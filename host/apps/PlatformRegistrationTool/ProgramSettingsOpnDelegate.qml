@@ -6,22 +6,17 @@ import tech.strata.theme 1.0
 ProgramSettingsDelegate {
     id: delegate
 
+    isBusy: isSearching
+    visible: false
 
     property bool isValid: false
     property string title: "Orderable Part Number"
     property string titleWhenSet
     property string opn
-
     property  bool isSearching: false
-
-
-
-
     property string errorText
 
     signal checkOpnRequested(string opn)
-
-    visible: false
 
     content: Item {
         width: setButton.x + setButton.width
@@ -52,7 +47,6 @@ ProgramSettingsDelegate {
             enabled: delegate.isSearching === false && delegate.isSet === false
             font.capitalization: Font.AllUppercase
             maximumLength: 100
-            busyIndicatorRunning: delegate.isSearching
 
             Behavior on opacity { OpacityAnimator {} }
 

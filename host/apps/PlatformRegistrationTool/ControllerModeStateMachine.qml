@@ -8,8 +8,8 @@ DSM.StateMachine {
     id: stateMachine
 
     property bool stateDownloadActive: stateDownload.active
-    property bool stateCheckDeviceActive: stateCheckDevice.active
-    property bool stateRegistrationActive: stateRegistration.active
+    property bool stateControllerCheckActive: stateControllerCheck.active
+    property bool stateControllerRegistrationActive: stateControllerRegistration.active
     property bool stateErrorActive: stateError.active
     property bool stateLoopFailedActive: stateLoopFailed.active
     property bool stateLoopSucceedActive: stateLoopSucceed.active
@@ -18,8 +18,8 @@ DSM.StateMachine {
     property string internalSubtext: ""
     property string subtext: {
         var t = ""
-        if (stateCheckDeviceCount.active || stateWaitForDevice.active) {
-            t = "Connect single device with MCU "+ jlinkDevice.toUpperCase()
+        if (stateCheckDeviceCount.active || stateWaitForController.active) {
+            t = "Connect single controller with MCU "+ jlinkDevice.toUpperCase()
 
             if (prtModel.deviceCount > 1) {
                 t += "\n"
@@ -27,38 +27,39 @@ DSM.StateMachine {
             }
         } else if (stateWaitForJLink.active) {
             t = "Connect single JLink Base to program device"
-        } else if (stateRegistrationActive) {
+        } else if (stateControllerRegistration.active) {
             t = internalSubtext
             t += "\n\n"
-            t += "Do not unplug device or JLink Base"
-        } else if (stateLoopSucceedActive) {
-            t = "Device registered as platform " + opn.toUpperCase() + "\n\n"
-            t += "You can unplug device now\n\n"
-            t += "To program another device, simply plug it in and process will start automatically\n\n"
+            t += "Do not unplug controller or JLink Base"
+        } else if (stateLoopSucceed.active) {
+            t = "Controller\n" + controllerOpn.toUpperCase() + "\n\n"
+            t += "You can unplug controller now\n\n"
+            t += "To program another controller, simply plug it in and process will start automatically\n\n"
             t += "or press End to finish current session"
-        } else if (stateLoopFailedActive) {
+        } else if (stateLoopFailed.active) {
             t = internalSubtext
             t += "\n\n"
-            t += "Unplug device and press Continue"
-        } else if (stateErrorActive) {
+            t += "Unplug controller and press Continue"
+        } else if (stateError.active) {
             t = internalSubtext
         }
 
         return t
     }
 
+    running: false
+    initialState: stateValidateInput
+
     property QtObject prtModel
     property QtObject jLinkConnector
-
     property QtObject breakButton
     property QtObject continueButton
 
     property string jlinkExePath: ""
-
-    property var firmwareData: ({})
     property var bootloaderData: ({})
-    property string classId: ""
-    property string opn: ""
+
+    property string controllerClassId: ""
+    property string controllerOpn: ""
 
     property string jlinkDevice: ""
     property int bootloaderStartAddress: -1
@@ -70,35 +71,28 @@ DSM.StateMachine {
     signal settingsInvalid(string errorString)
     signal deviceCountValid()
     signal deviceCountInvalid()
-    signal deviceFirmwareValid()
-    signal deviceFirmwareInvalid()
     signal jlinkProcessFailed()
-
-    running: false
-    initialState: stateValidateInput
 
 
     DSM.State {
         id: stateValidateInput
 
         onEntered: {
-            prtModel.clearBinaries();
+             prtModel.clearBinaries();
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
                 errorString = "Path to JLink.exe not set"
-            } else if (Object.keys(firmwareData).length === 0) {
-                errorString = "No valid firmware available"
             } else if (Object.keys(bootloaderData).length === 0) {
                 errorString = "No valid bootloader available"
-            } else if (classId.length === 0) {
-                errorString = "Class id not set"
+            } else if (controllerClassId.length === 0) {
+                errorString = "Controller class id not set"
+            } else if (controllerOpn.length === 0) {
+                errorString = "Controller OPN not set"
             } else if (jlinkDevice.length === 0) {
                 errorString = "MCU device type not set"
             } else if (bootloaderStartAddress < 0) {
                 errorString = "Bootloader start address not set"
-            } else if (opn.length === 0) {
-                errorString = "OPN not set"
             }
 
             if (errorString.length > 0) {
@@ -129,13 +123,11 @@ DSM.StateMachine {
         onEntered: {
             stateMachine.statusText = "Downloading"
 
-            console.debug(Logger.prtCategory, "binaries download about to start")
+            console.debug(Logger.prtCategory, "binary download about to start")
 
             prtModel.downloadBinaries(
                         stateMachine.bootloaderData.file,
-                        stateMachine.bootloaderData.md5,
-                        stateMachine.firmwareData.file,
-                        stateMachine.firmwareData.md5)
+                        stateMachine.bootloaderData.md5)
         }
 
         DSM.SignalTransition {
@@ -147,9 +139,12 @@ DSM.StateMachine {
         }
 
         DSM.SignalTransition {
-            targetState: stateCheckDevice
+            targetState: stateControllerCheck
             signal: prtModel.downloadFirmwareFinished
             guard: errorString.length === 0
+            onTriggered: {
+                console.debug(Logger.prtCategory, "binary download finished succesfully",)
+            }
         }
 
         DSM.SignalTransition {
@@ -164,7 +159,7 @@ DSM.StateMachine {
     }
 
     DSM.State {
-        id: stateCheckDevice
+        id: stateControllerCheck
 
         initialState: stateCheckDeviceCount
 
@@ -174,7 +169,18 @@ DSM.StateMachine {
         }
 
         DSM.SignalTransition {
-            targetState: stateWaitForDevice
+            targetState: stateWaitForController
+            signal: prtModel.deviceCountChanged
+            guard: prtModel.deviceCount !== 1
+        }
+
+        DSM.SignalTransition {
+            targetState: exitState
+            signal: breakButton.clicked
+        }
+
+        DSM.SignalTransition {
+            targetState: stateWaitForController
             signal: prtModel.deviceCountChanged
             guard: prtModel.deviceCount !== 1
         }
@@ -182,7 +188,7 @@ DSM.StateMachine {
         DSM.State {
             id: stateCheckDeviceCount
             onEntered: {
-                stateMachine.statusText = "Waiting for device to connect"
+                stateMachine.statusText = "Waiting for controller"
 
                 console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
@@ -194,23 +200,29 @@ DSM.StateMachine {
             }
 
             DSM.SignalTransition {
-                targetState: stateWaitForJLink
+                targetState: stateDelayWaitForJLink
                 signal: stateMachine.deviceCountValid
             }
 
             DSM.SignalTransition {
-                targetState: stateWaitForDevice
+                targetState: stateWaitForController
                 signal: stateMachine.deviceCountInvalid
             }
         }
 
         DSM.State {
-            id: stateWaitForDevice
+            id: stateDelayWaitForJLink
+            DSM.TimeoutTransition {
+                targetState: stateWaitForJLink
+                timeout: 1000
+            }
+        }
 
+        DSM.State {
+            id: stateWaitForController
             onEntered: {
-                stateMachine.statusText = "Waiting for device to connect"
-
-                console.debug(Logger.prtCategory, "waiting for device")
+                stateMachine.statusText = "Waiting for controller"
+                console.debug(Logger.prtCategory, "waiting for controller")
             }
 
             DSM.SignalTransition {
@@ -244,7 +256,7 @@ DSM.StateMachine {
                 }
 
                 DSM.SignalTransition {
-                    targetState: stateRegistration
+                    targetState: stateControllerRegistration
                     signal: jLinkConnector.checkConnectionProcessFinished
                     guard: exitedNormally && connected
                 }
@@ -272,23 +284,24 @@ DSM.StateMachine {
     }
 
     DSM.State {
-        id: stateRegistration
+        id: stateControllerRegistration
 
         initialState: stateProgramBootloader
 
         property string currentPlatformId
         property int currentBoardCount
 
+        signal jlinkProcessFailed()
+
         DSM.State {
             id: stateProgramBootloader
-
             onEntered: {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
+
+                console.debug(Logger.prtCategory, "bootloader on controller is about to be programmed")
+
                 var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
-
-                console.debug(Logger.prtCategory, "bootloader about to be programmed")
-
                 if (run === false) {
                     stateMachine.jlinkProcessFailed()
                 }
@@ -304,7 +317,7 @@ DSM.StateMachine {
             }
 
             DSM.SignalTransition {
-                targetState: stateProgramFirmware
+                targetState: stateNotifyCloudService
                 signal: jLinkConnector.programBoardProcessFinished
                 guard: exitedNormally
             }
@@ -321,115 +334,33 @@ DSM.StateMachine {
         }
 
         DSM.State {
-            id: stateProgramFirmware
-
-            onEntered: {
-                stateMachine.statusText = "Programming firmware"
-
-                console.debug(Logger.prtCategory, "firmware about to be programmed")
-
-                prtModel.programDevice();
-            }
-
-            /* Seems like DSM casts class enum arguments to simple int,
-                   so "===" doesnt work */
-            DSM.SignalTransition {
-                signal: prtModel.flasherOperationStateChanged
-                onTriggered: {
-                    if (operation == FlasherConnector.Preparation ) {
-                        if (state == FlasherConnector.Started) {
-                            stateMachine.internalSubtext = "Preparations"
-                        } else if (state == FlasherConnector.Failed) {
-                            stateMachine.internalSubtext = errorString
-                        }
-                    } else if (operation == FlasherConnector.Flash) {
-                        if (state == FlasherConnector.Started) {
-                            stateMachine.internalSubtext = "Programming"
-                        } else if (state === FlasherConnector.Failed) {
-                            stateMachine.internalSubtext = errorString
-                        }
-                    } else if (operation == FlasherConnector.BackupBeforeFlash
-                               || operation == FlasherConnector.RestoreFromBackup) {
-                        console.warn(Logger.prtCategory, "unsupported operation", operation, state)
-                    } else {
-                        console.warn(Logger.prtCategory, "unknown operation", operation, state)
-                    }
-                }
-            }
-
-            DSM.SignalTransition {
-                signal: prtModel.flasherProgress
-                onTriggered: {
-                    stateMachine.internalSubtext = (total < 1 ? 0 : Math.floor((chunk / total) * 100)) +"% completed"
-                }
-            }
-
-            DSM.SignalTransition {
-                targetState: stateNotifyCloudService
-                signal: prtModel.flasherFinished
-                guard: result == FlasherConnector.Success
-
-            }
-
-            DSM.SignalTransition {
-                targetState: stateLoopFailed
-                signal: prtModel.flasherFinished
-                guard: result == FlasherConnector.Unsuccess || result == FlasherConnector.Failure
-            }
-        }
-
-        DSM.State {
             id: stateNotifyCloudService
 
             onEntered: {
-                stateMachine.statusText = "Registering"
+                stateMachine.statusText = "Registering Controller"
                 stateMachine.internalSubtext = "contacting cloud service"
-                stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
-                stateRegistration.currentBoardCount = -1
+                stateControllerRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
+                stateControllerRegistration.currentBoardCount = -1
 
-                console.debug(Logger.prtCategory, "cloud service is about to be notified")
+                console.debug(Logger.prtCategory, "cloud service is about to be notified for controller registration")
 
                 prtModel.notifyServiceAboutRegistration(
-                            stateMachine.classId,
-                            stateRegistration.currentPlatformId)
-            }
-
-            DSM.SignalTransition {
-                targetState: stateStartBootloader
-                signal: prtModel.notifyServiceFinished
-                guard: boardCount > 0 && errorString.length === 0
-                onTriggered: {
-                    stateRegistration.currentBoardCount = boardCount
-                }
-            }
-
-            DSM.SignalTransition {
-                targetState: stateLoopFailed
-                signal: prtModel.notifyServiceFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    stateMachine.internalSubtext = errorString
-                }
-            }
-        }
-
-        DSM.State {
-            id: stateStartBootloader
-
-            onEntered: {
-                stateMachine.internalSubtext = "starting bootloader"
-                prtModel.startBootloader()
+                            stateMachine.controllerClassId,
+                            stateControllerRegistration.currentPlatformId)
             }
 
             DSM.SignalTransition {
                 targetState: stateWriteRegistrationData
-                signal: prtModel.startBootloaderFinished
-                guard: errorString.length === 0
+                signal: prtModel.notifyServiceFinished
+                guard: boardCount > 0 && errorString.length === 0
+                onTriggered: {
+                    stateControllerRegistration.currentBoardCount = boardCount
+                }
             }
 
             DSM.SignalTransition {
                 targetState: stateLoopFailed
-                signal: prtModel.startBootloaderFinished
+                signal: prtModel.notifyServiceFinished
                 guard: errorString.length > 0
                 onTriggered: {
                     stateMachine.internalSubtext = errorString
@@ -443,51 +374,39 @@ DSM.StateMachine {
             onEntered: {
                 stateMachine.internalSubtext = "writing to device"
 
-                console.debug(Logger.prtCategory, "device is about to be registered")
-
-                prtModel.setPlatformId(
-                            stateMachine.classId,
-                            stateRegistration.currentPlatformId,
-                            stateRegistration.currentBoardCount)
-            }
-
-            DSM.SignalTransition {
-                targetState: stateStartApplication
-                signal: prtModel.setPlatformIdFinished
-                guard: errorString.length === 0
-            }
-
-            DSM.SignalTransition {
-                targetState: stateLoopFailed
-                signal: prtModel.setPlatformIdFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    stateMachine.internalSubtext = errorString
-                    console.error(Logger.prtCategory, "device registration failed:", errorString)
+                var data = {
+                    "controller_class_id": stateMachine.controllerClassId,
+                    "controller_platform_id": stateControllerRegistration.currentPlatformId,
+                    "controller_board_count": stateControllerRegistration.currentBoardCount
                 }
-            }
-        }
 
-        DSM.State {
-            id: stateStartApplication
+                console.debug(Logger.prtCategory, "controller is about to be registered", JSON.stringify(data))
 
-            onEntered: {
-                stateMachine.internalSubtext = "starting application firmware"
-                prtModel.startApplication()
+                prtModel.setAssistedPlatformId(data)
             }
 
             DSM.SignalTransition {
                 targetState: stateLoopSucceed
-                signal: prtModel.startApplicationFinished
-                guard: errorString.length === 0
+                signal: prtModel.setAssistedPlatformIdFinished
+                guard: statusString === "ok"
             }
 
             DSM.SignalTransition {
                 targetState: stateLoopFailed
-                signal: prtModel.startApplicationFinished
-                guard: errorString.length > 0
+                signal: prtModel.setAssistedPlatformIdFinished
+                guard: statusString !== "ok"
                 onTriggered: {
-                    stateMachine.internalSubtext = errorString
+                    if (statusString == "failed") {
+                        stateMachine.internalSubtext = "Registration refused by controller"
+                    } else if (statusString == "already_initialized") {
+                        stateMachine.internalSubtext = "Controller has already been registered"
+                    } else if (statusString == "device_not_connected") {
+                        stateMachine.internalSubtext = "Assisted device not connected"
+                    } else if (statusString) {
+                        stateMachine.internalSubtext = "Error: " + errorString
+                    }
+
+                    console.error(Logger.prtCategory, "controller registration failed:", statusString)
                 }
             }
         }
@@ -497,7 +416,7 @@ DSM.StateMachine {
         id: stateError
 
         onEntered: {
-            stateMachine.statusText = "Platform Registration Failed"
+            stateMachine.statusText = "Controller Registration Failed"
         }
 
         DSM.SignalTransition {
@@ -510,12 +429,13 @@ DSM.StateMachine {
         id: stateLoopFailed
 
         onEntered: {
-            stateMachine.statusText = "Registration Failed"
+            stateMachine.statusText = "Controller Registration Failed"
         }
 
         DSM.SignalTransition {
-            targetState: stateWaitForDevice
+            targetState: stateControllerCheck
             signal: continueButton.clicked
+            guard: prtModel.deviceCount !== 1
         }
     }
 
@@ -523,7 +443,7 @@ DSM.StateMachine {
         id: stateLoopSucceed
 
         onEntered: {
-            stateMachine.statusText = "Registration Successful"
+            stateMachine.statusText = "Controller Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
         }
 
@@ -533,13 +453,14 @@ DSM.StateMachine {
         }
 
         DSM.SignalTransition {
-            targetState: stateCheckDevice
+            targetState: stateControllerCheck
             signal: prtModel.boardDisconnected
         }
     }
 
     DSM.FinalState {
         id: exitState
+
         onEntered: {
             stateMachine.exitWizardRequested()
         }

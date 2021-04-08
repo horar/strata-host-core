@@ -4,7 +4,7 @@ import QtQuick.Controls 2.12
 Item {
     id: workflow
 
-    width: childrenRect.width
+    width: labelEnd.x + labelEnd.width
     height: childrenRect.height
 
     property color baseNodeColor: "#303030"
@@ -227,6 +227,7 @@ Item {
     }
 
     WorkflowNodeText {
+        id: labelEnd
         anchors {
             left: arrowExit.right
             verticalCenter: nodeDownload.verticalCenter

@@ -805,7 +805,7 @@ Item {
         else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
         }
-        else if ((event.key === Qt.Key_M) && markIconVisible) {
+        else if ((event.key === Qt.Key_M) && markIconVisible && currentIndex != -1) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
             logModel.toggleIsMarked(sourceIndex)
         }

@@ -154,6 +154,7 @@ FocusScope {
             DSM.SignalTransition {
                 signal: beginButton.clicked
                 onTriggered: {
+                    wizard.jlinkExePath = jlinkPathDelegate.jlinkExePath
                     wizard.registrationEmbeddedRequested()
                 }
             }
@@ -300,6 +301,7 @@ FocusScope {
             DSM.SignalTransition {
                 signal: beginButton.clicked
                 onTriggered: {
+                    wizard.jlinkExePath = jlinkPathDelegate.jlinkExePath
                     wizard.registrationControllerRequested()
                 }
             }
@@ -325,6 +327,7 @@ FocusScope {
             DSM.SignalTransition {
                 signal: beginButton.clicked
                 onTriggered: {
+                    wizard.jlinkExePath = jlinkPathDelegate.jlinkExePath
                     wizard.registrationAssistedAndControllerRequested()
                 }
             }
@@ -434,6 +437,7 @@ FocusScope {
             DSM.SignalTransition {
                 signal: beginButton.clicked
                 onTriggered: {
+                    wizard.jlinkExePath = jlinkPathDelegate.jlinkExePath
                     wizard.registrationAssistedAndControllerRequested()
                 }
             }
@@ -607,6 +611,7 @@ FocusScope {
             return
         } else {
             if (dataObject.hasOwnProperty("controller_type") === false) {
+                console.error(Logger.prtCategory, "controller_type is missing")
                 stateMachine.findPlatformReplyNotValid()
                 return
             }

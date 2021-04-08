@@ -73,7 +73,6 @@ DSM.StateMachine {
     property QtObject breakButton
     property QtObject continueButton
 
-    property int registrationMode: ProgramDeviceWizard.Unknown
     property string jlinkExePath: ""
     property var firmwareData: ({})
     property var bootloaderData: ({})
@@ -112,9 +111,7 @@ DSM.StateMachine {
             prtModel.clearBinaries();
 
             var errorString = ""
-            if (registrationMode !== ProgramDeviceWizard.ControllerAndAssisted) {
-                errorString = "Registration mode not supported"
-            } else if (jlinkExePath.length === 0) {
+            if (jlinkExePath.length === 0) {
                 errorString = "Path to JLink.exe not set"
             } else if (Object.keys(firmwareData).length === 0) {
                 errorString = "No valid firmware available"
@@ -173,6 +170,9 @@ DSM.StateMachine {
         DSM.SignalTransition {
             targetState: exitState
             signal: breakButton.clicked
+            onTriggered: {
+                prtModel.abortDownload()
+            }
         }
 
         DSM.SignalTransition {
@@ -643,7 +643,7 @@ DSM.StateMachine {
         id: stateError
 
         onEntered: {
-            stateMachine.statusText = "Platform Registration Failed"
+            stateMachine.statusText = "Assisted Platform Registration Failed"
         }
 
         DSM.SignalTransition {
@@ -656,7 +656,7 @@ DSM.StateMachine {
         id: stateLoopFailed
 
         onEntered: {
-            stateMachine.statusText = "Registration Failed"
+            stateMachine.statusText = "Assisted Platform Registration Failed"
         }
 
         DSM.SignalTransition {
@@ -676,7 +676,7 @@ DSM.StateMachine {
         id: stateLoopSucceed
 
         onEntered: {
-            stateMachine.statusText = "Registration Successful"
+            stateMachine.statusText = "Assisted Platform Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
         }
 

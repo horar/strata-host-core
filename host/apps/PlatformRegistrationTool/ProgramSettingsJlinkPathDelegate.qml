@@ -29,7 +29,9 @@ ProgramSettingsDelegate {
             onActiveEditingChanged: {
                 if (activeEditing) {
                     setStateIsUnknown()
+                    delegate.isBusy = false
                 } else {
+                    delegate.isBusy = true
                     validateJlinkPath()
                 }
             }
@@ -51,6 +53,7 @@ ProgramSettingsDelegate {
                     }
 
                     if (pathEdit.filePath.length > 0) {
+                        delegate.isBusy = true
                         validateWithDelayTimer.start()
                     }
                 }
@@ -70,7 +73,7 @@ ProgramSettingsDelegate {
 
             Timer {
                 id: validateWithDelayTimer
-                interval: 1000
+                interval: 500
                 onTriggered: pathEdit.validateJlinkPath()
             }
 
@@ -83,6 +86,8 @@ ProgramSettingsDelegate {
                 } else if(!CommonCpp.SGUtilsCpp.isExecutable(filePath)) {
                     error = "JLink Commander is not executable"
                 }
+
+                delegate.isBusy = false
 
                 if (error.length) {
                     pathEdit.setStateIsInvalid(error)

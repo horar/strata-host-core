@@ -8,6 +8,7 @@
         <file>ProgramDeviceWizard.qml</file>
         <file>AssistedModeStateMachine.qml</file>
         <file>EmbeddedModeStateMachine.qml</file>
+        <file>ControllerModeStateMachine.qml</file>
         <file>ProgramSettingsWizard.qml</file>
         <file>ProgramSettingsDelegate.qml</file>
         <file>ProgramSettingsOpnDelegate.qml</file>
