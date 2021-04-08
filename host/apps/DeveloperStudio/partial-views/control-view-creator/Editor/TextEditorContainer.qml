@@ -270,16 +270,6 @@ ColumnLayout {
                 channelObject.setContainerWidth(width.toString())
             }
 
-            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
-            // the visibilty changed is called when the window is resized from signals outside of the app
-            Connections {
-                target: mainWindow
-
-                onVisibilityChanged: {
-                    channelObject.resetContainer(webEngine.height.toString(), webEngine.width.toString())
-                }
-            }
-
             onLoadingChanged: {
                 if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
                     channelObject.setContainerHeight(height.toString())
