@@ -80,9 +80,6 @@ Popup {
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt"
                 }
 
-
-
-
             }
 
             delegate: Button {

@@ -38,11 +38,11 @@ LayoutSGGraph { // start_%1
                         if(sgGraph_%1) {
                             sgGraph_%1.curve(0).clear()
                          }
-                   lastTime = Date.now()
-                  }
-          }
+              lastTime = Date.now()
+           }
+         }
 
-          onTriggered: {
+       onTriggered: {
                         let currentTime = Date.now()
                         if(sgGraph_%1) {
                             let curve = sgGraph_%1.curve(0)
@@ -50,8 +50,8 @@ LayoutSGGraph { // start_%1
                              curve.append(0, Math.random())
                              removeOutOfViewPoints()
                              sgGraph_%1.update()
-                        }
-                   lastTime = currentTime
+                  }
+                 lastTime = currentTime
            }
 
            function removeOutOfViewPoints() {

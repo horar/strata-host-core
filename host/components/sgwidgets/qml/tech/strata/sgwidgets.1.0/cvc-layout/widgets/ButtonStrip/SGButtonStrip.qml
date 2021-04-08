@@ -40,6 +40,8 @@ Item {
 
         rows: orientation === Qt.Horizontal ? 1 : -1
         columns: orientation === Qt.Vertical ? 1 : -1
+        columnSpacing: 1
+        rowSpacing: 1
 
         Repeater {
             id: repeater
