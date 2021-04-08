@@ -111,19 +111,19 @@ public slots:
      * Update firmware.
      * @param data struct containing data for updating firmware
      */
-    void updateFirmware(UpdateFirmwareData data);
+    void updateFirmware(const UpdateFirmwareData &data);
 
     /**
      * Program controller.
      * @param data struct containing data for programing controller
      */
-    void programController(ProgramControllerData data);
+    void programController(const ProgramControllerData &data);
 
     /**
      * Set controller firmware class ID.
      * @param data struct containing data for setting controller fw_class_id (URL and MD5 are unused)
      */
-    void setControllerFwClassId(ProgramControllerData data);
+    void setControllerFwClassId(const ProgramControllerData &data);
 
 
 private slots:

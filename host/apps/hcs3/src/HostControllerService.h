@@ -126,7 +126,7 @@ public slots:
     void broadcastConnectedPlatformListMessage();
 
 private slots:
-    void parseMessageFromClient(QByteArray message, QByteArray clientId);
+    void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
     void sendMessageToClients(const QString &platformId, const QString& message);
 

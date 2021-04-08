@@ -634,7 +634,7 @@ Client* HostControllerService::getClientById(const QByteArray& clientId)
 }
 
 
-void HostControllerService::parseMessageFromClient(QByteArray message, QByteArray clientId)
+void HostControllerService::parseMessageFromClient(const QByteArray &message, const QByteArray &clientId)
 {
     //check the client's ID (dealer_id) is in list
     Client* client = getClientById(clientId);
