@@ -49,7 +49,6 @@
             });
 
             link.resetContainer.connect(function (height, width) {
-                alert(height)
                 document.getElementById("container").setAttribute("style", `height:${height}px`);
                 document.getElementById("container").setAttribute("style", `width:${width}px`);
                 editor.layout()

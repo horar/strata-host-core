@@ -279,11 +279,13 @@ Item {
         }
 
         onHeightChanged: {
-            channelObject.setContainerHeight(height.toString())
+            var htmlHeight = height - 10
+            channelObject.setContainerHeight(htmlHeight.toString())
         }
 
         onWidthChanged: {
-            channelObject.setContainerWidth(width.toString())
+            var htmlWidth = width - 10
+            channelObject.setContainerWidth(htmlWidth.toString())
         }
         // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
         // the visibilty changed is called when the window is resized from signals outside of the app
@@ -291,7 +293,9 @@ Item {
             target: mainWindow
 
             onVisibilityChanged: {
-                channelObject.resetContainer(webEngine.height.toString(), webEngine.width.toString())
+                var htmlHeight = webEngine.height - 10
+                var htmlWidth = webEngine.width - 10
+                channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
             }
         }
 
