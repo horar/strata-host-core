@@ -331,6 +331,16 @@ function registerQmlAsLanguage() {
         var nextnextMatch = model.findNextMatch("}", { lineNumber: nextMatch.range.startLineNumber, column: nextMatch.range.endColumn }, false, false)
         var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
 
+        //Handles the : after issue
+        var line = model.getLineContent(position.lineNumber)
+        if(line.includes(":") && line.substring(0,2) !== "on"){
+            var idsSuggestions = []
+            for(var i = 0; i < ids.length; i++){
+                idsSuggestions.push(functionSuggestions[ids[i]])
+            }
+            return idsSuggestions
+        }
+
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
             propRange = {
@@ -817,13 +827,6 @@ function registerQmlAsLanguage() {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(functionSuggestions)
         } else {
-            if (bracketWord.includes(":")) {
-                var idsSuggestions = []
-                for(var i = 0; i < ids.length; i++){
-                    idsSuggestions.push(functionSuggestions[ids[i]])
-                }
-                    return idsSuggestions
-            }
             const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
             if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
                 convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, true)
