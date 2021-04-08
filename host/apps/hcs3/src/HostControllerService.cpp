@@ -508,7 +508,7 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
     }
 
     QString path = payload.value("path").toString();
-    if (deviceId.isEmpty()) {
+    if (path.isEmpty()) {
         qCWarning(logCategoryHcs) << "path attribute is empty or has bad format";
         return;
     }
