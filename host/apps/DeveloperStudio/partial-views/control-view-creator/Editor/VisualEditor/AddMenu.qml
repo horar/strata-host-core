@@ -72,9 +72,14 @@ Popup {
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Slider/SGSlider.txt"
                 }
                 ListElement {
-                    text: "TextFeild"
+                    text: "TextField"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/TextField/SGTextField.txt"
                 }
+                ListElement {
+                    text: "ButtonStrip"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt"
+                }
+
 
 
 

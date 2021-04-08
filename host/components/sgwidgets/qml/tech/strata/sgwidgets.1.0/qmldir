@@ -69,6 +69,7 @@ LayoutSGComboBox 1.0 cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml
 LayoutSGGraph 1.0 cvc-layout/widgets/Graph/LayoutSGGraph.qml
 LayoutSGSlider 1.0 cvc-layout/widgets/Slider/LayoutSGSlider.qml
 LayoutSGTextField 1.0 cvc-layout/widgets/TextField/LayoutSGTextField.qml
+LayoutSGButtonStrip 1.0 cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml
 
 UIBase 1.0 cvc-layout/UIBase.qml
 

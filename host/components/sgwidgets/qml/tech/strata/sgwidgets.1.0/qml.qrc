@@ -88,5 +88,8 @@
         <file>cvc-layout/widgets/RadioButton/SGRadioButton.txt</file>
         <file>cvc-layout/widgets/TextField/LayoutSGTextField.qml</file>
         <file>cvc-layout/widgets/TextField/SGTextField.txt</file>
+        <file>cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml</file>
+        <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt</file>
+        <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.qml</file>
     </qresource>
 </RCC>
