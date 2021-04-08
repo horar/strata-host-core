@@ -44,6 +44,8 @@ namespace strata::device::scanner {
     signals:
         /**
          * Emitted when new device was detected.
+         * @note this signal only works with Qt::DirectConnection, not with Qt::QueuedConnection
+         * @note in such case change DevicePtr to QSharedPointer or use Q_DECLARE_SMART_POINTER_METATYPE
          * @param device pointer
          */
         void deviceDetected(DevicePtr device);
