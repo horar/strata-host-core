@@ -50,16 +50,12 @@ LayoutContainer {
        return graphObject.update()
     }
 
-
-
     SGGraph {
         id: graphObject
         panXEnabled: panXEnabled
         panYEnabled : panYEnabled
         zoomXEnabled : zoomXEnabled
         zoomYEnabled : zoomYEnabled
-
-
     }
 }
 
