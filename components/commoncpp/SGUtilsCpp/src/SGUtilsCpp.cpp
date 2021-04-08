@@ -284,3 +284,8 @@ QString SGUtilsCpp::keySequenceNativeText(QString sequence)
 {
     return QKeySequence(sequence).toString(QKeySequence::NativeText);
 }
+
+bool SGUtilsCpp::keySequenceMatches(QString sequence, int key)
+{
+    return QKeySequence(sequence).matches(QKeySequence(key));
+}

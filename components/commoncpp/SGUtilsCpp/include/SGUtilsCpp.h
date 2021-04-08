@@ -40,6 +40,7 @@ public:
     Q_INVOKABLE static QString toHex(qint64 number, int width = 0);
     Q_INVOKABLE static void copyToClipboard(const QString &text);
     Q_INVOKABLE static QString keySequenceNativeText(QString sequence);
+    Q_INVOKABLE static bool keySequenceMatches(QString sequence, int key);
 
 private:
     const QStringList fileSizePrefixList_;

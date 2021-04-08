@@ -923,6 +923,12 @@ Module {
             type: "string"
             Parameter { name: "sequence"; type: "string" }
         }
+        Method {
+            name: "keySequenceMatches"
+            type: "bool"
+            Parameter { name: "sequence"; type: "string" }
+            Parameter { name: "key"; type: "int" }
+        }
     }
     Component {
         name: "SGVersionUtils"
