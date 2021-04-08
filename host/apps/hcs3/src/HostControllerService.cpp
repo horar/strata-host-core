@@ -485,7 +485,7 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
     updateData.deviceId = deviceId;
 
     QString path = payload.value("path").toString();
-    if (deviceId.isEmpty()) {
+    if (path.isEmpty()) {
         qCWarning(logCategoryHcs) << "path attribute is empty or has bad format";
 
         QJsonObject payloadBody {
@@ -516,8 +516,6 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
 
     updateController_.updateFirmware(updateData);
 }
-
-             //TODO do this
 
 void HostControllerService::processCmdProgramController(const QJsonObject &payload, const QByteArray &clientId)
 {
