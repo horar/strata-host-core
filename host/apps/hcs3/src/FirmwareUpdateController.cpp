@@ -47,7 +47,7 @@ void FirmwareUpdateController::updateFirmware(const UpdateFirmwareData &data)
     runUpdate(flashData);
 }
 
-void FirmwareUpdateController::programController(const ProgramControllerData data)
+void FirmwareUpdateController::programController(const ProgramControllerData &data)
 {
     if (data.firmwareClassId.isNull()) {
         logAndEmitError(data.deviceId, QStringLiteral("Cannot program controller - firmware class ID was not provided."));
