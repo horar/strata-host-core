@@ -47,10 +47,10 @@ public:
     Q_INVOKABLE bool isAssistedDeviceConnected() const;
 
     Q_INVOKABLE void downloadBinaries(
-            QString bootloaderUrl,
-            QString bootloaderMd5,
-            QString firmwareUrl,
-            QString firmwareMd5);
+            QString bootloaderUrl = QString(),
+            QString bootloaderMd5 = QString(),
+            QString firmwareUrl = QString(),
+            QString firmwareMd5 = QString());
 
     Q_INVOKABLE void programDevice();
     Q_INVOKABLE void notifyServiceAboutRegistration(
@@ -68,6 +68,7 @@ public:
     Q_INVOKABLE void startApplication();
 
     Q_INVOKABLE void clearBinaries();
+    Q_INVOKABLE void abortDownload();
 
 signals:
     void deviceInfoChanged(QByteArray deviceId);
@@ -111,8 +112,8 @@ private:
     QPointer<QTemporaryFile> firmwareFile_;
 
     bool fakeDownloadBinaries(
-                const QString &bootloaderUrl,
-                const QString &firmwareUrl);
+                const QString &bootloaderUrl = QString(),
+                const QString &firmwareUrl = QString());
 
     QString resolveConfigFilePath();
 };

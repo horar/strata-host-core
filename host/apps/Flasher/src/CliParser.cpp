@@ -89,7 +89,7 @@ CommandShPtr CliParser::parse() {
     }
 
     if (hasDeviceOption) {
-        return std::make_unique<WrongCommand>(QStringLiteral("Option 'device' cannot be used without 'flash' or 'backup' option!"));
+        return std::make_unique<WrongCommand>(QStringLiteral("Option 'device' cannot be used without 'flash', 'backup' or 'info' option!"));
     }
 
     // Now we have only positional arguments (if any) or none arguments.

@@ -11,6 +11,7 @@ FocusScope {
     visible: false
 
     property bool isSet: false
+    property bool isBusy: false
     property alias content: loader.sourceComponent
     readonly property int horizontalSpace: 10
     readonly property int verticalSpace: 6
@@ -68,6 +69,15 @@ FocusScope {
             iconColor: Theme.palette.green
             source: "qrc:/sgimages/check.svg"
         }
+    }
+
+    BusyIndicator {
+        id: busyIndicator
+        anchors.centerIn: iconWrapper
+        height: icon.height + 8
+        width: height
+
+        running: isBusy
     }
 
     Loader {

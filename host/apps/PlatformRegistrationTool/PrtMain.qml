@@ -90,7 +90,7 @@ Item {
 
             onRegistrationAssistedAndControllerRequested: {
                 var properties = {
-                    "registrationMode": ProgramDeviceWizard.ControllerAndAssisted,
+                    "registrationMode": ProgramDeviceWizard.Assisted,
                     "jlinkExePath": settingsWizard.jlinkExePath,
                     "controllerData": settingsWizard.controllerData,
                     "assistedData": settingsWizard.assistedData,
@@ -100,7 +100,13 @@ Item {
             }
 
             onRegistrationControllerRequested: {
-                console.log("not implemented yet")
+                var properties = {
+                    "registrationMode": ProgramDeviceWizard.ControllerOnly,
+                    "jlinkExePath": settingsWizard.jlinkExePath,
+                    "controllerData": settingsWizard.controllerData,
+                }
+
+                startRegistrationProcess(properties)
             }
 
             function startRegistrationProcess(properties) {
@@ -164,23 +170,7 @@ Item {
                 alternativeColorEnabled: true
                 font.bold: true
                 text: prtModel.debugBuild ? "Production server in use" : "Non-production server in use"
-            }            
+            }
         }
     }
-
-    function resolveFirmwareAndBootloader(registrationMode, embeddedData, assistedData, controllerData) {
-
-        if (registrationMode === ProgramDeviceWizard.Embedded) {
-            latestFirmwareIndex =
-
-            console.log("best firmware:", embeddedData.firmware[latestFirmwareIndex].version, embeddedData.firmware[latestFirmwareIndex].timestamp)
-
-        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
-
-        } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
-
-        }
-    }
-
-
 }
