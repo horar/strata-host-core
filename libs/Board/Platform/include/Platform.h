@@ -164,6 +164,13 @@ namespace strata::platform {
          */
         bool isControllerConnectedToPlatform();
 
+        /**
+         * Check if platform was correctly recognized.
+         * This method must be called after Identify operation finishes.
+         * @return true if platform is recognized, false otherwise
+         */
+        bool isRecognized();
+
         // *** Platform properties (end) ***
 
         /**
@@ -302,9 +309,9 @@ namespace strata::platform {
         /**
          * Informs the device that Identify operation completed
          * Emits recognized() signal.
-         * @param success if the device was properly recognized
+         * @param isRecognized if the device was properly recognized
          */
-        void identifyFinished(bool success);
+        void identifyFinished(bool isRecognized);
       // ***
 
         void openDevice();
@@ -327,6 +334,7 @@ namespace strata::platform {
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 
         bool bootloaderMode_;
+        bool isRecognized_;
         ApiVersion apiVersion_;
         ControllerType controllerType_;
         QString bootloaderVer_;

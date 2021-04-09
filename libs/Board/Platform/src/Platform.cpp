@@ -21,7 +21,7 @@ QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
 }
 
 Platform::Platform(const device::DevicePtr& device) :
-    device_(device), operationLock_(0), bootloaderMode_(false),
+    device_(device), operationLock_(0), bootloaderMode_(false), isRecognized_(false),
     apiVersion_(ApiVersion::Unknown), controllerType_(ControllerType::Embedded)
 {
     if (device_ == nullptr) {
@@ -188,6 +188,15 @@ Platform::ControllerType Platform::controllerType() {
     return controllerType_;
 }
 
+bool Platform::isControllerConnectedToPlatform() {
+    return ((this->controllerType() == ControllerType::Assisted) && this->hasClassId());
+}
+
+bool Platform::isRecognized() {
+    QReadLocker rLock(&properiesLock_);
+    return isRecognized_;
+}
+
 QByteArray Platform::deviceId() const {
     return device_->deviceId();
 }
@@ -198,10 +207,6 @@ const QString Platform::deviceName() const {
 
 device::Device::Type Platform::deviceType() const {
     return device_->deviceType();
-}
-
-bool Platform::isControllerConnectedToPlatform() {
-    return ((this->controllerType() == ControllerType::Assisted) && this->hasClassId());
 }
 
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {
@@ -273,8 +278,12 @@ void Platform::setApiVersion(ApiVersion apiVersion) {
     apiVersion_ = apiVersion;
 }
 
-void Platform::identifyFinished(bool success) {
-    emit recognized(success);
+void Platform::identifyFinished(bool isRecognized) {
+    {
+        QWriteLocker wLock(&properiesLock_);
+        isRecognized_ = isRecognized;
+    }
+    emit recognized(isRecognized);
 }
 
 void Platform::openDevice() {
