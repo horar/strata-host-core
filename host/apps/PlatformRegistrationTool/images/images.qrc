@@ -1,8 +1,0 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource prefix="/images/">
-        <file>prt-logo.svg</file>
-        <file>download-shrinked.svg</file>
-        <file>letter-r.svg</file>
-    </qresource>
-</RCC>

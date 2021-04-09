@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/images/">
+        <file>prt-logo.svg</file>
+        <file>download-shrinked.svg</file>
+        <file>letter-r.svg</file>
+        <file>connect-schema-embedded.svg</file>
+        <file>connect-schema-assisted.svg</file>
+        <file>connect-schema-controller.svg</file>
+    </qresource>
+</RCC>
