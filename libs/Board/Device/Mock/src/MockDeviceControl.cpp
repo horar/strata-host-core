@@ -387,10 +387,6 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
             targetDocumentNode = &(*targetDocumentNode)[placeholderPart.toStdString().c_str()];
         }
 
-        if (targetDocumentNode->IsInt()) {
-            return QString::number(targetDocumentNode->GetInt());
-        }
-
         if (targetDocumentNode->IsString()) {
             return targetDocumentNode->GetString();
         }
