@@ -34,26 +34,24 @@ bool MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QSt
     }
 
     DevicePtr device = std::make_shared<MockDevice>(deviceId, name, saveMessages);
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     deviceIds_.insert(deviceId);
 
     qCInfo(logCategoryDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << deviceId << ", name: '" << name << "'";
 
-    emit deviceDetected(device);
+    emit deviceDetected(platform);
 
     return true;
 }
 
 bool MockDeviceScanner::mockDeviceLost(const QByteArray& deviceId) {
-    auto iter = deviceIds_.find(deviceId);
-    if (iter == deviceIds_.end()) {
+    if (deviceIds_.erase(deviceId) == 0) {
         qCWarning(logCategoryDeviceScanner).nospace().noquote()
             << "Unable to erase mock device: ID: " << deviceId << ", device does not exists";
         return false;
     }
-
-    deviceIds_.erase(iter);
 
     qCInfo(logCategoryDeviceScanner).nospace().noquote()
         << "Erased mock device: ID: " << deviceId;

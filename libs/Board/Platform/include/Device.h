@@ -40,6 +40,7 @@ namespace strata::device {
             NoError = 0,
             UndefinedError,
             DeviceBusy,
+            DeviceFailedToOpen,
             SendMessageError,
             // values from QSerialPort::SerialPortError:
             SP_DeviceNotFoundError = 101,

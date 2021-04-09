@@ -20,7 +20,7 @@ QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
     return dbg << d.get();
 }
 
-Platform::Platform(const device::DeviceNewPtr& device) :
+Platform::Platform(const device::DevicePtr& device) :
     device_(device), operationLock_(0), bootloaderMode_(false),
     apiVersion_(ApiVersion::Unknown), controllerType_(ControllerType::Embedded)
 {
@@ -28,9 +28,9 @@ Platform::Platform(const device::DeviceNewPtr& device) :
         throw std::invalid_argument("Missing mandatory device pointer in platform");
     }
 
-    connect(device_.get(), &device::DeviceNew::messageReceived, this, &Platform::messageReceivedHandler);
-    connect(device_.get(), &device::DeviceNew::messageSent, this, &Platform::messageSentHandler);
-    connect(device_.get(), &device::DeviceNew::deviceError, this, &Platform::deviceErrorHandler);
+    connect(device_.get(), &device::Device::msgFromDevice, this, &Platform::messageReceivedHandler);
+    connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler);
+    connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
 
     reconnectTimer_.setSingleShot(true);
     connect(&reconnectTimer_, &QTimer::timeout, this, &Platform::openDevice);
@@ -87,7 +87,7 @@ void Platform::messageSentHandler(QByteArray msg) {
     emit messageSent(msg);
 }
 
-void Platform::deviceErrorHandler(device::DeviceNew::ErrorCode errCode, QString msg) {
+void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg) {
     emit deviceError(errCode, msg);
 }
 
@@ -128,7 +128,7 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device::DeviceNew::ErrorCode::DeviceBusy, errMsg);
+        emit deviceError(device::Device::ErrorCode::DeviceBusy, errMsg);
         return false;
     }
 }
@@ -196,7 +196,7 @@ const QString Platform::deviceName() const {
     return device_->deviceName();
 }
 
-device::DeviceNew::Type Platform::deviceType() const {
+device::Device::Type Platform::deviceType() const {
     return device_->deviceType();
 }
 
@@ -283,7 +283,7 @@ void Platform::openDevice() {
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device::DeviceNew::ErrorCode::DeviceFailedToOpen, errMsg);
+        emit deviceError(device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
         if (retryMsec_ != 0) {
             reconnectTimer_.start(retryMsec_);
         }

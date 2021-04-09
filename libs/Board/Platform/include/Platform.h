@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DeviceNew.h>
+#include <Device.h>
 
 #include <memory>
 
@@ -51,7 +51,7 @@ namespace strata::platform {
          * Platform constructor
          * @param device pointer
          */
-        explicit Platform(const device::DeviceNewPtr& device) noexcept(false);
+        explicit Platform(const device::DevicePtr& device) noexcept(false);
 
         /**
          * Platform destructor
@@ -182,7 +182,7 @@ namespace strata::platform {
          * Get device type.
          * @return Type of device
          */
-        device::DeviceNew::Type deviceType() const;
+        device::Device::Type deviceType() const;
 
         friend QDebug operator<<(QDebug dbg, const Platform* d);
         friend QDebug operator<<(QDebug dbg, const PlatformPtr& d);
@@ -205,10 +205,10 @@ namespace strata::platform {
          * @param errCode error code
          * @param msg error description
          */
-        void deviceError(device::DeviceNew::ErrorCode errCode, QString msg);
+        void deviceError(device::Device::ErrorCode errCode, QString msg);
 
         /**
-         * Emitted when device communication channel was open.
+         * Emitted when device communication channel was opened.
          */
         void opened();
 
@@ -236,7 +236,7 @@ namespace strata::platform {
     private slots:
         void messageReceivedHandler(QByteArray msg);
         void messageSentHandler(QByteArray msg);
-        void deviceErrorHandler(device::DeviceNew::ErrorCode errCode, QString msg);
+        void deviceErrorHandler(device::Device::ErrorCode errCode, QString msg);
 
     private:
       // *** functions used by friend classes BasePlatformOperation and BasePlatformCommand:
@@ -311,7 +311,7 @@ namespace strata::platform {
         void closeDevice(const int waitMsec);
 
     protected:
-        device::DeviceNewPtr device_;
+        device::DevicePtr device_;
 
         // Mutex for protect access to operationLock_.
         QMutex operationMutex_;
