@@ -7,10 +7,10 @@ LayoutSGCircularGauge { // start_%1
         layoutInfo.yRows: 0
 
         // start_user_content
-         unitText : "%"
-         minimumValue : 0
-         maximumValue : 10
-         tickmarkStepSize: 1
-         valueDecimalPlaces: 1
+        unitText : "%"
+        minimumValue : 0
+        maximumValue : 10
+        tickmarkStepSize: 1
+        value : 10
         // end_user_content
     } // end_%1

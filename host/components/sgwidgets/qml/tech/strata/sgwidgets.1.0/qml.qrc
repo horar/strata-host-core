@@ -72,8 +72,6 @@
         <file>cvc-layout/widgets/Switch/SGSwitch.txt</file>
         <file>cvc-layout/widgets/InfoBox/SGInfoBox.txt</file>
         <file>cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml</file>
-        <file>cvc-layout/widgets/SubmitInfoBox/LayoutSGSubmitInfoBox.qml</file>
-        <file>cvc-layout/widgets/SubmitInfoBox/SGSubmitInfoBox.txt</file>
         <file>cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml</file>
         <file>cvc-layout/widgets/CircularGauge/SGCircularGauge.txt</file>
         <file>cvc-layout/widgets/StatusLight/LayoutSGStatusLight.qml</file>
@@ -84,8 +82,6 @@
         <file>cvc-layout/widgets/Graph/SGGraph.txt</file>
         <file>cvc-layout/widgets/Slider/LayoutSGSlider.qml</file>
         <file>cvc-layout/widgets/Slider/SGSlider.txt</file>
-        <file>cvc-layout/widgets/TextField/LayoutSGTextField.qml</file>
-        <file>cvc-layout/widgets/TextField/SGTextField.txt</file>
         <file>cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml</file>
         <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt</file>
         <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.qml</file>

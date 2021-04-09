@@ -10,15 +10,26 @@ LayoutContainer {
     // pass through all properties
     property alias fontSizeMultiplier: infoObject.fontSizeMultiplier
     property alias text: infoObject.text
-    property alias horizontalAlignment: infoObject.horizontalAlignment
     property alias placeholderText: infoObject.placeholderText
     property alias readOnly: infoObject.readOnly
+    property alias textColor: infoObject.textColor
+    property alias textPadding: infoObject.textPadding
+    property alias invalidTextColor: infoObject.invalidTextColor
     property alias boxColor: infoObject.boxColor
+    property alias boxBorderColor: infoObject.boxBorderColor
+    property alias boxBorderWidth:  infoObject.boxBorderWidth
+    property alias unit: infoObject.unit
+    property alias validator: infoObject.validator
+    property alias horizontalAlignment: infoObject.horizontalAlignment
+    property alias contextMenuEnabled: infoObject.contextMenuEnabled
+
+    signal accepted()
+    signal editingFinished()
 
     SGInfoBox {
         id: infoObject
+        onAccepted: parent.accepted()
+        onEditingFinished: parent.editingFinished()
     }
-
-
 }
 

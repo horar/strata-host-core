@@ -16,7 +16,6 @@ LayoutContainer {
     property alias outerTextFontSizeMultiplier: circularGaugeObject.outerTextFontSizeMultiplier
     property alias valueDecimalPlaces: circularGaugeObject.valueDecimalPlaces
     property alias tickmarkDecimalPlaces: circularGaugeObject.tickmarkDecimalPlaces
-
     property alias minimumValue: circularGaugeObject.minimumValue
     property alias maximumValue: circularGaugeObject.maximumValue
     property alias tickmarkStepSize : circularGaugeObject.tickmarkStepSize
@@ -24,16 +23,6 @@ LayoutContainer {
 
     SGCircularGauge {
         id: circularGaugeObject
-        gaugeFillColor1: parent.gaugeFillColor1
-        gaugeFillColor2: parent.gaugeFillColor2
-        gaugeBackgroundColor: parent.gaugeBackgroundColor
-        centerTextColor: parent.centerTextColor
-        outerTextColor: parent.outerTextColor
-        unitTextFontSizeMultiplier: parent.unitTextFontSizeMultiplier
-        value : parent.value
-        outerTextFontSizeMultiplier: parent.outerTextFontSizeMultiplier
-
-
     }
 }
 

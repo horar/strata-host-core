@@ -8,5 +8,10 @@ LayoutSGInfoBox { // start_%1
 
         // start_user_content
         text: "100"
+        readOnly : true // Set readOnly: false if you like to make SGInfoBox Editable
+
+         onAccepted: {
+           console.log("Accepted:",text,layoutInfo.uuid)
+         }
         // end_user_content
     } // end_%1

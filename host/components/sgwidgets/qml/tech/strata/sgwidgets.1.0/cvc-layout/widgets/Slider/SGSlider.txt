@@ -1,8 +1,8 @@
 LayoutSGSlider { // start_%1
         id: sgSlider_%1
         layoutInfo.uuid: "%1"
-        layoutInfo.columnsWide: 10
-        layoutInfo.rowsTall: 4
+        layoutInfo.columnsWide: 15
+        layoutInfo.rowsTall: 1
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
@@ -12,6 +12,5 @@ LayoutSGSlider { // start_%1
         onMoved : {
                 console.log("onMoved:",value,layoutInfo.uuid)
          }
-
         // end_user_content
     } // end_%1

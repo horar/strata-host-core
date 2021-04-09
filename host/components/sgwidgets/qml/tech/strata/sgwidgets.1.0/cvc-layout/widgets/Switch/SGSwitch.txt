@@ -11,5 +11,8 @@
         checkedLabel : "on"
         uncheckedLabel : "off"
         labelsInside : true
+        onToggled: {
+              console.log("onToggled:",checked,layoutInfo.uuid)
+        }
         // end_user_content
     } // end_%1

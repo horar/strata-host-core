@@ -12,6 +12,7 @@ LayoutContainer {
     property alias exclusive: buttonStripObject.exclusive
     property alias orientation: buttonStripObject.orientation
     property alias checkedIndices: buttonStripObject.checkedIndices
+
     signal clicked ()
 
     SGButtonStrip {

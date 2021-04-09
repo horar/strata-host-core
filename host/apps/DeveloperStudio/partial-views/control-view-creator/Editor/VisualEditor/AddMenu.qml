@@ -48,10 +48,6 @@ Popup {
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/InfoBox/SGInfoBox.txt"
                 }
                 ListElement {
-                    text: "SubmitInfoBox"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/SubmitInfoBox/SGSubmitInfoBox.txt"
-                }
-                ListElement {
                     text: "CircularGauge"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/CircularGauge/SGCircularGauge.txt"
                 }
