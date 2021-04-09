@@ -8,9 +8,8 @@ LayoutSGComboBox { // start_%1
 
         // start_user_content
         model: ["Amps", "Volts", "Watts"]
-        textColor : "red"
         onActivated: {
-            console.log("Activated:", currentIndex, currentText, layoutInfo.uuid)
+            console.log("onActivated:", currentIndex, currentText, layoutInfo.uuid)
         }
         // end_user_content
 } // end_%1

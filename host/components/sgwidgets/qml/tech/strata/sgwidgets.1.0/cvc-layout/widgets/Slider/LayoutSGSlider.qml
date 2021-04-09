@@ -45,26 +45,10 @@ LayoutContainer {
     signal userSet(real value)
     signal moved()
 
-    function userSetValue (value) {  // sets value, signals userSet
-        sliderObject.userSetValue(value)
-    }
-
-    function increase () {
-        sliderObject.increase()
-    }
-
-    function decrease () {
-        sliderObject.decrease()
-    }
-
-    function valueAt (position) {
-        return sliderObject.valueAt(position)
-    }
-
-
     SGSlider {
         id: sliderObject
         onMoved: parent.moved()
+        onUserSet: parent.userSet()
 
     }
 }
