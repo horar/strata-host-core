@@ -40,11 +40,16 @@ QtObject {
             overlayObjects[i].destroy()
         }
         overlayObjects = []
-        sdsModel.resourceLoader.clearComponentCache(visualEditor)
 
         if (visualEditor.file.toLowerCase().endsWith(".qml")){
             fileContents = openFile(visualEditor.file)
-            loader.setSource(visualEditor.file)
+
+            // Append a numerical string to the end of each file since the component cache cannot be trimmed synchronously
+            // Trim the component cache to clear out old components to prevent memory leak
+            // see: https://stackoverflow.com/questions/19604552/qml-loader-not-shows-changes-on-qml-file
+            loader.setSource(visualEditor.file + "?t=" + Date.now())
+            sdsModel.resourceLoader.trimComponentCache(visualEditor)
+
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
                 overlayContainer.rowCount = loader.children[0].rowCount
                 overlayContainer.columnCount = loader.children[0].columnCount

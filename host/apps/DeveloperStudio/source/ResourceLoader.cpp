@@ -385,9 +385,7 @@ QString ResourceLoader::getLastLoggedError() {
     return lastLoggedError;
 }
 
-void ResourceLoader::clearComponentCache(QObject *parent) {
+void ResourceLoader::trimComponentCache(QObject *parent) {
     QQmlEngine *eng = qmlEngine(parent);
-//    eng->collectGarbage();
-//    eng->trimComponentCache();
-    eng->clearComponentCache();
+    eng->trimComponentCache();
 }
