@@ -340,10 +340,6 @@ function registerQmlAsLanguage() {
                 idsSuggestions.push(functionSuggestions[ids[i]])
             }
             return idsSuggestions
-        } else if (line.includes("property")) {
-
-            convertStrArrayToObjArray("property", qtObjectKeyValues["property"].properties, qtObjectKeyValues["property"].flag, false, "property")
-            return qtObjectPropertyValues["property"]
         }
 
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file

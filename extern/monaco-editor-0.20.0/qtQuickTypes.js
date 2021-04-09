@@ -4669,18 +4669,5 @@ const qtTypeJson = {
         "String": [
             "arg()",
         ],
-    },"property": [
-        'int', 
-        'real', 
-        'var', 
-        'string', 
-        'color', 
-        'url', 
-        'alias', 
-        'bool', 
-        'double',
-        'rect',
-        'float',
-        'vector2d'
-    ]
+    },"property": []
 }
