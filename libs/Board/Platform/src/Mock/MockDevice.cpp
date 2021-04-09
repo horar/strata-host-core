@@ -30,8 +30,8 @@ bool MockDevice::open()
         return true;
     }
 
-    opened_ = true;
-    return true;
+    opened_ = mockIsOpenEnabled();
+    return opened_;
 }
 
 void MockDevice::close()
@@ -115,14 +115,19 @@ bool MockDevice::mockIsOpened() const
     return opened_;
 }
 
-bool MockDevice::mockIsBootloader() const
+bool MockDevice::mockIsOpenEnabled() const
 {
-    return control_.mockIsBootloader();
+    return control_.mockIsOpenEnabled();
 }
 
 bool MockDevice::mockIsLegacy() const
 {
     return control_.mockIsLegacy();
+}
+
+bool MockDevice::mockIsBootloader() const
+{
+    return control_.mockIsBootloader();
 }
 
 bool MockDevice::mockIsAutoResponse() const
@@ -138,6 +143,11 @@ MockCommand MockDevice::mockGetCommand() const
 MockResponse MockDevice::mockGetResponse() const
 {
     return control_.mockGetResponse();
+}
+
+bool MockDevice::mockSetOpenEnabled(bool enabled)
+{
+    return control_.mockSetOpenEnabled(enabled);
 }
 
 bool MockDevice::mockSetLegacy(bool isLegacy)
