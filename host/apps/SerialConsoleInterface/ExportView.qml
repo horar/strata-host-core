@@ -37,8 +37,8 @@ FocusScope {
                 font.bold: true
             }
 
-            SGWidgets.SGFileSelector {
-                id: exportPathSelector
+            SGWidgets.SGFilePicker {
+                id: exportPathPicker
                 contextMenuEnabled: true
                 width: content.width
                 hasHelperText: false
@@ -63,15 +63,15 @@ FocusScope {
 
                 onClicked: {
                     exportErrorTag.text = ""
-                    var errorString = model.platform.scrollbackModel.exportToFile(exportPathSelector.filePath)
+                    var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
                     if (errorString.length > 0) {
                         exportErrorTag.text = errorString
                         infoPopup.showFailed("Export Failed")
-                        console.error(Logger.sciCategory, "failed to export content into", exportPathSelector.filePath)
+                        console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
 
                     } else {
                         infoPopup.showSuccess("Export Done")
-                        console.log(Logger.sciCategory, "content exported into", exportPathSelector.filePath)
+                        console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
                     }
                 }
             }
@@ -132,8 +132,8 @@ FocusScope {
             }
 
 
-            SGWidgets.SGFileSelector {
-                id: autoExportPathSelector
+            SGWidgets.SGFilePicker {
+                id: autoExportPathPicker
                 contextMenuEnabled: true
                 width: content.width
                 anchors {
@@ -154,7 +154,7 @@ FocusScope {
             SGWidgets.SGTag {
                 id: autoExportErrorTag
                 anchors {
-                    top: autoExportPathSelector.bottom
+                    top: autoExportPathPicker.bottom
                     topMargin: baseSpacing
                 }
 
@@ -175,7 +175,7 @@ FocusScope {
                     if (model.platform.scrollbackModel.autoExportIsActive) {
                         model.platform.scrollbackModel.stopAutoExport()
                     } else {
-                        model.platform.scrollbackModel.startAutoExport(autoExportPathSelector.filePath)
+                        model.platform.scrollbackModel.startAutoExport(autoExportPathPicker.filePath)
                     }
                 }
             }

@@ -37,10 +37,10 @@ bool MockDeviceControl::mockSetLegacy(bool legacy)
 {
     if (isLegacy_ != legacy) {
         isLegacy_ = legacy;
-        qCDebug(logCategoryMockDevice) << "Configured legacy mode to" << isLegacy_;
+        qCDebug(logCategoryDeviceMock) << "Configured legacy mode to" << isLegacy_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Legacy mode already configured to" << isLegacy_;
+    qCDebug(logCategoryDeviceMock) << "Legacy mode already configured to" << isLegacy_;
     return false;
 }
 
@@ -48,11 +48,11 @@ bool MockDeviceControl::mockSetCommand(MockCommand command)
 {
     if (command_ != command) {
         command_ = command;
-        qCDebug(logCategoryMockDevice) << "Configured command from command-response pair to"
+        qCDebug(logCategoryDeviceMock) << "Configured command from command-response pair to"
                                        << command_<< ":" << response_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Command from command-response pair already configured to"
+    qCDebug(logCategoryDeviceMock) << "Command from command-response pair already configured to"
                                    << command_<< ":" << response_;
     return false;
 }
@@ -61,11 +61,11 @@ bool MockDeviceControl::mockSetResponse(MockResponse response)
 {
     if (response_ != response) {
         response_ = response;
-        qCDebug(logCategoryMockDevice) << "Configured response command-response pair to"
+        qCDebug(logCategoryDeviceMock) << "Configured response command-response pair to"
                                        << command_<< ":" << response_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Response from command-response pair already configured to"
+    qCDebug(logCategoryDeviceMock) << "Response from command-response pair already configured to"
                                    << command_<< ":" << response_;
     return false;
 }
@@ -75,11 +75,11 @@ bool MockDeviceControl::mockSetResponseForCommand(MockResponse response, MockCom
     if ((command_ != command) || (response_ != response)) {
         command_ = command;
         response_ = response;
-        qCDebug(logCategoryMockDevice) << "Configured command-response pair to"
+        qCDebug(logCategoryDeviceMock) << "Configured command-response pair to"
                                        << command_<< ":" << response_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Command-response pair already configured to"
+    qCDebug(logCategoryDeviceMock) << "Command-response pair already configured to"
                                    << command_<< ":" << response_;
     return false;
 }
@@ -88,10 +88,10 @@ bool MockDeviceControl::mockSetVersion(MockVersion version)
 {
     if (version_ != version) {
         version_ = version;
-        qCDebug(logCategoryMockDevice) << "Configured version to" << version_;
+        qCDebug(logCategoryDeviceMock) << "Configured version to" << version_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Version already configured to" << version_;
+    qCDebug(logCategoryDeviceMock) << "Version already configured to" << version_;
     return false;
 }
 
@@ -100,6 +100,7 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
     rapidjson::Document requestDoc;
     rapidjson::ParseResult parseResult = requestDoc.Parse(request.toStdString().c_str());
     std::vector<QByteArray> retVal;
+
     if (parseResult.IsError()) {
         return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});
     }
@@ -124,6 +125,18 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
         }
         if (0 == cmd.compare("start_application")) {
             recievedCommand = MockCommand::start_application;
+        }
+        if (0 == cmd.compare("start_flash_firmware")) {
+            recievedCommand = MockCommand::start_flash_firmware;
+        }
+        if (0 == cmd.compare("flash_firmware")) {
+            recievedCommand = MockCommand::flash_firmware;
+        }
+        if (0 == cmd.compare("start_flash_bootloader")) {
+            recievedCommand = MockCommand::start_flash_bootloader;
+        }
+        if (0 == cmd.compare("flash_bootloader")) {
+            recievedCommand = MockCommand::flash_bootloader;
         }
 
         retVal.push_back(test_commands::ack);
@@ -296,6 +309,54 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                 retVal.push_back(test_commands::start_application_response);
             }
             break;
+
+        case MockCommand::flash_firmware:
+            if (customResponse) {
+                switch (response_) {
+                case MockResponse::flash_resend_chunk: {
+                    retVal.push_back(test_commands::flash_firmware_response_resend_chunk);
+                } break;
+                case MockResponse::flash_memory_error: {
+                    retVal.push_back(test_commands::flash_firmware_response_memory_error);
+                } break;
+                case MockResponse::flash_invalid_cmd_sequence: {
+                    retVal.push_back(test_commands::flash_firmware_response_invalid_cmd_sequence);
+                } break;
+                case MockResponse::flash_invalid_value: {
+                    retVal.push_back(test_commands::flash_firmware_invalid_value);
+                } break;
+                default: {
+                    retVal.push_back(test_commands::flash_firmware_response);
+                } break;
+                }
+            } else {
+                retVal.push_back(test_commands::flash_firmware_response);
+            }
+            break;
+
+        case MockCommand::flash_bootloader:
+            retVal.push_back(test_commands::flash_bootloader_response);
+            break;
+
+        case MockCommand::start_flash_firmware:
+            if (customResponse) {
+                switch (response_) {
+                case MockResponse::start_flash_firmware_invalid: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_invalid);
+                } break;
+                default: {
+                    retVal.push_back(test_commands::start_flash_firmware_response);
+                } break;
+                }
+            } else {
+            retVal.push_back(test_commands::start_flash_firmware_response);
+            }
+            break;
+
+        case MockCommand::start_flash_bootloader:
+            retVal.push_back(test_commands::start_flash_bootloader_response);
+            break;
+
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);
@@ -326,11 +387,15 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
             targetDocumentNode = &(*targetDocumentNode)[placeholderPart.toStdString().c_str()];
         }
 
+        if (targetDocumentNode->IsInt()) {
+            return QString::number(targetDocumentNode->GetInt());
+        }
+
         if (targetDocumentNode->IsString()) {
             return targetDocumentNode->GetString();
         }
         // fallthrough
-    }  // add other namespaces as required in the future (e.g. refer to mock variables)
+    } // add other namespaces as required in the future (e.g. refer to mock variables)
     //QFAIL_(("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
     return placeholder;  // fallback, return the value as is
 }

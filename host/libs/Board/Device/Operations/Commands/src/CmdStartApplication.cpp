@@ -1,5 +1,5 @@
 #include "CmdStartApplication.h"
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 
 #include <cstring>
 
@@ -19,19 +19,19 @@ QByteArray CmdStartApplication::message() {
     return QByteArray("{\"cmd\":\"start_application\",\"payload\":{}}");
 }
 
-bool CmdStartApplication::processNotification(rapidjson::Document& doc) {
+bool CmdStartApplication::processNotification(rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::startApplicationNotif, doc)) {
-        result_ = CommandResult::Failure;
+        result = CommandResult::Failure;
 
         const char* jsonStatus = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS].GetString();
         if (std::strcmp(jsonStatus, JSON_OK) == 0) {
-            result_ = CommandResult::Done;
+            result = CommandResult::Done;
             setDeviceApiVersion(device::Device::ApiVersion::Unknown);
             setDeviceBootloaderMode(false);
         } else {
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to start, board has no valid firmware.";
-                result_ = CommandResult::FinaliseOperation;
+                qCWarning(logCategoryDeviceCommand) << device_ << "Nothing to start, board has no valid firmware.";
+                result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             }
         }

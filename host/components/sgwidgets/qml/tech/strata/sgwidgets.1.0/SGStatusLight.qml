@@ -8,8 +8,8 @@ import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
-    width: 50
-    height: width
+    implicitWidth: 50
+    implicitHeight: width
     layer.enabled: true
 
     property int status: 6
