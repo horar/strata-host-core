@@ -34,14 +34,6 @@ namespace strata::platform {
     friend class strata::platform::command::BasePlatformCommand;
 
     public:
-        enum class PlatformState {
-            AttemptingToOpen,
-            Open,
-            ClosedPartially,
-            Closed
-        };
-        Q_ENUM(PlatformState)
-
         enum class ApiVersion {
             Unknown,
             v1_0,
@@ -70,20 +62,20 @@ namespace strata::platform {
          * Open device communication channel.
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
-         * @param retryTimestamp timeout between re-attempts to open the device (in case of failure)
+         * @param retryMsec timeout between re-attempts to open the device (in case of failure)
          */
-        void open(const QDateTime &retryTimestamp);
+        void open(const int retryMsec = 0);
 
         /**
          * Close device communication channel.
          * Emits closed() signal upon completion.
-         * @param waitTimestamp how long to remain in closed state before re-attempting to open the device
-         * @param retryTimestamp timeout between re-attempts to open the device (in case of failure)
+         * @param waitMsec how long to remain in closed state before re-attempting to open the device
+         * @param retryMsec timeout between re-attempts to open the device (in case of failure)
          */
-        void close(const QDateTime &waitTimestamp, const QDateTime &retryTimestamp);
+        void close(const int waitMsec = 0, const int retryMsec = 0);
 
         /**
-         * Send message to device.
+         * Send message to device (public).
          * Emits messageSent() signal in case of success.
          * Emits deviceError() signal in case of failure.
          * @param msg message to be written to device
@@ -158,6 +150,20 @@ namespace strata::platform {
          */
         ControllerType controllerType();
 
+        /**
+         * Get bootloader mode property.
+         * @note Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
+         * @return bootloader mode (device property)
+         */
+        bool bootloaderMode();
+
+        /**
+         * Check if controller is connected to platform (dongle is connected to board).
+         * This method must be called after Identify operation finishes.
+         * @return true if controller is connected to platform, false otherwise
+         */
+        bool isControllerConnectedToPlatform();
+
         // *** Platform properties (end) ***
 
         /**
@@ -177,14 +183,6 @@ namespace strata::platform {
          * @return Type of device
          */
         device::DeviceNew::Type deviceType() const;
-
-        /**
-         * Check if controller is connected to platform (dongle is connected to board).
-         * This method must be called after Identify operation finishes or after signal
-         * boardInfoChanged is received from PlatformManager.
-         * @return true if controller is connected to platform, false otherwise
-         */
-        bool isControllerConnectedToPlatform();
 
         friend QDebug operator<<(QDebug dbg, const Platform* d);
         friend QDebug operator<<(QDebug dbg, const PlatformPtr& d);
@@ -215,14 +213,20 @@ namespace strata::platform {
         void opened();
 
         /**
+         * Emitted when device communication channel is about to be closed.
+         */
+        void aboutToClose();
+
+        /**
          * Emitted when device communication channel was closed.
          */
         void closed();
 
         /**
          * Emitted when device was identified using Identify operation.
+         * @param success true if successfully recognized, otherwise false
          */
-        void recognized();
+        void recognized(bool success);
 
         /**
          * Emitted when device receives platform Id changed message.
@@ -236,27 +240,78 @@ namespace strata::platform {
 
     private:
       // *** functions used by friend classes BasePlatformOperation and BasePlatformCommand:
-        // Does not change property if parameter is nullptr.
+        /**
+         * Sets bootloader and/or application version.
+         * @note Does not changes property if parameter is nullptr.
+         * @param bootloaderVer bootloader version
+         * @param bootloaderVer bootloader version
+         */
         void setVersions(const char* bootloaderVer, const char* applicationVer);
-        // Clears property if parameter is nullptr.
+
+        /**
+         * Sets or clears (if parameter is nullptr) the provided properties.
+         * @param name application name
+         * @param platformId platform Id
+         * @param classId class Id
+         * @param type controller type
+         */
         void setProperties(const char* name, const char* platformId, const char* classId, ControllerType type);
-        // Clears property if parameter is nullptr.
+
+        /**
+         * Sets or clears (if parameter is nullptr) the provided assisted properties.
+         * @param platformId assisted platform Id
+         * @param classId assisted class Id
+         * @param fwClassId assisted firmware class Id
+         */
         void setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId);
-        bool lockDeviceForOperation(quintptr lockId);
-        void unlockDevice(quintptr lockId);
-        bool sendMessage(const QByteArray msg, quintptr lockId);
+
+        /**
+         * Configures bootloader mode.
+         * @param inBootloaderMode true if bootloader mode is active, otherwise false
+         */
         void setBootloaderMode(bool inBootloaderMode);
-        // Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
-        bool bootloaderMode();
+
+        /**
+         * Sets API version property.
+         * @param apiVersion API version
+         */
         void setApiVersion(ApiVersion apiVersion);
+
+        /**
+         * Lock device with specified lock Id, so that only selected operation can use it
+         * @param lockId lock Id
+         * @return true if succesfully locked, otherwise false
+         */
+        bool lockDeviceForOperation(quintptr lockId);
+
+        /**
+         * Unlock device previously locked with specified lock Id
+         * @param lockId lock Id
+         */
+        void unlockDevice(quintptr lockId);
+
+        /**
+         * Send message to device using the specified lock Id (internal).
+         * Emits messageSent() signal in case of success.
+         * Emits deviceError() signal in case of failure.
+         * @param msg message to be written to device
+         * @param lockId lock Id
+         */
+        bool sendMessage(const QByteArray msg, quintptr lockId);
+
+        /**
+         * Informs the device that Identify operation completed
+         * Emits recognized() signal.
+         * @param success if the device was properly recognized
+         */
+        void identifyFinished(bool success);
       // ***
 
-    protected:
-        void changeState(PlatformState state) noexcept(false);
-        void timerExpired();
+        void openDevice();
+        void closeDevice(const int waitMsec);
 
+    protected:
         device::DeviceNewPtr device_;
-        PlatformState state_ = PlatformState::Closed;
 
         // Mutex for protect access to operationLock_.
         QMutex operationMutex_;
@@ -267,8 +322,7 @@ namespace strata::platform {
 
     private:
         QTimer reconnectTimer_;
-        QDateTime waitTimestamp_;
-        QDateTime retryTimestamp_;
+        int retryMsec_ = 0;
 
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 

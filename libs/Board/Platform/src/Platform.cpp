@@ -33,11 +33,15 @@ Platform::Platform(const device::DeviceNewPtr& device) :
     connect(device_.get(), &device::DeviceNew::deviceError, this, &Platform::deviceErrorHandler);
 
     reconnectTimer_.setSingleShot(true);
-    reconnectTimer_.callOnTimeout(this, [this](){changeState(PlatformState::AttemptingToOpen);});
+    connect(&reconnectTimer_, &QTimer::timeout, this, &Platform::openDevice);
 }
 
 Platform::~Platform() {
-    changeState(PlatformState::Closed);
+    // stop reconnectTimer_ just in case close was not called before (should not happen)
+    if (reconnectTimer_.isActive())
+        reconnectTimer_.stop();
+
+    // no need to close device here (if close was not called before), will be done in device
 }
 
 const rapidjson::SchemaDocument platformIdChangedSchema(
@@ -87,15 +91,18 @@ void Platform::deviceErrorHandler(device::DeviceNew::ErrorCode errCode, QString 
     emit deviceError(errCode, msg);
 }
 
-void Platform::open(const QDateTime &retryTimestamp) {
-    retryTimestamp_ = retryTimestamp;
-    changeState(PlatformState::AttemptingToOpen);
+void Platform::open(const int retryMsec) {
+    retryMsec_ = retryMsec;
+    if (reconnectTimer_.isActive())
+        reconnectTimer_.stop();
+    openDevice();
 }
 
-void Platform::close(const QDateTime &waitTimestamp, const QDateTime &retryTimestamp) {
-    waitTimestamp_ = waitTimestamp;
-    retryTimestamp_ = retryTimestamp;
-    changeState(PlatformState::Closed);
+void Platform::close(const int waitMsec, const int retryMsec) {
+    retryMsec_ = retryMsec;
+    if (reconnectTimer_.isActive())
+        reconnectTimer_.stop();
+    closeDevice(waitMsec);
 }
 
 // public method
@@ -266,41 +273,29 @@ void Platform::setApiVersion(ApiVersion apiVersion) {
     apiVersion_ = apiVersion;
 }
 
-void Platform::changeState(PlatformState state) {
-    state_ = state;
-    if (reconnectTimer_.isActive())
-        reconnectTimer_.stop();
+void Platform::identifyFinished(bool success) {
+    emit recognized(success);
+}
 
-    switch(state_) {
-        case PlatformState::AttemptingToOpen: {
-            if (device_->open() == true) {
-                changeState(PlatformState::Open);
-            } else {
-                QString errMsg(QStringLiteral("Unable to open device."));
-                qCWarning(logCategoryPlatform) << this << errMsg;
-                emit deviceError(device::DeviceNew::ErrorCode::DeviceFailedToOpen, errMsg);
-                if (retryTimestamp_.isNull() == false) {
-                    reconnectTimer_.start(retryTimestamp_.toMSecsSinceEpoch());
-                } else {
-                    state_ = PlatformState::Closed;
-                }
-            }
-        } break;
-        case PlatformState::Open: {
-            emit opened();
-        } break;
-        case PlatformState::ClosedPartially: {
-            if (waitTimestamp_.isNull() == false) {
-                reconnectTimer_.start(waitTimestamp_.toMSecsSinceEpoch());
-            }
-        } break;
-        case PlatformState::Closed: {
-            device_->close();
-            emit closed();
-            if (waitTimestamp_.isNull() == false) {
-                changeState(PlatformState::ClosedPartially);
-            }
-        } break;
+void Platform::openDevice() {
+    if (device_->open() == true) {
+        emit opened();
+    } else {
+        QString errMsg(QStringLiteral("Unable to open device."));
+        qCWarning(logCategoryPlatform) << this << errMsg;
+        emit deviceError(device::DeviceNew::ErrorCode::DeviceFailedToOpen, errMsg);
+        if (retryMsec_ != 0) {
+            reconnectTimer_.start(retryMsec_);
+        }
+    }
+}
+
+void Platform::closeDevice(const int waitMsec) {
+    emit aboutToClose();
+    device_->close();   // can take some time depending on the device type
+    emit closed();
+    if (waitMsec != 0) {
+        reconnectTimer_.start(waitMsec);
     }
 }
 
