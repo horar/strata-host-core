@@ -33,18 +33,18 @@ private slots:
     void cancelOperationTest();
     void identifyLegacyTest();
 
-    void timeoutForRetriedCommandsTest();
+    void retryGetFirmwareInfoTest();
 
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
-    void handleSendCommand();
+    void handleRetryGetFirmwareInfo();
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
-    void connectRetriedCommandsHandler(strata::device::operation::BaseDeviceOperation* operation);
+    void connectRetryGetFirmwareInfoHandler(strata::device::operation::BaseDeviceOperation* operation);
 
     std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
