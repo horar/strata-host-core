@@ -42,7 +42,7 @@ LayoutContainer {
     property alias handleObject: sliderObject.handleObject
     property alias contextMenuEnabled: sliderObject.contextMenuEnabled
 
-    signal userSet(real value)
+    signal userSet()
     signal moved()
 
     SGSlider {
