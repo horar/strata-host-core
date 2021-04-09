@@ -6,16 +6,12 @@ import "../../"
 LayoutContainer {
 
     // pass through all properties
-    property int status: 6
-    property color customColor: "white"
-    property bool flatStyle: false
-
+    property alias status: statusLightObject.status
+    property alias customColor: statusLightObject.customColor
+    property alias flatStyle: statusLightObject.flatStyle
 
     SGStatusLight {
         id: statusLightObject
-        status : parent.status
-        customColor: parent.customColor
-        flatStyle: parent.flatStyle
     }
 }
 

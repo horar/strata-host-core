@@ -6,16 +6,16 @@ import "../../"
 LayoutContainer {
 
     // pass through all properties
-    property real value: 0
-    property color gaugeFillColor1: "#0cf"
-    property color gaugeFillColor2: "red"
-    property color gaugeBackgroundColor: "#E5E5E5"
-    property color centerTextColor: "black"
-    property color outerTextColor: "#808080"
-    property real unitTextFontSizeMultiplier: 1.0
-    property real outerTextFontSizeMultiplier: 1.0
-    property int valueDecimalPlaces: tickmarkDecimalPlaces
-    property int tickmarkDecimalPlaces: circularGaugeObject.tickmarkDecimalPlaces
+    property alias value: circularGaugeObject.value
+    property alias gaugeFillColor1: circularGaugeObject.gaugeFillColor1
+    property alias gaugeFillColor2: circularGaugeObject.gaugeFillColor2
+    property alias gaugeBackgroundColor: circularGaugeObject.gaugeBackgroundColor
+    property alias centerTextColor: circularGaugeObject.centerTextColor
+    property alias outerTextColor: circularGaugeObject.outerTextColor
+    property alias unitTextFontSizeMultiplier: circularGaugeObject.unitTextFontSizeMultiplier
+    property alias outerTextFontSizeMultiplier: circularGaugeObject.outerTextFontSizeMultiplier
+    property alias valueDecimalPlaces: circularGaugeObject.valueDecimalPlaces
+    property alias tickmarkDecimalPlaces: circularGaugeObject.tickmarkDecimalPlaces
 
     property alias minimumValue: circularGaugeObject.minimumValue
     property alias maximumValue: circularGaugeObject.maximumValue

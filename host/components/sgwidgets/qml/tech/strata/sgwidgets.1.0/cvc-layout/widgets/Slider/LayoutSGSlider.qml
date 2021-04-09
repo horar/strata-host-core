@@ -6,8 +6,8 @@ import "../../"
 LayoutContainer {
 
     // pass through all properties
-    property real fontSizeMultiplier: sliderObject.fontSizeMultiplier
-    property color textColor: "black"
+    property alias fontSizeMultiplier: sliderObject.fontSizeMultiplier
+    property alias textColor:sliderObject.textColor
     property alias mirror: sliderObject.mirror
     property alias handleSize: sliderObject.handleSize
     property alias orientation: sliderObject.orientation

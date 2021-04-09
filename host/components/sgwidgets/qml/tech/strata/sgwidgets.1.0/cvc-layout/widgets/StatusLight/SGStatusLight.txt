@@ -8,6 +8,5 @@ LayoutSGStatusLight { // start_%1
 
         // start_user_content
         status : SGStatusLight.Green
-
         // end_user_content
     } // end_%1

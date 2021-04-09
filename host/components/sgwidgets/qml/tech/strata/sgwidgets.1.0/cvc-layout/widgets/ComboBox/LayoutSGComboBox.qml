@@ -5,17 +5,15 @@ import "../../"
 
 LayoutContainer {
 
-    property color textColor: "black"
-    property color indicatorColor: "#B3B3B3"
-    property color borderColor: "#B3B3B3"
-    property color borderColorFocused: "#219647"
-    property color boxColor: "white"
-    property bool dividers: false
-
+    property alias textColor: comboBoxObject.textColor
+    property alias indicatorColor: comboBoxObject.indicatorColor
+    property alias borderColor: comboBoxObject.borderColor
+    property alias borderColorFocused: comboBoxObject.borderColorFocused
+    property alias boxColor: comboBoxObject.boxColor
+    property alias dividers: comboBoxObject.dividers
     property alias model: comboBoxObject.model
     property alias currentIndex: comboBoxObject.currentIndex
     property alias currentText: comboBoxObject.currentText
-
 
     // private members for advanced customization
     property alias iconImage: comboBoxObject.iconImage

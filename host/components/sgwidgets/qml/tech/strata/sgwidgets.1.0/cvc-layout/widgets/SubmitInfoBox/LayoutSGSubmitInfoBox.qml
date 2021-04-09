@@ -27,7 +27,6 @@ LayoutContainer {
         onEditingFinished: parent.editingFinished(infoObject.text)
         Component.onCompleted: {
             infoBoxObject.Layout.fillHeight = true
-
         }
 
     }

@@ -6,6 +6,18 @@ import "../../"
 LayoutContainer {
 
     // pass through all properties
+    property alias fontSizeMultiplier: switchObject.fontSizeMultiplier
+    property alias handleColor: switchObject
+    property alias textColor: switchObject.textColor
+    property alias labelsInside: switchObject.labelsInside
+    property alias pressed: switchObject.pressed
+    property alias down: switchObject.down
+    property alias checked: switchObject.checked
+    property alias checkedLabel: switchObject.checkedLabel
+    property alias uncheckedLabel: switchObject.uncheckedLabel
+    property alias grooveFillColor: switchObject.grooveFillColor
+    property alias grooveColor: switchObject.grooveColor
+
     signal released()
     signal canceled()
     signal clicked()
@@ -13,36 +25,13 @@ LayoutContainer {
     signal press()
     signal pressAndHold()
 
-    property real fontSizeMultiplier: 1.0
-    property color handleColor: "white"
-    property color textColor: labelsInside ? "white" : "black"
-    property bool labelsInside: true
-
-    property alias pressed: swicthObject.pressed
-    property alias down: swicthObject.down
-    property alias checked: swicthObject.checked
-    property alias checkedLabel: swicthObject.checkedLabel
-    property alias uncheckedLabel: swicthObject.uncheckedLabel
-    property alias grooveFillColor: swicthObject.grooveFillColor
-    property alias grooveColor: swicthObject.grooveColor
-
-
     SGSwitch {
-        id: swicthObject
-        fontSizeMultiplier: parent.fontSizeMultiplier
-        labelsInside: parent.labelsInside
-        textColor: parent.textColor
-        handleColor: parent.handleColor
-
+        id: switchObject
         onReleased: parent.released()
         onCanceled: parent.canceled()
         onClicked: parent.clicked()
         onToggled: parent.toggled()
         onPressAndHold: parent.pressAndHold()
-
-        //elide: Text.ElideRight
-        // wrapMode: Text.Wrap
-        //  text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
     }
 }
 

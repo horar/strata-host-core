@@ -11,5 +11,6 @@ LayoutSGCircularGauge { // start_%1
          minimumValue : 0
          maximumValue : 10
          tickmarkStepSize: 1
+         valueDecimalPlaces: 1
         // end_user_content
     } // end_%1

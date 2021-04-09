@@ -7,10 +7,10 @@ import "../../"
 LayoutContainer {
 
     // pass through all properties
-    property bool panXEnabled: true
-    property bool panYEnabled: true
-    property bool zoomXEnabled: true
-    property bool zoomYEnabled: true
+    property alias panXEnabled: graphObject.panXEnabled
+    property alias panYEnabled: graphObject.panYEnabled
+    property alias zoomXEnabled: graphObject.zoomXEnabled
+    property alias zoomYEnabled: graphObject.zoomYEnabled
 
     //Advance feature for tooltip.
     property alias mouseArea: graphObject.mouseArea
@@ -24,7 +24,6 @@ LayoutContainer {
     property alias xGrid: graphObject.xGrid
     property alias yGrid: graphObject.yGrid
     property alias gridColor: graphObject.gridColor
-
 
     function createCurve(name) {
        return graphObject.createCurve(name)
@@ -52,10 +51,6 @@ LayoutContainer {
 
     SGGraph {
         id: graphObject
-        panXEnabled: panXEnabled
-        panYEnabled : panYEnabled
-        zoomXEnabled : zoomXEnabled
-        zoomYEnabled : zoomYEnabled
     }
 }
 
