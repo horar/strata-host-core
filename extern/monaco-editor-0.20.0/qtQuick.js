@@ -147,18 +147,18 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
     }
 }
 
-function addCustomProperties(lineNumber,item, property){
-    if(!qtPropertyPairs.hasOwnProperty(item)){
+function addCustomProperties(lineNumber, item, property) {
+    if (!qtPropertyPairs.hasOwnProperty(item)) {
         qtPropertyPairs[item] = {}
-        if(!qtPropertyPairs[item].hasOwnProperty(lineNumber)){
+        if (!qtPropertyPairs[item].hasOwnProperty(lineNumber)) {
             qtPropertyPairs[item][lineNumber] = property
         }
     } else {
         qtPropertyPairs[item][lineNumber] = property
     }
-    if(qtObjectKeyValues.hasOwnProperty(item) && property !== undefined){
+    if (qtObjectKeyValues.hasOwnProperty(item) && property !== undefined) {
         var onCall = property
-        var onCallProperty = "on"+onCall[0].toUpperCase()+onCall.substring(1)+"Changed"
+        var onCallProperty = "on" + onCall[0].toUpperCase() + onCall.substring(1) + "Changed"
         qtObjectKeyValues[item].properties = qtObjectKeyValues[item].properties.concat(onCallProperty)
     }
 }
@@ -333,12 +333,17 @@ function registerQmlAsLanguage() {
 
         //Handles the : after issue
         var line = model.getLineContent(position.lineNumber)
-        if(line.includes(":") && line.substring(0,2) !== "on" && !line.includes("property")){
+        alert(line)
+        if (line.includes(":") && line.substring(0, 2) !== "on" && !line.includes("property")) {
             var idsSuggestions = []
-            for(var i = 0; i < ids.length; i++){
+            for (var i = 0; i < ids.length; i++) {
                 idsSuggestions.push(functionSuggestions[ids[i]])
             }
             return idsSuggestions
+        } else if (line.includes("property")) {
+
+            convertStrArrayToObjArray("property", qtObjectKeyValues["property"].properties, qtObjectKeyValues["property"].flag, false, "property")
+            return qtObjectPropertyValues["property"]
         }
 
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
@@ -398,8 +403,8 @@ function registerQmlAsLanguage() {
             //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
         } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
             var prevParent = findPreviousBracketParent(model, position).trim()
-            var prevBrack = model.findPreviousMatch(prevParent,position)
-            var bracket = model.findPreviousMatch("{",{lineNumber: prevBrack.range.startLineNumber, column: prevBrack.range.startColumn})
+            var prevBrack = model.findPreviousMatch(prevParent, position)
+            var bracket = model.findPreviousMatch("{", { lineNumber: prevBrack.range.startLineNumber, column: prevBrack.range.startColumn })
             var getWord = model.getLineContent(bracket.range.startLineNumber).replace("\t", "").split(/\{|\t/)[0].trim()
             if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                 propRange = {
@@ -417,7 +422,7 @@ function registerQmlAsLanguage() {
             } else if (qtObjectMetaPropertyValues[getWord].hasOwnProperty(prevParent)) {
                 convertStrArrayToObjArray(prevParent, qtObjectMetaPropertyValues[getWord][prevParent], true, true, null)
                 return qtObjectPropertyValues[prevParent]
-            } else if (prevParent.includes(":") && prevParent.substring(0,2) !== "on") {
+            } else if (prevParent.includes(":") && prevParent.substring(0, 2) !== "on") {
                 const propertyItem = prevParent.trim().replace("\t", "").split(":")[1].trim()
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
@@ -568,9 +573,16 @@ function registerQmlAsLanguage() {
             arr = removeDuplicates(arr)
             createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
         }
-        for(const key in qtTypeJson){
-            if(key === "property"){
-                createQtObjectValPairs(key, {label: key, insertText: key, properties: qtTypeJson[key], flag: true, isId: false})
+        for (const key in qtTypeJson) {
+            if (key === "property") {
+                createQtObjectValPairs(key, { label: key, insertText: key, properties: qtTypeJson[key], flag: true, isId: false })
+                suggestions[key] = {
+                    label: qtObjectKeyValues[key].label.trim(),
+                    kind: monaco.languages.CompletionItemKind.KeyWord,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: qtObjectKeyValues[key].insertText,
+                    range: null,
+                }
             }
         }
         createSuggestions()
@@ -646,7 +658,7 @@ function registerQmlAsLanguage() {
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
-            triggerCharacters: ['.', ':'],
+            triggerCharacters: ['.', ':', '\v'],
             provideCompletionItems: (model, position) => {
 
                 var currText = model.getLineContent(position.lineNumber)
@@ -685,8 +697,8 @@ function registerQmlAsLanguage() {
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
                         var others = []
-                        if(otherProperties.hasOwnProperty(activeWord)){
-                                others = otherProperties[activeWord]
+                        if (otherProperties.hasOwnProperty(activeWord)) {
+                            others = otherProperties[activeWord]
                         }
                         convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties.concat(others), true, qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
@@ -697,12 +709,12 @@ function registerQmlAsLanguage() {
                 }
                 if (active.includes(":")) {
                     var idsSuggestions = []
-                    for(var i = 0; i < ids.length; i++){
+                    for (var i = 0; i < ids.length; i++) {
                         idsSuggestions.push(functionSuggestions[ids[i]])
                     }
                     return { suggestions: idsSuggestions }
                 }
-                determineCustomPropertyParents(model,position)
+                determineCustomPropertyParents(model, position)
                 var fetchedSuggestions = searchForChildBrackets(model, position)
                 return { suggestions: fetchedSuggestions }
             }
@@ -790,11 +802,11 @@ function registerQmlAsLanguage() {
         searchedIds = true
     }
 
-    function getPropertyType(model){
+    function getPropertyType(model) {
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
         while (position.lineNumber > fullRange.startLineNumber) {
             var getPrevPropertyPosition = model.findPreviousMatch("property", position)
-            if(getPrevPropertyPosition === null){
+            if (getPrevPropertyPosition === null) {
                 break;
             }
             if (position.lineNumber < getPrevPropertyPosition.range.startLineNumber) {
@@ -807,7 +819,7 @@ function registerQmlAsLanguage() {
             position = { lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn }
             var content = model.getLineContent(position.lineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            addCustomProperties(position.lineNumber,type,prevProperty)
+            addCustomProperties(position.lineNumber, type, prevProperty)
         }
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
@@ -854,73 +866,79 @@ function registerQmlAsLanguage() {
         }
     }
 
-    function determineCustomPropertyParents(model,position){
+    function determineCustomPropertyParents(model, position) {
         // determine custom properties before returning
         customProperties = []
         var startPosition = position
-        const previousBracket = model.findPreviousMatch("{",startPosition)
-        const prevParent = findPreviousBracketParent(model,position)
+        const previousBracket = model.findPreviousMatch("{", startPosition)
+        const prevParent = findPreviousBracketParent(model, position)
         const prevParentBracket = model.findPreviousMatch(prevParent, position)
         var prevNextBracket = previousBracket
-        var nextPosition = {lineNumber: prevParentBracket.range.startLineNumber, column: previousBracket.range.startColumn}
-        var nextProperty = model.findNextMatch("property",nextPosition)
-        if(nextProperty === null){
+        var nextPosition = { lineNumber: prevParentBracket.range.startLineNumber, column: previousBracket.range.startColumn }
+        var nextProperty = model.findNextMatch("property", nextPosition)
+        if (nextProperty === null) {
             return;
         }
-        nextPosition = {lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn}
-        while(previousBracket.range.startLineNumber === prevNextBracket.range.startLineNumber){
-            if(nextProperty === null){
+        nextPosition = { lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn }
+        while (previousBracket.range.startLineNumber === prevNextBracket.range.startLineNumber) {
+            if (nextProperty === null) {
                 break;
             }
-            prevNextBracket = model.findPreviousMatch("{",{lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn})
-            if(prevNextBracket.range.startLineNumber !== previousBracket.range.startLineNumber){
+            prevNextBracket = model.findPreviousMatch("{", { lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn })
+            if (prevNextBracket.range.startLineNumber !== previousBracket.range.startLineNumber) {
                 break;
             }
             var getProperty = model.getLineContent(nextPosition.lineNumber)
-            if(getProperty === "" || getProperty.trim().replace("\t","").split(" ")[2] === undefined){
+            if (getProperty === "" || getProperty.trim().replace("\t", "").split(" ")[2] === undefined) {
                 break;
             }
-            var propertyWord = getProperty.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
-            customProperties.push("on"+propertyWord[0].toUpperCase()+propertyWord.substring(1)+"Changed")
+            var propertyWord = getProperty.trim().replace("\t", "").split(" ")[2].trim().split(":")[0].trim()
+            customProperties.push("on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed")
             var getPrevId = model.findPreviousMatch("id:", nextPosition)
 
-            if(getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber){
+            if (getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber) {
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
-                var id = getLine.replace("\t","").split(":")[1].trim()
+                var id = getLine.replace("\t", "").split(":")[1].trim()
                 qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertyWord)
-                if(otherProperties.hasOwnProperty(id)){
+                if (otherProperties.hasOwnProperty(id)) {
                     otherProperties[id].push(propertyWord)
                     otherProperties[id] = removeDuplicates(otherProperties[id])
                 } else {
                     otherProperties[id] = []
                 }
             }
-            
-            nextPosition = {lineNumber: nextProperty.range.startLineNumber + 1, column: nextProperty.range.startColumn}
-            nextProperty = model.findNextMatch("property",nextPosition)
+
+            nextPosition = { lineNumber: nextProperty.range.startLineNumber + 1, column: nextProperty.range.startColumn }
+            nextProperty = model.findNextMatch("property", nextPosition)
             var checkNextBracket = model.findNextMatch("{", nextPosition)
-                if(nextProperty.range.startLineNumber >= checkNextBracket.range.startLineNumber){
-                    break
-                }
+            if (nextProperty.range.startLineNumber >= checkNextBracket.range.startLineNumber) {
+                break
             }
         }
+    }
 
     editor.getModel().onDidChangeContent((event) => {
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
-        if  (getLine.includes("id:")) {
+        if (getLine.includes("id:")) {
             var word = getLine.replace("\t", "").split(":")[1].trim()
             var getIdType = editor.getModel().findPreviousMatch("{", position, false, false)
             var content = editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(word, position, type)
-        }else if(getLine.replace("\t","").split(" ")[2] !== "" && getLine.replace("\t","").split(" ")[2] !== undefined && !getLine.includes("import")){
-            var word = getLine.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
-            if(word !== undefined || word !== ""){
-                var getPropertyType = editor.getModel().findPreviousMatch("{",position,false,false)
-                var content = editor.getModel().getLineContent({lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn})
-                var type = content.replace("\t","").split(/\{|\t/)[0].trim()
-                addCustomProperties(event.changes[0].range.startLineNumber,type,word)
+        } else if (getLine.includes("property") && !getLine.includes("import")) {
+            if (getLine.replace("\t", "").split(" ")[1] !== "" && getLine.replace("\t", "").split(" ")[1] !== undefined) {
+                if (getLine.replace("\t", "").split(" ")[2] !== "" && getLine.replace("\t", "").split(" ")[2] !== undefined) {
+                    if (getLine.replace("\t", "").split(" ")[2].includes(":")) {
+                        var word = getLine.replace("\t", "").split(" ")[2].split(":")[0].trim()
+                        if (word !== undefined || word !== "") {
+                            var getPropertyType = editor.getModel().findPreviousMatch("{", position, false, false)
+                            var content = editor.getModel().getLineContent({ lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn })
+                            var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
+                            addCustomProperties(event.changes[0].range.startLineNumber, type, word)
+                        }
+                    }
+                }
             }
         }
     })
