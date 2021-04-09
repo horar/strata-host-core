@@ -69,7 +69,7 @@ bool CmdFlash::processNotification(rapidjson::Document& doc, CommandResult& resu
     if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
-            result = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Repeat;
+            result = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::RepeatAndWait;
         } else {
             result = CommandResult::Failure;
             if (status == JSON_RESEND_CHUNK) {

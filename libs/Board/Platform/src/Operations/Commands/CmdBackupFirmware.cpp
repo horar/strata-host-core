@@ -69,7 +69,7 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc, CommandRes
                 }
 
                 if (ok) {
-                    result = ((chunkNumber_ + 1) == totalChunks_) ? CommandResult::Done : CommandResult::Repeat;
+                    result = ((chunkNumber_ + 1) == totalChunks_) ? CommandResult::Done : CommandResult::RepeatAndWait;
                     retriesCount_ = 0;  // reset retries count before next run
                 } else {
                     if (retriesCount_ < maxRetries_) {

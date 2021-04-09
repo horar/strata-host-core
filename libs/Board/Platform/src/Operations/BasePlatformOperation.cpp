@@ -132,7 +132,7 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
             }
         }
         break;
-    case CommandResult::Repeat :
+    case CommandResult::RepeatAndWait :
         // Operation is not finished yet, so emit only value of status and do not call function finishOperation().
         // Do not increment currentCommand_, the same command will be repeated.
         // Following (repeated) command will be sent by calling BaseDeviceOperation::resume() method.

@@ -11,12 +11,12 @@
 namespace strata::platform::command {
 
 enum class CommandResult : int {
-    Done,              // successfully done
-    DoneAndWait,       // successfully done, move to next command but do not send it
-    Repeat,            // successfully done, command is expected to be send again (with new data)
+    Done,              // command done, move to next command and send it
+    DoneAndWait,       // command done, move to next command but do not send it yet
+    RepeatAndWait,     // command is expected to be send again (with new data), do not send it yet
     Retry,             // retry - send command again with same data
     Reject,            // command was rejected (is unsupported)
-    Failure,           // response to command is not successful
+    Failure,           // failure - response to command is not successful
     FinaliseOperation, // finish operation (there is no point in continuing)
     Timeout,           // command has timed out
     MissingAck,        // failure - received notification without previous ACK
