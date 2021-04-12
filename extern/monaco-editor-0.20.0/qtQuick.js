@@ -2657,7 +2657,6 @@ function registerQmlAsLanguage() {
                 [/\/\*/, 'comment', '@comment'],
                 [/\/\/.*$/, 'comment'],
             ],
-
             comment: [
                 [/[^\/*]+/, 'comment'],
                 [/\*\//, 'comment', '@pop'],
@@ -2740,10 +2739,9 @@ function registerQmlAsLanguage() {
         value: "",
         language: 'qml',
         theme: "qmlTheme",
-        insertSpaces: true,
-        detectIndentation: true,
-        tabCompletion: "on",
+        detectIndentation: false,
         formatOnPaste: true,
+        formatOnType: true,
     });
 
     function getValue() {
