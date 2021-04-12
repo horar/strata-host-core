@@ -674,7 +674,6 @@ function registerQmlAsLanguage() {
                         return { suggestions: [] }
                     }
                 }
-
                 if (getId !== null) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
@@ -794,6 +793,13 @@ function registerQmlAsLanguage() {
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(prevId, position, type)
             ids.push(prevId)
+            if (!otherProperties.hasOwnProperty(prevId)) {
+                otherProperties[prevId] = []
+            }
+            var checkPrevIdPosition = model.findPreviousMatch("id:",position,false,false)
+            if(getPrevIDPosition.range.startLineNumber === checkPrevIdPosition.range.startLineNumber){
+                break;
+            }
         }
         searchedIds = true
     }
@@ -828,7 +834,6 @@ function registerQmlAsLanguage() {
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-
             convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties.concat(customProperties), qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId, bracketWord)
             if (currentItems[bracketWord] === undefined) {
                 currentItems[bracketWord] = {}
