@@ -6,14 +6,15 @@ import QtGraphicalEffects 1.0
 Popup {
     id: addPop
     y: parent.height
-    background: Rectangle {
-    }
+    background: Rectangle { }
     padding: 0
 
     ColumnLayout {
         spacing: 1
+
         Repeater {
             model: ListModel {
+
                 ListElement {
                     text: "Button"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Button/Button.txt"
