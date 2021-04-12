@@ -163,6 +163,8 @@ private:
 
     void documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 
+    void freeReplicator();
+
     std::string database_name_;
     std::string database_path_;
 
@@ -180,6 +182,8 @@ private:
 
     std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback_;
     std::function<void(cbl::Replicator, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback_;
+
+    bool repIsStopping_ = false;
 };
 
 } // namespace strata::Database

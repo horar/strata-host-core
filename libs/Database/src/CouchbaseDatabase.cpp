@@ -315,12 +315,24 @@ bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std
 }
 
 void CouchbaseDatabase::stopReplicator() {
-    if (database_ == nullptr) {
+    if (database_ == nullptr || replicator_ == nullptr) {
         return;
     }
-    if (replicator_) {
-        replicator_->stop();
+
+    replicator_->stop();
+    repIsStopping_ = true;
+}
+
+void CouchbaseDatabase::freeReplicator() {
+    if (replicator_ == nullptr) {
+        return;
     }
+
+    replicator_ = nullptr;
+    ctoken_ = nullptr;
+    dtoken_ = nullptr;
+
+    repIsStopping_ = false;
 }
 
 void CouchbaseDatabase::joinChannel(const QString &strataLoginUsername, const QString &channel) {
@@ -375,6 +387,10 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
 
     switch (status.activity) {
         case CBLReplicatorActivityLevel::kCBLReplicatorStopped:
+            if (repIsStopping_) {
+                freeReplicator();
+            }
+
             status_ = SGActivityLevel::CBLReplicatorStopped;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorOffline:
@@ -434,6 +450,8 @@ std::string CouchbaseDatabase::getReplicatorStatusString() {
             return "Idle";
         case SGActivityLevel::CBLReplicatorBusy:
             return "Busy";
+        default:
+            return "";
     }
 }
 
