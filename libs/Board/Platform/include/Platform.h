@@ -34,6 +34,7 @@ namespace strata::platform {
     friend class strata::platform::command::BasePlatformCommand;
 
     public:
+        // TODO: remove these enums from Device.h upon integration into existing code
         enum class ApiVersion {
             Unknown,
             v1_0,
@@ -57,6 +58,12 @@ namespace strata::platform {
          * Platform destructor
          */
         ~Platform();
+
+        /**
+         * Get stored device pointer.
+         * @return device pointer
+         */
+        device::DevicePtr getDevice() const;
 
         /**
          * Open device communication channel.

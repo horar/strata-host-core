@@ -44,6 +44,10 @@ Platform::~Platform() {
     // no need to close device here (if close was not called before), will be done in device
 }
 
+device::DevicePtr Platform::getDevice() const {
+    return device_;
+}
+
 const rapidjson::SchemaDocument platformIdChangedSchema(
     CommandValidator::parseSchema(
 R"(
