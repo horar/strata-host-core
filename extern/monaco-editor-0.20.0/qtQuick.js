@@ -905,6 +905,7 @@ function registerQmlAsLanguage() {
                     otherProperties[id] = removeDuplicates(otherProperties[id])
                 } else {
                     otherProperties[id] = []
+                    otherProperties[id].push(propertyWord)
                 }
             }
 
