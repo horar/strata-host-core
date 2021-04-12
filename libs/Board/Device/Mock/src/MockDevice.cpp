@@ -77,13 +77,13 @@ void MockDevice::mockEmitMessage(const QByteArray msg)
 void MockDevice::mockEmitResponses(const QByteArray msg)
 {
     auto responses = control_.getResponses(msg);
-    for (const QByteArray& response : responses) {
-        qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
-        QTimer::singleShot(
-            10, this, [=]() {  // deferred emit (if emitted in the same loop, may cause trouble)
-                emit msgFromDevice(response);
-            });
-    }
+    QTimer::singleShot(
+                10, this, [=]() {
+        for (const QByteArray& response : responses) { // deferred emit (if emitted in the same loop, may cause trouble)
+            qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
+            emit msgFromDevice(response);
+        }
+    });
 }
 
 std::vector<QByteArray> MockDevice::mockGetRecordedMessages()
