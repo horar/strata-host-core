@@ -11,6 +11,7 @@ const qtObjectMetaPropertyValues = {}
 var isInitialized = false
 var searchedIds = false
 var functionsAdded = false
+var searchedProperties = false
 var suggestions = {}
 var functionSuggestions = {}
 var customProperties = []
@@ -800,23 +801,27 @@ function registerQmlAsLanguage() {
 
     function getPropertyType(model) {
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
-        while (position.lineNumber > fullRange.startLineNumber) {
+        while (position.lineNumber > fullRange.startLineNumber  && !searchedProperties) {
             var getPrevPropertyPosition = model.findPreviousMatch("property", position)
             if (getPrevPropertyPosition === null) {
                 break;
             }
-            if (position.lineNumber < getPrevPropertyPosition.range.startLineNumber) {
+            if(getPrevPropertyPosition.range.startLineNumber > position.lineNumber){
                 break;
             }
             var prevPropertyLine = model.getLineContent(getPrevPropertyPosition.range.startLineNumber).trim()
             var prevProperty = prevPropertyLine.split(" ")[2].split(":")[0].trim()
 
             var getPropertyType = model.findPreviousMatch("{", { lineNumber: getPrevPropertyPosition.range.startLineNumber, column: getPrevPropertyPosition.range.startColumn })
-            position = { lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn }
+            if (position.lineNumber < getPropertyType.range.startLineNumber) {
+                break;
+            }
+            position = { lineNumber: getPrevPropertyPosition.range.startLineNumber - 1, column: getPrevPropertyPosition.range.startColumn }
             var content = model.getLineContent(position.lineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomProperties(position.lineNumber, type, prevProperty)
         }
+        searchedProperties = true
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
