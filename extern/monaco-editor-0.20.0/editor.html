@@ -54,6 +54,12 @@
                 editor.trigger('undoClicked', 'undo');
             });
 
+            link.resetContainer.connect(function (height, width) {
+                document.getElementById("container").setAttribute("style", `height:${height}px`);
+                document.getElementById("container").setAttribute("style", `width:${width}px`);
+                editor.layout()
+            })
+
             link.redo.connect(function () {
                 editor.trigger('redoClicked', 'redo');
             });
