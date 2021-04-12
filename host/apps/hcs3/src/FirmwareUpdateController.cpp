@@ -40,14 +40,14 @@ FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid,
 {
 }
 
-void FirmwareUpdateController::updateFirmware(UpdateFirmwareData data)
+void FirmwareUpdateController::updateFirmware(const UpdateFirmwareData &data)
 {
     FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareUrl, data.firmwareMD5);
 
     runUpdate(flashData);
 }
 
-void FirmwareUpdateController::programController(ProgramControllerData data)
+void FirmwareUpdateController::programController(const ProgramControllerData &data)
 {
     if (data.firmwareClassId.isNull()) {
         logAndEmitError(data.deviceId, QStringLiteral("Cannot program controller - firmware class ID was not provided."));
@@ -59,7 +59,7 @@ void FirmwareUpdateController::programController(ProgramControllerData data)
     runUpdate(flashData);
 }
 
-void FirmwareUpdateController::setControllerFwClassId(ProgramControllerData data)
+void FirmwareUpdateController::setControllerFwClassId(const ProgramControllerData &data)
 {
     if (data.firmwareClassId.isNull()) {
         logAndEmitError(data.deviceId, QStringLiteral("Cannot set controller firmware class ID - it is not provided."));

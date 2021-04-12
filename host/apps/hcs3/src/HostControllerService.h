@@ -56,15 +56,7 @@ public:
     void stop();
 
 signals:
-    void platformListRequested(QByteArray clientId);
-    void platformDocumentsRequested(QByteArray clientId, QString classId);
-    void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
-    void cancelPlatformDocumentRequested(QByteArray clientId);
-    void firmwareUpdateRequested(FirmwareUpdateController::UpdateFirmwareData updateData);
-    void programControllerRequested(FirmwareUpdateController::ProgramControllerData programData);
-    void setControllerFwClassIdRequested(FirmwareUpdateController::ProgramControllerData programData);
-    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
-    void updateInfoRequested(QByteArray clientId);
+    void newMessageFromClient(QByteArray message, QByteArray clientId);
 
 public slots:
     void onAboutToQuit();
@@ -134,6 +126,8 @@ public slots:
     void broadcastConnectedPlatformListMessage();
 
 private slots:
+    void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
+
     void sendMessageToClients(const QString &platformId, const QString& message);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
@@ -143,8 +137,6 @@ private slots:
 
 private:
     void handleMessage(const PlatformMessage& msg);
-
-    void handleClientMsg(const PlatformMessage& msg);
 
     bool broadcastMessage(const QString& message);
 
@@ -166,26 +158,32 @@ private:
     const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
     QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
 
-    ///////
-    //handlers for client (UI)
-    void onCmdHCSStatus(const rapidjson::Value* );
-    void onCmdUnregisterClient(const rapidjson::Value* );
-    void onCmdLoadDocuments(const rapidjson::Value* );
-
-    //handlers for hcs::cmd
-    void onCmdHostUnregister(const rapidjson::Value* );
-    void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
-    void onCmdDynamicPlatformList(const rapidjson::Value* );
-    void onCmdUpdateFirmware(const rapidjson::Value* );
-    void onCmdProgramController(const rapidjson::Value* );
-    void onCmdDownloadControlView(const rapidjson::Value* );
-    void onCmdGetUpdateInfo(const rapidjson::Value* );
+    void processCmdRequestHcsStatus(const QByteArray &clientId);
+    void processCmdClientUnregister(const QByteArray &clientId);
+    void processCmdLoadDocuments(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdHostUnregister(const QByteArray &clientId);
+    void processCmdDownloadFiles(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdDynamicPlatformList(const QByteArray &clientId);
+    void processCmdUpdateFirmware(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdProgramController(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdCheckForUpdates(const QByteArray &clientId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
     Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
+
+    void callHandlerForTypeCmd(
+            const QString &cmdName,
+            const QJsonObject &payload,
+            const QByteArray &clientId);
+
+    void callHandlerForTypeHcsCmd(
+            const QString &cmdName,
+            const QJsonObject &payload,
+            const QByteArray &clientId);
 
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
@@ -198,11 +196,6 @@ private:
 
     std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;
-
-    typedef std::function<void(const rapidjson::Value* )> NotificationHandler;
-
-    std::map<QByteArray, NotificationHandler> clientCmdHandler_;
-    std::map<QByteArray, NotificationHandler> hostCmdHandler_;
 
     std::list<Client*> clientList_;
     Client* current_client_;
