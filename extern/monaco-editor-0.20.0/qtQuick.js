@@ -2746,13 +2746,10 @@ function registerQmlAsLanguage() {
         formatOnPaste: true,
         scrollbar: {
             useShadows: false,
-            verticalHasArrows: true,
-            horizontalHasArrows: true,
             vertical: 'visible',
             horizontal: 'visible',
             horizontalScrollbarSize: 15,
             verticalScrollbarSize: 15,
-            arrowSize: 30,
         }
     });
 
