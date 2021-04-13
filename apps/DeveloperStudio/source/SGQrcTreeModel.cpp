@@ -402,11 +402,16 @@ void SGQrcTreeModel::setUrl(QUrl url)
 {
     if (url_ != url) {
         url_ = url;
-        QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url)).dir());
-        projectDir_ = QUrl::fromLocalFile(dir.path());
+        projectDir_ = parentDirectoryUrl(url);
         emit urlChanged();
         emit projectDirectoryChanged();
     }
+}
+
+QUrl SGQrcTreeModel::parentDirectoryUrl(QUrl url)
+{
+    QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url)).dir());
+    return QUrl::fromLocalFile(dir.path());
 }
 
 bool SGQrcTreeModel::needsCleaning() const
@@ -748,6 +753,15 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
 
 void SGQrcTreeModel::createModel()
 {
+    // reset fsWatcher and pathsInTree_ before creating model
+    if (fsWatcher_->files().count() > 0) {
+        fsWatcher_->removePaths(fsWatcher_->files());
+    }
+    if (fsWatcher_->directories().count() > 0) {
+        fsWatcher_->removePaths(fsWatcher_->directories());
+    }
+    pathsInTree_.clear();
+
     // Create a thread to write data to disk
     QThread *thread = QThread::create(std::bind(&SGQrcTreeModel::readQrcFile, this));
     thread->setObjectName("SGQrcTreeModel - FileIO Thread");
