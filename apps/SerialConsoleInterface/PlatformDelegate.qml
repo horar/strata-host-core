@@ -96,7 +96,7 @@ FocusScope {
 
             FocusScope {
                 id: inputWrapper
-                height: rightButtonRow.y + rightButtonRow.height + 6
+                height: leftButtonRow.y + leftButtonRow.height + 6
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
@@ -343,23 +343,42 @@ FocusScope {
                     }
                 }
 
-                SGWidgets.SGTag {
+                Row {
+                    id: rightInfoRow
                     anchors {
                         top: messageEditor.bottom
                         topMargin: 2
                         right: messageEditor.right
                     }
 
-                    text: "Line: " + (messageEditor.currentLine + 1) + ", Col: " + (messageEditor.currentColumn + 1)
-                    color: "#b2b2b2"
-                    textColor: "white"
-                    horizontalPadding: 2
-                    verticalPadding: 2
-                    font: messageEditor.font
+                    spacing: 4
+
+                    SGWidgets.SGTag {
+                        visible: messageEditor.lineCount >= Sci.Settings.maxInputLines
+                        text: "Line limit reached"
+                        color:  TangoTheme.palette.orange2
+                        textColor: "white"
+                        horizontalPadding: 2
+                        verticalPadding: 2
+                        font: positionTag.font
+                    }
+
+                    SGWidgets.SGTag {
+                        id: positionTag
+
+                        text: "Line: " + (messageEditor.currentLine + 1) + ", Col: " + (messageEditor.currentColumn + 1)
+                        color: "#b2b2b2"
+                        textColor: "white"
+                        horizontalPadding: 2
+                        verticalPadding: 2
+                        font.family: messageEditor.font.family
+                        font.pixelSize: messageEditor.font.pixelSize
+                        font.bold: true
+                    }
                 }
 
                 Row {
-                    id: rightButtonRow
+                    id: leftButtonRow
                     anchors {
                         top: messageEditor.bottom
                         topMargin: 2
@@ -382,9 +401,9 @@ FocusScope {
                 SGWidgets.SGCheckBox {
                     id: validateCheckBox
                     anchors {
-                        left: rightButtonRow.right
-                        leftMargin: 2*rightButtonRow.spacing
-                        verticalCenter: rightButtonRow.verticalCenter
+                        left: leftButtonRow.right
+                        leftMargin: 2*leftButtonRow.spacing
+                        verticalCenter: leftButtonRow.verticalCenter
                     }
 
                     focusPolicy: Qt.NoFocus
