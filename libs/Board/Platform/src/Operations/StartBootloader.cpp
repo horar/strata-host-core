@@ -13,12 +13,12 @@ using command::CmdStartBootloader;
 using command::CmdWait;
 using command::CommandResult;
 
-StartBootloader::StartBootloader(const device::DevicePtr& device) :
-    BasePlatformOperation(device, Type::StartBootloader)
+StartBootloader::StartBootloader(const PlatformPtr& platform) :
+    BasePlatformOperation(platform, Type::StartBootloader)
 {
     commandList_.reserve(6);
 
-    // BasePlatformOperation member device_ must be used as a parameter for commands!
+    // BasePlatformOperation member platform_ must be used as a parameter for commands!
 
     // Legacy note related to EFM boards:
     // Bootloader takes 5 seconds to start (known issue related to clock source).
@@ -26,17 +26,17 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     // Clock source for bootloader and application must match. Otherwise when application
     // jumps to bootloader, it will have a hardware fault which requires board to be reset.
     std::unique_ptr<CmdWait> cmdWait = std::make_unique<CmdWait>(
-                device_,
+                platform_,
                 BOOTLOADER_BOOT_TIME,
                 QStringLiteral("Waiting for bootloader to start"));
     cmdWait_ = cmdWait.get();
 
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES)); // 0
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 1
-    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));        // 2
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(platform_, true, MAX_GET_FW_INFO_RETRIES)); // 0
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));      // 1
+    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(platform_));        // 2
     commandList_.emplace_back(std::move(cmdWait));                                   // 3
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true));  // 4
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 5
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(platform_, true));  // 4
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));      // 5
 
     initCommandList();
 
@@ -61,7 +61,7 @@ void StartBootloader::skipCommands(CommandResult& result, int& status)
             result = CommandResult::FinaliseOperation;
             // set status for 'finished' signal
             status = ALREADY_IN_BOOTLOADER;
-            qCInfo(logCategoryPlatformOperation) << device_ << "Platform already in bootloader mode.";
+            qCInfo(logCategoryPlatformOperation) << platform_ << "Platform already in bootloader mode.";
         }
     }
 }

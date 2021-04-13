@@ -7,7 +7,7 @@ namespace strata::platform::command {
 
 class CmdGetFirmwareInfo : public BasePlatformCommand {
 public:
-    explicit CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse = true, uint maxRetries = 0);
+    explicit CmdGetFirmwareInfo(const PlatformPtr& platform, bool requireResponse = true, uint maxRetries = 0);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
     CommandResult onTimeout() override;

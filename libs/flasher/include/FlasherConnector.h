@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTemporaryFile>
 
-#include <Device.h>
+#include <Platform.h>
 #include <Flasher.h>
 
 namespace strata {
@@ -20,34 +20,34 @@ class FlasherConnector : public QObject
 public:
     /*!
      * FlasherConnector constructor.
-     * \param device device which will be used by FlasherConnector
+     * \param platform platform which will be used by FlasherConnector
      * \param firmwarePath path to firmware file
      */
-    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
+    FlasherConnector(const platform::PlatformPtr& platform, const QString& firmwarePath, QObject* parent = nullptr);
 
     /*!
      * FlasherConnector constructor.
-     * \param fwClassId firmware class id which will be set to device
-     * \param device device which will be used by FlasherConnector
+     * \param fwClassId firmware class id which will be set to platform
+     * \param platform platform which will be used by FlasherConnector
      */
-    FlasherConnector(const QString& fwClassId, const device::DevicePtr& device, QObject* parent = nullptr);
+    FlasherConnector(const QString& fwClassId, const platform::PlatformPtr& platform, QObject* parent = nullptr);
 
     /*!
      * FlasherConnector constructor.
-     * \param device device which will be used by FlasherConnector
-     * \param firmwarePath path to firmware file
-     * \param firmwareMD5 MD5 checksum of firmware
-     */
-    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, const QString& firmwareMD5, QObject* parent = nullptr);
-
-    /*!
-     * FlasherConnector constructor.
-     * \param device device which will be used by FlasherConnector
+     * \param platform platform which will be used by FlasherConnector
      * \param firmwarePath path to firmware file
      * \param firmwareMD5 MD5 checksum of firmware
-     * \param fwClassId firmware class id which will be set to device
      */
-    FlasherConnector(const device::DevicePtr& device,
+    FlasherConnector(const platform::PlatformPtr& platform, const QString& firmwarePath, const QString& firmwareMD5, QObject* parent = nullptr);
+
+    /*!
+     * FlasherConnector constructor.
+     * \param platform platform which will be used by FlasherConnector
+     * \param firmwarePath path to firmware file
+     * \param firmwareMD5 MD5 checksum of firmware
+     * \param fwClassId firmware class id which will be set to platform
+     */
+    FlasherConnector(const platform::PlatformPtr& platform,
                      const QString& firmwarePath,
                      const QString& firmwareMD5,
                      const QString& fwClassId,
@@ -155,7 +155,7 @@ signals:
     void operationStateChanged(Operation operation, State state, QString errorString = QString());
 
     /*!
-     * This signal is emitted when device properties are changed (when device is switched to/from bootloader mode).
+     * This signal is emitted when platform properties are changed (when platform is switched to/from bootloader mode).
      */
     void devicePropertiesChanged();
 
@@ -171,7 +171,7 @@ private:
     void backupFirmware(bool backupOld);
     void processStartupError(const QString& errorString);
 
-    device::DevicePtr device_;
+    platform::PlatformPtr platform_;
 
     typedef std::unique_ptr<Flasher, void(*)(Flasher*)> FlasherPtr;
     FlasherPtr flasher_;

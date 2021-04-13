@@ -7,15 +7,15 @@ using command::CmdSetPlatformId;
 using command::CmdRequestPlatformId;
 
 SetPlatformId::SetPlatformId(
-        const device::DevicePtr &device,
+        const PlatformPtr& platform,
         const command::CmdSetPlatformIdData &data)
-    : BasePlatformOperation(device, Type::SetPlatformId)
+    : BasePlatformOperation(platform, Type::SetPlatformId)
 {
     commandList_.reserve(2);
 
-    // BasePlatformOperation member device_ must be used as a parameter for commands!
-    commandList_.emplace_back(std::make_unique<CmdSetPlatformId>(device_, data));
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+    // BasePlatformOperation member platform_ must be used as a parameter for commands!
+    commandList_.emplace_back(std::make_unique<CmdSetPlatformId>(platform_, data));
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));
 
     initCommandList();
 }

@@ -7,7 +7,7 @@ namespace strata::platform::operation {
 class StartApplication : public BasePlatformOperation {
 
 public:
-    explicit StartApplication(const device::DevicePtr& device);
+    explicit StartApplication(const PlatformPtr& platform);
     ~StartApplication() = default;
 };
 

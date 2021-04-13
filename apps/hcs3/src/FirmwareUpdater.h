@@ -9,7 +9,7 @@
 #include <QTemporaryFile>
 
 #include <FlasherConnector.h>
-#include <Device.h>
+#include <Platform.h>
 
 #include "FirmwareUpdateController.h"
 
@@ -29,7 +29,7 @@ public:
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
      */
-    FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager, const QUrl& url, const QString& md5);
+    FirmwareUpdater(const strata::platform::PlatformPtr& platform, strata::DownloadManager *downloadManager, const QUrl& url, const QString& md5);
 
     /**
      * FirmwareUpdater destructor
@@ -67,7 +67,7 @@ private:
 
     bool running_;
 
-    const strata::device::DevicePtr device_;
+    const strata::platform::PlatformPtr platform_;
     const QByteArray deviceId_;
 
     QPointer<strata::DownloadManager> downloadManager_;

@@ -6,32 +6,34 @@
 
 namespace strata {
 
-FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+using platform::PlatformPtr;
+
+FlasherConnector::FlasherConnector(const PlatformPtr& platform,
                                    const QString& firmwarePath,
                                    QObject* parent) :
-    FlasherConnector(device, firmwarePath, QString(), QString(), parent)
+    FlasherConnector(platform, firmwarePath, QString(), QString(), parent)
 { }
 
 FlasherConnector::FlasherConnector(const QString& fwClassId,
-                                   const device::DevicePtr& device,
+                                   const PlatformPtr& platform,
                                    QObject* parent) :
-    FlasherConnector(device, QString(), QString(), fwClassId, parent)
+    FlasherConnector(platform, QString(), QString(), fwClassId, parent)
 { }
 
-FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+FlasherConnector::FlasherConnector(const PlatformPtr& platform,
                                    const QString& firmwarePath,
                                    const QString& firmwareMD5,
                                    QObject* parent) :
-    FlasherConnector(device, firmwarePath, firmwareMD5, QString(), parent)
+    FlasherConnector(platform, firmwarePath, firmwareMD5, QString(), parent)
 { }
 
-FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+FlasherConnector::FlasherConnector(const PlatformPtr& platform,
                                    const QString& firmwarePath,
                                    const QString& firmwareMD5,
                                    const QString& fwClassId,
                                    QObject* parent) :
     QObject(parent),
-    device_(device),
+    platform_(platform),
     flasher_(nullptr, nullptr),
     filePath_(firmwarePath),
     newFirmwareMD5_(firmwareMD5),
@@ -39,7 +41,7 @@ FlasherConnector::FlasherConnector(const device::DevicePtr& device,
     tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))),
     action_(Action::None)
 {
-    oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : device_->firmwareClassId();
+    oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : platform_->firmwareClassId();
 }
 
 FlasherConnector::~FlasherConnector() { }
@@ -119,7 +121,7 @@ bool FlasherConnector::setFwClassId() {
     qCInfo(logCategoryFlasherConnector) << "Starting to set firmware class ID.";
     action_ = Action::SetFwClassId;
 
-    flasher_ = FlasherPtr(new Flasher(device_, QString(), QString(), newFwClassId_), flasherDeleter);
+    flasher_ = FlasherPtr(new Flasher(platform_, QString(), QString(), newFwClassId_), flasherDeleter);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
@@ -144,11 +146,11 @@ void FlasherConnector::flashFirmware(bool flashOld) {
     QString firmwarePath;
     if (flashOld) {
         firmwarePath = tmpBackupFile_.fileName();
-        flasher_ = FlasherPtr(new Flasher(device_, firmwarePath, QString(), oldFwClassId_), flasherDeleter);
+        flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath, QString(), oldFwClassId_), flasherDeleter);
         connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress);
     } else {
         firmwarePath = filePath_;
-        flasher_ = FlasherPtr(new Flasher(device_, firmwarePath, newFirmwareMD5_, newFwClassId_), flasherDeleter);
+        flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath, newFirmwareMD5_, newFwClassId_), flasherDeleter);
         connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
     }
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
@@ -164,7 +166,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
     bool startApp = (backupOld) ? false : true;
 
     const QString& firmwarePath = (backupOld) ? tmpBackupFile_.fileName() : filePath_;
-    flasher_ = FlasherPtr(new Flasher(device_, firmwarePath), flasherDeleter);
+    flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath), flasherDeleter);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);

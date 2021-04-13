@@ -118,7 +118,7 @@ void SerialDevice::readMessage() {
         from = end + 1;  // +1 due to skip '\n'
 
         // qCDebug(logCategoryDeviceSerial) << this << ": received message: " << QString::fromStdString(readBuffer_);
-        emit msgFromDevice(QByteArray::fromStdString(readBuffer_));
+        emit messageReceived(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
     }
@@ -128,75 +128,38 @@ void SerialDevice::readMessage() {
     }
 }
 
-// public method
 bool SerialDevice::sendMessage(const QByteArray msg) {
-    return writeData(msg, 0);
-}
-
-// private method
-bool SerialDevice::sendMessage(const QByteArray msg, quintptr lockId) {
-    return writeData(msg, lockId);
-}
-
-bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
-    bool canWrite = false;
-    {
-        QMutexLocker lock(&operationMutex_);
-        if (operationLock_ == lockId) {
-            canWrite = true;
-        }
-    }
-    if (canWrite) {
-        // * Slot connected to below emitted signal emits other signals
-        //   and it should'n be locked. Also if we are here it is not necessary
-        //   to lock writting to serial port because all writting happens in one thread.
-        // * Signal must be emitted because of calling this function from another
-        //   thread as in which this SerialDevice object was created. Slot connected
-        //   to this signal will be executed in correct thread.
-        // * Data cannot be written to serial port from another thread (otherwise error
-        //   "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs).
-        emit writeToPort(data, QPrivateSignal());
-        return true;
-    } else {
-        QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-        qCWarning(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceBusy, errMsg);
-        return false;
-    }
+    // * Signal must be emitted because of calling this function from another
+    //   thread as in which this SerialDevice object was created. Slot connected
+    //   to this signal will be executed in correct thread.
+    // * Data cannot be written to serial port from another thread (otherwise error
+    //   "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs).
+    emit writeToPort(msg, QPrivateSignal());
+    return true;
 }
 
 Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
     switch (error) {
         case QSerialPort::SerialPortError::NoError :
             return ErrorCode::NoError;
-        case QSerialPort::SerialPortError::DeviceNotFoundError :
-            return ErrorCode::SP_DeviceNotFoundError;
-        case QSerialPort::SerialPortError::PermissionError :
-            return ErrorCode::SP_PermissionError;
-        case QSerialPort::SerialPortError::OpenError :
-            return ErrorCode::SP_OpenError;
-        case QSerialPort::SerialPortError::ParityError :
-            return ErrorCode::SP_ParityError;
-        case QSerialPort::SerialPortError::FramingError :
-            return ErrorCode::SP_FramingError;
-        case QSerialPort::SerialPortError::BreakConditionError :
-            return ErrorCode::SP_BreakConditionError;
-        case QSerialPort::SerialPortError::WriteError :
-            return ErrorCode::SP_WriteError;
-        case QSerialPort::SerialPortError::ReadError :
-            return ErrorCode::SP_ReadError;
         case QSerialPort::SerialPortError::ResourceError :
-            return ErrorCode::SP_ResourceError;
+            return ErrorCode::DeviceDisconnected;
+        case QSerialPort::SerialPortError::DeviceNotFoundError :
+        case QSerialPort::SerialPortError::PermissionError :
+        case QSerialPort::SerialPortError::OpenError :
+        case QSerialPort::SerialPortError::ParityError :
+        case QSerialPort::SerialPortError::FramingError :
+        case QSerialPort::SerialPortError::BreakConditionError :
+        case QSerialPort::SerialPortError::WriteError :
+        case QSerialPort::SerialPortError::ReadError :
         case QSerialPort::SerialPortError::UnsupportedOperationError :
-            return ErrorCode::SP_UnsupportedOperationError;
         case QSerialPort::SerialPortError::UnknownError :
-            return ErrorCode::SP_UnknownError;
         case QSerialPort::SerialPortError::TimeoutError :
-            return ErrorCode::SP_TimeoutError;
         case QSerialPort::SerialPortError::NotOpenError :
-            return ErrorCode::SP_NotOpenError;
+            return ErrorCode::DeviceError;
+        default:
+            return ErrorCode::DeviceError;
     }
-    return ErrorCode::UndefinedError;
 }
 
 void SerialDevice::handleWriteToPort(const QByteArray data) {
@@ -212,7 +175,7 @@ void SerialDevice::handleWriteToPort(const QByteArray data) {
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::SendMessageError, errMsg);
+        emit deviceError(ErrorCode::DeviceError, errMsg);
     }
 }
 

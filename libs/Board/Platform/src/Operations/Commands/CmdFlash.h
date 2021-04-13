@@ -9,7 +9,7 @@ namespace strata::platform::command {
 
 class CmdFlash : public BasePlatformCommand {
 public:
-    CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware);
+    CmdFlash(const PlatformPtr& platform, int chunkCount, bool flashFirmware);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
     bool logSendMessage() const override;

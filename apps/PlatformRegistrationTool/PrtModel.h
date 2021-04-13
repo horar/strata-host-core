@@ -98,7 +98,7 @@ private slots:
 
 private:
     strata::PlatformManager platformManager_;
-    QList<strata::device::DevicePtr> platformList_;
+    QList<strata::platform::PlatformPtr> platformList_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;

@@ -12,7 +12,7 @@ namespace strata::platform::command {
 class CmdWait : public BasePlatformCommand
 {
 public:
-    CmdWait(const device::DevicePtr& device,
+    CmdWait(const PlatformPtr& platform,
             std::chrono::milliseconds waitTime,
             const QString& description);
 

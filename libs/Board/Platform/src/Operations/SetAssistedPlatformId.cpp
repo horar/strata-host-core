@@ -7,21 +7,21 @@ namespace strata::platform::operation {
 using command::CmdSetAssistedPlatformId;
 using command::CmdRequestPlatformId;
 
-SetAssistedPlatformId::SetAssistedPlatformId(const device::DevicePtr &device)
-    : BasePlatformOperation(device, Type::SetAssistedPlatformId)
+SetAssistedPlatformId::SetAssistedPlatformId(const PlatformPtr& platform)
+    : BasePlatformOperation(platform, Type::SetAssistedPlatformId)
 {
     commandList_.reserve(2);
 
-    // BasePlatformOperation member device_ must be used as a parameter for commands!
+    // BasePlatformOperation member platform_ must be used as a parameter for commands!
 
-    std::unique_ptr<CmdSetAssistedPlatformId> cmdSetAssistPlatfId = std::make_unique<CmdSetAssistedPlatformId>(device_);
+    std::unique_ptr<CmdSetAssistedPlatformId> cmdSetAssistPlatfId = std::make_unique<CmdSetAssistedPlatformId>(platform_);
     cmdSetAssistPlatfId_ = cmdSetAssistPlatfId.get();
 
     // special case, firmware takes too long to send ACK (see CS-1722)
     cmdSetAssistPlatfId_->setAckTimeout(std::chrono::milliseconds(2000));
 
     commandList_.emplace_back(std::move(cmdSetAssistPlatfId));
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));
 
     initCommandList();
 }

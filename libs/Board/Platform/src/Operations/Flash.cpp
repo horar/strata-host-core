@@ -9,17 +9,17 @@ using command::CmdStartFlash;
 using command::CmdFlash;
 using command::CommandType;
 
-Flash::Flash(const device::DevicePtr& device, int size, int chunks, const QString &md5, bool flashFirmware) :
-    BasePlatformOperation(device, (flashFirmware) ? Type::FlashFirmware : Type::FlashBootloader),
+Flash::Flash(const PlatformPtr& platform, int size, int chunks, const QString &md5, bool flashFirmware) :
+    BasePlatformOperation(platform, (flashFirmware) ? Type::FlashFirmware : Type::FlashBootloader),
     chunkCount_(chunks), flashFirmware_(flashFirmware)
 {
     commandList_.reserve(2);
 
-    // BasePlatformOperation member device_ must be used as a parameter for commands!
-    std::unique_ptr<CmdFlash> cmdFlash = std::make_unique<CmdFlash>(device_, chunkCount_, flashFirmware_);
+    // BasePlatformOperation member platform_ must be used as a parameter for commands!
+    std::unique_ptr<CmdFlash> cmdFlash = std::make_unique<CmdFlash>(platform_, chunkCount_, flashFirmware_);
     cmdFlash_ = cmdFlash.get();
 
-    commandList_.emplace_back(std::make_unique<CmdStartFlash>(device_, size, chunkCount_, md5, flashFirmware_));
+    commandList_.emplace_back(std::make_unique<CmdStartFlash>(platform_, size, chunkCount_, md5, flashFirmware_));
     commandList_.emplace_back(std::move(cmdFlash));
 
     initCommandList();
@@ -34,7 +34,7 @@ void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
             || ( ((*currentCommand_)->type() != CommandType::FlashFirmware) && ((*currentCommand_)->type() != CommandType::FlashBootloader) ))
     {
         QString errMsg(QStringLiteral("Cannot flash chunk, bad state of flash operation."));
-        qCWarning(logCategoryPlatformOperation) << device_ << errMsg;
+        qCWarning(logCategoryPlatformOperation) << platform_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }

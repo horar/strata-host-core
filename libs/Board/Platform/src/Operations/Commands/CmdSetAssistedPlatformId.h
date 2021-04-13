@@ -10,7 +10,7 @@ namespace strata::platform::command {
 class CmdSetAssistedPlatformId: public BasePlatformCommand
 {
 public:
-    explicit CmdSetAssistedPlatformId(const device::DevicePtr& device);
+    explicit CmdSetAssistedPlatformId(const PlatformPtr& platform);
 
     void setBaseData(const CmdSetPlatformIdData& data);
     void setControllerData(const CmdSetPlatformIdData& controllerData);

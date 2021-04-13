@@ -12,7 +12,7 @@ namespace strata::platform::operation {
 class SetAssistedPlatformId : public BasePlatformOperation {
 
 public:
-    explicit SetAssistedPlatformId(const device::DevicePtr &device);
+    explicit SetAssistedPlatformId(const PlatformPtr& platform);
 
     ~SetAssistedPlatformId() = default;
 

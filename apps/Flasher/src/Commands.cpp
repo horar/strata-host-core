@@ -1,7 +1,7 @@
 #include "Commands.h"
 #include "SerialPortList.h"
 #include "logging/LoggingQtCategories.h"
-#include <Device.h>
+#include <Platform.h>
 #include <Serial/SerialDevice.h>
 #include <Operations/Identify.h>
 #include <Flasher.h>
@@ -92,13 +92,15 @@ void FlasherCommand::process() {
 
     const QByteArray deviceId = SerialDevice::createDeviceId(name);
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
-    if (device->open() == false) {
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    if (platform->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    flasher_ = std::make_unique<Flasher>(device, fileName_);
+    flasher_ = std::make_unique<Flasher>(platform, fileName_);
 
     connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result, QString){
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -142,14 +144,16 @@ void InfoCommand::process() {
     }
 
     const QByteArray deviceId = SerialDevice::createDeviceId(name);
-    device_ = std::make_shared<SerialDevice>(deviceId, name);
-    if (device_->open() == false) {
+    device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
+    platform_ = std::make_shared<platform::Platform>(device);
+
+    if (platform_->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    identifyOperation_ = std::make_unique<platform::operation::Identify>(device_, false);
+    identifyOperation_ = std::make_unique<platform::operation::Identify>(platform_, false);
 
     connect(identifyOperation_.get(), &platform::operation::BasePlatformOperation::finished,
             this, &InfoCommand::handleIdentifyOperationFinished);
@@ -172,38 +176,38 @@ void InfoCommand::handleIdentifyOperationFinished(platform::operation::Result re
         QString message(QStringLiteral("List of available parameters for board:"));
 
         message.append(QStringLiteral("\nApplication Name: "));
-        message.append(device_->name());
+        message.append(platform_->name());
         message.append(QStringLiteral("\nDevice Name: "));
-        message.append(device_->deviceName());
+        message.append(platform_->deviceName());
         message.append(QStringLiteral("\nDevice Id: "));
-        message.append(device_->deviceId());
+        message.append(platform_->deviceId());
         message.append(QStringLiteral("\nDevice Type: "));
-        message.append(QVariant::fromValue(device_->deviceType()).toString());
+        message.append(QVariant::fromValue(platform_->deviceType()).toString());
         message.append(QStringLiteral("\nController Type: "));
-        message.append(QVariant::fromValue(device_->controllerType()).toString());
-        if (device_->controllerType() == device::Device::ControllerType::Assisted) {
+        message.append(QVariant::fromValue(platform_->controllerType()).toString());
+        if (platform_->controllerType() == platform::Platform::ControllerType::Assisted) {
             message.append(QStringLiteral(" (Platform Connected: "));
-            message.append(QVariant(device_->isControllerConnectedToPlatform()).toString());
+            message.append(QVariant(platform_->isControllerConnectedToPlatform()).toString());
             message.append(QStringLiteral(")"));
         }
         message.append(QStringLiteral("\nBoard Mode: "));
         message.append(QVariant::fromValue(identifyOp->boardMode()).toString());
         message.append(QStringLiteral(" (API: "));
-        message.append(QVariant::fromValue(device_->apiVersion()).toString());
+        message.append(QVariant::fromValue(platform_->apiVersion()).toString());
         message.append(QStringLiteral(")\nApplication version: "));
-        message.append(device_->applicationVer());
+        message.append(platform_->applicationVer());
         message.append(QStringLiteral("\nBootloader version: "));
-        message.append(device_->bootloaderVer());
+        message.append(platform_->bootloaderVer());
         message.append(QStringLiteral("\nPlatform Id: "));
-        message.append(device_->platformId());
+        message.append(platform_->platformId());
         message.append(QStringLiteral("\nClass Id: "));
-        message.append(device_->classId());
+        message.append(platform_->classId());
         message.append(QStringLiteral("\nController Platform Id: "));
-        message.append(device_->controllerPlatformId());
+        message.append(platform_->controllerPlatformId());
         message.append(QStringLiteral("\nController Class Id: "));
-        message.append(device_->controllerClassId());
+        message.append(platform_->controllerClassId());
         message.append(QStringLiteral("\nFirmware Class Id: "));
-        message.append(device_->firmwareClassId());
+        message.append(platform_->firmwareClassId());
 
         qCInfo(logCategoryFlasherCli).noquote() << message;
         emit finished(EXIT_SUCCESS);

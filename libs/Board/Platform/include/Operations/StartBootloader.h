@@ -13,7 +13,7 @@ namespace strata::platform::operation {
 class StartBootloader : public BasePlatformOperation {
 
 public:
-    explicit StartBootloader(const device::DevicePtr& device);
+    explicit StartBootloader(const PlatformPtr& platform);
     ~StartBootloader() = default;
 
     /*! Set wait time for bootloader to start.

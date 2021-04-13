@@ -21,6 +21,8 @@ namespace strata {
 using device::Device;
 using device::DevicePtr;
 using device::SerialDevice;
+using platform::Platform;
+using platform::PlatformPtr;
 
 namespace operation = platform::operation;
 
@@ -43,10 +45,10 @@ bool PlatformManager::disconnectDevice(const QByteArray& deviceId, std::chrono::
     bool success = false;
     {
         QMutexLocker lock(&mutex_);
-        auto it = openedDevices_.find(deviceId);
-        if (it != openedDevices_.end()) {
+        auto it = openedPlatforms_.find(deviceId);
+        if (it != openedPlatforms_.end()) {
             it.value()->close();
-            openedDevices_.erase(it);
+            openedPlatforms_.erase(it);
 
             if (disconnectDuration > std::chrono::milliseconds(0)) {
                 QTimer* reconnectTimer = new QTimer(this);
@@ -67,7 +69,7 @@ bool PlatformManager::disconnectDevice(const QByteArray& deviceId, std::chrono::
         }
     }
     if (success) {
-        qCInfo(logCategoryPlatformManager).noquote() << "Disconnected serial device" << deviceId;
+        qCInfo(logCategoryPlatformManager).noquote() << "Disconnected platform" << deviceId;
         if (disconnectDuration > std::chrono::milliseconds(0)) {
             qCInfo(logCategoryPlatformManager) << "Device will be connected again after" << disconnectDuration.count()
                                             << "milliseconds at the earliest.";
@@ -84,10 +86,10 @@ bool PlatformManager::reconnectDevice(const QByteArray& deviceId) {
     bool disconnected = false;
     {
         QMutexLocker lock(&mutex_);
-        auto it = openedDevices_.find(deviceId);
-        if (it != openedDevices_.end()) {
+        auto it = openedPlatforms_.find(deviceId);
+        if (it != openedPlatforms_.end()) {
             it.value()->close();
-            openedDevices_.erase(it);
+            openedPlatforms_.erase(it);
             ok = true;
             disconnected = true;
         } else {
@@ -97,14 +99,14 @@ bool PlatformManager::reconnectDevice(const QByteArray& deviceId) {
             }
         }
         if (ok) {
-            ok = addSerialPort(deviceId);  // modifies openedDevices_ - call it while mutex_ is locked
+            ok = addSerialPort(deviceId);  // modifies openedPlatforms_ - call it while mutex_ is locked
         }
     }
     if (disconnected) {
         emit boardDisconnected(deviceId);
     }
     if (ok) {
-        qCInfo(logCategoryPlatformManager).noquote() << "Reconnected serial device" << deviceId;
+        qCInfo(logCategoryPlatformManager).noquote() << "Reconnected platform" << deviceId;
         emit boardConnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot reconnect"), deviceId);
@@ -112,10 +114,10 @@ bool PlatformManager::reconnectDevice(const QByteArray& deviceId) {
     return ok;
 }
 
-DevicePtr PlatformManager::device(const QByteArray& deviceId) {
+PlatformPtr PlatformManager::platform(const QByteArray& deviceId) {
     QMutexLocker lock(&mutex_);
-    auto it = openedDevices_.constFind(deviceId);
-    if (it != openedDevices_.constEnd()) {
+    auto it = openedPlatforms_.constFind(deviceId);
+    if (it != openedPlatforms_.constEnd()) {
         return it.value();
     } else {
         return nullptr;
@@ -124,7 +126,7 @@ DevicePtr PlatformManager::device(const QByteArray& deviceId) {
 
 QVector<QByteArray> PlatformManager::activeDeviceIds() {
     QMutexLocker lock(&mutex_);
-    return QVector<QByteArray>::fromList(openedDevices_.keys());
+    return QVector<QByteArray>::fromList(openedPlatforms_.keys());
 }
 
 void PlatformManager::checkNewSerialDevices() {
@@ -164,18 +166,18 @@ void PlatformManager::checkNewSerialDevices() {
         if (success == false) {
             // Error: hash already exists!
             qCCritical(logCategoryPlatformManager).nospace().noquote()
-                << "Cannot add device (hash conflict: " << deviceId << "): '" << name << "'";
+                << "Cannot add platform (hash conflict: " << deviceId << "): '" << name << "'";
             continue;
         }
         idToName.insert(deviceId, name);
 
-        // qCDebug(logCategoryPlatformManager).nospace().noquote() << "Found serial device, ID: " << deviceId << ", name: '" << name << "'";
+        // qCDebug(logCategoryPlatformManager).nospace().noquote() << "Found platform, ID: " << deviceId << ", name: '" << name << "'";
     }
 
     std::set<QByteArray> added, removed;
     std::vector<QByteArray> opened, deleted;
 
-    {  // this block of code modifies serialPortsList_, openedDevices_, serialIdToName_
+    {  // this block of code modifies serialPortsList_, openedPlatforms_, serialIdToName_
         QMutexLocker lock(&mutex_);
 
         serialIdToName_ = std::move(idToName);
@@ -184,13 +186,13 @@ void PlatformManager::checkNewSerialDevices() {
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (const auto& deviceId : removed) {
-            if (removeDevice(deviceId)) {  // modifies openedDevices_ and reconnectTimers_
+            if (removePlatform(deviceId)) {  // modifies openedPlatforms_ and reconnectTimers_
                 deleted.emplace_back(deviceId);
             }
         }
 
         for (const auto& deviceId : added) {
-            if (addSerialPort(deviceId)) {  // modifies openedDevices_, uses serialIdToName_
+            if (addSerialPort(deviceId)) {  // modifies openedPlatforms_, uses serialIdToName_
                 opened.emplace_back(deviceId);
             } else {
                 // If serial port cannot be opened (for example it is hold by another application),
@@ -222,11 +224,12 @@ void PlatformManager::computeListDiff(std::set<QByteArray>& list, std::set<QByte
                         std::inserter(removed_ports, removed_ports.begin()));
 }
 
-// mutex_ must be locked before calling this function (due to modification openedDevices_ and using serialIdToName_)
+// mutex_ must be locked before calling this function (due to modification openedPlatforms_ and using serialIdToName_)
 bool PlatformManager::addSerialPort(const QByteArray& deviceId) {
     // 1. construct the serial device
-    // 2. open the device
-    // 3. attach PlatformOperations object
+    // 2. wrap with platform
+    // 3. open the device
+    // 4. attach PlatformOperations object
 
     const QString name = serialIdToName_.value(deviceId);
 
@@ -240,72 +243,74 @@ bool PlatformManager::addSerialPort(const QByteArray& deviceId) {
     }
 
     DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort));
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    if (openDevice(device) == false) {
+    if (openPlatform(platform) == false) {
         qCWarning(logCategoryPlatformManager).nospace().noquote()
-            << "Cannot open device: ID: " << deviceId << ", name: '" << name << "'";
+            << "Cannot open serial device: ID: " << deviceId << ", name: '" << name << "'";
         return false;
     }
+
     qCInfo(logCategoryPlatformManager).nospace().noquote()
         << "Added new serial device: ID: " << deviceId << ", name: '" << name << "'";
-    startPlatformOperations(device);
+    startPlatformOperations(platform);
     return true;
 }
 
-// mutex_ must be locked before calling this function (due to modification openedDevices_)
-bool PlatformManager::openDevice(const DevicePtr device) {
-    if (device->open() == false) {
+// mutex_ must be locked before calling this function (due to modification openedPlatforms_)
+bool PlatformManager::openPlatform(const platform::PlatformPtr newPlatform) {
+    if (newPlatform->open() == false) {
         return false;
     }
-    openedDevices_.insert(device->deviceId(), device);
+    openedPlatforms_.insert(newPlatform->deviceId(), newPlatform);
 
-    connect(device.get(), &Device::deviceError, this, &PlatformManager::handleDeviceError);
+    connect(newPlatform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError);
 
     return true;
 }
 
-void PlatformManager::startPlatformOperations(const DevicePtr device) {
-    startIdentifyOperation(device);
+void PlatformManager::startPlatformOperations(const PlatformPtr platform) {
+    startIdentifyOperation(platform);
 
-    connect(device.get(), &Device::msgFromDevice, this, &PlatformManager::checkNotification);
+    connect(platform.get(), &Platform::messageReceived, this, &PlatformManager::checkNotification);
 }
 
-void PlatformManager::startIdentifyOperation(const DevicePtr device) {
+void PlatformManager::startIdentifyOperation(const PlatformPtr platform) {
     // shared_ptr because QHash::insert() calls copy constructor (unique_ptr has deleted copy constructor)
     // We need deleteLater() because PlatformOperations object is deleted
     // in slot connected to signal from it (PlatformManager::handleOperationFinished).
     std::shared_ptr<operation::BasePlatformOperation> operation (
         // Some boards need time for booting. If board is rebooted it also takes some time to start.
-        new operation::Identify(device, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY),
+        new operation::Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY),
         operationLaterDeleter
     );
 
     connect(operation.get(), &operation::BasePlatformOperation::finished, this, &PlatformManager::handleOperationFinished);
 
-    identifyOperations_.insert(device->deviceId(), operation);
+    identifyOperations_.insert(platform->deviceId(), operation);
 
     operation->run();
 }
 
-// mutex_ must be locked before calling this function (due to modification openedDevices_ and reconnectTimers_)
-bool PlatformManager::removeDevice(const QByteArray& deviceId) {
+// mutex_ must be locked before calling this function (due to modification openedPlatforms_ and reconnectTimers_)
+bool PlatformManager::removePlatform(const QByteArray& deviceId) {
     identifyOperations_.remove(deviceId);
 
-    // If device is physically disconnected, remove reconnect timer (if exists).
+    // If platform is physically disconnected, remove reconnect timer (if exists).
     auto timerIter = reconnectTimers_.find(deviceId);
     if (timerIter != reconnectTimers_.end()) {
         QTimer* reconnectTimer = timerIter.value();
         reconnectTimer->stop();
         delete reconnectTimer;
         reconnectTimers_.erase(timerIter);
-        qCInfo(logCategoryPlatformManager).noquote() << "Removed timer for reconnecting device" << deviceId;
+        qCInfo(logCategoryPlatformManager).noquote() << "Removed timer for reconnecting platform" << deviceId;
     }
 
-    auto deviceIter = openedDevices_.find(deviceId);
-    if (deviceIter != openedDevices_.end()) {
+    auto deviceIter = openedPlatforms_.find(deviceId);
+    if (deviceIter != openedPlatforms_.end()) {
         deviceIter.value()->close();
-        openedDevices_.erase(deviceIter);
-        qCInfo(logCategoryPlatformManager).noquote() << "Removed serial device" << deviceId;
+        openedPlatforms_.erase(deviceIter);
+        qCInfo(logCategoryPlatformManager).noquote() << "Removed platform" << deviceId;
         return true;
     } else {
         return false;
@@ -313,7 +318,7 @@ bool PlatformManager::removeDevice(const QByteArray& deviceId) {
 }
 
 void PlatformManager::logInvalidDeviceId(const QString& message, const QByteArray& deviceId) const {
-    qCWarning(logCategoryPlatformManager).nospace().noquote() << message << ", invalid device ID: " << deviceId;
+    qCWarning(logCategoryPlatformManager).nospace().noquote() << message << ", invalid platform ID: " << deviceId;
 }
 
 void PlatformManager::handleOperationFinished(operation::Result result, int status, QString errStr) {
@@ -342,7 +347,7 @@ void PlatformManager::handleOperationFinished(operation::Result result, int stat
             if (boardRecognized == false && keepDevicesOpen_ == false) {
                 qCInfo(logCategoryPlatformManager).noquote()
                     << "Device" << deviceId << "was not recognized, going to release communication channel.";
-                // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
+                // Device cannot be removed in this slot (this slot is connected to signal emitted by platform).
                 // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
                 // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
                 QTimer::singleShot(0, this, [this, deviceId](){
@@ -355,17 +360,17 @@ void PlatformManager::handleOperationFinished(operation::Result result, int stat
 
 void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
-    Device *device = qobject_cast<Device*>(QObject::sender());
-    if (device == nullptr) {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
         return;
     }
-    // if serial device is unexpectedly disconnected, remove it
-    if (errCode == Device::ErrorCode::SP_ResourceError) {
-        disconnect(device, &Device::msgFromDevice, this, &PlatformManager::checkNotification);
-        const QByteArray deviceId = device->deviceId();
-        qCWarning(logCategoryPlatformManager).noquote() << "Interrupted connection with device" << deviceId;
+    // if platform is unexpectedly disconnected, remove it
+    if (errCode == Device::ErrorCode::DeviceDisconnected) {
+        disconnect(platform, &Platform::messageReceived, this, &PlatformManager::checkNotification);
+        const QByteArray deviceId = platform->deviceId();
+        qCWarning(logCategoryPlatformManager).noquote() << "Interrupted connection with platform" << deviceId;
 
-        // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
+        // Device cannot be removed in this slot (this slot is connected to signal emitted by platform).
         // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
         // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
         QTimer::singleShot(0, this, [this, deviceId](){
@@ -396,8 +401,8 @@ R"(
 );
 
 void PlatformManager::checkNotification(QByteArray message) {
-    Device *device = qobject_cast<Device*>(QObject::sender());
-    if (device == nullptr) {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
         return;
     }
 
@@ -410,15 +415,15 @@ void PlatformManager::checkNotification(QByteArray message) {
     }
 
     qCInfo(logCategoryPlatformManager).noquote()
-        << "Received 'platform_id_changed' notification for device" << device->deviceId();
+        << "Received 'platform_id_changed' notification for platform" << platform->deviceId();
 
-    emit platformIdChanged(device->deviceId(), QPrivateSignal());
+    emit platformIdChanged(platform->deviceId(), QPrivateSignal());
 }
 
 void PlatformManager::handlePlatformIdChanged(const QByteArray& deviceId) {
-    // method device() uses mutex_
-    DevicePtr device = this->device(deviceId);
-    if (device == nullptr) {
+    // method platform() uses mutex_
+    PlatformPtr platform = this->platform(deviceId);
+    if (platform == nullptr) {
         return;
     }
 
@@ -429,7 +434,7 @@ void PlatformManager::handlePlatformIdChanged(const QByteArray& deviceId) {
         // and operation will be removed from identifyOperations_ in handleOperationFinished slot.
     }
 
-    startIdentifyOperation(device);
+    startIdentifyOperation(platform);
 }
 
 void PlatformManager::operationLaterDeleter(operation::BasePlatformOperation *operation) {

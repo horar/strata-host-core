@@ -6,7 +6,7 @@
 
 #include <rapidjson/document.h>
 
-#include <Device.h>
+#include <Platform.h>
 
 namespace strata::platform::command {
 
@@ -48,11 +48,11 @@ class BasePlatformCommand : public QObject
 protected:
     /*!
      * BasePlatformCommand constructor.
-     * \param device the device on which is this command performed
+     * \param platform the platform on which is this command performed
      * \param name command name
      * \param cmdType type of command (value from CommandType enum)
      */
-    BasePlatformCommand(const device::DevicePtr& device, const QString& name, CommandType cmdType);
+    BasePlatformCommand(const PlatformPtr& platform, const QString& name, CommandType cmdType);
 
 public:
     /*!
@@ -67,8 +67,8 @@ public:
     BasePlatformCommand(const BasePlatformCommand&) = delete;
 
     /*!
-     * Sends command to device.
-     * \param lockId device lock ID
+     * Sends command to platform.
+     * \param lockId platform lock ID
      */
     virtual void sendCommand(quintptr lockId);
 
@@ -112,12 +112,12 @@ signals:
 protected:
     /*!
      * Returns JSON command.
-     * \return message to be send to device
+     * \return message to be send to platform
      */
     virtual QByteArray message() = 0;
 
     /*!
-     * Process response (notification) from device.
+     * Process response (notification) from platform.
      * \param doc JSON from notification
      * \param result comand result set by this method
      * \return true if notification is valid for sent command, otherwise false
@@ -131,7 +131,7 @@ protected:
     virtual CommandResult onTimeout();
 
     /*!
-     * This method is called when command is rejected by device.
+     * This method is called when command is rejected by platform.
      * \return value from CommandResult enum
      */
     virtual CommandResult onReject();
@@ -149,14 +149,14 @@ private slots:
 
 protected:
     virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;
-    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, device::Device::ControllerType type) final;
+    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, Platform::ControllerType type) final;
     virtual void setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
-    virtual void setDeviceApiVersion(device::Device::ApiVersion apiVersion) final;
+    virtual void setDeviceApiVersion(Platform::ApiVersion apiVersion) final;
 
     const QString cmdName_;
     const CommandType cmdType_;
-    const device::DevicePtr& device_;
+    const PlatformPtr& platform_;
     QTimer responseTimer_;
     bool ackOk_;
     int status_;

@@ -13,7 +13,7 @@
 #include <QVector>
 #include <QMutex>
 
-#include <Device.h>
+#include <Platform.h>
 
 namespace strata::platform::operation {
     class BasePlatformOperation;
@@ -58,7 +58,7 @@ namespace strata {
          * Get smart pointer to the device.
          * @param deviceId device ID
          */
-        device::DevicePtr device(const QByteArray& deviceId);
+        platform::PlatformPtr platform(const QByteArray& deviceId);
 
         /**
          * Get list of active device IDs.
@@ -112,9 +112,9 @@ namespace strata {
     protected:
         void computeListDiff(std::set<QByteArray>& list, std::set<QByteArray>& added_ports, std::set<QByteArray>& removed_ports);
         bool addSerialPort(const QByteArray& deviceId);
-        bool openDevice(const device::DevicePtr newDevice);
-        void startPlatformOperations(const device::DevicePtr device);
-        bool removeDevice(const QByteArray& deviceId);
+        bool openPlatform(const platform::PlatformPtr newPlatform);
+        void startPlatformOperations(const platform::PlatformPtr platform);
+        bool removePlatform(const QByteArray& deviceId);
 
         void logInvalidDeviceId(const QString& message, const QByteArray& deviceId) const;
 
@@ -127,7 +127,7 @@ namespace strata {
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<QByteArray> serialPortsList_;
         QHash<QByteArray, QString> serialIdToName_;
-        QHash<QByteArray, device::DevicePtr> openedDevices_;
+        QHash<QByteArray, platform::PlatformPtr> openedPlatforms_;
         QHash<QByteArray, QTimer*> reconnectTimers_;
 
         QHash<QByteArray, std::shared_ptr<platform::operation::BasePlatformOperation>> identifyOperations_;
@@ -138,7 +138,7 @@ namespace strata {
         bool keepDevicesOpen_;
 
     private:
-        void startIdentifyOperation(const device::DevicePtr device);
+        void startIdentifyOperation(const platform::PlatformPtr device);
         static void operationLaterDeleter(platform::operation::BasePlatformOperation* operation);
 
     };

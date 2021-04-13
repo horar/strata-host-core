@@ -7,7 +7,7 @@ namespace strata::platform::command {
 
 class CmdStartBootloader : public BasePlatformCommand {
 public:
-    explicit CmdStartBootloader(const device::DevicePtr& device);
+    explicit CmdStartBootloader(const PlatformPtr& platform);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
 };

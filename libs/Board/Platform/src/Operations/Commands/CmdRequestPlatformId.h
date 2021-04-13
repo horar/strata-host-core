@@ -7,7 +7,7 @@ namespace strata::platform::command {
 
 class CmdRequestPlatformId : public BasePlatformCommand {
 public:
-    explicit CmdRequestPlatformId(const device::DevicePtr& device);
+    explicit CmdRequestPlatformId(const PlatformPtr& platform);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
 };

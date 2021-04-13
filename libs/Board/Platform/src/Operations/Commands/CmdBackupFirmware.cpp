@@ -12,8 +12,8 @@
 
 namespace strata::platform::command {
 
-CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int totalChunks) :
-    BasePlatformCommand(device, QStringLiteral("backup_firmware"), CommandType::BackupFirmware), chunk_(chunk),
+CmdBackupFirmware::CmdBackupFirmware(const PlatformPtr& platform, QVector<quint8>& chunk, int totalChunks) :
+    BasePlatformCommand(platform, QStringLiteral("backup_firmware"), CommandType::BackupFirmware), chunk_(chunk),
     totalChunks_(totalChunks), firstBackupChunk_(true), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0)
 { }
 
@@ -37,7 +37,7 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc, CommandRes
 {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::backupFirmwareNotif, doc)) {
         if (totalChunks_ <= 0) {
-            qCWarning(logCategoryPlatformCommand) << device_ << "Count of firmware chunks is not known.";
+            qCWarning(logCategoryPlatformCommand) << platform_ << "Count of firmware chunks is not known.";
             result = CommandResult::Failure;
         } else {
             const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
@@ -62,10 +62,10 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc, CommandRes
                     if (crc.GetUint() == crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size()))) {
                         ok = true;
                     } else {
-                        qCCritical(logCategoryPlatformCommand) << device_ << "Wrong CRC of firmware chunk.";
+                        qCCritical(logCategoryPlatformCommand) << platform_ << "Wrong CRC of firmware chunk.";
                     }
                 } else {
-                    qCCritical(logCategoryPlatformCommand) << device_ << "Wrong SIZE of firmware chunk.";
+                    qCCritical(logCategoryPlatformCommand) << platform_ << "Wrong SIZE of firmware chunk.";
                 }
 
                 if (ok) {
@@ -74,15 +74,15 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc, CommandRes
                 } else {
                     if (retriesCount_ < maxRetries_) {
                         ++retriesCount_;
-                        qCInfo(logCategoryPlatformCommand) << device_ << "Going to retry to backup firmware chunk.";
+                        qCInfo(logCategoryPlatformCommand) << platform_ << "Going to retry to backup firmware chunk.";
                         result = CommandResult::Retry;
                     } else {
-                        qCWarning(logCategoryPlatformCommand) << device_ << "Reached maximum retries for backup firmware chunk.";
+                        qCWarning(logCategoryPlatformCommand) << platform_ << "Reached maximum retries for backup firmware chunk.";
                         result = CommandResult::Failure;
                     }
                 }
             } else {
-                qCWarning(logCategoryPlatformCommand) << device_ << "Wrong format of notification.";
+                qCWarning(logCategoryPlatformCommand) << platform_ << "Wrong format of notification.";
                 result = CommandResult::Failure;
             }
         }

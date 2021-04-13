@@ -7,7 +7,7 @@ namespace strata::platform::command {
 
 class CmdStartFlash : public BasePlatformCommand {
 public:
-    CmdStartFlash(const device::DevicePtr& device, int size, int chunks, const QString& md5, bool flashFirmware);
+    CmdStartFlash(const PlatformPtr& platform, int size, int chunks, const QString& md5, bool flashFirmware);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
 private:

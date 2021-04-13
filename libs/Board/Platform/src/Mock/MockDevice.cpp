@@ -69,14 +69,9 @@ bool MockDevice::sendMessage(const QByteArray msg)
     return true;
 }
 
-bool MockDevice::sendMessage(const QByteArray msg, quintptr)
-{
-    return sendMessage(msg);
-}
-
 void MockDevice::mockEmitMessage(const QByteArray msg)
 {
-    emit msgFromDevice(msg);
+    emit messageReceived(msg);
 }
 
 void MockDevice::mockEmitResponses(const QByteArray msg)
@@ -86,7 +81,7 @@ void MockDevice::mockEmitResponses(const QByteArray msg)
         qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
         QTimer::singleShot(
             10, this, [=]() {  // deferred emit (if emitted in the same loop, may cause trouble)
-                emit msgFromDevice(response);
+                emit messageReceived(response);
             });
     }
 }

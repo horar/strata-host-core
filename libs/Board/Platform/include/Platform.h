@@ -19,6 +19,7 @@ namespace strata::platform {
     }
     namespace operation {
         class BasePlatformOperation;
+        class Identify;
     }
 
     class Platform;
@@ -31,10 +32,10 @@ namespace strata::platform {
         Q_DISABLE_COPY(Platform)
 
     friend class strata::platform::operation::BasePlatformOperation;
+    friend class strata::platform::operation::Identify;
     friend class strata::platform::command::BasePlatformCommand;
 
     public:
-        // TODO: remove these enums from Device.h upon integration into existing code
         enum class ApiVersion {
             Unknown,
             v1_0,
@@ -70,8 +71,9 @@ namespace strata::platform {
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
          * @param retryMsec timeout between re-attempts to open the device (in case of failure)
+         * @return true if open successfully, otherwise false (TODO: remove this and use signals)
          */
-        void open(const int retryMsec = 0);
+        bool open(const int retryMsec = 0);
 
         /**
          * Close device communication channel.
@@ -87,7 +89,7 @@ namespace strata::platform {
          * Emits deviceError() signal in case of failure.
          * @param msg message to be written to device
          */
-        void sendMessage(const QByteArray msg);
+        bool sendMessage(const QByteArray msg);
 
         // *** Platform properties (start) ***
 
@@ -240,7 +242,7 @@ namespace strata::platform {
          * Emitted when device was identified using Identify operation.
          * @param success true if successfully recognized, otherwise false
          */
-        void recognized(bool success);
+        void recognized(bool isRecognized);
 
         /**
          * Emitted when device receives platform Id changed message.
@@ -321,7 +323,7 @@ namespace strata::platform {
         void identifyFinished(bool isRecognized);
       // ***
 
-        void openDevice();
+        bool openDevice();
         void closeDevice(const int waitMsec);
 
     protected:

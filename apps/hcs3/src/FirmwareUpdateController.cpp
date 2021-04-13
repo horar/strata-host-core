@@ -4,7 +4,7 @@
 #include "FirmwareUpdater.h"
 #include "BoardController.h"
 
-#include <Device.h>
+#include <Platform.h>
 #include <DownloadManager.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -47,15 +47,15 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
         return;
     }
 
-    strata::device::DevicePtr device = boardController_->getDevice(deviceId);
-    if (device == nullptr) {
+    strata::platform::PlatformPtr platform = boardController_->getPlatform(deviceId);
+    if (platform == nullptr) {
         QString errStr("Incorrect device ID for update.");
         qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;
     }
 
-    FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5);
+    FirmwareUpdater *fwUpdater = new FirmwareUpdater(platform, downloadManager_, firmwareUrl, firmwareMD5);
     UpdateData *updateData = new UpdateData(clientId, fwUpdater);
     updates_.insert(deviceId, updateData);
 

@@ -64,7 +64,8 @@ private:
     void connectHandlers(strata::platform::operation::BasePlatformOperation* operation);
     void connectFlashHandlers(strata::platform::operation::BasePlatformOperation* operation);
 
-    std::shared_ptr<strata::device::MockDevice> device_;
+    strata::platform::PlatformPtr platform_;
+    std::shared_ptr<strata::device::MockDevice> mockDevice_;
     QSharedPointer<strata::platform::operation::BasePlatformOperation> platformOperation_;
     QSharedPointer<strata::platform::operation::Flash> flashOperation_;
 

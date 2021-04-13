@@ -151,7 +151,7 @@ void SciPlatformModel::boardConnectedHandler(const QByteArray& deviceId)
         appendNewPlatform(deviceId);
     } else {
         platformList_.at(index)->setErrorString("");
-        platformList_.at(index)->setDevice(platformManager_->device(deviceId));
+        platformList_.at(index)->setPlatform(platformManager_->platform(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
         platformList_.at(index)->resetPropertiesFromDevice();
 
@@ -191,11 +191,11 @@ void SciPlatformModel::boardDisconnectedHandler(const QByteArray& deviceId)
 {
     int index = findPlatform(deviceId);
     if (index < 0) {
-        //device might have been disconnected from UI
+        // platform might have been disconnected from UI
         return;
     }
 
-    platformList_.at(index)->setDevice(nullptr);
+    platformList_.at(index)->setPlatform(nullptr);
 }
 
 int SciPlatformModel::findPlatform(const QByteArray& deviceId) const
@@ -211,21 +211,21 @@ int SciPlatformModel::findPlatform(const QByteArray& deviceId) const
 
 void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 {
-    strata::device::DevicePtr device = platformManager_->device(deviceId);
-    if (device == nullptr) {
-        qCCritical(logCategorySci) << "device not found by its id";
+    strata::platform::PlatformPtr platform = platformManager_->platform(deviceId);
+    if (platform == nullptr) {
+        qCCritical(logCategorySci) << "platform not found by its id";
         return;
     }
 
     beginInsertRows(QModelIndex(), platformList_.length(), platformList_.length());
 
     SciPlatform *item = new SciPlatform(&sciSettings_, this);
-    item->setDevice(device);
+    item->setPlatform(platform);
     item->setStatus(SciPlatform::PlatformStatus::Connected);
     item->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
     item->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
     item->scrollbackModel()->setCondensedMode(condensedAtStartup_);
-    item->setDeviceName(device->deviceName());
+    item->setDeviceName(platform->deviceName());
     platformList_.append(item);
 
     endInsertRows();

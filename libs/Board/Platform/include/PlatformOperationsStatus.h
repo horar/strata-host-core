@@ -4,7 +4,7 @@
 
 namespace strata::platform::operation {
 
-// special values of status for device operation finished() signal
+// special values of status for platform operation finished() signal
 constexpr int DEFAULT_STATUS(INT_MIN);
 constexpr int ALREADY_IN_BOOTLOADER(1);
 constexpr int NO_FIRMWARE(-100);

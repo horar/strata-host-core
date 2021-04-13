@@ -84,7 +84,7 @@ private slots:
 
 private:
     const int deviceNumber_;
-    device::DevicePtr device_;
+    platform::PlatformPtr platform_;
     std::unique_ptr<platform::operation::Identify> identifyOperation_;
 };
 
