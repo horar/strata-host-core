@@ -231,6 +231,13 @@ public:
      */
     Q_INVOKABLE void startSave();
 
+    /**
+     * @brief parentDirectoryUrl will return a parent directory of a url - like SGUtils.parentDirectoryPath, but for Urls
+     * @param url QUrl of file to find parent directory of
+     * @return Returns Qurl of parent directory
+     */
+    Q_INVOKABLE QUrl parentDirectoryUrl(QUrl url);
+
     /***
      * SIGNALS
      ***/
@@ -287,6 +294,7 @@ private:
     void setDebugMenuSource(const QUrl &path);
     void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
+
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
      * @param path The path of the file/directory added
