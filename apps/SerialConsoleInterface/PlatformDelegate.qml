@@ -209,6 +209,7 @@ FocusScope {
 
                     SGWidgets.SGTag {
                         anchors.right: parent.right
+
                         sizeByMask: true
                         mask: "Filtered: " + "9".repeat(filteredCount.toString().length)
                         text: "Filtered: " + filteredCount
@@ -220,6 +221,7 @@ FocusScope {
 
                     SGWidgets.SGTag {
                         anchors.right: parent.right
+
                         text: {
                             if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
                                 return "EXPORT FAILED"
@@ -229,6 +231,7 @@ FocusScope {
 
                             return ""
                         }
+                        visible: text.length
 
                         font.bold: true
                         textColor: "white"
@@ -239,6 +242,16 @@ FocusScope {
 
                             return TangoTheme.palette.plum1
                         }
+                    }
+
+                    SGWidgets.SGTag {
+                        anchors.right: parent.right
+
+                        text: "Scrollback limit reached"
+                        visible: scrollbackModel.count >= Sci.Settings.maxCommandsInScrollback
+                        font.bold: true
+                        color:  TangoTheme.palette.warning
+                        textColor: "white"
                     }
                 }
 
