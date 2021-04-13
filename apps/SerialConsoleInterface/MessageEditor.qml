@@ -158,7 +158,7 @@ FocusScope {
             }
 
             policy: ScrollBar.AlwaysOn
-            width: 8
+            height: 8
             visible: flick.width < flick.contentWidth
             minimumSize: 0.1
         }
