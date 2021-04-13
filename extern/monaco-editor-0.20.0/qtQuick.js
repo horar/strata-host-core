@@ -2567,7 +2567,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
-            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true})
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
             suggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
@@ -2600,6 +2600,60 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
 */
 function registerQmlAsLanguage() {
     monaco.languages.register({ id: 'qml' })
+    monaco.languages.setLanguageConfiguration("qml", {
+        wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+        comments: {
+            lineComment: '//',
+            blockComment: ['/*', '*/']
+        },
+        brackets: [
+            ['{', '}'],
+            ['[', ']'],
+            ['(', ')']
+        ],
+        onEnterRules: [
+            {
+                // e.g. /** | */
+                beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+                afterText: /^\s*\*\/$/,
+                action: { indentAction: monaco.languages.IndentAction.IndentOutdent, appendText: ' * ' }
+            },
+            {
+                // e.g. /** ...|
+                beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+                action: { indentAction: monaco.languages.IndentAction.None, appendText: ' * ' }
+            },
+            {
+                // e.g.  * ...|
+                beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
+                action: { indentAction: monaco.languages.IndentAction.None, appendText: '* ' }
+            },
+            {
+                // e.g.  */|
+                beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
+                action: { indentAction: monaco.languages.IndentAction.None, removeText: 1 }
+            },
+            {
+                beforeText: /^\s*$/,
+                action: { indentAction: monaco.languages.IndentAction.Outdent }
+            },
+        ],
+        autoClosingPairs: [
+            { open: '{', close: '}' },
+            { open: '[', close: ']' },
+            { open: '(', close: ')' },
+            { open: '"', close: '"', notIn: ['string'] },
+            { open: '\'', close: '\'', notIn: ['string', 'comment'] },
+            { open: '`', close: '`', notIn: ['string', 'comment'] },
+            { open: "/*", close: " */", notIn: ["string"] }
+        ],
+        folding: {
+            markers: {
+                start: new RegExp("^\\s*//\\s*#?region\\b"),
+                end: new RegExp("^\\s*//\\s*#?endregion\\b")
+            }
+        }
+    })
     monaco.languages.setMonarchTokensProvider('qml', {
         keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
         typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool', 'double'],
@@ -2739,7 +2793,7 @@ function registerQmlAsLanguage() {
         value: "",
         language: 'qml',
         theme: "qmlTheme",
-        detectIndentation: false,
+        detectIndentation: true,
         formatOnPaste: true,
         formatOnType: true,
     });
@@ -2902,12 +2956,12 @@ function registerQmlAsLanguage() {
         var parent = null
         while (currentPosition.lineNumber <= position.lineNumber) {
             var getPrev = model.findPreviousMatch("{", currentPosition)
-            var getPrevNext = model.findNextMatch("}",{lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn})
+            var getPrevNext = model.findNextMatch("}", { lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn })
             if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
                 return suggestions
             }
 
-            if(currentPosition.lineNumber < getPrevNext.range.startLineNumber){
+            if (currentPosition.lineNumber < getPrevNext.range.startLineNumber) {
                 var content = model.getLineContent(getPrev.range.startLineNumber)
                 var splitContent = content.replace("\t", "").split(/\{|\t/)
                 var bracketWord = splitContent[0].trim()
@@ -2957,12 +3011,12 @@ function registerQmlAsLanguage() {
     }
 
     editor.getModel().onDidChangeContent((event) => {
-        var getId =  editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
-        var position = {lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn}
+        var getId = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
+        var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getId.includes("id:")) {
             var word = getId.replace("\t", "").split(":")[1].trim()
-            var getIdType =  editor.getModel().findPreviousMatch("{", position, false, false)
-            var content =  editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
+            var getIdType = editor.getModel().findPreviousMatch("{", position, false, false)
+            var content = editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(word, position, type)
         }
