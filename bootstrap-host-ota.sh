@@ -53,7 +53,7 @@ esac
 done
 
 if [[ USE_DEFAULT_ARGUMENTS -eq 0 ]]; then
-    sh deployment/OTA/Strata/release_app.sh ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
+    sh internal/deployment/OTA/Strata/release_app.sh ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
 else
-    sh deployment/OTA/Strata/release_app.sh ${DEFAULT_ARGUMENTS} ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
+    sh internal/deployment/OTA/Strata/release_app.sh ${DEFAULT_ARGUMENTS} ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
 fi

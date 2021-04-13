@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "${env.workspace}/deployment/OTA/Strata/release_app.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
+                sh "${env.workspace}/internal/deployment/OTA/Strata/release_app.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
             }
         }
         stage('Test') {
@@ -42,10 +42,10 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh "python -m venv ${env.workspace}/deployment/OTA/ota-deploy-env"
-                sh "source ${env.workspace}/deployment/OTA/ota-deploy-env/Scripts/activate"
-                sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/deployment/OTA/main.py' \
+                sh "python -m venv ${env.workspace}/internal/deployment/OTA/ota-deploy-env"
+                sh "source ${env.workspace}/internal/deployment/OTA/ota-deploy-env/Scripts/activate"
+                sh "python -m pip install -r ${env.workspace}/internal/deployment/OTA/requirements.txt"
+                sh """python '${env.workspace}/internal/deployment/OTA/main.py' \
                     --dir 'ota' \
 					strata \
                     --repo '${ROOT_BUILD_DIR}/${BUILD_NAME}/public/repository/strata' \
