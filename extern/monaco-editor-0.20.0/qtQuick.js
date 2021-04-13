@@ -4,7 +4,7 @@
 */
 var qtObjectSuggestions = {}
 const qtObjectKeyValues = {}
-const qtIdPairs = {}
+var qtIdPairs = {}
 const qtPropertyPairs = {}
 const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
@@ -773,8 +773,10 @@ function registerQmlAsLanguage() {
 
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
     function getTypeID(model) {
+        ids = []
+        qtIdPairs = {}
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
-        while (position.lineNumber > fullRange.startLineNumber && !searchedIds) {
+        while (position.lineNumber > fullRange.startLineNumber) {
             var getPrevIDPosition = model.findPreviousMatch("id:", position, false, false)
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
                 break;
@@ -806,7 +808,7 @@ function registerQmlAsLanguage() {
 
     function getPropertyType(model) {
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
-        while (position.lineNumber > fullRange.startLineNumber  && !searchedProperties) {
+        while (position.lineNumber > fullRange.startLineNumber ) {
             var getPrevPropertyPosition = model.findPreviousMatch("property", position)
             if (getPrevPropertyPosition === null) {
                 break;
@@ -826,7 +828,6 @@ function registerQmlAsLanguage() {
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomProperties(position.lineNumber, type, prevProperty)
         }
-        searchedProperties = true
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
