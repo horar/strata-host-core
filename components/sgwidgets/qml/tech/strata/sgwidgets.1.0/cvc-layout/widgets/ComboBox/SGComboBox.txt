@@ -1,4 +1,4 @@
-LayoutSGComboBox { // start_%1
+    LayoutSGComboBox { // start_%1
         id: sgComboBox_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 6
@@ -12,4 +12,4 @@ LayoutSGComboBox { // start_%1
             console.log("onActivated:", currentIndex, currentText, layoutInfo.uuid)
         }
         // end_user_content
-} // end_%1
+    } // end_%1
