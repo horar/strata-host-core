@@ -279,12 +279,12 @@ Item {
         }
 
         onHeightChanged: {
-            var htmlHeight = height - 10
+            var htmlHeight = height - 16
             channelObject.setContainerHeight(htmlHeight.toString())
         }
 
         onWidthChanged: {
-            var htmlWidth = width - 10
+            var htmlWidth = width - 16
             channelObject.setContainerWidth(htmlWidth.toString())
         }
         // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
@@ -293,20 +293,19 @@ Item {
             target: mainWindow
 
             onVisibilityChanged: {
-                var htmlHeight = webEngine.height - 10
-                var htmlWidth = webEngine.width - 10
+                var htmlHeight = webEngine.height - 16
+                var htmlWidth = webEngine.width - 16
                 channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
             }
         }
 
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                channelObject.setContainerHeight(height.toString())
+                channelObject.setContainerHeight((webEngine.height - 16).toString())
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
-
         }
 
         url: "qrc:///tech/strata/monaco/minified/editor.html"
