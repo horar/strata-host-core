@@ -15,6 +15,7 @@ SGWidgets.SGBaseEditor {
     property bool passwordMode: false
     property string textFieldLeftIconSource
     property bool textFieldBusyIndicatorRunning: false
+    property bool textFieldSuggestionCloseWithArrowKey: false
     property bool contextMenuEnabled: false
     property bool activeEditing: false
 
@@ -33,6 +34,7 @@ SGWidgets.SGBaseEditor {
         passwordMode: root.passwordMode
         leftIconSource: root.textFieldLeftIconSource
         busyIndicatorRunning: root.textFieldBusyIndicatorRunning
+        suggestionCloseWithArrowKey: root.textFieldSuggestionCloseWithArrowKey
 
         onTextChanged: root.text = text
         Binding {
