@@ -42,6 +42,11 @@ SGWidgets.SGMainWindow {
             bottomMargin: statusBarHeight + 5
         }
         focus: true
+        Component.onCompleted: {
+            for(var i = 1; i < Qt.application.arguments.length; i++) {
+                loadFile(["file:" + Qt.application.arguments[i]]);
+            }
+        }
     }
 
     function showAboutWindow() {
