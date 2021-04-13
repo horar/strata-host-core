@@ -356,7 +356,7 @@ FocusScope {
                     SGWidgets.SGTag {
                         visible: messageEditor.lineCount >= Sci.Settings.maxInputLines
                         text: "Line limit reached"
-                        color:  TangoTheme.palette.orange2
+                        color: TangoTheme.palette.warning
                         textColor: "white"
                         horizontalPadding: 2
                         verticalPadding: 2
