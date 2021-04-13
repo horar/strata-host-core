@@ -40,3 +40,4 @@ components/monaco/qml/tech/strata/monaco/minified/*
 3p/
 3p-d/
 *.pyc
+strata-host-core-internal/
