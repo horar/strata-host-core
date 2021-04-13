@@ -1,8 +1,8 @@
-LayoutSGStatusLight { // start_%1
+    LayoutSGStatusLight { // start_%1
         id: sgStatusLight_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 5
-        layoutInfo.rowsTall: 3
+        layoutInfo.rowsTall: 5
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 

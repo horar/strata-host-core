@@ -1,4 +1,4 @@
-LayoutSGSlider { // start_%1
+    LayoutSGSlider { // start_%1
         id: sgSlider_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 12

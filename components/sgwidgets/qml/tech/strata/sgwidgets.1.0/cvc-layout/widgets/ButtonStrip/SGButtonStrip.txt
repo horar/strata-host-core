@@ -1,4 +1,4 @@
-LayoutSGButtonStrip { // start_%1
+    LayoutSGButtonStrip { // start_%1
         id: sgButtonStrip_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 10

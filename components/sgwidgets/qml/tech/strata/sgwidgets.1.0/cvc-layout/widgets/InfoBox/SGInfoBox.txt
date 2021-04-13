@@ -1,4 +1,4 @@
-LayoutSGInfoBox { // start_%1
+    LayoutSGInfoBox { // start_%1
         id: sgInfoBox_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 6
