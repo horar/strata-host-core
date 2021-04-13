@@ -11,6 +11,8 @@ find_package(Qt5 ${VERSION_QT5}
 add_library(${PROJECT_NAME}
     src/Device.cpp
     src/Platform.cpp
+    src/PlatformMessage.cpp
+    src/PlatformmessageData.cpp
     src/logging/LoggingQtCategories.cpp
     src/Serial/SerialDevice.cpp
     src/Mock/MockDevice.cpp
@@ -41,6 +43,8 @@ add_library(${PROJECT_NAME}
     #AUTOMOC wont find header if it is in different directory
     include/Device.h
     include/Platform.h
+    include/PlatformMessage.h
+    include/PlatformMessageData.h
     include/Serial/SerialDevice.h
     include/Mock/MockDevice.h
     include/Mock/MockDeviceControl.h
