@@ -1,0 +1,15 @@
+    LayoutSGComboBox { // start_%1
+        id: sgComboBox_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 6
+        layoutInfo.rowsTall: 2
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        // start_user_content
+        model: ["Amps", "Volts", "Watts"]
+        onActivated: {
+            console.log("onActivated:", currentIndex, currentText, layoutInfo.uuid)
+        }
+        // end_user_content
+    } // end_%1

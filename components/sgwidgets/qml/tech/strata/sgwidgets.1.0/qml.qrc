@@ -68,5 +68,22 @@
         <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
         <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
         <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
+        <file>cvc-layout/widgets/Switch/LayoutSGSwitch.qml</file>
+        <file>cvc-layout/widgets/Switch/SGSwitch.txt</file>
+        <file>cvc-layout/widgets/InfoBox/SGInfoBox.txt</file>
+        <file>cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml</file>
+        <file>cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml</file>
+        <file>cvc-layout/widgets/CircularGauge/SGCircularGauge.txt</file>
+        <file>cvc-layout/widgets/StatusLight/LayoutSGStatusLight.qml</file>
+        <file>cvc-layout/widgets/StatusLight/SGStatusLight.txt</file>
+        <file>cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml</file>
+        <file>cvc-layout/widgets/ComboBox/SGComboBox.txt</file>
+        <file>cvc-layout/widgets/Graph/LayoutSGGraph.qml</file>
+        <file>cvc-layout/widgets/Graph/SGGraph.txt</file>
+        <file>cvc-layout/widgets/Slider/LayoutSGSlider.qml</file>
+        <file>cvc-layout/widgets/Slider/SGSlider.txt</file>
+        <file>cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml</file>
+        <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt</file>
+        <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.qml</file>
     </qresource>
 </RCC>
