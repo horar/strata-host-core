@@ -6,7 +6,7 @@ def INSTALLER_PATH = ""
 pipeline {
     agent { 
         node { 
-            label 'Strata-OTA-Win-Prod'
+            label 'Strata-OTA-Win-Prod || Strata-OTA-Win-Dev'
             // TODO: hard drive letter should be loaded from ${env.SystemDrive} but node can't access env
             customWorkspace "C:/${REPO_NAME}"
         } 
@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "${env.workspace}/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
+                sh "${env.workspace}/internal/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
             }
         }           
         stage('Test') {
@@ -25,15 +25,15 @@ pipeline {
                 }
                 echo "Installer Path: $INSTALLER_PATH"
                 // Tests are disabled at the moment
-                //powershell "${env.workspace}/host/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"              
+                //powershell "${env.workspace}/internal/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"              
             }
         }
         stage('Deploy'){
             steps{
-                sh "python -m venv ${env.workspace}/deployment/OTA/ota-deploy-env"
-                sh "source ${env.workspace}/deployment/OTA/ota-deploy-env/Scripts/activate"
-                sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/deployment/OTA/main.py' view \
+                sh "python -m venv ${env.workspace}/internal/deployment/OTA/ota-deploy-env"
+                sh "source ${env.workspace}/internal/deployment/OTA/ota-deploy-env/Scripts/activate"
+                sh "python -m pip install -r ${env.workspace}/internal/deployment/OTA/requirements.txt"
+                sh """python '${env.workspace}/internal/deployment/OTA/main.py' view \
                     --dir '${BUILD_NAME}' \
                     '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
                     """
