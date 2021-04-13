@@ -87,7 +87,7 @@ Item {
         }
 
         selection: ItemSelectionModel {
-            model: treeModel
+            model: treeView.model
         }
 
         headerDelegate: Rectangle {

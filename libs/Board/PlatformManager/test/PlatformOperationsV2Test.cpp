@@ -856,8 +856,8 @@ void PlatformOperationsV2Test::flashResendChunkTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 0);
-    QCOMPARE(operationTimeoutCount_, 1);
+    QCOMPARE(operationFailureCount_, 1);
+    QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 1);
     QCOMPARE(flashPartialStatusCount_, 1);
 
@@ -910,7 +910,7 @@ void PlatformOperationsV2Test::flashMemoryErrorTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 1);
+    QCOMPARE(operationFailureCount_, 2);
     QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 1);
     QCOMPARE(flashPartialStatusCount_, 1);
@@ -953,7 +953,7 @@ void PlatformOperationsV2Test::flashInvalidCmdSequenceTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 2);
+    QCOMPARE(operationFailureCount_, 3);
     QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 1);
     QCOMPARE(flashPartialStatusCount_, 1);
@@ -998,7 +998,7 @@ void PlatformOperationsV2Test::flashInvalidValueTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 2);
+    QCOMPARE(operationFailureCount_, 3);
     QCOMPARE(operationTimeoutCount_, 1);
     QCOMPARE(operationFinishedCount_, 1);
     QCOMPARE(flashPartialStatusCount_, 1);
@@ -1042,7 +1042,7 @@ void PlatformOperationsV2Test::cancelFlashOperationTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 2); //2 chunks + one fail flash
+    QCOMPARE(operationFailureCount_, 3); //2 chunks + one fail flash
     QCOMPARE(operationErrorCount_, 1); //flash w/o flash operation
     QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 2); //run & cancel operations
@@ -1072,7 +1072,7 @@ void PlatformOperationsV2Test::startFlashInvalidTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 2);
+    QCOMPARE(operationFailureCount_, 3);
     QCOMPARE(operationFinishedCount_, 1);
     QCOMPARE(operationTimeoutCount_,1);
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
