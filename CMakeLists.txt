@@ -59,8 +59,8 @@ option(BUILD_TESTING "Build the testing tree" ON)
 add_feature_info(BUILD_TESTING BUILD_TESTING "Build the testing tree.")
 enable_testing()
 
-if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/internal")
-    add_subdirectory(internal)
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/strata-host-core-internal")
+    add_subdirectory(strata-host-core-internal)
 endif()
 
 add_subdirectory(extern)
