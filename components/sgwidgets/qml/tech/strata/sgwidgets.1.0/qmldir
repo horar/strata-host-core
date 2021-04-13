@@ -60,7 +60,19 @@ LayoutInfo 1.0 cvc-layout/LayoutInfo.qml
 LayoutRectangle 1.0 cvc-layout/widgets/Rectangle/LayoutRectangle.qml
 LayoutSGIcon 1.0 cvc-layout/widgets/SGIcon/LayoutSGIcon.qml
 LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
+<<<<<<< HEAD
 LayoutRadioButton 1.0 cvc-layout/widgets/RadioButton/LayoutRadioButton.qml
+=======
+LayoutSGSwitch 1.0 cvc-layout/widgets/Switch/LayoutSGSwitch.qml
+LayoutSGInfoBox 1.0 cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml
+LayoutSGCircularGauge 1.0 cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml
+LayoutSGStatusLight 1.0 cvc-layout/widgets/StatusLight/LayoutSGStatusLight.qml
+LayoutSGComboBox 1.0 cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml
+LayoutSGGraph 1.0 cvc-layout/widgets/Graph/LayoutSGGraph.qml
+LayoutSGSlider 1.0 cvc-layout/widgets/Slider/LayoutSGSlider.qml
+LayoutSGButtonStrip 1.0 cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml
+
+>>>>>>> CS-1705-layout-creator-integration-into-cvc
 UIBase 1.0 cvc-layout/UIBase.qml
 
 singleton SGSettings 1.0 SGSettings.qml
