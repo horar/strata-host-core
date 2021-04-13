@@ -59,12 +59,14 @@ public:
     void mockClearRecordedMessages();
 
     bool mockIsOpened() const;
-    bool mockIsBootloader() const;
+    bool mockIsOpenEnabled() const;
     bool mockIsLegacy() const;
+    bool mockIsBootloader() const;
     bool mockIsAutoResponse() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
 
+    bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool isLegacy);
     bool mockSetAutoResponse(bool autoResponse);
     bool mockSetSaveMessages(bool saveMessages);

@@ -128,11 +128,12 @@ bool SerialDeviceScanner::addSerialDevice(const QByteArray& deviceId) {
     }
 
     DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort));
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     qCInfo(logCategoryDeviceScanner).nospace().noquote()
         << "Created new serial device: ID: " << deviceId << ", name: '" << name << "'";
 
-    emit deviceDetected(device);
+    emit deviceDetected(platform);
 
     return true;
 }

@@ -13,14 +13,19 @@ MockDeviceControl::~MockDeviceControl()
 {
 }
 
-bool MockDeviceControl::mockIsBootloader() const
+bool MockDeviceControl::mockIsOpenEnabled() const
 {
-    return isBootloader_;
+    return isOpenEnabled_;
 }
 
 bool MockDeviceControl::mockIsLegacy() const
 {
     return isLegacy_;
+}
+
+bool MockDeviceControl::mockIsBootloader() const
+{
+    return isBootloader_;
 }
 
 MockCommand MockDeviceControl::mockGetCommand() const
@@ -31,6 +36,17 @@ MockCommand MockDeviceControl::mockGetCommand() const
 MockResponse MockDeviceControl::mockGetResponse() const
 {
     return response_;
+}
+
+bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
+{
+    if (isOpenEnabled_ != enabled) {
+        isOpenEnabled_ = enabled;
+        qCDebug(logCategoryDeviceMock) << "Configured open enabled to" << isOpenEnabled_;
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Open enabled already configured to" << isOpenEnabled_;
+    return false;
 }
 
 bool MockDeviceControl::mockSetLegacy(bool legacy)

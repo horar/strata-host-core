@@ -34,7 +34,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
 }
 
 SerialDevice::~SerialDevice() {
-    close();
+    SerialDevice::close();
     serialPort_.reset();
     qCDebug(logCategoryDeviceSerial).nospace().noquote()
         << "Deleted serial device, ID: " <<  deviceId_
