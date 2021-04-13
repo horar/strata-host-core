@@ -39,6 +39,11 @@ Popup {
                     text: "Rectangle"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Rectangle/Rectangle.txt"
                 }
+
+                ListElement {
+                    text: "RadioButton"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/RadioButton/SGRadioButton.txt"
+                }
             }
 
             delegate: Button {

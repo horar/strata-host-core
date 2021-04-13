@@ -68,5 +68,8 @@
         <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
         <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
         <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
+        <file>cvc-layout/widgets/RadioButton/LayoutRadioButton.qml</file>
+        <file>cvc-layout/widgets/RadioButton/SGRadioButton.txt</file>
+        <file>cvc-layout/widgets/RadioButton/SGRadioButton.qml</file>
     </qresource>
 </RCC>
