@@ -93,7 +93,7 @@ public:
 
     Q_INVOKABLE QString getLastLoggedError();
 
-    Q_INVOKABLE void clearComponentCache(QObject *parent);
+    Q_INVOKABLE void trimComponentCache(QObject *parent);
 
 signals:
     void finishedRecompiling(QString filepath);

@@ -67,6 +67,8 @@ ColumnLayout {
             externalChanges = false;
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
+            } else {
+                visualEditor.functions.reload()
             }
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
@@ -199,30 +201,80 @@ ColumnLayout {
     }
 
     RowLayout {
+        id: menuRow
+        Layout.fillHeight: false
+        Layout.preferredHeight: 40
 
-        SGComboBox {
-            id: viewSelector
-            model: ["Text Editor", "Visual Editor"]
-            currentIndex: 0
-            Layout.leftMargin: 5
-            Layout.topMargin: 5
-            Layout.bottomMargin: 5
+        Button {
+            id: textEditorButton
+            text: "Text Editor"
+            checkable: true
+            checked: true
+            implicitHeight: menuRow.height - 10
 
-            onCurrentIndexChanged:  {
-                if (currentIndex === 1) {
-                    visualEditor.functions.reload()
+            onCheckedChanged: {
+                if (checked) {
+                    visualEditorButton.checked = false
+                    viewStack.currentIndex = 0
                 }
             }
         }
 
+        Item {
+            implicitHeight: visualEditorButton.implicitHeight
+            implicitWidth: visualEditorButton.implicitWidth
+
+            Button {
+                id: visualEditorButton
+                text: "Visual Editor"
+                checkable: true
+                implicitHeight: menuRow.height - 10
+                enabled: visualEditor.fileValid
+
+                onCheckedChanged: {
+                    if (checked) {
+                        textEditorButton.checked = false
+                        viewStack.currentIndex = 1
+                    }
+                }
+            }
+
+            MouseArea {
+                id: toolTipMouse
+                anchors {
+                    fill: parent
+                }
+                hoverEnabled: enabled
+                enabled: !visualEditorButton.enabled
+
+                ToolTip {
+                    visible: toolTipMouse.containsMouse
+                    text: visualEditor.error
+                }
+            }
+        }
+
+        Rectangle {
+            // divider
+            Layout.preferredHeight: menuRow.height - 6
+            Layout.preferredWidth: 1
+            color: "grey"
+            visible: menuLoader.active
+        }
+
         Loader {
             id: menuLoader
+            active: menuLoaded
+
+            property bool menuLoaded: false
+
             source: {
-                switch (viewSelector.currentIndex) {
+                switch (viewStack.currentIndex) {
                     case 0:
+                        menuLoaded = false
                         return ""
                     case 1:
-                        active = true
+                        menuLoaded = true
                         return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
                 }
             }
@@ -240,7 +292,7 @@ ColumnLayout {
         id: viewStack
         Layout.fillHeight: true
         Layout.fillWidth: true
-        currentIndex: viewSelector.currentIndex
+        currentIndex: 0
 
         Keys.onPressed: {
             if (event.matches(StandardKey.Save)) {

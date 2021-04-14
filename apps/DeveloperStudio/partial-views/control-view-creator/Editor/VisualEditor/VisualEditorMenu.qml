@@ -12,7 +12,7 @@ RowLayout {
 
     Button {
         text: "Reload"
-        implicitHeight: viewSelector.height
+        implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
         padding: 0
 
@@ -27,7 +27,7 @@ RowLayout {
         text: "Layout mode"
         checkable: true
         checked: visualEditor.layoutDebugMode
-        implicitHeight: viewSelector.height
+        implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
         padding: 0
 
@@ -38,7 +38,7 @@ RowLayout {
 
     Button {
         text: "Add..."
-        implicitHeight: viewSelector.height
+        implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
         padding: 0
 
@@ -53,7 +53,7 @@ RowLayout {
 
     Button {
         text: "Rows/Cols..."
-        implicitHeight: viewSelector.height
+        implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
         padding: 0
 

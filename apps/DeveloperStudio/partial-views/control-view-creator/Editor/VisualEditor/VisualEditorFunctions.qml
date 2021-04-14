@@ -12,6 +12,12 @@ QtObject {
 
     signal passUUID(string uuid)
 
+    Component.onDestruction: {
+        for (let i = 0; i < overlayObjects.length; i++) {
+            overlayObjects[i].destroy()
+        }
+    }
+
     function openFile(fileUrl) {
         if (fileUrl.startsWith("file")) {
             fileUrl = SGUtilsCpp.urlToLocalFile(fileUrl)
@@ -34,25 +40,38 @@ QtObject {
             overlayObjects[i].destroy()
         }
         overlayObjects = []
-        sdsModel.resourceLoader.clearComponentCache(visualEditor)
-        fileContents = openFile(file)
-        loader.setSource(visualEditor.file)
-        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-            overlayContainer.rowCount = loader.children[0].rowCount
-            overlayContainer.columnCount = loader.children[0].columnCount
-            identifyChildren(loader.children[0])
-        } else {
-            // todo: disable visual editor controls
-            if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-                loader.setSource("qrc:/partial-views/SGLoadError.qml")
-                console.log("Visual Editor error: file does not derive from UIBase")
-                loader.item.error_intro = "Unable to display file"
-                loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
+
+        if (visualEditor.file.toLowerCase().endsWith(".qml")){
+            fileContents = openFile(visualEditor.file)
+
+            // Append a numerical string to the end of each file since the component cache cannot be trimmed synchronously
+            // Trim the component cache to clear out old components to prevent memory leak
+            // see: https://stackoverflow.com/questions/19604552/qml-loader-not-shows-changes-on-qml-file
+            loader.setSource(visualEditor.file + "?t=" + Date.now())
+            sdsModel.resourceLoader.trimComponentCache(visualEditor)
+
+            if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+                overlayContainer.rowCount = loader.children[0].rowCount
+                overlayContainer.columnCount = loader.children[0].columnCount
+                identifyChildren(loader.children[0])
+                visualEditor.fileValid = true
             } else {
-                loader.setSource("qrc:/partial-views/SGLoadError.qml")
-                loader.item.error_intro = "Unable to display file"
-                loader.item.error_message = "Build error, see logs"
+                if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
+                    loader.setSource("qrc:/partial-views/SGLoadError.qml")
+                    console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
+                    loader.item.error_intro = "Unable to display file"
+                    loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
+                    visualEditor.fileValid = false
+                    visualEditor.error = "Visual Editor supports files derived from UIBase only"
+                } else {
+                    loader.setSource("qrc:/partial-views/SGLoadError.qml")
+                    loader.item.error_intro = "Unable to display file"
+                    loader.item.error_message = "Build error, see logs"
+                }
             }
+        } else {
+            visualEditor.fileValid = false
+            visualEditor.error = "Visual Editor supports QML files only"
         }
     }
 
@@ -115,11 +134,15 @@ QtObject {
         insertTextAtEndOfFile(copy)
     }
 
+    /*
+        Given a <string>, find start and end tags for <uuid>, within those tags find the first
+        instance of <prop> and replace its value with <value>
+    */
     function replaceObjectPropertyValueInString (uuid, prop, value, string = fileContents) {
         // total regex: (start_42e89[\\s\\S]*?yRows:\\s*)(.*)([\\s\\S]*?end_42e89)
         // explanation: find "yRows" prop, only occurring between start and end uuid tags, replace anything following with value
 
-        // notes:
+        // regex notes:
         // \\s\\S is "space or not space" ,aka wildcard, since 's' flag does not work in qml
         // *? is lazy find, i.e. stop after first find, otherwise catches last match instead
         // all 3 groups are captured for replacement as it is impossible to replace only one group that is matched
@@ -135,14 +158,28 @@ QtObject {
         let capture2 = "(.*)"
         let capture3 = "[\\s\\S]*?end_" + uuid + ""
         let regex = new RegExp(capture1 + capture2 + capture3)
-        return fileContents.match(regex)[1];
+        let id
+        try {
+            id = fileContents.match(regex)[1]
+        } catch (e) {
+            id = ""
+            console.warn("No match for uuid '" + uuid + "' found, start/end tags may be malformed")
+        }
+        return id;
     }
 
     function getType(uuid) {
         let capture1 = "([A-Za-z0-9_]+)" // qml object type, e.g. Rectangle
         let capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
         let regex = new RegExp(capture1 + capture2)
-        return fileContents.match(regex)[1];
+        let type
+        try {
+            type = fileContents.match(regex)[1]
+        } catch (e) {
+            type = ""
+            console.warn("No match for " + uuid + " found, start/end tags may be malformed")
+        }
+        return type;
     }
 
     function create_UUID(){
