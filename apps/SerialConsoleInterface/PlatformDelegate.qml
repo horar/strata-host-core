@@ -248,7 +248,7 @@ FocusScope {
                         anchors.right: parent.right
 
                         text: "Scrollback limit reached"
-                        visible: scrollbackModel.count >= Sci.Settings.maxCommandsInScrollback
+                        visible: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
                         font.bold: true
                         color:  TangoTheme.palette.warning
                         textColor: "white"
