@@ -901,13 +901,11 @@ function registerQmlAsLanguage() {
                 break;
             }
             prevNextBracket = model.findPreviousMatch("{", { lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn })
-            if (prevNextBracket.range.startLineNumber !== previousBracket.range.startLineNumber) {
-                break;
-            }
             var getProperty = model.getLineContent(nextPosition.lineNumber)
             if (getProperty === "" || getProperty.trim().replace("\t", "").split(" ")[2] === undefined) {
                 break;
             }
+
             var propertyWord = getProperty.trim().replace("\t", "").split(" ")[2].trim().split(":")[0].trim()
             customProperties.push("on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed")
             var getPrevId = model.findPreviousMatch("id:", nextPosition)
