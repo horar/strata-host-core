@@ -12,11 +12,20 @@ pipeline {
         } 
     }
     stages {
+        stage('Clone Internal Repository') {
+            steps {
+                script {
+                    def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
+                    def internalRepoName = "strata-host-core-internal"
+                    sh "git clone ${internalRepoUrl} '${env.workspace}/${internalRepoName}"
+                }
+            }
+        }
         stage('Build') {
             steps {
                 sh "${env.workspace}/strata-host-core-internal/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
             }
-        }           
+        }
         stage('Test') {
             steps {
                 script{
@@ -25,10 +34,10 @@ pipeline {
                 }
                 echo "Installer Path: $INSTALLER_PATH"
                 // Tests are disabled at the moment
-                //powershell "${env.workspace}/strata-host-core-internal/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"              
+                //powershell "${env.workspace}/strata-host-core-internal/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"
             }
         }
-        stage('Deploy'){
+        stage('Deploy') {
             steps{
                 sh "python -m venv ${env.workspace}/strata-host-core-internal/deployment/OTA/ota-deploy-env"
                 sh "source ${env.workspace}/strata-host-core-internal/deployment/OTA/ota-deploy-env/Scripts/activate"
