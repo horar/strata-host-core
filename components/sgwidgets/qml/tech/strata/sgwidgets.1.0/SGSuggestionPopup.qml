@@ -99,6 +99,12 @@ Popup {
 
         Keys.onPressed: {
             if (event.key === Qt.Key_Up) {
+                if (closeWithArrowKey && position === Item.Bottom) {
+                    if (view.currentIndex === 0) {
+                        popup.close()
+                    }
+                }
+
                 view.decrementCurrentIndex()
             } else if (event.key === Qt.Key_Down) {
                 if (closeWithArrowKey && position === Item.Top) {
