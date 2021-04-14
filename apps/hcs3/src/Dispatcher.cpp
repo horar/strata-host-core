@@ -3,7 +3,7 @@
 
 const unsigned int g_waitForMessageTime = 500;  //in ms
 
-PlatformMessage::PlatformMessage() : msg_type(eMsgUnknown)
+PlatformMessage::PlatformMessage()
 {
 
 }
