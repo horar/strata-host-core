@@ -62,7 +62,7 @@ QtObject {
                     loader.item.error_intro = "Unable to display file"
                     loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
                     visualEditor.fileValid = false
-                    visualEditor.error = "File must derive from UIBase to use visual editor"
+                    visualEditor.error = "Visual Editor supports files derived from UIBase only"
                 } else {
                     loader.setSource("qrc:/partial-views/SGLoadError.qml")
                     loader.item.error_intro = "Unable to display file"
@@ -71,7 +71,7 @@ QtObject {
             }
         } else {
             visualEditor.fileValid = false
-            visualEditor.error = "Only QML files work with visual editor"
+            visualEditor.error = "Visual Editor supports QML files only"
         }
     }
 
