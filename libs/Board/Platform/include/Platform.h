@@ -70,7 +70,7 @@ namespace strata::platform {
          * Open device communication channel.
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
-         * @param retryMsec timeout between re-attempts to open the device (in case of failure)
+         * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
          * @return true if open successfully, otherwise false (TODO: remove this and use signals)
          */
         bool open(const int retryMsec = 0);
@@ -78,8 +78,8 @@ namespace strata::platform {
         /**
          * Close device communication channel.
          * Emits closed() signal upon completion.
-         * @param waitMsec how long to remain in closed state before re-attempting to open the device
-         * @param retryMsec timeout between re-attempts to open the device (in case of failure)
+         * @param waitMsec how long to remain in closed state before re-attempting to open the device (0 - stay closed)
+         * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
         void close(const int waitMsec = 0, const int retryMsec = 0);
 
