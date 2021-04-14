@@ -14,6 +14,7 @@ import "../"
 
 Item {
     id: editorRoot
+
     property alias editorToolBar: editorToolBar
     property alias openFilesModel: openFilesModel
     property alias fileTreeModel: treeModel

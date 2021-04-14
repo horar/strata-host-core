@@ -315,11 +315,13 @@ ColumnLayout {
             settings.showScrollBars: false
 
             onHeightChanged: {
-                channelObject.setContainerHeight(height.toString())
+                var htmlHeight = height - 16
+                channelObject.setContainerHeight(htmlHeight.toString())
             }
 
             onWidthChanged: {
-                channelObject.setContainerWidth(width.toString())
+                var htmlWidth = width - 16
+                channelObject.setContainerWidth(htmlWidth.toString())
             }
 
             // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
@@ -328,13 +330,15 @@ ColumnLayout {
                 target: mainWindow
 
                 onVisibilityChanged: {
-                    channelObject.resetContainer(webEngine.height.toString(), webEngine.width.toString())
+                    var htmlHeight = webEngine.height - 16
+                    var htmlWidth = webEngine.width - 16
+                    channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
                 }
             }
 
             onLoadingChanged: {
                 if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                    channelObject.setContainerHeight(height.toString())
+                    channelObject.setContainerHeight((webEngine.height - 16).toString())
                     let fileText = openFile(model.filepath)
                     channelObject.setHtml(fileText)
                     channelObject.fileText = fileText

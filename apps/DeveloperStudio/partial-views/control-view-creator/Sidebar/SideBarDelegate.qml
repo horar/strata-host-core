@@ -65,15 +65,17 @@ Item {
                 return;
             }
 
-            let path;
+            let url;
             // Below handles the case where the parentNode is the .qrc file
             if (model.parentNode && !model.parentNode.isDir) {
-                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), text);
+                url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, text)
             } else {
-                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
+                url = SGUtilsCpp.joinFilePath(model.parentNode.filepath, text)
             }
+            let path = SGUtilsCpp.urlToLocalFile(url)
+            let parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
 
-            treeModel.stopWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
+            treeModel.stopWatchingPath(parentDir);
             // If we are creating a new file
             if (styleData.value === "") {
                 const success = SGUtilsCpp.createFile(path);
@@ -83,7 +85,7 @@ Item {
                 } else {
                     model.editing = false
                     model.filename = text
-                    model.filepath = SGUtilsCpp.pathToUrl(path);
+                    model.filepath = url;
                     if (!model.isDir) {
                         model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
                         if (!model.inQrc) {
@@ -113,7 +115,7 @@ Item {
 
                 model.editing = false
             }
-            treeModel.startWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
+            treeModel.startWatchingPath(parentDir);
         }
 
         onVisibleChanged: {

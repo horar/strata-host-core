@@ -44,34 +44,27 @@ FocusScope {
                 messageEditor.height = Math.min(maximumInputAreaHeight, messageEditor.height)
             }
 
-            Shortcut {
-                id: clearShortcut
-                sequence: "Ctrl+D"
-                onActivated: mainPage.clearScrollback()
+            property var keyboardActions: {
+                "clear_scrollback": {"sequence": "Ctrl+D", "action": "clearScrollback", "hint":"Clear scrollback"},
+                "toggle_expand": {"sequence": "Ctrl+E", "action": "toggleExpand", "hint":"Toggle Expand"},
+                "toggle_follow": {"sequence": "Ctrl+F", "action": "toggleFollow", "hint":"Auto scroll down when new message arrives"},
+                "send_message_ent": {"sequence": "Ctrl+Enter", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
+                "send_message_ret": {"sequence": "Ctrl+Return", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
             }
 
-            Shortcut {
-                id: followShortcut
-                sequence: "Ctrl+F"
-                onActivated: mainPage.toggleFollow()
-            }
+            Keys.onPressed: {
+                var key = event.key + event.modifiers
 
-            Shortcut {
-                id: expandShortcut
-                sequence: "Ctrl+E"
-                onActivated: mainPage.toggleExpand()
-            }
+                if (tryKeyboardAction("clear_scrollback", key)) {
+                } else if (tryKeyboardAction("toggle_expand", key)) {
+                } else if (tryKeyboardAction("toggle_follow", key)) {
+                } else if (tryKeyboardAction("send_message_ent", key)) {
+                } else if (tryKeyboardAction("send_message_ret", key)) {
+                } else {
+                    return
+                }
 
-            Shortcut {
-                id: sendMessageEnterShortcut
-                sequence: "Ctrl+Enter"
-                onActivated: mainPage.sendMessageInputTextAsComand()
-            }
-
-            Shortcut {
-                id: sendMessageReturnShortcut
-                sequence: "Ctrl+Return"
-                onActivated: mainPage.sendMessageInputTextAsComand()
+                event.accepted = true
             }
 
             ScrollbackView {
@@ -96,7 +89,7 @@ FocusScope {
 
             FocusScope {
                 id: inputWrapper
-                height: rightButtonRow.y + rightButtonRow.height + 6
+                height: leftButtonRow.y + leftButtonRow.height + 6
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
@@ -118,7 +111,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         text: "Clear"
-                        hintText: prettifyHintText("Clear scrollback", clearShortcut.nativeText)
+                        hintText: mainPage.resolveKeyboardActionHintText("clear_scrollback")
                         icon.source: "qrc:/sgimages/broom.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: mainPage.clearScrollback()
@@ -127,7 +120,7 @@ FocusScope {
                     SGWidgets.SGIconButton {
                         id: automaticScrollButton
                         text: "Follow"
-                        hintText: prettifyHintText("Auto scroll down when new message arrives", followShortcut.nativeText)
+                        hintText: mainPage.resolveKeyboardActionHintText("toggle_follow")
                         icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                         iconSize: toolButtonRow.iconHeight
                         checkable: true
@@ -151,7 +144,7 @@ FocusScope {
                                 t = qsTr("Collapse all commands")
                             }
 
-                            return prettifyHintText(t, expandShortcut.nativeText)
+                            return mainPage.resolveKeyboardActionHintText("toggle_expand", t)
                         }
                         icon.source: scrollbackModel.condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                         iconSize: toolButtonRow.iconHeight
@@ -209,6 +202,7 @@ FocusScope {
 
                     SGWidgets.SGTag {
                         anchors.right: parent.right
+
                         sizeByMask: true
                         mask: "Filtered: " + "9".repeat(filteredCount.toString().length)
                         text: "Filtered: " + filteredCount
@@ -220,6 +214,7 @@ FocusScope {
 
                     SGWidgets.SGTag {
                         anchors.right: parent.right
+
                         text: {
                             if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
                                 return "EXPORT FAILED"
@@ -229,6 +224,7 @@ FocusScope {
 
                             return ""
                         }
+                        visible: text.length
 
                         font.bold: true
                         textColor: "white"
@@ -239,6 +235,16 @@ FocusScope {
 
                             return TangoTheme.palette.plum1
                         }
+                    }
+
+                    SGWidgets.SGTag {
+                        anchors.right: parent.right
+
+                        text: "Scrollback limit reached"
+                        visible: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
+                        font.bold: true
+                        color:  TangoTheme.palette.warning
+                        textColor: "white"
                     }
                 }
 
@@ -343,23 +349,42 @@ FocusScope {
                     }
                 }
 
-                SGWidgets.SGTag {
+                Row {
+                    id: rightInfoRow
                     anchors {
                         top: messageEditor.bottom
                         topMargin: 2
                         right: messageEditor.right
                     }
 
-                    text: "Line: " + (messageEditor.currentLine + 1) + ", Col: " + (messageEditor.currentColumn + 1)
-                    color: "#b2b2b2"
-                    textColor: "white"
-                    horizontalPadding: 2
-                    verticalPadding: 2
-                    font: messageEditor.font
+                    spacing: 4
+
+                    SGWidgets.SGTag {
+                        visible: messageEditor.lineCount >= Sci.Settings.maxInputLines
+                        text: "Line limit reached"
+                        color: TangoTheme.palette.warning
+                        textColor: "white"
+                        horizontalPadding: 2
+                        verticalPadding: 2
+                        font: positionTag.font
+                    }
+
+                    SGWidgets.SGTag {
+                        id: positionTag
+
+                        text: "Line: " + (messageEditor.currentLine + 1) + ", Col: " + (messageEditor.currentColumn + 1)
+                        color: "#b2b2b2"
+                        textColor: "white"
+                        horizontalPadding: 2
+                        verticalPadding: 2
+                        font.family: messageEditor.font.family
+                        font.pixelSize: messageEditor.font.pixelSize
+                        font.bold: true
+                    }
                 }
 
                 Row {
-                    id: rightButtonRow
+                    id: leftButtonRow
                     anchors {
                         top: messageEditor.bottom
                         topMargin: 2
@@ -382,9 +407,9 @@ FocusScope {
                 SGWidgets.SGCheckBox {
                     id: validateCheckBox
                     anchors {
-                        left: rightButtonRow.right
-                        leftMargin: 2*rightButtonRow.spacing
-                        verticalCenter: rightButtonRow.verticalCenter
+                        left: leftButtonRow.right
+                        leftMargin: 2*leftButtonRow.spacing
+                        verticalCenter: leftButtonRow.verticalCenter
                     }
 
                     focusPolicy: Qt.NoFocus
@@ -403,8 +428,12 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
-                    hintText: prettifyHintText("Send command",
-                                               Qt.platform.os === "osx" ? sendMessageReturnShortcut.nativeText : sendMessageEnterShortcut.nativeText)
+                    hintText: {
+                        if (Qt.platform.os === "osx") {
+                            return mainPage.resolveKeyboardActionHintText("send_message_ret")
+                        }
+                        return mainPage.resolveKeyboardActionHintText("send_message_ent")
+                    }
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
@@ -486,6 +515,33 @@ FocusScope {
                 })
 
                 dialog.open()
+            }
+
+            function tryKeyboardAction(actionName, key) {
+                if (keyboardActionMatches(actionName, key)) {
+                    var action = keyboardActions[actionName].action
+                    mainPage[action]()
+                    return true
+                }
+
+                return false
+            }
+
+            function keyboardActionMatches(actionName, key) {
+                var sequence = keyboardActions[actionName].sequence
+                return CommonCpp.SGUtilsCpp.keySequenceMatches(sequence, key)
+            }
+
+            function resolveKeyboardActionHintText(actionName, customHintText) {
+                var nativeSequence = CommonCpp.SGUtilsCpp.keySequenceNativeText(keyboardActions[actionName].sequence)
+
+                if (customHintText === undefined) {
+                    var hint = keyboardActions[actionName].hint
+                } else {
+                    hint = customHintText
+                }
+
+                return prettifyHintText(hint, nativeSequence)
             }
         }
     }

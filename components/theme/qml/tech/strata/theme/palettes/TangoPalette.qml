@@ -24,7 +24,7 @@ QtObject {
     readonly property color chameleon3:     "#4e9a06"
 
     readonly property color error:          scarletRed2
-    readonly property color warning:        orange1
+    readonly property color warning:        orange2
     readonly property color highlight:      "#0066ff"
     readonly property color selectedText:   Qt.lighter(highlight, 1.2)
 
