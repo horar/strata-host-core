@@ -758,7 +758,9 @@ function registerQmlAsLanguage() {
 
             var prevIdLine = model.getLineContent(getPrevIDPosition.range.startLineNumber)
             var prevId = prevIdLine.replace("\t", "").split(":")[1].trim()
-
+            if(prevId.includes("//")){
+                prevId = prevId.split("//")[0]
+            }
             var getIdType = model.findPreviousMatch("{", { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn })
             position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
             var content = model.getLineContent(getIdType.range.startLineNumber)
@@ -815,6 +817,9 @@ function registerQmlAsLanguage() {
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getId.includes("id:")) {
             var word = getId.replace("\t", "").split(":")[1].trim()
+            if(word.includes("//")){
+                word = word.split("//")[0]
+            }
             var getIdType = editor.getModel().findPreviousMatch("{", position, false, false)
             var content = editor.getModel().getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
