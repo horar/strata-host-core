@@ -14,11 +14,14 @@ pipeline {
     stages {
         stage('Clone Internal Repository') {
             steps {
-                script {
-                    def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
-                    def internalRepoName = "strata-host-core-internal"
-                    sh "git clone ${internalRepoUrl} '${env.workspace}/${internalRepoName}'"
-                }
+                def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
+                def internalRepoName = "strata-host-core-internal"
+
+                git changelog: false,
+                    poll: false,
+                    credentialsId: 'BB-access-token',
+                    url: internalRepoUrl,
+                    filesystem: "${env.workspace}/${internalRepoName}"
             }
         }
         stage('Build') {
