@@ -5,10 +5,7 @@
 var qtObjectSuggestions = {}
 const qtObjectKeyValues = {}
 var qtIdPairs = {}
-<<<<<<< HEAD
 const qtPropertyPairs = {}
-=======
->>>>>>> 7d0f5fdabb5c17f8d9c5e138c42aea6eae45fa39
 const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
 var isInitialized = false
