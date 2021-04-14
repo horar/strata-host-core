@@ -58,7 +58,7 @@ namespace strata::platform {
         /**
          * Platform destructor
          */
-        ~Platform();
+        virtual ~Platform();
 
         /**
          * Get stored device pointer.
