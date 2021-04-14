@@ -18,7 +18,7 @@ pipeline {
                     def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
                     def internalRepoName = "strata-host-core-internal"
 
-                    dir(internalRepoName) {
+                    dir("${env.workspace}/${internalRepoName}") {
                         git changelog: false,
                             poll: false,
                             credentialsId: 'BB-access-token',
