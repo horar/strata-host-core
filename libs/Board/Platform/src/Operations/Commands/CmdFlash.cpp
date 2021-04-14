@@ -13,8 +13,8 @@
 
 namespace strata::platform::command {
 
-CmdFlash::CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware) :
-    BasePlatformCommand(device,
+CmdFlash::CmdFlash(const PlatformPtr& platform, int chunkCount, bool flashFirmware) :
+    BasePlatformCommand(platform,
                       (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader"),
                       (flashFirmware) ? CommandType::FlashFirmware : CommandType::FlashBootloader),
     flashFirmware_(flashFirmware), chunkNumber_(0), chunkCount_(chunkCount),
@@ -76,10 +76,10 @@ bool CmdFlash::processNotification(rapidjson::Document& doc, CommandResult& resu
                 const char* binaryType = (flashFirmware_) ? "firmware" : "bootloader";
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
-                    qCInfo(logCategoryPlatformCommand) << device_ << "Going to retry to flash " << binaryType << " chunk.";
+                    qCInfo(logCategoryPlatformCommand) << platform_ << "Going to retry to flash " << binaryType << " chunk.";
                     result = CommandResult::Retry;
                 } else {
-                    qCWarning(logCategoryPlatformCommand) << device_ << "Reached maximum retries for flash " << binaryType << " chunk.";
+                    qCWarning(logCategoryPlatformCommand) << platform_ << "Reached maximum retries for flash " << binaryType << " chunk.";
                 }
             }
         }

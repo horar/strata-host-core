@@ -11,13 +11,13 @@ using strata::DownloadManager;
 using strata::FlasherConnector;
 
 FirmwareUpdater::FirmwareUpdater(
-        const strata::device::DevicePtr& devPtr,
+        const strata::platform::PlatformPtr& platform,
         strata::DownloadManager *downloadManager,
         const QUrl& url,
         const QString& md5)
     : running_(false),
-      device_(devPtr),
-      deviceId_(devPtr->deviceId()),
+      platform_(platform),
+      deviceId_(platform->deviceId()),
       downloadManager_(downloadManager),
       firmwareUrl_(url),
       firmwareMD5_(md5),
@@ -39,7 +39,7 @@ void FirmwareUpdater::updateFirmware()
 {
     if (running_) {
         QString errStr("Cannot update firmware, update is already running.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
+        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
         emit updaterError(deviceId_, errStr);
         return;
     }
@@ -53,7 +53,7 @@ void FirmwareUpdater::downloadFirmware()
 {
     if (firmwareFile_.open() == false) {
         QString errStr("Cannot create temporary file for firmware download.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
+        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
         emit updaterError(deviceId_, errStr);
         running_ = false;
         return;
@@ -116,13 +116,13 @@ void FirmwareUpdater::handleFlashFirmware()
 {
     if (flasherConnector_.isNull() == false) {
         QString errStr("Cannot create firmware flasher, other one already exists.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
+        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
         emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
         emit updaterError(deviceId_, errStr);
         return;
     }
 
-    flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
+    flasherConnector_ = new FlasherConnector(platform_, firmwareFile_.fileName(), firmwareMD5_, this);
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::flashProgress, this, &FirmwareUpdater::handleFlashProgress);

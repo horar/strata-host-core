@@ -9,8 +9,8 @@
 
 namespace strata::platform::command {
 
-CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse, uint maxRetries) :
-    BasePlatformCommand(device, QStringLiteral("get_firmware_info"), CommandType::GetFirmwareInfo),
+CmdGetFirmwareInfo::CmdGetFirmwareInfo(const PlatformPtr& platform, bool requireResponse, uint maxRetries) :
+    BasePlatformCommand(platform, QStringLiteral("get_firmware_info"), CommandType::GetFirmwareInfo),
     requireResponse_(requireResponse), maxRetries_(maxRetries), retriesCount_(0)
 { }
 
@@ -29,9 +29,9 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc, CommandRe
         if (payload.HasMember(JSON_API_VERSION) &&
             (std::strcmp(payload[JSON_API_VERSION].GetString(), CSTR_API_2_0) == 0)
            ) {
-            setDeviceApiVersion(device::Device::ApiVersion::v2_0);
+            setDeviceApiVersion(Platform::ApiVersion::v2_0);
         } else {
-            setDeviceApiVersion(device::Device::ApiVersion::Unknown);
+            setDeviceApiVersion(Platform::ApiVersion::Unknown);
         }
 
         if (payload.HasMember(JSON_ACTIVE) &&
@@ -64,7 +64,7 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc, CommandRe
 CommandResult CmdGetFirmwareInfo::onTimeout() {
     if (retriesCount_ < maxRetries_) {
         ++retriesCount_;
-        qCInfo(logCategoryPlatformCommand) << device_ << "Going to retry to get firmware info.";
+        qCInfo(logCategoryPlatformCommand) << platform_ << "Going to retry to get firmware info.";
         return CommandResult::Retry;
     } else {
         if (requireResponse_) {

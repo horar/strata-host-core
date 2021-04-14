@@ -8,8 +8,8 @@
 
 namespace strata::platform::command {
 
-CmdStartBootloader::CmdStartBootloader(const device::DevicePtr& device) :
-    BasePlatformCommand(device, QStringLiteral("start_bootloader"), CommandType::StartBootloader)
+CmdStartBootloader::CmdStartBootloader(const PlatformPtr& platform) :
+    BasePlatformCommand(platform, QStringLiteral("start_bootloader"), CommandType::StartBootloader)
 { }
 
 QByteArray CmdStartBootloader::message() {
@@ -21,7 +21,7 @@ bool CmdStartBootloader::processNotification(rapidjson::Document& doc, CommandRe
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
             result = CommandResult::Done;
-            setDeviceApiVersion(device::Device::ApiVersion::Unknown);
+            setDeviceApiVersion(Platform::ApiVersion::Unknown);
         } else {
             result = CommandResult::Failure;
         }

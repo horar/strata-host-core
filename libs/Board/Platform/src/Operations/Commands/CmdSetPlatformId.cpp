@@ -11,9 +11,9 @@
 namespace strata::platform::command {
 
 CmdSetPlatformId::CmdSetPlatformId(
-        const device::DevicePtr& device,
+        const PlatformPtr& platform,
         const CmdSetPlatformIdData& data)
-    : BasePlatformCommand(device, QStringLiteral("set_platform_id"), CommandType::SetPlatformId),
+    : BasePlatformCommand(platform, QStringLiteral("set_platform_id"), CommandType::SetPlatformId),
       data_(data)
 {
 }
@@ -54,7 +54,7 @@ bool CmdSetPlatformId::processNotification(rapidjson::Document& doc, CommandResu
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
         status_ = operation::PLATFORM_ID_ALREADY_SET;
     } else {
-        qCCritical(logCategoryPlatformCommand) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryPlatformCommand) << platform_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

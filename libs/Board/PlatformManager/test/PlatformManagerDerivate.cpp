@@ -5,6 +5,8 @@
 using strata::PlatformManager;
 using strata::device::Device;
 using strata::device::DevicePtr;
+using strata::platform::Platform;
+using strata::platform::PlatformPtr;
 
 PlatformManagerDerivate::PlatformManagerDerivate() : PlatformManager()
 {
@@ -47,7 +49,7 @@ bool PlatformManagerDerivate::addNewMockDevice(const QByteArray& deviceId, const
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto removedDeviceId : removed) {
-            if (removeDevice(removedDeviceId)) {        // modifies openedDevices_ and reconnectTimers_
+            if (removePlatform(removedDeviceId)) {        // modifies openedDevices_ and reconnectTimers_
                 deleted.emplace_back(removedDeviceId);
             }
         }
@@ -106,7 +108,7 @@ void PlatformManagerDerivate::handleOperationFinished(strata::platform::operatio
     PlatformManager::handleOperationFinished(result, status, errStr);
 }
 
-void PlatformManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr)
+void PlatformManagerDerivate::handleDeviceError(Device::ErrorCode errCode, QString errStr)
 {
     PlatformManager::handleDeviceError(errCode, errStr);
 }
@@ -121,15 +123,16 @@ bool PlatformManagerDerivate::addMockPort(const QByteArray& deviceId, bool start
     const QString name = serialIdToName_.value(deviceId);
 
     DevicePtr device = std::make_shared<strata::device::MockDevice>(deviceId, name, true);
+    PlatformPtr platform = std::make_shared<Platform>(device);
 
-    if (openDevice(device) == false) {
+    if (openPlatform(platform) == false) {
         qWarning().nospace().noquote() << "Cannot open device: ID: " << deviceId << ", name: '" << name << "'";
         QFAIL_("Cannot open device");
         return false;
     }
     qInfo().nospace().noquote() << "Added new mock device: ID: " << deviceId << ", name: '" << name << "'";
     if (startOperations) {
-        startPlatformOperations(device);
+        startPlatformOperations(platform);
     }
     return true;
 }

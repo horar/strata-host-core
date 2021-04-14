@@ -13,7 +13,7 @@ This BoardController class is replacement for original classes BoardsController 
 Instead of two original classes is now used PlatformManager.
 
 Functions in this BoardController class are very similar as original ones from BoardsController class.
-BoardsController managed PlatformBoard objects (one PlatformBoard object for one device).
+BoardsController managed PlatformBoard objects (one PlatformBoard object for one platform).
 
 PlatformBoard class held information about board and also shared pointer to PlatformConnection object
 which managed communication with serial device. Properties which was held by PlatformBoard class are
@@ -47,11 +47,11 @@ public:
     bool sendMessage(const QByteArray& deviceId, const QByteArray& message);
 
     /**
-     * Gets device specified by device ID
+     * Gets platform specified by device ID
      * @param deviceId
-     * @return device or nullptr if such device with device ID is not available
+     * @return platform or nullptr if such platform with device ID is not available
      */
-    strata::device::DevicePtr getDevice(const QByteArray& deviceId) const;
+    strata::platform::PlatformPtr getPlatform(const QByteArray& deviceId) const;
 
     /**
      * Creates JSON with list of platforms
@@ -71,8 +71,8 @@ private slots:  // slots for signals from PlatformManager
 
 private:
     struct Board {
-        Board(const strata::device::DevicePtr& devPtr);
-        strata::device::DevicePtr device;
+        Board(const strata::platform::PlatformPtr& platform);
+        strata::platform::PlatformPtr platform_;
     };
 
     strata::PlatformManager platformManager_;

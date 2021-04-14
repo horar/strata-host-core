@@ -14,7 +14,7 @@ namespace strata::platform::operation {
 class Flash : public BasePlatformOperation {
 
 public:
-    Flash(const device::DevicePtr& device, int size, int chunks, const QString &md5, bool flashFirmware);
+    Flash(const PlatformPtr& platform, int size, int chunks, const QString &md5, bool flashFirmware);
     ~Flash() = default;
     void flashChunk(const QVector<quint8>& chunk, int chunkNumber);
 private:

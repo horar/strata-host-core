@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QTimer>
 
-#include <Device.h>
+#include <Platform.h>
 
 namespace strata::platform::command {
 
@@ -16,6 +16,8 @@ enum class CommandResult : int;
 
 namespace strata::platform::operation {
 
+Q_NAMESPACE
+
 enum class Type: int {
     Identify,
     StartBootloader,
@@ -25,7 +27,7 @@ enum class Type: int {
     StartApplication,
     SetPlatformId,
     SetAssistedPlatformId
-};
+}; Q_ENUM_NS(Type)
 
 enum class Result: int {
     Success,  // successfully done
@@ -34,7 +36,7 @@ enum class Result: int {
     Timeout,  // no response from device
     Failure,  // faulty response from device
     Error     // error during operation
-};
+}; Q_ENUM_NS(Result)
 
 class BasePlatformOperation : public QObject
 {
@@ -44,10 +46,10 @@ class BasePlatformOperation : public QObject
 protected:
     /*!
      * BasePlatformOperation constructor.
-     * \param device device which will be used by device operation
+     * \param platform platform which will be used by platform operation
      * \param type type of operation (value from OperationType enum)
      */
-    BasePlatformOperation(const device::DevicePtr& device, Type type);
+    BasePlatformOperation(const PlatformPtr& platform, Type type);
 
 public:
     /*!
@@ -84,7 +86,7 @@ public:
     virtual void cancelOperation() final;
 
     /*!
-     * Get ID of device used by device operation.
+     * Get ID of device used by platform operation.
      * \return device ID
      */
     virtual QByteArray deviceId() const final;
@@ -106,15 +108,21 @@ public:
 
 protected:
     /*!
-     * Check if device is in bootloader mode. Commands get_firmware_info
+     * Check if platform is in bootloader mode. Commands get_firmware_info
      * and request_platform_id must be called before calling this method.
-     * \return true if device is in bootloader mode, otherwise false
+     * \return true if platform is in bootloader mode, otherwise false
      */
     virtual bool bootloaderMode() final;
 
+    /*!
+     * Perform any post operation actions once operation finishes.
+     * \param result value from Result enum
+     */
+    virtual void performPostOperationActions(Result result);
+
 signals:
     /*!
-     * This signal is emitted when device operation finishes.
+     * This signal is emitted when platform operation finishes.
      * \param result value from Result enum
      * \param status specific status for operation
      * \param errorString error string (valid only if operation finishes with error)
@@ -150,7 +158,7 @@ protected:
     void finishOperation(Result result, const QString &errorString);
     void resume();
 
-    device::DevicePtr device_;
+    PlatformPtr platform_;
 
     // Every operation can have specific status when it finishes.
     int status_;

@@ -19,13 +19,13 @@ public:
 
     /*!
      * Identify operation constructor
-     * \param device device which will be used for operation
+     * \param platform platform which will be used for operation
      * \param requireFwInfoResponse true if response to 'get_firmware_info' command is required
      * \param maxFwInfoRetries max number of retries for 'get_firmware_info' command
      * \param delay number of milliseconds for waiting before sending first operation command
      * If maxFwInfoRetries is 2, 'get_firmware_info' command can be sent 3 times (1 regular + 2 retries).
      */
-    Identify(const device::DevicePtr& device,
+    Identify(const PlatformPtr& platform,
              bool requireFwInfoResponse,
              uint maxFwInfoRetries = 1,
              std::chrono::milliseconds delay = std::chrono::milliseconds(0));
@@ -40,6 +40,13 @@ public:
      * \return value from BoardMode enum
      */
     BoardMode boardMode();
+
+protected:
+    /*!
+     * Perform any post operation actions once operation finishes.
+     * \param result value from Result enum
+     */
+    virtual void performPostOperationActions(Result result) override;
 };
 
 }  // namespace

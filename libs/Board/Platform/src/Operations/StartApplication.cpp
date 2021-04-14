@@ -8,15 +8,15 @@ using command::CmdStartApplication;
 using command::CmdRequestPlatformId;
 using command::CmdGetFirmwareInfo;
 
-StartApplication::StartApplication(const device::DevicePtr& device) :
-    BasePlatformOperation(device, Type::StartApplication)
+StartApplication::StartApplication(const PlatformPtr& platform) :
+    BasePlatformOperation(platform, Type::StartApplication)
 {
     commandList_.reserve(3);
 
-    // BasePlatformOperation member device_ must be used as a parameter for commands!
-    commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES));
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+    // BasePlatformOperation member platform_ must be used as a parameter for commands!
+    commandList_.emplace_back(std::make_unique<CmdStartApplication>(platform_));
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(platform_, true, MAX_GET_FW_INFO_RETRIES));
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));
 
     initCommandList();
 }

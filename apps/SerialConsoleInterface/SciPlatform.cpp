@@ -36,24 +36,24 @@ QByteArray SciPlatform::deviceId()
     return deviceId_;
 }
 
-void SciPlatform::setDevice(strata::device::DevicePtr device)
+void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 {
-    if (device == nullptr) {
+    if (platform == nullptr) {
         if (status_ == PlatformStatus::Disconnected) {
-             qCCritical(logCategorySci) << "device is already disconnected";
+             qCCritical(logCategorySci) << "platform is already disconnected";
              return;
         }
 
-        device_->disconnect();
-        device_.reset();
+        platform_->disconnect();
+        platform_.reset();
         setStatus(PlatformStatus::Disconnected);
     } else {
-        device_ = device;
-        deviceId_ = device_->deviceId();
+        platform_ = platform;
+        deviceId_ = platform_->deviceId();
 
-        connect(device_.get(), &strata::device::Device::msgFromDevice, this, &SciPlatform::messageFromDeviceHandler);
-        connect(device_.get(), &strata::device::Device::messageSent, this, &SciPlatform::messageToDeviceHandler);
-        connect(device_.get(), &strata::device::Device::deviceError, this, &SciPlatform::deviceErrorHandler);
+        connect(platform_.get(), &strata::platform::Platform::messageReceived, this, &SciPlatform::messageFromDeviceHandler);
+        connect(platform_.get(), &strata::platform::Platform::messageSent, this, &SciPlatform::messageToDeviceHandler);
+        connect(platform_.get(), &strata::platform::Platform::deviceError, this, &SciPlatform::deviceErrorHandler);
 
         setStatus(PlatformStatus::Connected);
     }
@@ -159,13 +159,13 @@ void SciPlatform::setDeviceName(const QString &deviceName)
 
 void SciPlatform::resetPropertiesFromDevice()
 {
-    if (device_ == nullptr) {
+    if (platform_ == nullptr) {
         return;
     }
 
-    QString verboseName = device_->name();
-    QString appVersion = device_->applicationVer();
-    QString bootloaderVersion = device_->bootloaderVer();
+    QString verboseName = platform_->name();
+    QString appVersion = platform_->applicationVer();
+    QString bootloaderVersion = platform_->bootloaderVer();
 
     if (verboseName.isEmpty()) {
         if (appVersion.isEmpty() == false) {
@@ -180,7 +180,7 @@ void SciPlatform::resetPropertiesFromDevice()
     setVerboseName(verboseName);
     setAppVersion(appVersion);
     setBootloaderVersion(bootloaderVersion);
-    setDeviceName(device_->deviceName());
+    setDeviceName(platform_->deviceName());
 }
 
 QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
@@ -210,7 +210,7 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
     //compact format as line break is end of input for serial library
     QString compactMsg = SGJsonFormatter::minifyJson(message);
 
-    bool result = device_->sendMessage(compactMsg.toUtf8());
+    bool result = platform_->sendMessage(compactMsg.toUtf8());
     if (result) {
         commandHistoryModel_->add(compactMsg, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
@@ -235,7 +235,7 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
         return false;
     }
 
-    flasherConnector_ = new strata::FlasherConnector(device_, filePath, this);
+    flasherConnector_ = new strata::FlasherConnector(platform_, filePath, this);
 
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &SciPlatform::flasherProgramProgressHandler);
     connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);

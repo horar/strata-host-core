@@ -28,7 +28,7 @@ Platform::Platform(const device::DevicePtr& device) :
         throw std::invalid_argument("Missing mandatory device pointer in platform");
     }
 
-    connect(device_.get(), &device::Device::msgFromDevice, this, &Platform::messageReceivedHandler);
+    connect(device_.get(), &device::Device::messageReceived, this, &Platform::messageReceivedHandler);
     connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler);
     connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
 
@@ -95,11 +95,11 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg
     emit deviceError(errCode, msg);
 }
 
-void Platform::open(const int retryMsec) {
+bool Platform::open(const int retryMsec) {
     retryMsec_ = retryMsec;
     if (reconnectTimer_.isActive())
         reconnectTimer_.stop();
-    openDevice();
+    return openDevice();
 }
 
 void Platform::close(const int waitMsec, const int retryMsec) {
@@ -110,8 +110,8 @@ void Platform::close(const int waitMsec, const int retryMsec) {
 }
 
 // public method
-void Platform::sendMessage(const QByteArray msg) {
-    sendMessage(msg, 0);
+bool Platform::sendMessage(const QByteArray msg) {
+    return sendMessage(msg, 0);
 }
 
 // private method
@@ -124,9 +124,8 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
         }
     }
     if (canWrite) {
-        // Slot connected to below emitted signal emits other signals
-        // and it should'n be locked. Also if we are here it is not necessary
-        // to lock writting because all writting happens in one thread.
+        // Slot connected to below emitted signal may emit other signals
+        // and therefore it shouldn't be locked to avoid a deadlock.
         device_->sendMessage(msg);
         return true;
     } else {
@@ -290,9 +289,10 @@ void Platform::identifyFinished(bool isRecognized) {
     emit recognized(isRecognized);
 }
 
-void Platform::openDevice() {
+bool Platform::openDevice() {
     if (device_->open() == true) {
         emit opened();
+        return true;
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
         qCWarning(logCategoryPlatform) << this << errMsg;
@@ -300,6 +300,7 @@ void Platform::openDevice() {
         if (retryMsec_ != 0) {
             reconnectTimer_.start(retryMsec_);
         }
+        return false;
     }
 }
 

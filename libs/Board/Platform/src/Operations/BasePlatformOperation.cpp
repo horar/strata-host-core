@@ -11,34 +11,34 @@ namespace strata::platform::operation {
 using command::BasePlatformCommand;
 using command::CommandResult;
 
-BasePlatformOperation::BasePlatformOperation(const device::DevicePtr& device, Type type):
+BasePlatformOperation::BasePlatformOperation(const PlatformPtr& platform, Type type):
     type_(type), started_(false), succeeded_(false),
-    finished_(false), device_(device), status_(DEFAULT_STATUS)
+    finished_(false), platform_(platform), status_(DEFAULT_STATUS)
 {
     connect(this, &BasePlatformOperation::sendCommand, this, &BasePlatformOperation::handleSendCommand, Qt::QueuedConnection);
 
-    //qCDebug(logCategoryPlatformOperation) << device_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(logCategoryPlatformOperation) << platform_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
 }
 
 BasePlatformOperation::~BasePlatformOperation()
 {
-    device_->unlockDevice(reinterpret_cast<quintptr>(this));
+    platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
-    //qCDebug(logCategoryPlatformOperation) << device_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(logCategoryPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
 }
 
 void BasePlatformOperation::run()
 {
     if (started_) {
         QString errStr(QStringLiteral("The operation has already run."));
-        qCWarning(logCategoryPlatformOperation) << device_ << errStr;
+        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
         finishOperation(Result::Error, errStr);
         return;
     }
 
-    if (device_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
+    if (platform_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
         QString errStr(QStringLiteral("Cannot get access to device (another operation is running)."));
-        qCWarning(logCategoryPlatformOperation) << device_ << errStr;
+        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
         finishOperation(Result::Error, errStr);
         return;
     }
@@ -66,7 +66,7 @@ bool BasePlatformOperation::isFinished() const
 
 void BasePlatformOperation::cancelOperation()
 {
-    qCDebug(logCategoryPlatformOperation) << device_ << "Cancelling currently running operation.";
+    qCDebug(logCategoryPlatformOperation) << platform_ << "Cancelling currently running operation.";
 
     if (currentCommand_ != commandList_.end()) {
         (*currentCommand_)->cancel();
@@ -77,7 +77,7 @@ void BasePlatformOperation::cancelOperation()
 
 QByteArray BasePlatformOperation::deviceId() const
 {
-    return device_->deviceId();
+    return platform_->deviceId();
 }
 
 Type BasePlatformOperation::type() const
@@ -97,7 +97,11 @@ void BasePlatformOperation::setResponseTimeouts(std::chrono::milliseconds respon
 
 bool BasePlatformOperation::bootloaderMode()
 {
-    return device_->bootloaderMode();
+    return platform_->bootloaderMode();
+}
+
+void BasePlatformOperation::performPostOperationActions(Result result) {
+    Q_UNUSED(result)
 }
 
 void BasePlatformOperation::handleSendCommand()
@@ -127,7 +131,7 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
             if (result == CommandResult::Done) {
                 emit sendCommand(QPrivateSignal());  // send (next) command
             } else {
-                // Do not send next command, it will be sent by calling BaseDeviceOperation::resume() method.
+                // Do not send next command, it will be sent by calling BasePlatformOperation::resume() method.
                 emit partialStatus(status_);
             }
         }
@@ -135,7 +139,7 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
     case CommandResult::RepeatAndWait :
         // Operation is not finished yet, so emit only value of status and do not call function finishOperation().
         // Do not increment currentCommand_, the same command will be repeated.
-        // Following (repeated) command will be sent by calling BaseDeviceOperation::resume() method.
+        // Following (repeated) command will be sent by calling BasePlatformOperation::resume() method.
         emit partialStatus(status_);
         break;
     case CommandResult::Retry :
@@ -186,6 +190,8 @@ void BasePlatformOperation::finishOperation(Result result, const QString &errorS
         succeeded_ = true;
     }
 
+    performPostOperationActions(result);
+
     emit finished(result, status_, errorString);
 }
 
@@ -200,7 +206,7 @@ void BasePlatformOperation::reset()
 {
     commandList_.clear();
     currentCommand_ = commandList_.end();
-    device_->unlockDevice(reinterpret_cast<quintptr>(this));
+    platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 }
 
 }  // namespace

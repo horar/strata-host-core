@@ -10,8 +10,8 @@
 
 namespace strata::platform::command {
 
-CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const device::DevicePtr& device)
-    : BasePlatformCommand(device, QStringLiteral("set_assisted_platform_id"), CommandType::SetAssistedPlatformId)
+CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const PlatformPtr& platform)
+    : BasePlatformCommand(platform, QStringLiteral("set_assisted_platform_id"), CommandType::SetAssistedPlatformId)
 {
 }
 
@@ -81,7 +81,7 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document& doc, Com
     } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
         status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
-        qCCritical(logCategoryPlatformCommand) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryPlatformCommand) << platform_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

@@ -68,7 +68,7 @@ public:
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false
      */
-    bool sendMessage(const QByteArray msg) override;
+    virtual bool sendMessage(const QByteArray msg) override;
 
 signals:
     // signals only for internal use:
@@ -82,10 +82,6 @@ private slots:
 
 private:
     void initSerialDevice();
-
-    bool sendMessage(const QByteArray msg, quintptr lockId) override;
-
-    bool writeData(const QByteArray data, quintptr lockId);
     ErrorCode translateQSerialPortError(QSerialPort::SerialPortError error);
 
     SerialPortPtr serialPort_;

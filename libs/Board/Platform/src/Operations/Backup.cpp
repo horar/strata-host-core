@@ -10,17 +10,17 @@ using command::CmdStartBackupFirmware;
 using command::CmdBackupFirmware;
 using command::CommandType;
 
-Backup::Backup(const device::DevicePtr& device) :
-    BasePlatformOperation(device, Type::BackupFirmware)
+Backup::Backup(const PlatformPtr& platform) :
+    BasePlatformOperation(platform, Type::BackupFirmware)
 {
     commandList_.reserve(2);
 
-    // BaseDeviceOperation member device_ must be used as a parameter for commands!
+    // BasePlatformOperation member platform_ must be used as a parameter for commands!
 
-    std::unique_ptr<CmdStartBackupFirmware> cmdStartBackupFirmware = std::make_unique<CmdStartBackupFirmware>(device_);
+    std::unique_ptr<CmdStartBackupFirmware> cmdStartBackupFirmware = std::make_unique<CmdStartBackupFirmware>(platform_);
     cmdStartBackup_ = cmdStartBackupFirmware.get();
 
-    std::unique_ptr<CmdBackupFirmware> cmdBackupFirmware = std::make_unique<CmdBackupFirmware>(device_, chunk_, 0);
+    std::unique_ptr<CmdBackupFirmware> cmdBackupFirmware = std::make_unique<CmdBackupFirmware>(platform_, chunk_, 0);
     cmdBackup_ = cmdBackupFirmware.get();
 
     commandList_.emplace_back(std::move(cmdStartBackupFirmware));
@@ -38,7 +38,7 @@ void Backup::backupNextChunk()
             || (*currentCommand_)->type() != CommandType::BackupFirmware)
     {
         QString errMsg(QStringLiteral("Cannot backup chunk, bad state of backup operation."));
-        qCWarning(logCategoryPlatformOperation) << device_ << errMsg;
+        qCWarning(logCategoryPlatformOperation) << platform_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }

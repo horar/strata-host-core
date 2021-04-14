@@ -41,7 +41,7 @@ public:
     Q_ENUM(PlatformStatus)
 
     QByteArray deviceId();
-    void setDevice(strata::device::DevicePtr device);
+    void setPlatform(const strata::platform::PlatformPtr& platform);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
     QString appVersion();
@@ -103,7 +103,7 @@ private slots:
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
 
 private:
-    strata::device::DevicePtr device_;
+    strata::platform::PlatformPtr platform_;
     QByteArray deviceId_;
     QString verboseName_;
     QString appVersion_;

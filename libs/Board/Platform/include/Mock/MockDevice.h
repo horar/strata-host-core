@@ -76,9 +76,6 @@ public:
     bool mockSetVersion(MockVersion version);
 
 private:
-    virtual bool sendMessage(const QByteArray msg, quintptr lockId) override;
-
-private:
     bool opened_ = false;
     bool autoResponse_ = true;
     bool saveMessages_;

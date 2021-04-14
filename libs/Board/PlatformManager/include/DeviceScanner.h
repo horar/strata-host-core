@@ -3,7 +3,6 @@
 #include <QObject>
 #include <QByteArray>
 
-#include <Device.h>
 #include <Platform.h>
 
 namespace strata::device::scanner {
@@ -45,8 +44,6 @@ public:
 signals:
     /**
      * Emitted when new device was detected.
-     * @note this signal only works with Qt::DirectConnection, not with Qt::QueuedConnection
-     * @note in such case change DevicePtr to QSharedPointer or use Q_DECLARE_SMART_POINTER_METATYPE
      * @param platform pointer
      */
     void deviceDetected(platform::PlatformPtr platform);

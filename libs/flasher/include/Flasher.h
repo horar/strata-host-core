@@ -9,7 +9,7 @@
 #include <vector>
 #include <chrono>
 
-#include <Device.h>
+#include <Platform.h>
 
 namespace strata::platform::operation {
     class BasePlatformOperation;
@@ -53,27 +53,27 @@ class Flasher : public QObject
 
         /*!
          * Flasher constructor.
-         * \param device device which will be used by Flasher
+         * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          */
 
-        Flasher(const device::DevicePtr& device, const QString& fileName);
+        Flasher(const platform::PlatformPtr& platform, const QString& fileName);
         /*!
          * Flasher constructor.
-         * \param device device which will be used by Flasher
+         * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          * \param fileMD5 MD5 checksum of file which will be flashed
          */
-        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
+        Flasher(const platform::PlatformPtr& platform, const QString& fileName, const QString& fileMD5);
 
         /*!
          * Flasher constructor.
-         * \param device device which will be used by Flasher
+         * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          * \param fileMD5 MD5 checksum of file which will be flashed
-         * \param fwClassId device firmware class id (UUID v4)
+         * \param fwClassId platform firmware class id (UUID v4)
          */
-        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5, const QString& fwClassId);
+        Flasher(const platform::PlatformPtr& platform, const QString& fileName, const QString& fileMD5, const QString& fwClassId);
 
         /*!
          * Flasher destructor.
@@ -145,7 +145,7 @@ class Flasher : public QObject
         void flashBootloaderProgress(int chunk, int total);
 
         /*!
-         * This signal is emitted when device properties are changed (board switched to/from bootloader, fwClassId changed).
+         * This signal is emitted when platform properties are changed (board switched to/from bootloader, fwClassId changed).
          */
         void devicePropertiesChanged();
 
@@ -216,7 +216,7 @@ class Flasher : public QObject
         std::vector<FlasherOperation> operationList_;
         std::vector<FlasherOperation>::iterator currentOperation_;
 
-        device::DevicePtr device_;
+        platform::PlatformPtr platform_;
 
         QFile binaryFile_;
         QString fileMD5_;

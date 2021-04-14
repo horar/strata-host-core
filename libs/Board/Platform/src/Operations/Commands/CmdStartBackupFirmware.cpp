@@ -11,8 +11,8 @@
 
 namespace strata::platform::command {
 
-CmdStartBackupFirmware::CmdStartBackupFirmware(const device::DevicePtr& device) :
-    BasePlatformCommand(device, QStringLiteral("start_backup_firmware"), CommandType::StartBackupFirmware)
+CmdStartBackupFirmware::CmdStartBackupFirmware(const PlatformPtr& platform) :
+    BasePlatformCommand(platform, QStringLiteral("start_backup_firmware"), CommandType::StartBackupFirmware)
 { }
 
 QByteArray CmdStartBackupFirmware::message() {
@@ -25,11 +25,11 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc, Comma
         if (payload.HasMember(JSON_STATUS)) {
             const char* jsonStatus = payload[JSON_STATUS].GetString();
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryPlatformCommand) << device_ << "Nothing to backup, board has no firmware.";
+                qCWarning(logCategoryPlatformCommand) << platform_ << "Nothing to backup, board has no firmware.";
                 result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             } else {
-                qCWarning(logCategoryPlatformCommand) << device_ << "Bad notification status: '" << jsonStatus << "'.";
+                qCWarning(logCategoryPlatformCommand) << platform_ << "Bad notification status: '" << jsonStatus << "'.";
                 result = CommandResult::Failure;
             }
         } else {
@@ -45,7 +45,7 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc, Comma
                 result = CommandResult::DoneAndWait;
                 status_ = operation::BACKUP_STARTED;
             } else {
-                qCWarning(logCategoryPlatformCommand) << device_ << "Wrong format of notification.";
+                qCWarning(logCategoryPlatformCommand) << platform_ << "Wrong format of notification.";
                 result = CommandResult::Failure;
             }
         }

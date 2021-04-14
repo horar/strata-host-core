@@ -9,7 +9,7 @@ namespace strata::platform::command {
 
 class CmdBackupFirmware : public BasePlatformCommand {
 public:
-    CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int totalChunks);
+    CmdBackupFirmware(const PlatformPtr& platform, QVector<quint8>& chunk, int totalChunks);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
     bool logSendMessage() const override;

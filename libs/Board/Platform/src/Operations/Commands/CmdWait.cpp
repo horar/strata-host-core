@@ -4,10 +4,10 @@
 
 namespace strata::platform::command {
 
-CmdWait::CmdWait(const device::DevicePtr& device,
+CmdWait::CmdWait(const PlatformPtr& platform,
                  std::chrono::milliseconds waitTime,
                  const QString& description)
-    : BasePlatformCommand(device, QStringLiteral("wait"), CommandType::Wait),
+    : BasePlatformCommand(platform, QStringLiteral("wait"), CommandType::Wait),
       waitTime_(waitTime),
       description_(description)
 { }
@@ -16,7 +16,7 @@ void CmdWait::sendCommand(quintptr lockId)
 {
     Q_UNUSED(lockId)
 
-    qCInfo(logCategoryPlatformCommand) << device_ << description_
+    qCInfo(logCategoryPlatformCommand) << platform_ << description_
         << ". Next command will be sent after " << waitTime_.count() << " milliseconds.";
     responseTimer_.setInterval(waitTime_);
     responseTimer_.start();

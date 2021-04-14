@@ -7,8 +7,8 @@
 
 namespace strata::platform::command {
 
-CmdRequestPlatformId::CmdRequestPlatformId(const device::DevicePtr& device) :
-    BasePlatformCommand(device, QStringLiteral("request_platform_id"), CommandType::RequestPlatformid)
+CmdRequestPlatformId::CmdRequestPlatformId(const PlatformPtr& platform) :
+    BasePlatformCommand(platform, QStringLiteral("request_platform_id"), CommandType::RequestPlatformid)
 { }
 
 QByteArray CmdRequestPlatformId::message() {
@@ -21,14 +21,14 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc, Command
         const char *name = payload[JSON_NAME].GetString();
         const char *platformId = nullptr;
         const char *classId = nullptr;
-        device::Device::ControllerType controllerType = device::Device::ControllerType::Embedded;
+        Platform::ControllerType controllerType = Platform::ControllerType::Embedded;
         if (payload.HasMember(JSON_PLATFORM_ID)) {
             platformId = payload[JSON_PLATFORM_ID].GetString();
             classId = payload[JSON_CLASS_ID].GetString();
         }
         if (payload.HasMember(JSON_CONTROLLER_TYPE)) {
             if (payload[JSON_CONTROLLER_TYPE].GetInt() == CONTROLLER_TYPE_ASSISTED) {
-                controllerType = device::Device::ControllerType::Assisted;
+                controllerType = Platform::ControllerType::Assisted;
             }
         }
         setDeviceProperties(name, platformId, classId, controllerType);
@@ -38,13 +38,13 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc, Command
                                         payload[JSON_FW_CLASS_ID].GetString());
         }
 
-        device::Device::ApiVersion apiVersion = device_->apiVersion();
-        if (apiVersion == device::Device::ApiVersion::Unknown || apiVersion == device::Device::ApiVersion::v1_0) {
+        Platform::ApiVersion apiVersion = platform_->apiVersion();
+        if (apiVersion == Platform::ApiVersion::Unknown || apiVersion == Platform::ApiVersion::v1_0) {
             if (std::strcmp(name, CSTR_NAME_BOOTLOADER) == 0) {
                 setDeviceBootloaderMode(true);
             }
             if (payload.HasMember(JSON_PLATF_ID_VER)) {
-                setDeviceApiVersion(device::Device::ApiVersion::v1_0);
+                setDeviceApiVersion(Platform::ApiVersion::v1_0);
             }
         }
 

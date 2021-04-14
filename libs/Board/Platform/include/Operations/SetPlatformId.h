@@ -9,7 +9,7 @@ class SetPlatformId : public BasePlatformOperation {
 
 public:
     SetPlatformId(
-            const device::DevicePtr& device,
+            const PlatformPtr& platform,
             const command::CmdSetPlatformIdData &data);
 
     ~SetPlatformId() = default;

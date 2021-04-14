@@ -483,11 +483,11 @@ void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recogniz
 {
     Q_UNUSED(recognized)
 
-    strata::device::DevicePtr device = platformManager_.device(deviceId);
+    strata::platform::PlatformPtr platform = platformManager_.platform(deviceId);
 
-    if (platformList_.indexOf(device) < 0) {
-        //new device connected
-        platformList_.append(device);
+    if (platformList_.indexOf(platform) < 0) {
+        //new platform connected
+        platformList_.append(platform);
 
         emit deviceCountChanged();
     } else {

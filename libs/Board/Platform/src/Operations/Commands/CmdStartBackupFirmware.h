@@ -7,7 +7,7 @@ namespace strata::platform::command {
 
 class CmdStartBackupFirmware : public BasePlatformCommand {
 public:
-    explicit CmdStartBackupFirmware(const device::DevicePtr& device);
+    explicit CmdStartBackupFirmware(const PlatformPtr& platform);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
     int totalChunks() const;

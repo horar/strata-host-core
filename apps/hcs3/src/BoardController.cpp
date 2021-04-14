@@ -9,8 +9,8 @@
 #include "JsonStrings.h"
 
 using strata::PlatformManager;
-using strata::device::Device;
-using strata::device::DevicePtr;
+using strata::platform::Platform;
+using strata::platform::PlatformPtr;
 
 BoardController::BoardController() {
     connect(&platformManager_, &PlatformManager::boardInfoChanged, this, &BoardController::newConnection);
@@ -28,26 +28,26 @@ bool BoardController::sendMessage(const QByteArray& deviceId, const QByteArray& 
         return false;
     }
     qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board" << deviceId;
-    return it.value().device->sendMessage(message);
+    return it.value().platform_->sendMessage(message);
 }
 
-DevicePtr BoardController::getDevice(const QByteArray& deviceId) const {
+PlatformPtr BoardController::getPlatform(const QByteArray& deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
-        return it.value().device;
+        return it.value().platform_;
     }
     return nullptr;
 }
 
 void BoardController::newConnection(const QByteArray& deviceId, bool recognized) {
     if (recognized) {
-        DevicePtr device = platformManager_.device(deviceId);
-        if (device == nullptr) {
+        PlatformPtr platform = platformManager_.platform(deviceId);
+        if (platform == nullptr) {
             return;
         }
 
-        connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
-        boards_.insert(deviceId, Board(device));
+        connect(platform.get(), &Platform::messageReceived, this, &BoardController::messageFromBoard);
+        boards_.insert(deviceId, Board(platform));
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board" << deviceId;
 
@@ -79,12 +79,12 @@ void BoardController::closeConnection(const QByteArray& deviceId)
 
 void BoardController::messageFromBoard(QString message)
 {
-    Device *device = qobject_cast<Device*>(QObject::sender());
-    if (device == nullptr) {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
         return;
     }
 
-    const QByteArray deviceId = device->deviceId();
+    const QByteArray deviceId = platform->deviceId();
     QJsonObject wrapper {
         { JSON_MESSAGE, message },
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
@@ -96,7 +96,7 @@ void BoardController::messageFromBoard(QString message)
     QJsonDocument wrapperDoc(notification);
     QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
 
-    QString platformId = device->platformId();
+    QString platformId = platform->platformId();
 
     qCDebug(logCategoryHcsBoard).noquote() << "New board message from device" << deviceId;
 
@@ -106,19 +106,19 @@ void BoardController::messageFromBoard(QString message)
 QString BoardController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
-        Device::ControllerType controllerType = it.value().device->controllerType();
+        Platform::ControllerType controllerType = it.value().platform_->controllerType();
         QJsonObject item {
-            { JSON_DEVICE_ID, QLatin1String(it.value().device->deviceId()) },
+            { JSON_DEVICE_ID, QLatin1String(it.value().platform_->deviceId()) },
             { JSON_CONTROLLER_TYPE, static_cast<int>(controllerType) },
-            { JSON_FW_VERSION, it.value().device->applicationVer() },
-            { JSON_BL_VERSION, it.value().device->bootloaderVer() }
+            { JSON_FW_VERSION, it.value().platform_->applicationVer() },
+            { JSON_BL_VERSION, it.value().platform_->bootloaderVer() }
         };
-        if (it.value().device->hasClassId()) {
-            item.insert(JSON_CLASS_ID, it.value().device->classId());
+        if (it.value().platform_->hasClassId()) {
+            item.insert(JSON_CLASS_ID, it.value().platform_->classId());
         }
-        if (controllerType == Device::ControllerType::Assisted) {
-            item.insert(JSON_CONTROLLER_CLASS_ID, it.value().device->controllerClassId());
-            item.insert(JSON_FW_CLASS_ID, it.value().device->firmwareClassId());
+        if (controllerType == Platform::ControllerType::Assisted) {
+            item.insert(JSON_CONTROLLER_CLASS_ID, it.value().platform_->controllerClassId());
+            item.insert(JSON_FW_CLASS_ID, it.value().platform_->firmwareClassId());
         }
         arr.append(item);
     }
@@ -134,4 +134,4 @@ QString BoardController::createPlatformsList() {
     return doc.toJson(QJsonDocument::Compact);
 }
 
-BoardController::Board::Board(const DevicePtr& devPtr) : device(devPtr) { }
+BoardController::Board::Board(const PlatformPtr& platform) : platform_(platform) { }

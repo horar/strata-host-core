@@ -14,7 +14,7 @@ namespace strata::platform::operation {
 class Backup : public BasePlatformOperation {
 
 public:
-    explicit Backup(const device::DevicePtr& device);
+    explicit Backup(const PlatformPtr& platform);
     ~Backup() = default;
     int totalChunks() const;
     void backupNextChunk();
