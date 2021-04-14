@@ -13,6 +13,7 @@ Item {
     property string lastSelectedFirmware
     property bool commandsCondensedAtStartup: defaultcommandsCondensedAtStartup
     property bool backupFirmware: defaultBackupFirmware
+    property int maxInputLines: 500
 
     readonly property int defaultMaxCommandsInScrollback: 5000
     readonly property bool defaultCommandsInScrollbackUnlimited: false
