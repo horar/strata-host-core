@@ -17,7 +17,7 @@ pipeline {
                 script {
                     def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
                     def internalRepoName = "strata-host-core-internal"
-                    sh "git clone ${internalRepoUrl} '${env.workspace}/${internalRepoName}"
+                    sh "git clone ${internalRepoUrl} '${env.workspace}/${internalRepoName}'"
                 }
             }
         }
