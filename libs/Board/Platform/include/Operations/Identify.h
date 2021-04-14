@@ -40,11 +40,12 @@ public:
      * \return value from BoardMode enum
      */
     BoardMode boardMode();
+
 protected:
     /*!
-     * Perform any post operation commands once operation finishes.
+     * Perform any post operation actions once operation finishes.
      */
-    virtual void performPostOperationCommands(bool succeeded) override;
+    virtual void performPostOperationActions(bool succeeded) override;
 };
 
 }  // namespace

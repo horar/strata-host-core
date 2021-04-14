@@ -40,7 +40,7 @@ Identify::BoardMode Identify::boardMode()
     return BoardMode::Unknown;
 }
 
-void Identify::performPostOperationCommands(bool succeeded) {
+void Identify::performPostOperationActions(bool succeeded) {
     platform_->identifyFinished(succeeded);
 }
 

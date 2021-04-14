@@ -115,9 +115,9 @@ protected:
     virtual bool bootloaderMode() final;
 
     /*!
-     * Perform any post operation commands once operation finishes.
+     * Perform any post operation actions once operation finishes.
      */
-    virtual void performPostOperationCommands(bool succeeded);
+    virtual void performPostOperationActions(bool succeeded);
 
 signals:
     /*!
