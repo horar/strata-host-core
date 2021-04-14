@@ -13,6 +13,8 @@ TextField {
     property bool isValidAffectsBackground: false
     property alias leftIconColor: leftIconItem.iconColor
     property alias leftIconSource: leftIconItem.source
+    property alias rightIconSource: rightIconItem.source
+    property alias rightIconColor: rightIconItem.iconColor
     property bool darkMode: false
     property bool showCursorPosition: false
     property bool showClearButton: false
@@ -41,6 +43,8 @@ TextField {
     /*private*/
     property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
                                  || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
+                                 || (clearButtonLoader !== null && clearButtonLoader.status === Loader.Ready)
+                                 || rightIconItem.source
 
     property bool revealPassword: false
 
@@ -192,6 +196,14 @@ TextField {
                 id: revelPasswordLoader
                 anchors.verticalCenter: parent.verticalCenter
                 sourceComponent: passwordMode ? revealPasswordComponent : undefined
+            }
+
+            SGWidgets.SGIcon {
+                id: rightIconItem
+                anchors.verticalCenter: parent.verticalCenter
+                width: leftIconItem.width
+                height: leftIconItem.height
+                iconColor: "darkgray"
             }
         }
     }

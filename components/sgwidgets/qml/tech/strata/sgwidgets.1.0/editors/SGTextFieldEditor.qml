@@ -14,6 +14,7 @@ SGWidgets.SGBaseEditor {
     property bool showCursorPosition: false
     property bool passwordMode: false
     property string textFieldLeftIconSource
+    property string textFieldRightIconSource
     property bool textFieldBusyIndicatorRunning: false
     property bool textFieldSuggestionCloseWithArrowKey: false
     property bool contextMenuEnabled: false
@@ -33,6 +34,7 @@ SGWidgets.SGBaseEditor {
         showCursorPosition: root.showCursorPosition
         passwordMode: root.passwordMode
         leftIconSource: root.textFieldLeftIconSource
+        rightIconSource: root.textFieldRightIconSource
         busyIndicatorRunning: root.textFieldBusyIndicatorRunning
         suggestionCloseWithArrowKey: root.textFieldSuggestionCloseWithArrowKey
 
