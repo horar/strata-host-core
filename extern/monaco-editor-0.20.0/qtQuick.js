@@ -801,7 +801,7 @@ function registerQmlAsLanguage() {
                 prevId = prevId.split("//")[0]
             }
             var getIdType = model.findPreviousMatch("{", { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn })
-            position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
+            position = { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn }
             var content = model.getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(prevId, position, type)
@@ -937,8 +937,8 @@ function registerQmlAsLanguage() {
     editor.getModel().onDidChangeContent((event) => {
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
-        if (getId.includes("id:")) {
-            var word = getId.replace("\t", "").split(":")[1].trim()
+        if (getLine.includes("id:")) {
+            var word = getLine.replace("\t", "").split(":")[1].trim()
             if(word.includes("//")){
                 word = word.split("//")[0]
             }
@@ -953,7 +953,7 @@ function registerQmlAsLanguage() {
                         var word = getLine.replace("\t", "").split(" ")[2].split(":")[0].trim()
                         if (word !== undefined || word !== "") {
                             var getPropertyType = editor.getModel().findPreviousMatch("{", position, false, false)
-                            var content = editor.getModel().getLineContent({ lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn })
+                            var content = editor.getModel().getLineContent(getPropertyType.range.startLineNumber)
                             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
                             addCustomProperties(event.changes[0].range.startLineNumber, type, word)
                         }
