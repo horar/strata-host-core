@@ -49,6 +49,13 @@ public:
     bool mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages);
 
     /**
+     * Will assign platform to an existing mock device and emit detected signal
+     * @param mockDevice mock device
+     * @return true if device did not existed and was assigned platform, otherwise false
+     */
+    bool mockDeviceDetected(DevicePtr mockDevice);
+
+    /**
      * Will emit lost signal for previously detected device
      * @param deviceId device ID
      * @return true if device existed and was removed, otherwise false
