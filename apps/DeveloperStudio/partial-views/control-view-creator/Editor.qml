@@ -376,6 +376,7 @@ Item {
                                     case "html":
                                     case "txt":
                                     case "json":
+                                    case "ts":
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
                                         return "./Editor/UnsupportedFileType.qml"
