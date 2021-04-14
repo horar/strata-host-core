@@ -21,7 +21,7 @@ pipeline {
                     git changelog: false,
                         poll: false,
                         credentialsId: 'BB-access-token',
-                        url: internalRepoUrl,
+                        url: "${internalRepoUrl}"
                 }
             }
         }
