@@ -1,6 +1,7 @@
 #include "LogModel.h"
 #include "FileModel.h"
 
+#include <QCommandLineParser>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QSettings>
@@ -66,12 +67,22 @@ int main(int argc, char *argv[]) {
     app.setWindowIcon(QIcon(":/images/lv-logo.png"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
+
+    QCommandLineParser parser;
+    parser.setApplicationDescription(
+        QStringLiteral("Log Viewer \n\n"
+                       "Tool, useful for loading, parsing and filtering log files."));
+    parser.addVersionOption();
+    parser.addHelpOption();
+    parser.process(app);
+
     qCInfo(logCategoryLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QQmlApplicationEngine engine;
 
     qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
     qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
+
     loadResources();
     addImportPaths(&engine);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

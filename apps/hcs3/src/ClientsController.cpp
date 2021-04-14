@@ -82,7 +82,6 @@ void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int
             break;
         }
 
-        msg.msg_type = PlatformMessage::eMsgClientMessage;
         msg.from_client = QByteArray::fromStdString(client_connector_->getDealerID());
         msg.message = QByteArray::fromStdString(read_message);
         msg.msg_document = nullptr;
