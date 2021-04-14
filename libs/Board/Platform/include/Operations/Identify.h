@@ -44,8 +44,9 @@ public:
 protected:
     /*!
      * Perform any post operation actions once operation finishes.
+     * \param result value from Result enum
      */
-    virtual void performPostOperationActions(bool succeeded) override;
+    virtual void performPostOperationActions(Result result) override;
 };
 
 }  // namespace

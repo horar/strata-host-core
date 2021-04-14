@@ -40,8 +40,12 @@ Identify::BoardMode Identify::boardMode()
     return BoardMode::Unknown;
 }
 
-void Identify::performPostOperationActions(bool succeeded) {
-    platform_->identifyFinished(succeeded);
+void Identify::performPostOperationActions(Result result) {
+    // If identify operation is cancelled, another identify operation will be started soon.
+    // So there is no need for emitting recognized signal.
+    if (result != Result::Cancel) {
+        platform_->identifyFinished(result == Result::Success);
+    }
 }
 
 }  // namespace

@@ -100,8 +100,8 @@ bool BasePlatformOperation::bootloaderMode()
     return platform_->bootloaderMode();
 }
 
-void BasePlatformOperation::performPostOperationActions(bool succeeded) {
-    Q_UNUSED(succeeded)
+void BasePlatformOperation::performPostOperationActions(Result result) {
+    Q_UNUSED(result)
 }
 
 void BasePlatformOperation::handleSendCommand()
@@ -190,7 +190,8 @@ void BasePlatformOperation::finishOperation(Result result, const QString &errorS
         succeeded_ = true;
     }
 
-    performPostOperationActions(succeeded_);
+    performPostOperationActions(result);
+
     emit finished(result, status_, errorString);
 }
 
