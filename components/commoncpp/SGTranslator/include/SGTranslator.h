@@ -18,11 +18,6 @@ public:
 
     Q_INVOKABLE void loadLanguageFile(QString languageFileName = "");
 
-protected:
-    void componentComplete();
-
 private:
-    QCoreApplication* mApp = QCoreApplication::instance();
-    QQmlEngine* mEngine = nullptr;
-    QTranslator mTranslator;
+    QTranslator translator_;
 };

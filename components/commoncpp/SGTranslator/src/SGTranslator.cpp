@@ -1,29 +1,25 @@
 #include "SGTranslator.h"
 
-SGTranslator::SGTranslator (QQuickItem* parent)
+SGTranslator::SGTranslator (QQuickItem* parent) : QQuickItem(parent)
 {
-    Q_UNUSED(parent)
-}
 
-void SGTranslator::componentComplete()
-{
-    if (parentItem()) {
-        mEngine = qmlEngine(parentItem());
-    }
 }
 
 void SGTranslator::loadLanguageFile(QString languageFileName)
 {
-    if (mApp && mEngine) {
-        mApp->removeTranslator(&mTranslator);
+    QCoreApplication* app = QCoreApplication::instance();
+    QQmlEngine* engine = qmlEngine(parentItem());
+
+    if (app && engine) {
+        app->removeTranslator(&translator_);
 
         if (languageFileName != "") {
-            mTranslator.load(languageFileName, ":/");
-            mApp->installTranslator(&mTranslator);
+            translator_.load(languageFileName, ":/");
+            app->installTranslator(&translator_);
         }
 
-        mEngine->retranslate();
+        engine->retranslate();
     } else {
-        qDebug () << "engine or app not initialized";
+        qCritical () << "Engine or app not initialized";
     }
 }
