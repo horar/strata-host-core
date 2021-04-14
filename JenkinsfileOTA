@@ -13,6 +13,21 @@ pipeline {
         }
     }
     stages {
+        stage('Clone Internal Repository') {
+            steps {
+                script {
+                    def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
+                    def internalRepoName = "strata-host-core-internal"
+
+                    dir("${env.workspace}/${internalRepoName}") {
+                        git changelog: false,
+                            poll: false,
+                            credentialsId: 'BB-access-token',
+                            url: "${internalRepoUrl}"
+                    }
+                }
+            }
+        }
         stage('Build') {
             steps {
                 sh "${env.workspace}/strata-host-core-internal/deployment/OTA/Strata/release_app.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
