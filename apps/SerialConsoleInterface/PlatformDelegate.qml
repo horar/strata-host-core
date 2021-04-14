@@ -44,34 +44,27 @@ FocusScope {
                 messageEditor.height = Math.min(maximumInputAreaHeight, messageEditor.height)
             }
 
-            Shortcut {
-                id: clearShortcut
-                sequence: "Ctrl+D"
-                onActivated: mainPage.clearScrollback()
+            property var keyboardActions: {
+                "clear_scrollback": {"sequence": "Ctrl+D", "action": "clearScrollback", "hint":"Clear scrollback"},
+                "toggle_expand": {"sequence": "Ctrl+E", "action": "toggleExpand", "hint":"Toggle Expand"},
+                "toggle_follow": {"sequence": "Ctrl+F", "action": "toggleFollow", "hint":"Auto scroll down when new message arrives"},
+                "send_message_ent": {"sequence": "Ctrl+Enter", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
+                "send_message_ret": {"sequence": "Ctrl+Return", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
             }
 
-            Shortcut {
-                id: followShortcut
-                sequence: "Ctrl+F"
-                onActivated: mainPage.toggleFollow()
-            }
+            Keys.onPressed: {
+                var key = event.key + event.modifiers
 
-            Shortcut {
-                id: expandShortcut
-                sequence: "Ctrl+E"
-                onActivated: mainPage.toggleExpand()
-            }
+                if (tryKeyboardAction("clear_scrollback", key)) {
+                } else if (tryKeyboardAction("toggle_expand", key)) {
+                } else if (tryKeyboardAction("toggle_follow", key)) {
+                } else if (tryKeyboardAction("send_message_ent", key)) {
+                } else if (tryKeyboardAction("send_message_ret", key)) {
+                } else {
+                    return
+                }
 
-            Shortcut {
-                id: sendMessageEnterShortcut
-                sequence: "Ctrl+Enter"
-                onActivated: mainPage.sendMessageInputTextAsComand()
-            }
-
-            Shortcut {
-                id: sendMessageReturnShortcut
-                sequence: "Ctrl+Return"
-                onActivated: mainPage.sendMessageInputTextAsComand()
+                event.accepted = true
             }
 
             ScrollbackView {
@@ -118,7 +111,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         text: "Clear"
-                        hintText: prettifyHintText("Clear scrollback", clearShortcut.nativeText)
+                        hintText: mainPage.resolveKeyboardActionHintText("clear_scrollback")
                         icon.source: "qrc:/sgimages/broom.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: mainPage.clearScrollback()
@@ -127,7 +120,7 @@ FocusScope {
                     SGWidgets.SGIconButton {
                         id: automaticScrollButton
                         text: "Follow"
-                        hintText: prettifyHintText("Auto scroll down when new message arrives", followShortcut.nativeText)
+                        hintText: mainPage.resolveKeyboardActionHintText("toggle_follow")
                         icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                         iconSize: toolButtonRow.iconHeight
                         checkable: true
@@ -151,7 +144,7 @@ FocusScope {
                                 t = qsTr("Collapse all commands")
                             }
 
-                            return prettifyHintText(t, expandShortcut.nativeText)
+                            return mainPage.resolveKeyboardActionHintText("toggle_expand", t)
                         }
                         icon.source: scrollbackModel.condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                         iconSize: toolButtonRow.iconHeight
@@ -422,8 +415,12 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
-                    hintText: prettifyHintText("Send command",
-                                               Qt.platform.os === "osx" ? sendMessageReturnShortcut.nativeText : sendMessageEnterShortcut.nativeText)
+                    hintText: {
+                        if (Qt.platform.os === "osx") {
+                            return mainPage.resolveKeyboardActionHintText("send_message_ret")
+                        }
+                        return mainPage.resolveKeyboardActionHintText("send_message_ent")
+                    }
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
@@ -505,6 +502,33 @@ FocusScope {
                 })
 
                 dialog.open()
+            }
+
+            function tryKeyboardAction(actionName, key) {
+                if (keyboardActionMatches(actionName, key)) {
+                    var action = keyboardActions[actionName].action
+                    mainPage[action]()
+                    return true
+                }
+
+                return false
+            }
+
+            function keyboardActionMatches(actionName, key) {
+                var sequence = keyboardActions[actionName].sequence
+                return CommonCpp.SGUtilsCpp.keySequenceMatches(sequence, key)
+            }
+
+            function resolveKeyboardActionHintText(actionName, customHintText) {
+                var nativeSequence = CommonCpp.SGUtilsCpp.keySequenceNativeText(keyboardActions[actionName].sequence)
+
+                if (customHintText === undefined) {
+                    var hint = keyboardActions[actionName].hint
+                } else {
+                    hint = customHintText
+                }
+
+                return prettifyHintText(hint, nativeSequence)
             }
         }
     }
