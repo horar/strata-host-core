@@ -182,9 +182,9 @@ function registerQmlAsLanguage() {
                 action: { indentAction: monaco.languages.IndentAction.None, removeText: 1 }
             },
             {
-                beforeText: /^\s*$/,
+                beforeText: /(?!\n)/,
                 action: { indentAction: monaco.languages.IndentAction.Outdent }
-            },
+            }
         ],
         autoClosingPairs: [
             { open: '{', close: '}' },
