@@ -312,6 +312,13 @@ function registerQmlAsLanguage() {
         detectIndentation: true,
         tabCompletion: "on",
         formatOnPaste: true,
+        scrollbar: {
+            useShadows: false,
+            vertical: 'visible',
+            horizontal: 'visible',
+            horizontalScrollbarSize: 15,
+            verticalScrollbarSize: 15,
+        }
     });
 
     function getValue() {
