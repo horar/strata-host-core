@@ -4,7 +4,7 @@
 */
 var qtObjectSuggestions = {}
 const qtObjectKeyValues = {}
-const qtIdPairs = {}
+var qtIdPairs = {}
 const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
 var isInitialized = false
@@ -29,11 +29,11 @@ var ids = []
 // return an object from a string with definable properties
 function createDynamicProperty(property, isFunction = false) {
     return {
-        "label": property,
-        "kind": !isFunction ? monaco.languages.CompletionItemKind.KeyWord : monaco.languages.CompletionItemKind.Function,
-        "insertTextRules": monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-        "insertText": property,
-        "range": null
+        label: property,
+        kind: !isFunction ? monaco.languages.CompletionItemKind.Keyword : monaco.languages.CompletionItemKind.Function,
+        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        insertText: property,
+        range: null
     }
 }
 // filter out duplicate lines
@@ -131,6 +131,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             arr = arr.concat(removeDuplicates(qtObjectSuggestions[type].functions))
             arr = arr.concat(qtObjectSuggestions[type].signals)
             createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+
             functionSuggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
@@ -486,6 +487,7 @@ function registerQmlAsLanguage() {
     // Initializes the library to become an Object array to be feed into suggestions
     function initializeQtQuick(model) {
         suggestions = {}
+        functionSuggestions = {}
         qtObjectSuggestions = {}
         qtImports = []
         const firstLine = { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }
@@ -526,7 +528,7 @@ function registerQmlAsLanguage() {
                 createQtObjectValPairs(qtCustomProps, { label: qtCustomProps, insertText: qtCustomProps, properties: qtproperties, flag: true })
                 functionSuggestions[qtCustomProps] = {
                     label: qtObjectKeyValues[qtCustomProps].label.trim(),
-                    kind: monaco.languages.CompletionItemKind.KeyWord,
+                    kind: monaco.languages.CompletionItemKind.Keyword,
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: qtObjectKeyValues[qtCustomProps].insertText,
                     range: null
@@ -741,8 +743,10 @@ function registerQmlAsLanguage() {
 
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
     function getTypeID(model, position) {
+        qtIdPairs = {}
+        ids = []
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
-        while (position.lineNumber > fullRange.startLineNumber && !searchedIds) {
+        while (position.lineNumber > fullRange.startLineNumber) {
             var getPrevIDPosition = model.findPreviousMatch("id:", position, false, false)
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
                 break;
@@ -757,12 +761,11 @@ function registerQmlAsLanguage() {
 
             var getIdType = model.findPreviousMatch("{", { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn })
             position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
-            var content = model.getValueInRange({ startLineNumber: getIdType.range.startLineNumber, startColumn: 0, endLineNumber: getIdType.range.startLineNumber, endColumn: getIdType.range.endColumn })
+            var content = model.getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(prevId, position, type)
             ids.push(prevId)
         }
-        searchedIds = true
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
@@ -813,7 +816,7 @@ function registerQmlAsLanguage() {
         if (getId.includes("id:")) {
             var word = getId.replace("\t", "").split(":")[1].trim()
             var getIdType = editor.getModel().findPreviousMatch("{", position, false, false)
-            var content = editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
+            var content = editor.getModel().getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(word, position, type)
         }
