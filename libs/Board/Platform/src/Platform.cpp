@@ -124,9 +124,8 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
         }
     }
     if (canWrite) {
-        // Slot connected to below emitted signal emits other signals
-        // and it should'n be locked. Also if we are here it is not necessary
-        // to lock writting because all writting happens in one thread.
+        // Slot connected to below emitted signal may emit other signals
+        // and therefore it shouldn't be locked to avoid a deadlock.
         device_->sendMessage(msg);
         return true;
     } else {
