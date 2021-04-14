@@ -1,2 +1,0 @@
-add_subdirectory(strataClient)
-add_subdirectory(strataServer)

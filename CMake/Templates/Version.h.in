@@ -1,0 +1,19 @@
+// WARNING! Generated file.
+// All changes made in this file will be lost!!
+
+#pragma once
+
+#include <string_view>
+
+struct AppInfo final {
+    static const std::string_view version;
+    static const std::string_view versionMajor;
+    static const std::string_view versionMinor;
+    static const std::string_view versionPatch;
+
+    static const std::string_view buildId;
+    static const std::string_view gitRevision;
+    static const std::string_view stageOfDevelopment;
+
+    static const std::string_view supportedPlugins_;
+};

@@ -64,10 +64,10 @@ echo "======================================================================="
 cd build-host
 cmake -G "NMake Makefiles JOM" ^
 	-DCMAKE_BUILD_TYPE=Debug ^
-	..\host
+	..
 REM cmake -G "Visual Studio 15 2017 Win64" ^
 REM 	-T v141 ^
-REM 	..\host
+REM 	..
 
 echo "======================================================================="
 echo " Compiling.."
