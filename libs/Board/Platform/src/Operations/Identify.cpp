@@ -41,8 +41,7 @@ Identify::BoardMode Identify::boardMode()
 }
 
 void Identify::performPostOperationActions(Result result) {
-    // If identify operation is cancelled, another identify operation will be started soon.
-    // So there is no need for emitting recognized signal.
+    // do not emit recognized signal if operation was cancelled
     if (result != Result::Cancel) {
         platform_->identifyFinished(result == Result::Success);
     }
