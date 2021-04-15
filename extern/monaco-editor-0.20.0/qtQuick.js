@@ -150,6 +150,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
 }
 
 function addCustomProperties(lineNumber, item, property) {
+    var closestTop
     if (!qtPropertyPairs.hasOwnProperty(item)) {
         qtPropertyPairs[item] = {}
         if (!qtPropertyPairs[item].hasOwnProperty(lineNumber)) {
@@ -161,7 +162,7 @@ function addCustomProperties(lineNumber, item, property) {
     if (qtObjectKeyValues.hasOwnProperty(item) && property !== undefined) {
         var onCall = property
         var onCallProperty = "on" + onCall[0].toUpperCase() + onCall.substring(1) + "Changed"
-        qtObjectKeyValues[item].properties = qtObjectKeyValues[item].properties.concat(onCallProperty)
+       customProperties.push(onCallProperty)
     }
 }
 
@@ -827,7 +828,10 @@ function registerQmlAsLanguage() {
                 break;
             }
             var prevPropertyLine = model.getLineContent(getPrevPropertyPosition.range.startLineNumber).trim()
-            var prevProperty = prevPropertyLine.split(" ")[2].split(":")[0].trim()
+            var prevProperty = prevPropertyLine.split(" ")[2].trim()
+            if(prevProperty.includes(":")){
+                prevProperty = prevProperty.split(":")[0].trim()
+            }
 
             var getPropertyType = model.findPreviousMatch("{", { lineNumber: getPrevPropertyPosition.range.startLineNumber, column: getPrevPropertyPosition.range.startColumn })
             if (position.lineNumber < getPropertyType.range.startLineNumber) {
@@ -892,6 +896,18 @@ function registerQmlAsLanguage() {
         var prevNextBracket = previousBracket
         var nextPosition = { lineNumber: prevParentBracket.range.startLineNumber, column: previousBracket.range.startColumn }
         var nextProperty = model.findNextMatch("property", nextPosition)
+        var closestTop = matchingBrackets[0].top
+        var closestBottom = matchingBrackets[0].bottom
+        for( var i = 0; i < matchingBrackets.length; i++){
+            if (position.lineNumber <= matchingBrackets[i].bottom && position.lineNumber >= matchingBrackets[i].top) {
+                if (closestTop < matchingBrackets[i].top) {
+                    closestTop = matchingBrackets[i].top
+                }
+                if (closestBottom > matchingBrackets[i].bottom) {
+                    closestBottom = matchingBrackets[i].bottom
+                }
+            }
+        }
         if (nextProperty === null) {
             return;
         }
@@ -905,21 +921,29 @@ function registerQmlAsLanguage() {
             if (getProperty === "" || getProperty.trim().replace("\t", "").split(" ")[2] === undefined) {
                 break;
             }
-
             var propertyWord = getProperty.trim().replace("\t", "").split(" ")[2].trim().split(":")[0].trim()
-            customProperties.push("on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed")
             var getPrevId = model.findPreviousMatch("id:", nextPosition)
 
-            if (getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber) {
+            if (getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber &&(getPrevId.range.startLineNumber >= closestTop && getPrevId.range.startLineNumber <= closestBottom)) {
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
                 var id = getLine.replace("\t", "").split(":")[1].trim()
-                qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertyWord)
+                var propertySlot = "on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed"
+                qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertySlot)
                 if (otherProperties.hasOwnProperty(id)) {
                     otherProperties[id].push(propertyWord)
                     otherProperties[id] = removeDuplicates(otherProperties[id])
                 } else {
                     otherProperties[id] = []
                     otherProperties[id].push(propertyWord)
+                }
+            } else {
+                if(position.lineNumber >= closestTop && position.lineNumber <= closestBottom && (nextProperty.range.startLineNumber >= closestTop && nextProperty.range.startLineNumber <= closestBottom)){
+                    var propertySlot = "on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed"
+                    if(!customProperties.includes(propertySlot)){
+                        var getLine = model.getLineContent(closestTop)
+                        var getParent = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
+                        qtObjectKeyValues[getParent].properties = qtObjectKeyValues[getParent].properties.concat(propertySlot)
+                    }
                 }
             }
 
@@ -948,7 +972,10 @@ function registerQmlAsLanguage() {
             if (getLine.replace("\t", "").split(" ")[1] !== "" && getLine.replace("\t", "").split(" ")[1] !== undefined) {
                 if (getLine.replace("\t", "").split(" ")[2] !== "" && getLine.replace("\t", "").split(" ")[2] !== undefined) {
                     if (getLine.replace("\t", "").split(" ")[2].includes(":")) {
-                        var word = getLine.replace("\t", "").split(" ")[2].split(":")[0].trim()
+                        var word = getLine.replace("\t", "").split(" ")[2].trim()
+                        if(word.includes(":")){
+                            word.split(":")[0].trim()
+                        }
                         if (word !== undefined || word !== "") {
                             var getPropertyType = editor.getModel().findPreviousMatch("{", position, false, false)
                             var content = editor.getModel().getLineContent(getPropertyType.range.startLineNumber)
