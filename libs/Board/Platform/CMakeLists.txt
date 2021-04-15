@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME}
     src/Operations/StartApplication.cpp
     src/Operations/SetPlatformId.cpp
     src/Operations/SetAssistedPlatformId.cpp
+    src/Operations/PlatformOperations.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/Device.h
@@ -48,6 +49,7 @@ add_library(${PROJECT_NAME}
 
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h
+    include/Operations/PlatformOperations.h
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
