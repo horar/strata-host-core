@@ -130,10 +130,19 @@ Rectangle {
         Rectangle {
             id: tool
             Layout.fillHeight: true
-            Layout.preferredWidth: 70
-            Layout.maximumWidth: 70
+            Layout.preferredWidth: 71
+            Layout.maximumWidth: 71
             Layout.alignment: Qt.AlignTop
             color: "#444"
+
+            Rectangle {
+                // divider
+                color: "black"
+                width: 2
+                height: parent.height
+                anchors.right: parent.right
+                opacity: .25
+            }
 
             ColumnLayout {
                 id: toolBarListView
@@ -410,4 +419,3 @@ Rectangle {
         return false
     }
 }
-
