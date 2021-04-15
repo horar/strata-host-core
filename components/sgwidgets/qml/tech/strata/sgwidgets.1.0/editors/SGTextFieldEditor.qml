@@ -14,9 +14,16 @@ SGWidgets.SGBaseEditor {
     property bool showCursorPosition: false
     property bool passwordMode: false
     property string textFieldLeftIconSource
+    property string textFieldRightIconSource
     property bool textFieldBusyIndicatorRunning: false
+    property bool textFieldSuggestionDelegateRemovable: false
+    property bool textFieldSuggestionCloseWithArrowKey: false
+    property int textFieldSuggestionMaxHeight: 120
     property bool contextMenuEnabled: false
     property bool activeEditing: false
+
+    signal textFieldSuggestionDelegateSelected(int index)
+    signal textFieldSuggestionDelegateRemoveRequested(int index)
 
     editor: SGWidgets.SGTextField {
         id: editorItem
@@ -32,7 +39,11 @@ SGWidgets.SGBaseEditor {
         showCursorPosition: root.showCursorPosition
         passwordMode: root.passwordMode
         leftIconSource: root.textFieldLeftIconSource
+        rightIconSource: root.textFieldRightIconSource
         busyIndicatorRunning: root.textFieldBusyIndicatorRunning
+        suggestionDelegateRemovable: root.textFieldSuggestionDelegateRemovable
+        suggestionCloseWithArrowKey: root.textFieldSuggestionCloseWithArrowKey
+        suggestionMaxHeight: root.textFieldSuggestionMaxHeight
 
         onTextChanged: root.text = text
         Binding {
@@ -42,5 +53,8 @@ SGWidgets.SGBaseEditor {
         }
 
         onActiveEditingChanged: root.activeEditing = activeEditing
+
+        onSuggestionDelegateSelected: textFieldSuggestionDelegateSelected(index)
+        onSuggestionDelegateRemoveRequested: textFieldSuggestionDelegateRemoveRequested(index)
     }
 }

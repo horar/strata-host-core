@@ -13,6 +13,8 @@ TextField {
     property bool isValidAffectsBackground: false
     property alias leftIconColor: leftIconItem.iconColor
     property alias leftIconSource: leftIconItem.source
+    property alias rightIconSource: rightIconItem.source
+    property alias rightIconColor: rightIconItem.iconColor
     property bool darkMode: false
     property bool showCursorPosition: false
     property bool showClearButton: false
@@ -27,7 +29,7 @@ TextField {
     property int suggestionPosition: Item.Bottom
     property string suggestionEmptyModelText: "No Suggestion"
     property string suggestionHeaderText
-    property bool suggestionCloseOnDown: false
+    property bool suggestionCloseWithArrowKey: false
     property bool suggestionOpenWithAnyKey: true
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
@@ -41,6 +43,8 @@ TextField {
     /*private*/
     property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
                                  || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
+                                 || (clearButtonLoader !== null && clearButtonLoader.status === Loader.Ready)
+                                 || rightIconItem.source
 
     property bool revealPassword: false
 
@@ -193,6 +197,14 @@ TextField {
                 anchors.verticalCenter: parent.verticalCenter
                 sourceComponent: passwordMode ? revealPasswordComponent : undefined
             }
+
+            SGWidgets.SGIcon {
+                id: rightIconItem
+                anchors.verticalCenter: parent.verticalCenter
+                width: leftIconItem.width
+                height: leftIconItem.height
+                iconColor: "darkgray"
+            }
         }
     }
 
@@ -213,7 +225,7 @@ TextField {
             position: suggestionPosition
             emptyModelText: suggestionEmptyModelText
             headerText: suggestionHeaderText
-            closeOnDown: suggestionCloseOnDown
+            closeWithArrowKey: suggestionCloseWithArrowKey
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable

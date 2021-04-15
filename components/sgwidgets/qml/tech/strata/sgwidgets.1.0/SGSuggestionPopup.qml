@@ -17,7 +17,7 @@ Popup {
     property int listSpacing: 0
     property bool controlWithSpace: false
     property bool closeOnSelection: true
-    property bool closeOnDown: false
+    property bool closeWithArrowKey: false
     property bool openOnActiveFocus: false
     property int maxHeight: 120
     property int position: Item.Bottom
@@ -99,9 +99,15 @@ Popup {
 
         Keys.onPressed: {
             if (event.key === Qt.Key_Up) {
+                if (closeWithArrowKey && position === Item.Bottom) {
+                    if (view.currentIndex === 0) {
+                        popup.close()
+                    }
+                }
+
                 view.decrementCurrentIndex()
             } else if (event.key === Qt.Key_Down) {
-                if (closeOnDown && position === Item.Top) {
+                if (closeWithArrowKey && position === Item.Top) {
                     if (view.currentIndex === view.count - 1) {
                         popup.close()
                     }
