@@ -384,6 +384,7 @@ Rectangle {
 
     function requestRecompile() {
         recompileRequested = true
+        Help.resetDeviceIdTour(debugPlatform.deviceId)
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
@@ -401,7 +402,7 @@ Rectangle {
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
 
-        Help.setClassId(debugPlatform.deviceId)
+        Help.setDeviceId(debugPlatform.deviceId)
         NavigationControl.context.class_id = debugPlatform.classId
         NavigationControl.context.device_id = debugPlatform.deviceId
 
