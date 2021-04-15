@@ -10,9 +10,11 @@ Item {
     property int maxCommandsInScrollback: defaultMaxCommandsInScrollback
     property bool commandsInScrollbackUnlimited: defaultCommandsInScrollbackUnlimited
     property int maxCommandsInHistory: defaultMaxCommandsInHistory
-    property string lastSelectedFirmware
     property bool commandsCondensedAtStartup: defaultcommandsCondensedAtStartup
     property bool backupFirmware: defaultBackupFirmware
+    property int maxInputLines: 500
+    property var firmwarePathList: []
+    property var maxFirmwarePathList: 10
 
     readonly property int defaultMaxCommandsInScrollback: 5000
     readonly property bool defaultCommandsInScrollbackUnlimited: false
@@ -25,9 +27,9 @@ Item {
         property alias maxCommandsInScrollback: root.maxCommandsInScrollback
         property alias commandsInScrollbackUnlimited: root.commandsInScrollbackUnlimited
         property alias maxCommandsInHistory: root.maxCommandsInHistory
-        property alias lastSelectedFirmware: root.lastSelectedFirmware
         property alias commandsCondensedAtStartup: root.commandsCondensedAtStartup
         property alias backupFirmware: root.backupFirmware
+        property alias firmwarePathList: root.firmwarePathList
     }
 
     function resetToDefaultValues() {

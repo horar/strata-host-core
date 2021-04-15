@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.theme 1.0
+import tech.strata.sci 1.0 as Sci
 
 FocusScope {
     id: control
@@ -15,6 +16,7 @@ FocusScope {
     property bool tabAllowed: true
     property int tabSize: 4
     property alias cursorPosition: edit.cursorPosition
+    property alias lineCount: edit.lineCount
 
     readonly property var currentCoordinates: resolveCoordinates(edit.cursorPosition, edit.text)
     readonly property int currentLine: currentCoordinates.line
@@ -148,6 +150,7 @@ FocusScope {
             policy: ScrollBar.AlwaysOn
             width: 8
             visible: flick.height < flick.contentHeight
+             minimumSize: 0.1
         }
 
         ScrollBar.horizontal: ScrollBar {
@@ -157,8 +160,9 @@ FocusScope {
             }
 
             policy: ScrollBar.AlwaysOn
-            width: 8
+            height: 8
             visible: flick.width < flick.contentWidth
+            minimumSize: 0.1
         }
 
         function ensureVisible(r) {
@@ -198,7 +202,7 @@ FocusScope {
             x: edit.leftPadding - 1
             y: edit.cursorRectangle.y
 
-            visible: edit.text.length
+            visible: edit.length
             color: "black"
             opacity: 0.04
         }
@@ -249,6 +253,12 @@ FocusScope {
                 }
             }
 
+            onTextChanged: {
+                if (lineCount > Sci.Settings.maxInputLines) {
+                    truncateTextTimer.start()
+                }
+            }
+
             Text {
                 id: placeholderTextItem
                 anchors {
@@ -258,12 +268,31 @@ FocusScope {
                     leftMargin: edit.leftPadding
                 }
 
-                visible: edit.text.length === 0
+                visible: edit.length === 0
                 color: dummyControl.palette.text
                 opacity: edit.enabled ? 0.5 : 1
                 font: edit.font
                 elide: Text.ElideRight
                 text: "Enter JSON Message..."
+            }
+
+            function truncateText(position) {
+                var newCursorPosition = Math.min(cursorPosition, position)
+                text = text.substring(0, position)
+                cursorPosition = newCursorPosition
+            }
+        }
+    }
+
+    Timer {
+        id: truncateTextTimer
+        interval: 100
+        onTriggered: {
+            if (edit.lineCount > Sci.Settings.maxInputLines) {
+                var endOfLinePosition = findEndOfLine(edit.text, Sci.Settings.maxInputLines + 1)
+                if (endOfLinePosition >= 0) {
+                    edit.truncateText(endOfLinePosition)
+                }
             }
         }
     }
@@ -292,7 +321,7 @@ FocusScope {
         emptyModelText: qsTr("No commands.")
         headerText: qsTr("Message history")
         maxHeight: 250
-        closeOnDown: true
+        closeWithArrowKey: true
         delegateRemovable: true
 
         onDelegateSelected: {
@@ -409,5 +438,21 @@ FocusScope {
             "line": line,
             "column": column,
         }
+    }
+
+    function findEndOfLine(text, lineIndex) {
+        var ll = length
+        var lineCount = 1
+        for (var i = 0; i < ll; ++i) {
+            if (text[i] === '\n') {
+                ++lineCount
+            }
+
+            if (lineCount === lineIndex) {
+                return i
+            }
+        }
+
+        return -1
     }
 }

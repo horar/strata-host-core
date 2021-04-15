@@ -14,6 +14,7 @@
 #include <cctype>
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QKeySequence>
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
@@ -277,4 +278,14 @@ void SGUtilsCpp::copyToClipboard(const QString &text)
 {
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(text, QClipboard::Clipboard);
+}
+
+QString SGUtilsCpp::keySequenceNativeText(QString sequence)
+{
+    return QKeySequence(sequence).toString(QKeySequence::NativeText);
+}
+
+bool SGUtilsCpp::keySequenceMatches(QString sequence, int key)
+{
+    return QKeySequence(sequence).matches(QKeySequence(key));
 }
