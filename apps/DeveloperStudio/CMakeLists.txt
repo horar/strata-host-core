@@ -134,6 +134,10 @@ endif()
 
 set(SDS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/strata-host-core-internal/assets/config/sds)
 
+if(NOT EXISTS ${SDS_CONFIG_LOCATION})
+    message(FATAL_ERROR "SDS config file location does not exist. You might need to clone strata-host-core-internal repository.")
+endif()
+
 if(NOT APPS_CORESW_SDS_CONFIG)
     set(APPS_CORESW_SDS_CONFIG sds_qa.config CACHE STRING "Desired SDS configuration file." FORCE)
     message(STATUS "Defaulting 'APPS_CORESW_SDS_CONFIG' to ${APPS_CORESW_SDS_CONFIG}.")

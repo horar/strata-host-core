@@ -72,6 +72,10 @@ generate_app_build_timestamp()
 
 set(HCS_CREDENTIALS_LOCATION ${CMAKE_SOURCE_DIR}/strata-host-core-internal/assets/config/hcs/credentials)
 
+if(NOT EXISTS ${HCS_CREDENTIALS_LOCATION})
+    message(FATAL_ERROR "HCS config file location does not exist. You might need to clone strata-host-core-internal repository.")
+endif()
+
 if(NOT APPS_CORESW_HCS_CREDENTIALS)
     set(APPS_CORESW_HCS_CREDENTIALS qa.json CACHE STRING "Desired HCS configuration file with credentials." FORCE)
     message(STATUS "Defaulting 'APPS_CORESW_HCS_CREDENTIALS' to ${APPS_CORESW_HCS_CREDENTIALS}.")
