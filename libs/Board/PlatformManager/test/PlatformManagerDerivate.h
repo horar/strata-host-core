@@ -33,8 +33,6 @@ public:
 
 private slots:
     virtual void checkNewSerialDevices() override;
-    virtual void handleOperationFinished(strata::platform::operation::Result result, int status, QString errStr) override;
-    virtual void handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr) override;
 
 private:
     bool addMockPort(const QByteArray& deviceId, bool startOperations);

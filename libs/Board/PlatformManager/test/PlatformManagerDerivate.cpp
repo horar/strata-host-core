@@ -103,16 +103,6 @@ void PlatformManagerDerivate::checkNewSerialDevices()
     // empty, disable the PlatformManager functionality working with serial ports
 }
 
-void PlatformManagerDerivate::handleOperationFinished(strata::platform::operation::Result result, int status, QString errStr)
-{
-    PlatformManager::handleOperationFinished(result, status, errStr);
-}
-
-void PlatformManagerDerivate::handleDeviceError(Device::ErrorCode errCode, QString errStr)
-{
-    PlatformManager::handleDeviceError(errCode, errStr);
-}
-
 // mutex_ must be locked before calling this function (due to modification openedDevices_ and using mockIdToName_)
 bool PlatformManagerDerivate::addMockPort(const QByteArray& deviceId, bool startOperations)
 {

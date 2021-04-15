@@ -31,6 +31,8 @@ PlatformManager::PlatformManager() {
     connect(&timer_, &QTimer::timeout, this, &PlatformManager::checkNewSerialDevices, Qt::QueuedConnection);
     // handlePlatformIdChanged() slot uses mutex_
     connect(this, &PlatformManager::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
+
+    connect(&platformOperations_, &operation::PlatformOperations::finished, this, &PlatformManager::handleOperationFinished);
 }
 
 PlatformManager::~PlatformManager() { }
@@ -270,31 +272,14 @@ bool PlatformManager::openPlatform(const platform::PlatformPtr newPlatform) {
 }
 
 void PlatformManager::startPlatformOperations(const PlatformPtr platform) {
-    startIdentifyOperation(platform);
-
     connect(platform.get(), &Platform::messageReceived, this, &PlatformManager::checkNotification);
-}
 
-void PlatformManager::startIdentifyOperation(const PlatformPtr platform) {
-    // shared_ptr because QHash::insert() calls copy constructor (unique_ptr has deleted copy constructor)
-    // We need deleteLater() because PlatformOperations object is deleted
-    // in slot connected to signal from it (PlatformManager::handleOperationFinished).
-    std::shared_ptr<operation::BasePlatformOperation> operation (
-        // Some boards need time for booting. If board is rebooted it also takes some time to start.
-        new operation::Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY),
-        operationLaterDeleter
-    );
-
-    connect(operation.get(), &operation::BasePlatformOperation::finished, this, &PlatformManager::handleOperationFinished);
-
-    identifyOperations_.insert(platform->deviceId(), operation);
-
-    operation->run();
+    platformOperations_.Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY);
 }
 
 // mutex_ must be locked before calling this function (due to modification openedPlatforms_ and reconnectTimers_)
 bool PlatformManager::removePlatform(const QByteArray& deviceId) {
-    identifyOperations_.remove(deviceId);
+    platformOperations_.stopOperation(deviceId);
 
     // If platform is physically disconnected, remove reconnect timer (if exists).
     auto timerIter = reconnectTimers_.find(deviceId);
@@ -321,39 +306,31 @@ void PlatformManager::logInvalidDeviceId(const QString& message, const QByteArra
     qCWarning(logCategoryPlatformManager).nospace().noquote() << message << ", invalid platform ID: " << deviceId;
 }
 
-void PlatformManager::handleOperationFinished(operation::Result result, int status, QString errStr) {
+void PlatformManager::handleOperationFinished(QByteArray deviceId, operation::Type type, operation::Result result, int status, QString errStr) {
     Q_UNUSED(status)
 
-    operation::BasePlatformOperation *baseOp = qobject_cast<operation::BasePlatformOperation*>(QObject::sender());
-    if (baseOp == nullptr) {
+    if (type != operation::Type::Identify) {
         return;
     }
 
-    if (baseOp->type() == operation::Type::Identify) {
-        const QByteArray deviceId = baseOp->deviceId();
+    if (result == operation::Result::Error) {
+        emit boardError(deviceId, errStr);
+    }
 
-        // operation has finished, we do not need BasePlatformOperation object anymore
-        identifyOperations_.remove(deviceId);
-
-        if (result == operation::Result::Error) {
-            emit boardError(deviceId, errStr);
-        }
-
-        // If identify operation is cancelled, another identify operation will be started soon.
-        // So there is no need for emitting boardInfoChanged signal. (See handlePlatformIdChanged() function.)
-        if (result != operation::Result::Cancel) {
-            bool boardRecognized = (result == operation::Result::Success);
-            emit boardInfoChanged(deviceId, boardRecognized);
-            if (boardRecognized == false && keepDevicesOpen_ == false) {
-                qCInfo(logCategoryPlatformManager).noquote()
-                    << "Device" << deviceId << "was not recognized, going to release communication channel.";
-                // Device cannot be removed in this slot (this slot is connected to signal emitted by platform).
-                // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
-                // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
-                QTimer::singleShot(0, this, [this, deviceId](){
-                    disconnectDevice(deviceId);
-                });
-            }
+    // If identify operation is cancelled, another identify operation will be started soon.
+    // So there is no need for emitting boardInfoChanged signal. (See handlePlatformIdChanged() function.)
+    if (result != operation::Result::Cancel) {
+        bool boardRecognized = (result == operation::Result::Success);
+        emit boardInfoChanged(deviceId, boardRecognized);
+        if (boardRecognized == false && keepDevicesOpen_ == false) {
+            qCInfo(logCategoryPlatformManager).noquote()
+                << "Device" << deviceId << "was not recognized, going to release communication channel.";
+            // Device cannot be removed in this slot (this slot is connected to signal emitted by platform).
+            // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
+            // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
+            QTimer::singleShot(0, this, [this, deviceId](){
+                disconnectDevice(deviceId);
+            });
         }
     }
 }
@@ -427,18 +404,7 @@ void PlatformManager::handlePlatformIdChanged(const QByteArray& deviceId) {
         return;
     }
 
-    auto it = identifyOperations_.find(deviceId);
-    if (it != identifyOperations_.end()) {
-        it.value()->cancelOperation();
-        // If operation is cancelled, finished is signal will be received (with Result::Cancel)
-        // and operation will be removed from identifyOperations_ in handleOperationFinished slot.
-    }
-
-    startIdentifyOperation(platform);
-}
-
-void PlatformManager::operationLaterDeleter(operation::BasePlatformOperation *operation) {
-    operation->deleteLater();
+    platformOperations_.Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY);
 }
 
 }  // namespace
