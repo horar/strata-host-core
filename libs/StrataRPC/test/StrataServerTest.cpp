@@ -1,14 +1,13 @@
 #include "StrataServerTest.h"
 #include "ClientConnector.h"
 
+#include <QMetaObject>
 #include <QSignalSpy>
 
 void StrataServerTest::testValidApiVer2Message()
 {
     StrataServer server(address_, false);
     bool validMessage = false;
-    connect(this, &StrataServerTest::mockNewMessageReceived, &server,
-            &StrataServer::newClientMessage);
 
     // Connect a handler to verify that the message got parsed and the dispatch signal got emitted.
     connect(&server, &StrataServer::newClientMessageParsed, this,
@@ -16,49 +15,66 @@ void StrataServerTest::testValidApiVer2Message()
 
     // This will register the client and sets the api as v2
     validMessage = false;
-    emit mockNewMessageReceived(
-        "AAA",
-        R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
+
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
+        Q_ARG(
+            QByteArray,
+            R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived(
-        "AAA",
-        R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
+        Q_ARG(
+            QByteArray,
+            R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived(
-        "AAA",
-        R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
+        Q_ARG(
+            QByteArray,
+            R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
+
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived(
-        "AAA",
-        R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
+        Q_ARG(
+            QByteArray,
+            R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"({"cmd":"load_documents","payload":{}})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"),
+                              Q_ARG(QByteArray, R"({"cmd":"load_documents","payload":{}})"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"()");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"()"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"(0000)");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(0000)"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"(invalid message)");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(invalid message)"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived(
-        "AAA",
-        R"({"jsonrpc": 2.0,"method":"register_client","params":{"api_version": "1.0"},"id":1})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
+        Q_ARG(
+            QByteArray,
+            R"({"jsonrpc": 2.0,"method":"register_client","params":{"api_version": "1.0"},"id":1})"));
     QVERIFY_(false == validMessage);
 }
 
@@ -66,44 +82,55 @@ void StrataServerTest::testValidApiVer1Message()
 {
     StrataServer server(address_, false);
     bool validMessage = false;
-    connect(this, &StrataServerTest::mockNewMessageReceived, &server,
-            &StrataServer::newClientMessage);
     connect(&server, &StrataServer::newClientMessageParsed, this,
             [&validMessage]() { validMessage = true; });
 
     // This will register the client and sets the api as v1
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"({"cmd":"register_client", "payload":{}})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"),
+                              Q_ARG(QByteArray, R"({"cmd":"register_client", "payload":{}})"));
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"({"cmd":"load_documents","payload":{}})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"),
+                              Q_ARG(QByteArray, R"({"cmd":"load_documents","payload":{}})"));
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"({"sscmd":"load_documents","payload":{}})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"),
+                              Q_ARG(QByteArray, R"({"sscmd":"load_documents","payload":{}})"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"({"cmd":0,"payload":{}})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"),
+                              Q_ARG(QByteArray, R"({"cmd":0,"payload":{}})"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived(
-        "AAA",
-        R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
+        Q_ARG(
+            QByteArray,
+            R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"()");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"()"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"(0000)");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(0000)"));
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageReceived("AAA", R"(invalid message)");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(invalid message)"));
     QVERIFY_(false == validMessage);
 }
 
@@ -113,13 +140,12 @@ void StrataServerTest::testFloodTheServer()
     StrataServer server(address_, false);
     int counter = 0;
     int testSize = 1000;
-    connect(this, &StrataServerTest::mockNewMessageReceived, &server,
-            &StrataServer::newClientMessage);
     connect(&server, &StrataServer::newClientMessageParsed, this, [&counter]() { counter++; });
 
     for (int i = 0; i < testSize; i++) {
-        emit mockNewMessageReceived(QByteArray::number(i),
-                                    R"({"cmd":"register_client", "payload":{}})");
+        QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                                  Q_ARG(QByteArray, QByteArray::number(i)),
+                                  Q_ARG(QByteArray, R"({"cmd":"register_client", "payload":{}})"));
     }
 
     QCOMPARE_(counter, testSize);
@@ -443,23 +469,29 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
 
     handlerCalled = false;
     currentCommandName = "test_1";
-    server.newClientMessage(
-        "AA", R"({"cmd":"test_1","payload":{"enable":"off"},"device_id":-949921126})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AA"),
+        Q_ARG(QByteArray, R"({"cmd":"test_1","payload":{"enable":"off"},"device_id":-949921126})"));
     QVERIFY_(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_2";
-    server.newClientMessage("AA", R"({"cmd":"test_2","payload":"enable","device_id":-949921126})");
+    QMetaObject::invokeMethod(
+        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AA"),
+        Q_ARG(QByteArray, R"({"cmd":"test_2","payload":"enable","device_id":-949921126})"));
     QVERIFY_(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_3";
-    server.newClientMessage("AA", R"({"cmd":"test_3","device_id":-949921126})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AA"),
+                              Q_ARG(QByteArray, R"({"cmd":"test_3","device_id":-949921126})"));
     QVERIFY_(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_4";
-    server.newClientMessage("AA", R"({"cmd":"test_4"})");
+    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+                              Q_ARG(QByteArray, "AA"), Q_ARG(QByteArray, R"({"cmd":"test_4"})"));
     QVERIFY_(false == handlerCalled);
 }
 

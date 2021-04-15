@@ -70,13 +70,6 @@ public:
 
 public slots:
     /**
-     * Slot to handler new incoming messages.
-     * @param [in] clientId client id of the sender
-     * @param [in] message QByteArray of the message json string.
-     */
-    void newClientMessage(const QByteArray &clientId, const QByteArray &message);
-
-    /**
      * Slot to send a message to a client. This overload is used when responding to a prevues client
      * message.
      * @param [in] clientMessage Message struct that have information about the client original
@@ -106,6 +99,13 @@ public slots:
     void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
 
 private slots:
+    /**
+     * Slot to handler new incoming messages.
+     * @param [in] clientId client id of the sender
+     * @param [in] message QByteArray of the message json string.
+     */
+    void newClientMessage(const QByteArray &clientId, const QByteArray &message);
+
     /**
      * Slot to handle dispatching client notification/requests handlers.
      * @note This will emit errorOccurred signal if the handler is not registered.
