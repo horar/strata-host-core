@@ -21,8 +21,9 @@ QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
 }
 
 Platform::Platform(const device::DevicePtr& device) :
-    device_(device), operationLock_(0), bootloaderMode_(false), isRecognized_(false),
-    apiVersion_(ApiVersion::Unknown), controllerType_(ControllerType::Embedded)
+    device_(device), operationLock_(0), retryMsec_(std::chrono::milliseconds::zero()),
+    bootloaderMode_(false), isRecognized_(false), apiVersion_(ApiVersion::Unknown),
+    controllerType_(ControllerType::Embedded)
 {
     if (device_ == nullptr) {
         throw std::invalid_argument("Missing mandatory device pointer in platform");
@@ -95,14 +96,14 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg
     emit deviceError(errCode, msg);
 }
 
-bool Platform::open(const int retryMsec) {
+bool Platform::open(const std::chrono::milliseconds retryMsec) {
     retryMsec_ = retryMsec;
     if (reconnectTimer_.isActive())
         reconnectTimer_.stop();
     return openDevice();
 }
 
-void Platform::close(const int waitMsec, const int retryMsec) {
+void Platform::close(const std::chrono::milliseconds waitMsec, const std::chrono::milliseconds retryMsec) {
     retryMsec_ = retryMsec;
     if (reconnectTimer_.isActive())
         reconnectTimer_.stop();
@@ -297,19 +298,19 @@ bool Platform::openDevice() {
         QString errMsg(QStringLiteral("Unable to open device."));
         qCWarning(logCategoryPlatform) << this << errMsg;
         emit deviceError(device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
-        if (retryMsec_ != 0) {
-            reconnectTimer_.start(retryMsec_);
+        if (retryMsec_ != std::chrono::milliseconds::zero()) {
+            reconnectTimer_.start(retryMsec_.count());
         }
         return false;
     }
 }
 
-void Platform::closeDevice(const int waitMsec) {
+void Platform::closeDevice(const std::chrono::milliseconds waitMsec) {
     emit aboutToClose();
     device_->close();   // can take some time depending on the device type
     emit closed();
-    if (waitMsec != 0) {
-        reconnectTimer_.start(waitMsec);
+    if (waitMsec != std::chrono::milliseconds::zero()) {
+        reconnectTimer_.start(waitMsec.count());
     }
 }
 

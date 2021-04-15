@@ -3,6 +3,7 @@
 #include <Device.h>
 
 #include <memory>
+#include <chrono>
 
 #include <QObject>
 #include <QString>
@@ -73,7 +74,7 @@ namespace strata::platform {
          * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
          * @return true if open successfully, otherwise false (TODO: remove this and use signals)
          */
-        bool open(const int retryMsec = 0);
+        bool open(const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
 
         /**
          * Close device communication channel.
@@ -81,7 +82,8 @@ namespace strata::platform {
          * @param waitMsec how long to remain in closed state before re-attempting to open the device (0 - stay closed)
          * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        void close(const int waitMsec = 0, const int retryMsec = 0);
+        void close(const std::chrono::milliseconds waitMsec = std::chrono::milliseconds::zero(),
+                   const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
 
         /**
          * Send message to device (public).
@@ -324,7 +326,7 @@ namespace strata::platform {
       // ***
 
         bool openDevice();
-        void closeDevice(const int waitMsec);
+        void closeDevice(const std::chrono::milliseconds waitMsec);
 
     protected:
         device::DevicePtr device_;
@@ -338,7 +340,7 @@ namespace strata::platform {
 
     private:
         QTimer reconnectTimer_;
-        int retryMsec_ = 0;
+        std::chrono::milliseconds retryMsec_;
 
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 
