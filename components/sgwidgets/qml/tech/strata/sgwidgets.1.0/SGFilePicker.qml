@@ -1,3 +1,4 @@
+import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -21,10 +22,20 @@ FocusScope {
     property alias isValid: textEdit.isValid
     property alias activeEditing: textEdit.activeEditing
     property alias showValidationResultIcon: textEdit.showValidationResultIcon
-
+    property alias suggestionModel: textEdit.suggestionListModel
+    property alias suggestionModelTextRole: textEdit.suggestionModelTextRole
 
     function inputValidationErrorMsg() {
         return ""
+    }
+
+    /* reimplement this to return data from provided suggestionModel */
+    function textRoleValue(index) {
+        return ""
+    }
+
+    /* reimplement this to remove data from provided suggestionModel */
+    function removeAt(index) {
     }
 
     function setStateIsUnknown() {
@@ -49,6 +60,18 @@ FocusScope {
         label: "File"
         placeholderText: "Select path..."
         focus: true
+        textFieldSuggestionDelegateRemovable: true
+        textFieldSuggestionCloseWithArrowKey: true
+        textFieldSuggestionMaxHeight: 200
+        textFieldRightIconSource: suggestionListModel ? "qrc:/sgimages/chevron-down.svg" : ""
+
+        onTextFieldSuggestionDelegateSelected: {
+            text = filePicker.textRoleValue(index)
+        }
+
+        onTextFieldSuggestionDelegateRemoveRequested: {
+            filePicker.removeAt(index)
+        }
 
         function inputValidationErrorMsg() {
             return filePicker.inputValidationErrorMsg()

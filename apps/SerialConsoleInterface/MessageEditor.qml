@@ -321,7 +321,7 @@ FocusScope {
         emptyModelText: qsTr("No commands.")
         headerText: qsTr("Message history")
         maxHeight: 250
-        closeOnDown: true
+        closeWithArrowKey: true
         delegateRemovable: true
 
         onDelegateSelected: {
