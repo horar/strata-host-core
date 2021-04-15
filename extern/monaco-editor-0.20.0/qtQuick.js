@@ -184,7 +184,7 @@ function registerQmlAsLanguage() {
             {
                 beforeText: /(?!\n)/,
                 action: { indentAction: monaco.languages.IndentAction.Outdent }
-            }
+            }, 
         ],
         autoClosingPairs: [
             { open: '{', close: '}' },
@@ -342,6 +342,7 @@ function registerQmlAsLanguage() {
         theme: "qmlTheme",
         detectIndentation: true,
         formatOnPaste: true,
+        formatOnType: true,
         scrollbar: {
             useShadows: false,
             vertical: 'visible',
