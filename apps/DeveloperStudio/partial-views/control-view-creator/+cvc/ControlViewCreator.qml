@@ -384,13 +384,12 @@ Rectangle {
 
     function requestRecompile() {
         recompileRequested = true
+        controlViewLoader.setSource("")
         Help.resetDeviceIdTour(debugPlatform.deviceId)
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
     function loadDebugView (compiledRccFile) {
-        controlViewLoader.setSource("")
-
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
 

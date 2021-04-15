@@ -52,9 +52,9 @@ Item {
                 source: {
                     switch (navTabs.currentIndex) {
                         case 0:
-                            return "qrc:/control-views/BasicControl.qml"
+                            return "control-views/BasicControl.qml"
                         case 1:
-                            return "qrc:/control-views/AdvancedControl.qml"
+                            return "control-views/AdvancedControl.qml"
                     }
                 }
             }
