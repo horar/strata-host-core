@@ -27,3 +27,6 @@ if(APPS_CORECOMPONENTS)
     add_subdirectory(commoncpp)
 endif()
 
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/strata-platform-control-views")
+    add_subdirectory(strata-platform-control-views)
+endif()
