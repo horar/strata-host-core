@@ -55,12 +55,12 @@ SGWidgets.SGMainWindow {
 
     Timer {
         id: loadingTimer
-        interval: 1500
+        interval: 500
         onTriggered: {
             for(var i = 1; i < Qt.application.arguments.length; i++) {
                 logViewerMain.loadFiles(["file:" + Qt.application.arguments[i]])
-                filesLoading = false
             }
+            filesLoading = false
         }
     }
 
