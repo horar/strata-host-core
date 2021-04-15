@@ -183,6 +183,10 @@ void BasePlatformOperation::initCommandList()
 
 void BasePlatformOperation::finishOperation(Result result, const QString &errorString)
 {
+    if (finished_) {
+        return;
+    }
+
     reset();
     finished_ = true;
 
@@ -197,7 +201,7 @@ void BasePlatformOperation::finishOperation(Result result, const QString &errorS
 
 void BasePlatformOperation::resume()
 {
-    if (started_) {
+    if (started_ && (finished_ == false)) {
         emit sendCommand(QPrivateSignal());
     }
 }
