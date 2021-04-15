@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         QStringLiteral("Log Viewer \n\n"
                        "Tool, useful for loading, parsing and filtering log files."));
     parser.addPositionalArgument(QStringLiteral("<file>"),
-                            QObject::tr("Specifies files to be loaded."));
+                            QObject::tr("Specifies list of Strata log files to be loaded."));
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
