@@ -15,7 +15,6 @@ void StrataServerTest::testValidApiVer2Message()
 
     // This will register the client and sets the api as v2
     validMessage = false;
-
     QMetaObject::invokeMethod(
         &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "AAA"),
         Q_ARG(
@@ -37,7 +36,6 @@ void StrataServerTest::testValidApiVer2Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-
     QVERIFY_(validMessage);
 
     validMessage = false;
