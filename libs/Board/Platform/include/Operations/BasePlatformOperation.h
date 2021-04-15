@@ -114,12 +114,6 @@ protected:
      */
     virtual bool bootloaderMode() final;
 
-    /*!
-     * Perform any post operation actions once operation finishes.
-     * \param result value from Result enum
-     */
-    virtual void performPostOperationActions(Result result);
-
 signals:
     /*!
      * This signal is emitted when platform operation finishes.
@@ -167,6 +161,7 @@ protected:
     std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator currentCommand_;
 
     std::function<void(command::CommandResult&, int&)> postCommandHandler_;
+    std::function<void(Result)> postOperationHandler_;
 
 };
 

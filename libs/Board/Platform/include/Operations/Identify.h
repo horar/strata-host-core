@@ -41,12 +41,12 @@ public:
      */
     BoardMode boardMode();
 
-protected:
+private:
     /*!
-     * Perform any post operation actions once operation finishes.
+     * Set platform recognized property once operation finishes.
      * \param result value from Result enum
      */
-    virtual void performPostOperationActions(Result result) override;
+    void setPlatformRecognized(Result result);
 };
 
 }  // namespace
