@@ -11,12 +11,14 @@ Item {
     property alias model: repeater.model
     readonly property alias count: repeater.count
     property int orientation: Qt.Vertical
+    property real radioSize: 12
+    property color radioColor: "black"
+    property int checkedIndices: 1
 
-    signal checked()
+    signal clicked(int index)
 
     GridLayout {
         id: strip
-
         rows: orientation === Qt.Horizontal ? 1 : -1
         columns: orientation === Qt.Vertical ? 1 : -1
         anchors.fill: parent
@@ -26,18 +28,43 @@ Item {
         Repeater {
             id: repeater
 
-
-            delegate: SGWidgets.SGRadioButton {
+            delegate: RadioButton {
                 id: buttonDelegate
-                text : modelData
                 checkable: true
+                checked: checkedIndices
                 spacing: 10
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                onCheckedChanged: {
-                     control.checked()
 
+                indicator :  Rectangle {
+                    id: outerRadio
+                    implicitWidth: control.radioSize
+                    implicitHeight: implicitWidth
+                    radius: width/2
+                    color: "transparent"
+                    border.width: 1
+                    border.color: control.radioColor
+
+                    Rectangle {
+                        id: innerRadio
+                        implicitWidth: outerRadio.width * 0.6
+                        implicitHeight: implicitWidth
+                        anchors {
+                            horizontalCenter: outerRadio.horizontalCenter
+                            verticalCenter: outerRadio.verticalCenter
+                        }
+                        radius: width / 2
+                        color: control.radioColor
+                        visible: buttonDelegate.checked
+                    }
                 }
+
+//                property int powIndex: 1 << index
+
+                onClicked: {
+                    control.clicked(index)
+                }
+
             }
         }
     }

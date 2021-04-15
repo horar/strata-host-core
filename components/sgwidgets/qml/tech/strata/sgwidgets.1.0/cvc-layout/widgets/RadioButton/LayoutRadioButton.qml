@@ -5,12 +5,21 @@ import "../../"
 
 LayoutContainer {
 
-    signal clicked()
+    property alias model: radioButtonObject.model
+    property alias radioSize: radioButtonObject.radioSize
+    property alias radioColor: radioButtonObject.radioColor
+    property alias orientation: radioButtonObject.orientation
+    property var index
+
+    signal clicked ()
 
     SGRadioButton {
-        model: 2
+        id: radioButtonObject
 
-
+        onClicked: {
+            parent.index = index
+            parent.clicked()
+        }
     }
 }
 
