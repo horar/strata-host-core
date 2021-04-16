@@ -12,7 +12,7 @@ Item {
     property int orientation: Qt.Vertical
     property int radioSize: 25
     property color radioColor: "black"
-    property color textColor: "black"
+    property color textColor: radioColor
     property int checkedIndex: 1
     property real fontSizeMultiplier: 1.0
     property real pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
