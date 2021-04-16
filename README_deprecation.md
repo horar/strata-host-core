@@ -22,6 +22,7 @@ Checkout Hello Strata page for more details: https://confluence.onsemi.com/pages
 ## Directories and files that has been moved and removed 
 
 * spyglass/platform_rsl10: Has been moved to: https://code.onsemi.com/projects/SECSWST/repos/embedded-portable-core/browse
+* components/views: Has been moved to: https://code.onsemi.com/projects/SECSWST/repos/strata-platform-control-views/browse
 
 ## Directories and files that has been removed 
 * spyglass/bitbucket-pipelines.yml
