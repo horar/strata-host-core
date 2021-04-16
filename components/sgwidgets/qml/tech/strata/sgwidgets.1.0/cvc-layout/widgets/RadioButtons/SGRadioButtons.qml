@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
-
 Item {
     id: control
     anchors.fill: parent
@@ -58,10 +57,7 @@ Item {
                 onClicked: {
                     control.clicked(index)
                 }
-
             }
         }
     }
-
-
 }
