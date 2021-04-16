@@ -133,6 +133,10 @@ bool Database::getDocument(const std::string& doc_id, std::string& result)
 
 void Database::stop()
 {
+    if (DB_ == nullptr) {
+        return;
+    }
+
     DB_->close();
 
     DB_ = nullptr;
