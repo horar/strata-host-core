@@ -81,8 +81,8 @@ Popup {
                 }
 
                 ListElement {
-                    text: "RadioButton"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/RadioButton/SGRadioButton.txt"
+                    text: "RadioButtons"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/RadioButtons/SGRadioButtons.txt"
                 }
             }
 

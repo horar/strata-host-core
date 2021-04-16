@@ -68,9 +68,6 @@
         <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
         <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
         <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
-        <file>cvc-layout/widgets/RadioButton/LayoutRadioButton.qml</file>
-        <file>cvc-layout/widgets/RadioButton/SGRadioButton.txt</file>
-        <file>cvc-layout/widgets/RadioButton/SGRadioButton.qml</file>
         <file>cvc-layout/widgets/Switch/LayoutSGSwitch.qml</file>
         <file>cvc-layout/widgets/Switch/SGSwitch.txt</file>
         <file>cvc-layout/widgets/InfoBox/SGInfoBox.txt</file>
@@ -88,5 +85,8 @@
         <file>cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml</file>
         <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt</file>
         <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.qml</file>
+        <file>cvc-layout/widgets/RadioButtons/LayoutRadioButtons.qml</file>
+        <file>cvc-layout/widgets/RadioButtons/SGRadioButtons.qml</file>
+        <file>cvc-layout/widgets/RadioButtons/SGRadioButtons.txt</file>
     </qresource>
 </RCC>
