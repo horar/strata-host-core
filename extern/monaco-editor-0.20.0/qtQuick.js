@@ -182,9 +182,9 @@ function registerQmlAsLanguage() {
                 action: { indentAction: monaco.languages.IndentAction.None, removeText: 1 }
             },
             {
-                previousLineText: /(\t\n)+/,
-                action: { indentAction: monaco.languages.IndentAction.None }
-            }, 
+                beforeText: /^\s(?:readonly|property|for|if|else|do|while|try|int|real|var|string|color|url|alias|bool|double).*?:\s*$/,
+                action: {indentAction: monaco.languages.IndentAction.IndentOutdent}
+            }
         ],
         autoClosingPairs: [
             { open: '{', close: '}' },
@@ -195,11 +195,16 @@ function registerQmlAsLanguage() {
             { open: '`', close: '`', notIn: ['string', 'comment'] },
             { open: "/*", close: " */", notIn: ["string"] }
         ],
+        autoCloseBefore: ";:.,=})>`\n\t",
         folding: {
             markers: {
                 start: new RegExp("^\\s*//\\s*#?region\\b"),
                 end: new RegExp("^\\s*//\\s*#?endregion\\b")
             }
+        },
+        indentationRules: {
+            increseasIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
+            decreaseIndentPattern: /^((?!\/\/).)*(\{[^}\"'`]*|\([^)\"'`]*|\[[^\]\"'`]*)$/
         }
     })
     monaco.languages.setMonarchTokensProvider('qml', {
@@ -342,6 +347,7 @@ function registerQmlAsLanguage() {
         theme: "qmlTheme",
         formatOnPaste: true,
         formatOnType: true,
+        formatOnSave: true,
         autoIndent: 'all',
         scrollbar: {
             useShadows: false,
@@ -351,6 +357,10 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
+
+
+
+
 
     function getValue() {
         return editor.getValue();
@@ -876,4 +886,10 @@ function registerQmlAsLanguage() {
             addCustomIdAndTypes(word, position, type)
         }
     })
+}
+
+function correctFormat(position){
+    const model = editor.getModel()
+
+
 }
