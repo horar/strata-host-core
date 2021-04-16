@@ -17,6 +17,8 @@ add_executable(${PROJECT_NAME}-test
 target_link_libraries(${PROJECT_NAME}-test
     PRIVATE Qt5::Test
     PRIVATE Flasher
+    PRIVATE strata::base64
+    PRIVATE strata::crc16
 )
 
 add_test(NAME ${PROJECT_NAME}-test

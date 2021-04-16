@@ -6,6 +6,9 @@
 #include <Operations/StartBootloader.h>
 #include <Operations/StartApplication.h>
 
+#include <CodecBase64.h>
+#include <Buypass.h>
+
 //constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
 using strata::Flasher;
@@ -427,6 +430,7 @@ void FlasherTest::flashBootloaderTest()
         QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
         QCOMPARE(expectedChunk["number"].GetInt(),0);
         QCOMPARE(expectedChunk["size"].GetInt(),256);
+        //QCOMPARE(expectedChunk["crc"].GetInt(),crcForChunk());
         //QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
     }
     qDebug() << recordedMessages[8];
