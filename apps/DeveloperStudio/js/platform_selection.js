@@ -289,6 +289,7 @@ function previousDeviceIndex(device_id) {
 */
 function addConnectedPlatform(platform) {
     let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
+    let data
 
     if (platform.controller_class_id === undefined) {
         // Embedded Strata
@@ -306,6 +307,11 @@ function addConnectedPlatform(platform) {
             }
         }
 
+        data = {
+            "class_id": class_id_string,
+            "device_id": platform.device_id,
+            "firmware_version": platform.firmware_version
+        }
     } else {
         // Assisted Strata
 
@@ -336,15 +342,16 @@ function addConnectedPlatform(platform) {
                 sdsModel.programControllerManager.program(platform.device_id)
             }
         }
+
+        data = {
+            "class_id": class_id_string,
+            "controller_class_id": platform.controller_class_id,
+            "device_id": platform.device_id,
+            "firmware_version": platform.firmware_version
+        }
     }
 
     notifyConnectedState(true,classMap[class_id_string].original_listing.verbose_name)
-
-    let data = {
-        "class_id": class_id_string,
-        "device_id": platform.device_id,
-        "firmware_version": platform.firmware_version
-    }
 
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
