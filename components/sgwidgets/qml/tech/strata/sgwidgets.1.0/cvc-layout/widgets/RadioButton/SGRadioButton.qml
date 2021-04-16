@@ -11,9 +11,13 @@ Item {
     property alias model: repeater.model
     readonly property alias count: repeater.count
     property int orientation: Qt.Vertical
-    property real radioSize: 12
+    property int radioSize: 25
     property color radioColor: "black"
-    property int checkedIndices: 1
+    property color textColor: "black"
+    //property color indicatorColor: "white"
+    property int checkedIndex: 1
+    property real fontSizeMultiplier: 1.0
+    property real pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
 
     signal clicked(int index)
 
@@ -31,35 +35,27 @@ Item {
             delegate: RadioButton {
                 id: buttonDelegate
                 checkable: true
-                checked: checkedIndices
+                checked: checkedIndex & powIndex
                 spacing: 10
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                text: modelData
+                padding: 0
 
-                indicator :  Rectangle {
-                    id: outerRadio
-                    implicitWidth: control.radioSize
-                    implicitHeight: implicitWidth
-                    radius: width/2
-                    color: "transparent"
-                    border.width: 1
-                    border.color: control.radioColor
 
-                    Rectangle {
-                        id: innerRadio
-                        implicitWidth: outerRadio.width * 0.6
-                        implicitHeight: implicitWidth
-                        anchors {
-                            horizontalCenter: outerRadio.horizontalCenter
-                            verticalCenter: outerRadio.verticalCenter
-                        }
-                        radius: width / 2
-                        color: control.radioColor
-                        visible: buttonDelegate.checked
-                    }
+                Component.onCompleted:  {
+                    indicator.color = Qt.binding(function(){return "transparent"})
+                    indicator.implicitWidth = Qt.binding(function(){ return control.radioSize })
+                    indicator.implicitHeight = Qt.binding(function(){ return indicator.implicitWidth })
+                    indicator.border.color = Qt.binding(function(){return control.radioColor})
+                    indicator.children[0].color = Qt.binding(function(){return control.radioColor})
+                    indicator.children[0].width = Qt.binding(function(){return (control.radioSize * 0.6) })
+                    indicator.children[0].height = Qt.binding(function(){return (indicator.children[0].width)})
+                    contentItem.font.pixelSize = Qt.binding(function(){return control.pixelSize})
+                    contentItem.color = Qt.binding(function(){return control.textColor})
                 }
 
-//                property int powIndex: 1 << index
+                property int powIndex: 1 << index
 
                 onClicked: {
                     control.clicked(index)

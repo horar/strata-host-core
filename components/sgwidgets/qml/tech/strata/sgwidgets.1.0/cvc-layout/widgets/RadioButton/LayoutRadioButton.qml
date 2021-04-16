@@ -6,11 +6,15 @@ import "../../"
 LayoutContainer {
 
     property alias model: radioButtonObject.model
-    property alias radioSize: radioButtonObject.radioSize
+    //property alias radioSize: radioButtonObject.radioSize
+    property alias textColor: radioButtonObject.textColor
     property alias radioColor: radioButtonObject.radioColor
     property alias orientation: radioButtonObject.orientation
-    property var index
-
+    property alias checkedIndex: radioButtonObject.checkedIndex
+    property int index
+    property alias fontSizeMultiplier: radioButtonObject.fontSizeMultiplier
+    property alias pixelSize : radioButtonObject.pixelSize
+    property alias radioSize : radioButtonObject.radioSize
     signal clicked ()
 
     SGRadioButton {

@@ -21,7 +21,7 @@ Item {
             // textColor: "black"       // Default: "black"
             // radioColor: "black"      // Default: "black"
             // exclusive: false         // Default: true (modifies the built-in ButtonGroup)
-            // radioSize: 20            // Default: 20 * fontSizeMultiplier (can also be individually set for buttons)
+              radioSize: 50          // Default: 20 * fontSizeMultiplier (can also be individually set for buttons)
             // columnSpacing: 5         // Default: 5
             // rowSpacing: 5            // Default: 5
             // alignment: SGAlignedLabel.SideRightCenter    // Default: SGAlignedLabel.SideRightCenter (see SGAlignedLabel for alignment enumeration options)
