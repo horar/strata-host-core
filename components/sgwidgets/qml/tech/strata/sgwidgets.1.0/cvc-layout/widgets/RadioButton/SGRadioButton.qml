@@ -42,15 +42,15 @@ Item {
                 padding: 0
 
                 Component.onCompleted:  {
-                    indicator.color = Qt.binding(function(){return "transparent"})
-                    indicator.implicitWidth = Qt.binding(function(){ return control.radioSize })
-                    indicator.implicitHeight = Qt.binding(function(){ return indicator.implicitWidth })
-                    indicator.border.color = Qt.binding(function(){return control.radioColor})
-                    indicator.children[0].color = Qt.binding(function(){return control.radioColor})
-                    indicator.children[0].width = Qt.binding(function(){return (control.radioSize * 0.6) })
-                    indicator.children[0].height = Qt.binding(function(){return (indicator.children[0].width)})
-                    contentItem.font.pixelSize = Qt.binding(function(){return control.pixelSize})
-                    contentItem.color = Qt.binding(function(){return control.textColor})
+                    indicator.color = Qt.binding(function(){ return "transparent"} )
+                    indicator.implicitWidth = Qt.binding(function(){ return control.radioSize } )
+                    indicator.implicitHeight = Qt.binding(function(){ return indicator.implicitWidth } )
+                    indicator.border.color = Qt.binding(function(){ return control.radioColor} )
+                    indicator.children[0].color = Qt.binding(function(){ return control.radioColor} )
+                    indicator.children[0].width = Qt.binding(function(){ return (control.radioSize * 0.6)} )
+                    indicator.children[0].height = Qt.binding(function(){ return (indicator.children[0].width)} )
+                    contentItem.font.pixelSize = Qt.binding(function(){ return control.pixelSize} )
+                    contentItem.color = Qt.binding(function(){ return control.textColor} )
                 }
 
                 property int powIndex: 1 << index
