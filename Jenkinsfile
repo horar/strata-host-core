@@ -33,8 +33,9 @@ pipeline {
                 sh "python -m venv ${env.workspace}/internal/deployment/OTA/ota-deploy-env"
                 sh "source ${env.workspace}/internal/deployment/OTA/ota-deploy-env/Scripts/activate"
                 sh "python -m pip install -r ${env.workspace}/internal/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/internal/deployment/OTA/main.py' view \
+                sh """python '${env.workspace}/internal/deployment/OTA/main.py'
                     --dir '${BUILD_NAME}' \
+                    view \
                     '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
                     """
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
