@@ -20,8 +20,10 @@ class PlatformOperations : public QObject
 public:
     /*!
      * BasePlatformOperation constructor.
+     * @param runOperations true if operations are to be run automatically, false otherwise
+     * @param overwriteEnabled true if operations are to be always created (cancelling old operations), false otherwise
      */
-    PlatformOperations();
+    PlatformOperations(bool runOperations, bool overwriteEnabled);
 
     /*!
      * PlatformOperations destructor.
@@ -29,14 +31,7 @@ public:
     virtual ~PlatformOperations();
 
     /**
-     * Start an operation
-     * @param deviceId device Id
-     * @param operation operation pointer
-     */
-    void startOperation(const OperationSharedPtr& operation);
-
-    /**
-     * Stop an ongoing operation
+     * Stop ongoing operation with specified device Id
      * @param deviceId device Id
      */
     void stopOperation(const QByteArray& deviceId);
@@ -47,51 +42,41 @@ public:
     void stopAllOperations();
 
     /**
-     * Get operation pointer of an ongoing operation
+     * Get operation pointer of ongoing operation with specified device Id
      * @param deviceId device Id
      * @return operation pointer
      */
     OperationSharedPtr getOperation(const QByteArray& deviceId);
 
-    static OperationSharedPtr createOperationBackup(const PlatformPtr& platform);
+    // -----------------------------------------------------
+    // -------functions for creating operations begin-------
+    // -----------------------------------------------------
 
-    static OperationSharedPtr createOperationFlash(const PlatformPtr& platform,
-                                                   int size,
-                                                   int chunks,
-                                                   const QString &md5,
-                                                   bool flashFirmware);
+    OperationSharedPtr Backup(const PlatformPtr& platform);
 
-    static OperationSharedPtr createOperationIdentify(const PlatformPtr& platform,
-                                                      bool requireFwInfoResponse,
-                                                      uint maxFwInfoRetries = 1,
-                                                      std::chrono::milliseconds delay = std::chrono::milliseconds(0));
+    OperationSharedPtr Flash(const PlatformPtr& platform,
+                             int size,
+                             int chunks,
+                             const QString &md5,
+                             bool flashFirmware);
 
-    static OperationSharedPtr createOperationSetAssistedPlatformId(const PlatformPtr& platform);
+    OperationSharedPtr Identify(const PlatformPtr& platform,
+                                bool requireFwInfoResponse,
+                                uint maxFwInfoRetries = 1,
+                                std::chrono::milliseconds delay = std::chrono::milliseconds(0));
 
-    static OperationSharedPtr createOperationSetPlatformId(const PlatformPtr& platform,
-                                                           const command::CmdSetPlatformIdData &data);
+    OperationSharedPtr SetAssistedPlatformId(const PlatformPtr& platform);
 
-    static OperationSharedPtr createOperationStartApplication(const PlatformPtr& platform);
+    OperationSharedPtr SetPlatformId(const PlatformPtr& platform,
+                                     const command::CmdSetPlatformIdData &data);
 
-    static OperationSharedPtr createOperationStartBootloader(const PlatformPtr& platform);
+    OperationSharedPtr StartApplication(const PlatformPtr& platform);
 
-    void Backup(const PlatformPtr& platform);
+    OperationSharedPtr StartBootloader(const PlatformPtr& platform);
 
-    void Flash(const PlatformPtr& platform, int size, int chunks, const QString &md5, bool flashFirmware);
-
-    void Identify(const PlatformPtr& platform,
-                  bool requireFwInfoResponse,
-                  uint maxFwInfoRetries = 1,
-                  std::chrono::milliseconds delay = std::chrono::milliseconds(0));
-
-    void SetAssistedPlatformId(const PlatformPtr& platform);
-
-    void SetPlatformId(const PlatformPtr& platform,
-                       const command::CmdSetPlatformIdData &data);
-
-    void StartApplication(const PlatformPtr& platform);
-
-    void StartBootloader(const PlatformPtr& platform);
+    // ---------------------------------------------------
+    // -------functions for creating operations end-------
+    // ---------------------------------------------------
 
 signals:
     /*!
@@ -107,8 +92,11 @@ private slots:
     void handleOperationFinished(Result result, int status, QString errorString);
 private:
     static void operationLaterDeleter(BasePlatformOperation* operation);
+    OperationSharedPtr processOperation(const OperationSharedPtr& operation);
 
     QHash<QByteArray, OperationSharedPtr> operations_;
+    bool runOperations_;
+    bool overwriteEnabled_;
 };
 
 }  // namespace

@@ -26,7 +26,7 @@ using platform::PlatformPtr;
 
 namespace operation = platform::operation;
 
-PlatformManager::PlatformManager() {
+PlatformManager::PlatformManager() : platformOperations_(true, true) {
     // checkNewSerialDevices() slot uses mutex_
     connect(&timer_, &QTimer::timeout, this, &PlatformManager::checkNewSerialDevices, Qt::QueuedConnection);
     // handlePlatformIdChanged() slot uses mutex_

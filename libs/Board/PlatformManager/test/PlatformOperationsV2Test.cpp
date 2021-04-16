@@ -23,6 +23,10 @@ namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
+PlatformOperationsV2Test::PlatformOperationsV2Test() : platformOperations_(false, true) {
+
+}
+
 void PlatformOperationsV2Test::initTestCase()
 {
 }
@@ -188,8 +192,8 @@ void PlatformOperationsV2Test::identifyEmbeddedApplicationTest()
 
     mockDevice_->mockSetResponse(MockResponse::embedded_app);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -232,8 +236,8 @@ void PlatformOperationsV2Test::identifyEmbeddedBootloaderTest()
 
     mockDevice_->mockSetResponse(MockResponse::embedded_btloader);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -276,8 +280,8 @@ void PlatformOperationsV2Test::identifyAssistedApplicationTest()
 
     mockDevice_->mockSetResponse(MockResponse::assisted_app);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -320,8 +324,8 @@ void PlatformOperationsV2Test::identifyAssistedBootloaderTest()
 
     mockDevice_->mockSetResponse(MockResponse::assisted_btloader);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -365,8 +369,8 @@ void PlatformOperationsV2Test::identifyAssistedNoBoardTest()
 
     mockDevice_->mockSetResponse(MockResponse::assisted_no_board);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -408,9 +412,9 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 
     mockDevice_->mockSetResponse(MockResponse::embedded_app);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1));
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -439,8 +443,8 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 
         mockDevice_->mockSetResponse(MockResponse::embedded_app);
 
-        platformOperation = PlatformOperations::createOperationStartApplication(platform_);
-        platformOperations_.startOperation(platformOperation);
+        platformOperation = platformOperations_.StartApplication(platform_);
+        platformOperation->run();
 
         QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -482,9 +486,9 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 
     mockDevice_->mockSetResponse(MockResponse::assisted_app);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1));
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -515,8 +519,8 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackAssistedTest()
         QCOMPARE(platform_->applicationVer(), expectedPayload["application"]["version"].GetString());
     }
 
-    platformOperation = PlatformOperations::createOperationStartApplication(platform_);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation = platformOperations_.StartApplication(platform_);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -558,8 +562,8 @@ void PlatformOperationsV2Test::cancelOperationEmbeddedTest()
     mockDevice_->mockSetAutoResponse(false);
     mockDevice_->mockSetResponse(MockResponse::embedded_btloader);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(mockDevice_->mockGetRecordedMessagesCount(), 1, 1000);
 
@@ -585,8 +589,8 @@ void PlatformOperationsV2Test::cancelOperationAssistedTest()
     mockDevice_->mockSetAutoResponse(false);
     mockDevice_->mockSetResponse(MockResponse::assisted_btloader);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(mockDevice_->mockGetRecordedMessagesCount(), 1, 1000);
 
@@ -610,9 +614,9 @@ void PlatformOperationsV2Test::noResponseEmbeddedTest()
     mockDevice_->mockSetAutoResponse(false);
     mockDevice_->mockSetResponse(MockResponse::embedded_app);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -633,9 +637,9 @@ void PlatformOperationsV2Test::noResponseAssistedTest()
     mockDevice_->mockSetAutoResponse(false);
     mockDevice_->mockSetResponse(MockResponse::assisted_app);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -655,9 +659,9 @@ void PlatformOperationsV2Test::invalidValueV2Test()
 {
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -672,9 +676,9 @@ void PlatformOperationsV2Test::flashFirmwareTest()
 {
     rapidjson::Document expectedDoc;
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -729,9 +733,9 @@ void PlatformOperationsV2Test::flashBootloaderTest()
 {
     rapidjson::Document expectedDoc;
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,1024,4,"207fb5670e66e7d6ecd89b5f195c0b71",false);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,1024,4,"207fb5670e66e7d6ecd89b5f195c0b71",false);
     connectFlashHandlers(platformOperation.get());
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -796,9 +800,9 @@ void PlatformOperationsV2Test::flashResendChunkTest()
 
     mockDevice_->mockSetResponse(MockResponse::flash_resend_chunk);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1100);
 
@@ -847,9 +851,9 @@ void PlatformOperationsV2Test::flashMemoryErrorTest()
 
     mockDevice_->mockSetResponse(MockResponse::flash_memory_error);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -887,9 +891,9 @@ void PlatformOperationsV2Test::flashInvalidCmdSequenceTest()
 
     mockDevice_->mockSetResponse(MockResponse::flash_invalid_cmd_sequence);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -927,10 +931,10 @@ void PlatformOperationsV2Test::flashInvalidValueTest()
 
     mockDevice_->mockSetResponse(MockResponse::flash_invalid_value);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -965,9 +969,9 @@ void PlatformOperationsV2Test::flashInvalidValueTest()
 
 void PlatformOperationsV2Test::cancelFlashOperationTest()
 {
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     platformOperation->cancelOperation();
 
@@ -996,10 +1000,10 @@ void PlatformOperationsV2Test::startFlashInvalidTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::start_flash_firmware_invalid,MockCommand::start_flash_firmware);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationFlash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 

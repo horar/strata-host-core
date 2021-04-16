@@ -20,6 +20,10 @@ namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
+PlatformOperationsTest::PlatformOperationsTest() : platformOperations_(false, true) {
+
+}
+
 void PlatformOperationsTest::initTestCase()
 {
 }
@@ -116,8 +120,8 @@ void PlatformOperationsTest::identifyTest()
 {
     rapidjson::Document expectedDoc;
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -145,9 +149,9 @@ void PlatformOperationsTest::noResponseTest()
 {
     mockDevice_->mockSetAutoResponse(false); //stopping auto-response
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -167,9 +171,9 @@ void PlatformOperationsTest::notJSONTest()
 {
     mockDevice_->mockSetResponse(MockResponse::no_JSON);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -191,9 +195,9 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::get_firmware_info);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -205,9 +209,9 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::request_platform_id);
 
-    platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -222,9 +226,9 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::start_application);
 
-    platformOperation = PlatformOperations::createOperationStartApplication(platform_);
+    platformOperation = platformOperations_.StartApplication(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -242,9 +246,9 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::start_bootloader);
 
-    platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
+    platformOperation = platformOperations_.StartBootloader(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -279,9 +283,9 @@ void PlatformOperationsTest::nackTest()
 {
     mockDevice_->mockSetResponse(MockResponse::nack);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -301,9 +305,9 @@ void PlatformOperationsTest::invalidValueTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -315,9 +319,9 @@ void PlatformOperationsTest::invalidValueTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::request_platform_id);
 
-    platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -332,9 +336,9 @@ void PlatformOperationsTest::invalidValueTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::start_application);
 
-    platformOperation = PlatformOperations::createOperationStartApplication(platform_);
+    platformOperation = platformOperations_.StartApplication(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -352,9 +356,9 @@ void PlatformOperationsTest::invalidValueTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::start_bootloader);
 
-    platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
+    platformOperation = platformOperations_.StartBootloader(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
@@ -389,9 +393,9 @@ void PlatformOperationsTest::switchToBootloaderAndBackTest()
 {
     rapidjson::Document expectedDoc;
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1));
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
@@ -409,8 +413,8 @@ void PlatformOperationsTest::switchToBootloaderAndBackTest()
     QCOMPARE(platform_->applicationVer(),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
-    platformOperation = PlatformOperations::createOperationStartApplication(platform_);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation = platformOperations_.StartApplication(platform_);
+    platformOperation->run();
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(!mockDevice_->mockIsBootloader());
@@ -444,8 +448,8 @@ void PlatformOperationsTest::cancelOperationTest()
     mockDevice_->mockSetAutoResponse(false);
     rapidjson::Document expectedDoc;
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationStartBootloader(platform_);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
+    platformOperation->run();
     QTRY_COMPARE_WITH_TIMEOUT(mockDevice_->mockGetRecordedMessagesCount(), 1, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
@@ -469,8 +473,8 @@ void PlatformOperationsTest::identifyLegacyTest()
 
     mockDevice_->mockSetLegacy(true);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, false);
-    platformOperations_.startOperation(platformOperation);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, false);
+    platformOperation->run();
     QCOMPARE(platformOperation->deviceId(), "mock1234");
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
@@ -497,10 +501,10 @@ void PlatformOperationsTest::retryGetFirmwareInfoTest()
 
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::get_firmware_info);
 
-    OperationSharedPtr platformOperation = PlatformOperations::createOperationIdentify(platform_, true);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     connectRetryGetFirmwareInfoHandler(platformOperation.get());
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperations_.startOperation(platformOperation);
+    platformOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 

@@ -10,6 +10,10 @@
 class PlatformOperationsV2Test : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PlatformOperationsV2Test)
+
+public:
+    PlatformOperationsV2Test();
 
 private slots:
     // test init/teardown
