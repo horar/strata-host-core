@@ -12,7 +12,6 @@ SGWidgets.SGMainWindow {
     minimumHeight: 600
 
     property int statusBarHeight: logViewerMain.statusBarHeight
-    property bool filesLoading: false
 
     visible: true
     title: qsTr("Log Viewer")
@@ -38,17 +37,13 @@ SGWidgets.SGMainWindow {
         id: popup
 
         parent: Overlay.overlay
+        anchors.centerIn: parent
+        padding: 16
 
-        x: parent ? Math.round((parent.width - width) / 2) : 0
-        y: parent ? Math.round((parent.height - height) / 2) : 0
-
-        padding: 18
-
-        visible: filesLoading
         Column {
-            Label {
+            SGWidgets.SGText {
                 text: qsTr("Files are loading...")
-                font.pixelSize: 18
+                fontSizeMultiplier: 2.0
             }
         }
     }
@@ -57,10 +52,10 @@ SGWidgets.SGMainWindow {
         id: loadingTimer
         interval: 500
         onTriggered: {
-            for(var i = 1; i < Qt.application.arguments.length; i++) {
+            for (var i = 1; i < Qt.application.arguments.length; i++) {
                 logViewerMain.loadFiles(["file:" + Qt.application.arguments[i]])
             }
-            filesLoading = false
+            popup.close()
         }
     }
 
@@ -77,7 +72,7 @@ SGWidgets.SGMainWindow {
         focus: true
         Component.onCompleted: {
             if(Qt.application.arguments.length > 1) {
-                filesLoading = true
+                popup.open()
                 loadingTimer.start()
             }
         }
