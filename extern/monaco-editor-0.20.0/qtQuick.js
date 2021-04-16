@@ -182,8 +182,8 @@ function registerQmlAsLanguage() {
                 action: { indentAction: monaco.languages.IndentAction.None, removeText: 1 }
             },
             {
-                beforeText: /(?!\n)/,
-                action: { indentAction: monaco.languages.IndentAction.Outdent }
+                previousLineText: /(\t\n)+/,
+                action: { indentAction: monaco.languages.IndentAction.None }
             }, 
         ],
         autoClosingPairs: [
@@ -340,9 +340,9 @@ function registerQmlAsLanguage() {
         value: "",
         language: 'qml',
         theme: "qmlTheme",
-        detectIndentation: true,
         formatOnPaste: true,
         formatOnType: true,
+        autoIndent: 'all',
         scrollbar: {
             useShadows: false,
             vertical: 'visible',
@@ -683,7 +683,6 @@ function registerQmlAsLanguage() {
         monaco.languages.registerCompletionItemProvider('qml', {
             triggerCharacters: ['.', ':'],
             provideCompletionItems: (model, position) => {
-
                 var currText = model.getLineContent(position.lineNumber)
                 var currWords = currText.replace("\t", "").split(" ");
                 var active = currWords[currWords.length - 1]
@@ -701,7 +700,6 @@ function registerQmlAsLanguage() {
                         return { suggestions: [] }
                     }
                 }
-
                 if (getId !== null) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
