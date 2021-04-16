@@ -23,16 +23,13 @@ LayoutContainer {
     */
     property alias checkedIndex: radioButtonObject.checkedIndex  //Default: "1"
 
-    property int index
-
-    signal clicked ()
+    signal clicked (int index)
 
     SGRadioButtons {
         id: radioButtonObject
 
         onClicked: {
-            parent.index = index
-            parent.clicked()
+            parent.clicked(index)
         }
     }
 }
