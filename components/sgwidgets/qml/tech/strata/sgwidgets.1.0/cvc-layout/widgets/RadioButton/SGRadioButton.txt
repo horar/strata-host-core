@@ -11,7 +11,7 @@
         checkedIndex: 1
         orientation : Qt.Vertical // For horizontal radio button set Qt.Horizontal
         onClicked: {
-               console.info("Clicked", index)
+               console.info("Clicked Index:", index)
         }
         // end_user_content
     } // end_%1

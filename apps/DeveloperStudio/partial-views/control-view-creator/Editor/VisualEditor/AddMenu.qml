@@ -41,40 +41,48 @@ Popup {
                 }
 
                 ListElement {
-                    text: "RadioButton"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/RadioButton/SGRadioButton.txt"
-                }
-                ListElement {
                     text: "Switch"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Switch/SGSwitch.txt"
                 }
+
                 ListElement {
                     text: "InfoBox"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/InfoBox/SGInfoBox.txt"
                 }
+
                 ListElement {
                     text: "CircularGauge"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/CircularGauge/SGCircularGauge.txt"
                 }
+
                 ListElement {
                     text: "StatusLight"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLight/SGStatusLight.txt"
                 }
+
                 ListElement {
                     text: "ComboBox"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ComboBox/SGComboBox.txt"
                 }
+
                 ListElement {
                     text: "Graph"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Graph/SGGraph.txt"
                 }
+
                 ListElement {
                     text: "Slider"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Slider/SGSlider.txt"
                 }
+
                 ListElement {
                     text: "ButtonStrip"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt"
+                }
+
+                ListElement {
+                    text: "RadioButton"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/RadioButton/SGRadioButton.txt"
                 }
             }
 
