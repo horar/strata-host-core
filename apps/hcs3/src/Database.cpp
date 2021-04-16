@@ -23,14 +23,19 @@ bool Database::open(const QString& db_path, const QString& db_name)
         return false;
     }
 
-    databaseName_ = db_name;
-    databasePath_ = db_path;
-    qCDebug(logCategoryHcsDb) << "DB location set to:" << databasePath_;
+    if (db_name.isEmpty()) {
+        qCCritical(logCategoryHcsDb) << "Missing valid DB name";
+        return false;
+    }
 
-    if (databasePath_.isEmpty()) {
+    if (db_path.isEmpty()) {
         qCCritical(logCategoryHcsDb) << "Missing writable DB location path";
         return false;
     }
+
+    databaseName_ = db_name;
+    databasePath_ = db_path;
+    qCDebug(logCategoryHcsDb) << "DB location set to:" << databasePath_;
 
     // Check if directories/files already exist
     // If 'db' and 'strata_db' (db_name) directories exist but the main DB file does not, remove directory 'strata_db' (db_name) to avoid bug with opening DB
@@ -101,18 +106,14 @@ void Database::updateChannels()
         return;
     }
 
-    bool wasRunning = isRunning_;
-    if (wasRunning) {
-        DB_->stopReplicator();
-    }
-
     DB_->close();
 
     if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
         qCCritical(logCategoryHcsDb) << "Failed to open database";
+        return;
     }
 
-    if (wasRunning) {
+    if (isRunning_) {
         auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
         isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
     }
