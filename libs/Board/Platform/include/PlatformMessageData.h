@@ -16,10 +16,10 @@ public:
     PlatformMessageData(const PlatformMessageData& other);
     ~PlatformMessageData();
 
-    const QByteArray raw;
-    rapidjson::Document json;
-    QString jsonErrorString;
-    uint jsonErrorOffset;
+    const QByteArray raw_;
+    rapidjson::Document json_;
+    QString jsonErrorString_;
+    uint jsonErrorOffset_;
 };
 
 }  // namespace

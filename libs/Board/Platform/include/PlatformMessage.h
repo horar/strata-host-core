@@ -27,7 +27,7 @@ public:
     uint jsonErrorOffset() const;
 
 private:
-    QSharedDataPointer<PlatformMessageData> data;
+    QSharedDataPointer<PlatformMessageData> data_;
 };
 
 }  // namespace

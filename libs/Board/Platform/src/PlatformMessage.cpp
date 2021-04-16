@@ -4,15 +4,15 @@
 namespace strata::platform {
 
 PlatformMessage::PlatformMessage()
-    : data(new PlatformMessageData())
+    : data_(new PlatformMessageData())
 { }
 
 PlatformMessage::PlatformMessage(const QByteArray& rawMessage)
-    : data(new PlatformMessageData(rawMessage))
+    : data_(new PlatformMessageData(rawMessage))
 { }
 
 PlatformMessage::PlatformMessage(const PlatformMessage& other)
-    : data(other.data)
+    : data_(other.data_)
 { }
 
 PlatformMessage::~PlatformMessage()
@@ -20,27 +20,27 @@ PlatformMessage::~PlatformMessage()
 
 const QByteArray& PlatformMessage::raw() const
 {
-    return data->raw;
+    return data_->raw_;
 }
 
 const rapidjson::Document& PlatformMessage::json() const
 {
-    return data->json;
+    return data_->json_;
 }
 
 bool PlatformMessage::isJsonValid() const
 {
-    return (data->json.IsNull() == false);
+    return (data_->json_.IsNull() == false);
 }
 
 const QString& PlatformMessage::jsonErrorString() const
 {
-    return data->jsonErrorString;
+    return data_->jsonErrorString_;
 }
 
 uint PlatformMessage::jsonErrorOffset() const
 {
-    return data->jsonErrorOffset;
+    return data_->jsonErrorOffset_;
 }
 
 }  // namespace

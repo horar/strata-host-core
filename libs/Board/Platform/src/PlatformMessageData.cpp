@@ -7,34 +7,34 @@
 namespace strata::platform {
 
 PlatformMessageData::PlatformMessageData()
-    : jsonErrorString(QStringLiteral("Message was not provided.")),
-      jsonErrorOffset(0)
+    : jsonErrorString_(QStringLiteral("Message was not provided.")),
+      jsonErrorOffset_(0)
 { }
 
 PlatformMessageData::PlatformMessageData(const QByteArray& rawMessage)
-    : raw(rawMessage),
-      jsonErrorOffset(0)
+    : raw_(rawMessage),
+      jsonErrorOffset_(0)
 {
-    rapidjson::ParseResult result = json.Parse(rawMessage.data(), rawMessage.size());
+    rapidjson::ParseResult result = json_.Parse(raw_.data(), raw_.size());
 
     if (result.IsError()) {
-        jsonErrorString = rapidjson::GetParseError_En(result.Code());
-        jsonErrorOffset = static_cast<uint>(result.Offset());
+        jsonErrorString_ = rapidjson::GetParseError_En(result.Code());
+        jsonErrorOffset_ = static_cast<uint>(result.Offset());
 
         qCWarning(logCategoryPlatformMessage).nospace().noquote()
-            << QStringLiteral("JSON parse error at offset ") << jsonErrorOffset
-            << QStringLiteral(": ") << jsonErrorString
-            << QStringLiteral(" Invalid JSON: '") << rawMessage << '\'';
+            << QStringLiteral("JSON parse error at offset ") << jsonErrorOffset_
+            << QStringLiteral(": ") << jsonErrorString_
+            << QStringLiteral(" Invalid JSON: '") << raw_ << '\'';
     }
 }
 
 PlatformMessageData::PlatformMessageData(const PlatformMessageData& other)
     : QSharedData(other),
-      raw(other.raw),
-      jsonErrorString(other.jsonErrorString),
-      jsonErrorOffset(other.jsonErrorOffset)
+      raw_(other.raw_),
+      jsonErrorString_(other.jsonErrorString_),
+      jsonErrorOffset_(other.jsonErrorOffset_)
 {
-    json.CopyFrom(other.json, json.GetAllocator());
+    json_.CopyFrom(other.json_, json_.GetAllocator());
 }
 
 PlatformMessageData::~PlatformMessageData()
