@@ -1,4 +1,4 @@
-    LayoutRadioButton { // start_%1
+    LayoutRadioButtons { // start_%1
         id: radioButtons_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 5
