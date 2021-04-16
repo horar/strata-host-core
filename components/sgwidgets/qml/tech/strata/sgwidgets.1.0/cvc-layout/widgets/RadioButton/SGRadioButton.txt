@@ -8,8 +8,9 @@
 
         // start_user_content
         model: ["One","Two","Three"]
-        checkedIndex: 1
         orientation : Qt.Vertical // For horizontal radio button set Qt.Horizontal
+        checkedIndex: 1            // 1 = first button checked, 2 = second button checked,
+                                   // 4 = third button checked, 8 = fourth button checked
         onClicked: {
                console.info("Clicked Index:", index)
         }
