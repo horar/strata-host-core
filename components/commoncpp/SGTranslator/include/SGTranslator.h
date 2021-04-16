@@ -16,7 +16,7 @@ public:
     SGTranslator(QQuickItem* parent = nullptr);
     virtual ~SGTranslator() {}
 
-    Q_INVOKABLE void loadLanguageFile(QString languageFileName = "");
+    Q_INVOKABLE bool loadLanguageFile(QString languageFileName = "");
 
 private:
     QTranslator translator_;
