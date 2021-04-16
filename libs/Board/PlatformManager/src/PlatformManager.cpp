@@ -309,17 +309,13 @@ void PlatformManager::logInvalidDeviceId(const QString& message, const QByteArra
 void PlatformManager::handleOperationFinished(QByteArray deviceId, operation::Type type, operation::Result result, int status, QString errStr) {
     Q_UNUSED(status)
 
-    if (type != operation::Type::Identify) {
-        return;
-    }
-
     if (result == operation::Result::Error) {
         emit boardError(deviceId, errStr);
     }
 
     // If identify operation is cancelled, another identify operation will be started soon.
     // So there is no need for emitting boardInfoChanged signal. (See handlePlatformIdChanged() function.)
-    if (result != operation::Result::Cancel) {
+    if ((type == operation::Type::Identify) && (result != operation::Result::Cancel)) {
         bool boardRecognized = (result == operation::Result::Success);
         emit boardInfoChanged(deviceId, boardRecognized);
         if (boardRecognized == false && keepDevicesOpen_ == false) {
