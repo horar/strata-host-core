@@ -119,7 +119,7 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
 }
 
 /***
- * Edit template CMakeLists.txt file by replacing 'template' and 'basic' with project name
+ * Edit template CMakeLists.txt file by replacing 'template' with project name
  * @param cmakeListsFilePath
  ***/
 void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeListsFilePath) {
@@ -131,13 +131,11 @@ void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeLi
     QString cmakeText = cmakeInFile.readAll();
 
     // These regular expressions will be found in the input file (CMakeLists.txt file)
-    QRegularExpression re1("basic");
-    QRegularExpression re2("template");
+    QRegularExpression re("template");
 
     // Replace regular expressions with projectName_
     QString replacementText(projectName_);
-    cmakeText.replace(re1, replacementText);
-    cmakeText.replace(re2, replacementText);
+    cmakeText.replace(re, replacementText);
 
     // Save new CMakeLists.txt file in same path
     QFile cmakeOutFile(cmakeListsFilePath);

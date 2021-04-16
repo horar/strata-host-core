@@ -1,4 +1,4 @@
-project(mdk
+project(template
     LANGUAGES NONE
 )
 

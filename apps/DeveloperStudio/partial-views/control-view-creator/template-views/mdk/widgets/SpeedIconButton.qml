@@ -57,6 +57,15 @@ MouseArea {
             }
             closePolicy: Popup.NoAutoClose
 
+            Connections {
+                target: speedMouse
+                onVisibleChanged: {
+                    if (visible === false) {
+                        speedpop.close()
+                    }
+                }
+            }
+
             RowLayout {
                 height: parent.height
                 spacing:10
