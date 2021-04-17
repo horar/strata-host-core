@@ -10,6 +10,7 @@
 #include "mqtt/SGSslConfiguration.h"
 #include "SGJsonSyntaxHighlighter.h"
 #include "SGJsonFormatter.h"
+#include "SGTranslator.h"
 
 #include <QtQml/qqml.h>
 
@@ -41,4 +42,5 @@ void CommonCppPlugin::registerTypes(const char *uri)
     qmlRegisterType<QmlSslConfiguration>(uri, 1, 0, "SGSslConfiguration");
     qmlRegisterSingletonType<SGVersionUtils>(uri, 1, 0, "SGVersionUtils", SGVersionUtils::SingletonTypeProvider);
     qmlRegisterType<SGJsonSyntaxHighlighter>(uri, 1, 0, "SGJsonSyntaxHighlighter");
+    qmlRegisterType<SGTranslator>(uri, 1, 0, "SGTranslator");
 }
