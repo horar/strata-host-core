@@ -828,6 +828,9 @@ function registerQmlAsLanguage() {
                 break;
             }
             var prevPropertyLine = model.getLineContent(getPrevPropertyPosition.range.startLineNumber).trim()
+            if(prevPropertyLine.substring(0,2) === "on"){
+                break;
+            }
             var prevProperty = prevPropertyLine.split(" ")[2].trim()
             if(prevProperty.includes(":")){
                 prevProperty = prevProperty.split(":")[0].trim()
@@ -840,7 +843,7 @@ function registerQmlAsLanguage() {
             position = { lineNumber: getPrevPropertyPosition.range.startLineNumber - 1, column: getPrevPropertyPosition.range.startColumn }
             var content = model.getLineContent(position.lineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            addCustomProperties(position.lineNumber, type, prevProperty)
+            addCustomProperties(getPrevPropertyPosition.range.startLineNumber, type, prevProperty)
         }
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
