@@ -11,6 +11,8 @@
 
 #include <QThread>
 
+#include<QStandardPaths>
+
 #ifdef Q_OS_WIN
 #include <ShlObj.h>
 #include <Shlwapi.h>
@@ -217,4 +219,26 @@ void SDSModel::setHcsConnected(bool hcsConnected)
 
     hcsConnected_ = hcsConnected;
     emit hcsConnectedChanged();
+}
+
+bool SDSModel::openLogViewer() {
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+    #ifdef Q_OS_MACOS
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+        const QString logViewerPath = applicationDir.filePath("Log Viewer.app/Contents/MacOS/Log Viewer");
+    #else
+        const QString logViewerPath = applicationDir.filePath("Log Viewer");
+    #endif
+
+    QDir logDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    logDir.cdUp();
+    const QString sdsLog = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("Strata Developer Studio.log");
+    const QString hcsLog = logDir.filePath("Host Controller Service/Host Controller Service.log");
+
+    QProcess logViewerProcess_;
+    logViewerProcess_.setProgram(logViewerPath);
+    logViewerProcess_.setArguments({sdsLog, hcsLog});
+    return logViewerProcess_.startDetached();
 }

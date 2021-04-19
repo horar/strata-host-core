@@ -144,6 +144,20 @@ Item {
             }
 
             Button {
+                text: "Log Viewer"
+
+                onClicked: {
+                    if (sdsModel.openLogViewer() == false) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                        root,
+                        SGWidgets.SGMessageDialog.Error,
+                        qsTr("The Application Log Viewer can't be opened!"),
+                        qsTr("The Application Log Viewer not found."))
+                    }
+                }
+            }
+
+            Button {
                 text: "Platform List Controls"
 
                 onClicked: {
