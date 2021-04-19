@@ -260,23 +260,22 @@ void SGJLinkConnector::finishProcess(bool exitedNormally)
     configFile_->deleteLater();
 
     if (type == PROCESS_CHECK_CONNECTION) {
-        bool isConnected = parseStatusOutput(output);
+        bool isConnected = parseReferenceVoltage(output) > 0.01f;
         emit checkConnectionProcessFinished(exitedNormally, isConnected);
     } else if(type == PROCESS_PROGRAM) {
         emit programBoardProcessFinished(exitedNormally);
     }
 }
 
-bool SGJLinkConnector::parseStatusOutput(const QString &output)
+float SGJLinkConnector::parseReferenceVoltage(const QString &output)
 {
+    float vtref = 0.0f;
     QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
     re.setPatternOptions(QRegularExpression::MultilineOption);
     QRegularExpressionMatch match = re.match(output);
     if (match.hasMatch()) {
-        if (match.captured(0).toFloat() > 0.01f) {
-            return true;
-        }
+        vtref = match.captured(0).toFloat();
     }
 
-    return false;
+    return vtref;
 }

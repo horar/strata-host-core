@@ -74,7 +74,7 @@ private:
 
     bool processRequest(const QString &cmd, ProcessType type);
     void finishProcess(bool exitedNormally);
-    bool parseStatusOutput(const QString &output);
+    float parseReferenceVoltage(const QString &output);
 };
 
 #endif  // SGJLINKCONNECTOR
