@@ -348,7 +348,7 @@ function registerQmlAsLanguage() {
         formatOnPaste: true,
         formatOnType: true,
         formatOnSave: true,
-        autoIndent: 'all',
+        autoIndent: 'full',
         scrollbar: {
             useShadows: false,
             vertical: 'visible',
@@ -886,10 +886,4 @@ function registerQmlAsLanguage() {
             addCustomIdAndTypes(word, position, type)
         }
     })
-}
-
-function correctFormat(position){
-    const model = editor.getModel()
-
-
 }
