@@ -17,16 +17,15 @@ PlatformOperations::PlatformOperations(bool runOperations, bool overwriteEnabled
 { }
 
 PlatformOperations::~PlatformOperations() {
+    // will not emit finished in case of queued connection
     stopAllOperations();
 }
 
 OperationSharedPtr PlatformOperations::processOperation(const OperationSharedPtr& operation) {
-    if (overwriteEnabled_) {
-        if (operations_.contains(operation->deviceId())) {
+    if (operations_.contains(operation->deviceId())) {
+        if (overwriteEnabled_) {
             stopOperation(operation->deviceId());
-        }
-    } else {
-        if (operations_.count(operation->deviceId()) != 0) {
+        } else {
             return nullptr;
         }
     }
@@ -37,6 +36,7 @@ OperationSharedPtr PlatformOperations::processOperation(const OperationSharedPtr
     qCDebug(logCategoryPlatformOperation) << "Starting operation" << operation->type()
                                           << "for device Id:" << operation->deviceId();
 
+    // in case of queued finished signal, this insert will overwrite the old operation
     operations_.insert(operation->deviceId(), operation);
 
     if (runOperations_) {
@@ -59,13 +59,13 @@ void PlatformOperations::stopOperation(const QByteArray& deviceId) {
 }
 
 void PlatformOperations::stopAllOperations() {
-    auto it = operations_.begin();
-    while (it != operations_.end()) {
-        it.value()->cancelOperation();
+    // make a copy of operations_ in case of queued signals which would not modify the map immediatelly
+    QList<OperationSharedPtr> operations = operations_.values();
+    for (auto iter = operations.begin(); iter != operations.end(); ++iter) {
+        (*iter)->cancelOperation();
 
         // If operation is cancelled, finished signal will be received (with Result::Cancel)
         // and operation will be removed from operations_ in handleOperationFinished slot.
-        it = operations_.begin();
     }
 }
 
@@ -143,10 +143,18 @@ void PlatformOperations::handleOperationFinished(Result result, int status, QStr
     const QByteArray deviceId = baseOp->deviceId();
     const Type type = baseOp->type();
 
+    qCDebug(logCategoryPlatformOperation) << "Finished operation" << type
+                                          << "for device Id:" << deviceId
+                                          << "result:" << result;
+
     disconnect(baseOp, nullptr, this, nullptr);
 
     // operation has finished, we do not need BasePlatformOperation object anymore
-    operations_.remove(deviceId);
+    // make sure we are erasing correct object from map in case of queued signals
+    auto iter = operations_.find(deviceId);
+    if ((iter != operations_.end()) && (iter.value().get() == baseOp)) {
+        operations_.erase(iter);
+    }
 
     emit finished(deviceId, type, result, status, errorString);
 }
