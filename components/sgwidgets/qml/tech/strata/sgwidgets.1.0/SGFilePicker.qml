@@ -21,6 +21,7 @@ FocusScope {
     property alias contextMenuEnabled: textEdit.contextMenuEnabled
     property alias isValid: textEdit.isValid
     property alias activeEditing: textEdit.activeEditing
+    property alias textFieldActiveEditingEnabled: textEdit.textFieldActiveEditingEnabled
     property alias showValidationResultIcon: textEdit.showValidationResultIcon
     property alias suggestionModel: textEdit.suggestionListModel
     property alias suggestionModelTextRole: textEdit.suggestionModelTextRole
