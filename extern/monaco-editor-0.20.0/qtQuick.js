@@ -203,7 +203,7 @@ function registerQmlAsLanguage() {
             }
         },
         indentationRules: {
-            increseasIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
+            increaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
             decreaseIndentPattern: /^((?!\/\/).)*(\{[^}\"'`]*|\([^)\"'`]*|\[[^\]\"'`]*)$/
         }
     })
