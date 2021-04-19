@@ -18,8 +18,10 @@ FocusScope {
 
     focus: true
 
-    readonly property int itemX: loader.x
-    readonly property int itemY: loader.y
+    readonly property int loaderItemX: loader.x
+    readonly property int loaderItemY: loader.y
+    readonly property int loaderItemHeight: loader.height
+    readonly property int loaderItemWidth: loader.width
 
     property alias label: text.text
     property Component editor
