@@ -10,7 +10,7 @@ LayoutContainer {
     property alias customColor: statusLightObject.customColor
     property alias flatStyle: statusLightObject.flatStyle
 
-    SGStatusLight {
+    contentItem: SGStatusLight {
         id: statusLightObject
     }
 }

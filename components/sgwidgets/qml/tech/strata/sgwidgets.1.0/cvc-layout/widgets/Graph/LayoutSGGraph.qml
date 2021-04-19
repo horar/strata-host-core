@@ -49,7 +49,7 @@ LayoutContainer {
        return graphObject.update()
     }
 
-    SGGraph {
+    contentItem: SGGraph {
         id: graphObject
     }
 }

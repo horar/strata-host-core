@@ -15,11 +15,13 @@ Item {
     height: layoutInfo.rowsTall * rowSize
 
     property LayoutInfo layoutInfo: LayoutInfo { }
-    default property var contentItem: null
+    property var contentItem: null
 
     onContentItemChanged: {
-        contentItem.anchors.fill = layoutContainerRoot
-        contentItem.parent = layoutContainerRoot
+        if (contentItem) {
+            contentItem.anchors.fill = layoutContainerRoot
+            contentItem.parent = layoutContainerRoot
+        }
     }
 }
 

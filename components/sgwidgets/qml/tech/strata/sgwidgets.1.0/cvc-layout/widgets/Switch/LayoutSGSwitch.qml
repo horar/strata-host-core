@@ -25,7 +25,7 @@ LayoutContainer {
     signal press()
     signal pressAndHold()
 
-    SGSwitch {
+    contentItem: SGSwitch {
         id: switchObject
         onReleased: parent.released()
         onCanceled: parent.canceled()

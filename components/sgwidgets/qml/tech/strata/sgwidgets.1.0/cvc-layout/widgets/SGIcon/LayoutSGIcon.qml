@@ -16,7 +16,7 @@ LayoutContainer {
 
     signal clicked()
 
-    SGIcon {
+    contentItem: SGIcon {
         id: icon
 
         MouseArea {

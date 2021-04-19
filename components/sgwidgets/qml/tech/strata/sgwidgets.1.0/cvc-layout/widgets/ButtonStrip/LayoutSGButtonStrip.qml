@@ -15,7 +15,7 @@ LayoutContainer {
 
     signal clicked ()
 
-    SGButtonStrip {
+    contentItem: SGButtonStrip {
         id: buttonStripObject
         onClicked: {
             parent.clicked()

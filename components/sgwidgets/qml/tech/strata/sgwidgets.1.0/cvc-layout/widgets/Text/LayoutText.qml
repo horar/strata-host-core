@@ -14,7 +14,7 @@ LayoutContainer {
     property alias verticalAlignment: textObject.verticalAlignment
     property alias maximumLineCount: textObject.maximumLineCount
 
-    Text {
+    contentItem: Text {
         id: textObject
         elide: Text.ElideRight
         wrapMode: Text.Wrap

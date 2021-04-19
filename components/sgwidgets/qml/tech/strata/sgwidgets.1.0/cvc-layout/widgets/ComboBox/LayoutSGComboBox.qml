@@ -25,10 +25,9 @@ LayoutContainer {
 
     signal activated()
 
-     SGComboBox {
+    contentItem: SGComboBox {
          id: comboBoxObject
          onActivated: parent.activated()
-     }
-
+    }
 }
 

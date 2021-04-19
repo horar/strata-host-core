@@ -4,7 +4,7 @@ import "../../"
 
 LayoutContainer {
 
-    Item {
+    contentItem: Item {
 
         Rectangle {
             id: dividerLine

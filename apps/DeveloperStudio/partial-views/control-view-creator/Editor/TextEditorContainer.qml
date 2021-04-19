@@ -205,16 +205,23 @@ ColumnLayout {
         Layout.fillHeight: false
         Layout.preferredHeight: 40
 
+        ButtonGroup {
+            id: buttonGroup
+            exclusive: true
+        }
+
         Button {
             id: textEditorButton
             text: "Text Editor"
             checkable: true
-            checked: true
+            checked: viewStack.currentIndex === 0
+
             implicitHeight: menuRow.height - 10
+
+            Component.onCompleted: buttonGroup.addButton(this)
 
             onCheckedChanged: {
                 if (checked) {
-                    visualEditorButton.checked = false
                     viewStack.currentIndex = 0
                 }
             }
@@ -230,10 +237,12 @@ ColumnLayout {
                 checkable: true
                 implicitHeight: menuRow.height - 10
                 enabled: visualEditor.fileValid
+                checked: viewStack.currentIndex === 1
+
+                Component.onCompleted: buttonGroup.addButton(this)
 
                 onCheckedChanged: {
                     if (checked) {
-                        textEditorButton.checked = false
                         viewStack.currentIndex = 1
                     }
                 }
@@ -441,7 +450,7 @@ ColumnLayout {
         target: visualEditor.functions
 
         onPassUUID: {
-            viewSelector.currentIndex = 0
+            viewStack.currentIndex = 0
             channelObject.goToUUID(uuid)
         }
     }
