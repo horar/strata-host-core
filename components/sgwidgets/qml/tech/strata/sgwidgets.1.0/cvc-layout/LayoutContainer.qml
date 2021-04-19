@@ -21,6 +21,8 @@ Item {
         if (contentItem) {
             contentItem.anchors.fill = layoutContainerRoot
             contentItem.parent = layoutContainerRoot
+        } else {
+            console.warn("ContentItem not set, LayoutContainer will not function properly:", layoutInfo.uuid)
         }
     }
 }
