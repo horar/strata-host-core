@@ -3,13 +3,13 @@
 
 #include <CommandValidator.h>
 #include <rapidjson/writer.h>
-#include <Operations/Identify.h>
 #include <Operations/StartBootloader.h>
-#include <Operations/StartApplication.h>
 #include <Mock/MockDevice.h>
 #include <Mock/MockDeviceConstants.h>
 #include "PlatformOperationsTest.h"
 
+using strata::platform::operation::PlatformOperations;
+using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::BasePlatformOperation;
 using strata::platform::operation::StartBootloader;
 using strata::device::MockCommand;
@@ -19,6 +19,10 @@ namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
+
+PlatformOperationsTest::PlatformOperationsTest() : platformOperations_(false, true) {
+
+}
 
 void PlatformOperationsTest::initTestCase()
 {
@@ -37,16 +41,15 @@ void PlatformOperationsTest::init()
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     QVERIFY(!mockDevice_->mockIsOpened());
     QVERIFY(platform_->open());
+
+    connect(&platformOperations_, &PlatformOperations::finished, this, &PlatformOperationsTest::handleOperationFinished);
 }
 
 void PlatformOperationsTest::cleanup()
 {
-    BasePlatformOperation *operation = platformOperation_.data();
-    if (operation != nullptr) {
-        disconnect(operation, &BasePlatformOperation::finished, this,
-                   &PlatformOperationsTest::handleOperationFinished);
-        platformOperation_.reset();
-    }
+    disconnect(&platformOperations_, nullptr, this, nullptr);
+    platformOperations_.stopAllOperations();
+
     if (platform_.get() != nullptr) {
         platform_.reset();
     }
@@ -55,7 +58,7 @@ void PlatformOperationsTest::cleanup()
     }
 }
 
-void PlatformOperationsTest::handleOperationFinished(operation::Result result, int, QString)
+void PlatformOperationsTest::handleOperationFinished(QByteArray, operation::Type, operation::Result result, int, QString)
 {
     operationFinishedCount_++;
     if (result == operation::Result::Error) {
@@ -108,26 +111,20 @@ void PlatformOperationsTest::verifyMessage(const QByteArray &msg, const QByteArr
     QCOMPARE(doc, expectedDoc);
 }
 
-void PlatformOperationsTest::connectHandlers(BasePlatformOperation *operation) {
-    connect(operation, &BasePlatformOperation::finished, this, &PlatformOperationsTest::handleOperationFinished);
-}
-
-void PlatformOperationsTest::connectRetryGetFirmwareInfoHandler(strata::platform::operation::BasePlatformOperation *operation)
+void PlatformOperationsTest::connectRetryGetFirmwareInfoHandler(BasePlatformOperation *operation)
 {
     connect(operation, &BasePlatformOperation::sendCommand, this, &PlatformOperationsTest::handleRetryGetFirmwareInfo);
-    connect(operation, &BasePlatformOperation::finished, this, &PlatformOperationsTest::handleOperationFinished);
 }
 
 void PlatformOperationsTest::identifyTest()
 {
     rapidjson::Document expectedDoc;
 
-    platformOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->run();
-    QCOMPARE(platformOperation_->deviceId(), "mock1234");
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isSuccessfullyFinished(), true, 1000);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->run();
+
+    QCOMPARE(platformOperation->deviceId(), "mock1234");
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -151,12 +148,12 @@ void PlatformOperationsTest::identifyTest()
 void PlatformOperationsTest::noResponseTest()
 {
     mockDevice_->mockSetAutoResponse(false); //stopping auto-response
-    platformOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -172,13 +169,13 @@ void PlatformOperationsTest::noResponseTest()
 
 void PlatformOperationsTest::notJSONTest()
 {
-    platformOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponse(MockResponse::no_JSON);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -196,13 +193,13 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 {
     rapidjson::Document expectedDoc;
 
-    platformOperation_ = QSharedPointer<operation::Identify>(
-                new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::get_firmware_info);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(platform_->name().isEmpty());
     QVERIFY(platform_->classId().isEmpty());
@@ -210,13 +207,13 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
     QVERIFY(platform_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
 
-    platformOperation_ = QSharedPointer<operation::Identify>(
-                new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::request_platform_id);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(platform_->name().isEmpty());
     QVERIFY(platform_->classId().isEmpty());
@@ -227,13 +224,13 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
     QCOMPARE(operationTimeoutCount_,2);
 
-    platformOperation_ = QSharedPointer<operation::StartApplication>(
-        new operation::StartApplication(platform_), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::start_application);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    platformOperation = platformOperations_.StartApplication(platform_);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(!mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
@@ -247,13 +244,13 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
     QVERIFY(platform_->classId().isEmpty());
     QCOMPARE(operationTimeoutCount_,3);
 
-    platformOperation_ = QSharedPointer<operation::StartBootloader>(
-        new operation::StartBootloader(platform_), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::start_bootloader);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    platformOperation = platformOperations_.StartBootloader(platform_);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
@@ -284,12 +281,13 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
 void PlatformOperationsTest::nackTest()
 {
-    platformOperation_ = QSharedPointer<operation::Identify>(
-                new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
     mockDevice_->mockSetResponse(MockResponse::nack);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
@@ -305,13 +303,13 @@ void PlatformOperationsTest::invalidValueTest()
 {
     rapidjson::Document expectedDoc;
 
-    platformOperation_ = QSharedPointer<operation::Identify>(
-                new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(platform_->name().isEmpty());
     QVERIFY(platform_->classId().isEmpty());
@@ -319,13 +317,13 @@ void PlatformOperationsTest::invalidValueTest()
     QVERIFY(platform_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
 
-    platformOperation_ = QSharedPointer<operation::Identify>(
-                new operation::Identify(platform_, true), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::request_platform_id);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    platformOperation = platformOperations_.Identify(platform_, true);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(platform_->name().isEmpty());
     QVERIFY(platform_->classId().isEmpty());
@@ -336,13 +334,13 @@ void PlatformOperationsTest::invalidValueTest()
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
     QCOMPARE(operationTimeoutCount_,2);
 
-    platformOperation_ = QSharedPointer<operation::StartApplication>(
-        new operation::StartApplication(platform_), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::start_application);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    platformOperation = platformOperations_.StartApplication(platform_);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(!mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
@@ -356,13 +354,13 @@ void PlatformOperationsTest::invalidValueTest()
     QVERIFY(platform_->classId().isEmpty());
     QCOMPARE(operationTimeoutCount_,3);
 
-    platformOperation_ = QSharedPointer<operation::StartBootloader>(
-        new operation::StartBootloader(platform_), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::start_bootloader);
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isFinished(), true, 1000);
+
+    platformOperation = platformOperations_.StartBootloader(platform_);
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
     QVERIFY(mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
@@ -395,14 +393,11 @@ void PlatformOperationsTest::switchToBootloaderAndBackTest()
 {
     rapidjson::Document expectedDoc;
 
-    operation::StartBootloader* startBootloaderOperation = new operation::StartBootloader(platform_);
-    platformOperation_ = QSharedPointer<operation::StartBootloader>(
-            startBootloaderOperation, &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
+    static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1));
+    platformOperation->run();
 
-    startBootloaderOperation->setWaitTime(std::chrono::milliseconds(1));
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isSuccessfullyFinished(), true, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response_bootloader.data());
@@ -418,11 +413,9 @@ void PlatformOperationsTest::switchToBootloaderAndBackTest()
     QCOMPARE(platform_->applicationVer(),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
-    platformOperation_ = QSharedPointer<operation::StartApplication>(
-        new operation::StartApplication(platform_), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isSuccessfullyFinished(), true, 1000);
+    platformOperation = platformOperations_.StartApplication(platform_);
+    platformOperation->run();
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(!mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
@@ -455,21 +448,19 @@ void PlatformOperationsTest::cancelOperationTest()
     mockDevice_->mockSetAutoResponse(false);
     rapidjson::Document expectedDoc;
 
-    platformOperation_ = QSharedPointer<operation::StartBootloader>(
-        new operation::StartBootloader(platform_), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->run();
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
+    platformOperation->run();
     QTRY_COMPARE_WITH_TIMEOUT(mockDevice_->mockGetRecordedMessagesCount(), 1, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
 
-    platformOperation_->cancelOperation();
+    platformOperation->cancelOperation();
 
-    QCOMPARE(platformOperation_->hasStarted(), true);
-    QCOMPARE(platformOperation_->isSuccessfullyFinished(), false);
-    QCOMPARE(platformOperation_->isFinished(), true);
+    QCOMPARE(platformOperation->hasStarted(), true);
+    QCOMPARE(platformOperation->isSuccessfullyFinished(), false);
+    QCOMPARE(platformOperation->isFinished(), true);
 
     recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
@@ -482,12 +473,11 @@ void PlatformOperationsTest::identifyLegacyTest()
 
     mockDevice_->mockSetLegacy(true);
 
-    platformOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(platform_, false), &QObject::deleteLater);
-    connectHandlers(platformOperation_.data());
-    platformOperation_->run();
-    QCOMPARE(platformOperation_->deviceId(), "mock1234");
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation_->isSuccessfullyFinished(), true, 1000);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, false);
+    platformOperation->run();
+    QCOMPARE(platformOperation->deviceId(), "mock1234");
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -509,16 +499,14 @@ void PlatformOperationsTest::retryGetFirmwareInfoTest()
 {
     rapidjson::Document expectedDoc;
 
-    operation::Identify* identifyOperation = new operation::Identify(platform_,true);
-    platformOperation_ = QSharedPointer<operation::Identify>(
-        identifyOperation, &QObject::deleteLater);
-    connectRetryGetFirmwareInfoHandler(identifyOperation);
-
-    platformOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::get_firmware_info);
 
-    identifyOperation->run();
-    QTRY_COMPARE_WITH_TIMEOUT(identifyOperation->isSuccessfullyFinished(), true, 1000);
+    OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
+    connectRetryGetFirmwareInfoHandler(platformOperation.get());
+    platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(!mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());

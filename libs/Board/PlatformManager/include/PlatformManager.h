@@ -14,6 +14,7 @@
 #include <QMutex>
 
 #include <Platform.h>
+#include <Operations/PlatformOperations.h>
 
 namespace strata::platform::operation {
     class BasePlatformOperation;
@@ -102,7 +103,7 @@ namespace strata {
 
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(platform::operation::Result result, int status, QString errStr);
+        virtual void handleOperationFinished(QByteArray deviceId, platform::operation::Type type, platform::operation::Result result, int status, QString errStr);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
     private slots:
@@ -130,17 +131,12 @@ namespace strata {
         QHash<QByteArray, platform::PlatformPtr> openedPlatforms_;
         QHash<QByteArray, QTimer*> reconnectTimers_;
 
-        QHash<QByteArray, std::shared_ptr<platform::operation::BasePlatformOperation>> identifyOperations_;
+        platform::operation::PlatformOperations platformOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
         // flag if communication channel should stay open if device is not recognized
         bool keepDevicesOpen_;
-
-    private:
-        void startIdentifyOperation(const platform::PlatformPtr device);
-        static void operationLaterDeleter(platform::operation::BasePlatformOperation* operation);
-
     };
 
 }

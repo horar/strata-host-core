@@ -3,18 +3,17 @@
 #include <rapidjson/document.h>
 #include <QObject>
 #include <Mock/MockDevice.h>
-#include <Operations/Flash.h>
+#include "Operations/PlatformOperations.h"
 
 #include "QtTest.h"
-
-namespace strata::platform::operation {
-class BasePlatformOperation;
-enum class Result : int;
-}
 
 class PlatformOperationsV2Test : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PlatformOperationsV2Test)
+
+public:
+    PlatformOperationsV2Test();
 
 private slots:
     // test init/teardown
@@ -54,20 +53,18 @@ private slots:
     void startFlashInvalidTest();
 
 protected slots:
-    void handleOperationFinished(strata::platform::operation::Result result, int, QString);
+    void handleOperationFinished(QByteArray, strata::platform::operation::Type, strata::platform::operation::Result result, int, QString);
     void handleFlashPartialStatus(int status);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
-    void connectHandlers(strata::platform::operation::BasePlatformOperation* operation);
     void connectFlashHandlers(strata::platform::operation::BasePlatformOperation* operation);
 
     strata::platform::PlatformPtr platform_;
     std::shared_ptr<strata::device::MockDevice> mockDevice_;
-    QSharedPointer<strata::platform::operation::BasePlatformOperation> platformOperation_;
-    QSharedPointer<strata::platform::operation::Flash> flashOperation_;
+    strata::platform::operation::PlatformOperations platformOperations_;
 
     QByteArray dataForChunkSize(int chunkSize);
 
