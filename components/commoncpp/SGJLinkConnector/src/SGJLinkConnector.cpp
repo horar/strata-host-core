@@ -17,11 +17,6 @@ SGJLinkConnector::~SGJLinkConnector()
 
 bool SGJLinkConnector::checkConnectionRequested()
 {
-    if (exePath_.isEmpty()) {
-        qCWarning(logCategoryJLink) << "exePath is empty";
-        return false;
-    }
-
     QString cmd;
 
     cmd += QString("exitonerror 1\n");
@@ -82,6 +77,14 @@ bool SGJLinkConnector::programBoardRequested(
     setStartAddress(startAddress);
 
     return programBoardRequested(binaryPath);
+}
+
+bool SGJLinkConnector::checkHostVersion()
+{
+    QString cmd;
+    cmd += QString("exit\n");
+
+    return processRequest(cmd, PROCESS_CHECK_HOST_VERSION);
 }
 
 QString SGJLinkConnector::exePath() const
@@ -262,15 +265,19 @@ void SGJLinkConnector::finishProcess(bool exitedNormally)
     if (type == PROCESS_CHECK_CONNECTION) {
         bool isConnected = parseReferenceVoltage(output) > 0.01f;
         emit checkConnectionProcessFinished(exitedNormally, isConnected);
-    } else if(type == PROCESS_PROGRAM) {
+    } else if (type == PROCESS_PROGRAM) {
         emit programBoardProcessFinished(exitedNormally);
+    } else if (type == PROCESS_CHECK_HOST_VERSION) {
+        QString commanderVersion = parseCommanderVersion(output);
+        QString libraryVersion = parseLibraryVersion(output);
+        emit checkHostVersionProcessFinished(exitedNormally, commanderVersion, libraryVersion);
     }
 }
 
 float SGJLinkConnector::parseReferenceVoltage(const QString &output)
 {
     float vtref = 0.0f;
-    QRegularExpression re("(?<=VTref=)[0-9]*.?[0-9]*(?=V)");
+    QRegularExpression re("(?<=^VTref=)[0-9]*.?[0-9]*(?=V)");
     re.setPatternOptions(QRegularExpression::MultilineOption);
     QRegularExpressionMatch match = re.match(output);
     if (match.hasMatch()) {
@@ -278,4 +285,36 @@ float SGJLinkConnector::parseReferenceVoltage(const QString &output)
     }
 
     return vtref;
+}
+
+QString SGJLinkConnector::parseLibraryVersion(const QString &output)
+{
+    QString version;
+    QRegularExpression re("(?<=^DLL version )[Vv][^,\\s]+");
+    re.setPatternOptions(QRegularExpression::MultilineOption);
+    QRegularExpressionMatch match = re.match(output);
+
+    if (match.hasMatch()) {
+        version = match.captured(0);
+    } else {
+        qCWarning(logCategoryJLink()) << "library version could not be determined";
+    }
+
+    return version;
+}
+
+QString SGJLinkConnector::parseCommanderVersion(const QString &output)
+{
+    QString version;
+    QRegularExpression re("(?<=^SEGGER J-Link Commander )[Vv][^,\\s]+");
+    re.setPatternOptions(QRegularExpression::MultilineOption);
+    QRegularExpressionMatch match = re.match(output);
+
+    if (match.hasMatch()) {
+        version = match.captured(0);
+    } else {
+        qCWarning(logCategoryJLink()) << "commander version could not be determined";
+    }
+
+    return version;
 }

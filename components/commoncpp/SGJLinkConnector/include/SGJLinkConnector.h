@@ -25,6 +25,7 @@ public:
         PROCESS_NO_PROCESS,
         PROCESS_CHECK_CONNECTION,
         PROCESS_PROGRAM,
+        PROCESS_CHECK_HOST_VERSION,
     };
     Q_ENUM(ProcessType)
 
@@ -37,6 +38,8 @@ public:
             QString device,
             int speed,
             int startAddress);
+
+    Q_INVOKABLE bool checkHostVersion();
 
     QString exePath() const;
     void setExePath(const QString &exePath);
@@ -51,6 +54,7 @@ public:
 
 signals:
     void checkConnectionProcessFinished(bool exitedNormally, bool connected);
+    void checkHostVersionProcessFinished(bool exitedNormally, QString commanderVersion, QString libraryVersion);
     void programBoardProcessFinished(bool exitedNormally);
     void exePathChanged();
     void eraseBeforeProgramChanged();
@@ -75,6 +79,8 @@ private:
     bool processRequest(const QString &cmd, ProcessType type);
     void finishProcess(bool exitedNormally);
     float parseReferenceVoltage(const QString &output);
+    QString parseLibraryVersion(const QString &output);
+    QString parseCommanderVersion(const QString &output);
 };
 
 #endif  // SGJLINKCONNECTOR
