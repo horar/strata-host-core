@@ -150,7 +150,6 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
 }
 
 function addCustomProperties(lineNumber, item, property) {
-    var closestTop
     if (!qtPropertyPairs.hasOwnProperty(item)) {
         qtPropertyPairs[item] = {}
         if (!qtPropertyPairs[item].hasOwnProperty(lineNumber)) {
