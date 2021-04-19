@@ -4,10 +4,7 @@
 #include <set>
 #include <QObject>
 
-#include <Database/DatabaseManager.h>
 #include <Database/DatabaseAccess.h>
-
-using namespace strata::Database;
 
 class HCS_Dispatcher;
 
@@ -83,11 +80,11 @@ private:
 
     QStringList databaseChannels_;
 
-    std::unique_ptr<DatabaseAccess> DB_ = nullptr;
+    std::unique_ptr<strata::Database::DatabaseAccess> DB_ = nullptr;
 
     bool isRunning_ = false;
 
-    void documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents);
+    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
 
     void updateChannels();
 };

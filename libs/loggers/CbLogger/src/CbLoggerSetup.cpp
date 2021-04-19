@@ -5,6 +5,8 @@
 #include <QHash>
 #include <QString>
 
+#include <unordered_map>
+
 #include <couchbase-lite-C/CouchbaseLite.hh>
 
 using std::string;
@@ -30,25 +32,15 @@ void c4LogCallback(CBLLogDomain domain, CBLLogLevel level, const char *message)
                                                    {CBLLogError, QtCriticalMsg}};
 
     if (const auto msgType{cb2qtLevels[level]}; logCategoryCbLogger().isEnabled(msgType)) {
-        string tag(logCategoryCbLoggerName);
+        static const std::unordered_map<CBLLogDomain, std::string> cbDomain2string{
+            {kCBLLogDomainAll, "All"},
+            {kCBLLogDomainDatabase, "Database"},
+            {kCBLLogDomainQuery, "Query"},
+            {kCBLLogDomainReplicator, "Replicator"},
+            {kCBLLogDomainNetwork, "Network"}};
 
-        switch (domain) {
-            case kCBLLogDomainAll:
-                tag += ".All";
-                break;
-            case kCBLLogDomainDatabase:
-                tag += ".Database";
-                break;
-            case kCBLLogDomainQuery:
-                tag += ".Query";
-                break;
-            case kCBLLogDomainReplicator:
-                tag += ".Replicator";
-                break;
-            case kCBLLogDomainNetwork:
-                tag += ".Network";
-                break;
-        }
+        using namespace std::string_literals;
+        const std::string tag = logCategoryCbLoggerName + "."s + cbDomain2string.at(domain);
 
         const QMessageLogContext context{nullptr, 0, "n/a", tag.c_str()};
 

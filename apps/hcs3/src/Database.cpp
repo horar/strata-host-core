@@ -8,6 +8,8 @@
 
 #include <QDir>
 
+using namespace strata::Database;
+
 Database::Database(QObject *parent)
     : QObject(parent){
 }
