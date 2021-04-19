@@ -16,11 +16,6 @@
 #include <Platform.h>
 #include <Operations/PlatformOperations.h>
 
-namespace strata::platform::operation {
-    class BasePlatformOperation;
-    enum class Result: int;
-}
-
 namespace strata {
 
     class PlatformManager : public QObject
