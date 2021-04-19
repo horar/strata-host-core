@@ -18,6 +18,24 @@
         <file>template-views/basic/platformInterface.json</file>
         <file>template-views/template/control-views/DebugMenu.qml</file>
         <file>template-views/template/control-views/platformInterface.json</file>
+        <file>template-views/images/mdk.jpg</file>
+        <file>template-views/mdk/control-views/AdvancedControl.qml</file>
+        <file>template-views/mdk/control-views/BasicControl.qml</file>
+        <file>template-views/mdk/control-views/SideBar.qml</file>
+        <file>template-views/mdk/images/brake.svg</file>
+        <file>template-views/mdk/images/play-solid.svg</file>
+        <file>template-views/mdk/images/redo-alt-solid.svg</file>
+        <file>template-views/mdk/images/stop-solid.svg</file>
+        <file>template-views/mdk/images/tach.svg</file>
+        <file>template-views/mdk/images/undo.svg</file>
+        <file>template-views/mdk/widgets/CircGauge.qml</file>
+        <file>template-views/mdk/widgets/DigitalReadout.qml</file>
+        <file>template-views/mdk/widgets/FaultLight.qml</file>
+        <file>template-views/mdk/widgets/IconButton.qml</file>
+        <file>template-views/mdk/widgets/SpeedIconButton.qml</file>
+        <file>template-views/mdk/CMakeLists.txt</file>
+        <file>template-views/mdk/Control.qml</file>
+        <file>template-views/mdk/PlatformInterface.qml</file>
+        <file>template-views/mdk/qml.qrc</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>
