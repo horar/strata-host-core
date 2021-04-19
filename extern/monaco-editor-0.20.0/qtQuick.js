@@ -358,10 +358,6 @@ function registerQmlAsLanguage() {
         }
     });
 
-
-
-
-
     function getValue() {
         return editor.getValue();
     }
