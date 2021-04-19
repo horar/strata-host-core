@@ -263,6 +263,7 @@ function registerQmlAsLanguage() {
         }
 
     })
+
     monaco.editor.defineTheme('qmlTheme', {
         base: 'vs',
         inherit: false,
@@ -299,6 +300,8 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
+    // adds CMD + I and CTRL + I
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_I, () => editor.trigger(editor.getValue(),'editor.action.triggerSuggest',{}))
 
     function getValue() {
         return editor.getValue();
