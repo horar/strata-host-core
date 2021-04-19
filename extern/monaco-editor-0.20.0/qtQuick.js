@@ -300,7 +300,7 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
-    // adds CMD + I and CTRL + I
+    // adds CMD + I and CTRL + I to auto suggestions open widget
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_I, () => editor.trigger(editor.getValue(),'editor.action.triggerSuggest',{}))
 
     function getValue() {
