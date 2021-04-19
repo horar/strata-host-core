@@ -34,6 +34,7 @@ private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
+    void clearExpectedValues();
     void connectFlasherHandlers(strata::Flasher* flasher);
 
     std::shared_ptr<strata::device::mock::MockDevice> device_;
@@ -41,13 +42,18 @@ private:
     QSharedPointer<strata::Flasher> flasher_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
 
+    void getExpectedValues(QFile firmware);
+    void getMd5(QFile firmware);
+
     int flasherNoFirmwareCount_ = 0;
     int flasherErrorCount_ = 0;
     int flasherTimeoutCount_ = 0;
     int flasherCancelledCount_ = 0;
     int flasherFinishedCount_ = 0;
 
-//    int chunkSize_ = 0;
-//    int chunkAmount_ = 0;
-//    QByteArray md5_ = "";
+    QString expectedMd5_;
+    int expectedChunksCount_;
+    QVector<quint64> expectedChunkSize_;
+    QVector<QByteArray> expectedChunkData_;
+    QVector<quint16> expectedChunkCrc_;
 };
