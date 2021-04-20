@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include "PlatformManagerDerivate.h"
+#include <PlatformManager.h>
 #include <Mock/MockDevice.h>
 #include "QtTest.h"
 
@@ -61,7 +61,9 @@ private:
      */
     void removeMockDevice(const QByteArray& deviceId);
 
-    std::shared_ptr<PlatformManagerDerivate> platformManager_;
+    std::shared_ptr<strata::PlatformManager> platformManager_;
+    strata::device::scanner::DeviceScannerPtr mockDeviceScanner_;
+
     /*!
      * \brief count of calls to onBoardDisconnected slot
      */

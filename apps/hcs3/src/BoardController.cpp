@@ -12,13 +12,13 @@ using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
 
-BoardController::BoardController() {
-    connect(&platformManager_, &PlatformManager::boardInfoChanged, this, &BoardController::newConnection);
-    connect(&platformManager_, &PlatformManager::boardDisconnected, this, &BoardController::closeConnection);
+BoardController::BoardController(): platformManager_(false, false, true) {
+    connect(&platformManager_, &PlatformManager::platformRecognized, this, &BoardController::newConnection);
+    connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &BoardController::closeConnection);
 }
 
 void BoardController::initialize() {
-    platformManager_.init(false, false);
+    platformManager_.init(strata::device::Device::Type::SerialDevice);
 }
 
 bool BoardController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
@@ -41,7 +41,7 @@ PlatformPtr BoardController::getPlatform(const QByteArray& deviceId) const {
 
 void BoardController::newConnection(const QByteArray& deviceId, bool recognized) {
     if (recognized) {
-        PlatformPtr platform = platformManager_.platform(deviceId);
+        PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
             return;
         }

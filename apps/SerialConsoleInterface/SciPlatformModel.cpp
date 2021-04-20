@@ -5,9 +5,9 @@ SciPlatformModel::SciPlatformModel(strata::PlatformManager *platformManager, QOb
     : QAbstractListModel(parent),
       platformManager_(platformManager)
 {
-    connect(platformManager_, &strata::PlatformManager::boardConnected, this, &SciPlatformModel::boardConnectedHandler);
-    connect(platformManager_, &strata::PlatformManager::boardInfoChanged, this, &SciPlatformModel::boardReadyHandler);
-    connect(platformManager_, &strata::PlatformManager::boardDisconnected, this, &SciPlatformModel::boardDisconnectedHandler);
+    connect(platformManager_, &strata::PlatformManager::platformAdded, this, &SciPlatformModel::boardConnectedHandler);
+    connect(platformManager_, &strata::PlatformManager::platformRecognized, this, &SciPlatformModel::boardReadyHandler);
+    connect(platformManager_, &strata::PlatformManager::platformAboutToClose, this, &SciPlatformModel::boardDisconnectedHandler);
 }
 
 SciPlatformModel::~SciPlatformModel()
@@ -103,7 +103,7 @@ void SciPlatformModel::releasePort(int index, int disconnectDuration)
         return;
     }
 
-    platformManager_->disconnectDevice(
+    platformManager_->disconnectPlatform(
                 platformList_.at(index)->deviceId(),
                 std::chrono::milliseconds(disconnectDuration));
 }
@@ -133,7 +133,7 @@ void SciPlatformModel::reconnect(int index)
         qCCritical(logCategorySci) << "index out of range";
     }
 
-    platformManager_->reconnectDevice(platformList_.at(index)->deviceId());
+    platformManager_->reconnectPlatform(platformList_.at(index)->deviceId());
 }
 
 QHash<int, QByteArray> SciPlatformModel::roleNames() const
@@ -151,7 +151,7 @@ void SciPlatformModel::boardConnectedHandler(const QByteArray& deviceId)
         appendNewPlatform(deviceId);
     } else {
         platformList_.at(index)->setErrorString("");
-        platformList_.at(index)->setPlatform(platformManager_->platform(deviceId));
+        platformList_.at(index)->setPlatform(platformManager_->getPlatform(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
         platformList_.at(index)->resetPropertiesFromDevice();
 
@@ -211,7 +211,7 @@ int SciPlatformModel::findPlatform(const QByteArray& deviceId) const
 
 void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 {
-    strata::platform::PlatformPtr platform = platformManager_->platform(deviceId);
+    strata::platform::PlatformPtr platform = platformManager_->getPlatform(deviceId);
     if (platform == nullptr) {
         qCCritical(logCategorySci) << "platform not found by its id";
         return;

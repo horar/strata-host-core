@@ -39,8 +39,7 @@ Platform::Platform(const device::DevicePtr& device) :
 
 Platform::~Platform() {
     // stop reconnectTimer_ just in case close was not called before (should not happen)
-    if (reconnectTimer_.isActive())
-        reconnectTimer_.stop();
+    abortReconnect();
 
     // no need to close device here (if close was not called before), will be done in device
 }
@@ -98,16 +97,19 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg
 
 bool Platform::open(const std::chrono::milliseconds retryMsec) {
     retryMsec_ = retryMsec;
-    if (reconnectTimer_.isActive())
-        reconnectTimer_.stop();
+    abortReconnect();
     return openDevice();
 }
 
 void Platform::close(const std::chrono::milliseconds waitMsec, const std::chrono::milliseconds retryMsec) {
     retryMsec_ = retryMsec;
+    abortReconnect();
+    closeDevice(waitMsec);
+}
+
+void Platform::abortReconnect() {
     if (reconnectTimer_.isActive())
         reconnectTimer_.stop();
-    closeDevice(waitMsec);
 }
 
 // public method

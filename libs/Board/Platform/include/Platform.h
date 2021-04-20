@@ -86,6 +86,11 @@ namespace strata::platform {
                    const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
 
         /**
+         * Stop reconnection timer if active.
+         */
+        void abortReconnect();
+
+        /**
          * Send message to device (public).
          * Emits messageSent() signal in case of success.
          * Emits deviceError() signal in case of failure.
