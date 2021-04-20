@@ -214,7 +214,7 @@ Item {
 
     WebChannel {
         id: channel
-        registeredObjects: [channelObject]
+        Component.onCompleted: registerObjects({valueLink: channelObject})
     }
 
     QtObject {
@@ -279,11 +279,13 @@ Item {
         }
 
         onHeightChanged: {
-            channelObject.setContainerHeight(height.toString())
+            var htmlHeight = height - 16
+            channelObject.setContainerHeight(htmlHeight.toString())
         }
 
         onWidthChanged: {
-            channelObject.setContainerWidth(width.toString())
+            var htmlWidth = width - 16
+            channelObject.setContainerWidth(htmlWidth.toString())
         }
         // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
         // the visibilty changed is called when the window is resized from signals outside of the app
@@ -291,18 +293,19 @@ Item {
             target: mainWindow
 
             onVisibilityChanged: {
-                channelObject.resetContainer(webEngine.height.toString(), webEngine.width.toString())
+                var htmlHeight = webEngine.height - 16
+                var htmlWidth = webEngine.width - 16
+                channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
             }
         }
 
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                channelObject.setContainerHeight(height.toString())
+                channelObject.setContainerHeight((webEngine.height - 16).toString())
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
-
         }
 
         url: "qrc:///tech/strata/monaco/minified/editor.html"

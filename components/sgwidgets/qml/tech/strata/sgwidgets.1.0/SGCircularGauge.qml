@@ -27,6 +27,7 @@ Item {
     property alias maximumValue: gauge.maximumValue
     property alias tickmarkStepSize : gauge.tickmarkStepSize
     property alias unitText: unitLabel.text
+    property alias gaugeObject: gauge
 
     CircularGauge {
         id: gauge
