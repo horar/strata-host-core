@@ -71,7 +71,7 @@ R"(
 
 void Platform::messageReceivedHandler(QByteArray msg) {
     // re-emit the message first, then parse
-    emit messageReceived(msg);
+    emit messageReceived(device_->deviceId(), msg);
 
     rapidjson::Document doc;
     if (CommandValidator::parseJsonCommand(msg, doc, true) == false) {
@@ -84,15 +84,15 @@ void Platform::messageReceivedHandler(QByteArray msg) {
     qCInfo(logCategoryPlatform).noquote()
         << "Received 'platform_id_changed' notification for device" << deviceId();
 
-    emit platformIdChanged();
+    emit platformIdChanged(device_->deviceId());
 }
 
 void Platform::messageSentHandler(QByteArray msg) {
-    emit messageSent(msg);
+    emit messageSent(device_->deviceId(), msg);
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg) {
-    emit deviceError(errCode, msg);
+    emit deviceError(device_->deviceId(), errCode, msg);
 }
 
 bool Platform::open(const std::chrono::milliseconds retryMsec) {
@@ -134,7 +134,7 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device::Device::ErrorCode::DeviceBusy, errMsg);
+        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceBusy, errMsg);
         return false;
     }
 }
@@ -289,17 +289,17 @@ void Platform::identifyFinished(bool isRecognized) {
         QWriteLocker wLock(&properiesLock_);
         isRecognized_ = isRecognized;
     }
-    emit recognized(isRecognized);
+    emit recognized(device_->deviceId(), isRecognized);
 }
 
 bool Platform::openDevice() {
     if (device_->open() == true) {
-        emit opened();
+        emit opened(device_->deviceId());
         return true;
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
+        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
         if (retryMsec_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryMsec_.count());
         }
@@ -308,9 +308,9 @@ bool Platform::openDevice() {
 }
 
 void Platform::closeDevice(const std::chrono::milliseconds waitMsec) {
-    emit aboutToClose();
+    emit aboutToClose(device_->deviceId());
     device_->close();   // can take some time depending on the device type
-    emit closed();
+    emit closed(device_->deviceId());
     if (waitMsec != std::chrono::milliseconds::zero()) {
         reconnectTimer_.start(waitMsec.count());
     }

@@ -55,23 +55,29 @@ namespace strata {
         bool reconnectPlatform(const QByteArray& deviceId);
 
         /**
-         * Get smart pointer to the opened platform.
+         * Get smart pointer to the opened and/or closed platform.
          * @param deviceId device ID
+         * @param open true if open platforms are considered, false otherwise
+         * @param closed true if closed platforms are considered, false otherwise
          * @return platform pointer
          */
-        platform::PlatformPtr getPlatform(const QByteArray& deviceId);
+        platform::PlatformPtr getPlatform(const QByteArray& deviceId, bool open = true, bool closed = false);
 
         /**
-         * Get list of smart pointers to all the opened platforms.
+         * Get list of smart pointers to all the opened and/or closed platforms.
+         * @param open true if open platforms are considered, false otherwise
+         * @param closed true if closed platforms are considered, false otherwise
          * @return list of platform pointers
          */
-        QList<platform::PlatformPtr> getPlatforms();
+        QList<platform::PlatformPtr> getPlatforms(bool open = true, bool closed = false);
 
         /**
-         * Get list of device Ids of all the opened platforms.
+         * Get list of device Ids of all the opened and/or closed platforms.
+         * @param open true if open platforms are considered, false otherwise
+         * @param closed true if closed platforms are considered, false otherwise
          * @return list of device Ids
          */
-        QList<QByteArray> getDeviceIds();
+        QList<QByteArray> getDeviceIds(bool open = true, bool closed = false);
 
         /**
          * Get smart pointer to the device scanner.
@@ -111,12 +117,12 @@ namespace strata {
         void handleDeviceLost(QByteArray deviceId);
 
         // from Platform
-        void handlePlatformOpened();
-        void handlePlatformAboutToClose();
-        void handlePlatformClosed();
-        void handlePlatformRecognized(bool isRecognized);
-        void handlePlatformIdChanged();
-        void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+        void handlePlatformOpened(QByteArray deviceId);
+        void handlePlatformAboutToClose(QByteArray deviceId);
+        void handlePlatformClosed(QByteArray deviceId);
+        void handlePlatformRecognized(QByteArray deviceId, bool isRecognized);
+        void handlePlatformIdChanged(QByteArray deviceId);
+        void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
 
     private:
         void startPlatformOperations(const platform::PlatformPtr& platform);

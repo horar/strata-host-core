@@ -89,16 +89,47 @@ bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
     return false;
 }
 
-PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId) {
-    return openedPlatforms_.value(deviceId);
+PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, bool closed) {
+    if ((open == true) && (closed == false)) {
+        return openedPlatforms_.value(deviceId);
+    } else if ((open == false) && (closed == true)) {
+        return closedPlatforms_.value(deviceId);
+    } else if ((open == true) && (closed == true)) {
+        auto openIter = openedPlatforms_.constFind(deviceId);
+        if (openIter != openedPlatforms_.constEnd()) {
+            return openIter.value();
+        }
+        auto closedIter = closedPlatforms_.constFind(deviceId);
+        if (closedIter != closedPlatforms_.constEnd()) {
+            return closedIter.value();
+        }
+    }
+
+    return PlatformPtr();
 }
 
-QList<PlatformPtr> PlatformManager::getPlatforms() {
-    return openedPlatforms_.values();
+QList<PlatformPtr> PlatformManager::getPlatforms(bool open, bool closed) {
+    if ((open == true) && (closed == false)) {
+        return openedPlatforms_.values();
+    } else if ((open == false) && (closed == true)) {
+        return closedPlatforms_.values();
+    } else if ((open == true) && (closed == true)) {
+        return openedPlatforms_.values() + closedPlatforms_.values();
+    } else {
+        return QList<PlatformPtr>();
+    }
 }
 
-QList<QByteArray> PlatformManager::getDeviceIds() {
-    return openedPlatforms_.keys();
+QList<QByteArray> PlatformManager::getDeviceIds(bool open, bool closed) {
+    if ((open == true) && (closed == false)) {
+        return openedPlatforms_.keys();
+    } else if ((open == false) && (closed == true)) {
+        return closedPlatforms_.keys();
+    } else if ((open == true) && (closed == true)) {
+        return openedPlatforms_.keys() + closedPlatforms_.keys();
+    } else {
+        return QList<QByteArray>();
+    }
 }
 
 DeviceScannerPtr PlatformManager::getScanner(Device::Type scannerType) {
@@ -155,15 +186,7 @@ void PlatformManager::handleDeviceLost(QByteArray deviceId) {
     qCWarning(logCategoryPlatformManager).noquote() << "Unable to erase platform from maps, device Id does not exists:" << deviceId;
 }
 
-void PlatformManager::handlePlatformOpened() {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << QObject::sender();
-        return;
-    }
-
-    const QByteArray deviceId = platform->deviceId();
-
+void PlatformManager::handlePlatformOpened(QByteArray deviceId) {
     auto closedIter = closedPlatforms_.find(deviceId);
     if (closedIter != closedPlatforms_.end()) {
         PlatformPtr platformPtr = closedIter.value();
@@ -181,29 +204,15 @@ void PlatformManager::handlePlatformOpened() {
     }
 }
 
-void PlatformManager::handlePlatformAboutToClose() {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << QObject::sender();
-        return;
-    }
-
-    const QByteArray deviceId = platform->deviceId();
-
+void PlatformManager::handlePlatformAboutToClose(QByteArray deviceId) {
     qCDebug(logCategoryPlatformManager).noquote() << "Platform about to close, deviceId:" << deviceId;
+
+    platformOperations_.stopOperation(deviceId);
 
     emit platformAboutToClose(deviceId);
 }
 
-void PlatformManager::handlePlatformClosed() {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << QObject::sender();
-        return;
-    }
-
-    const QByteArray deviceId = platform->deviceId();
-
+void PlatformManager::handlePlatformClosed(QByteArray deviceId) {
     auto openIter = openedPlatforms_.find(deviceId);
     if (openIter != openedPlatforms_.end()) {
         PlatformPtr platformPtr = openIter.value();
@@ -218,15 +227,7 @@ void PlatformManager::handlePlatformClosed() {
     }
 }
 
-void PlatformManager::handlePlatformRecognized(bool isRecognized) {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << QObject::sender();
-        return;
-    }
-
-    const QByteArray deviceId = platform->deviceId();
-
+void PlatformManager::handlePlatformRecognized(QByteArray deviceId, bool isRecognized) {
     qCDebug(logCategoryPlatformManager).noquote().nospace() << "Platform recognized: " << isRecognized << ", deviceId: " << deviceId;
 
     emit platformRecognized(deviceId, isRecognized);
@@ -238,15 +239,7 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized) {
     }
 }
 
-void PlatformManager::handlePlatformIdChanged() {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << QObject::sender();
-        return;
-    }
-
-    const QByteArray deviceId = platform->deviceId();
-
+void PlatformManager::handlePlatformIdChanged(QByteArray deviceId) {
     auto iter = openedPlatforms_.constFind(deviceId);
     if (iter != openedPlatforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, going to Identify, deviceId:" << deviceId;
@@ -258,15 +251,7 @@ void PlatformManager::handlePlatformIdChanged() {
     }
 }
 
-void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << QObject::sender();
-        return;
-    }
-
-    const QByteArray deviceId = platform->deviceId();
-
+void PlatformManager::handleDeviceError(QByteArray deviceId, Device::ErrorCode errCode, QString errStr) {
     switch (errCode) {
     case Device::ErrorCode::NoError: {
     } break;

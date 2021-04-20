@@ -67,7 +67,7 @@ signals:
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
     void closeConnection(const QByteArray& deviceId);
-    void messageFromBoard(QString message);
+    void messageFromBoard(QByteArray deviceId, QString message);
 
 private:
     struct Board {

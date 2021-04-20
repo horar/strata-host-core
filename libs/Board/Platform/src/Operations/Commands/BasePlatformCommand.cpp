@@ -96,8 +96,9 @@ bool BasePlatformCommand::logSendMessage() const {
     return true;
 }
 
-void BasePlatformCommand::handleDeviceResponse(const QByteArray data)
+void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const QByteArray data)
 {
+    Q_UNUSED(deviceId)
     rapidjson::Document doc;
 
     if (CommandValidator::parseJsonCommand(data, doc) == false) {
@@ -178,8 +179,9 @@ void BasePlatformCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
-void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
+void BasePlatformCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr)
 {
+    Q_UNUSED(deviceId)
     Q_UNUSED(errCode)
     responseTimer_.stop();
     qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;

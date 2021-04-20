@@ -215,46 +215,46 @@ namespace strata::platform {
          * Emitted when there is available new message from device.
          * @param msg message from device
          */
-        void messageReceived(QByteArray msg);
+        void messageReceived(QByteArray deviceId, QByteArray msg);
 
         /**
          * Emitted when message was written to device.
          * @param msg writen message to device
          */
-        void messageSent(QByteArray msg);
+        void messageSent(QByteArray deviceId, QByteArray msg);
 
         /**
          * Emitted when error occured during communication on the serial port.
          * @param errCode error code
          * @param msg error description
          */
-        void deviceError(device::Device::ErrorCode errCode, QString msg);
+        void deviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString msg);
 
         /**
          * Emitted when device communication channel was opened.
          */
-        void opened();
+        void opened(QByteArray deviceId);
 
         /**
          * Emitted when device communication channel is about to be closed.
          */
-        void aboutToClose();
+        void aboutToClose(QByteArray deviceId);
 
         /**
          * Emitted when device communication channel was closed.
          */
-        void closed();
+        void closed(QByteArray deviceId);
 
         /**
          * Emitted when device was identified using Identify operation.
          * @param success true if successfully recognized, otherwise false
          */
-        void recognized(bool isRecognized);
+        void recognized(QByteArray deviceId, bool isRecognized);
 
         /**
          * Emitted when device receives platform Id changed message.
          */
-        void platformIdChanged();
+        void platformIdChanged(QByteArray deviceId);
 
     private slots:
         void messageReceivedHandler(QByteArray msg);

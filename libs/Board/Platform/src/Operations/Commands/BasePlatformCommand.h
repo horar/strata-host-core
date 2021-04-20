@@ -143,9 +143,9 @@ protected:
     virtual bool logSendMessage() const;
 
 private slots:
-    void handleDeviceResponse(const QByteArray data);
+    void handleDeviceResponse(QByteArray deviceId, const QByteArray data);
     void handleResponseTimeout();
-    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
 
 protected:
     virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;

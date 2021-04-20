@@ -77,14 +77,13 @@ void BoardController::closeConnection(const QByteArray& deviceId)
     emit boardDisconnected(deviceId);
 }
 
-void BoardController::messageFromBoard(QString message)
+void BoardController::messageFromBoard(QByteArray deviceId, QString message)
 {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    PlatformPtr platform = platformManager_.getPlatform(deviceId);
     if (platform == nullptr) {
         return;
     }
 
-    const QByteArray deviceId = platform->deviceId();
     QJsonObject wrapper {
         { JSON_MESSAGE, message },
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
