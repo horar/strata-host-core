@@ -44,7 +44,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
              return;
         }
 
-        platform_->disconnect();
+        disconnect(platform_.get(), nullptr, this, nullptr);
         platform_.reset();
         setStatus(PlatformStatus::Disconnected);
     } else {
