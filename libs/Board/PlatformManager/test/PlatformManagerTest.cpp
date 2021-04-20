@@ -2,6 +2,8 @@
 #include <Mock/MockDevice.h>
 #include <Mock/MockDeviceScanner.h>
 
+#include <QSignalSpy>
+
 using strata::PlatformManager;
 using strata::device::Device;
 using strata::device::scanner::MockDeviceScanner;
@@ -44,7 +46,9 @@ std::shared_ptr<strata::device::MockDevice> PlatformManagerTest::addMockDevice(c
                                                                                   const QString& deviceName)
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
+    QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
     QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceDetected(deviceId, deviceName, true));
+    QCOMPARE_(platformAddedSignal.wait(250), true);
     QVERIFY_(platformManager_->getDeviceIds().contains(deviceId));
     QCOMPARE_(platformManager_->getDeviceIds().count(), ++devicesCount);
     auto platform = platformManager_->getPlatform(deviceId);
@@ -61,7 +65,9 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
     auto platform = platformManager_->getPlatform(deviceId);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
     if (platformManager_->disconnectPlatform(deviceId)) {
+        QCOMPARE_(platformRemovedSignal.wait(250), true);
         QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
         QVERIFY_(platform.get() != nullptr);
         auto mockDevice = std::dynamic_pointer_cast<strata::device::MockDevice>(platform->getDevice());
