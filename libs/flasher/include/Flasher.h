@@ -28,11 +28,12 @@ class Flasher : public QObject
          * The Result enum for finished() signal.
          */
         enum class Result {
-            Ok,
-            NoFirmware,
-            Error,
-            Timeout,
-            Cancelled
+            Ok,          // successfully done
+            NoFirmware,  // device has no firmware
+            Error,       // error during firmware / bootloader operation
+            Disconnect,  // device disconnected
+            Timeout,     // command timed out
+            Cancelled    // operation cancelled
         };
         Q_ENUM(Result)
 
