@@ -24,7 +24,15 @@ PlatformManager::PlatformManager(bool requireFwInfoResponse, bool keepDevicesOpe
     handleIdentify_(handleIdentify)
 { }
 
-PlatformManager::~PlatformManager() { }
+PlatformManager::~PlatformManager() {
+    // stop all operations here to avoid capturing signals later which could crash
+    platformOperations_.stopAllOperations();
+
+    QList<Device::Type> scannerTypes = scanners_.keys();
+    foreach(auto scannerType, scannerTypes) {
+        deinit(scannerType);
+    }
+}
 
 void PlatformManager::init(Device::Type scannerType) {
     if (scanners_.contains(scannerType)) {
