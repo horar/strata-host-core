@@ -14,13 +14,6 @@
 
 struct PlatformMessage
 {
-    enum MessageType {
-        eMsgUnknown = 0,
-
-        eMsgClientMessage,
-    };
-
-    MessageType msg_type;
     QByteArray from_client;
     QByteArray message;
     rapidjson::Document* msg_document;
