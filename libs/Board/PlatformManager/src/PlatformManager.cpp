@@ -280,7 +280,7 @@ void PlatformManager::handleDeviceError(QByteArray deviceId, Device::ErrorCode e
     }
 }
 
-void PlatformManager::startPlatformOperations(const platform::PlatformPtr& platform) {
+void PlatformManager::startPlatformOperations(const PlatformPtr& platform) {
     if (handleIdentify_) {
         platformOperations_.Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY);
     }

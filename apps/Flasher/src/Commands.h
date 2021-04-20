@@ -65,11 +65,18 @@ public:
     FlasherCommand(const QString &fileName, int deviceNumber, CmdType command);
     ~FlasherCommand() override;
     void process() override;
+
+private slots:
+    void handlePlatformOpened(QByteArray deviceId);
+    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+
 private:
+    platform::PlatformPtr platform_;
     std::unique_ptr<Flasher> flasher_;
     const QString fileName_;
     const int deviceNumber_;
     const CmdType command_;
+    unsigned int openRetries_;
 };
 
 class InfoCommand : public Command {
@@ -80,10 +87,13 @@ public:
     void process() override;
 
 private slots:
+    void handlePlatformOpened(QByteArray deviceId);
+    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
     virtual void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
 
 private:
     const int deviceNumber_;
+    unsigned int openRetries_;
     platform::PlatformPtr platform_;
     std::unique_ptr<platform::operation::Identify> identifyOperation_;
 };

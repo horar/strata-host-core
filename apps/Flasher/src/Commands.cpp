@@ -10,6 +10,9 @@
 
 namespace strata {
 
+constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
+constexpr unsigned int OPEN_MAX_RETRIES(5);
+
 using device::SerialDevice;
 
 Command::~Command() { }
@@ -69,7 +72,7 @@ void ListCommand::process() {
 // FLASHER (FLASH/BACKUP firmware/bootloader) command
 
 FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command) :
-    fileName_(fileName), deviceNumber_(deviceNumber), command_(command) { }
+    fileName_(fileName), deviceNumber_(deviceNumber), command_(command), openRetries_(0) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
 FlasherCommand::~FlasherCommand() { }
@@ -94,13 +97,18 @@ void FlasherCommand::process() {
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    if (platform->open() == false) {
-        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
-        emit finished(EXIT_FAILURE);
-        return;
-    }
+    platform_ = std::make_shared<platform::Platform>(device);
 
-    flasher_ = std::make_unique<Flasher>(platform, fileName_);
+    connect(platform_.get(), &platform::Platform::opened, this, &FlasherCommand::handlePlatformOpened, Qt::QueuedConnection);
+    connect(platform_.get(), &platform::Platform::deviceError, this, &FlasherCommand::handleDeviceError, Qt::QueuedConnection);
+
+    platform_->open(DEVICE_CHECK_INTERVAL);
+}
+
+void FlasherCommand::handlePlatformOpened(QByteArray deviceId) {
+    Q_UNUSED(deviceId)
+
+    flasher_ = std::make_unique<Flasher>(platform_, fileName_);
 
     connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result, QString){
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -119,10 +127,27 @@ void FlasherCommand::process() {
     }
 }
 
+void FlasherCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr) {
+    Q_UNUSED(deviceId)
+    Q_UNUSED(errStr)
+
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+        if (++openRetries_ >= OPEN_MAX_RETRIES) {
+            qCCritical(logCategoryFlasherCli).nospace() << "Cannot open board (serial device) " << platform_->deviceName()
+                                                        << ", attempt " << openRetries_ << " of " << OPEN_MAX_RETRIES;
+            emit finished(EXIT_FAILURE);
+            return;
+        } else {
+            qCInfo(logCategoryFlasherCli).nospace() << "Cannot to open board (serial device) " << platform_->deviceName()
+                                                    << ", attempt " << openRetries_ << " of " << OPEN_MAX_RETRIES;
+        }
+    }
+}
+
 // INFO command
 
 InfoCommand::InfoCommand(int deviceNumber) :
-    deviceNumber_(deviceNumber) { }
+    deviceNumber_(deviceNumber), openRetries_(0) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
 InfoCommand::~InfoCommand() { }
@@ -147,11 +172,14 @@ void InfoCommand::process() {
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
     platform_ = std::make_shared<platform::Platform>(device);
 
-    if (platform_->open() == false) {
-        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
-        emit finished(EXIT_FAILURE);
-        return;
-    }
+    connect(platform_.get(), &platform::Platform::opened, this, &InfoCommand::handlePlatformOpened, Qt::QueuedConnection);
+    connect(platform_.get(), &platform::Platform::deviceError, this, &InfoCommand::handleDeviceError, Qt::QueuedConnection);
+
+    platform_->open(DEVICE_CHECK_INTERVAL);
+}
+
+void InfoCommand::handlePlatformOpened(QByteArray deviceId) {
+    Q_UNUSED(deviceId)
 
     identifyOperation_ = std::make_unique<platform::operation::Identify>(platform_, false);
 
@@ -159,6 +187,23 @@ void InfoCommand::process() {
             this, &InfoCommand::handleIdentifyOperationFinished);
 
     identifyOperation_->run();
+}
+
+void InfoCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr) {
+    Q_UNUSED(deviceId)
+    Q_UNUSED(errStr)
+
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+        if (++openRetries_ >= OPEN_MAX_RETRIES) {
+            qCCritical(logCategoryFlasherCli).nospace() << "Cannot open board (serial device) " << platform_->deviceName()
+                                                        << ", attempt " << openRetries_ << " of " << OPEN_MAX_RETRIES;
+            emit finished(EXIT_FAILURE);
+            return;
+        } else {
+            qCInfo(logCategoryFlasherCli).nospace() << "Cannot to open board (serial device) " << platform_->deviceName()
+                                                    << ", attempt " << openRetries_ << " of " << OPEN_MAX_RETRIES;
+        }
+    }
 }
 
 void InfoCommand::handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr) {

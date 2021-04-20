@@ -95,10 +95,10 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg
     emit deviceError(device_->deviceId(), errCode, msg);
 }
 
-bool Platform::open(const std::chrono::milliseconds retryMsec) {
+void Platform::open(const std::chrono::milliseconds retryMsec) {
     retryMsec_ = retryMsec;
     abortReconnect();
-    return openDevice();
+    openDevice();
 }
 
 void Platform::close(const std::chrono::milliseconds waitMsec, const std::chrono::milliseconds retryMsec) {
@@ -292,10 +292,9 @@ void Platform::identifyFinished(bool isRecognized) {
     emit recognized(device_->deviceId(), isRecognized);
 }
 
-bool Platform::openDevice() {
+void Platform::openDevice() {
     if (device_->open() == true) {
         emit opened(device_->deviceId());
-        return true;
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
         qCWarning(logCategoryPlatform) << this << errMsg;
@@ -303,7 +302,6 @@ bool Platform::openDevice() {
         if (retryMsec_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryMsec_.count());
         }
-        return false;
     }
 }
 

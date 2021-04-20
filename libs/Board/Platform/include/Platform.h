@@ -72,9 +72,8 @@ namespace strata::platform {
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
          * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
-         * @return true if open successfully, otherwise false (TODO: remove this and use signals)
          */
-        bool open(const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
+        void open(const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
 
         /**
          * Close device communication channel.
@@ -330,7 +329,7 @@ namespace strata::platform {
         void identifyFinished(bool isRecognized);
       // ***
 
-        bool openDevice();
+        void openDevice();
         void closeDevice(const std::chrono::milliseconds waitMsec);
 
     protected:
