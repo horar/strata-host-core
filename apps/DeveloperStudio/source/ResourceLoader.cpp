@@ -389,3 +389,12 @@ void ResourceLoader::trimComponentCache(QObject *parent) {
     QQmlEngine *eng = qmlEngine(parent);
     eng->trimComponentCache();
 }
+
+QList<QString> ResourceLoader::getQrcPaths(QString path) {
+    QList<QString> pathList;
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        pathList.append(it.next());
+    }
+    return pathList;
+}
