@@ -144,15 +144,16 @@ Item {
             }
 
             Button {
-                text: "Log Viewer"
+                text: "Log Viewer App"
 
                 onClicked: {
-                    if (sdsModel.openLogViewer() == false) {
+                    var errMessage = sdsModel.openLogViewer()
+                    if (errMessage != "") {
                         SGWidgets.SGDialogJS.showMessageDialog(
-                        root,
+                        ApplicationWindow.window,
                         SGWidgets.SGMessageDialog.Error,
-                        qsTr("The Application Log Viewer can't be opened!"),
-                        qsTr("The Application Log Viewer not found."))
+                        qsTr("Log Viewer can't be opened."),
+                        errMessage)
                     }
                 }
             }
