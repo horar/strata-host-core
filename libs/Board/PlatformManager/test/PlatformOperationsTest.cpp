@@ -20,7 +20,7 @@ namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
-PlatformOperationsTest::PlatformOperationsTest() : platformOperations_(false, true) {
+PlatformOperationsTest::PlatformOperationsTest() : platformOperations_(false, false) {
 
 }
 
