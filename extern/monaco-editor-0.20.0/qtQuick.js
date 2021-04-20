@@ -204,7 +204,6 @@ function registerQmlAsLanguage() {
         },
         indentationRules: {
             increaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
-            decreaseIndentPattern: /^((?!\/\/).)*(\{[^}\"'`]*|\([^)\"'`]*|\[[^\]\"'`]*)$/
         }
     })
     monaco.languages.setMonarchTokensProvider('qml', {
@@ -357,6 +356,8 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
+
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.CMD_I, editor.trigger(editor.getValue(),'editor.action.formatDocument',{}))
 
     function getValue() {
         return editor.getValue();
