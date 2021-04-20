@@ -221,7 +221,8 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     emit hcsConnectedChanged();
 }
 
-QString SDSModel::openLogViewer() {
+QString SDSModel::openLogViewer()
+{
     QDir applicationDir(QCoreApplication::applicationDirPath());
     #ifdef Q_OS_MACOS
         applicationDir.cdUp();
@@ -233,25 +234,19 @@ QString SDSModel::openLogViewer() {
     #endif
 
     QFileInfo logViewerInfo(logViewerPath);
-    if (logViewerInfo.exists() == true) {
-        if (logViewerInfo.isExecutable() == true) {
-            QDir logDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-            logDir.cdUp();
-            const QString sdsLog = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("Strata Developer Studio.log");
-            const QString hcsLog = logDir.filePath("Host Controller Service/Host Controller Service.log");
-
-            static QProcess logViewerProcess;
-            logViewerProcess.setProgram(logViewerPath);
-            logViewerProcess.setArguments({sdsLog, hcsLog});
-            if (logViewerProcess.startDetached() == true) {
-                return "";
-            } else {
-                return "Log Viewer failed to start.";
-            }
-        } else {
-            return "Log Viewer is not executable file.";
-        }
-    } else {
+    if (logViewerInfo.exists() == false) {
         return "Log Viewer not found.";
+    }
+    if (logViewerInfo.isExecutable() == false) {
+        return "Log Viewer is not executable file.";
+    }
+    QDir logDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    logDir.cdUp();
+    const QString sdsLog = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("Strata Developer Studio.log");
+    const QString hcsLog = logDir.filePath("Host Controller Service/Host Controller Service.log");
+    if (QProcess::startDetached(logViewerPath, {sdsLog, hcsLog})) {
+        return "";
+    } else {
+        return "Log Viewer failed to start.";
     }
 }

@@ -148,12 +148,12 @@ Item {
 
                 onClicked: {
                     var errMessage = sdsModel.openLogViewer()
-                    if (errMessage != "") {
+                    if (errMessage !== "") {
                         SGWidgets.SGDialogJS.showMessageDialog(
-                        ApplicationWindow.window,
-                        SGWidgets.SGMessageDialog.Error,
-                        qsTr("Log Viewer can't be opened."),
-                        errMessage)
+                            ApplicationWindow.window,
+                            SGWidgets.SGMessageDialog.Error,
+                            qsTr("Log Viewer can't be opened."),
+                            errMessage)
                     }
                 }
             }
