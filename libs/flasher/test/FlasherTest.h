@@ -20,6 +20,9 @@ private slots:
     // tests
     void flashFirmwareTest();
     void flashBootloaderTest();
+    void flashFirmwareWithoutStartApplicationTest();
+
+    void setFwClassIdTest();
 
     void disconnectWhileFlashingTest();
 
@@ -30,17 +33,20 @@ protected slots:
    void handleFlasherBootloaderProgress(int chunk, int total);
    void handleFlasherDevicePropertiesChanged();
 
+   void handleFlashingProgressForDisconnectWhileFlashingTest(int chunk, int total);
+
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void clearExpectedValues();
     void connectFlasherHandlers(strata::Flasher* flasher);
+    void connectFlasherForDisconnectWhileFlashingTest(strata::Flasher* flasher);
 
-    std::shared_ptr<strata::device::mock::MockDevice> device_;
-
+    strata::platform::PlatformPtr platform_;
+    std::shared_ptr<strata::device::MockDevice> device_;
     QSharedPointer<strata::Flasher> flasher_;
-    QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
+    QSharedPointer<strata::platform::operation::BasePlatformOperation> deviceOperation_;
 
     void getExpectedValues(QFile firmware);
     void getMd5(QFile firmware);
