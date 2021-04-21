@@ -86,6 +86,7 @@ private:
     bool parseReferenceVoltage(const QString &output, float &voltage);
     bool parseLibraryVersion(const QString &output, QString &version, QString &date);
     bool parseCommanderVersion(const QString &output, QString &version, QString &date);
+    bool parseEmulatorFwVersion(const QString &output, QString &version, QString &date);
 };
 
 #endif  // SGJLINKCONNECTOR

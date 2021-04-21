@@ -312,6 +312,14 @@ void SGJLinkConnector::parseOutput(SGJLinkConnector::ProcessType type)
             latestOutputInfo_.insert("lib_date", date);
         }
     }
+
+    if (type == PROCESS_CHECK_CONNECTION || type == PROCESS_PROGRAM) {
+        matched = parseEmulatorFwVersion(latestRawOutput_, version, date);
+        if (matched) {
+            latestOutputInfo_.insert("emulator_fw_version", version);
+            latestOutputInfo_.insert("emulator_fw_date", date);
+        }
+    }
 }
 
 bool SGJLinkConnector::parseReferenceVoltage(const QString &output, float &voltage)
@@ -360,4 +368,19 @@ bool SGJLinkConnector::parseCommanderVersion(const QString &output, QString &ver
     date = match.captured("date");
     return true;
 }
+
+bool SGJLinkConnector::parseEmulatorFwVersion(const QString &output, QString &version, QString &date)
+{
+    QRegularExpression re("(?<version>(?<=^firmware: ).*)[^a-z]compiled (?<date>[a-z]{3} \\d\\d \\d\\d\\d\\d) \\d\\d:\\d\\d:\\d\\d");
+    re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
+    QRegularExpressionMatch match = re.match(output);
+
+    if (match.hasMatch() == false) {
+        qCWarning(logCategoryJLink()) << "emulator fw version could not be determined";
+        return false;
+    }
+
+    version = match.captured("version");
+    date = match.captured("date");
+    return true;
 }
