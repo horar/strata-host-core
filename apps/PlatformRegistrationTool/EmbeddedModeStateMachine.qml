@@ -302,7 +302,7 @@ DSM.StateMachine {
                 if (stateWaitForJLink.outputInfo.hasOwnProperty("emulator_fw_version")
                         && stateWaitForJLink.outputInfo.hasOwnProperty("emulator_fw_date")) {
                     stateMachine.bottomLeftText += "emulator firmware: " + stateWaitForJLink.outputInfo["emulator_fw_version"]
-                    stateMachine.bottomLeftText += " compiled " + stateWaitForJLink.outputInfo["emulator_fw_date"] + "\n"
+                    stateMachine.bottomLeftText += " compiled " + stateWaitForJLink.outputInfo["emulator_fw_date"]
                 }
 
                 console.debug(Logger.prtCategory, "bootloader about to be programmed")

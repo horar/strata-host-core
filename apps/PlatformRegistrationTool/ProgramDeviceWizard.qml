@@ -399,7 +399,6 @@ FocusScope {
             anchors {
                 bottom: content.bottom
                 left: content.left
-                margins: content.verticalSpacing
             }
 
             text: wizard.bottomLeftText
