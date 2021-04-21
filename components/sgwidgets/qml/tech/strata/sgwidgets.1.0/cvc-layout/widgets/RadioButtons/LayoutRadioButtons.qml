@@ -25,7 +25,7 @@ LayoutContainer {
 
     signal clicked (int index)
 
-    SGRadioButtons {
+    contentItem: SGRadioButtons {
         id: radioButtonObject
 
         onClicked: {

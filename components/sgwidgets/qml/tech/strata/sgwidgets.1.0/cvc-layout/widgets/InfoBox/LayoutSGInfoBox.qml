@@ -26,7 +26,7 @@ LayoutContainer {
     signal accepted()
     signal editingFinished()
 
-    SGInfoBox {
+    contentItem: SGInfoBox {
         id: infoObject
         onAccepted: parent.accepted()
         onEditingFinished: parent.editingFinished()

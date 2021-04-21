@@ -9,7 +9,7 @@ LayoutContainer {
 
     signal clicked()
 
-    Button {
+    contentItem: Button {
         id: buttonObject
         text: "Button"
 

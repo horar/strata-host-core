@@ -7,7 +7,7 @@ LayoutContainer {
 
     property alias color: rect.color
 
-    Rectangle {
+    contentItem: Rectangle {
         id: rect
     }
 }

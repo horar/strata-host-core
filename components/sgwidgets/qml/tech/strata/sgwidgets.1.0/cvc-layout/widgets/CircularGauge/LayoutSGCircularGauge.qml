@@ -21,7 +21,7 @@ LayoutContainer {
     property alias tickmarkStepSize : circularGaugeObject.tickmarkStepSize
     property alias unitText: circularGaugeObject.unitText
 
-    SGCircularGauge {
+    contentItem: SGCircularGauge {
         id: circularGaugeObject
     }
 }

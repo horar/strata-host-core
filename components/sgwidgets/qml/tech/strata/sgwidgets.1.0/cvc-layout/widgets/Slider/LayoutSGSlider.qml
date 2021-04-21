@@ -45,7 +45,7 @@ LayoutContainer {
     signal userSet()
     signal moved()
 
-    SGSlider {
+    contentItem: SGSlider {
         id: sliderObject
         onMoved: parent.moved()
         onUserSet: parent.userSet()

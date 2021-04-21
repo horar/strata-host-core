@@ -12,7 +12,7 @@ LayoutContainer {
 
     property string type: ""
 
-    Item { // contentItem in LayoutContainer
+    contentItem: Item {
 
         MouseArea {
             id: dragMouseArea
