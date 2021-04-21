@@ -369,7 +369,15 @@ Item {
                         id: openControls
                         text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
                         buttonEnabled: model.connected && model.available.control
-                        toolTipText: buttonEnabled ? "" : "Hardware not connected or not recognized"
+                        toolTipText: {
+                            if (model.connected && model.available.control === false) {
+                                return "No control software found"
+                            }
+                            if (model.connected && model.available.control) { // buttonEnabled === true
+                                return ""
+                            }
+                            return "Hardware not connected"
+                        }
 
                         onClicked: {
                             buttonColumn.openView("control")

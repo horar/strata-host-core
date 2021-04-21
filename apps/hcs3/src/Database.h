@@ -1,20 +1,10 @@
-
-#ifndef HOST_HCS_DATABASE_H__
-#define HOST_HCS_DATABASE_H__
+#pragma once
 
 #include <string>
 #include <set>
 #include <QObject>
 
-namespace Strata {
-    class SGDatabase;
-    class SGURLEndpoint;
-    class SGReplicatorConfiguration;
-    class SGReplicator;
-    class SGBasicAuthenticator;
-
-    class SGMutableDocument;
-};
+#include <Database/DatabaseAccess.h>
 
 class HCS_Dispatcher;
 
@@ -34,7 +24,7 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(std::string_view db_path, const std::string &db_name);
+    bool open(const QString& db_path, const QString& db_name);
 
     /**
      * Initializes and starts the DB replicator
@@ -76,25 +66,25 @@ signals:
     void documentUpdated(QString documentId);
 
 private:
-    void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
+    struct Replication {
+        QString url;
+        QString username;
+        QString password;
+    };
+
+    Replication replication_;
+
+    QString databaseName_;
+
+    QString databasePath_;
+
+    QStringList databaseChannels_;
+
+    std::unique_ptr<strata::Database::DatabaseAccess> DB_ = nullptr;
+
+    bool isRunning_ = false;
+
+    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
 
     void updateChannels();
-
-private:
-    std::string sgDatabasePath_;
-    Strata::SGDatabase *sg_database_{nullptr};
-
-    Strata::SGURLEndpoint *url_endpoint_{nullptr};
-    Strata::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
-    Strata::SGReplicator *sg_replicator_{nullptr};
-    bool isRunning_{false};
-
-    // Set replicator reconnection timer to 15 seconds
-    const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
-
-    Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
-
-    std::set<std::string> channels_;
 };
-
-#endif //HOST_HCS_DATABASE_H__

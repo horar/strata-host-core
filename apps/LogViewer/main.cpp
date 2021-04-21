@@ -1,6 +1,8 @@
 #include "LogModel.h"
 #include "FileModel.h"
 
+#include "Version.h"
+
 #include <QCommandLineParser>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -60,9 +62,11 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 }
 
 int main(int argc, char *argv[]) {
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
+
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/lv-logo.png"));
 
@@ -72,6 +76,8 @@ int main(int argc, char *argv[]) {
     parser.setApplicationDescription(
         QStringLiteral("Log Viewer \n\n"
                        "Tool, useful for loading, parsing and filtering log files."));
+    parser.addPositionalArgument(QStringLiteral("<file>"),
+                            QObject::tr("Specifies list of Strata log files to be loaded."));
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);

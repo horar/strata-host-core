@@ -56,6 +56,10 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
             // update tourTarget if it already exists (occurs when same platform disconnected and reconnected - must update object references)
+            if (tourTargetList[i].helpObject) {
+                tourTargetList[i].helpObject.destroy()
+            }
+
             tourTargetList[i] = tourTarget
             return
         }
@@ -65,7 +69,7 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     tourTargetList.push(tourTarget)
 }
 
-function setClassId(device_id) {
+function setDeviceId(device_id) {
     // incoming target registration belongs to new device_id, needs new tour initialized
     current_device_id = device_id
     createView(device_id)
@@ -250,4 +254,14 @@ function createHelpObject(tourTarget) {
     tourStop.index = tourTarget.index
     tourStop.description = tourTarget.description
     tourTarget.helpObject = tourStop
+}
+
+function resetDeviceIdTour (device_id) {
+    // for CVC, need to clear out help tour for device id, otherwise help views are cached and won't update properly which is problematic for development
+    for (let i=0; i<views.length; i++) {
+        if (views[i].view_id === device_id) {
+            killView(i)
+            break
+        }
+    }
 }

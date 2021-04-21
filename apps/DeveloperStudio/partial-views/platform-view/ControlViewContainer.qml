@@ -125,7 +125,7 @@ Item {
         let control_filepath = NavigationControl.getQMLFile("Control", platformStack.class_id, version)
 
         // Set up context for control object creation
-        Help.setClassId(platformStack.device_id)
+        Help.setDeviceId(platformStack.device_id)
         NavigationControl.context.class_id = platformStack.class_id
         NavigationControl.context.device_id = platformStack.device_id
 
