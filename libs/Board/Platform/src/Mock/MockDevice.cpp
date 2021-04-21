@@ -31,12 +31,15 @@ bool MockDevice::open()
     }
 
     opened_ = mockIsOpenEnabled();
+    Device::connected_ = opened_;
+
     return opened_;
 }
 
 void MockDevice::close()
 {
     opened_ = false;
+    Device::connected_ = false;
     recordedMessages_.clear();
 }
 

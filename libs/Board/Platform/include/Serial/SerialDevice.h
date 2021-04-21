@@ -86,6 +86,8 @@ private:
 
     SerialPortPtr serialPort_;
     std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
+
+    bool disconnectReceived_;  // flag if error about disconnect from computer was received
 };
 
 }  // namespace
