@@ -43,7 +43,7 @@ void PlatformOperationsTest::init()
 
     QSignalSpy platformOpened(platform_.get(), SIGNAL(opened(QByteArray)));
     platform_->open();
-    QCOMPARE_(platformOpened.wait(250), true);
+    QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
     QVERIFY(mockDevice_->mockIsOpened());
 
     connect(&platformOperations_, &PlatformOperations::finished, this, &PlatformOperationsTest::handleOperationFinished);
