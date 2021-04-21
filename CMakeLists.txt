@@ -59,16 +59,21 @@ option(BUILD_TESTING "Build the testing tree" ON)
 add_feature_info(BUILD_TESTING BUILD_TESTING "Build the testing tree.")
 enable_testing()
 
+option(BUILD_EXAMPLES "Build project examples" OFF)
+add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
+
+option(APPS_UTILS "Build project supplementary utils" ON)
+add_feature_info(APPS_UTILS APPS_UTILS "Build project supplementary utils")
+
 if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/strata-host-core-internal")
     add_subdirectory(strata-host-core-internal)
 endif()
 
 add_subdirectory(extern)
-option(BUILD_EXAMPLES "Build project examples" OFF)
-add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 add_subdirectory(components)
 add_subdirectory(apps)
 add_subdirectory(libs)
+add_subdirectory(utils)
 
 message(STATUS "=============================================================================")
 message(STATUS "QML import paths:")
