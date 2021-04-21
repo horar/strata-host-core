@@ -201,12 +201,13 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         errorMessage = QStringLiteral("The board has no valid firmware.");
         break;
     case Flasher::Result::Error :
+    case Flasher::Result::Disconnect :
         result = State::Failed;
         if (errorString.isEmpty()) {
             errorMessage = QStringLiteral("Unknown error");
         } else {
             errorMessage = errorString;
-            qCDebug(logCategoryFlasherConnector).noquote() << "Flasher error:" << errorMessage;
+            qCWarning(logCategoryFlasherConnector).noquote() << "Flasher error:" << errorMessage;
         }
         break;
     case Flasher::Result::Timeout :
@@ -257,12 +258,12 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
             action_ = Action::None;
             emit finished(Result::Success);
         } else {
-            if (flasherResult != Flasher::Result::Cancelled) {
+            if ((flasherResult == Flasher::Result::Disconnect) || (flasherResult == Flasher::Result::Cancelled)) {
+                emit finished(Result::Failure);
+            } else {
                 qCWarning(logCategoryFlasherConnector) << "Failed to flash new firmware. Starting to flash backed up firmware.";
                 action_ = Action::FlashOld;
                 flashFirmware(true);
-            } else {
-                emit finished(Result::Failure);
             }
         }
         break;
