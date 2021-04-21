@@ -339,7 +339,7 @@ bool SGJLinkConnector::parseReferenceVoltage(const QString &output, float &volta
 
 bool SGJLinkConnector::parseLibraryVersion(const QString &output, QString &version, QString &date)
 {
-    QRegularExpression re("(?<version>(?<=^dll version )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3} \\d\\d \\d\\d\\d\\d) \\d\\d:\\d\\d:\\d\\d");
+    QRegularExpression re("(?<version>(?<=^dll version )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s");
     re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
     QRegularExpressionMatch match = re.match(output);
 
@@ -355,7 +355,7 @@ bool SGJLinkConnector::parseLibraryVersion(const QString &output, QString &versi
 
 bool SGJLinkConnector::parseCommanderVersion(const QString &output, QString &version, QString &date)
 {
-    QRegularExpression re("(?<version>(?<=^segger j-link commander )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3} \\d\\d) \\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d");
+    QRegularExpression re("(?<version>(?<=^segger j-link commander )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s");
     re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
     QRegularExpressionMatch match = re.match(output);
 
@@ -371,7 +371,7 @@ bool SGJLinkConnector::parseCommanderVersion(const QString &output, QString &ver
 
 bool SGJLinkConnector::parseEmulatorFwVersion(const QString &output, QString &version, QString &date)
 {
-    QRegularExpression re("(?<version>(?<=^firmware: ).*)[^a-z]compiled (?<date>[a-z]{3} \\d\\d \\d\\d\\d\\d) \\d\\d:\\d\\d:\\d\\d");
+    QRegularExpression re("(?<version>(?<=^firmware: ).*)[^a-z]compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s");
     re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
     QRegularExpressionMatch match = re.match(output);
 
