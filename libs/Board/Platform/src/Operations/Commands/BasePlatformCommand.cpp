@@ -180,10 +180,14 @@ void BasePlatformCommand::handleResponseTimeout()
 
 void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
-    Q_UNUSED(errCode)
     responseTimer_.stop();
     qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;
-    finishCommand(CommandResult::DeviceError);
+
+    if (errCode == device::Device::ErrorCode::DeviceDisconnected) {
+        finishCommand(CommandResult::DeviceDisconnected);
+    } else {
+        finishCommand(CommandResult::DeviceError);
+    }
 }
 
 void BasePlatformCommand::finishCommand(CommandResult result)
