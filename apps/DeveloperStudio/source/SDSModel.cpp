@@ -229,8 +229,10 @@ QString SDSModel::openLogViewer()
         applicationDir.cdUp();
         applicationDir.cdUp();
         const QString logViewerPath = applicationDir.filePath("Log Viewer.app/Contents/MacOS/Log Viewer");
-    #else
+    #elif defined(Q_OS_WIN)
         const QString logViewerPath = applicationDir.filePath("Log Viewer.exe");
+    #else
+        const QString logViewerPath = applicationDir.filePath("Log Viewer");
     #endif
 
     QFileInfo logViewerInfo(logViewerPath);
@@ -247,7 +249,7 @@ QString SDSModel::openLogViewer()
     logDir.cdUp();
     const QString sdsLog = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("Strata Developer Studio.log");
     const QString hcsLog = logDir.filePath("Host Controller Service/Host Controller Service.log");
-    if (QProcess::startDetached(logViewerPath + "123", {sdsLog, hcsLog}) == false) {
+    if (QProcess::startDetached(logViewerPath, {sdsLog, hcsLog}) == false) {
         qCCritical(logCategoryStrataDevStudio) << "Log Viewer from location " + logViewerPath + " with log files " + sdsLog + " and " + hcsLog + " failed to start.";
         return "Log Viewer failed to start.";
     }
