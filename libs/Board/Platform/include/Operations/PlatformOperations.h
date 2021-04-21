@@ -21,7 +21,7 @@ public:
     /*!
      * BasePlatformOperation constructor.
      * @param runOperations true if operations are to be run automatically, false otherwise
-     * @param overwriteEnabled true if operations are to be always created (cancelling old operations), false otherwise
+     * @param identifyOverwriteEnabled true if Identify operations are to be always created (cancelling old operations), false otherwise
      */
     PlatformOperations(bool runOperations, bool identifyOverwriteEnabled = false);
 
