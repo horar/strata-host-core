@@ -53,6 +53,7 @@ FocusScope {
 
     property string statusText
     property string subtext
+    property string bottomLeftText
 
     clip: true
 
@@ -126,6 +127,13 @@ FocusScope {
             value: embeddedStateMachine.subtext
             when: registrationMode === ProgramDeviceWizard.Embedded
         }
+
+        Binding {
+            target: wizard
+            property: "bottomLeftText"
+            value: embeddedStateMachine.bottomLeftText
+            when: registrationMode === ProgramDeviceWizard.Embedded
+        }
     }
 
     AssistedModeStateMachine {
@@ -155,6 +163,13 @@ FocusScope {
             value: assistedStateMachine.subtext
             when: registrationMode === ProgramDeviceWizard.Assisted
         }
+
+        Binding {
+            target: wizard
+            property: "bottomLeftText"
+            value: assistedStateMachine.bottomLeftText
+            when: registrationMode === ProgramDeviceWizard.Assisted
+        }
     }
 
     ControllerModeStateMachine {
@@ -182,6 +197,13 @@ FocusScope {
             target: wizard
             property: "subtext"
             value: controllerStateMachine.subtext
+            when: registrationMode === ProgramDeviceWizard.ControllerOnly
+        }
+
+        Binding {
+            target: wizard
+            property: "bottomLeftText"
+            value: controllerStateMachine.bottomLeftText
             when: registrationMode === ProgramDeviceWizard.ControllerOnly
         }
     }
@@ -273,7 +295,7 @@ FocusScope {
             height: 100
             anchors {
                 top: statusTextItem.bottom
-                topMargin: parent.verticalSpacing
+                topMargin: content.verticalSpacing
                 horizontalCenter: parent.horizontalCenter
             }
 
@@ -333,7 +355,7 @@ FocusScope {
             id: statusSubtext
             anchors {
                 top: statusIndicator.visible ? statusIndicator.bottom : statusTextItem.bottom
-                topMargin: parent.verticalSpacing
+                topMargin: content.verticalSpacing
                 horizontalCenter: parent.horizontalCenter
             }
 
@@ -371,6 +393,16 @@ FocusScope {
             sourceSize: Qt.size(width, height)
             smooth: true
             visible: wizard.stateAssistedCheckActive || wizard.stateControllerCheckActive
+        }
+
+        SGWidgets.SGText {
+            anchors {
+                bottom: content.bottom
+                left: content.left
+                margins: content.verticalSpacing
+            }
+
+            text: wizard.bottomLeftText
         }
     }
 

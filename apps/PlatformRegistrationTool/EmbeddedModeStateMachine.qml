@@ -15,6 +15,7 @@ DSM.StateMachine {
     property bool stateLoopSucceedActive: stateLoopSucceed.active
 
     property string statusText
+    property string bottomLeftText
     property string internalSubtext: ""
     property string subtext: {
         var t = ""
@@ -225,7 +226,10 @@ DSM.StateMachine {
 
             initialState: stateCheckJLinkConnection
 
+            property var outputInfo: ({})
+
             onEntered: {
+                stateWaitForJLink.outputInfo = {}
                 stateMachine.statusText = "Waiting for JLink connection"
                 jLinkConnector.device = stateMachine.jlinkDevice
                 jLinkConnector.startAddress = stateMachine.bootloaderStartAddress
@@ -247,6 +251,9 @@ DSM.StateMachine {
                     targetState: stateRegistration
                     signal: jLinkConnector.checkConnectionProcessFinished
                     guard: exitedNormally && connected
+                    onTriggered: {
+                        stateWaitForJLink.outputInfo = jLinkConnector.latestOutputInfo()
+                    }
                 }
 
                 DSM.SignalTransition {
@@ -285,13 +292,29 @@ DSM.StateMachine {
             onEntered: {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
-                var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
+                stateMachine.bottomLeftText = "J-Link\n"
+                if (stateWaitForJLink.outputInfo.hasOwnProperty("lib_version")
+                        && stateWaitForJLink.outputInfo.hasOwnProperty("lib_date")) {
+                    stateMachine.bottomLeftText += "host library: " + stateWaitForJLink.outputInfo["lib_version"]
+                    stateMachine.bottomLeftText += " compiled " + stateWaitForJLink.outputInfo["lib_date"] + "\n"
+                }
+
+                if (stateWaitForJLink.outputInfo.hasOwnProperty("emulator_fw_version")
+                        && stateWaitForJLink.outputInfo.hasOwnProperty("emulator_fw_date")) {
+                    stateMachine.bottomLeftText += "emulator firmware: " + stateWaitForJLink.outputInfo["emulator_fw_version"]
+                    stateMachine.bottomLeftText += " compiled " + stateWaitForJLink.outputInfo["emulator_fw_date"] + "\n"
+                }
 
                 console.debug(Logger.prtCategory, "bootloader about to be programmed")
 
+                var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
                 if (run === false) {
                     stateMachine.jlinkProcessFailed()
                 }
+            }
+
+            onExited: {
+                stateMachine.bottomLeftText = ""
             }
 
             DSM.SignalTransition {
