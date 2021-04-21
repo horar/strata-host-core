@@ -71,18 +71,18 @@ namespace strata::platform {
          * Open device communication channel.
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
-         * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
+         * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        void open(const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
+        void open(const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
 
         /**
          * Close device communication channel.
          * Emits closed() signal upon completion.
-         * @param waitMsec how long to remain in closed state before re-attempting to open the device (0 - stay closed)
-         * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
+         * @param waitInterval how long to remain in closed state before re-attempting to open the device (0 - stay closed)
+         * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        void close(const std::chrono::milliseconds waitMsec = std::chrono::milliseconds::zero(),
-                   const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
+        void close(const std::chrono::milliseconds waitInterval = std::chrono::milliseconds::zero(),
+                   const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
 
         /**
          * Stop reconnection timer if active.
@@ -330,7 +330,7 @@ namespace strata::platform {
       // ***
 
         void openDevice();
-        void closeDevice(const std::chrono::milliseconds waitMsec);
+        void closeDevice(const std::chrono::milliseconds waitInterval);
 
     protected:
         device::DevicePtr device_;
@@ -344,7 +344,7 @@ namespace strata::platform {
 
     private:
         QTimer reconnectTimer_;
-        std::chrono::milliseconds retryMsec_;
+        std::chrono::milliseconds retryInterval_;
 
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 

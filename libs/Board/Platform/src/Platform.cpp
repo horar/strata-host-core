@@ -21,7 +21,7 @@ QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
 }
 
 Platform::Platform(const device::DevicePtr& device) :
-    device_(device), operationLock_(0), retryMsec_(std::chrono::milliseconds::zero()),
+    device_(device), operationLock_(0), retryInterval_(std::chrono::milliseconds::zero()),
     bootloaderMode_(false), isRecognized_(false), apiVersion_(ApiVersion::Unknown),
     controllerType_(ControllerType::Embedded)
 {
@@ -95,16 +95,16 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg
     emit deviceError(device_->deviceId(), errCode, msg);
 }
 
-void Platform::open(const std::chrono::milliseconds retryMsec) {
-    retryMsec_ = retryMsec;
+void Platform::open(const std::chrono::milliseconds retryInterval) {
+    retryInterval_ = retryInterval;
     abortReconnect();
     openDevice();
 }
 
-void Platform::close(const std::chrono::milliseconds waitMsec, const std::chrono::milliseconds retryMsec) {
-    retryMsec_ = retryMsec;
+void Platform::close(const std::chrono::milliseconds waitInterval, const std::chrono::milliseconds retryInterval) {
+    retryInterval_ = retryInterval;
     abortReconnect();
-    closeDevice(waitMsec);
+    closeDevice(waitInterval);
 }
 
 void Platform::abortReconnect() {
@@ -299,18 +299,18 @@ void Platform::openDevice() {
         QString errMsg(QStringLiteral("Unable to open device."));
         qCWarning(logCategoryPlatform) << this << errMsg;
         emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
-        if (retryMsec_ != std::chrono::milliseconds::zero()) {
-            reconnectTimer_.start(retryMsec_.count());
+        if (retryInterval_ != std::chrono::milliseconds::zero()) {
+            reconnectTimer_.start(retryInterval_.count());
         }
     }
 }
 
-void Platform::closeDevice(const std::chrono::milliseconds waitMsec) {
+void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
     emit aboutToClose(device_->deviceId());
     device_->close();   // can take some time depending on the device type
     emit closed(device_->deviceId());
-    if (waitMsec != std::chrono::milliseconds::zero()) {
-        reconnectTimer_.start(waitMsec.count());
+    if (waitInterval != std::chrono::milliseconds::zero()) {
+        reconnectTimer_.start(waitInterval.count());
     }
 }
 
