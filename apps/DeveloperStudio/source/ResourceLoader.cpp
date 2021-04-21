@@ -271,13 +271,16 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     const QString rccExecutablePath = QT_RCC_EXECUTABLE;
 #else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
 // Will be completed in CS-1093
+    qDebug()<<"RCC Not found, attempting to find";
     QDir applicationDir(QCoreApplication::applicationDirPath());
     #ifdef Q_OS_MACOS
         applicationDir.cdUp();
         applicationDir.cdUp();
         applicationDir.cdUp();
+        const QString rccExecutablePath = applicationDir.filePath("rcc");
+    #else
+        const QString rccExecutablePath = applicationDir.filePath("rcc.exe");
     #endif
-    const QString rccExecutablePath = applicationDir.filePath("rcc");
 #endif
 
     qrcFilePath.replace("file://", "");
