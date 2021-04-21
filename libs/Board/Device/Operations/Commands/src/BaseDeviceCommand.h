@@ -12,18 +12,19 @@
 namespace strata::device::command {
 
 enum class CommandResult : int {
-    Done,              // command done, move to next command and send it
-    DoneAndWait,       // command done, move to next command but do not send it yet
-    RepeatAndWait,     // command is expected to be send again (with new data), do not send it yet
-    Retry,             // retry - send command again with same data
-    Reject,            // command was rejected (is unsupported)
-    Failure,           // failure - response to command is not successful
-    FinaliseOperation, // finish operation (there is no point in continuing)
-    Timeout,           // command has timed out
-    MissingAck,        // failure - received notification without previous ACK
-    Unsent,            // command was not sent (sending to device has failed)
-    Cancel,            // command was cencelled
-    DeviceError        // unexpected device error has occured
+    Done,               // command done, move to next command and send it
+    DoneAndWait,        // command done, move to next command but do not send it yet
+    RepeatAndWait,      // command is expected to be send again (with new data), do not send it yet
+    Retry,              // retry - send command again with same data
+    Reject,             // command was rejected (is unsupported)
+    Failure,            // failure - response to command is not successful
+    FinaliseOperation,  // finish operation (there is no point in continuing)
+    Timeout,            // command has timed out
+    MissingAck,         // failure - received notification without previous ACK
+    Unsent,             // command was not sent (sending to device has failed)
+    Cancel,             // command was cencelled
+    DeviceDisconnected, // device unexpectedly disconnected (unplugged)
+    DeviceError         // unexpected device error has occured
 };
 
 enum class CommandType : int {
@@ -146,7 +147,7 @@ protected:
 private slots:
     void handleDeviceResponse(const QByteArray data);
     void handleResponseTimeout();
-    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+    void handleDeviceError(Device::ErrorCode errCode, QString errStr);
 
 protected:
     virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;

@@ -11,6 +11,7 @@ cd ${SCRIPT_DIR}
 DEFAULT_ARGUMENTS="--create-installer --generate-repo"
 FIXED_ARGUMENTS="--config QA --app --relativerepo --demorepo --nosigning"
 CUSTOM_ARGUMENTS="$@"
+BUILD_SCRIPT=strata-host-core-internal/deployment/OTA/Strata/release_app.sh
 
 usage() {
     echo "bootstrap-host-ota.sh is a simple build script for all 'host' targets configured for OTA release"
@@ -26,7 +27,7 @@ usage() {
     echo
     echo "Displaying now help from release_app.sh:"
     echo
-    sh deployment/OTA/Strata/release_app.sh --help
+    sh ${BUILD_SCRIPT} --help
     exit 0
 }
 
@@ -53,7 +54,7 @@ esac
 done
 
 if [[ USE_DEFAULT_ARGUMENTS -eq 0 ]]; then
-    sh strata-host-core-internal/deployment/OTA/Strata/release_app.sh ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
+    sh ${BUILD_SCRIPT} ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
 else
-    sh strata-host-core-internal/deployment/OTA/Strata/release_app.sh ${DEFAULT_ARGUMENTS} ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
+    sh ${BUILD_SCRIPT} ${DEFAULT_ARGUMENTS} ${FIXED_ARGUMENTS} ${CUSTOM_ARGUMENTS}
 fi

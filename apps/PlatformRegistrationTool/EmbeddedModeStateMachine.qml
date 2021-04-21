@@ -4,7 +4,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.flasherConnector 1.0
 import tech.strata.logger 1.0
 
-DSM.StateMachine {
+BaseStateMachine {
     id: stateMachine
 
     property bool stateDownloadActive: stateDownload.active
@@ -15,6 +15,7 @@ DSM.StateMachine {
     property bool stateLoopSucceedActive: stateLoopSucceed.active
 
     property string statusText
+    property string bottomLeftText
     property string internalSubtext: ""
     property string subtext: {
         var t = ""
@@ -225,7 +226,10 @@ DSM.StateMachine {
 
             initialState: stateCheckJLinkConnection
 
+            property var outputInfo: ({})
+
             onEntered: {
+                stateWaitForJLink.outputInfo = {}
                 stateMachine.statusText = "Waiting for JLink connection"
                 jLinkConnector.device = stateMachine.jlinkDevice
                 jLinkConnector.startAddress = stateMachine.bootloaderStartAddress
@@ -247,6 +251,9 @@ DSM.StateMachine {
                     targetState: stateRegistration
                     signal: jLinkConnector.checkConnectionProcessFinished
                     guard: exitedNormally && connected
+                    onTriggered: {
+                        stateWaitForJLink.outputInfo = jLinkConnector.latestOutputInfo()
+                    }
                 }
 
                 DSM.SignalTransition {
@@ -285,13 +292,18 @@ DSM.StateMachine {
             onEntered: {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
-                var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
+                stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
 
                 console.debug(Logger.prtCategory, "bootloader about to be programmed")
 
+                var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
                 if (run === false) {
                     stateMachine.jlinkProcessFailed()
                 }
+            }
+
+            onExited: {
+                stateMachine.bottomLeftText = ""
             }
 
             DSM.SignalTransition {

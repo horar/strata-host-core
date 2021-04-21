@@ -21,6 +21,7 @@ SGWidgets.SGBaseEditor {
     property int textFieldSuggestionMaxHeight: 120
     property bool contextMenuEnabled: false
     property bool activeEditing: false
+    property bool textFieldActiveEditingEnabled: true
 
     signal textFieldSuggestionDelegateSelected(int index)
     signal textFieldSuggestionDelegateRemoveRequested(int index)
@@ -44,6 +45,7 @@ SGWidgets.SGBaseEditor {
         suggestionDelegateRemovable: root.textFieldSuggestionDelegateRemovable
         suggestionCloseWithArrowKey: root.textFieldSuggestionCloseWithArrowKey
         suggestionMaxHeight: root.textFieldSuggestionMaxHeight
+        activeEditingEnabled: root.textFieldActiveEditingEnabled
 
         onTextChanged: root.text = text
         Binding {
