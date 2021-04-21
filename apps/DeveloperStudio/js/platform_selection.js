@@ -401,13 +401,6 @@ function connectListing(class_id_string, device_id, firmware_version, controller
     selector_listing.visible = true
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
-    if (available.control === false) {
-        if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
-            // Non-OTA development scenario:
-            // DP has dictated control === false, but connected board class_id is defined in uuidmap, so control view exists; allow access
-            available.control = true
-        }
-    }
     selector_listing.available = available
     selector_listing.controller_class_id = controller_class_id
     selector_listing.is_assisted = (controller_class_id !== null)
