@@ -1,5 +1,4 @@
-#ifndef SGJLINKCONNECTOR
-#define SGJLINKCONNECTOR
+#pragma once
 
 #include <QObject>
 #include <QPointer>
@@ -88,5 +87,3 @@ private:
     bool parseCommanderVersion(const QString &output, QString &version, QString &date);
     bool parseEmulatorFwVersion(const QString &output, QString &version, QString &date);
 };
-
-#endif  // SGJLINKCONNECTOR
