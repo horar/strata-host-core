@@ -297,7 +297,6 @@ void Platform::openDevice() {
         emit opened(device_->deviceId());
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
-        qCWarning(logCategoryPlatform) << this << errMsg;
         emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
         if (retryInterval_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryInterval_.count());

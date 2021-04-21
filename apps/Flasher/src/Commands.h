@@ -52,9 +52,27 @@ public:
     void process() override;
 };
 
+class DeviceCommand : public Command {
+    Q_OBJECT
+public:
+    explicit DeviceCommand(int deviceNumber);
+    virtual ~DeviceCommand() override;
+
+protected slots:
+    virtual void handlePlatformOpened(QByteArray deviceId) = 0;
+    virtual void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+
+protected:
+    bool createSerialDevice();
+
+    const int deviceNumber_;
+    unsigned int openRetries_;
+    platform::PlatformPtr platform_;
+};
+
 class Flasher;
 
-class FlasherCommand : public Command {
+class FlasherCommand : public DeviceCommand {
     Q_OBJECT
 public:
     enum class CmdType {
@@ -67,34 +85,26 @@ public:
     void process() override;
 
 private slots:
-    void handlePlatformOpened(QByteArray deviceId);
-    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+    virtual void handlePlatformOpened(QByteArray deviceId) override;
 
 private:
-    platform::PlatformPtr platform_;
     std::unique_ptr<Flasher> flasher_;
     const QString fileName_;
-    const int deviceNumber_;
     const CmdType command_;
-    unsigned int openRetries_;
 };
 
-class InfoCommand : public Command {
+class InfoCommand : public DeviceCommand {
     Q_OBJECT
 public:
-    InfoCommand(int deviceNumber);
+    explicit InfoCommand(int deviceNumber);
     ~InfoCommand() override;
     void process() override;
 
 private slots:
-    void handlePlatformOpened(QByteArray deviceId);
-    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+    virtual void handlePlatformOpened(QByteArray deviceId) override;
     virtual void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
 
 private:
-    const int deviceNumber_;
-    unsigned int openRetries_;
-    platform::PlatformPtr platform_;
     std::unique_ptr<platform::operation::Identify> identifyOperation_;
 };
 
