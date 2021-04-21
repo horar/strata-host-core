@@ -4,7 +4,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.flasherConnector 1.0
 import tech.strata.logger 1.0
 
-DSM.StateMachine {
+BaseStateMachine {
     id: stateMachine
 
     property bool stateDownloadActive: stateDownload.active
@@ -292,18 +292,7 @@ DSM.StateMachine {
             onEntered: {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
-                stateMachine.bottomLeftText = "J-Link\n"
-                if (stateWaitForJLink.outputInfo.hasOwnProperty("lib_version")
-                        && stateWaitForJLink.outputInfo.hasOwnProperty("lib_date")) {
-                    stateMachine.bottomLeftText += "host library: " + stateWaitForJLink.outputInfo["lib_version"]
-                    stateMachine.bottomLeftText += " compiled " + stateWaitForJLink.outputInfo["lib_date"] + "\n"
-                }
-
-                if (stateWaitForJLink.outputInfo.hasOwnProperty("emulator_fw_version")
-                        && stateWaitForJLink.outputInfo.hasOwnProperty("emulator_fw_date")) {
-                    stateMachine.bottomLeftText += "emulator firmware: " + stateWaitForJLink.outputInfo["emulator_fw_version"]
-                    stateMachine.bottomLeftText += " compiled " + stateWaitForJLink.outputInfo["emulator_fw_date"]
-                }
+                stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
 
                 console.debug(Logger.prtCategory, "bootloader about to be programmed")
 
