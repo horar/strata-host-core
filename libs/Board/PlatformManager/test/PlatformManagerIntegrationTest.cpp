@@ -3,6 +3,10 @@
 
 #include "PlatformManagerIntegrationTest.h"
 
+PlatformManagerIntegrationTest::PlatformManagerIntegrationTest()
+{
+}
+
 void PlatformManagerIntegrationTest::initTestCase()
 {
 }

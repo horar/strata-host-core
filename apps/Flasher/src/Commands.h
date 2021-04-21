@@ -10,36 +10,49 @@ namespace strata {
 
 class Command : public QObject {
     Q_OBJECT
+    Q_DISABLE_COPY(Command)
+
 public:
+    Command();
     virtual ~Command();
     virtual void process() = 0;
+
 signals:
     void finished(int returnCode);
 };
 
 class WrongCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(WrongCommand)
+
 public:
     WrongCommand(const QString &message);
     void process() override;
+
 private:
     const QString message_;
 };
 
 class HelpCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(HelpCommand)
+
 public:
     HelpCommand(const QString &helpText);
     void process() override;
+
 private:
     const QString helpText_;
 };
 
 class VersionCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(VersionCommand)
+
 public:
     VersionCommand(const QString &appName, const QString &appDescription, const QString &appVersion);
     void process() override;
+
 private:
     const QString appName_;
     const QString appDescription_;
@@ -48,12 +61,17 @@ private:
 
 class ListCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(ListCommand)
+
 public:
+    ListCommand();
     void process() override;
 };
 
 class DeviceCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(DeviceCommand)
+
 public:
     explicit DeviceCommand(int deviceNumber);
     virtual ~DeviceCommand() override;
@@ -74,6 +92,8 @@ class Flasher;
 
 class FlasherCommand : public DeviceCommand {
     Q_OBJECT
+    Q_DISABLE_COPY(FlasherCommand)
+
 public:
     enum class CmdType {
         FlashFirmware,
@@ -95,6 +115,8 @@ private:
 
 class InfoCommand : public DeviceCommand {
     Q_OBJECT
+    Q_DISABLE_COPY(InfoCommand)
+
 public:
     explicit InfoCommand(int deviceNumber);
     ~InfoCommand() override;

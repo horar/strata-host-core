@@ -15,6 +15,8 @@ constexpr unsigned int OPEN_MAX_RETRIES(5);
 
 using device::SerialDevice;
 
+Command::Command() { }
+
 Command::~Command() { }
 
 // WRONG command
@@ -49,6 +51,8 @@ void VersionCommand::process() {
 
 
 // LIST command
+
+ListCommand::ListCommand() { }
 
 void ListCommand::process() {
     SerialPortList serialPorts;

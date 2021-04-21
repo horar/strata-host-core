@@ -8,6 +8,10 @@
 class PlatformManagerTest : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PlatformManagerTest)
+
+public:
+    PlatformManagerTest();
 
 private slots:
     // test init/teardown
