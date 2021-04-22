@@ -30,3 +30,4 @@
 [submodule "extern/libevent"]
 	path = extern/libevent
 	url = https://github.com/libevent/libevent.git
+	ignore = all
