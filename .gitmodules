@@ -27,3 +27,6 @@
 	path = extern/cppzmq
 	url = https://github.com/zeromq/cppzmq.git
 	ignore = all
+[submodule "extern/libevent"]
+	path = extern/libevent
+	url = https://github.com/libevent/libevent.git
