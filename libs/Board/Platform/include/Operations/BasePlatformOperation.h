@@ -27,16 +27,19 @@ enum class Type: int {
     StartApplication,
     SetPlatformId,
     SetAssistedPlatformId
-}; Q_ENUM_NS(Type)
+};
+Q_ENUM_NS(Type)
 
 enum class Result: int {
-    Success,  // successfully done
-    Reject,   // some command from operation is not supported by device
-    Cancel,   // operation was cancelled
-    Timeout,  // no response from device
-    Failure,  // faulty response from device
-    Error     // error during operation
-}; Q_ENUM_NS(Result)
+    Success,    // successfully done
+    Reject,     // some command from operation is not supported by device
+    Cancel,     // operation was cancelled
+    Timeout,    // no response from device
+    Failure,    // faulty response from device
+    Disconnect, // device disconnected during operation
+    Error       // error during operation
+};
+Q_ENUM_NS(Result)
 
 class BasePlatformOperation : public QObject
 {
@@ -137,6 +140,7 @@ signals:
 private slots:
     void handleSendCommand();
     void handleCommandFinished(command::CommandResult result, int status);
+    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
 private:
     void reset();
@@ -146,6 +150,7 @@ private:
     bool started_;
     bool succeeded_;
     bool finished_;
+    bool deviceDisconnected_;
 
 protected:
     void initCommandList();

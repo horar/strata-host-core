@@ -301,6 +301,13 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
             finish(Result::Error, errMsg);
         }
         break;
+    case operation::Result::Disconnect:
+        {
+            QString errMsg(QStringLiteral("Device disconnected during firmware operation."));
+            qCCritical(logCategoryFlasher) << platform_ << errMsg;
+            finish(Result::Disconnect, errMsg);
+        }
+    break;
     case operation::Result::Error:
         qCCritical(logCategoryFlasher) << platform_ << "Error during flashing: " << errStr;
         finish(Result::Error, errStr);
