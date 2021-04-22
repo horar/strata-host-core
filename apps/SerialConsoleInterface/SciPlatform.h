@@ -5,7 +5,7 @@
 #include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 #include <FlasherConnector.h>
 #include <QObject>
 #include <QPointer>
@@ -41,7 +41,7 @@ public:
     Q_ENUM(PlatformStatus)
 
     QByteArray deviceId();
-    void setDevice(strata::device::DevicePtr device);
+    void setPlatform(const strata::platform::PlatformPtr& platform);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
     QString appVersion();
@@ -88,9 +88,9 @@ signals:
 
 
 private slots:
-    void messageFromDeviceHandler(QByteArray message);
-    void messageToDeviceHandler(QByteArray message);
-    void deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString);
+    void messageFromDeviceHandler(QByteArray deviceId, QByteArray message);
+    void messageToDeviceHandler(QByteArray deviceId, QByteArray message);
+    void deviceErrorHandler(QByteArray deviceId, strata::device::Device::ErrorCode errorCode, QString errorString);
     void flasherProgramProgressHandler(int chunk, int total);
     void flasherBackupProgressHandler(int chunk, int total);
     void flasherRestoreProgressHandler(int chunk, int total);
@@ -103,7 +103,7 @@ private slots:
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
 
 private:
-    strata::device::DevicePtr device_;
+    strata::platform::PlatformPtr platform_;
     QByteArray deviceId_;
     QString verboseName_;
     QString appVersion_;

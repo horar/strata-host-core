@@ -21,9 +21,14 @@ FocusScope {
     property alias contextMenuEnabled: textEdit.contextMenuEnabled
     property alias isValid: textEdit.isValid
     property alias activeEditing: textEdit.activeEditing
+    property alias textFieldActiveEditingEnabled: textEdit.textFieldActiveEditingEnabled
     property alias showValidationResultIcon: textEdit.showValidationResultIcon
     property alias suggestionModel: textEdit.suggestionListModel
     property alias suggestionModelTextRole: textEdit.suggestionModelTextRole
+    property alias textFieldX: textEdit.loaderItemX
+    property alias textFieldY: textEdit.loaderItemY
+    property alias textFieldHeight: textEdit.loaderItemHeight
+    property alias textFieldWidth: textEdit.loaderItemWidth
 
     function inputValidationErrorMsg() {
         return ""
@@ -80,10 +85,9 @@ FocusScope {
 
     SGWidgets.SGButton {
         id: selectButton
-        y: textEdit.itemY + (textEdit.item.height - height) / 2
+        y: textEdit.loaderItemY + (textEdit.loaderItemHeight - height) / 2
         anchors {
             right: parent.right
-
         }
 
         text: "Select"

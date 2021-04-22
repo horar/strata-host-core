@@ -57,7 +57,7 @@ bool HostControllerService::initialize(const QString& config)
 
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (db_.open(baseFolder.toStdString(), "strata_db") == false) {
+    if (db_.open(baseFolder, "strata_db") == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
@@ -79,9 +79,9 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
     connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
 
-    connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
-    connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
-    connect(&boardsController_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
+    connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
+    connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
@@ -106,9 +106,9 @@ bool HostControllerService::initialize(const QString& config)
         std::string(ReplicatorCredentials::replicator_username).c_str(),
         std::string(ReplicatorCredentials::replicator_password).c_str());
 
-    boardsController_.initialize();
+    platformController_.initialize();
 
-    updateController_.initialize(&boardsController_, &downloadManager_);
+    updateController_.initialize(&platformController_, &downloadManager_);
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -405,7 +405,7 @@ void HostControllerService::platformConnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastMessage(boardsController_.createPlatformsList());
+    broadcastMessage(platformController_.createPlatformsList());
 }
 
 void HostControllerService::platformDisconnected(const QByteArray& deviceId)
@@ -413,7 +413,7 @@ void HostControllerService::platformDisconnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastMessage(boardsController_.createPlatformsList());
+    broadcastMessage(platformController_.createPlatformsList());
 }
 
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
@@ -595,7 +595,7 @@ void HostControllerService::parseMessageFromClient(const QByteArray &message, co
             return;
         }
 
-        boardsController_.sendMessage(deviceId, message);
+        platformController_.sendMessage(deviceId, message);
         return;
     }
 
@@ -690,7 +690,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
         // If firmware was updated broadcast new platforms list
         // to indicate the firmware version has changed.
-        broadcastMessage(boardsController_.createPlatformsList());
+        broadcastMessage(platformController_.createPlatformsList());
     }
 }
 

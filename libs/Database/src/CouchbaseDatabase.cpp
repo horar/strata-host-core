@@ -319,6 +319,10 @@ void CouchbaseDatabase::stopReplicator() {
         return;
     }
 
+    if (repIsStopping_) {
+        return;
+    }
+
     replicator_->stop();
     repIsStopping_ = true;
 }

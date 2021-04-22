@@ -8,6 +8,7 @@ TextField {
 
     property bool isValid: true
     property bool activeEditing: timerIsRunning
+    property bool activeEditingEnabled: true
     property bool validationReady: false
     property bool timerIsRunning: false
     property bool isValidAffectsBackground: false
@@ -78,8 +79,10 @@ TextField {
 
     onTextChanged: {
         validationReady = true
-        timerIsRunning = true
-        activeEditingTimer.restart()
+        if (activeEditingEnabled) {
+            timerIsRunning = true
+            activeEditingTimer.restart()
+        }
     }
 
     onActiveFocusChanged: {
