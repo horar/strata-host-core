@@ -76,10 +76,8 @@ bool SerialDevice::open() {
 
     if (opened) {
         serialPort_->clear(QSerialPort::AllDirections);
-        Device::connected_ = true;
-    } else {
-        Device::connected_ = false;
     }
+    Device::connected_ = opened;
 
     return opened;
 }
