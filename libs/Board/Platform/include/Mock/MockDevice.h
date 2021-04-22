@@ -49,6 +49,12 @@ public:
      */
     virtual bool sendMessage(const QByteArray msg) override;
 
+    /**
+     * Check if mock device is connected (communication with it is possible).
+     * @return true if device is connected, otherwise false
+     */
+    virtual bool isConnected() const override;
+
     // commands to control mock device behavior
 
     void mockEmitMessage(const QByteArray msg);

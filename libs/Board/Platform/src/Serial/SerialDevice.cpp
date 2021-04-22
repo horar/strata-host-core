@@ -43,6 +43,7 @@ SerialDevice::~SerialDevice() {
 
 void SerialDevice::initSerialDevice() {
     readBuffer_.reserve(READ_BUFFER_SIZE);
+    connected_ = false;
 
     serialPort_->setBaudRate(QSerialPort::Baud115200);
     serialPort_->setDataBits(QSerialPort::Data8);
@@ -77,6 +78,7 @@ bool SerialDevice::open() {
     if (opened) {
         serialPort_->clear(QSerialPort::AllDirections);
     }
+    connected_ = opened;
 
     return opened;
 }
@@ -85,6 +87,7 @@ void SerialDevice::close() {
     if (serialPort_->isOpen()) {
         serialPort_->close();
     }
+    connected_ = false;
 }
 
 SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName) {
@@ -138,6 +141,11 @@ bool SerialDevice::sendMessage(const QByteArray msg) {
     return true;
 }
 
+bool SerialDevice::isConnected() const
+{
+    return connected_;
+}
+
 Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
     switch (error) {
         case QSerialPort::SerialPortError::NoError :
@@ -186,6 +194,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
             qCWarning(logCategoryDeviceSerial) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
+            connected_ = false;
         }
         else {
             qCCritical(logCategoryDeviceSerial) << this << errMsg;

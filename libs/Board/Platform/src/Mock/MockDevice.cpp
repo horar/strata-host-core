@@ -31,6 +31,7 @@ bool MockDevice::open()
     }
 
     opened_ = mockIsOpenEnabled();
+
     return opened_;
 }
 
@@ -67,6 +68,11 @@ bool MockDevice::sendMessage(const QByteArray msg)
         mockEmitResponses(msg);
     }
     return true;
+}
+
+bool MockDevice::isConnected() const
+{
+    return opened_;
 }
 
 void MockDevice::mockEmitMessage(const QByteArray msg)

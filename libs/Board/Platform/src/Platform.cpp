@@ -21,8 +21,12 @@ QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
 }
 
 Platform::Platform(const device::DevicePtr& device) :
-    device_(device), operationLock_(0), retryInterval_(std::chrono::milliseconds::zero()),
-    bootloaderMode_(false), isRecognized_(false), apiVersion_(ApiVersion::Unknown),
+    device_(device),
+    operationLock_(0),
+    retryInterval_(std::chrono::milliseconds::zero()),
+    bootloaderMode_(false),
+    isRecognized_(false),
+    apiVersion_(ApiVersion::Unknown),
     controllerType_(ControllerType::Embedded)
 {
     if (device_ == nullptr) {
@@ -127,10 +131,7 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
         }
     }
     if (canWrite) {
-        // Slot connected to below emitted signal may emit other signals
-        // and therefore it shouldn't be locked to avoid a deadlock.
-        device_->sendMessage(msg);
-        return true;
+        return device_->sendMessage(msg);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
@@ -213,6 +214,10 @@ const QString Platform::deviceName() const {
 
 device::Device::Type Platform::deviceType() const {
     return device_->deviceType();
+}
+
+bool Platform::deviceConnected() const {
+    return device_->isConnected();
 }
 
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {

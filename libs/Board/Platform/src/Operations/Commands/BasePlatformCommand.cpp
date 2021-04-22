@@ -30,6 +30,11 @@ BasePlatformCommand::~BasePlatformCommand() { }
 // Do not override this method (unless you really need to).
 void BasePlatformCommand::sendCommand(quintptr lockId)
 {
+    if (platform_->deviceConnected() == false) {
+        finishCommand(CommandResult::DeviceDisconnected);
+        return;
+    }
+
     if (deviceSignalsConnected_ == false) {
         connect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse);
         connect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError);

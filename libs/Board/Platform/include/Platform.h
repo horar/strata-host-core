@@ -206,6 +206,12 @@ namespace strata::platform {
          */
         device::Device::Type deviceType() const;
 
+        /**
+         * Check if platform device is connected.
+         * @return true if device is connected, false otherwise
+         */
+        bool deviceConnected() const;
+
         friend QDebug operator<<(QDebug dbg, const Platform* d);
         friend QDebug operator<<(QDebug dbg, const PlatformPtr& d);
 
