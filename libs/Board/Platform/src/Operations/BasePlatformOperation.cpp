@@ -12,10 +12,16 @@ using command::BasePlatformCommand;
 using command::CommandResult;
 
 BasePlatformOperation::BasePlatformOperation(const PlatformPtr& platform, Type type):
-    type_(type), started_(false), succeeded_(false),
-    finished_(false), platform_(platform), status_(DEFAULT_STATUS)
+    type_(type),
+    started_(false),
+    succeeded_(false),
+    finished_(false),
+    deviceDisconnected_(false),
+    platform_(platform),
+    status_(DEFAULT_STATUS)
 {
     connect(this, &BasePlatformOperation::sendCommand, this, &BasePlatformOperation::handleSendCommand, Qt::QueuedConnection);
+    connect(platform_.get(), &Platform::deviceError, this, &BasePlatformOperation::handleDeviceError);
 
     //qCDebug(logCategoryPlatformOperation) << platform_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
 }
@@ -29,6 +35,13 @@ BasePlatformOperation::~BasePlatformOperation()
 
 void BasePlatformOperation::run()
 {
+    if (deviceDisconnected_) {
+        QString errStr(QStringLiteral("Cannot run operation, device is disconnected."));
+        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
+        finishOperation(Result::Disconnect, errStr);
+        return;
+    }
+
     if (started_) {
         QString errStr(QStringLiteral("The operation has already run."));
         qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
@@ -162,9 +175,21 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
     case CommandResult::Cancel :
         finishOperation(Result::Cancel, QStringLiteral("Operation cancelled."));
         break;
+    case CommandResult::DeviceDisconnected :
+        finishOperation(Result::Disconnect, QStringLiteral("Device unexpectedly disconnected."));
+        break;
     case CommandResult::DeviceError :
         finishOperation(Result::Failure, QStringLiteral("Unexpected device error has occured."));
         break;
+    }
+}
+
+void BasePlatformOperation::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
+{
+    Q_UNUSED(errStr)
+
+    if (errCode == device::Device::ErrorCode::DeviceDisconnected) {
+        deviceDisconnected_ = true;
     }
 }
 
@@ -199,8 +224,14 @@ void BasePlatformOperation::finishOperation(Result result, const QString &errorS
 
 void BasePlatformOperation::resume()
 {
-    if (started_ && (finished_ == false)) {
-        emit sendCommand(QPrivateSignal());
+    if (deviceDisconnected_) {
+        QString errStr(QStringLiteral("Cannot continue operation, device is disconnected."));
+        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
+        finishOperation(Result::Disconnect, errStr);
+    } else {
+        if (started_ && (finished_ == false)) {
+            emit sendCommand(QPrivateSignal());
+        }
     }
 }
 
