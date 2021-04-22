@@ -1,10 +1,10 @@
-#ifndef SGJLINKCONNECTOR
-#define SGJLINKCONNECTOR
+#pragma once
 
 #include <QObject>
 #include <QPointer>
 #include <QProcess>
 #include <QTemporaryFile>
+#include <QVariantMap>
 
 class SGJLinkConnector : public QObject
 {
@@ -40,6 +40,7 @@ public:
             int startAddress);
 
     Q_INVOKABLE bool checkHostVersion();
+    Q_INVOKABLE QVariantMap latestOutputInfo();
 
     QString exePath() const;
     void setExePath(const QString &exePath);
@@ -54,7 +55,7 @@ public:
 
 signals:
     void checkConnectionProcessFinished(bool exitedNormally, bool connected);
-    void checkHostVersionProcessFinished(bool exitedNormally, QString commanderVersion, QString libraryVersion);
+    void checkHostVersionProcessFinished(bool exitedNormally);
     void programBoardProcessFinished(bool exitedNormally);
     void exePathChanged();
     void eraseBeforeProgramChanged();
@@ -75,12 +76,14 @@ private:
     QString device_;
     int speed_ = 0;
     int startAddress_ = 0x0;
+    QString latestRawOutput_;
+    QVariantMap latestOutputInfo_;
 
     bool processRequest(const QString &cmd, ProcessType type);
     void finishProcess(bool exitedNormally);
-    float parseReferenceVoltage(const QString &output);
-    QString parseLibraryVersion(const QString &output);
-    QString parseCommanderVersion(const QString &output);
+    void parseOutput(ProcessType type);
+    bool parseReferenceVoltage(const QString &output, float &voltage);
+    bool parseLibraryVersion(const QString &output, QString &version, QString &date);
+    bool parseCommanderVersion(const QString &output, QString &version, QString &date);
+    bool parseEmulatorFwVersion(const QString &output, QString &version, QString &date);
 };
-
-#endif  // SGJLINKCONNECTOR
