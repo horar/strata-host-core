@@ -32,7 +32,7 @@ Component.prototype.createOperations = function()
             try {
                 if (installer.gainAdminRights() == true) {
                     if (installer.fileExists(onsemiConfigFolder) == true) {
-                        console.log("changing acces rights for Strata config folder: " + onsemiConfigFolder);
+                        console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
                         installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
                         installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
                     }
@@ -40,7 +40,7 @@ Component.prototype.createOperations = function()
                     //installer.dropAdminRights();
                 }
             } catch(e) {
-                console.log("unable to change acces rights for Strata config folder");
+                console.log("unable to change access rights for Strata config folder");
                 console.log(e);
             }
         }
