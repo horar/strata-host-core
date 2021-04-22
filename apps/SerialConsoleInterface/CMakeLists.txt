@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     Qt5::WebEngine
-    strata::BoardManager
+    strata::PlatformManager
     strata::FlasherConnector
     strata::CouchbaseLiteCPP
     strata::QtLogger

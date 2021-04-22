@@ -2,9 +2,9 @@
 
 #include "FirmwareUpdateController.h"
 #include "FirmwareUpdater.h"
-#include "BoardController.h"
+#include "PlatformController.h"
 
-#include <Device/Device.h>
+#include <Platform.h>
 #include <DownloadManager.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -24,15 +24,15 @@ FirmwareUpdateController::~FirmwareUpdateController()
     }
 }
 
-void FirmwareUpdateController::initialize(BoardController *boardController, strata::DownloadManager *downloadManager)
+void FirmwareUpdateController::initialize(PlatformController *platformController, strata::DownloadManager *downloadManager)
 {
-    boardController_ = boardController;
+    platformController_ = platformController;
     downloadManager_ = downloadManager;
 }
 
 void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const QByteArray& deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
 {
-    if (boardController_.isNull() || downloadManager_.isNull()) {
+    if (platformController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
         qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
@@ -47,15 +47,15 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
         return;
     }
 
-    strata::device::DevicePtr device = boardController_->getDevice(deviceId);
-    if (device == nullptr) {
+    strata::platform::PlatformPtr platform = platformController_->getPlatform(deviceId);
+    if (platform == nullptr) {
         QString errStr("Incorrect device ID for update.");
         qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;
     }
 
-    FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5);
+    FirmwareUpdater *fwUpdater = new FirmwareUpdater(platform, downloadManager_, firmwareUrl, firmwareMD5);
     UpdateData *updateData = new UpdateData(clientId, fwUpdater);
     updates_.insert(deviceId, updateData);
 
