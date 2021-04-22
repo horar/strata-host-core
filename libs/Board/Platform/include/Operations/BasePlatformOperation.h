@@ -140,7 +140,7 @@ signals:
 private slots:
     void handleSendCommand();
     void handleCommandFinished(command::CommandResult result, int status);
-    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
 
 private:
     void reset();

@@ -184,8 +184,9 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
     }
 }
 
-void BasePlatformOperation::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
+void BasePlatformOperation::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr)
 {
+    Q_UNUSED(deviceId)
     Q_UNUSED(errStr)
 
     if (errCode == device::Device::ErrorCode::DeviceDisconnected) {
