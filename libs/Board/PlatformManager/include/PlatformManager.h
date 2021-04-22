@@ -1,19 +1,18 @@
 #pragma once
 
-#include <set>
 #include <memory>
 #include <chrono>
 
 #include <QObject>
 #include <QString>
 #include <QByteArray>
-#include <QTimer>
+#include <QMap>
 #include <QHash>
-#include <QVariantMap>
+#include <QList>
 #include <QVector>
-#include <QMutex>
 
 #include <Platform.h>
+#include <DeviceScanner.h>
 #include <Operations/PlatformOperations.h>
 
 namespace strata {
@@ -24,114 +23,122 @@ namespace strata {
         Q_DISABLE_COPY(PlatformManager)
 
     public:
-        PlatformManager();
+        PlatformManager(bool requireFwInfoResponse, bool keepDevicesOpen, bool handleIdentify);
         ~PlatformManager();
 
         /**
-         * Initialize PlatformManager (start managing connected devices).
-         * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
-         * @param keepDevicesOpen if true communication channel is not released (closed) if device is not recognized
+         * Initialize a particular device scanner.
+         * @param scannerType scanner type
          */
-        virtual void init(bool requireFwInfoResponse, bool keepDevicesOpen);
+        void init(device::Device::Type scannerType);
 
         /**
-         * Disconnect from the device.
+         * De-Initialize a particular device scanner.
+         * @param scannerType scanner type
+         */
+        void deinit(device::Device::Type scannerType);
+
+        /**
+         * Disconnect and close the platform.
          * @param deviceId device ID
          * @param disconnectDuration if more than 0, the device will be connected again after the given milliseconds at the earliest;
          *                           if 0 or less, there will be no attempt to reconnect device
-         * @return true if device was disconnected, otherwise false
+         * @return true if platform was open and a close attempt was executed, otherwise false
          */
-        bool disconnectDevice(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
+        bool disconnectPlatform(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
 
         /**
-         * Reconnect the device.
+         * Reconnect and open the platform.
          * @param deviceId device ID
-         * @return true if device was reconnected (and identification process has started), otherwise false
+         * @return true if platform was closed and an open attempt was executed, otherwise false
          */
-        bool reconnectDevice(const QByteArray& deviceId);
+        bool reconnectPlatform(const QByteArray& deviceId);
 
         /**
-         * Get smart pointer to the device.
+         * Get smart pointer to the opened and/or closed platform.
          * @param deviceId device ID
+         * @param open true if open platforms are considered, false otherwise
+         * @param closed true if closed platforms are considered, false otherwise
+         * @return platform pointer
          */
-        platform::PlatformPtr platform(const QByteArray& deviceId);
+        platform::PlatformPtr getPlatform(const QByteArray& deviceId, bool open = true, bool closed = false);
 
         /**
-         * Get list of active device IDs.
-         * @return list of active device IDs (those, which have
-         *         communication channel (serial port) opened)
+         * Get list of smart pointers to all the opened and/or closed platforms.
+         * @param open true if open platforms are considered, false otherwise
+         * @param closed true if closed platforms are considered, false otherwise
+         * @return list of platform pointers
          */
-        QVector<QByteArray> activeDeviceIds();
+        QList<platform::PlatformPtr> getPlatforms(bool open = true, bool closed = false);
+
+        /**
+         * Get list of device Ids of all the opened and/or closed platforms.
+         * @param open true if open platforms are considered, false otherwise
+         * @param closed true if closed platforms are considered, false otherwise
+         * @return list of device Ids
+         */
+        QList<QByteArray> getDeviceIds(bool open = true, bool closed = false);
+
+        /**
+         * Get smart pointer to the device scanner.
+         * @param scannerType scanner type
+         */
+        device::scanner::DeviceScannerPtr getScanner(device::Device::Type scannerType);
 
     signals:
         /**
-         * Emitted when new board is connected to computer.
+         * Emitted when new platform is connected and succesfully opened (added to openedPlatforms_).
          * @param deviceId device ID
          */
-        void boardConnected(QByteArray deviceId);
+        void platformAdded(QByteArray deviceId);
 
         /**
-         * Emitted when board is disconnected.
+         * Emitted when platform is about to be closed (removed from openedPlatforms_).
          * @param deviceId device ID
          */
-        void boardDisconnected(QByteArray deviceId);
+        void platformAboutToClose(QByteArray deviceId);
 
         /**
-         * Emitted when board properties has changed (and board is ready for communication).
+         * Emitted when platform is disconnected and closed (removed from openedPlatforms_).
          * @param deviceId device ID
-         * @param recognized true when board was recognized (identified), otherwise false
          */
-        void boardInfoChanged(QByteArray deviceId, bool recognized);
+        void platformRemoved(QByteArray deviceId);
 
         /**
-         * Emitted when error occures during communication with the board.
+         * Emitted when platform was recognized through Identify operation (and is ready for communication).
          * @param deviceId device ID
-         * @param message error description
+         * @param recognized true when platform was recognized (identified), otherwise false
          */
-        void boardError(QByteArray deviceId, QString message);
-
-        /**
-         * Emitted when platform_id_changed notification was received (signal only for internal use).
-         * @param deviceId devide ID
-         */
-        void platformIdChanged(QByteArray deviceId, QPrivateSignal);
-
-    protected slots:
-        virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(QByteArray deviceId, platform::operation::Type type, platform::operation::Result result, int status, QString errStr);
-        virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+        void platformRecognized(QByteArray deviceId, bool isRecognized);
 
     private slots:
-        virtual void checkNotification(QByteArray message);
-        virtual void handlePlatformIdChanged(const QByteArray& deviceId);
+        // from DeviceScanner
+        void handleDeviceDetected(platform::PlatformPtr platform);
+        void handleDeviceLost(QByteArray deviceId);
 
-    protected:
-        void computeListDiff(std::set<QByteArray>& list, std::set<QByteArray>& added_ports, std::set<QByteArray>& removed_ports);
-        bool addSerialPort(const QByteArray& deviceId);
-        bool openPlatform(const platform::PlatformPtr newPlatform);
-        void startPlatformOperations(const platform::PlatformPtr platform);
-        bool removePlatform(const QByteArray& deviceId);
+        // from Platform
+        void handlePlatformOpened(QByteArray deviceId);
+        void handlePlatformAboutToClose(QByteArray deviceId);
+        void handlePlatformClosed(QByteArray deviceId);
+        void handlePlatformRecognized(QByteArray deviceId, bool isRecognized);
+        void handlePlatformIdChanged(QByteArray deviceId);
+        void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
 
-        void logInvalidDeviceId(const QString& message, const QByteArray& deviceId) const;
+    private:
+        void startPlatformOperations(const platform::PlatformPtr& platform);
 
-        QTimer timer_;
-
-        QMutex mutex_;
-
-        // Access to next 4 members should be protected by mutex (one mutex for all) in case of multithread usage.
-        // Do not emit signals in block of locked code (because their slots are executed immediately in QML
-        // and deadlock can occur if from QML is called another function which uses same mutex).
-        std::set<QByteArray> serialPortsList_;
-        QHash<QByteArray, QString> serialIdToName_;
+        QMap<device::Device::Type, device::scanner::DeviceScannerPtr> scanners_;
         QHash<QByteArray, platform::PlatformPtr> openedPlatforms_;
-        QHash<QByteArray, QTimer*> reconnectTimers_;
+        QHash<QByteArray, platform::PlatformPtr> closedPlatforms_;
 
         platform::operation::PlatformOperations platformOperations_;
 
         // flag if require response to get_firmware_info command
-        bool reqFwInfoResp_;
+        const bool reqFwInfoResp_;
         // flag if communication channel should stay open if device is not recognized
-        bool keepDevicesOpen_;
+        const bool keepDevicesOpen_;
+        // flag if Identify is to be done automatically by PlatformManager or manually by other class
+        const bool handleIdentify_;
     };
 
 }

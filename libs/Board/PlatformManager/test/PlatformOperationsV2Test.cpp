@@ -23,7 +23,7 @@ namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
-PlatformOperationsV2Test::PlatformOperationsV2Test() : platformOperations_(false, true) {
+PlatformOperationsV2Test::PlatformOperationsV2Test() : platformOperations_(false, false) {
 
 }
 
@@ -45,7 +45,11 @@ void PlatformOperationsV2Test::init()
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     QVERIFY(mockDevice_->mockSetVersion(MockVersion::version2));
     QVERIFY(!mockDevice_->mockIsOpened());
-    QVERIFY(platform_->open());
+
+    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened(QByteArray)));
+    platform_->open();
+    QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
+    QVERIFY(mockDevice_->mockIsOpened());
 
     connect(&platformOperations_, &PlatformOperations::finished, this, &PlatformOperationsV2Test::handleOperationFinished);
 }

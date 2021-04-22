@@ -43,7 +43,7 @@ qt5_generate_repc(NODE_RO_SRCS ./src/HostControllerService.rep SOURCE)
 
 add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
-    src/BoardController.cpp
+    src/PlatformController.cpp
     src/Dispatcher.cpp
     src/Client.cpp
     src/ClientsController.cpp

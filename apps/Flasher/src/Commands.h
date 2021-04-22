@@ -10,36 +10,49 @@ namespace strata {
 
 class Command : public QObject {
     Q_OBJECT
+    Q_DISABLE_COPY(Command)
+
 public:
+    Command();
     virtual ~Command();
     virtual void process() = 0;
+
 signals:
     void finished(int returnCode);
 };
 
 class WrongCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(WrongCommand)
+
 public:
     WrongCommand(const QString &message);
     void process() override;
+
 private:
     const QString message_;
 };
 
 class HelpCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(HelpCommand)
+
 public:
     HelpCommand(const QString &helpText);
     void process() override;
+
 private:
     const QString helpText_;
 };
 
 class VersionCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(VersionCommand)
+
 public:
     VersionCommand(const QString &appName, const QString &appDescription, const QString &appVersion);
     void process() override;
+
 private:
     const QString appName_;
     const QString appDescription_;
@@ -48,14 +61,39 @@ private:
 
 class ListCommand : public Command {
     Q_OBJECT
+    Q_DISABLE_COPY(ListCommand)
+
 public:
+    ListCommand();
     void process() override;
+};
+
+class DeviceCommand : public Command {
+    Q_OBJECT
+    Q_DISABLE_COPY(DeviceCommand)
+
+public:
+    explicit DeviceCommand(int deviceNumber);
+    virtual ~DeviceCommand() override;
+
+protected slots:
+    virtual void handlePlatformOpened(QByteArray deviceId) = 0;
+    virtual void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+
+protected:
+    bool createSerialDevice();
+
+    const int deviceNumber_;
+    unsigned int openRetries_;
+    platform::PlatformPtr platform_;
 };
 
 class Flasher;
 
-class FlasherCommand : public Command {
+class FlasherCommand : public DeviceCommand {
     Q_OBJECT
+    Q_DISABLE_COPY(FlasherCommand)
+
 public:
     enum class CmdType {
         FlashFirmware,
@@ -65,26 +103,30 @@ public:
     FlasherCommand(const QString &fileName, int deviceNumber, CmdType command);
     ~FlasherCommand() override;
     void process() override;
+
+private slots:
+    virtual void handlePlatformOpened(QByteArray deviceId) override;
+
 private:
     std::unique_ptr<Flasher> flasher_;
     const QString fileName_;
-    const int deviceNumber_;
     const CmdType command_;
 };
 
-class InfoCommand : public Command {
+class InfoCommand : public DeviceCommand {
     Q_OBJECT
+    Q_DISABLE_COPY(InfoCommand)
+
 public:
-    InfoCommand(int deviceNumber);
+    explicit InfoCommand(int deviceNumber);
     ~InfoCommand() override;
     void process() override;
 
 private slots:
+    virtual void handlePlatformOpened(QByteArray deviceId) override;
     virtual void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
 
 private:
-    const int deviceNumber_;
-    platform::PlatformPtr platform_;
     std::unique_ptr<platform::operation::Identify> identifyOperation_;
 };
 

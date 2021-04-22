@@ -10,7 +10,12 @@
 
 namespace strata {
 
+constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
+constexpr unsigned int OPEN_MAX_RETRIES(5);
+
 using device::SerialDevice;
+
+Command::Command() { }
 
 Command::~Command() { }
 
@@ -47,6 +52,8 @@ void VersionCommand::process() {
 
 // LIST command
 
+ListCommand::ListCommand() { }
+
 void ListCommand::process() {
     SerialPortList serialPorts;
     auto const portList = serialPorts.list();
@@ -65,42 +72,82 @@ void ListCommand::process() {
     emit finished(EXIT_SUCCESS);
 }
 
+// DEVICE command
 
-// FLASHER (FLASH/BACKUP firmware/bootloader) command
-
-FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command) :
-    fileName_(fileName), deviceNumber_(deviceNumber), command_(command) { }
+DeviceCommand::DeviceCommand(int deviceNumber) :
+    deviceNumber_(deviceNumber), openRetries_(0) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
-FlasherCommand::~FlasherCommand() { }
+DeviceCommand::~DeviceCommand() { }
 
-void FlasherCommand::process() {
+bool DeviceCommand::createSerialDevice() {
     SerialPortList serialPorts;
 
     if (serialPorts.count() == 0) {
         qCCritical(logCategoryFlasherCli) << "No board is connected.";
-        emit finished(EXIT_FAILURE);
-        return;
+        return false;
     }
 
     const QString name = serialPorts.name(deviceNumber_ - 1);
     if (name.isEmpty()) {
         qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
-        emit finished(EXIT_FAILURE);
-        return;
+        return false;
     }
 
     const QByteArray deviceId = SerialDevice::createDeviceId(name);
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
-    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+    platform_ = std::make_shared<platform::Platform>(device);
 
-    if (platform->open() == false) {
-        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
+    connect(platform_.get(), &platform::Platform::opened, this, &DeviceCommand::handlePlatformOpened, Qt::QueuedConnection);
+    connect(platform_.get(), &platform::Platform::deviceError, this, &DeviceCommand::handleDeviceError, Qt::QueuedConnection);
+
+    return true;
+}
+
+void DeviceCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr) {
+    Q_UNUSED(deviceId)
+    Q_UNUSED(errStr)
+
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+        ++openRetries_;
+        QString errorMessage(QStringLiteral("Cannot open board (serial device) "));
+        errorMessage.append(platform_->deviceName());
+        errorMessage.append(QStringLiteral(", attempt "));
+        errorMessage.append(QString::number(openRetries_));
+        errorMessage.append(QStringLiteral(" of "));
+        errorMessage.append(QString::number(OPEN_MAX_RETRIES));
+
+        if (openRetries_ >= OPEN_MAX_RETRIES) {
+            qCCritical(logCategoryFlasherCli).noquote() << errorMessage;
+            emit finished(EXIT_FAILURE);
+            return;
+        } else {
+            qCInfo(logCategoryFlasherCli).noquote() << errorMessage;
+        }
+    }
+}
+
+// FLASHER (FLASH/BACKUP firmware/bootloader) command
+
+FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command) :
+    DeviceCommand(deviceNumber), fileName_(fileName), command_(command) { }
+
+// Destructor must be defined due to unique pointer to incomplete type.
+FlasherCommand::~FlasherCommand() { }
+
+void FlasherCommand::process() {
+    if (createSerialDevice() == false) {
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    flasher_ = std::make_unique<Flasher>(platform, fileName_);
+    platform_->open(DEVICE_CHECK_INTERVAL);
+}
+
+void FlasherCommand::handlePlatformOpened(QByteArray deviceId) {
+    Q_UNUSED(deviceId)
+
+    flasher_ = std::make_unique<Flasher>(platform_, fileName_);
 
     connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result, QString){
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -122,36 +169,22 @@ void FlasherCommand::process() {
 // INFO command
 
 InfoCommand::InfoCommand(int deviceNumber) :
-    deviceNumber_(deviceNumber) { }
+    DeviceCommand(deviceNumber) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
 InfoCommand::~InfoCommand() { }
 
 void InfoCommand::process() {
-    SerialPortList serialPorts;
-
-    if (serialPorts.count() == 0) {
-        qCCritical(logCategoryFlasherCli) << "No board is connected.";
+    if (createSerialDevice() == false) {
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    const QString name = serialPorts.name(deviceNumber_ - 1);
-    if (name.isEmpty()) {
-        qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
-        emit finished(EXIT_FAILURE);
-        return;
-    }
+    platform_->open(DEVICE_CHECK_INTERVAL);
+}
 
-    const QByteArray deviceId = SerialDevice::createDeviceId(name);
-    device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
-    platform_ = std::make_shared<platform::Platform>(device);
-
-    if (platform_->open() == false) {
-        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
-        emit finished(EXIT_FAILURE);
-        return;
-    }
+void InfoCommand::handlePlatformOpened(QByteArray deviceId) {
+    Q_UNUSED(deviceId)
 
     identifyOperation_ = std::make_unique<platform::operation::Identify>(platform_, false);
 

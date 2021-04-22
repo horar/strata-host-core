@@ -11,9 +11,9 @@
 
 namespace strata::platform::operation {
 
-PlatformOperations::PlatformOperations(bool runOperations, bool overwriteEnabled) :
+PlatformOperations::PlatformOperations(bool runOperations, bool identifyOverwriteEnabled) :
     runOperations_(runOperations),
-    overwriteEnabled_(overwriteEnabled)
+    identifyOverwriteEnabled_(identifyOverwriteEnabled)
 { }
 
 PlatformOperations::~PlatformOperations() {
@@ -22,9 +22,13 @@ PlatformOperations::~PlatformOperations() {
 }
 
 OperationSharedPtr PlatformOperations::processOperation(const OperationSharedPtr& operation) {
-    if (operations_.contains(operation->deviceId())) {
-        if (overwriteEnabled_) {
-            stopOperation(operation->deviceId());
+    auto it = operations_.find(operation->deviceId());
+    if (it != operations_.end()) {
+        OperationSharedPtr oldOperation = it.value();
+        if (identifyOverwriteEnabled_ &&
+            (operation->type() == Type::Identify) &&
+            (oldOperation->type() == Type::Identify)) {
+            stopOperation(oldOperation);
         } else {
             return nullptr;
         }
@@ -51,21 +55,21 @@ void PlatformOperations::stopOperation(const QByteArray& deviceId) {
     if (it != operations_.end()) {
         qCDebug(logCategoryPlatformOperation) << "Cancelling operation" << it.value()->type()
                                               << "for device Id:" << deviceId;
-        it.value()->cancelOperation();
-
-        // If operation is cancelled, finished is signal will be received (with Result::Cancel)
-        // and operation will be removed from operations_ in handleOperationFinished slot.
+        stopOperation(it.value());
     }
+}
+
+void PlatformOperations::stopOperation(const OperationSharedPtr& operation) {
+    // If operation is cancelled, finished is signal will be received (with Result::Cancel)
+    // and operation will be removed from operations_ in handleOperationFinished slot.
+    operation->cancelOperation();
 }
 
 void PlatformOperations::stopAllOperations() {
     // make a copy of operations_ in case of queued signals which would not modify the map immediatelly
     QList<OperationSharedPtr> operations = operations_.values();
     for (auto iter = operations.begin(); iter != operations.end(); ++iter) {
-        (*iter)->cancelOperation();
-
-        // If operation is cancelled, finished signal will be received (with Result::Cancel)
-        // and operation will be removed from operations_ in handleOperationFinished slot.
+        stopOperation(*iter);
     }
 }
 

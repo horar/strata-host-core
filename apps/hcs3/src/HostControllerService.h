@@ -16,7 +16,7 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "BoardController.h"
+#include "PlatformController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
 
@@ -158,7 +158,7 @@ private:
             const QJsonObject &payload,
             const QByteArray &clientId);
 
-    BoardController boardsController_;
+    PlatformController platformController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     QNetworkAccessManager networkManager_;

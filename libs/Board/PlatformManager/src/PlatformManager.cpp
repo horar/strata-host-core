@@ -1,406 +1,289 @@
 #include "PlatformManager.h"
 #include "PlatformManagerConstants.h"
-
 #include "logging/LoggingQtCategories.h"
 
-#include <Serial/SerialDevice.h>
-#include <Operations/Identify.h>
-
-#include <CommandValidator.h>
-
-#include <QSerialPortInfo>
-#include <QMutexLocker>
-
-#include <rapidjson/document.h>
-#include <rapidjson/schema.h>
-
-#include <vector>
+#include <Serial/SerialDeviceScanner.h>
+#include <Mock/MockDeviceScanner.h>
 
 namespace strata {
 
 using device::Device;
-using device::DevicePtr;
-using device::SerialDevice;
 using platform::Platform;
 using platform::PlatformPtr;
+using device::scanner::DeviceScanner;
+using device::scanner::DeviceScannerPtr;
+using device::scanner::MockDeviceScanner;
+using device::scanner::SerialDeviceScanner;
 
 namespace operation = platform::operation;
 
-PlatformManager::PlatformManager() : platformOperations_(true, true) {
-    // checkNewSerialDevices() slot uses mutex_
-    connect(&timer_, &QTimer::timeout, this, &PlatformManager::checkNewSerialDevices, Qt::QueuedConnection);
-    // handlePlatformIdChanged() slot uses mutex_
-    connect(this, &PlatformManager::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
+PlatformManager::PlatformManager(bool requireFwInfoResponse, bool keepDevicesOpen, bool handleIdentify) :
+    platformOperations_(true, true),
+    reqFwInfoResp_(requireFwInfoResponse),
+    keepDevicesOpen_(keepDevicesOpen),
+    handleIdentify_(handleIdentify)
+{ }
 
-    connect(&platformOperations_, &operation::PlatformOperations::finished, this, &PlatformManager::handleOperationFinished);
+PlatformManager::~PlatformManager() {
+    // stop all operations here to avoid capturing signals later which could crash
+    platformOperations_.stopAllOperations();
+
+    QList<Device::Type> scannerTypes = scanners_.keys();
+    foreach(auto scannerType, scannerTypes) {
+        deinit(scannerType);
+    }
 }
 
-PlatformManager::~PlatformManager() { }
+void PlatformManager::init(Device::Type scannerType) {
+    if (scanners_.contains(scannerType)) {
+        return; // already initialized
+    }
 
-void PlatformManager::init(bool requireFwInfoResponse, bool keepDevicesOpen) {
-    reqFwInfoResp_ = requireFwInfoResponse;
-    keepDevicesOpen_ = keepDevicesOpen;
-    timer_.start(DEVICE_CHECK_INTERVAL);
+    DeviceScannerPtr scanner;
+
+    switch(scannerType) {
+    case Device::Type::SerialDevice: {
+        scanner = std::make_shared<SerialDeviceScanner>();
+    } break;
+    case Device::Type::MockDevice: {
+        scanner = std::make_shared<MockDeviceScanner>();
+    } break;
+    default: {
+        qCCritical(logCategoryPlatformManager) << "Invalid DeviceScanner type:" << scannerType;
+        return;
+    }
+    }
+
+    scanners_.insert(scannerType, scanner);
+
+    qCDebug(logCategoryPlatformManager) << "Created DeviceScanner with type:" << scannerType;
+
+    connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected);
+    connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost);
+
+    scanner->init();
 }
 
-bool PlatformManager::disconnectDevice(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration) {
-    bool success = false;
-    {
-        QMutexLocker lock(&mutex_);
-        auto it = openedPlatforms_.find(deviceId);
-        if (it != openedPlatforms_.end()) {
-            it.value()->close();
-            openedPlatforms_.erase(it);
-
-            if (disconnectDuration > std::chrono::milliseconds(0)) {
-                QTimer* reconnectTimer = new QTimer(this);
-                reconnectTimers_.insert(deviceId, reconnectTimer);
-                reconnectTimer->setSingleShot(true);
-                reconnectTimer->callOnTimeout(this, [this, deviceId, reconnectTimer](){
-                    QMutexLocker lock(&mutex_);
-                    reconnectTimer->deleteLater();
-                    reconnectTimers_.remove(deviceId);
-                    // Remove serial port from list of known ports, device will be
-                    // added (reconnected) in next round of scaning serial ports.
-                    serialPortsList_.erase(deviceId);
-                });
-                reconnectTimer->start(disconnectDuration);
-            }
-
-            success = true;
-        }
+void PlatformManager::deinit(Device::Type scannerType) {
+    auto iter = scanners_.find(scannerType);
+    if (iter == scanners_.end()) {
+        return; // scanner not found
     }
-    if (success) {
-        qCInfo(logCategoryPlatformManager).noquote() << "Disconnected platform" << deviceId;
-        if (disconnectDuration > std::chrono::milliseconds(0)) {
-            qCInfo(logCategoryPlatformManager) << "Device will be connected again after" << disconnectDuration.count()
-                                            << "milliseconds at the earliest.";
-        }
-        emit boardDisconnected(deviceId);
-    } else {
-        logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
-    }
-    return success;
+
+    iter.value()->deinit(); // all devices will be reported as lost
+
+    scanners_.erase(iter);
+
+    qCDebug(logCategoryPlatformManager) << "Erased DeviceScanner with type:" << scannerType;
 }
 
-bool PlatformManager::reconnectDevice(const QByteArray& deviceId) {
-    bool ok = false;
-    bool disconnected = false;
-    {
-        QMutexLocker lock(&mutex_);
-        auto it = openedPlatforms_.find(deviceId);
-        if (it != openedPlatforms_.end()) {
-            it.value()->close();
-            openedPlatforms_.erase(it);
-            ok = true;
-            disconnected = true;
-        } else {
-            // desired port is not opened, check if it is connected
-            if (serialPortsList_.find(deviceId) != serialPortsList_.end()) {
-                ok = true;
-            }
-        }
-        if (ok) {
-            ok = addSerialPort(deviceId);  // modifies openedPlatforms_ - call it while mutex_ is locked
-        }
-    }
-    if (disconnected) {
-        emit boardDisconnected(deviceId);
-    }
-    if (ok) {
-        qCInfo(logCategoryPlatformManager).noquote() << "Reconnected platform" << deviceId;
-        emit boardConnected(deviceId);
-    } else {
-        logInvalidDeviceId(QStringLiteral("Cannot reconnect"), deviceId);
-    }
-    return ok;
-}
-
-PlatformPtr PlatformManager::platform(const QByteArray& deviceId) {
-    QMutexLocker lock(&mutex_);
+bool PlatformManager::disconnectPlatform(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration) {
     auto it = openedPlatforms_.constFind(deviceId);
     if (it != openedPlatforms_.constEnd()) {
-        return it.value();
+        qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: " << deviceId << ", duration: " << disconnectDuration.count();
+        it.value()->close(disconnectDuration, DEVICE_CHECK_INTERVAL);
+        return true;
+    }
+    return false;
+}
+
+bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
+    auto it = closedPlatforms_.constFind(deviceId);
+    if (it != closedPlatforms_.constEnd()) {
+        qCDebug(logCategoryPlatformManager).noquote() << "Going to reconnect platform, deviceId:" << deviceId;
+        it.value()->open(DEVICE_CHECK_INTERVAL);
+        return true;
+    }
+    return false;
+}
+
+PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, bool closed) {
+    if ((open == true) && (closed == false)) {
+        return openedPlatforms_.value(deviceId);
+    } else if ((open == false) && (closed == true)) {
+        return closedPlatforms_.value(deviceId);
+    } else if ((open == true) && (closed == true)) {
+        auto openIter = openedPlatforms_.constFind(deviceId);
+        if (openIter != openedPlatforms_.constEnd()) {
+            return openIter.value();
+        }
+        auto closedIter = closedPlatforms_.constFind(deviceId);
+        if (closedIter != closedPlatforms_.constEnd()) {
+            return closedIter.value();
+        }
+    }
+
+    return PlatformPtr();
+}
+
+QList<PlatformPtr> PlatformManager::getPlatforms(bool open, bool closed) {
+    if ((open == true) && (closed == false)) {
+        return openedPlatforms_.values();
+    } else if ((open == false) && (closed == true)) {
+        return closedPlatforms_.values();
+    } else if ((open == true) && (closed == true)) {
+        return openedPlatforms_.values() + closedPlatforms_.values();
     } else {
-        return nullptr;
+        return QList<PlatformPtr>();
     }
 }
 
-QVector<QByteArray> PlatformManager::activeDeviceIds() {
-    QMutexLocker lock(&mutex_);
-    return QVector<QByteArray>::fromList(openedPlatforms_.keys());
-}
-
-void PlatformManager::checkNewSerialDevices() {
-    // TODO refactoring, take serial port functionality out from this class
-    // or make another check function for bluetooth devices when it will be needed
-#if defined(Q_OS_MACOS)
-    const QString usbKeyword("usb");
-    const QString cuKeyword("cu");
-#elif defined(Q_OS_LINUX)
-    // TODO: this code was not tested on Linux, test it
-    const QString usbKeyword("USB");
-#elif defined(Q_OS_WIN)
-    const QString usbKeyword("COM");
-#endif
-
-    const auto serialPortInfos = QSerialPortInfo::availablePorts();
-    std::set<QByteArray> ports;
-    QHash<QByteArray, QString> idToName;
-
-    for (const QSerialPortInfo& serialPortInfo : serialPortInfos) {
-        const QString& name = serialPortInfo.portName();
-
-        if (serialPortInfo.isNull()) {
-            continue;
-        }
-        if (name.contains(usbKeyword) == false) {
-            continue;
-        }
-#ifdef Q_OS_MACOS
-        if (name.startsWith(cuKeyword) == false) {
-            continue;
-        }
-#endif
-        // device ID must be int because of integration with QML
-        const QByteArray deviceId = SerialDevice::createDeviceId(name);
-        auto [iter, success] = ports.emplace(deviceId);
-        if (success == false) {
-            // Error: hash already exists!
-            qCCritical(logCategoryPlatformManager).nospace().noquote()
-                << "Cannot add platform (hash conflict: " << deviceId << "): '" << name << "'";
-            continue;
-        }
-        idToName.insert(deviceId, name);
-
-        // qCDebug(logCategoryPlatformManager).nospace().noquote() << "Found platform, ID: " << deviceId << ", name: '" << name << "'";
-    }
-
-    std::set<QByteArray> added, removed;
-    std::vector<QByteArray> opened, deleted;
-
-    {  // this block of code modifies serialPortsList_, openedPlatforms_, serialIdToName_
-        QMutexLocker lock(&mutex_);
-
-        serialIdToName_ = std::move(idToName);
-
-        computeListDiff(ports, added, removed);  // uses serialPortsList_ (needs old value from previous run)
-
-        // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
-        for (const auto& deviceId : removed) {
-            if (removePlatform(deviceId)) {  // modifies openedPlatforms_ and reconnectTimers_
-                deleted.emplace_back(deviceId);
-            }
-        }
-
-        for (const auto& deviceId : added) {
-            if (addSerialPort(deviceId)) {  // modifies openedPlatforms_, uses serialIdToName_
-                opened.emplace_back(deviceId);
-            } else {
-                // If serial port cannot be opened (for example it is hold by another application),
-                // remove it from list of known ports. There will be another attempt to open it in next round.
-                ports.erase(deviceId);
-            }
-        }
-
-        serialPortsList_ = std::move(ports);
-    }
-
-    for (const auto& deviceId : deleted) {
-        emit boardDisconnected(deviceId);
-    }
-    for (const auto& deviceId : opened) {
-        emit boardConnected(deviceId);
+QList<QByteArray> PlatformManager::getDeviceIds(bool open, bool closed) {
+    if ((open == true) && (closed == false)) {
+        return openedPlatforms_.keys();
+    } else if ((open == false) && (closed == true)) {
+        return closedPlatforms_.keys();
+    } else if ((open == true) && (closed == true)) {
+        return openedPlatforms_.keys() + closedPlatforms_.keys();
+    } else {
+        return QList<QByteArray>();
     }
 }
 
-// mutex_ must be locked before calling this function (due to accessing serialPortsList_)
-void PlatformManager::computeListDiff(std::set<QByteArray>& list, std::set<QByteArray>& added_ports, std::set<QByteArray>& removed_ports) {
-    //create differences of the lists.. what is added / removed
-    std::set_difference(list.begin(), list.end(),
-                        serialPortsList_.begin(), serialPortsList_.end(),
-                        std::inserter(added_ports, added_ports.begin()));
-
-    std::set_difference(serialPortsList_.begin(), serialPortsList_.end(),
-                        list.begin(), list.end(),
-                        std::inserter(removed_ports, removed_ports.begin()));
+DeviceScannerPtr PlatformManager::getScanner(Device::Type scannerType) {
+    return scanners_.value(scannerType);
 }
 
-// mutex_ must be locked before calling this function (due to modification openedPlatforms_ and using serialIdToName_)
-bool PlatformManager::addSerialPort(const QByteArray& deviceId) {
-    // 1. construct the serial device
-    // 2. wrap with platform
-    // 3. open the device
-    // 4. attach PlatformOperations object
-
-    const QString name = serialIdToName_.value(deviceId);
-
-    SerialDevice::SerialPortPtr serialPort = SerialDevice::establishPort(name);
-
-    if (serialPort == nullptr) {
-        qCInfo(logCategoryPlatformManager).nospace().noquote()
-            << "Port for device: ID: " << deviceId << ", name: '" << name
-            << "' cannot be open, it is probably hold by another application.";
-        return false;
+void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
+    if (platform == nullptr) {
+        qCCritical(logCategoryPlatformManager) << "Received corrupt platform pointer:" << platform;
+        return;
     }
 
-    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort));
-    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+    const QByteArray deviceId = platform->deviceId();
 
-    if (openPlatform(platform) == false) {
-        qCWarning(logCategoryPlatformManager).nospace().noquote()
-            << "Cannot open serial device: ID: " << deviceId << ", name: '" << name << "'";
-        return false;
+    qCInfo(logCategoryPlatformManager).nospace().noquote() << "Platform detected: deviceId: " << deviceId << ", Type: " << platform->deviceType();
+
+    if ((openedPlatforms_.contains(deviceId) == false) &&
+        (closedPlatforms_.contains(deviceId) == false)) {
+        // add first to closedPlatforms_ and when open() succeeds, add to openedPlatforms_
+        closedPlatforms_.insert(deviceId, platform);
+
+        connect(platform.get(), &Platform::opened, this, &PlatformManager::handlePlatformOpened, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::aboutToClose, this, &PlatformManager::handlePlatformAboutToClose, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::closed, this, &PlatformManager::handlePlatformClosed, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::recognized, this, &PlatformManager::handlePlatformRecognized, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError, Qt::QueuedConnection);
+
+        platform->open(DEVICE_CHECK_INTERVAL);
+    } else {
+        qCCritical(logCategoryPlatformManager) << "Unable to add platform to maps, device Id already exists";
+    }
+}
+
+void PlatformManager::handleDeviceLost(QByteArray deviceId) {
+    qCInfo(logCategoryPlatformManager).noquote() << "Platform lost: deviceId:" << deviceId;
+
+    auto openIter = openedPlatforms_.find(deviceId);
+    if (openIter != openedPlatforms_.end()) {
+        openIter.value()->close();
+        disconnect(openIter.value().get(), nullptr, this, nullptr);
+        openedPlatforms_.erase(openIter);
+        return;
     }
 
-    qCInfo(logCategoryPlatformManager).nospace().noquote()
-        << "Added new serial device: ID: " << deviceId << ", name: '" << name << "'";
-    startPlatformOperations(platform);
-    return true;
-}
-
-// mutex_ must be locked before calling this function (due to modification openedPlatforms_)
-bool PlatformManager::openPlatform(const platform::PlatformPtr newPlatform) {
-    if (newPlatform->open() == false) {
-        return false;
+    auto closedIter = closedPlatforms_.find(deviceId);
+    if (closedIter != closedPlatforms_.end()) {
+        closedIter.value()->abortReconnect();
+        disconnect(closedIter.value().get(), nullptr, this, nullptr);
+        closedPlatforms_.erase(closedIter);
+        return;
     }
-    openedPlatforms_.insert(newPlatform->deviceId(), newPlatform);
 
-    connect(newPlatform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError);
-
-    return true;
+    qCWarning(logCategoryPlatformManager).noquote() << "Unable to erase platform from maps, device Id does not exists:" << deviceId;
 }
 
-void PlatformManager::startPlatformOperations(const PlatformPtr platform) {
-    connect(platform.get(), &Platform::messageReceived, this, &PlatformManager::checkNotification);
+void PlatformManager::handlePlatformOpened(QByteArray deviceId) {
+    auto closedIter = closedPlatforms_.find(deviceId);
+    if (closedIter != closedPlatforms_.end()) {
+        PlatformPtr platformPtr = closedIter.value();
+        closedPlatforms_.erase(closedIter);
+        openedPlatforms_.insert(deviceId, platformPtr);
+        qCInfo(logCategoryPlatformManager).noquote() << "Platform open, deviceId:" << deviceId;
 
-    platformOperations_.Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY);
+        emit platformAdded(deviceId);
+
+        startPlatformOperations(platformPtr);
+    } else if (openedPlatforms_.contains(deviceId)) {
+        qCDebug(logCategoryPlatformManager).noquote() << "Platform already open, deviceId:" << deviceId;
+    } else {
+        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to openedPlatforms_, device Id does not exists:" << deviceId;
+    }
 }
 
-// mutex_ must be locked before calling this function (due to modification openedPlatforms_ and reconnectTimers_)
-bool PlatformManager::removePlatform(const QByteArray& deviceId) {
+void PlatformManager::handlePlatformAboutToClose(QByteArray deviceId) {
+    qCDebug(logCategoryPlatformManager).noquote() << "Platform about to close, deviceId:" << deviceId;
+
     platformOperations_.stopOperation(deviceId);
 
-    // If platform is physically disconnected, remove reconnect timer (if exists).
-    auto timerIter = reconnectTimers_.find(deviceId);
-    if (timerIter != reconnectTimers_.end()) {
-        QTimer* reconnectTimer = timerIter.value();
-        reconnectTimer->stop();
-        delete reconnectTimer;
-        reconnectTimers_.erase(timerIter);
-        qCInfo(logCategoryPlatformManager).noquote() << "Removed timer for reconnecting platform" << deviceId;
-    }
+    emit platformAboutToClose(deviceId);
+}
 
-    auto deviceIter = openedPlatforms_.find(deviceId);
-    if (deviceIter != openedPlatforms_.end()) {
-        deviceIter.value()->close();
-        openedPlatforms_.erase(deviceIter);
-        qCInfo(logCategoryPlatformManager).noquote() << "Removed platform" << deviceId;
-        return true;
+void PlatformManager::handlePlatformClosed(QByteArray deviceId) {
+    auto openIter = openedPlatforms_.find(deviceId);
+    if (openIter != openedPlatforms_.end()) {
+        PlatformPtr platformPtr = openIter.value();
+        openedPlatforms_.erase(openIter);
+        closedPlatforms_.insert(deviceId, platformPtr);
+        qCInfo(logCategoryPlatformManager).noquote() << "Platform closed, deviceId:" << deviceId;
+        emit platformRemoved(deviceId);
+    } else if (closedPlatforms_.contains(deviceId)) {
+        qCDebug(logCategoryPlatformManager).noquote() << "Platform already closed, deviceId:" << deviceId;
     } else {
-        return false;
+        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to closedPlatforms_, device Id does not exists:" << deviceId;
     }
 }
 
-void PlatformManager::logInvalidDeviceId(const QString& message, const QByteArray& deviceId) const {
-    qCWarning(logCategoryPlatformManager).nospace().noquote() << message << ", invalid platform ID: " << deviceId;
-}
+void PlatformManager::handlePlatformRecognized(QByteArray deviceId, bool isRecognized) {
+    qCDebug(logCategoryPlatformManager).noquote().nospace() << "Platform recognized: " << isRecognized << ", deviceId: " << deviceId;
 
-void PlatformManager::handleOperationFinished(QByteArray deviceId, operation::Type type, operation::Result result, int status, QString errStr) {
-    Q_UNUSED(status)
+    emit platformRecognized(deviceId, isRecognized);
 
-    if (result == operation::Result::Error) {
-        emit boardError(deviceId, errStr);
-    }
-
-    // If identify operation is cancelled, another identify operation will be started soon.
-    // So there is no need for emitting boardInfoChanged signal. (See handlePlatformIdChanged() function.)
-    if ((type == operation::Type::Identify) && (result != operation::Result::Cancel)) {
-        bool boardRecognized = (result == operation::Result::Success);
-        emit boardInfoChanged(deviceId, boardRecognized);
-        if (boardRecognized == false && keepDevicesOpen_ == false) {
-            qCInfo(logCategoryPlatformManager).noquote()
-                << "Device" << deviceId << "was not recognized, going to release communication channel.";
-            // Device cannot be removed in this slot (this slot is connected to signal emitted by platform).
-            // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
-            // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
-            QTimer::singleShot(0, this, [this, deviceId](){
-                disconnectDevice(deviceId);
-            });
-        }
+    if (isRecognized == false && keepDevicesOpen_ == false) {
+        qCInfo(logCategoryPlatformManager).noquote()
+            << "Platform was not recognized, going to release communication channel, deviceId:" << deviceId;
+        disconnectPlatform(deviceId);
     }
 }
 
-void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {
-    Q_UNUSED(errStr)
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        return;
-    }
-    // if platform is unexpectedly disconnected, remove it
-    if (errCode == Device::ErrorCode::DeviceDisconnected) {
-        disconnect(platform, &Platform::messageReceived, this, &PlatformManager::checkNotification);
-        const QByteArray deviceId = platform->deviceId();
-        qCWarning(logCategoryPlatformManager).noquote() << "Interrupted connection with platform" << deviceId;
-
-        // Device cannot be removed in this slot (this slot is connected to signal emitted by platform).
-        // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
-        // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
-        QTimer::singleShot(0, this, [this, deviceId](){
-            disconnectDevice(deviceId);
-        });
+void PlatformManager::handlePlatformIdChanged(QByteArray deviceId) {
+    auto iter = openedPlatforms_.constFind(deviceId);
+    if (iter != openedPlatforms_.constEnd()) {
+        qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, going to Identify, deviceId:" << deviceId;
+        startPlatformOperations(iter.value());
+    } else if (closedPlatforms_.contains(deviceId)) {
+        qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify (platform closed), deviceId:" << deviceId;
+    } else {
+        qCWarning(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify, device Id does not exists:" << deviceId;
     }
 }
 
-const rapidjson::SchemaDocument platformIdChangedSchema(
-    CommandValidator::parseSchema(
-R"(
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "notification": {
-      "type": "object",
-      "properties": {
-        "value": {"type": "string", "pattern": "^platform_id_changed$"}
-      },
-      "required": ["value"]
+void PlatformManager::handleDeviceError(QByteArray deviceId, Device::ErrorCode errCode, QString errStr) {
+    switch (errCode) {
+    case Device::ErrorCode::NoError: {
+    } break;
+    case Device::ErrorCode::DeviceBusy:
+    case Device::ErrorCode::DeviceFailedToOpen: {
+        // no need to handle these
+        // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+    } break;
+    case Device::ErrorCode::DeviceDisconnected: {
+        qCWarning(logCategoryPlatformManager).nospace() << "Platform was disconnected: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        disconnectPlatform(deviceId);
+    } break;
+    case Device::ErrorCode::DeviceError: {
+        qCCritical(logCategoryPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        disconnectPlatform(deviceId);
+    } break;
+    default: break;
     }
-  },
-  "required": ["notification"]
-}
-)"
-    )
-);
-
-void PlatformManager::checkNotification(QByteArray message) {
-    Platform *platform = qobject_cast<Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        return;
-    }
-
-    rapidjson::Document doc;
-    if (CommandValidator::parseJsonCommand(message, doc, true) == false) {
-        return;
-    }
-    if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, doc, true) == false) {
-        return;
-    }
-
-    qCInfo(logCategoryPlatformManager).noquote()
-        << "Received 'platform_id_changed' notification for platform" << platform->deviceId();
-
-    emit platformIdChanged(platform->deviceId(), QPrivateSignal());
 }
 
-void PlatformManager::handlePlatformIdChanged(const QByteArray& deviceId) {
-    // method platform() uses mutex_
-    PlatformPtr platform = this->platform(deviceId);
-    if (platform == nullptr) {
-        return;
+void PlatformManager::startPlatformOperations(const PlatformPtr& platform) {
+    if (handleIdentify_) {
+        platformOperations_.Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY);
     }
-
-    platformOperations_.Identify(platform, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY);
 }
 
 }  // namespace

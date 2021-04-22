@@ -21,9 +21,9 @@ public:
     /*!
      * BasePlatformOperation constructor.
      * @param runOperations true if operations are to be run automatically, false otherwise
-     * @param overwriteEnabled true if operations are to be always created (cancelling old operations), false otherwise
+     * @param identifyOverwriteEnabled true if Identify operations are to be always created (cancelling old operations), false otherwise
      */
-    PlatformOperations(bool runOperations, bool overwriteEnabled);
+    PlatformOperations(bool runOperations, bool identifyOverwriteEnabled = false);
 
     /*!
      * PlatformOperations destructor.
@@ -93,10 +93,11 @@ private slots:
 private:
     static void operationLaterDeleter(BasePlatformOperation* operation);
     OperationSharedPtr processOperation(const OperationSharedPtr& operation);
+    void stopOperation(const OperationSharedPtr& operation);
 
     QHash<QByteArray, OperationSharedPtr> operations_;
     bool runOperations_;
-    bool overwriteEnabled_;
+    bool identifyOverwriteEnabled_;
 };
 
 }  // namespace

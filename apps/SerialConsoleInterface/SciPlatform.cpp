@@ -44,7 +44,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
              return;
         }
 
-        platform_->disconnect();
+        disconnect(platform_.get(), nullptr, this, nullptr);
         platform_.reset();
         setStatus(PlatformStatus::Disconnected);
     } else {
@@ -265,19 +265,22 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
     settings_->setAutoExportPath(verboseName_, autoExportPath);
 }
 
-void SciPlatform::messageFromDeviceHandler(QByteArray message)
+void SciPlatform::messageFromDeviceHandler(QByteArray deviceId, QByteArray message)
 {
+    Q_UNUSED(deviceId)
     scrollbackModel_->append(message, false);
     filterSuggestionModel_->add(message);
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray message)
+void SciPlatform::messageToDeviceHandler(QByteArray deviceId, QByteArray message)
 {
+    Q_UNUSED(deviceId)
     scrollbackModel_->append(message, true);
 }
 
-void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
+void SciPlatform::deviceErrorHandler(QByteArray deviceId, strata::device::Device::ErrorCode errorCode, QString errorString)
 {
+    Q_UNUSED(deviceId)
     Q_UNUSED(errorCode)
     setErrorString(errorString);
 }

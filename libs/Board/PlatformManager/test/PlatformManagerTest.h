@@ -1,13 +1,17 @@
 #pragma once
 
 #include <QObject>
-#include "PlatformManagerDerivate.h"
+#include <PlatformManager.h>
 #include <Mock/MockDevice.h>
 #include "QtTest.h"
 
 class PlatformManagerTest : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PlatformManagerTest)
+
+public:
+    PlatformManagerTest();
 
 private slots:
     // test init/teardown
@@ -61,7 +65,9 @@ private:
      */
     void removeMockDevice(const QByteArray& deviceId);
 
-    std::shared_ptr<PlatformManagerDerivate> platformManager_;
+    std::shared_ptr<strata::PlatformManager> platformManager_;
+    strata::device::scanner::DeviceScannerPtr mockDeviceScanner_;
+
     /*!
      * \brief count of calls to onBoardDisconnected slot
      */

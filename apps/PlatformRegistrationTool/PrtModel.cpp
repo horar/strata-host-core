@@ -17,6 +17,7 @@
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
+      platformManager_(true, true, true),
       downloadManager_(&networkManager_),
       authenticator_(&restClient_)
 {
@@ -39,10 +40,10 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-    platformManager_.init(true, true);
+    platformManager_.init(strata::device::Device::Type::SerialDevice);
 
-    connect(&platformManager_, &strata::PlatformManager::boardInfoChanged, this, &PrtModel::deviceInfoChangeHandler);
-    connect(&platformManager_, &strata::PlatformManager::boardDisconnected, this, &PrtModel::deviceDisconnectedHandler);
+    connect(&platformManager_, &strata::PlatformManager::platformRecognized, this, &PrtModel::deviceInfoChangeHandler);
+    connect(&platformManager_, &strata::PlatformManager::platformAboutToClose, this, &PrtModel::deviceDisconnectedHandler);
 
     connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);
 }
@@ -483,7 +484,7 @@ void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recogniz
 {
     Q_UNUSED(recognized)
 
-    strata::platform::PlatformPtr platform = platformManager_.platform(deviceId);
+    strata::platform::PlatformPtr platform = platformManager_.getPlatform(deviceId);
 
     if (platformList_.indexOf(platform) < 0) {
         //new platform connected

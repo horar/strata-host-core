@@ -71,19 +71,23 @@ namespace strata::platform {
          * Open device communication channel.
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
-         * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
-         * @return true if open successfully, otherwise false (TODO: remove this and use signals)
+         * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        bool open(const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
+        void open(const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
 
         /**
          * Close device communication channel.
          * Emits closed() signal upon completion.
-         * @param waitMsec how long to remain in closed state before re-attempting to open the device (0 - stay closed)
-         * @param retryMsec timeout between re-attempts to open the device when open fails (0 - do not retry)
+         * @param waitInterval how long to remain in closed state before re-attempting to open the device (0 - stay closed)
+         * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        void close(const std::chrono::milliseconds waitMsec = std::chrono::milliseconds::zero(),
-                   const std::chrono::milliseconds retryMsec = std::chrono::milliseconds::zero());
+        void close(const std::chrono::milliseconds waitInterval = std::chrono::milliseconds::zero(),
+                   const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
+
+        /**
+         * Stop reconnection timer if active.
+         */
+        void abortReconnect();
 
         /**
          * Send message to device (public).
@@ -210,46 +214,46 @@ namespace strata::platform {
          * Emitted when there is available new message from device.
          * @param msg message from device
          */
-        void messageReceived(QByteArray msg);
+        void messageReceived(QByteArray deviceId, QByteArray msg);
 
         /**
          * Emitted when message was written to device.
          * @param msg writen message to device
          */
-        void messageSent(QByteArray msg);
+        void messageSent(QByteArray deviceId, QByteArray msg);
 
         /**
          * Emitted when error occured during communication on the serial port.
          * @param errCode error code
          * @param msg error description
          */
-        void deviceError(device::Device::ErrorCode errCode, QString msg);
+        void deviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString msg);
 
         /**
          * Emitted when device communication channel was opened.
          */
-        void opened();
+        void opened(QByteArray deviceId);
 
         /**
          * Emitted when device communication channel is about to be closed.
          */
-        void aboutToClose();
+        void aboutToClose(QByteArray deviceId);
 
         /**
          * Emitted when device communication channel was closed.
          */
-        void closed();
+        void closed(QByteArray deviceId);
 
         /**
          * Emitted when device was identified using Identify operation.
          * @param success true if successfully recognized, otherwise false
          */
-        void recognized(bool isRecognized);
+        void recognized(QByteArray deviceId, bool isRecognized);
 
         /**
          * Emitted when device receives platform Id changed message.
          */
-        void platformIdChanged();
+        void platformIdChanged(QByteArray deviceId);
 
     private slots:
         void messageReceivedHandler(QByteArray msg);
@@ -325,8 +329,8 @@ namespace strata::platform {
         void identifyFinished(bool isRecognized);
       // ***
 
-        bool openDevice();
-        void closeDevice(const std::chrono::milliseconds waitMsec);
+        void openDevice();
+        void closeDevice(const std::chrono::milliseconds waitInterval);
 
     protected:
         device::DevicePtr device_;
@@ -340,7 +344,7 @@ namespace strata::platform {
 
     private:
         QTimer reconnectTimer_;
-        std::chrono::milliseconds retryMsec_;
+        std::chrono::milliseconds retryInterval_;
 
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 

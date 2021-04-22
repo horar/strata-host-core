@@ -6,6 +6,10 @@
 class PlatformManagerIntegrationTest : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PlatformManagerIntegrationTest)
+
+public:
+    PlatformManagerIntegrationTest();
 
 private slots:
     // test init/teardown

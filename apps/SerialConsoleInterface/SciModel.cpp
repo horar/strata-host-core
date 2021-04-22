@@ -3,9 +3,10 @@
 
 SciModel::SciModel(QObject *parent)
     : QObject(parent),
+      platformManager_(true, true, true),
       platformModel_(&platformManager_)
 {
-    platformManager_.init(true, true);
+    platformManager_.init(strata::device::Device::Type::SerialDevice);
 
 //disabled until remote db is ready
 //    bool result = db_.open("sci_db");
