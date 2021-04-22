@@ -36,7 +36,7 @@ pipeline {
                 sh """python '${env.workspace}/internal/deployment/OTA/main.py' \
                     --dir '${BUILD_NAME}' \
                     view \
-                    '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
+                    '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/views'
                     """
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
             }
