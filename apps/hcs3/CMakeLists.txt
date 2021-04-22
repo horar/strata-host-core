@@ -101,7 +101,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::connector
     strata::EventsMgr
     strata::DownloadManager
-    strata::CouchbaseLiteCPP
+    strata::Database
     strata::QtLogger
     strata::CbLogger
     rapidjson::rapidjson
