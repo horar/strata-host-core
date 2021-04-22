@@ -17,8 +17,7 @@ QDebug operator<<(QDebug dbg, const DevicePtr& d)
 Device::Device(const QByteArray& deviceId, const QString& name, const Type type) :
     deviceId_(deviceId),
     deviceName_(name),
-    deviceType_(type),
-    connected_(false)
+    deviceType_(type)
 { }
 
 Device::~Device() { }
@@ -36,11 +35,6 @@ const QString Device::deviceName() const
 Device::Type Device::deviceType() const
 {
     return deviceType_;
-}
-
-bool Device::isConnected() const
-{
-    return connected_;
 }
 
 }  // namespace

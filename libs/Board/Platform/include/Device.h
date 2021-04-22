@@ -100,9 +100,10 @@ namespace strata::device {
 
         /**
          * Check if device is connected (communication with it is possible).
+         * For example if serial device is plugged to computer and its port is open.
          * @return true if device is connected, otherwise false
          */
-        virtual bool isConnected() const final;
+        virtual bool isConnected() const = 0;
 
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
@@ -131,7 +132,5 @@ namespace strata::device {
         const QByteArray deviceId_;
         const QString deviceName_;  // name given by system (e.g. COM3)
         const Type deviceType_;
-        bool connected_;  // flag if communication with device is possibe
-                          // e.g.: serial device is plugged to computer and serial port is open
     };
 }  // namespace
