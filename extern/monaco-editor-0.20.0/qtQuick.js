@@ -225,7 +225,8 @@ function registerQmlAsLanguage() {
             }
         },
         indentationRules: {
-            increaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
+            increaseIndentPattern: /^((?!\/\/).)*(\{[^}\"'`]*|\([^)\"'`]*|\[[^\]\"'`]*)$/,
+            decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
         }
     })
     monaco.languages.setMonarchTokensProvider('qml', {
