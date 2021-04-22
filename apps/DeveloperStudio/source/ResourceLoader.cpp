@@ -269,9 +269,9 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
 void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 #ifdef QT_RCC_EXECUTABLE
     const QString rccExecutablePath = QT_RCC_EXECUTABLE;
-#else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
+#else // Triggers if installer build -- in installer builds, for now this will not work unless RCC compiler executable is manually placed in the application
 // Will be completed in CS-1093
-    qCDebug(logCategoryResourceLoader) << "Qt RCC compiler Not found, attempting to find";
+    qCDebug(logCategoryResourceLoader) << "Qt RCC Compiler not found, attempting to find";
     QDir applicationDir(QCoreApplication::applicationDirPath());
     #ifdef Q_OS_MACOS
         applicationDir.cdUp();
