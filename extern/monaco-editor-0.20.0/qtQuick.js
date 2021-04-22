@@ -379,8 +379,6 @@ function registerQmlAsLanguage() {
         }
     });
 
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.CMD_I, editor.trigger(editor.getValue(),'editor.action.formatDocument',{}))
-
     function getValue() {
         return editor.getValue();
     }
