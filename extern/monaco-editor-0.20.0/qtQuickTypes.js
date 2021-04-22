@@ -4669,5 +4669,5 @@ const qtTypeJson = {
         "String": [
             "arg()",
         ],
-    }
+    },"property": []
 }

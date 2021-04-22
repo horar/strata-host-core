@@ -57,7 +57,7 @@ FocusScope {
 
     SGWidgets.SGButton {
         id: selectButton
-        y: textEdit.itemY + (textEdit.item.height - height) / 2
+        y: textEdit.loaderItemY + (textEdit.loaderItemHeight - height) / 2
         anchors {
             right: parent.right
 

@@ -38,6 +38,11 @@ FocusScope {
         property alias jlinkExePath: wizard.jlinkExePath
     }
 
+    CommonCpp.SGJLinkConnector {
+        id: jlinkConnectorHelper
+        exePath: wizard.jlinkExePath
+    }
+
     DSM.StateMachine {
         id: stateMachine
 
@@ -488,6 +493,8 @@ FocusScope {
         ProgramSettingsJlinkPathDelegate {
             id: jlinkPathDelegate
             width: parent.width
+
+            jlinkConnector: jlinkConnectorHelper
         }
     }
 

@@ -178,12 +178,16 @@ void BaseDeviceCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
-void BaseDeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
+void BaseDeviceCommand::handleDeviceError(Device::ErrorCode errCode, QString errStr)
 {
-    Q_UNUSED(errCode)
     responseTimer_.stop();
     qCCritical(logCategoryDeviceCommand) << device_ << "Error: " << errStr;
-    finishCommand(CommandResult::DeviceError);
+
+    if (errCode == Device::ErrorCode::SP_ResourceError) {  // TODO - use DeviceDisconnected error code from PlatformManager refactoring
+        finishCommand(CommandResult::DeviceDisconnected);
+    } else {
+        finishCommand(CommandResult::DeviceError);
+    }
 }
 
 void BaseDeviceCommand::finishCommand(CommandResult result)

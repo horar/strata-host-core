@@ -49,7 +49,7 @@ Rectangle {
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
-        Help.setClassId("strataMain")
+        Help.setDeviceId("strataMain")
         Help.registerTarget(help_tour, "When a platform has been selected, its tab will come into view.", 2, "selectorHelp")
         userSettings.loadSettings()
         alertIconContainer.visible = hasNotifications
