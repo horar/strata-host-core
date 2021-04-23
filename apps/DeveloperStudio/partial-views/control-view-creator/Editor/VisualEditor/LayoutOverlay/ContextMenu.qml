@@ -80,6 +80,8 @@ Popup {
                 switch (layoutOverlayRoot.type) {
                 case "LayoutRectangle":
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml"
+                case "LayoutSGIcon":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml"
                 default:
                     return ""
                 }
