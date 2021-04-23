@@ -35,10 +35,10 @@ else()
 endif()
 
 ExternalProject_Add_Step(libevent COPY_DYNAMIC_LIB_TO_BIN
-        COMMENT "Copy libevent dynamic lib in case does not exist in the bin directory"
+        COMMENT "Copy libevent dynamic library from ${LIBEVENT_DYNAMIC_LIB_PATH} to ${CMAKE_BINARY_DIR}/bin"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBEVENT_DYNAMIC_LIB_PATH} ${CMAKE_BINARY_DIR}/bin
         ALWAYS ON
-        DEPENDEES install build
+        DEPENDEES install
 )
 
 add_library(libevent::libevent SHARED IMPORTED GLOBAL)
