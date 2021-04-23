@@ -194,8 +194,6 @@ Rectangle {
                     ]
 
                     delegate: SGSideNavItem {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 70
                         modelIndex: index
                         tooltipDescription: modelData.description
                         iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
@@ -207,8 +205,6 @@ Rectangle {
                 *****************************************/
 
                 SGSideNavItem {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
                     modelIndex: toolBarListView.debugTab
                     iconText: "Debug"
                     iconSource: "qrc:/sgimages/tools.svg"
@@ -226,8 +222,6 @@ Rectangle {
                 }
 
                 SGSideNavItem {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
                     color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
@@ -243,6 +237,18 @@ Rectangle {
                     }
                 }
 
+                SGSideNavItem {
+                    iconText: "Platform Interface Generator"
+                    iconSource: "qrc:/sgimages/bars.svg"
+                    color: pigStack.currentIndex === 1 && enabled ? Theme.palette.green : "transparent"
+                    enabled: !startContainer.visible
+                    tooltipDescription: "Toggle Platform Interface Generator"
+
+                    function onClicked() {
+                        pigStack.currentIndex = 1
+                    }
+                }
+
                 Item {
                     id: filler
                     Layout.fillHeight: true
@@ -255,96 +261,104 @@ Rectangle {
                     Layout.minimumHeight: footer.implicitHeight
                     Layout.fillWidth: true
                 }
-
             }
         }
 
-        SGSplitView {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            orientation: Qt.Vertical
+        StackLayout {
+            id: pigStack
 
-            StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+            SGSplitView {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                orientation: Qt.Vertical
 
-            Start {
-                id: startContainer
+                StackLayout {
+                id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                onVisibleChanged: {
-                    if(visible){
-                        consoleContainer.visible = false
-                    }
-                }
-            }
-
-            Editor {
-                id: editor
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
-
-                SGSplitView {
-                    id: controlViewContainer
+                Start {
+                    id: startContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    onResizingChanged: {
-                        if (!resizing) {
-                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                                debugPanel.expandWidth = debugPanel.width
-                            } else {
-                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
-                            }
+                    onVisibleChanged: {
+                        if(visible){
+                            consoleContainer.visible = false
                         }
                     }
+                }
 
-                    Loader {
-                        id: controlViewLoader
+                Editor {
+                    id: editor
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+
+                    SGSplitView {
+                        id: controlViewContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        Layout.minimumWidth: 600
 
-                        asynchronous: true
-
-                        onStatusChanged: {
-                            if (status === Loader.Ready) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                                if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                        || source === NavigationControl.screens.LOAD_ERROR) {
-                                    viewStack.currentIndex = 2
+                        onResizingChanged: {
+                            if (!resizing) {
+                                if (debugPanel.width >= debugPanel.minimumExpandWidth) {
+                                    debugPanel.expandWidth = debugPanel.width
+                                } else {
+                                    debugPanel.expandWidth = debugPanel.minimumExpandWidth
                                 }
-                            } else if (status === Loader.Error) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                                console.error("Error while loading control view")
-                                setSource(NavigationControl.screens.LOAD_ERROR,
-                                          { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
-                                          );
                             }
                         }
-                    }
 
-                    DebugPanel {
-                        id: debugPanel
-                        Layout.fillHeight: true
+                        Loader {
+                            id: controlViewLoader
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 600
+
+                            asynchronous: true
+
+                            onStatusChanged: {
+                                if (status === Loader.Ready) {
+                                    // Tear Down creation context
+                                    delete NavigationControl.context.class_id
+                                    delete NavigationControl.context.device_id
+
+                                    recompileRequested = false
+                                    if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                            || source === NavigationControl.screens.LOAD_ERROR) {
+                                        viewStack.currentIndex = 2
+                                    }
+                                } else if (status === Loader.Error) {
+                                    // Tear Down creation context
+                                    delete NavigationControl.context.class_id
+                                    delete NavigationControl.context.device_id
+
+                                    recompileRequested = false
+                                    console.error("Error while loading control view")
+                                    setSource(NavigationControl.screens.LOAD_ERROR,
+                                              { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                              );
+                                }
+                            }
+                        }
+
+                        DebugPanel {
+                            id: debugPanel
+                            Layout.fillHeight: true
+                        }
                     }
+                }
+
+                ConsoleContainer {
+                    id:consoleContainer
                 }
             }
 
-            ConsoleContainer {
-                id:consoleContainer
+            Rectangle {
+                // PIG here
+                color: "tomato"
             }
         }
     }

@@ -7,6 +7,8 @@ import tech.strata.theme 1.0
 
 Rectangle {
     id: buttonContainer
+    Layout.fillWidth: true
+    Layout.preferredHeight: 70
 
     color: toolBarListView.currentIndex === modelIndex ? Theme.palette.green : "transparent"
     enabled: {
