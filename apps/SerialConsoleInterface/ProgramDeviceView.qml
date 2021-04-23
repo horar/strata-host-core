@@ -9,7 +9,6 @@ import tech.strata.logger 1.0
 FocusScope {
     id: programDeviceView
 
-    property string firmwareBinaryPath: Sci.Settings.lastSelectedFirmware
     property int processingStatus: ProgramDeviceView.Setup
     property bool doBackup: Sci.Settings.backupFirmware
 
@@ -135,15 +134,14 @@ FocusScope {
             inputValidation: true
             focus: true
             enabled: programDeviceView.editable
+            suggestionModel: Sci.Settings.firmwarePathList
 
-            onFilePathChanged: {
-                firmwareBinaryPath = filePath
-            }
+            filePath: {
+                if (Sci.Settings.firmwarePathList.length > 0) {
+                    return Sci.Settings.firmwarePathList[0]
+                }
 
-            Binding {
-                target: firmwarePathEdit
-                property: "filePath"
-                value: firmwareBinaryPath
+                return ""
             }
 
             dialogLabel: "Select Firmware Binary"
@@ -158,6 +156,23 @@ FocusScope {
                 }
 
                 return ""
+            }
+
+            function textRoleValue(index) {
+                if (index < 0 || index >= Sci.Settings.firmwarePathList.length) {
+                    return
+                }
+
+                return Sci.Settings.firmwarePathList[index]
+            }
+
+            function removeAt(index) {
+                if (index < 0 || index >= Sci.Settings.firmwarePathList.length) {
+                    return
+                }
+
+                Sci.Settings.firmwarePathList.splice(index, 1)
+                Sci.Settings.firmwarePathList = Sci.Settings.firmwarePathList
             }
         }
 
@@ -285,15 +300,16 @@ FocusScope {
                                     "Firmware file not set",
                                     error)
                     } else {
-                        Sci.Settings.lastSelectedFirmware = firmwareBinaryPath
-                        startProgramProcess()
+                        updateFirmwarePathList(firmwarePathEdit.filePath)
+
+                        startProgramProcess(firmwarePathEdit.filePath)
                     }
                 }
             }
         }
     }
 
-    function startProgramProcess() {
+    function startProgramProcess(firmwarePath) {
         processingStatus = ProgramDeviceView.Setup
 
         setupNode.nodeState = StatusNode.NotSet
@@ -316,7 +332,7 @@ FocusScope {
         programProgress = 0
         programBackupProgress = 0
 
-        var ok = model.platform.programDevice(firmwareBinaryPath, doBackup)
+        var ok = model.platform.programDevice(firmwarePath, doBackup)
         if (ok) {
             setupNode.nodeState = StatusNode.Succeed
         } else {
@@ -344,5 +360,21 @@ FocusScope {
 
     function closeView() {
         StackView.view.pop();
+    }
+
+    function updateFirmwarePathList(path) {
+        var index = Sci.Settings.firmwarePathList.indexOf(path)
+        if (index >= 0) {
+            Sci.Settings.firmwarePathList.splice(index, 1)
+        }
+
+        Sci.Settings.firmwarePathList.splice(0, 0, path)
+
+        if (Sci.Settings.firmwarePathList.length > Sci.Settings.maxFirmwarePathList) {
+            Sci.Settings.firmwarePathList = Sci.Settings.firmwarePathList.slice(0, Sci.Settings.maxFirmwarePathList)
+        }
+
+        //to trigger change in qml
+        Sci.Settings.firmwarePathList = Sci.Settings.firmwarePathList
     }
 }

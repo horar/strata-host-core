@@ -396,7 +396,7 @@ ColumnLayout {
 
     WebChannel {
         id: channel
-        registeredObjects: [channelObject]
+        Component.onCompleted: registerObjects({valueLink: channelObject})
     }
 
     QtObject {

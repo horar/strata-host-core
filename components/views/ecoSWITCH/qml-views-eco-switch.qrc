@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>Control.qml</file>
-        <file>PlatformInterface.qml</file>
-        <file>images/question-circle-solid.svg</file>
-    </qresource>
-</RCC>

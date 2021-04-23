@@ -9,10 +9,10 @@
 #include <vector>
 #include <chrono>
 
-#include <Device/Device.h>
+#include <Platform.h>
 
-namespace strata::device::operation {
-    class BaseDeviceOperation;
+namespace strata::platform::operation {
+    class BasePlatformOperation;
     enum class Result : int;
 }
 
@@ -28,11 +28,12 @@ class Flasher : public QObject
          * The Result enum for finished() signal.
          */
         enum class Result {
-            Ok,
-            NoFirmware,
-            Error,
-            Timeout,
-            Cancelled
+            Ok,          // successfully done
+            NoFirmware,  // device has no firmware
+            Error,       // error during firmware / bootloader operation
+            Disconnect,  // device disconnected
+            Timeout,     // command timed out
+            Cancelled    // operation cancelled
         };
         Q_ENUM(Result)
 
@@ -53,27 +54,27 @@ class Flasher : public QObject
 
         /*!
          * Flasher constructor.
-         * \param device device which will be used by Flasher
+         * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          */
 
-        Flasher(const device::DevicePtr& device, const QString& fileName);
+        Flasher(const platform::PlatformPtr& platform, const QString& fileName);
         /*!
          * Flasher constructor.
-         * \param device device which will be used by Flasher
+         * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          * \param fileMD5 MD5 checksum of file which will be flashed
          */
-        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
+        Flasher(const platform::PlatformPtr& platform, const QString& fileName, const QString& fileMD5);
 
         /*!
          * Flasher constructor.
-         * \param device device which will be used by Flasher
+         * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          * \param fileMD5 MD5 checksum of file which will be flashed
-         * \param fwClassId device firmware class id (UUID v4)
+         * \param fwClassId platform firmware class id (UUID v4)
          */
-        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5, const QString& fwClassId);
+        Flasher(const platform::PlatformPtr& platform, const QString& fileName, const QString& fileMD5, const QString& fwClassId);
 
         /*!
          * Flasher destructor.
@@ -145,7 +146,7 @@ class Flasher : public QObject
         void flashBootloaderProgress(int chunk, int total);
 
         /*!
-         * This signal is emitted when device properties are changed (board switched to/from bootloader, fwClassId changed).
+         * This signal is emitted when platform properties are changed (board switched to/from bootloader, fwClassId changed).
          */
         void devicePropertiesChanged();
 
@@ -156,7 +157,7 @@ class Flasher : public QObject
         // run current operation from operationList_
         void runFlasherOperation();
         // process operation finished signal
-        void handleOperationFinished(device::operation::Result result, int status, QString errStr);
+        void handleOperationFinished(platform::operation::Result result, int status, QString errStr);
         // process operation partialStatus signal
         void handleOperationPartialStatus(int status);
 
@@ -187,9 +188,9 @@ class Flasher : public QObject
         void manageBackup(int chunkNumber);
 
         // deleter for flasher oparation
-        static void operationDeleter(device::operation::BaseDeviceOperation* operation);
+        static void operationDeleter(platform::operation::BasePlatformOperation* operation);
 
-        // error logic when dynamic_cast on DeviceOperation fails
+        // error logic when dynamic_cast on PlatformOperation fails
         void operationCastError();
 
         // methods for adding operations to operationList_
@@ -200,10 +201,10 @@ class Flasher : public QObject
         void addStartApplicationOperation();
         void addIdentifyOperation(bool flashingFirmware, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
 
-        typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> OperationPtr;
+        typedef std::unique_ptr<platform::operation::BasePlatformOperation, void(*)(platform::operation::BasePlatformOperation*)> OperationPtr;
 
         struct FlasherOperation {
-            FlasherOperation(OperationPtr&& deviceOperation,
+            FlasherOperation(OperationPtr&& platformOperation,
                              State stateOfFlasher,
                              const std::function<void(int)>& finishedOperationHandler,
                              const Flasher* parent);
@@ -216,7 +217,7 @@ class Flasher : public QObject
         std::vector<FlasherOperation> operationList_;
         std::vector<FlasherOperation>::iterator currentOperation_;
 
-        device::DevicePtr device_;
+        platform::PlatformPtr platform_;
 
         QFile binaryFile_;
         QString fileMD5_;

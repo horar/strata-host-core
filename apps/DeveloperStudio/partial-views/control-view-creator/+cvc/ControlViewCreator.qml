@@ -130,10 +130,19 @@ Rectangle {
         Rectangle {
             id: tool
             Layout.fillHeight: true
-            Layout.preferredWidth: 70
-            Layout.maximumWidth: 70
+            Layout.preferredWidth: 71
+            Layout.maximumWidth: 71
             Layout.alignment: Qt.AlignTop
             color: "#444"
+
+            Rectangle {
+                // divider
+                color: "black"
+                width: 2
+                height: parent.height
+                anchors.right: parent.right
+                opacity: .25
+            }
 
             ColumnLayout {
                 id: toolBarListView
@@ -374,12 +383,12 @@ Rectangle {
 
     function requestRecompile() {
         recompileRequested = true
+        controlViewLoader.setSource("")
+        Help.resetDeviceIdTour(debugPlatform.deviceId)
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
     function loadDebugView (compiledRccFile) {
-        controlViewLoader.setSource("")
-
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
 
@@ -391,7 +400,7 @@ Rectangle {
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
 
-        Help.setClassId(debugPlatform.deviceId)
+        Help.setDeviceId(debugPlatform.deviceId)
         NavigationControl.context.class_id = debugPlatform.classId
         NavigationControl.context.device_id = debugPlatform.deviceId
 
@@ -409,4 +418,3 @@ Rectangle {
         return false
     }
 }
-

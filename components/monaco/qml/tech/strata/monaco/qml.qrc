@@ -45,5 +45,6 @@
         <file>minified/min-maps/vs/loader.js.map</file>
         <file>minified/monaco.d.ts</file>
         <file>minified/qtQuick.js</file>
+        <file>minified/qtQuickTypes.js</file>
     </qresource>
 </RCC>

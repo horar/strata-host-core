@@ -228,6 +228,8 @@ SGWidgets.SGDialog {
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
                                 contextMenuEnabled: true
+                                rightIconSource: "qrc:/sgimages/chevron-down.svg"
+                                suggestionCloseWithArrowKey: true
                                 suggestionListModel: sortFilterModel
                                 onSuggestionDelegateSelected: {
                                    var sourceIndex = sortFilterModel.mapIndexToSource(index)

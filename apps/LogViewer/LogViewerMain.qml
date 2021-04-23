@@ -100,7 +100,7 @@ FocusScope {
             nameFilters: ["Log files (*.log)","All files (*)"]
 
             onAccepted: {
-                loadFile(fileUrls)
+                loadFiles(fileUrls)
             }
         }
     }
@@ -125,7 +125,7 @@ FocusScope {
         dialog.open();
     }
 
-    function loadFile(path) {
+    function loadFiles(path) {
         var errorStringList = []
         var pathList = []
 
@@ -1166,7 +1166,7 @@ FocusScope {
             interval: 1
 
             onTriggered: {
-                loadFile(urls)
+                loadFiles(urls)
             }
         }
 

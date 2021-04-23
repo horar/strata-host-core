@@ -2,6 +2,7 @@ import QtQuick 2.12
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
+import QtQuick.Controls 2.12
 
 SGWidgets.SGMainWindow {
     id: root
@@ -32,6 +33,32 @@ SGWidgets.SGMainWindow {
         color: "#eeeeee"
     }
 
+    Popup {
+        id: popup
+
+        parent: Overlay.overlay
+        anchors.centerIn: parent
+        padding: 16
+
+        Column {
+            SGWidgets.SGText {
+                text: qsTr("Files are loading...")
+                fontSizeMultiplier: 2.0
+            }
+        }
+    }
+
+    Timer {
+        id: loadingTimer
+        interval: 500
+        onTriggered: {
+            for (var i = 1; i < Qt.application.arguments.length; i++) {
+                logViewerMain.loadFiles(["file:" + Qt.application.arguments[i]])
+            }
+            popup.close()
+        }
+    }
+
     LogViewerMain {
         id: logViewerMain
         anchors{
@@ -41,7 +68,14 @@ SGWidgets.SGMainWindow {
             topMargin: 5
             bottomMargin: statusBarHeight + 5
         }
+
         focus: true
+        Component.onCompleted: {
+            if(Qt.application.arguments.length > 1) {
+                popup.open()
+                loadingTimer.start()
+            }
+        }
     }
 
     function showAboutWindow() {
