@@ -1,16 +1,21 @@
 #include "Commands.h"
 #include "SerialPortList.h"
 #include "logging/LoggingQtCategories.h"
-#include <Device/Device.h>
-#include <Device/Serial/SerialDevice.h>
-#include <Device/Operations/Identify.h>
+#include <Platform.h>
+#include <Serial/SerialDevice.h>
+#include <Operations/Identify.h>
 #include <Flasher.h>
 
 #include <cstdlib>
 
 namespace strata {
 
-using device::serial::SerialDevice;
+constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
+constexpr unsigned int OPEN_MAX_RETRIES(5);
+
+using device::SerialDevice;
+
+Command::Command() { }
 
 Command::~Command() { }
 
@@ -47,6 +52,8 @@ void VersionCommand::process() {
 
 // LIST command
 
+ListCommand::ListCommand() { }
+
 void ListCommand::process() {
     SerialPortList serialPorts;
     auto const portList = serialPorts.list();
@@ -65,40 +72,82 @@ void ListCommand::process() {
     emit finished(EXIT_SUCCESS);
 }
 
+// DEVICE command
 
-// FLASHER (FLASH/BACKUP firmware/bootloader) command
-
-FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command) :
-    fileName_(fileName), deviceNumber_(deviceNumber), command_(command) { }
+DeviceCommand::DeviceCommand(int deviceNumber) :
+    deviceNumber_(deviceNumber), openRetries_(0) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
-FlasherCommand::~FlasherCommand() { }
+DeviceCommand::~DeviceCommand() { }
 
-void FlasherCommand::process() {
+bool DeviceCommand::createSerialDevice() {
     SerialPortList serialPorts;
 
     if (serialPorts.count() == 0) {
         qCCritical(logCategoryFlasherCli) << "No board is connected.";
-        emit finished(EXIT_FAILURE);
-        return;
+        return false;
     }
 
     const QString name = serialPorts.name(deviceNumber_ - 1);
     if (name.isEmpty()) {
         qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
-        emit finished(EXIT_FAILURE);
-        return;
+        return false;
     }
 
     const QByteArray deviceId = SerialDevice::createDeviceId(name);
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
-    if (device->open() == false) {
-        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
+    platform_ = std::make_shared<platform::Platform>(device);
+
+    connect(platform_.get(), &platform::Platform::opened, this, &DeviceCommand::handlePlatformOpened, Qt::QueuedConnection);
+    connect(platform_.get(), &platform::Platform::deviceError, this, &DeviceCommand::handleDeviceError, Qt::QueuedConnection);
+
+    return true;
+}
+
+void DeviceCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr) {
+    Q_UNUSED(deviceId)
+    Q_UNUSED(errStr)
+
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+        ++openRetries_;
+        QString errorMessage(QStringLiteral("Cannot open board (serial device) "));
+        errorMessage.append(platform_->deviceName());
+        errorMessage.append(QStringLiteral(", attempt "));
+        errorMessage.append(QString::number(openRetries_));
+        errorMessage.append(QStringLiteral(" of "));
+        errorMessage.append(QString::number(OPEN_MAX_RETRIES));
+
+        if (openRetries_ >= OPEN_MAX_RETRIES) {
+            qCCritical(logCategoryFlasherCli).noquote() << errorMessage;
+            emit finished(EXIT_FAILURE);
+            return;
+        } else {
+            qCInfo(logCategoryFlasherCli).noquote() << errorMessage;
+        }
+    }
+}
+
+// FLASHER (FLASH/BACKUP firmware/bootloader) command
+
+FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command) :
+    DeviceCommand(deviceNumber), fileName_(fileName), command_(command) { }
+
+// Destructor must be defined due to unique pointer to incomplete type.
+FlasherCommand::~FlasherCommand() { }
+
+void FlasherCommand::process() {
+    if (createSerialDevice() == false) {
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    flasher_ = std::make_unique<Flasher>(device, fileName_);
+    platform_->open(DEVICE_CHECK_INTERVAL);
+}
+
+void FlasherCommand::handlePlatformOpened(QByteArray deviceId) {
+    Q_UNUSED(deviceId)
+
+    flasher_ = std::make_unique<Flasher>(platform_, fileName_);
 
     connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result, QString){
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -120,47 +169,35 @@ void FlasherCommand::process() {
 // INFO command
 
 InfoCommand::InfoCommand(int deviceNumber) :
-    deviceNumber_(deviceNumber) { }
+    DeviceCommand(deviceNumber) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
 InfoCommand::~InfoCommand() { }
 
 void InfoCommand::process() {
-    SerialPortList serialPorts;
-
-    if (serialPorts.count() == 0) {
-        qCCritical(logCategoryFlasherCli) << "No board is connected.";
+    if (createSerialDevice() == false) {
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    const QString name = serialPorts.name(deviceNumber_ - 1);
-    if (name.isEmpty()) {
-        qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
-        emit finished(EXIT_FAILURE);
-        return;
-    }
+    platform_->open(DEVICE_CHECK_INTERVAL);
+}
 
-    const QByteArray deviceId = SerialDevice::createDeviceId(name);
-    device_ = std::make_shared<SerialDevice>(deviceId, name);
-    if (device_->open() == false) {
-        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
-        emit finished(EXIT_FAILURE);
-        return;
-    }
+void InfoCommand::handlePlatformOpened(QByteArray deviceId) {
+    Q_UNUSED(deviceId)
 
-    identifyOperation_ = std::make_unique<device::operation::Identify>(device_, false);
+    identifyOperation_ = std::make_unique<platform::operation::Identify>(platform_, false);
 
-    connect(identifyOperation_.get(), &device::operation::BaseDeviceOperation::finished,
+    connect(identifyOperation_.get(), &platform::operation::BasePlatformOperation::finished,
             this, &InfoCommand::handleIdentifyOperationFinished);
 
     identifyOperation_->run();
 }
 
-void InfoCommand::handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr) {
+void InfoCommand::handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr) {
     Q_UNUSED(status)
 
-    device::operation::Identify *identifyOp = qobject_cast<device::operation::Identify*>(QObject::sender());
+    platform::operation::Identify *identifyOp = qobject_cast<platform::operation::Identify*>(QObject::sender());
     if ((identifyOp == nullptr) || (identifyOp != identifyOperation_.get())) {
         qCCritical(logCategoryFlasherCli) << "Received corrupt operation pointer:" << identifyOp;
         emit finished(EXIT_FAILURE);
@@ -168,42 +205,42 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
     }
 
     switch(result) {
-    case device::operation::Result::Success: {
+    case platform::operation::Result::Success: {
         QString message(QStringLiteral("List of available parameters for board:"));
 
         message.append(QStringLiteral("\nApplication Name: "));
-        message.append(device_->name());
+        message.append(platform_->name());
         message.append(QStringLiteral("\nDevice Name: "));
-        message.append(device_->deviceName());
+        message.append(platform_->deviceName());
         message.append(QStringLiteral("\nDevice Id: "));
-        message.append(device_->deviceId());
+        message.append(platform_->deviceId());
         message.append(QStringLiteral("\nDevice Type: "));
-        message.append(QVariant::fromValue(device_->deviceType()).toString());
+        message.append(QVariant::fromValue(platform_->deviceType()).toString());
         message.append(QStringLiteral("\nController Type: "));
-        message.append(QVariant::fromValue(device_->controllerType()).toString());
-        if (device_->controllerType() == device::Device::ControllerType::Assisted) {
+        message.append(QVariant::fromValue(platform_->controllerType()).toString());
+        if (platform_->controllerType() == platform::Platform::ControllerType::Assisted) {
             message.append(QStringLiteral(" (Platform Connected: "));
-            message.append(QVariant(device_->isControllerConnectedToPlatform()).toString());
+            message.append(QVariant(platform_->isControllerConnectedToPlatform()).toString());
             message.append(QStringLiteral(")"));
         }
         message.append(QStringLiteral("\nBoard Mode: "));
         message.append(QVariant::fromValue(identifyOp->boardMode()).toString());
         message.append(QStringLiteral(" (API: "));
-        message.append(QVariant::fromValue(device_->apiVersion()).toString());
+        message.append(QVariant::fromValue(platform_->apiVersion()).toString());
         message.append(QStringLiteral(")\nApplication version: "));
-        message.append(device_->applicationVer());
+        message.append(platform_->applicationVer());
         message.append(QStringLiteral("\nBootloader version: "));
-        message.append(device_->bootloaderVer());
+        message.append(platform_->bootloaderVer());
         message.append(QStringLiteral("\nPlatform Id: "));
-        message.append(device_->platformId());
+        message.append(platform_->platformId());
         message.append(QStringLiteral("\nClass Id: "));
-        message.append(device_->classId());
+        message.append(platform_->classId());
         message.append(QStringLiteral("\nController Platform Id: "));
-        message.append(device_->controllerPlatformId());
+        message.append(platform_->controllerPlatformId());
         message.append(QStringLiteral("\nController Class Id: "));
-        message.append(device_->controllerClassId());
+        message.append(platform_->controllerClassId());
         message.append(QStringLiteral("\nFirmware Class Id: "));
-        message.append(device_->firmwareClassId());
+        message.append(platform_->firmwareClassId());
 
         qCInfo(logCategoryFlasherCli).noquote() << message;
         emit finished(EXIT_SUCCESS);

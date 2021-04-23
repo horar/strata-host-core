@@ -36,6 +36,8 @@ public:
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
+    Q_INVOKABLE QString openLogViewer();
+
 public slots:
     void shutdownService();
 

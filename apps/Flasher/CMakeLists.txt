@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::SerialPort
     strata::QtLogger
     strata::Flasher
-    strata::Device
+    strata::Platform
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

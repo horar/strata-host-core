@@ -103,7 +103,7 @@ Item {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         })
-        Help.setClassId(help_tour_id)
+        Help.setDeviceId(help_tour_id)
         Help.registerTarget(accordion.contentItem.children[0],"Use this menu to select platform-specific documents for viewing.",0,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[1],"This menu includes part-specific datasheets for viewing.",1,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[2],"Select and download files related to this platform here.",2,"contentViewHelp")
