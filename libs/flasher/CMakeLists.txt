@@ -27,8 +27,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC strata::QtLogger
-    PUBLIC strata::Device
-    PRIVATE strata::DeviceOperations
+    PUBLIC strata::Platform
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
