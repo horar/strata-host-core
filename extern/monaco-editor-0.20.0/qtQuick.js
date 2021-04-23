@@ -380,8 +380,16 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
-    // adds CMD + I and CTRL + I to auto suggestions open widget
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_I, () => editor.trigger(editor.getValue(),'editor.action.triggerSuggest',{}))
+
+    editor.addAction({
+        id: 'commentSelection',
+        label: "Comment selection",
+        contextMenuGroupId: "navigation",
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
+        run:(editor) =>{
+            editor.getAction('editor.action.commentLine').run()
+        }
+    })
 
     function getValue() {
         return editor.getValue();
