@@ -146,6 +146,8 @@ protected:
 private slots:
     void handleDeviceResponse(QByteArray deviceId, const QByteArray data);
     void handleResponseTimeout();
+
+protected slots:
     void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
 
 protected:
