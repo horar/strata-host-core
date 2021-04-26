@@ -16,7 +16,7 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "BoardController.h"
+#include "PlatformController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
 #include "DownloadManager.h"
@@ -123,8 +123,6 @@ public slots:
             const QJsonArray &componentList,
             const QString &errorString);
 
-    void broadcastConnectedPlatformListMessage();
-
 private slots:
     void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
@@ -185,7 +183,7 @@ private:
             const QJsonObject &payload,
             const QByteArray &clientId);
 
-    BoardController boardsController_;
+    PlatformController platformController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     QNetworkAccessManager networkManager_;

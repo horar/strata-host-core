@@ -9,7 +9,7 @@
 #include <QTemporaryFile>
 
 #include <FlasherConnector.h>
-#include <Device/Device.h>
+#include <Platform.h>
 
 #include "FirmwareUpdateController.h"
 
@@ -29,31 +29,31 @@ class FirmwareUpdater final : public QObject
 public:
     /**
      * FirmwareUpdater constructor for updating firmware in device
-     * @param devPtr device
+     * @param platform platform
      * @param downloadManager pointer to DownloadManager
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
      */
-    FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager,
+    FirmwareUpdater(const strata::platform::PlatformPtr& platform, strata::DownloadManager *downloadManager,
                     const QUrl& url, const QString& md5);
 
     /**
      * FirmwareUpdater constructor for programming new firmware to assisted controller (dongle)
-     * @param devPtr device
+     * @param platform platform
      * @param downloadManager pointer to DownloadManager
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
      * @param fwClassId firmware class id
      */
-    FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager,
+    FirmwareUpdater(const strata::platform::PlatformPtr& platform, strata::DownloadManager *downloadManager,
                     const QUrl& url, const QString& md5, const QString& fwClassId);
 
     /**
      * FirmwareUpdater constructor for setting fw_class_id (without flash) to assisted controller (dongle)
-     * @param devPtr device
+     * @param platform platform
      * @param fwClassId firmware class id
      */
-    FirmwareUpdater(const strata::device::DevicePtr& devPtr, const QString& fwClassId);
+    FirmwareUpdater(const strata::platform::PlatformPtr& platform, const QString& fwClassId);
 
     /**
      * FirmwareUpdater destructor
@@ -99,7 +99,7 @@ private:
 
     bool running_;
 
-    const strata::device::DevicePtr device_;
+    const strata::platform::PlatformPtr platform_;
     const QByteArray deviceId_;
 
     QPointer<strata::DownloadManager> downloadManager_;

@@ -289,7 +289,7 @@ Item {
         id: srcConnection
         target: logger
         onLogMsg: {
-            if(controlViewCreatorRoot.visible){
+            if(controlViewCreatorRoot.visible && msg){
                 if(consoleModel.count > 0 && recompileRequested){
                     for (var i = 0; i < consoleModel.count; i++){
                         consoleModel.get(i).current = false

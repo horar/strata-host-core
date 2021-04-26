@@ -64,8 +64,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Quick
 
-    strata::DeviceOperations
-    strata::BoardManager
+    strata::Platform
+    strata::PlatformManager
     strata::FlasherConnector
     strata::DownloadManager
     strata::QtLogger

@@ -170,6 +170,65 @@ function addCustomProperties(lineNumber, item, property) {
 */
 function registerQmlAsLanguage() {
     monaco.languages.register({ id: 'qml' })
+    monaco.languages.setLanguageConfiguration("qml", {
+        wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+        comments: {
+            lineComment: '//',
+            blockComment: ['/*', '*/']
+        },
+        brackets: [
+            ['{', '}'],
+            ['[', ']'],
+            ['(', ')']
+        ],
+        onEnterRules: [
+            {
+                // e.g. /** | */
+                beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+                afterText: /^\s*\*\/$/,
+                action: { indentAction: monaco.languages.IndentAction.IndentOutdent, appendText: ' * ' }
+            },
+            {
+                // e.g. /** ...|
+                beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+                action: { indentAction: monaco.languages.IndentAction.None, appendText: ' * ' }
+            },
+            {
+                // e.g.  * ...|
+                beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
+                action: { indentAction: monaco.languages.IndentAction.None, appendText: '* ' }
+            },
+            {
+                // e.g.  */|
+                beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
+                action: { indentAction: monaco.languages.IndentAction.None, removeText: 1 }
+            },
+            {
+                beforeText: /^\s(?:readonly|property|for|if|else|do|while|try|int|real|var|string|color|url|alias|bool|double).*?:\s*$/,
+                action: {indentAction: monaco.languages.IndentAction.IndentOutdent}
+            }
+        ],
+        autoClosingPairs: [
+            { open: '{', close: '}' },
+            { open: '[', close: ']' },
+            { open: '(', close: ')' },
+            { open: '"', close: '"', notIn: ['string'] },
+            { open: '\'', close: '\'', notIn: ['string', 'comment'] },
+            { open: '`', close: '`', notIn: ['string', 'comment'] },
+            { open: "/*", close: " */", notIn: ["string"] }
+        ],
+        autoCloseBefore: ";:.,=})>`\n\t",
+        folding: {
+            markers: {
+                start: new RegExp("^\\s*//\\s*#?region\\b"),
+                end: new RegExp("^\\s*//\\s*#?endregion\\b")
+            }
+        },
+        indentationRules: {
+            increaseIndentPattern: /^((?!\/\/).)*(\{[^}\"'`]*|\([^)\"'`]*|\[[^\]\"'`]*)$/,
+            decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
+        }
+    })
     monaco.languages.setMonarchTokensProvider('qml', {
         keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
         typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool', 'double'],
@@ -227,7 +286,6 @@ function registerQmlAsLanguage() {
                 [/\/\*/, 'comment', '@comment'],
                 [/\/\/.*$/, 'comment'],
             ],
-
             comment: [
                 [/[^\/*]+/, 'comment'],
                 [/\*\//, 'comment', '@pop'],
@@ -285,6 +343,7 @@ function registerQmlAsLanguage() {
         }
 
     })
+
     monaco.editor.defineTheme('qmlTheme', {
         base: 'vs',
         inherit: false,
@@ -309,10 +368,10 @@ function registerQmlAsLanguage() {
         value: "",
         language: 'qml',
         theme: "qmlTheme",
-        insertSpaces: true,
-        detectIndentation: true,
-        tabCompletion: "on",
         formatOnPaste: true,
+        formatOnType: true,
+        formatOnSave: true,
+        autoIndent: 'full',
         scrollbar: {
             useShadows: false,
             vertical: 'visible',
@@ -321,6 +380,16 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
+
+    editor.addAction({
+        id: 'commentSelection',
+        label: "Comment selection",
+        contextMenuGroupId: "navigation",
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
+        run:(editor) =>{
+            editor.getAction('editor.action.commentLine').run()
+        }
+    })
 
     function getValue() {
         return editor.getValue();
@@ -665,7 +734,6 @@ function registerQmlAsLanguage() {
         monaco.languages.registerCompletionItemProvider('qml', {
             triggerCharacters: ['.', ':', '\v'],
             provideCompletionItems: (model, position) => {
-
                 var currText = model.getLineContent(position.lineNumber)
                 var currWords = currText.replace("\t", "").split(" ");
                 var active = currWords[currWords.length - 1]

@@ -12,7 +12,7 @@
 namespace strata {
     class DownloadManager;
 }
-class BoardController;
+class PlatformController;
 class FirmwareUpdater;
 
 class FirmwareUpdateController final : public QObject
@@ -33,10 +33,10 @@ public:
 
     /**
      * Initialize the Firmware Update Controller.
-     * @param boardController pointer to BoardController
+     * @param platformController pointer to PlatformController
      * @param downloadManager shared pointer to DownloadManager
      */
-    void initialize(BoardController *boardController, strata::DownloadManager *downloadManager);
+    void initialize(PlatformController *platformController, strata::DownloadManager *downloadManager);
 
     /**
      * The UpdateOperation enum for UpdateProgressInfo struct.
@@ -170,7 +170,7 @@ private:
 
     void runUpdate(const FlashData& data);
 
-    QPointer<BoardController> boardController_;
+    QPointer<PlatformController> platformController_;
     QPointer<strata::DownloadManager> downloadManager_;
 
     struct UpdateInfo {

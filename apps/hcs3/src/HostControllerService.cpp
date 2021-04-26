@@ -84,9 +84,9 @@ bool HostControllerService::initialize(const QString& config)
 
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this, &HostControllerService::sendUpdateInfoMessage);
 
-    connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
-    connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
-    connect(&boardsController_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
+    connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
+    connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
@@ -111,9 +111,9 @@ bool HostControllerService::initialize(const QString& config)
         std::string(ReplicatorCredentials::replicator_username).c_str(),
         std::string(ReplicatorCredentials::replicator_password).c_str());
 
-    boardsController_.initialize();
+    platformController_.initialize();
 
-    updateController_.initialize(&boardsController_, &downloadManager_);
+    updateController_.initialize(&platformController_, &downloadManager_);
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -377,7 +377,7 @@ void HostControllerService::platformConnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastConnectedPlatformListMessage();
+    broadcastMessage(platformController_.createPlatformsList());
 }
 
 void HostControllerService::platformDisconnected(const QByteArray& deviceId)
@@ -385,7 +385,7 @@ void HostControllerService::platformDisconnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastConnectedPlatformListMessage();
+    broadcastMessage(platformController_.createPlatformsList());
 }
 
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
@@ -528,19 +528,19 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
 
     QString errorString;
     do {
-        strata::device::DevicePtr device = boardsController_.getDevice(programData.deviceId);
-        if (device == nullptr) {
-            errorString = "Device " + programData.deviceId + " doesn't exist";
+        strata::platform::PlatformPtr platform = platformController_.getPlatform(programData.deviceId);
+        if (platform == nullptr) {
+            errorString = "Platform " + programData.deviceId + " doesn't exist";
             break;
         }
 
-        if (device->isControllerConnectedToPlatform() == false) {
+        if (platform->isControllerConnectedToPlatform() == false) {
             errorString = "Controller (dongle) is not connected to platform (board)";
             break;
         }
 
-        programData.firmwareClassId = device->classId(); // class_id becomes the new fw_class_id
-        QString controllerClassId = device->controllerClassId();
+        programData.firmwareClassId = platform->classId(); // class_id becomes the new fw_class_id
+        QString controllerClassId = platform->controllerClassId();
         if (programData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
             errorString = "Platform has no classId or controllerClassId";
             break;
@@ -555,14 +555,16 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
         programData.firmwareMD5 = firmware.second;
 
         QString currentMD5; // get md5 accorging to old fw_class_id and fw version
-        if (device->applicationVer().isEmpty() == false && device->firmwareClassId().isNull() == false && device->firmwareClassId().isEmpty() == false) {
-            firmware = storageManager_.getFirmwareUriMd5(device->firmwareClassId(), controllerClassId, device->applicationVer());
+        if (platform->applicationVer().isEmpty() == false
+                && platform->firmwareClassId().isNull() == false
+                && platform->firmwareClassId().isEmpty() == false) {
+            firmware = storageManager_.getFirmwareUriMd5(platform->firmwareClassId(), controllerClassId, platform->applicationVer());
             currentMD5 = firmware.second;
         } else {
-            qCInfo(logCategoryHcs) << device << "Device has probably no firmware.";
+            qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
         }
         if (currentMD5.isNull()) {
-            qCWarning(logCategoryHcs) << device << "Cannot get MD5 of curent firmware from database.";
+            qCWarning(logCategoryHcs) << platform << "Cannot get MD5 of curent firmware from database.";
         }
 
         programData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -667,7 +669,7 @@ void HostControllerService::parseMessageFromClient(const QByteArray &message, co
             return;
         }
 
-        boardsController_.sendMessage(deviceId, message);
+        platformController_.sendMessage(deviceId, message);
         return;
     }
 
@@ -781,7 +783,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
         // If firmware was updated broadcast new platforms list
         // to indicate the firmware version has changed.
-        broadcastConnectedPlatformListMessage();
+        broadcastMessage(platformController_.createPlatformsList());
     }
 }
 
@@ -878,24 +880,6 @@ void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, co
     QByteArray notification = createHcsNotification(hcsNotificationType::updatesAvailable, payload, false);
 
     clients_.sendMessage(clientId, notification);
-}
-
-void HostControllerService::broadcastConnectedPlatformListMessage()
-{
-    QJsonArray connectedPlatformList = boardsController_.createPlatformsList();
-
-    QJsonObject notification {
-        { JSON_LIST, connectedPlatformList },
-        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
-    };
-
-    QJsonObject message {
-        { JSON_HCS_NOTIFICATION, notification }
-    };
-
-    QJsonDocument doc(message);
-
-    broadcastMessage(doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::callHandlerForTypeCmd(

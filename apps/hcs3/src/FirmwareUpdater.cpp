@@ -13,22 +13,22 @@ using strata::FlasherConnector;
 namespace deviceOperation = strata::device::operation;
 
 FirmwareUpdater::FirmwareUpdater(
-        const strata::device::DevicePtr& devPtr,
+        const strata::platform::PlatformPtr& platform,
         strata::DownloadManager *downloadManager,
         const QUrl& url,
         const QString& md5)
-    : FirmwareUpdater(devPtr, downloadManager, url, md5, QString())
+    : FirmwareUpdater(platform, downloadManager, url, md5, QString())
 { }
 
 FirmwareUpdater::FirmwareUpdater(
-        const strata::device::DevicePtr& devPtr,
+        const strata::platform::PlatformPtr& platform,
         strata::DownloadManager *downloadManager,
         const QUrl& url,
         const QString& md5,
         const QString& fwClassId)
     : running_(false),
-      device_(devPtr),
-      deviceId_(devPtr->deviceId()),
+      platform_(platform),
+      deviceId_(platform->deviceId()),
       downloadManager_(downloadManager),
       firmwareUrl_(url),
       firmwareMD5_(md5),
@@ -39,9 +39,9 @@ FirmwareUpdater::FirmwareUpdater(
 }
 
 FirmwareUpdater::FirmwareUpdater(
-        const strata::device::DevicePtr& devPtr,
+        const strata::platform::PlatformPtr& platform,
         const QString& fwClassId)
-    : FirmwareUpdater(devPtr, nullptr, QString(), QString(), fwClassId)
+    : FirmwareUpdater(platform, nullptr, QString(), QString(), fwClassId)
 { }
 
 FirmwareUpdater::~FirmwareUpdater()
@@ -86,12 +86,13 @@ void FirmwareUpdater::setFwClassId()
 {
     if (fwClassId_.isNull()) {
         logAndEmitError(QStringLiteral("Firmware clas ID was not provided."));
+        running_ = false;
         return;
     }
 
     running_ = true;
 
-    flasherConnector_ = new FlasherConnector(fwClassId_, device_, this);
+    flasherConnector_ = new FlasherConnector(fwClassId_, platform_, this);
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
@@ -158,14 +159,20 @@ void FirmwareUpdater::handleSingleDownloadProgress(QString downloadId, QString f
 
 void FirmwareUpdater::handleFlashFirmware()
 {
-    Q_ASSERT(flasherConnector_.isNull());
+    if (flasherConnector_.isNull() == false) {
+        QString errStr("Cannot create firmware flasher, other one already exists.");
+        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
+        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
+        emit updaterError(deviceId_, errStr);
+        return;
+    }
 
     bool backupOldFirmware = true;
 
     if (fwClassId_.isNull()) {
-        flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
+        flasherConnector_ = new FlasherConnector(platform_, firmwareFile_.fileName(), firmwareMD5_, this);
     } else {  // program assisted controller (dongle)
-        flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, fwClassId_, this);
+        flasherConnector_ = new FlasherConnector(platform_, firmwareFile_.fileName(), firmwareMD5_, fwClassId_, this);
         backupOldFirmware = false;  // there is no need to backup old firmware if dongle is programmed
     }
 
@@ -270,6 +277,6 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
 
 void FirmwareUpdater::logAndEmitError(const QString& errorString)
 {
-    qCCritical(logCategoryHcsFwUpdater) << device_ << errorString;
+    qCCritical(logCategoryHcsFwUpdater) << platform_ << errorString;
     emit updaterError(deviceId_, errorString);
 }

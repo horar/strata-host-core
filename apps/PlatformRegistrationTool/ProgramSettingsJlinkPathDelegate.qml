@@ -25,9 +25,13 @@ ProgramSettingsDelegate {
                 delegate.validationInProgress = false
 
                 if (exitedNormally) {
-                    if (libraryVersion.length > 0 && commanderVersion.length > 0) {
-                        pathEdit.commanderVersion = commanderVersion
-                        pathEdit.libVersion = libraryVersion
+                    var info = jlinkConnector.latestOutputInfo()
+
+                    console.log("info", JSON.stringify(info))
+
+                    if (info.hasOwnProperty("lib_version") && info.hasOwnProperty("commander_version")) {
+                        pathEdit.commanderVersion = info["commander_version"]
+                        pathEdit.libVersion = info["lib_version"]
                         pathEdit.setStateIsValid()
                     } else {
                        pathEdit.setStateIsInvalid('Cannot determine version')
