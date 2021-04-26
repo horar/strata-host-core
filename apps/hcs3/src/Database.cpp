@@ -1,16 +1,14 @@
-
 #include "Database.h"
 #include "Dispatcher.h"
 
 #include "logging/LoggingQtCategories.h"
 
-#include <couchbaselitecpp/SGCouchBaseLite.h>
-#include <couchbaselitecpp/SGFleece.h>
+#include <Database/DatabaseManager.h>
 #include <string>
 
 #include <QDir>
 
-using namespace Strata;
+using namespace strata::Database;
 
 Database::Database(QObject *parent)
     : QObject(parent){
@@ -21,55 +19,69 @@ Database::~Database()
     stop();
 }
 
-bool Database::open(std::string_view db_path, const std::string& db_name)
+bool Database::open(const QString& db_path, const QString& db_name)
 {
-    if (sg_database_ != nullptr) {
+    if (DB_ != nullptr) {
         return false;
     }
 
-    sgDatabasePath_ = db_path;
-    qCDebug(logCategoryHcsDb) << "DB location set to:" << QString::fromStdString(sgDatabasePath_);
+    if (db_name.isEmpty()) {
+        qCCritical(logCategoryHcsDb) << "Missing valid DB name";
+        return false;
+    }
 
-    if (sgDatabasePath_.empty()) {
+    if (db_path.isEmpty()) {
         qCCritical(logCategoryHcsDb) << "Missing writable DB location path";
         return false;
     }
 
+    databaseName_ = db_name;
+    databasePath_ = db_path;
+    qCDebug(logCategoryHcsDb) << "DB location set to:" << databasePath_;
+
     // Check if directories/files already exist
     // If 'db' and 'strata_db' (db_name) directories exist but the main DB file does not, remove directory 'strata_db' (db_name) to avoid bug with opening DB
     // Directory will be re-created when DB is opened
-    QDir db_directory{QString::fromStdString(sgDatabasePath_)};
-    if (db_directory.cd(QString("db/%1").arg(QString::fromStdString(db_name)))
-    && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
+    QDir db_directory{databasePath_};
+    if (db_directory.cd(QString("%1.cblite2").arg(db_name)) && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
         if (db_directory.removeRecursively()) {
             qCInfo(logCategoryHcsDb)
-                << "DB directories exist but DB file does not -- successfully deleted directory "
+                << "DB directories exist but DB file does not -- successfully deleted directory"
                 << db_directory.absolutePath();
         } else {
             qCWarning(logCategoryHcsDb)
-                << "DB directories exist but DB file does not -- unable to delete directory "
+                << "DB directories exist but DB file does not -- unable to delete directory"
                 << db_directory.absolutePath();
         }
     }
 
-    // opening the db
-    sg_database_ = new SGDatabase(db_name, sgDatabasePath_);
-    SGDatabaseReturnStatus ret = sg_database_->open();
-    if (ret != SGDatabaseReturnStatus::kNoError) {
-        qCWarning(logCategoryHcsDb) << "Failed to open database err:" << QString::number(static_cast<int>(ret));
+    // Opening the db
+    DB_ = std::make_unique<DatabaseAccess>();
+
+    if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
+        qCCritical(logCategoryHcsDb) << "Failed to open database";
         return false;
     }
 
     return true;
 }
 
+void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)
+{
+    qCCritical(logCategoryHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
+    for (unsigned i = 0; i < documents.size(); ++i) {
+        emit documentUpdated(documents[i].id);
+    }
+}
+
 bool Database::addReplChannel(const std::string& channel)
 {
-    assert(channel.empty() == false);
-    auto findIt = channels_.find(channel);
-    if (findIt == channels_.end()) {
+    if (channel.empty()) {
+        return false;
+    }
 
-        channels_.insert(channel);
+    if (databaseChannels_.contains(QString::fromStdString(channel)) == false) {
+        databaseChannels_ << QString::fromStdString(channel);
         updateChannels();
     }
 
@@ -78,11 +90,12 @@ bool Database::addReplChannel(const std::string& channel)
 
 bool Database::remReplChannel(const std::string& channel)
 {
-    assert(channel.empty() == false);
-    auto findIt = channels_.find(channel);
-    if (findIt != channels_.end()) {
+    if (channel.empty()) {
+        return false;
+    }
 
-        channels_.erase(channel);
+    if (databaseChannels_.contains(QString::fromStdString(channel))) {
+        databaseChannels_.removeAll(QString::fromStdString(channel));
         updateChannels();
     }
 
@@ -91,110 +104,55 @@ bool Database::remReplChannel(const std::string& channel)
 
 void Database::updateChannels()
 {
-    if (sg_replicator_ == nullptr || sg_replicator_configuration_ == nullptr) {
+    if (DB_ == nullptr) {
         return;
     }
 
-    bool wasRunning = isRunning_;
-    if (isRunning_) {
-        sg_replicator_->stop();
-        sg_replicator_->join();
+    DB_->close();
+
+    if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
+        qCCritical(logCategoryHcsDb) << "Failed to open database";
+        return;
     }
 
-    std::vector<std::string> myChannels;
-    myChannels.reserve(channels_.size());
-    std::copy(channels_.begin(), channels_.end(), std::back_inserter(myChannels));
-
-    sg_replicator_configuration_->setChannels(myChannels);
-
-    if (wasRunning) {
-        if (auto ret = sg_replicator_->start(); ret != SGReplicatorReturnStatus::kNoError) {
-            qCWarning(logCategoryHcsDb) << "Replicator start failed! (code:" << QString::number(static_cast<int>(ret)) << ")";
-        }
+    if (isRunning_) {
+        auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
+        isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
     }
 }
 
 bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
-    if (sg_database_ == nullptr) {
+    if (DB_ == nullptr) {
         return false;
     }
 
-    SGDocument doc(sg_database_, doc_id);
-    if (!doc.exist()) {
-        return false;
-    }
+    QString myQStr = DB_->getDocumentAsStr(QString::fromStdString(doc_id), DB_->getDatabaseName());
+    result = myQStr.toStdString();
 
-    result = doc.getBody();
     return true;
 }
 
 void Database::stop()
 {
-    if(sg_replicator_ != nullptr) {
-        delete sg_replicator_;      // destructor will call stop and join
-        sg_replicator_ = nullptr;
-        qCDebug(logCategoryHcsDb) << "Replicator stoped.";
+    if (DB_ == nullptr) {
+        return;
     }
 
-    // delete also these in case we would like to reinit replication through initReplicator()
-    delete url_endpoint_; url_endpoint_ = nullptr;
-    delete sg_replicator_configuration_; sg_replicator_configuration_ = nullptr;
-    delete basic_authenticator_; basic_authenticator_ = nullptr;
+    DB_->close();
+
+    DB_ = nullptr;
     isRunning_ = false;
-
-    if(sg_database_ != nullptr) {
-        delete sg_database_; sg_database_ = nullptr;
-        qCDebug(logCategoryHcsDb) << "Database closed.";
-    }
 }
 
 bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
 {
-    if (url_endpoint_ != nullptr) {
-        return false;
-    }
+    replication_.url = QString::fromStdString(replUrl);
+    replication_.username = QString::fromStdString(username);
+    replication_.password = QString::fromStdString(password);
 
-    url_endpoint_ = new SGURLEndpoint(replUrl);
-    if (url_endpoint_->init() == false) {
-        qCWarning(logCategoryHcsDb) << "Replicator endpoint URL is failed!";
-        return false;
-    }
+    auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
+    isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
 
-    sg_replicator_configuration_ = new SGReplicatorConfiguration(sg_database_, url_endpoint_);
-    sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
-
-    // Set replicator to resolve to the remote revision in case of conflict
-    sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
-
-    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
-    sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
-    sg_replicator_configuration_->setReconnectionTimer(REPLICATOR_RECONNECTION_INTERVAL);
-
-    if(false == username.empty() && false == password.empty()){
-        basic_authenticator_ = new SGBasicAuthenticator(username, password);
-        sg_replicator_configuration_->setAuthenticator(basic_authenticator_);
-    }
-    // Create the replicator object passing it the configuration
-    sg_replicator_ = new SGReplicator(sg_replicator_configuration_);
-
-    sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
-
-    if (const auto ret = sg_replicator_->start(); ret != SGReplicatorReturnStatus::kNoError) {
-        qCWarning(logCategoryHcsDb) << "Replicator start failed! (code:" << "Replicator start failed! (code:" << QString::number(static_cast<int>(ret));
-
-        delete sg_replicator_; sg_replicator_ = nullptr;
-        delete sg_replicator_configuration_; sg_replicator_configuration_ = nullptr;
-        delete url_endpoint_; url_endpoint_ = nullptr;
-
-        return false;
-    }
-
-    isRunning_ = true;
     return isRunning_;
-}
-
-void Database::onDocumentEnd(bool /*pushing*/, std::string doc_id, std::string /*error_message*/, bool /*is_error*/, bool /*error_is_transient*/)
-{
-    emit documentUpdated(QString::fromStdString(doc_id));
 }

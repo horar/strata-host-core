@@ -12,6 +12,21 @@ pipeline {
         } 
     }
     stages {
+        stage('Clone Strata Platform Control Views Repository') {
+            steps {
+                script {
+                    def repoUrl = "https://code.onsemi.com/scm/secswst/strata-platform-control-views.git"
+                    def repoName = "strata-platform-control-views"
+
+                    dir("${env.workspace}/components/${repoName}") {
+                        git changelog: false,
+                        poll: false,
+                        credentialsId: 'BB-access-token',
+                        url: "${repoUrl}"
+                    }
+                }
+            }
+        }
         stage('Build') {
             steps {
                 sh "${env.workspace}/internal/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
@@ -33,9 +48,10 @@ pipeline {
                 sh "python -m venv ${env.workspace}/internal/deployment/OTA/ota-deploy-env"
                 sh "source ${env.workspace}/internal/deployment/OTA/ota-deploy-env/Scripts/activate"
                 sh "python -m pip install -r ${env.workspace}/internal/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/internal/deployment/OTA/main.py' view \
+                sh """python '${env.workspace}/internal/deployment/OTA/main.py' \
                     --dir '${BUILD_NAME}' \
-                    '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
+                    view \
+                    '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/views'
                     """
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
             }

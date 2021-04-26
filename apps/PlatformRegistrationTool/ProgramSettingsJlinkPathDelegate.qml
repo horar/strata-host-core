@@ -4,14 +4,43 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 ProgramSettingsDelegate {
     id: delegate
 
     property string jlinkExePath
+    property QtObject jlinkConnector
+    property bool validationInProgress: false
 
     content: Item {
         height: pathEdit.y + pathEdit.height
+
+        Connections {
+            target: jlinkConnector
+            enabled: validationInProgress
+
+            onCheckHostVersionProcessFinished: {
+                delegate.isBusy = false
+                delegate.validationInProgress = false
+
+                if (exitedNormally) {
+                    var info = jlinkConnector.latestOutputInfo()
+
+                    console.log("info", JSON.stringify(info))
+
+                    if (info.hasOwnProperty("lib_version") && info.hasOwnProperty("commander_version")) {
+                        pathEdit.commanderVersion = info["commander_version"]
+                        pathEdit.libVersion = info["lib_version"]
+                        pathEdit.setStateIsValid()
+                    } else {
+                       pathEdit.setStateIsInvalid('Cannot determine version')
+                    }
+                } else {
+                     pathEdit.setStateIsInvalid('Validation process failed')
+                }
+            }
+        }
 
         SGWidgets.SGFilePicker {
             id: pathEdit
@@ -26,10 +55,15 @@ ProgramSettingsDelegate {
             contextMenuEnabled: true
             focus: true
 
+            property string commanderVersion
+            property string libVersion
+
             onActiveEditingChanged: {
                 if (activeEditing) {
                     setStateIsUnknown()
                     delegate.isBusy = false
+                    pathEdit.commanderVersion = ""
+                    pathEdit.libVersion = ""
                 } else {
                     delegate.isBusy = true
                     validateJlinkPath()
@@ -45,24 +79,26 @@ ProgramSettingsDelegate {
 
                 onAboutToShow: {
                     pathEdit.setStateIsUnknown()
+                    pathEdit.commanderVersion = ""
+                    pathEdit.libVersion = ""
                 }
 
                 onShowed: {
+                    pathEdit.textFieldActiveEditingEnabled = false
+
                     if (pathEdit.filePath.length === 0) {
                         pathEdit.filePath = searchJLinkExePath()
+                    } else  {
+                        pathEdit.filePath = delegate.jlinkExePath
                     }
+
+                    pathEdit.textFieldActiveEditingEnabled = true
 
                     if (pathEdit.filePath.length > 0) {
                         delegate.isBusy = true
                         validateWithDelayTimer.start()
                     }
                 }
-            }
-
-            Binding {
-                target: pathEdit
-                property: "filePath"
-                value: delegate.jlinkExePath
             }
 
             Binding {
@@ -74,10 +110,42 @@ ProgramSettingsDelegate {
             Timer {
                 id: validateWithDelayTimer
                 interval: 500
-                onTriggered: pathEdit.validateJlinkPath()
+                onTriggered: {
+                    pathEdit.validateJlinkPath()
+                }
+            }
+
+            Row {
+                x: pathEdit.textFieldX
+                y: pathEdit.textFieldY + pathEdit.textFieldHeight + 2
+
+                spacing: 4
+                SGWidgets.SGTag {
+                    color: TangoTheme.palette.chocolate1
+                    text: {
+                        if (pathEdit.commanderVersion.length) {
+                            return "commander " + pathEdit.commanderVersion
+                        }
+
+                        return ""
+                    }
+                }
+
+                SGWidgets.SGTag {
+                    color: TangoTheme.palette.chocolate1
+                    text: {
+                        if (pathEdit.libVersion.length) {
+                            return "library " + pathEdit.libVersion
+                        }
+
+                        return ""
+                    }
+                }
             }
 
             function validateJlinkPath() {
+                delegate.validationInProgress = true
+
                 var error = ""
                 if (filePath.length === 0) {
                     error = "JLink Commander is required"
@@ -87,13 +155,15 @@ ProgramSettingsDelegate {
                     error = "JLink Commander is not executable"
                 }
 
-                delegate.isBusy = false
-
                 if (error.length) {
                     pathEdit.setStateIsInvalid(error)
-                } else {
-                    pathEdit.setStateIsValid()
+                    delegate.isBusy = false
+                    validationInProgress = false
+                    return
                 }
+
+                jlinkConnector.exePath = filePath
+                jlinkConnector.checkHostVersion()
             }
         }
     }
