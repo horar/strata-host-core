@@ -23,6 +23,9 @@ public:
 
     void setWaitTime(std::chrono::milliseconds waitTime);
 
+private slots:
+    void deviceErrorOccured(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+
 private:
     std::chrono::milliseconds waitTime_;
     QString description_;
