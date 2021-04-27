@@ -10,10 +10,8 @@ if(NOT LIB_INSTALLED)
         ExternalProject_Add(cb-lite-c
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/cbl-official-api-${GIT_HASH}
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
-
-            # Must add dependency to avoid conflict with CouchbaseLiteCPP build
-            DEPENDS strata::CouchbaseLiteCPP
             EXCLUDE_FROM_ALL ON
+
             # Apply patches
             PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
             COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
@@ -58,10 +56,8 @@ if(NOT LIB_INSTALLED)
         ExternalProject_Add(cb-lite-c
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/cbl-official-api-${GIT_HASH}
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
-
-            # Must add dependency to avoid conflict with CouchbaseLiteCPP build
-            DEPENDS strata::CouchbaseLiteCPP
             EXCLUDE_FROM_ALL ON
+
             # Apply patches
             PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
             COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
