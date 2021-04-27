@@ -44,6 +44,9 @@ FocusScope {
     property bool showDropAreaIndicator: false
     property bool showMarks: false
     property string markColor: TangoTheme.palette.chameleon3
+    property string recentFiles: ""
+
+    property alias recentFilesModel: recentFilesModel
 
     LogViewModels.LogModel {
         id: logModel
@@ -88,7 +91,22 @@ FocusScope {
         property alias sidePanelWidth: logViewerMain.sidePanelWidth
         property alias automaticScroll: logViewerMain.automaticScroll
         property alias timestampSimpleFormat: logViewerMain.timestampSimpleFormat
+        property alias recentFiles: logViewerMain.recentFiles
     }
+
+   ListModel {
+       id: recentFilesModel
+
+      Component.onCompleted: {
+          if (recentFiles) {
+              recentFilesModel.clear()
+              var tmpModel = JSON.parse(recentFiles)
+              for (var i = 0; i < tmpModel.length; ++i) {
+                   recentFilesModel.append(tmpModel[i])
+              }
+          }
+      }
+   }
 
     Component {
         id: fileDialogComponent
@@ -131,14 +149,13 @@ FocusScope {
 
         for (var i = 0; i < path.length; ++i) {
             var errorString = logModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
-
+            if (errorString.length === 0) {
+                updateRecentFilesModel(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
+            }
             if (errorString.length > 0) {
                 errorStringList.push(errorString)
-                if (CommonCPP.SGUtilsCpp.fileName(path[i]) === "") {
-                    pathList.push(CommonCPP.SGUtilsCpp.dirName(path[i]))
-                } else {
-                    pathList.push(CommonCPP.SGUtilsCpp.fileName(path[i]))
-                }
+                pathList.push(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
+                removeFromRecentFiles(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
             }
 
             if (errorStringList.length > 0 && fileLoaded === false) {
@@ -154,6 +171,60 @@ FocusScope {
                         errorStringList.length > 1 ? qsTr("Could not open files (" + errorStringList.length + ")") : qsTr("Could not open file"),
                         generateHtmlList(pathList, errorStringList))
         }
+
+    }
+
+    function updateRecentFilesModel(path) {
+        var contains = false
+        for (var i = 0; i < recentFilesModel.count; ++i) {
+            if (recentFilesModel.get(i).filepath === path) {
+                contains = true
+                recentFilesModel.append({filepath: path, index: 100})
+                var count = recentFilesModel.count
+                for (var i = 0; i < count; ++i) {
+                    if (recentFilesModel.get(i).filepath !== path) {
+                        recentFilesModel.append({filepath: recentFilesModel.get(i).filepath, index: 100})
+                    }
+                }
+                if (count > 1) {
+                    recentFilesModel.remove(0, count - 1)
+                }
+                break
+            }
+        }
+        if (contains === false) {
+            if (recentFilesModel.count === 5) {
+                recentFilesModel.remove(recentFilesModel.count - 1, 1)
+            }
+            recentFilesModel.append({filepath: path, index: 100})
+            var count = recentFilesModel.count
+            for (var i = 0; i < count; ++i) {
+                if (recentFilesModel.get(i).filepath !== path) {
+                    recentFilesModel.append({filepath: recentFilesModel.get(i).filepath, index: 100})
+                }
+            }
+            if (count > 1) {
+                recentFilesModel.remove(0, count - 1)
+            }
+        }
+        updateRecentFiles()
+    }
+
+    function removeFromRecentFiles(path) {
+        for (var j = 0; j < recentFilesModel.count; ++j) {
+            if (path === recentFilesModel.get(j).filepath && fileModel.containsFilePath(path) === false) {
+                recentFilesModel.remove(j, 1)
+            }
+        }
+        updateRecentFiles()
+    }
+
+    function updateRecentFiles() {
+        var tmpModel = []
+        for (var i = 0; i < recentFilesModel.count; ++i) {
+             tmpModel.push(recentFilesModel.get(i))
+        }
+        recentFiles = JSON.stringify(tmpModel)
     }
 
     function generateHtmlList(firstList,secondList) {
@@ -167,6 +238,15 @@ FocusScope {
 
     function clearScrollback() {
         logModel.clear();
+    }
+
+    function closeAllFiles() {
+        logModel.removeAllFiles()
+    }
+
+    function clearRecentFiles() {
+        recentFiles = ""
+        recentFilesModel.clear()
     }
 
     CommonCPP.SGSortFilterProxyModel {
