@@ -103,6 +103,7 @@ Rectangle {
             iconText: "Platform Interface Generator"
             iconSource: "qrc:/partial-views/control-view-creator/components/PlatformInterfaceGeneratorIcon.svg"
             selected: viewStack.currentIndex === 3
+            enabled: true
             tooltipDescription: "Show Platform Interface Generator"
 
             function onClicked() {
