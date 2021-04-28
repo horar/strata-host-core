@@ -269,7 +269,7 @@ Item {
                                     }
                                 } else {
                                     openProjectContainer.url = model.url
-                                    toolBarListView.currentIndex = toolBarListView.editTab
+                                    viewStack.currentIndex = 1 // switch to edit view
                                     controlViewCreatorRoot.rccInitialized = false
                                 }
                             }

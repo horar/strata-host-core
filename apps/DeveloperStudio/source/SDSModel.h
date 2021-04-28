@@ -9,6 +9,8 @@ class CoreInterface;
 class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
+class PlatformInterfaceGenerator;
+class DebugMenuGenerator;
 
 class SDSModel: public QObject
 {
@@ -20,6 +22,8 @@ class SDSModel: public QObject
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
+    Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
+    Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, QObject *parent = nullptr);
@@ -33,6 +37,8 @@ public:
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
+    PlatformInterfaceGenerator* platformInterfaceGenerator() const;
+    DebugMenuGenerator* debugMenuGenerator() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -56,6 +62,8 @@ private:
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
+    PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
+    DebugMenuGenerator *debugMenuGenerator_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
     QPointer<QProcess> hcsProcess_;
     bool externalHcsConnected_{false};
