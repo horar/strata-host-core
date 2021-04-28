@@ -350,6 +350,7 @@ function registerQmlAsLanguage() {
         }
 
     })
+
     monaco.editor.defineTheme('qmlTheme', {
         base: 'vs',
         inherit: false,
@@ -386,6 +387,16 @@ function registerQmlAsLanguage() {
             verticalScrollbarSize: 15,
         }
     });
+
+    editor.addAction({
+        id: 'commentSelection',
+        label: "Comment selection",
+        contextMenuGroupId: "navigation",
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
+        run:(editor) =>{
+            editor.getAction('editor.action.commentLine').run()
+        }
+    })
 
     function getValue() {
         return editor.getValue();
