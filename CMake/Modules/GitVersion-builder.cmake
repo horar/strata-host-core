@@ -6,6 +6,7 @@ if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
             WORKING_DIRECTORY ${GIT_ROOT_DIR}
             RESULT_VARIABLE res_var
             OUTPUT_VARIABLE GIT_COMMIT_ID
+            ERROR_VARIABLE GIT_SKIP_ERROR_OUTPUT
         )
         message(STATUS "Searching for Git hash...'")
         execute_process(
