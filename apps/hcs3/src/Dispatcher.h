@@ -12,14 +12,14 @@
 
 #include <rapidjson/document.h>
 
-struct PlatformMessage
+struct StrataPlatformMessage
 {
     QByteArray from_client;
     QByteArray message;
     rapidjson::Document* msg_document;
 
     // constructor
-    PlatformMessage();
+    StrataPlatformMessage();
 };
 
 
@@ -33,7 +33,7 @@ public:
      * sets message handler callback
      * @param callback
      */
-    void setMsgHandler(std::function<void(const PlatformMessage& )> callback);
+    void setMsgHandler(std::function<void(const StrataPlatformMessage& )> callback);
 
 //    void registerHandler();
 //    void unregisterHandler();
@@ -42,7 +42,7 @@ public:
      * adds a message to the message queue
      * @param msg message to add
      */
-    void addMessage(const PlatformMessage& msg);
+    void addMessage(const StrataPlatformMessage& msg);
 
     /**
      * Dispatch messages (loop)
@@ -55,17 +55,17 @@ public:
     void stop();
 
 private:
-    int waitForMessage(PlatformMessage& msg, unsigned int timeout);
+    int waitForMessage(StrataPlatformMessage& msg, unsigned int timeout);
 
 private:
 
     //message queue
     std::mutex event_list_mutex_;
-    std::deque<PlatformMessage> events_list_;
+    std::deque<StrataPlatformMessage> events_list_;
     std::condition_variable event_list_cv_;
     std::atomic_bool stop_{false};
 
-    std::function<void(const PlatformMessage& )> callback_;
+    std::function<void(const StrataPlatformMessage& )> callback_;
 };
 
 #endif //HOST_HCS_DISPATCHER_H__

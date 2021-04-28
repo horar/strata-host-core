@@ -23,7 +23,7 @@
 #include <DownloadManager.h>
 
 
-struct PlatformMessage;
+struct StrataPlatformMessage;
 
 class Client;
 class StorageManager;
@@ -122,7 +122,7 @@ public slots:
     void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
 private:
-    void handleMessage(const PlatformMessage& msg);
+    void handleMessage(const StrataPlatformMessage& msg);
 
     void sendMessageToClients(const QString &platformId, const QString& message);
 

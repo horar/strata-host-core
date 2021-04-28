@@ -3,7 +3,7 @@
 
 const unsigned int g_waitForMessageTime = 500;  //in ms
 
-PlatformMessage::PlatformMessage()
+StrataPlatformMessage::StrataPlatformMessage()
 {
 
 }
@@ -18,7 +18,7 @@ HCS_Dispatcher::~HCS_Dispatcher()
 
 }
 
-void HCS_Dispatcher::setMsgHandler(std::function<void(const PlatformMessage& )> callback)
+void HCS_Dispatcher::setMsgHandler(std::function<void(const StrataPlatformMessage& )> callback)
 {
     callback_ = callback;
 }
@@ -26,7 +26,7 @@ void HCS_Dispatcher::setMsgHandler(std::function<void(const PlatformMessage& )> 
 // void registerHandler();
 // void unregisterHandler();
 
-void HCS_Dispatcher::addMessage(const PlatformMessage& msg)
+void HCS_Dispatcher::addMessage(const StrataPlatformMessage& msg)
 {
     if(stop_ == false) {
         {
@@ -41,7 +41,7 @@ void HCS_Dispatcher::addMessage(const PlatformMessage& msg)
 void HCS_Dispatcher::dispatch()
 {
     int ret;
-    PlatformMessage msg;
+    StrataPlatformMessage msg;
 
     while(stop_ == false) {
 
@@ -64,7 +64,7 @@ void HCS_Dispatcher::stop()
     event_list_cv_.notify_all();
 }
 
-int HCS_Dispatcher::waitForMessage(PlatformMessage& msg, unsigned int timeout)
+int HCS_Dispatcher::waitForMessage(StrataPlatformMessage& msg, unsigned int timeout)
 {
     std::unique_lock<std::mutex> lock(event_list_mutex_);
     if (events_list_.empty()) {

@@ -11,6 +11,7 @@
 using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
+using strata::platform::PlatformMessage;
 
 PlatformController::PlatformController(): platformManager_(false, false, true) {
     connect(&platformManager_, &PlatformManager::platformRecognized, this, &PlatformController::newConnection);
@@ -77,7 +78,7 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     emit platformDisconnected(deviceId);
 }
 
-void PlatformController::messageFromPlatform(QByteArray deviceId, strata::platform::PlatformMessage message)
+void PlatformController::messageFromPlatform(QByteArray deviceId, PlatformMessage message)
 {
     PlatformPtr platform = platformManager_.getPlatform(deviceId);
     if (platform == nullptr) {
