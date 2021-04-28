@@ -43,7 +43,7 @@ const QString& PlatformMessage::jsonErrorString() const
     return data_->jsonErrorString_;
 }
 
-uint PlatformMessage::jsonErrorOffset() const
+ulong PlatformMessage::jsonErrorOffset() const
 {
     return data_->jsonErrorOffset_;
 }
