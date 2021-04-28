@@ -11,7 +11,7 @@ public:
     CmdSetPlatformId(const PlatformPtr& platform, const CmdSetPlatformIdData& data);
 
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
 
 private:
     CmdSetPlatformIdData data_;

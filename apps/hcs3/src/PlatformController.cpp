@@ -77,7 +77,7 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     emit platformDisconnected(deviceId);
 }
 
-void PlatformController::messageFromPlatform(QByteArray deviceId, QString message)
+void PlatformController::messageFromPlatform(QByteArray deviceId, strata::platform::PlatformMessage message)
 {
     PlatformPtr platform = platformManager_.getPlatform(deviceId);
     if (platform == nullptr) {
@@ -85,7 +85,7 @@ void PlatformController::messageFromPlatform(QByteArray deviceId, QString messag
     }
 
     QJsonObject wrapper {
-        { JSON_MESSAGE, message },
+        { JSON_MESSAGE, QString(message.raw()) },
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 

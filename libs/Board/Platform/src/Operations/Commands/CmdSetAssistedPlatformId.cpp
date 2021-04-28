@@ -61,7 +61,7 @@ QByteArray CmdSetAssistedPlatformId::message()
     return doc.toJson(QJsonDocument::Compact);
 }
 
-bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document& doc, CommandResult& result)
+bool CmdSetAssistedPlatformId::processNotification(const rapidjson::Document& doc, CommandResult& result)
 {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::setAssistedPlatformIdNotif, doc) == false) {
         return false;

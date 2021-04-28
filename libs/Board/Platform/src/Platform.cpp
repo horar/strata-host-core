@@ -73,26 +73,29 @@ R"(
     )
 );
 
-void Platform::messageReceivedHandler(QByteArray msg) {
-    // re-emit the message first, then parse
-    emit messageReceived(device_->deviceId(), msg);
+void Platform::messageReceivedHandler(QByteArray rawMsg) {
+    // re-emit the message first, then validate (for platform_id_changed)
 
-    rapidjson::Document doc;
-    if (CommandValidator::parseJsonCommand(msg, doc, true) == false) {
-        return;
-    }
-    if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, doc, true) == false) {
-        return;
+    PlatformMessage message(rawMsg);
+
+    if (message.isJsonValid() == false) {
+        qCDebug(logCategoryPlatform) << this << "JSON error at offset "
+            << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
-    qCInfo(logCategoryPlatform).noquote()
-        << "Received 'platform_id_changed' notification for device" << deviceId();
+    emit messageReceived(device_->deviceId(), message);
 
-    emit platformIdChanged(device_->deviceId());
+    if (message.isJsonValidObject()) {
+        if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
+            qCInfo(logCategoryPlatform) << this << "Received 'platform_id_changed' notification";
+
+            emit platformIdChanged(device_->deviceId());
+        }
+    }
 }
 
-void Platform::messageSentHandler(QByteArray msg) {
-    emit messageSent(device_->deviceId(), msg);
+void Platform::messageSentHandler(QByteArray rawMsg) {
+    emit messageSent(device_->deviceId(), PlatformMessage(rawMsg));
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg) {

@@ -66,7 +66,7 @@ signals:
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
     void closeConnection(const QByteArray& deviceId);
-    void messageFromPlatform(QByteArray deviceId, QString message);
+    void messageFromPlatform(QByteArray deviceId, strata::platform::PlatformMessage message);
 
 private:
     strata::PlatformManager platformManager_;

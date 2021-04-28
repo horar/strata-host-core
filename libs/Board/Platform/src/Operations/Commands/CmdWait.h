@@ -18,7 +18,7 @@ public:
 
     void sendCommand(quintptr lockId) override;
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
     CommandResult onTimeout() override;
 
     void setWaitTime(std::chrono::milliseconds waitTime);

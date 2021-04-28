@@ -23,6 +23,7 @@ public:
     const rapidjson::Document& json() const;
 
     bool isJsonValid() const;
+    bool isJsonValidObject() const;
     const QString& jsonErrorString() const;
     uint jsonErrorOffset() const;
 
