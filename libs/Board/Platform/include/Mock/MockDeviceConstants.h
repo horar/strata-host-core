@@ -553,6 +553,16 @@ R"({
     }
 })");
 
+const QByteArray start_flash_bootloader_response = normalizeMessage(
+R"({
+    "notification":{
+        "value":"start_flash_bootlaoder",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})");
+
 const QByteArray start_flash_firmware_response_invalid = normalizeMessage(
 R"({
     "notification":{
@@ -563,12 +573,22 @@ R"({
     }
 })");
 
-const QByteArray start_flash_bootloader_response = normalizeMessage(
+const QByteArray start_flash_firmware_response_invalid_command = normalizeMessage(
 R"({
     "notification":{
-        "value":"start_flash_bootloader",
+        "value":"start_flash_firmware",
         "payload":{
-            "status":"ok"
+            "status":"invalid_command"
+        }
+    }
+})");
+
+const QByteArray start_flash_firmware_response_firmware_too_large = normalizeMessage(
+R"({
+    "notification":{
+        "value":"start_flash_firmware",
+        "payload":{
+            "status":"firmware_too_large"
         }
     }
 })");
@@ -633,7 +653,7 @@ R"({
     }
 })");
 
-const QByteArray set_assisted_platform_id_response =
+const QByteArray set_assisted_platform_id_response = normalizeMessage(
 R"({
     "notification":{
         "value":"set_assisted_platform_id",
@@ -641,11 +661,11 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
-const QByteArray start_backup_firmware_request = R"({"cmd":"start_backup_firmware","payload":{}})";
+const QByteArray start_backup_firmware_request = normalizeMessage(R"({"cmd":"start_backup_firmware","payload":{}})");
 
-const QByteArray start_backup_firmware_response =
+const QByteArray start_backup_firmware_response = normalizeMessage(
 R"({
     "notification":{
         "value":"start_backup_firmware",
@@ -654,9 +674,9 @@ R"({
             "chunks":1
         }
     }
-})";
+})");
 
-const QByteArray backup_firmware_response =
+const QByteArray backup_firmware_response = normalizeMessage(
 R"({
     "notification":{
         "value":"backup_firmware",
@@ -669,6 +689,6 @@ R"({
             }
         }
     }
-})";
+})");
 }
 }
