@@ -30,6 +30,7 @@ Rectangle {
     }
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
+    property bool isConsoleLogOpen: false
 
     SGUserSettings {
         id: sgUserSettings
@@ -111,11 +112,11 @@ Rectangle {
         buttons: [okButtonObject]
 
         property var okButtonObject: ({
-            buttonText: "Ok",
-            buttonColor: acceptButtonColor,
-            buttonHoverColor: acceptButtonHoverColor,
-            closeReason: acceptCloseReason
-        });
+                                          buttonText: "Ok",
+                                          buttonColor: acceptButtonColor,
+                                          buttonHoverColor: acceptButtonHoverColor,
+                                          closeReason: acceptCloseReason
+                                      });
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
@@ -162,15 +163,22 @@ Rectangle {
                         viewStack.currentIndex = 0
                         break;
                     case editTab:
+                        if(isConsoleLogOpen) {
+                            consoleContainer.visible = true
+                            viewConsoleLog.visible = false
+                        }
                         viewStack.currentIndex = 1
                         break;
                     case viewTab:
+                        if(isConsoleLogOpen) {
+                            consoleContainer.visible = false
+                            viewConsoleLog.visible = true
+                        }
                         if (rccInitialized == false) {
                             recompileControlViewQrc();
                         } else {
                             viewStack.currentIndex = 2
                         }
-
                         break;
                     default:
                         viewStack.currentIndex = 0
@@ -230,15 +238,30 @@ Rectangle {
                     Layout.preferredHeight: 70
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
-                    color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
+                    color: (consoleContainer.visible || viewConsoleLog.visible)  && enabled ? Theme.palette.green : "transparent"
                     enabled: !startContainer.visible
                     tooltipDescription: "Toggle logger panel"
 
                     function onClicked() {
-                        if(consoleContainer.visible){
-                            consoleContainer.visible = false
-                        } else {
-                            consoleContainer.visible = true
+                        console.log(toolBarListView.currentIndex)
+                        if(toolBarListView.currentIndex === 1) {
+                            if(consoleContainer.visible){
+                                isConsoleLogOpen = false
+                                consoleContainer.visible = false
+                            } else {
+                                isConsoleLogOpen = true
+                                consoleContainer.visible = true
+                            }
+                        }
+                        if (toolBarListView.currentIndex === 2) {
+                            console.log(viewConsoleLog.visible)
+                            if(viewConsoleLog.visible){
+                                isConsoleLogOpen = false
+                                viewConsoleLog.visible = false
+                            } else {
+                                isConsoleLogOpen = true
+                                viewConsoleLog.visible = true
+                            }
                         }
                     }
                 }
@@ -265,27 +288,29 @@ Rectangle {
             orientation: Qt.Vertical
 
             StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            Start {
-                id: startContainer
+                id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                onVisibleChanged: {
-                    if(visible){
-                        consoleContainer.visible = false
+                Start {
+                    id: startContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    onVisibleChanged: {
+                        if(visible){
+                            consoleContainer.visible = false
+                            viewConsoleLog.visible = false
+                        }
                     }
                 }
-            }
 
-            Editor {
-                id: editor
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
+                Editor {
+                    id: editor
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
 
 
                 SGSplitView {
@@ -322,6 +347,8 @@ Rectangle {
                                         || source === NavigationControl.screens.LOAD_ERROR) {
                                     viewStack.currentIndex = 2
                                 }
+
+
                             } else if (status === Loader.Error) {
                                 // Tear Down creation context
                                 delete NavigationControl.context.class_id
@@ -342,13 +369,23 @@ Rectangle {
                     }
                 }
             }
-
             ConsoleContainer {
                 id:consoleContainer
+                width: parent.width - 71
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
             }
         }
     }
 
+    ViewConsoleContainer {
+        id: viewConsoleLog
+        width: parent.width - 71
+        implicitHeight: 200
+//        anchors.right: parent.right
+//        anchors.bottom: parent.bottom
+        visible: false
+    }
     ConfirmClosePopup {
         id: confirmBuildClean
         parent: mainWindow.contentItem
@@ -419,3 +456,4 @@ Rectangle {
         return false
     }
 }
+
