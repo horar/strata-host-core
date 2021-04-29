@@ -10,16 +10,14 @@
 
 #include <QByteArray>
 
-#include <rapidjson/document.h>
 
-struct PlatformMessage
+struct DispatcherMessage
 {
     QByteArray from_client;
     QByteArray message;
-    rapidjson::Document* msg_document;
 
     // constructor
-    PlatformMessage();
+    DispatcherMessage();
 };
 
 
@@ -33,7 +31,7 @@ public:
      * sets message handler callback
      * @param callback
      */
-    void setMsgHandler(std::function<void(const PlatformMessage& )> callback);
+    void setMsgHandler(std::function<void(const DispatcherMessage& )> callback);
 
 //    void registerHandler();
 //    void unregisterHandler();
@@ -42,7 +40,7 @@ public:
      * adds a message to the message queue
      * @param msg message to add
      */
-    void addMessage(const PlatformMessage& msg);
+    void addMessage(const DispatcherMessage& msg);
 
     /**
      * Dispatch messages (loop)
@@ -55,17 +53,17 @@ public:
     void stop();
 
 private:
-    int waitForMessage(PlatformMessage& msg, unsigned int timeout);
+    int waitForMessage(DispatcherMessage& msg, unsigned int timeout);
 
 private:
 
     //message queue
     std::mutex event_list_mutex_;
-    std::deque<PlatformMessage> events_list_;
+    std::deque<DispatcherMessage> events_list_;
     std::condition_variable event_list_cv_;
     std::atomic_bool stop_{false};
 
-    std::function<void(const PlatformMessage& )> callback_;
+    std::function<void(const DispatcherMessage& )> callback_;
 };
 
 #endif //HOST_HCS_DISPATCHER_H__
