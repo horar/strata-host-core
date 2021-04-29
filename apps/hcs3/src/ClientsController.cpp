@@ -75,7 +75,6 @@ void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int
 
         msg.from_client = QByteArray::fromStdString(client_connector_->getDealerID());
         msg.message = QByteArray::fromStdString(read_message);
-        msg.msg_document = nullptr;
 
         dispatcher_->addMessage(msg);
     }

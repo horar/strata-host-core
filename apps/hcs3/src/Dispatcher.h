@@ -10,13 +10,11 @@
 
 #include <QByteArray>
 
-#include <rapidjson/document.h>
 
 struct DispatcherMessage
 {
     QByteArray from_client;
     QByteArray message;
-    rapidjson::Document* msg_document;
 
     // constructor
     DispatcherMessage();
