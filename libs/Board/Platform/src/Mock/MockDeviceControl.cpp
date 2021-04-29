@@ -353,6 +353,18 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
             retVal.push_back(test_commands::start_flash_bootloader_response);
             break;
 
+        case MockCommand::Set_assisted_platform_id:
+            retVal.push_back(test_commands::set_assisted_platform_id_response);
+            break;
+
+        case MockCommand::Start_backup_firmware:
+            retVal.push_back(test_commands::start_backup_firmware_response);
+            break;
+
+        case MockCommand::Backup_firmware:
+            retVal.push_back(test_commands::backup_firmware_response);
+            break;
+
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);

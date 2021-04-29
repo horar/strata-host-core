@@ -19,10 +19,18 @@ private slots:
 
     // tests
     void flashFirmwareTest();
-    void flashBootloaderTest();
     void flashFirmwareWithoutStartApplicationTest();
-
+    void flashBootloaderTest();
+    void backupFirmwareTest();
     void setFwClassIdTest();
+    void setFwClassIdWithoutStartApplicationTest();
+
+    void startFlashFirmwareInvalidValueTest();
+
+    void flashFirmwareResendChunkTest();
+    void flashFirmwareMemoryErrorTest();
+    void flashFirmwareInvalidValueTest();
+    void flashFirmwareInvalidCmdSequenceTest();
 
     void disconnectWhileFlashingTest();
 
@@ -33,7 +41,7 @@ protected slots:
    void handleFlasherBootloaderProgress(int chunk, int total);
    void handleFlasherDevicePropertiesChanged();
 
-   void handleFlashingProgressForDisconnectWhileFlashingTest(int chunk, int total);
+   void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
@@ -41,7 +49,7 @@ private:
 
     void clearExpectedValues();
     void connectFlasherHandlers(strata::Flasher* flasher);
-    void connectFlasherForDisconnectWhileFlashingTest(strata::Flasher* flasher);
+    void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher);
 
     strata::platform::PlatformPtr platform_;
     std::shared_ptr<strata::device::MockDevice> device_;

@@ -633,6 +633,42 @@ R"({
     }
 })");
 
-} // namespace strata::device::test_commands
+const QByteArray set_assisted_platform_id_response =
+R"({
+    "notification":{
+        "value":"set_assisted_platform_id",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})";
 
-} // namespace strata::device
+const QByteArray start_backup_firmware_request = R"({"cmd":"start_backup_firmware","payload":{}})";
+
+const QByteArray start_backup_firmware_response =
+R"({
+    "notification":{
+        "value":"start_backup_firmware",
+        "payload": {
+            "size":3,
+            "chunks":1
+        }
+    }
+})";
+
+const QByteArray backup_firmware_response =
+R"({
+    "notification":{
+        "value":"backup_firmware",
+        "payload":{
+            "chunk":{
+                "number":0,
+                "size":3,
+                "crc":65285,
+                "data":"Test Data for backup Firmware command."
+            }
+        }
+    }
+})";
+}
+}
