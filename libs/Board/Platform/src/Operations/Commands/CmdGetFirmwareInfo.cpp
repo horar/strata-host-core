@@ -18,7 +18,7 @@ QByteArray CmdGetFirmwareInfo::message() {
     return QByteArray("{\"cmd\":\"get_firmware_info\",\"payload\":{}}");
 }
 
-bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc, CommandResult& result) {
+bool CmdGetFirmwareInfo::processNotification(const rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::getFirmwareInfoNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const rapidjson::Value& bootloader = payload[JSON_BOOTLOADER];

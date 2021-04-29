@@ -386,18 +386,18 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
     rapidjson::SchemaValidator validator(schema);
 
     if (json.Accept(validator) == false) {
-        rapidjson::StringBuffer buffer;
-        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-
-        json.Accept(writer);
-        QByteArray text(buffer.GetString(), static_cast<int>(buffer.GetSize()));
-
-        buffer.Clear();
-        writer.Reset(buffer);
-
-        validator.GetError().Accept(writer);
-
         if (quiet == false) {
+            rapidjson::StringBuffer buffer;
+            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+
+            json.Accept(writer);
+            QByteArray text(buffer.GetString(), static_cast<int>(buffer.GetSize()));
+
+            buffer.Clear();
+            writer.Reset(buffer);
+
+            validator.GetError().Accept(writer);
+
             qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
         }
 

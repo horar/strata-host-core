@@ -9,7 +9,7 @@ class CmdStartFlash : public BasePlatformCommand {
 public:
     CmdStartFlash(const PlatformPtr& platform, int size, int chunks, const QString& md5, bool flashFirmware);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
 private:
     const int size_;
     const int chunks_;
