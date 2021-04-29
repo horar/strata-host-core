@@ -98,8 +98,8 @@ void Platform::messageSentHandler(QByteArray rawMsg) {
     emit messageSent(device_->deviceId(), PlatformMessage(rawMsg));
 }
 
-void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg) {
-    emit deviceError(device_->deviceId(), errCode, msg);
+void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
+    emit deviceError(device_->deviceId(), errCode, errMsg);
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
