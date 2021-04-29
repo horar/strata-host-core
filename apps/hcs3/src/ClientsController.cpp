@@ -66,7 +66,7 @@ void ClientsController::stop()
 void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int)
 {
     std::string read_message;
-    StrataPlatformMessage msg;
+    DispatcherMessage msg;
 
     for(;;) {
         if (client_connector_->read(read_message) == false) {
