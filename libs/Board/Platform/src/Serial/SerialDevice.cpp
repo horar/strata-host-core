@@ -172,15 +172,16 @@ Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPor
 }
 
 void SerialDevice::handleWriteToPort(const QByteArray data) {
-    qint64 writtenBytes = serialPort_->write(data);
-    qint64 dataSize = data.size();
     // Strata commands must end with '\n'
-    if (data.endsWith('\n') == false) {
-        writtenBytes += serialPort_->write("\n", 1);
-        ++dataSize;
+    QByteArray dataToWrite = data;
+    if (dataToWrite.endsWith('\n') == false) {
+        dataToWrite.append('\n');
     }
-    if (writtenBytes == dataSize) {
-        emit messageSent(data);
+
+    qint64 writtenBytes = serialPort_->write(dataToWrite);
+
+    if (writtenBytes == dataToWrite.size()) {
+        emit messageSent(dataToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceSerial) << this << errMsg;
