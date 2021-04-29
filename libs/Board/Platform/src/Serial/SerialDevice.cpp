@@ -117,8 +117,9 @@ void SerialDevice::readMessage() {
     int from = 0;
     int end;
     while ((end = data.indexOf('\n', from)) > -1) {
+        ++end;
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
-        from = end + 1;  // +1 due to skip '\n'
+        from = end;
 
         // qCDebug(logCategoryDeviceSerial) << this << ": received message: " << QString::fromStdString(readBuffer_);
         emit messageReceived(QByteArray::fromStdString(readBuffer_));
