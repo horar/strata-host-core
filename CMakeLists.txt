@@ -63,8 +63,14 @@ add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 option(APPS_UTILS "Build project supplementary utils" ON)
 add_feature_info(APPS_UTILS APPS_UTILS "Build project supplementary utils")
 
-if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/strata-host-core-internal")
-    add_subdirectory(strata-host-core-internal)
+set(STRATA_HOST_CORE_INTERNAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../strata-host-core-internal")
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}")
+    add_subdirectory("${STRATA_HOST_CORE_INTERNAL_PATH}" "${CMAKE_BINARY_DIR}/strata-host-core-internal")
+endif()
+
+set(STRATA_PLATFORM_CONTROL_VIEWS "${CMAKE_CURRENT_SOURCE_DIR}/../strata-platform-control-views")
+if(IS_DIRECTORY "${STRATA_PLATFORM_CONTROL_VIEWS}")
+    add_subdirectory("${STRATA_PLATFORM_CONTROL_VIEWS}" "${CMAKE_BINARY_DIR}/strata-platform-control-views")
 endif()
 
 add_subdirectory(extern)

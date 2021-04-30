@@ -70,7 +70,7 @@ endif()
 generate_app_version(GITTAG_PREFIX "hcs_" MACBUNDLE OFF)
 generate_app_build_timestamp()
 
-set(HCS_CREDENTIALS_LOCATION ${CMAKE_SOURCE_DIR}/strata-host-core-internal/assets/config/hcs/credentials)
+set(HCS_CREDENTIALS_LOCATION ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs/credentials)
 
 if(NOT EXISTS ${HCS_CREDENTIALS_LOCATION})
     message(FATAL_ERROR "HCS config file location does not exist. You might need to clone strata-host-core-internal repository.")
@@ -86,7 +86,7 @@ file(GLOB HCS_CREDENTIALS_LOCATION_CHOICES
 )
 set_property(CACHE APPS_CORESW_HCS_CREDENTIALS PROPERTY STRINGS ${HCS_CREDENTIALS_LOCATION_CHOICES})
 
-file(READ ${CMAKE_SOURCE_DIR}/strata-host-core-internal/assets/config/hcs/credentials/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
+file(READ ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs/credentials/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
 generate_replicator_credentials(JSON_FILE ${JSON_CREDENTIALS})
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
@@ -139,7 +139,7 @@ endif()
 
 
 # deploy desired config file into side-by-side to compiled binary
-set(HCS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/strata-host-core-internal/assets/config/hcs)
+set(HCS_CONFIG_LOCATION ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs)
 
 if(NOT APPS_CORESW_HCS_CONFIG)
     set(APPS_CORESW_HCS_CONFIG hcs_qa.config CACHE STRING "Desired HCS configuration file." FORCE)
