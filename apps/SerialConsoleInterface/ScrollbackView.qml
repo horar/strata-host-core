@@ -21,6 +21,8 @@ Item {
     property int selectionStartPosition: -1
     property int selectionEndPosition: -1
 
+    property color highlightNoFocusColor: "#aaaaaa"
+
     signal resendMessageRequested(string message)
 
 
@@ -219,6 +221,7 @@ Item {
         model: scrollbackFilterModel
         clip: true
         boundsBehavior: Flickable.StopAtBounds
+        highlightMoveDuration: 100
 
         onActiveFocusChanged: {
             if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
@@ -272,6 +275,8 @@ Item {
                 if (position === undefined) {
                     return
                 }
+
+                listView.currentIndex = position.delegate_index
 
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
@@ -393,6 +398,24 @@ Item {
 
                     return "transparent"
                 }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+
+                color: "transparent"
+                border {
+                    width: 2
+                    color: {
+                        if (listView.activeFocus) {
+                            return TangoTheme.palette.highlight
+                        } else {
+                            return highlightNoFocusColor
+                        }
+                    }
+                }
+
+                visible: cmdDelegate.ListView.isCurrentItem
             }
 
             SGWidgets.SGText {
