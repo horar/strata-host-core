@@ -289,7 +289,13 @@ Item {
         id: srcConnection
         target: logger
         onLogMsg: {
-            if(controlViewCreatorRoot.visible && msg){
+            if(controlViewCreatorRoot.visible){
+                if(consoleModel.count > 0 && recompileRequested){
+                    for (var i = 0; i < consoleModel.count; i++){
+                        consoleModel.get(i).current = false
+                    }
+                }
+
                 consoleModel.append({
                                         time: timestamp(),
                                         type: getMsgType(type),
@@ -308,18 +314,6 @@ Item {
                 }
                 if(type === 2){
                     errorCount += 1
-                }
-            }
-        }
-    }
-
-    Connections {
-        target: sdsModel.resourceLoader
-
-        onFinishedRecompiling: {
-            if(consoleModel.count > 0 && recompileRequested){
-                for (var i = 0; i < consoleModel.count; i++){
-                    consoleModel.get(i).current = false
                 }
             }
         }

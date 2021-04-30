@@ -11,83 +11,61 @@ import "Console/"
 
 Item {
     id: resizeRectItem
+
     property real rectWidth
     property real rectHeight
+    property int warningCount: 0
+    property int errorCount: 0
+
     rectWidth: width
     rectHeight: height
+
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-
 
     Rectangle {
         id: resizeRect
         width: rectWidth
         height: rectHeight
-        color: "pink"
-
-        anchors.right: rightWall.left
         anchors.bottom: bottomWall.top
         anchors.top: topWall.bottom
-        anchors.left: leftWall.right
-
     }
 
-    Rectangle {
+    Item {
         id: topWall
-        x: -50
-        y: -50
+        x: 0
+        y: 0
         width: rectWidth + 5
         height: 4
-        color: "red"
-
     }
+
     MouseArea {
         id: topWallMA
         anchors.fill: topWall
         drag.target: topWall
-        drag.axis: Drag.YAxis
+        drag.minimumY: -440 // need to figure out when window resizee
+        drag.maximumY: 162
+        drag.minimumX: 0
+        drag.maximumX: 0
         cursorShape: Qt.DragMoveCursor
-        drag.minimumY: -10
+        property var clickPos: "0,0"
+        z:3
+        onPressed: {
+            clickPos  = Qt.point(mouse.x,mouse.y)
+            //var test = controlViewCreatorRoot.mapToItem()
+        }
         onPositionChanged: {
-          var newHeight = resizeRect.height - mouseY;
-          if (newHeight < height)
-                 return
-          console.log(mouseY)
+            console.log(controlViewCreatorRoot.height,resizeRect.height, mouseY)
 
         }
     }
 
-    Rectangle {
+    Item {
         id: bottomWall
         anchors.bottom: parent.bottom
         width: rectWidth
-        height: 4
-        color: "red"
+        height: 0.5
     }
-    Item {
-        id: leftWall
-        anchors.left: parent.left
-        width: 4
-        height: rectHeight
-    }
-    Item {
-        id: rightWall
-        anchors.right: parent.right
-        width: 4
-        height: rectHeight
-    }
-
-    states: [
-        State {
-            name: "hide"
-            PropertyChanges {
-                target: resizeRectItem
-                opacity: 0.0
-            }
-        }
-    ]
-    property int warningCount: 0
-    property int errorCount: 0
 
     ColumnLayout {
         anchors.fill: resizeRect

@@ -386,6 +386,7 @@ Rectangle {
 //        anchors.bottom: parent.bottom
         visible: false
     }
+
     ConfirmClosePopup {
         id: confirmBuildClean
         parent: mainWindow.contentItem
