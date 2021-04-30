@@ -20,6 +20,8 @@ Item {
     rectWidth: width
     rectHeight: height
 
+
+
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
@@ -43,8 +45,8 @@ Item {
         id: topWallMA
         anchors.fill: topWall
         drag.target: topWall
-        drag.minimumY: -440 // need to figure out when window resizee
-        drag.maximumY: 162
+        drag.minimumY: 0 - (controlViewCreatorRoot.height - (resizeRectItem.height + clickPos.y))
+        drag.maximumY: resizeRect.height
         drag.minimumX: 0
         drag.maximumX: 0
         cursorShape: Qt.DragMoveCursor
@@ -53,10 +55,6 @@ Item {
         onPressed: {
             clickPos  = Qt.point(mouse.x,mouse.y)
             //var test = controlViewCreatorRoot.mapToItem()
-        }
-        onPositionChanged: {
-            console.log(controlViewCreatorRoot.height,resizeRect.height, mouseY)
-
         }
     }
 
