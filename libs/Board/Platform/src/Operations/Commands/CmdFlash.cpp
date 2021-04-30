@@ -62,7 +62,7 @@ QByteArray CmdFlash::message() {
     return QByteArray(sb.GetString(), static_cast<int>(sb.GetSize()));
 }
 
-bool CmdFlash::processNotification(rapidjson::Document& doc, CommandResult& result) {
+bool CmdFlash::processNotification(const rapidjson::Document& doc, CommandResult& result) {
     CommandValidator::JsonType jsonType = (flashFirmware_)
                                           ? CommandValidator::JsonType::flashFirmwareNotif
                                           : CommandValidator::JsonType::flashBootloaderNotif;

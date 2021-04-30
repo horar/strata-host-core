@@ -16,7 +16,7 @@ QByteArray CmdStartBootloader::message() {
     return QByteArray("{\"cmd\":\"start_bootloader\",\"payload\":{}}");
 }
 
-bool CmdStartBootloader::processNotification(rapidjson::Document& doc, CommandResult& result) {
+bool CmdStartBootloader::processNotification(const rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::startBootloaderNotif, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {

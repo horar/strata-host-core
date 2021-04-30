@@ -11,7 +11,7 @@ class CmdFlash : public BasePlatformCommand {
 public:
     CmdFlash(const PlatformPtr& platform, int chunkCount, bool flashFirmware);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
     bool logSendMessage() const override;
     void setNewChunk(const QVector<quint8>& chunk, int chunkNumber);
 private:

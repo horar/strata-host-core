@@ -45,7 +45,6 @@ add_library(${PROJECT_NAME}
     include/Device.h
     include/Platform.h
     include/PlatformMessage.h
-    include/PlatformMessageData.h
     include/Serial/SerialDevice.h
     include/Mock/MockDevice.h
     include/Mock/MockDeviceControl.h
