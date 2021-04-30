@@ -100,9 +100,9 @@ FocusScope {
       Component.onCompleted: {
           if (recentFiles) {
               recentFilesModel.clear()
-              var tmpModel = JSON.parse(recentFiles)
+              var tmpModel = recentFiles.split(', ')
               for (var i = 0; i < tmpModel.length; ++i) {
-                   recentFilesModel.append(tmpModel[i])
+                   recentFilesModel.append({filepath: tmpModel[i]})
               }
           }
       }
@@ -179,11 +179,11 @@ FocusScope {
         for (var i = 0; i < recentFilesModel.count; ++i) {
             if (recentFilesModel.get(i).filepath === path) {
                 contains = true
-                recentFilesModel.append({filepath: path, index: 100})
+                recentFilesModel.append({filepath: path})
                 var count = recentFilesModel.count
                 for (var i = 0; i < count; ++i) {
                     if (recentFilesModel.get(i).filepath !== path) {
-                        recentFilesModel.append({filepath: recentFilesModel.get(i).filepath, index: 100})
+                        recentFilesModel.append({filepath: recentFilesModel.get(i).filepath})
                     }
                 }
                 if (count > 1) {
@@ -196,11 +196,11 @@ FocusScope {
             if (recentFilesModel.count === 5) {
                 recentFilesModel.remove(recentFilesModel.count - 1, 1)
             }
-            recentFilesModel.append({filepath: path, index: 100})
+            recentFilesModel.append({filepath: path})
             var count = recentFilesModel.count
             for (var i = 0; i < count; ++i) {
                 if (recentFilesModel.get(i).filepath !== path) {
-                    recentFilesModel.append({filepath: recentFilesModel.get(i).filepath, index: 100})
+                    recentFilesModel.append({filepath: recentFilesModel.get(i).filepath})
                 }
             }
             if (count > 1) {
@@ -219,12 +219,26 @@ FocusScope {
         updateRecentFiles()
     }
 
-    function updateRecentFiles() {
-        var tmpModel = []
-        for (var i = 0; i < recentFilesModel.count; ++i) {
-             tmpModel.push(recentFilesModel.get(i))
+    function getRecentFilesIndex(path) {
+        var count = recentFilesModel.count
+        for (var i = 0; i < count; ++i) {
+            if (path === recentFilesModel.get(i).filepath) {
+                return i
+            }
         }
-        recentFiles = JSON.stringify(tmpModel)
+        return -1
+    }
+
+    function updateRecentFiles() {
+        var tmpModel = ""
+        for (var i = 0; i < recentFilesModel.count; ++i) {
+            if(recentFilesModel.count - 1 === i){
+                tmpModel = tmpModel + recentFilesModel.get(i).filepath
+            } else {
+                tmpModel = tmpModel + recentFilesModel.get(i).filepath + ", "
+            }
+        }
+        recentFiles = tmpModel
     }
 
     function generateHtmlList(firstList,secondList) {
