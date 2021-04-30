@@ -12,6 +12,7 @@ Item {
     property bool exclusive: true
     property int orientation: Qt.Horizontal
     property bool scaleToFit: false
+    property int minimumButtonWidth: -1
 
     /* Holds indexes of checked buttons in power of 2 format:
        for example:
@@ -56,6 +57,7 @@ Item {
                 roundedTop: orientation == Qt.Vertical ? index === 0 : true
                 roundedBottom: orientation == Qt.Vertical ? index === repeater.count - 1 : true
                 scaleToFit: control.scaleToFit
+                minimumContentWidth: control.minimumButtonWidth
 
                 property int powIndex: 1 << index
 
