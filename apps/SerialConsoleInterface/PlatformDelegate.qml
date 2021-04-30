@@ -19,6 +19,8 @@ FocusScope {
     property var filterList: []
     property bool automaticScroll: true
 
+    property bool hexViewShown: false
+
     StackView {
         id: stackView
         anchors.fill: parent
@@ -67,6 +69,52 @@ FocusScope {
                 event.accepted = true
             }
 
+            Item {
+                id: hexViewWrapper
+                width: platformDelegate.hexViewShown ? hexView.width + 4 : 0
+                anchors {
+                    top: parent.top
+                    bottom: scrollbackView.bottom
+                    right: parent.right
+                    rightMargin: 6
+                }
+
+                Behavior on width { NumberAnimation {}}
+
+                HexView {
+                    id: hexView
+                    height: parent.height
+                    anchors.right: parent.right
+
+                    property var nextContent: ""
+                    onNextContentChanged: {
+                        changeContentTimer.start()
+                    }
+
+                    Timer {
+                        id: changeContentTimer
+                        interval: 500
+                        triggeredOnStart: true
+                        onTriggered: {
+                            hexView.content = hexView.nextContent
+                        }
+                    }
+
+                    Binding {
+                        target: hexView
+                        property: "nextContent"
+                        when: platformDelegate.hexViewShown
+                        value: {
+                            if (scrollbackView.currentIndex < 0) {
+                                return ""
+                            }
+
+                            return platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                        }
+                    }
+                }
+            }
+
             ScrollbackView {
                 id: scrollbackView
                 anchors {
@@ -74,7 +122,8 @@ FocusScope {
                     bottom: inputWrapper.top
                     bottomMargin: 2
                     left: parent.left
-                    right: parent.right
+                    leftMargin: 6
+                    right: hexViewWrapper.left
                 }
 
                 model: platformDelegate.scrollbackModel
@@ -94,6 +143,7 @@ FocusScope {
                     bottom: parent.bottom
                     left: parent.left
                     right: parent.right
+                    margins: 6
                 }
 
                 focus: true
@@ -178,13 +228,30 @@ FocusScope {
                         iconSize: toolButtonRow.iconHeight
                         onClicked: showProgramView()
                     }
+
+                    SGWidgets.SGIconButton {
+                        id: hexViewButton
+                        text: qsTr("Hex")
+                        hintText: "Raw message in hex viewer"
+                        icon.source: "qrc:/images/hex-view.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        checkable: true
+                        onClicked: {
+                            platformDelegate.hexViewShown = !platformDelegate.hexViewShown
+                        }
+
+                        Binding {
+                            target: hexViewButton
+                            property: "checked"
+                            value: platformDelegate.hexViewShown
+                        }
+                    }
                 }
 
                 Column {
                     anchors {
                         top: toolButtonRow.top
                         right: parent.right
-                        rightMargin: 6
                     }
 
                     spacing: 4
@@ -304,7 +371,6 @@ FocusScope {
                         top: toolButtonRow.bottom
                         left: parent.left
                         topMargin: 2
-                        margins: 6
                     }
 
                     text: model.platform.errorString
@@ -322,7 +388,7 @@ FocusScope {
                         left: parent.left
                         right: btnSend.left
                         topMargin: 2
-                        margins: 6
+                        rightMargin: 6
                     }
 
                     enabled: model.platform.status === Sci.SciPlatform.Ready
@@ -412,7 +478,6 @@ FocusScope {
                     anchors {
                         top: messageEditor.top
                         right: parent.right
-                        rightMargin: 6
                     }
 
                     enabled: messageEditor.enabled

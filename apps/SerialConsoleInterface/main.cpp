@@ -1,6 +1,7 @@
 #include <PlatformManager.h>
 #include "SciModel.h"
 #include "Version.h"
+#include "HexModel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -79,7 +80,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciScrollbackModel>("tech.strata.sci", 1, 0, "SciScrollbackModel", "cannot instantiate SciScrollbackModel in qml");
     qmlRegisterUncreatableType<SciCommandHistoryModel>("tech.strata.sci", 1, 0, "SciCommandHistoryModel", "cannot instantiate SciCommandHistoryModel in qml");
     qmlRegisterUncreatableType<SciFilterSuggestionModel>("tech.strata.sci", 1, 0, "SciFilterSuggestionModel", "cannot instantiate SciFilterSuggestionModel in qml");
-
     qmlRegisterUncreatableType<strata::PlatformManager>("tech.strata.sci", 1, 0, "PlatformManager", "can not instantiate PlatformManager in qml");
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
@@ -88,6 +88,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<strata::FlasherConnector::Operation>();
     qRegisterMetaType<strata::FlasherConnector::State>();
     qRegisterMetaType<strata::FlasherConnector::Result>();
+
+    qmlRegisterType<HexModel>("tech.strata.sci", 1, 0, "HexModel");
 
     loadResources();
 

@@ -21,6 +21,7 @@ Item {
     property int selectionStartPosition: -1
     property int selectionEndPosition: -1
 
+    property int currentIndex: scrollbackFilterModel.mapIndexToSource(listView.currentIndex)
     property color highlightNoFocusColor: "#aaaaaa"
 
     signal resendMessageRequested(string message)
@@ -159,8 +160,16 @@ Item {
     }
 
     Rectangle {
-        anchors.fill: parent
+        id: listViewBg
+        anchors {
+            fill: listView
+            margins: -listViewBg.border.width
+        }
         color: "white"
+        border {
+            width: 1
+            color: TangoTheme.palette.componentBorder
+        }
     }
 
     SGWidgets.SGAbstractContextMenu {
@@ -214,8 +223,7 @@ Item {
         id: listView
         anchors {
             fill: parent
-            leftMargin: 2
-            rightMargin: 2
+            margins: listViewBg.border.width
         }
 
         model: scrollbackFilterModel
@@ -348,7 +356,12 @@ Item {
         }
 
         ScrollBar.vertical: ScrollBar {
-            width: 12
+            anchors {
+                right: listView.right
+                rightMargin: 0
+            }
+            width: 8
+
             policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
             visible: listView.height < listView.contentHeight
