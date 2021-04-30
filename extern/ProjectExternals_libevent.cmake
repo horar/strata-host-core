@@ -21,25 +21,6 @@ else()
     set(MACOSX_CMAKE_ARGS "")
 endif()
 
-
-ExternalProject_Add(libevent
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libevent-${GIT_HASH}
-        SOURCE_DIR ${SOURCE_DIR_EXTERN}/libevent
-        BINARY_DIR ${EXTERN_INSTALL_DIR_PATH}/libevent-${GIT_HASH}/build-${CMAKE_VERSION}
-        EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS "${CMAKE_ARGS}"
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DEVENT__DISABLE_OPENSSL=ON
-            -DEVENT__BUILD_SHARED_LIBRARIES=ON
-            -DEVENT__DISABLE_BENCHMARK=ON
-            -DEVENT__DISABLE_SAMPLES=ON
-            -DEVENT__DISABLE_TESTS=ON
-            ${MACOSX_CMAKE_ARGS}
-
-        COPY_DYNAMIC_LIB_TO_BIN
-        INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
-)
-
 if(APPLE)
     set(LIBEVENT_DYNAMIC_LIB_PATH "${EXTERN_INSTALL_DIR_PATH}/libevent-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}event_core.${LIBEVENT_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}")
 elseif(WIN32)
@@ -48,12 +29,30 @@ else()
     set(LIBEVENT_DYNAMIC_LIB_PATH "")
 endif()
 
-ExternalProject_Add_Step(libevent COPY_DYNAMIC_LIB_TO_BIN
-        COMMENT "Copy libevent dynamic library from ${LIBEVENT_DYNAMIC_LIB_PATH} to ${CMAKE_BINARY_DIR}/bin"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBEVENT_DYNAMIC_LIB_PATH} ${CMAKE_BINARY_DIR}/bin
-        ALWAYS ON
-        DEPENDEES install
-)
+if(NOT LIB_INSTALLED)
+    ExternalProject_Add(libevent
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libevent-${GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/libevent
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+                -DEVENT__BUILD_SHARED_LIBRARIES=ON
+                -DEVENT__DISABLE_BENCHMARK=ON
+                -DEVENT__DISABLE_SAMPLES=ON
+                -DEVENT__DISABLE_TESTS=ON
+                -DEVENT__DISABLE_OPENSSL=ON
+                ${MACOSX_CMAKE_ARGS}
+
+            INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBEVENT_DYNAMIC_LIB_PATH} ${CMAKE_BINARY_DIR}/bin
+    )
+else()
+
+    execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBEVENT_DYNAMIC_LIB_PATH} ${CMAKE_BINARY_DIR}/bin
+    )
+
+endif()
 
 add_library(libevent::libevent SHARED IMPORTED GLOBAL)
 
