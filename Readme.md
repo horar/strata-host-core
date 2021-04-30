@@ -1,9 +1,3 @@
-# Strata Host Core Internal
-
-In order to be able to build Strata Developer Studio and HCS `strata-host-core-internal` repository needs to be cloned in the root directory of spyglass.
-
-- `strata-host-core-internal` can be accessed from here https://code.onsemi.com/projects/SECSWST/repos/strata-host-core-internal/browse 
-
 # Host directory
 
 ## How to build applications
