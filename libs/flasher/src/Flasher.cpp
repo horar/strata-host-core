@@ -188,7 +188,6 @@ bool Flasher::startActionCheck(const QString& errorString)
 bool Flasher::prepareForFlash(bool flashingFirmware)
 {
     if (binaryFile_.open(QIODevice::ReadOnly)) {
-        qDebug() << binaryFile_.fileName() << "is opened. " << "size of the file is: " << binaryFile_.size();
         if (binaryFile_.size() > 0) {
             {
                 QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);

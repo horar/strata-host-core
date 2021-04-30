@@ -17,7 +17,7 @@ private slots:
     void init();
     void cleanup();
 
-    // tests
+    // tests standard responses
     void flashFirmwareTest();
     void flashFirmwareWithoutStartApplicationTest();
     void flashBootloaderTest();
@@ -25,10 +25,10 @@ private slots:
     void setFwClassIdTest();
     void setFwClassIdWithoutStartApplicationTest();
 
+    //tests faulty/invalid responses
     void startFlashFirmwareInvalidValueTest();
     void startFlashFirmwareInvalidCommandTest();
     void startFlashFirmwareFirmwareTooLargeTest();
-
     void flashFirmwareResendChunkTest();
     void flashFirmwareMemoryErrorTest();
     void flashFirmwareInvalidValueTest();
@@ -54,18 +54,19 @@ private:
     void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher);
 
     strata::platform::PlatformPtr platform_;
-    std::shared_ptr<strata::device::MockDevice> device_;
+    std::shared_ptr<strata::device::MockDevice> mockDevice_;
     QSharedPointer<strata::Flasher> flasher_;
     QSharedPointer<strata::platform::operation::BasePlatformOperation> deviceOperation_;
 
     void getExpectedValues(QFile firmware);
     void getMd5(QFile firmware);
 
+    int flasherFinishedCount_ = 0;
     int flasherNoFirmwareCount_ = 0;
     int flasherErrorCount_ = 0;
+    int flasherDisconnectedCount_ = 0;
     int flasherTimeoutCount_ = 0;
     int flasherCancelledCount_ = 0;
-    int flasherFinishedCount_ = 0;
 
     QString expectedMd5_;
     int expectedChunksCount_;

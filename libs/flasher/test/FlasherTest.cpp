@@ -36,12 +36,14 @@ void FlasherTest::init()
     flasherFinishedCount_ = 0;
     flasherNoFirmwareCount_ = 0;
     flasherErrorCount_ = 0;
+    flasherDisconnectedCount_ = 0;
     flasherTimeoutCount_ = 0;
-    device_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
-    platform_ = std::make_shared<strata::platform::Platform>(device_);
+    flasherCancelledCount_ = 0;
+    mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
+    platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     expectedChunksCount_ = 0;
-    QVERIFY(!device_->mockIsOpened());
-    QVERIFY(device_->open());
+    QVERIFY(!mockDevice_->mockIsOpened());
+    QVERIFY(mockDevice_->open());
 }
 
 void FlasherTest::cleanup()
@@ -58,8 +60,8 @@ void FlasherTest::cleanup()
         deviceOperation_.reset();
     }
 
-    if (device_.get() != nullptr) {
-        device_.reset();
+    if (mockDevice_.get() != nullptr) {
+        mockDevice_.reset();
     }
 
     clearExpectedValues();
@@ -97,6 +99,11 @@ void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString 
         flasherTimeoutCount_++;
         break;
     }
+    case strata::Flasher::Result::Disconnect: {
+        qWarning() << er;
+        flasherDisconnectedCount_++;
+        break;
+    }
     case strata::Flasher::Result::Cancelled: {
         qWarning() << er;
         flasherCancelledCount_++;
@@ -124,7 +131,7 @@ void FlasherTest::handleFlasherState(strata::Flasher::State state, bool done)
             startBootloaderOperation->run();
 
             QTRY_COMPARE_WITH_TIMEOUT(startBootloaderOperation->isSuccessfullyFinished(), true, 1000);
-            QVERIFY(device_->mockIsBootloader());
+            QVERIFY(mockDevice_->mockIsBootloader());
         }
         break;
     }
@@ -152,7 +159,7 @@ void FlasherTest::handleFlasherDevicePropertiesChanged()
 void FlasherTest::handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total)
 {
     if (chunk >= total/2) {
-        device_->close();
+        mockDevice_->close();
     }
 }
 
@@ -192,7 +199,7 @@ void FlasherTest::connectFlasherHandlers(strata::Flasher *flasher) {
 
 void FlasherTest::connectFlasherForDisconnectWhileFlashing(strata::Flasher *flasher)
 {
-    connect(flasher, &strata::Flasher::flasherState, this, &FlasherTest::handleFlasherState);
+    connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForDisconnectWhileFlashing);
 }
 
@@ -208,35 +215,32 @@ void FlasherTest::getMd5(QFile firmware)
 void FlasherTest::getExpectedValues(QFile firmware)
 {
     if (firmware.open(QIODevice::ReadOnly)) {
-        if (firmware.size() > 0) {
 
-            getMd5(firmware.fileName());
+        getMd5(firmware.fileName());
 
-            expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + strata::CHUNK_SIZE) / strata::CHUNK_SIZE);
+        expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + strata::CHUNK_SIZE) / strata::CHUNK_SIZE);
 
-            while (!firmware.atEnd()) {
-                int chunkSize = strata::CHUNK_SIZE;
-                qint64 remainingFileSize = firmware.size() - firmware.pos();
+        while (!firmware.atEnd()) {
+            int chunkSize = strata::CHUNK_SIZE;
+            qint64 remainingFileSize = firmware.size() - firmware.pos();
 
-                if (remainingFileSize <= strata::CHUNK_SIZE) { //get size of the last chunk
-                    chunkSize = static_cast<int>(remainingFileSize);
-                }
-                QVector<quint8> chunk(chunkSize);
-                qint64 bytesRead = firmware.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
+            if (remainingFileSize <= strata::CHUNK_SIZE) { //get size of the last chunk
+                chunkSize = static_cast<int>(remainingFileSize);
+            }
+            QVector<quint8> chunk(chunkSize);
+            qint64 bytesRead = firmware.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
 
-                expectedChunkSize_.append(bytesRead);
+            expectedChunkSize_.append(bytesRead);
 
-                size_t firmwareBase64Size = base64::encoded_size(static_cast<size_t>(bytesRead));
-                QByteArray firmwareBase64;
-                firmwareBase64.resize(static_cast<int>(firmwareBase64Size));
-                base64::encode(firmwareBase64.data(), chunk.data(), static_cast<size_t>(bytesRead));
+            size_t firmwareBase64Size = base64::encoded_size(static_cast<size_t>(bytesRead));
+            QByteArray firmwareBase64;
+            firmwareBase64.resize(static_cast<int>(firmwareBase64Size));
+            base64::encode(firmwareBase64.data(), chunk.data(), static_cast<size_t>(bytesRead));
 
-                expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead))));
+            expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead))));
 
-
-                if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
-                    expectedChunkData_.append(firmwareBase64);
-                }
+            if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
+                expectedChunkData_.append(firmwareBase64);
             }
         }
     }
@@ -246,7 +250,6 @@ void FlasherTest::flashFirmwareTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -257,7 +260,7 @@ void FlasherTest::flashFirmwareTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -275,7 +278,6 @@ void FlasherTest::flashFirmwareTest()
         QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     }
-    qDebug() << recordedMessages[7];
     {
         actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
         const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
@@ -285,7 +287,6 @@ void FlasherTest::flashFirmwareTest()
         QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
         QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
     }
-    qDebug() << recordedMessages[8];
     {
         actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size());
         const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
@@ -465,7 +466,6 @@ void FlasherTest::flashFirmwareTest()
     QCOMPARE(recordedMessages.size(),31);
 }
 
-
 void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 {
     rapidjson::Document actualDoc;
@@ -480,7 +480,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -699,7 +699,7 @@ void FlasherTest::flashBootloaderTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1500);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -822,8 +822,6 @@ void FlasherTest::backupFirmwareTest()
     QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmwareBackup.bin");
     getExpectedValues(firmware.fileName());
 
-    rapidjson::Document expectedDoc;
-
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
@@ -832,7 +830,7 @@ void FlasherTest::backupFirmwareTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -861,8 +859,6 @@ void FlasherTest::setFwClassIdTest()
     QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
     getExpectedValues(firmware.fileName());
 
-    rapidjson::Document expectedDoc;
-
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
@@ -871,7 +867,7 @@ void FlasherTest::setFwClassIdTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -902,8 +898,6 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
     QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
     getExpectedValues(firmware.fileName());
 
-    rapidjson::Document expectedDoc;
-
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
@@ -912,7 +906,7 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
 
@@ -939,18 +933,18 @@ void FlasherTest::startFlashFirmwareInvalidValueTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
+
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherTimeoutCount_, 1, 2200);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -976,18 +970,18 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
+
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 2200);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -1013,18 +1007,18 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
+
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 2200);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -1050,19 +1044,18 @@ void FlasherTest::flashFirmwareResendChunkTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Flash_firmware_resend_chunk,MockCommand::Flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_resend_chunk,MockCommand::Flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -1106,19 +1099,18 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Flash_firmware_memory_error,MockCommand::Flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_memory_error,MockCommand::Flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -1153,19 +1145,18 @@ void FlasherTest::flashFirmwareInvalidValueTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_value,MockCommand::Flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_value,MockCommand::Flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherTimeoutCount_, 1, 2200);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -1200,19 +1191,18 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 {
     rapidjson::Document actualDoc;
     QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    device_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_cmd_sequence,MockCommand::Flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_cmd_sequence,MockCommand::Flash_firmware);
 
     flasher_->flashFirmware();
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
 
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -1245,20 +1235,15 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 
 void FlasherTest::disconnectWhileFlashingTest()
 {
-    rapidjson::Document actualDoc;
-    QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
-    getExpectedValues(firmware.fileName());
-
+    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherForDisconnectWhileFlashing(flasher_.data());
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherDisconnectedCount_, 1, 1000);
 
-    qWarning() << flasherErrorCount_ << flasherNoFirmwareCount_ << flasherTimeoutCount_;
-
-    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
-    qDebug() << recordedMessages;
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(),0);
 }
