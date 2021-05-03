@@ -34,7 +34,11 @@ private slots:
     void flashFirmwareInvalidValueTest();
     void flashFirmwareInvalidCmdSequenceTest();
 
+    //test faulty scenarios
     void disconnectWhileFlashingTest();
+    void setNoFwClassIdTest();
+    void flashFirmwareCancelTest();
+    void flashBootloaderCancelTest();
 
 protected slots:
    void handleFlasherFinished(strata::Flasher::Result result, QString);
@@ -44,6 +48,7 @@ protected slots:
    void handleFlasherDevicePropertiesChanged();
 
    void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
+   void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
@@ -52,6 +57,7 @@ private:
     void clearExpectedValues();
     void connectFlasherHandlers(strata::Flasher* flasher);
     void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher);
+    void connectFlasherForCancelFirmwareOperation(strata::Flasher* flasher);
 
     strata::platform::PlatformPtr platform_;
     std::shared_ptr<strata::device::MockDevice> mockDevice_;
