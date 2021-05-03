@@ -22,12 +22,15 @@ Item {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
+
     Rectangle {
         id: resizeRect
         width: rectWidth
         height: rectHeight
         anchors.bottom: parent.bottom
         anchors.top: topWall.bottom
+        color: "#eee"
+
     }
 
     Item {
@@ -39,7 +42,6 @@ Item {
     }
 
     MouseArea {
-        id: topWallMA
         anchors.fill: topWall
         drag.target: topWall
         drag.minimumY: 0 - (controlViewCreatorRoot.height - (consoleLog.height + clickPos.y) + 15)

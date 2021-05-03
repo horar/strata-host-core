@@ -112,11 +112,11 @@ Rectangle {
         buttons: [okButtonObject]
 
         property var okButtonObject: ({
-                                          buttonText: "Ok",
-                                          buttonColor: acceptButtonColor,
-                                          buttonHoverColor: acceptButtonHoverColor,
-                                          closeReason: acceptCloseReason
-                                      });
+            buttonText: "Ok",
+            buttonColor: acceptButtonColor,
+            buttonHoverColor: acceptButtonHoverColor,
+            closeReason: acceptCloseReason
+        });
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
@@ -243,7 +243,6 @@ Rectangle {
                     tooltipDescription: "Toggle logger panel"
 
                     function onClicked() {
-                        console.log(toolBarListView.currentIndex)
                         if(toolBarListView.currentIndex === 1) {
                             if(consoleContainer.visible){
                                 isConsoleLogOpen = false
@@ -254,7 +253,6 @@ Rectangle {
                             }
                         }
                         if (toolBarListView.currentIndex === 2) {
-                            console.log(viewConsoleLog.visible)
                             if(viewConsoleLog.visible){
                                 isConsoleLogOpen = false
                                 viewConsoleLog.visible = false
@@ -311,8 +309,6 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
-
-
                 SGSplitView {
                     id: controlViewContainer
                     Layout.fillHeight: true
@@ -347,8 +343,6 @@ Rectangle {
                                         || source === NavigationControl.screens.LOAD_ERROR) {
                                     viewStack.currentIndex = 2
                                 }
-
-
                             } else if (status === Loader.Error) {
                                 // Tear Down creation context
                                 delete NavigationControl.context.class_id
@@ -455,4 +449,3 @@ Rectangle {
         return false
     }
 }
-
