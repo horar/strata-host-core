@@ -12,16 +12,14 @@ import "../Console"
 Item {
     id: consoleLog
 
-    property real rectWidth
-    property real rectHeight
+    property real rectWidth: width
+    property real rectHeight : height
+
     property int warningCount: 0
     property int errorCount: 0
 
-    rectWidth: width
-    rectHeight: height
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-
 
     Rectangle {
         id: resizeRect
@@ -44,7 +42,7 @@ Item {
     MouseArea {
         anchors.fill: topWall
         drag.target: topWall
-        drag.minimumY: 0 - (controlViewCreatorRoot.height - (consoleLog.height + clickPos.y) + 15)
+        drag.minimumY: 0 - (controlViewCreatorRoot.height - (consoleLog.height + clickPos.y) + 5)
         drag.maximumY: 166
         drag.minimumX: 0
         drag.maximumX: 0

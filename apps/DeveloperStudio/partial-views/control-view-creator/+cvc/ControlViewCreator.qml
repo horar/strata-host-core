@@ -363,11 +363,9 @@ Rectangle {
                     }
                 }
             }
+
             ConsoleContainer {
                 id:consoleContainer
-                width: parent.width - 71
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
             }
         }
     }
