@@ -45,8 +45,8 @@ Item {
         id: topWallMA
         anchors.fill: topWall
         drag.target: topWall
-        drag.minimumY: 0 - (controlViewCreatorRoot.height - (resizeRectItem.height + clickPos.y))
-        drag.maximumY: resizeRect.height
+        drag.minimumY: 0 - (controlViewCreatorRoot.height - (resizeRectItem.height + clickPos.y) )
+        drag.maximumY: 168
         drag.minimumX: 0
         drag.maximumX: 0
         cursorShape: Qt.DragMoveCursor
@@ -56,6 +56,8 @@ Item {
             clickPos  = Qt.point(mouse.x,mouse.y)
             //var test = controlViewCreatorRoot.mapToItem()
         }
+
+
     }
 
     Item {
