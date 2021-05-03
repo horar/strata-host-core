@@ -543,6 +543,10 @@ Item {
 
                     onClicked: {
                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
+                        if (sourceIndex < 0) {
+                            return
+                        }
+
                         var item = scrollbackView.model.setIsCondensed(sourceIndex, !model.isCondensed)
                         clearSelection()
                     }
