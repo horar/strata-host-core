@@ -62,6 +62,9 @@ Item {
 
             for (var i = 0; i < consoleLogs.model.count; i++) {
                 var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i));
+                if (listElement < 0) {
+                    return
+                }
                 if (i >= start && i < end) {
                     listElement.state = "allSelected"
                 } else if (i < start - 1 || i > end) {
@@ -221,7 +224,7 @@ Item {
             onDoubleClicked: {
                 consoleLogs.deselectAll()
                 var clickedIndex = consoleLogs.indexAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
-                if (clickedIndex > -1) {
+                if (clickedIndex > -1 && consoleItems.mapIndexToSource(clickedIndex) > -1) {
                     consoleModel.get(consoleItems.mapIndexToSource(clickedIndex)).state = "allSelected"
                 }
             }

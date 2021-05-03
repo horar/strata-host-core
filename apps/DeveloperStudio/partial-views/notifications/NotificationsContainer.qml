@@ -23,7 +23,9 @@ Item {
         }
 
         function mapIndex(index) {
-            return Notifications.model.mapIndexToSource(mapIndexToSource(index))
+            if (Notifications.model.mapIndexToSource(mapIndexToSource(index)) > -1) {
+                return Notifications.model.mapIndexToSource(mapIndexToSource(index))
+            }
         }
     }
 

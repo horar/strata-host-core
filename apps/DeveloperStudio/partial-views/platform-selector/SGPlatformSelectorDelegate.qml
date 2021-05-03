@@ -325,6 +325,9 @@ Item {
                     visible: platformControlsColumn.comingSoon === false
 
                     function openView(view) {
+                        if (filteredPlatformSelectorModel.mapIndexToSource(model.index) < 0) {
+                            return
+                        }
                         let data = {
                             "device_id": model.device_id,
                             "class_id": model.class_id,

@@ -22,11 +22,15 @@ Rectangle {
         id: content
 
         onActionClicked: {
-            Notifications.model.remove(sortedModel.mapIndexToSource(modelIndex))
+            if (sortedModel.mapIndexToSource(modelIndex) > -1) {
+                Notifications.model.remove(sortedModel.mapIndexToSource(modelIndex))
+            }
         }
 
         onCloseClicked: {
-            Qt.callLater(Notifications.model.remove, sortedModel.mapIndexToSource(modelIndex))
+            if (sortedModel.mapIndexToSource(modelIndex) > -1) {
+                Qt.callLater(Notifications.model.remove, sortedModel.mapIndexToSource(modelIndex))
+            }
         }
     }
 }
