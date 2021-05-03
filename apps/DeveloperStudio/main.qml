@@ -50,7 +50,7 @@ SGWidgets.SGMainWindow {
             PlatformSelection.initialize(sdsModel)
         }
         if (!CoreUpdate.isInitialized) {
-            CoreUpdate.initialize(sdsModel.coreInterface, updateContainer)
+            CoreUpdate.initialize(sdsModel.coreInterface, updateLoader)
         }
         initialized()
     }
@@ -122,13 +122,15 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    Item {
-        id: updateContainer
+    Loader {
+        id: updateLoader
+        active: false
         anchors {
             centerIn: parent
         }
         width: 500
         height: 300
+        visible: active
     }
 
     ColumnLayout {

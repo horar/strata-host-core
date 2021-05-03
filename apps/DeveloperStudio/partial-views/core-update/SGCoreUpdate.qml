@@ -163,6 +163,10 @@ SGStrataPopup {
         CoreUpdate.setUserNotificationMode(askagain)
     }
 
+    onClosed: {
+        CoreUpdate.removeUpdatePopup()
+    }
+
     SGConfirmationPopup {
         id: errorPopup
         titleText: "Error when trying to perform software update"

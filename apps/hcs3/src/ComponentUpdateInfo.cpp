@@ -214,7 +214,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
 QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata) {
     qCInfo(logCategoryHcs) << "Launching Strata Maintenance Tool";
     QStringList arguments;
-    arguments << "--checkupdates";
+    arguments << "--checkupdates" <<  "--verbose";
 
     QProcess maintenanceToolProcess;
     maintenanceToolProcess.setProgram(absPathMaintenanceTool);

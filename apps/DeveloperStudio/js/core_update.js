@@ -5,7 +5,7 @@
 
 var isInitialized = false
 var coreInterface
-var updateContainer
+var updateLoader
 
 var update_info_string = ""
 var compact_update_info_string = ""
@@ -22,9 +22,9 @@ var update_alerticon
 var dontaskagain_checked = false
 var one_day = 86400000 // one day in ms
 
-function initialize (newCoreInterface, newUpdateContainer) {
+function initialize (newCoreInterface, newUpdateLoader) {
     coreInterface = newCoreInterface
-    updateContainer = newUpdateContainer
+    updateLoader = newUpdateLoader
     settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
     getUserNotificationModeFromINIFile()
     getLastKnownNotificationTimestampFromINIFile()
@@ -119,18 +119,20 @@ function processUpdateInfo (component_list) {
 }
 
 function createUpdatePopup () {
-    var coreUpdatePopup = NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateContainer)
-    coreUpdatePopup.width = updateContainer.width
-    coreUpdatePopup.height = updateContainer.height
+    NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateLoader)
 
-    coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
-    coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
+    updateLoader.item.width = updateLoader.width
+    updateLoader.item.height = updateLoader.height
 
-    coreUpdatePopup.update_info_string = update_info_string
-    coreUpdatePopup.error_string = error_string
-    coreUpdatePopup.dontaskagain_checked = dontaskagain_checked
+    updateLoader.item.update_info_string = update_info_string
+    updateLoader.item.error_string = error_string
+    updateLoader.item.dontaskagain_checked = dontaskagain_checked
 
-    coreUpdatePopup.open()
+    updateLoader.item.open()
+}
+
+function removeUpdatePopup () {
+    NavigationControl.removeView(updateLoader)
 }
 
 function getUserNotificationModeFromINIFile () {
