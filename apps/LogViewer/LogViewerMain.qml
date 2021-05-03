@@ -181,6 +181,9 @@ FocusScope {
 
         function filterAcceptsRow(row) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(row)
+            if (sourceIndex < 0) {
+                return
+            }
             var isMarked = logModel.data(sourceIndex, "isMarked")
             if (showMarksButton.checked && isMarked === false) {
                 return false
@@ -950,7 +953,13 @@ FocusScope {
                                 }
 
                                 onClicked: {
+                                if (index < 0) {
+                                    return
+                                }
                                     var sourceIndex = markedModel.mapIndexToSource(index)
+                                    if (sourceIndex < 0) {
+                                        return
+                                    }
                                     positionView(primaryLogView, sourceIndex)
                                 }
 
@@ -1088,6 +1097,10 @@ FocusScope {
                                 } else {
                                     sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }
+                                if (sourceIndex < 0) {
+                                    return
+                                }
+
                                 primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                                 primaryLogView.currentIndex = sourceIndex
                             }

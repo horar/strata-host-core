@@ -620,6 +620,9 @@ Item {
                         onClicked: {
                             logViewWrapper.forceActiveFocus()
                             var sourceIndex = logSortFilterModel.mapIndexToSource(index)
+                            if (sourceIndex < 0) {
+                                return
+                            }
                             delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
                         }
                     }
@@ -632,10 +635,19 @@ Item {
                         //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
                         var hackVariable = markedModel.sourceModel.count
                         var sourceIndex = logSortFilterModel.mapIndexToSource(model.index)
+                        if (sourceIndex < 0) {
+                            return ""
+                        }
                         if (showMarks) {
+                            if (markedModel.mapIndexToSource(sourceIndex) + 1 < 0) {
+                                return ""
+                            }
                             return markedModel.mapIndexToSource(sourceIndex) + 1
                         } else {
                             if (searchingMode) {
+                                if (searchResultModel.mapIndexToSource(sourceIndex) + 1 < 0) {
+                                    return ""
+                                }
                                 return searchResultModel.mapIndexToSource(sourceIndex) + 1
                             }
                             return sourceIndex + 1
@@ -805,8 +817,11 @@ Item {
         else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
         }
-        else if ((event.key === Qt.Key_M) && markIconVisible && currentIndex != -1) {
+        else if ((event.key === Qt.Key_M) && markIconVisible && currentIndex >= 0) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
+            if (sourceIndex < 0) {
+                return
+            }
             logModel.toggleIsMarked(sourceIndex)
         }
     }
