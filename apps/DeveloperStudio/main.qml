@@ -64,13 +64,27 @@ SGWidgets.SGMainWindow {
             controlViewCreatorLoader.visible = false
         }
 
-        SessionUtils.close_session()
+        SessionUtils.close_session((sessionClosed) => {
+                                       if (sessionClosed) {
+                                           // block window close for 100ms to give time for asynchronous XHR to send
+                                           close.accepted = false
+                                           waitForSessionClose.start()
+                                           return
+                                       } else {
+                                           // End session with HCS
+                                           sdsModel.coreInterface.unregisterClient();
+                                           if (SessionUtils.settings.rememberMe === false) {
+                                               SessionUtils.settings.clear()
+                                           }
+                                       }
+                                   })
+    }
 
-        // End session with HCS
-        sdsModel.coreInterface.unregisterClient();
-
-        if (SessionUtils.settings.rememberMe === false) {
-            SessionUtils.settings.clear()
+    Timer {
+        id: waitForSessionClose
+        interval: 100
+        onTriggered: {
+            mainWindow.close()
         }
     }
 

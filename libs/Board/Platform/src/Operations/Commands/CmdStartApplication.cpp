@@ -19,7 +19,7 @@ QByteArray CmdStartApplication::message() {
     return QByteArray("{\"cmd\":\"start_application\",\"payload\":{}}");
 }
 
-bool CmdStartApplication::processNotification(rapidjson::Document& doc, CommandResult& result) {
+bool CmdStartApplication::processNotification(const rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::startApplicationNotif, doc)) {
         result = CommandResult::Failure;
 

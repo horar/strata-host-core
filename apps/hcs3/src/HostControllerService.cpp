@@ -367,7 +367,7 @@ bool HostControllerService::parseConfig(const QString& config)
     return true;
 }
 
-void HostControllerService::handleMessage(const PlatformMessage& msg)
+void HostControllerService::handleMessage(const DispatcherMessage& msg)
 {
     emit newMessageFromClient(msg.message, msg.from_client);
 }

@@ -96,20 +96,23 @@ function logout_error(error){
 /*
   Login: Close session
 */
-function close_session() {
+function close_session(callback) {
     if (Rest.session !== '' && Rest.jwt !== ''){
         var headers = {"app": "strata"}
         Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
+        Rest.session = ""
+        callback(true)
+    } else {
+        callback(false)
     }
 }
 
 function close_session_result(response) {
-    Rest.session = ""
-//    if (response.message ==="session closed"){
-//        console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
-//    } else {
-//        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
-//    }
+    if (response.message ==="session closed"){
+        console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
+    } else {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
+    }
 }
 
 /*

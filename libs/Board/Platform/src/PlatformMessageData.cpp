@@ -19,7 +19,7 @@ PlatformMessageData::PlatformMessageData(const QByteArray& rawMessage)
 
     if (result.IsError()) {
         jsonErrorString_ = rapidjson::GetParseError_En(result.Code());
-        jsonErrorOffset_ = static_cast<uint>(result.Offset());
+        jsonErrorOffset_ = static_cast<ulong>(result.Offset());
 
         qCWarning(logCategoryPlatformMessage).nospace().noquote()
             << QStringLiteral("JSON parse error at offset ") << jsonErrorOffset_

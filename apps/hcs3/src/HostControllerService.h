@@ -22,7 +22,7 @@
 #include "DownloadManager.h"
 #include "ComponentUpdateInfo.h"
 
-struct PlatformMessage;
+struct DispatcherMessage;
 
 class Client;
 class StorageManager;
@@ -134,7 +134,7 @@ private slots:
     void platformDisconnected(const QByteArray& deviceId);
 
 private:
-    void handleMessage(const PlatformMessage& msg);
+    void handleMessage(const DispatcherMessage& msg);
 
     bool broadcastMessage(const QString& message);
 

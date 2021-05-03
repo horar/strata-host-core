@@ -32,7 +32,7 @@ QByteArray CmdWait::message()
     return QByteArray();
 }
 
-bool CmdWait::processNotification(rapidjson::Document& doc, CommandResult& result)
+bool CmdWait::processNotification(const rapidjson::Document& doc, CommandResult& result)
 {
     Q_UNUSED(doc)
     Q_UNUSED(result)

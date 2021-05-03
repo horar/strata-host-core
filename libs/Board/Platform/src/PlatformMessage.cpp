@@ -33,12 +33,17 @@ bool PlatformMessage::isJsonValid() const
     return (data_->json_.IsNull() == false);
 }
 
+bool PlatformMessage::isJsonValidObject() const
+{
+    return (isJsonValid() && data_->json_.IsObject());
+}
+
 const QString& PlatformMessage::jsonErrorString() const
 {
     return data_->jsonErrorString_;
 }
 
-uint PlatformMessage::jsonErrorOffset() const
+ulong PlatformMessage::jsonErrorOffset() const
 {
     return data_->jsonErrorOffset_;
 }
