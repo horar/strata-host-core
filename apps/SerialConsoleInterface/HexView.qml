@@ -18,6 +18,18 @@ FocusScope {
     property int charCellWidth: 1*Math.round(textMetrics.width) + 6
     property color highlightNoFocusColor: "#aaaaaa"
 
+    property int fullDigitTextLength: {
+        if (numeralSystemSelector.checkedIndices === 1) {
+            return 3
+        } else if (numeralSystemSelector.checkedIndices === 2) {
+            return 3
+        } else if (numeralSystemSelector.checkedIndices === 4) {
+            return 2
+        }
+
+        return 0
+    }
+
     onCurrentIndexChanged: {
         digitGrid.currentIndex = currentIndex
         charGrid.currentIndex = currentIndex
@@ -118,12 +130,11 @@ FocusScope {
                 }
             }
 
-            SGWidgets.SGText {
+            Row {
+                id: textRow
                 anchors.centerIn: parent
 
-                font.family: "monospace"
-                alternativeColorEnabled: digitDelegate.GridView.isCurrentItem
-                text: {
+                property string baseString: {
                     if (numeralSystemSelector.checkedIndices === 1) {
                         return model.octValue.toString().toUpperCase()
                     } else if (numeralSystemSelector.checkedIndices === 2) {
@@ -133,6 +144,23 @@ FocusScope {
                     }
 
                     return ""
+                }
+
+                SGWidgets.SGText {
+                    id: paddedText
+
+                    font.family: "monospace"
+                    text: "0".repeat(Math.max(0, fullDigitTextLength - textRow.baseString.length))
+                    color: baseText.color
+                    opacity: 0.5
+                }
+
+                SGWidgets.SGText {
+                    id: baseText
+
+                    font.family: "monospace"
+                    text: textRow.baseString
+                    alternativeColorEnabled: digitDelegate.GridView.isCurrentItem
                 }
             }
 
