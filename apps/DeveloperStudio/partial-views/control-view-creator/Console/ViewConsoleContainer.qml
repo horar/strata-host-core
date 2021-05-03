@@ -28,7 +28,6 @@ Item {
         anchors.bottom: parent.bottom
         anchors.top: topWall.bottom
         color: "#eee"
-
     }
 
     Item {
