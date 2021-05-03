@@ -34,6 +34,8 @@ QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case MessageRole:
         return item.message;
+    case RawMessageRole:
+        return item.rawMessage;
     case TypeRole:
         return static_cast<int>(item.type);
     case TimestampRole:
@@ -69,6 +71,7 @@ int SciScrollbackModel::count() const
 void SciScrollbackModel::append(const QByteArray &message, bool isRequest)
 {
     ScrollbackModelItem item;
+    item.rawMessage = message;
 
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
@@ -362,6 +365,7 @@ void SciScrollbackModel::setModelRoles()
 {
     roleByEnumHash_.clear();
     roleByEnumHash_.insert(MessageRole, "message");
+    roleByEnumHash_.insert(RawMessageRole, "rawMessage");
     roleByEnumHash_.insert(TypeRole, "type");
     roleByEnumHash_.insert(TimestampRole, "timestamp");
     roleByEnumHash_.insert(IsCondensedRole, "isCondensed");
