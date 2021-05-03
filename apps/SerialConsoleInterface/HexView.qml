@@ -58,7 +58,8 @@ FocusScope {
             right: verticalScrollbar.right
         }
 
-        color: "white"
+        color: TangoTheme.palette.componentBase
+
         border {
             width: 1
             color: TangoTheme.palette.componentBorder

@@ -44,7 +44,7 @@ FocusScope {
     Rectangle {
         id: bg
         anchors.fill: parent
-        color: dummyControl.palette.base
+        color: TangoTheme.palette.componentBase
     }
 
     TextMetrics {
