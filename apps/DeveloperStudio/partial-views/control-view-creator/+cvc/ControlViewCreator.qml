@@ -382,8 +382,6 @@ Rectangle {
         id: viewConsoleLog
         width: parent.width - 71
         implicitHeight: 200
-//        anchors.right: parent.right
-//        anchors.bottom: parent.bottom
         visible: false
     }
 

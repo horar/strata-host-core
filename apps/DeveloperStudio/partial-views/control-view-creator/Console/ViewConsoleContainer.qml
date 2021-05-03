@@ -6,11 +6,11 @@ import QtQuick.Window 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
-import "components/"
-import "Console/"
+import "../components"
+import "../Console"
 
 Item {
-    id: resizeRectItem
+    id: consoleLog
 
     property real rectWidth
     property real rectHeight
@@ -19,9 +19,6 @@ Item {
 
     rectWidth: width
     rectHeight: height
-
-
-
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
@@ -29,7 +26,7 @@ Item {
         id: resizeRect
         width: rectWidth
         height: rectHeight
-        anchors.bottom: bottomWall.top
+        anchors.bottom: parent.bottom
         anchors.top: topWall.bottom
     }
 
@@ -45,8 +42,8 @@ Item {
         id: topWallMA
         anchors.fill: topWall
         drag.target: topWall
-        drag.minimumY: 0 - (controlViewCreatorRoot.height - (resizeRectItem.height + clickPos.y) )
-        drag.maximumY: 168
+        drag.minimumY: 0 - (controlViewCreatorRoot.height - (consoleLog.height + clickPos.y) + 15)
+        drag.maximumY: 166
         drag.minimumX: 0
         drag.maximumX: 0
         cursorShape: Qt.DragMoveCursor
@@ -54,17 +51,7 @@ Item {
         z:3
         onPressed: {
             clickPos  = Qt.point(mouse.x,mouse.y)
-            //var test = controlViewCreatorRoot.mapToItem()
         }
-
-
-    }
-
-    Item {
-        id: bottomWall
-        anchors.bottom: parent.bottom
-        width: rectWidth
-        height: 0.5
     }
 
     ColumnLayout {
@@ -211,7 +198,6 @@ Item {
                         Layout.preferredWidth: 30
                         source: "qrc:/sgimages/times.svg"
                         Layout.alignment: Qt.AlignRight
-
                         onClicked:  {
                             viewConsoleLog.visible = false
                         }
