@@ -51,9 +51,7 @@ Item {
         onPressed: {
             clickPos  = Qt.point(mouse.x,mouse.y)
         }
-        onPositionChanged: {
-            console.log("x",x)
-        }
+
     }
 
     ConsoleContainer {
