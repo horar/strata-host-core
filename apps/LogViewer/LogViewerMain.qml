@@ -44,9 +44,8 @@ FocusScope {
     property bool showDropAreaIndicator: false
     property bool showMarks: false
     property string markColor: TangoTheme.palette.chameleon3
-    property string recentFiles: ""
-
-    property alias recentFilesModel: recentFilesModel
+    readonly property int maxRecentFiles: 5
+    property var recentFiles: []
 
     LogViewModels.LogModel {
         id: logModel
@@ -93,20 +92,6 @@ FocusScope {
         property alias timestampSimpleFormat: logViewerMain.timestampSimpleFormat
         property alias recentFiles: logViewerMain.recentFiles
     }
-
-   ListModel {
-       id: recentFilesModel
-
-      Component.onCompleted: {
-          if (recentFiles) {
-              recentFilesModel.clear()
-              var tmpModel = recentFiles.split(', ')
-              for (var i = 0; i < tmpModel.length; ++i) {
-                   recentFilesModel.append({filepath: tmpModel[i]})
-              }
-          }
-      }
-   }
 
     Component {
         id: fileDialogComponent
@@ -175,70 +160,50 @@ FocusScope {
     }
 
     function updateRecentFilesModel(path) {
+        var tmpRecentFiles = recentFiles
         var contains = false
-        for (var i = 0; i < recentFilesModel.count; ++i) {
-            if (recentFilesModel.get(i).filepath === path) {
+        for (var i = 0; i < tmpRecentFiles.length; ++i) {
+            if (tmpRecentFiles[i] === path) {
                 contains = true
-                recentFilesModel.append({filepath: path})
-                var count = recentFilesModel.count
+                tmpRecentFiles.push(path)
+                var count = tmpRecentFiles.length
                 for (var i = 0; i < count; ++i) {
-                    if (recentFilesModel.get(i).filepath !== path) {
-                        recentFilesModel.append({filepath: recentFilesModel.get(i).filepath})
+                    if (tmpRecentFiles[i] !== path) {
+                        tmpRecentFiles.push(tmpRecentFiles[i])
                     }
                 }
                 if (count > 1) {
-                    recentFilesModel.remove(0, count - 1)
+                    tmpRecentFiles.splice(0, count - 1)
                 }
                 break
             }
         }
         if (contains === false) {
-            if (recentFilesModel.count === 5) {
-                recentFilesModel.remove(recentFilesModel.count - 1, 1)
+            if (tmpRecentFiles.length === maxRecentFiles) {
+                tmpRecentFiles.splice(tmpRecentFiles.length - 1, 1)
             }
-            recentFilesModel.append({filepath: path})
-            var count = recentFilesModel.count
+            tmpRecentFiles.push(path)
+            var count = tmpRecentFiles.length
             for (var i = 0; i < count; ++i) {
-                if (recentFilesModel.get(i).filepath !== path) {
-                    recentFilesModel.append({filepath: recentFilesModel.get(i).filepath})
+                if (tmpRecentFiles[i] !== path) {
+                    tmpRecentFiles.push(tmpRecentFiles[i])
                 }
             }
             if (count > 1) {
-                recentFilesModel.remove(0, count - 1)
+                tmpRecentFiles.splice(0, count - 1)
             }
         }
-        updateRecentFiles()
+        recentFiles = tmpRecentFiles
     }
 
     function removeFromRecentFiles(path) {
-        for (var j = 0; j < recentFilesModel.count; ++j) {
-            if (path === recentFilesModel.get(j).filepath && fileModel.containsFilePath(path) === false) {
-                recentFilesModel.remove(j, 1)
+        var tmpRecentFiles = recentFiles
+        for (var j = 0; j < tmpRecentFiles.length; ++j) {
+            if (path === tmpRecentFiles[j] && fileModel.containsFilePath(path) === false) {
+                tmpRecentFiles.splice(j, 1)
             }
         }
-        updateRecentFiles()
-    }
-
-    function getRecentFilesIndex(path) {
-        var count = recentFilesModel.count
-        for (var i = 0; i < count; ++i) {
-            if (path === recentFilesModel.get(i).filepath) {
-                return i
-            }
-        }
-        return -1
-    }
-
-    function updateRecentFiles() {
-        var tmpModel = ""
-        for (var i = 0; i < recentFilesModel.count; ++i) {
-            if(recentFilesModel.count - 1 === i){
-                tmpModel = tmpModel + recentFilesModel.get(i).filepath
-            } else {
-                tmpModel = tmpModel + recentFilesModel.get(i).filepath + ", "
-            }
-        }
-        recentFiles = tmpModel
+        recentFiles = tmpRecentFiles
     }
 
     function generateHtmlList(firstList,secondList) {
@@ -259,8 +224,7 @@ FocusScope {
     }
 
     function clearRecentFiles() {
-        recentFiles = ""
-        recentFilesModel.clear()
+        recentFiles = []
     }
 
     CommonCPP.SGSortFilterProxyModel {

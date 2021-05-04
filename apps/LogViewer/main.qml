@@ -3,7 +3,6 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
 import QtQuick.Controls 2.12
-import Qt.labs.settings 1.1 as QtLabsSettings
 import QtQml 2.12
 
 SGWidgets.SGMainWindow {
@@ -14,7 +13,7 @@ SGWidgets.SGMainWindow {
     minimumHeight: 600
 
     property int statusBarHeight: logViewerMain.statusBarHeight
-    property string recentFiles: logViewerMain.recentFiles
+    property var recentFiles: logViewerMain.recentFiles
 
     visible: true
     title: qsTr("Log Viewer")
@@ -43,10 +42,10 @@ SGWidgets.SGMainWindow {
 
                 Instantiator {
                     id: recentFilesInstantiator
-                    model: logViewerMain.recentFilesModel
+                    model: recentFiles
                     delegate: QtLabsPlatform.MenuItem {
-                        text: qsTr("&%1: %2").arg(logViewerMain.getRecentFilesIndex(model.filepath) + 1).arg(model.filepath)
-                        onTriggered: logViewerMain.loadFiles(["file:" + model.filepath])
+                        text: qsTr("&%1: %2").arg(index + 1).arg(recentFiles[index])
+                        onTriggered: logViewerMain.loadFiles(["file:" + recentFiles[index]])
                     }
 
                     onObjectAdded: recentFilesSubMenu.insertItem(index, object)
