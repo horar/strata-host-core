@@ -108,18 +108,10 @@ FocusScope {
         }
     }
 
-    function getFilePath(callback) {
+    function getFilePath() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
                     logViewerMain,
                     fileDialogComponent)
-
-        dialog.accepted.connect(function() {
-            if (callback) {
-                lastOpenedFolder = dialog.folder
-                callback(dialog.fileUrl)
-            }
-            dialog.destroy()
-        })
 
         dialog.rejected.connect(function() {
             dialog.destroy()
@@ -323,7 +315,7 @@ FocusScope {
             hintText: "Add file"
 
             onClicked:  {
-                getFilePath(function(path) {})
+                getFilePath()
             }
         }
 
