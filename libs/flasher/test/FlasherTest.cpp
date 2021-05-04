@@ -22,8 +22,6 @@ using strata::device::MockVersion;
 namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
 
-//constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
-
 FlasherTest::FlasherTest() : platformOperations_(false, false) {
 
 }
@@ -89,36 +87,30 @@ void FlasherTest::clearExpectedValues()
     expectedChunkCrc_.clear();
 }
 
-void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString er)
+void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString)
 {
     switch (result) {
     case strata::Flasher::Result::Ok: {
-        qDebug() << er;
         flasherFinishedCount_++;
         break;
     }
     case strata::Flasher::Result::NoFirmware: {
-        qWarning() << er;
         flasherNoFirmwareCount_++;
         break;
     }
     case strata::Flasher::Result::Error: {
-        qCritical() << er;
         flasherErrorCount_++;
         break;
     }
     case strata::Flasher::Result::Timeout: {
-        qWarning() << er;
         flasherTimeoutCount_++;
         break;
     }
     case strata::Flasher::Result::Disconnect: {
-        qWarning() << er;
         flasherDisconnectedCount_++;
         break;
     }
     case strata::Flasher::Result::Cancelled: {
-        qWarning() << er;
         flasherCancelledCount_++;
         break;
     }
@@ -129,8 +121,6 @@ void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString 
 
 void FlasherTest::handleFlasherState(strata::Flasher::State state, bool done)
 {
-    qDebug() << "Handle flasher state: " << state << " is done: " << done;
-
     switch (state) {
     case strata::Flasher::State::SwitchToBootloader: {
         if (done) {
@@ -148,22 +138,6 @@ void FlasherTest::handleFlasherState(strata::Flasher::State state, bool done)
     default:
         break;
     }
-}
-
-void FlasherTest::handleFlasherFirmwareProgress(int chunk, int total)
-{
-    qDebug() << "flashFW: " << chunk << " out of: " << total;
-}
-
-void FlasherTest::handleFlasherBootloaderProgress(int chunk, int total)
-{
-    qDebug() << "flashBootloader: " << chunk << " out of: " << total;
-}
-
-void FlasherTest::handleFlasherDevicePropertiesChanged()
-{
-    qDebug() << "properties changed!";
-
 }
 
 void FlasherTest::handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total)
@@ -209,9 +183,6 @@ void FlasherTest::verifyMessage(const QByteArray &msg, const QByteArray &expecte
 void FlasherTest::connectFlasherHandlers(strata::Flasher *flasher) {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flasherState, this, &FlasherTest::handleFlasherState);
-    connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlasherFirmwareProgress);
-    connect(flasher, &strata::Flasher::flashBootloaderProgress, this, &FlasherTest::handleFlasherBootloaderProgress);
-    connect(flasher, &strata::Flasher::devicePropertiesChanged, this, &FlasherTest::handleFlasherDevicePropertiesChanged);
 }
 
 void FlasherTest::connectFlasherForDisconnectWhileFlashing(strata::Flasher *flasher)
@@ -294,7 +265,7 @@ void FlasherTest::getExpectedValues(QFile firmware)
             int chunkSize = strata::CHUNK_SIZE;
             qint64 remainingFileSize = firmware.size() - firmware.pos();
 
-            if (remainingFileSize <= strata::CHUNK_SIZE) { //get size of the last chunk
+            if (remainingFileSize <= strata::CHUNK_SIZE) { //Get size of the last chunk
                 chunkSize = static_cast<int>(remainingFileSize);
             }
             QVector<quint8> chunk(chunkSize);
@@ -529,7 +500,7 @@ void FlasherTest::flashFirmwareTest()
         QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[19]);
     }
 
-    QCOMPARE(recordedMessages[28],test_commands::start_application_request); //start application after flashing
+    QCOMPARE(recordedMessages[28],test_commands::start_application_request); //Start application after flashing
     QCOMPARE(recordedMessages[29],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[30],test_commands::request_platform_id_request);
 
@@ -752,7 +723,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
     QCOMPARE(recordedMessages[28],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[29],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),30); //without start application
+    QCOMPARE(recordedMessages.size(),30); //Without start application
 }
 
 void FlasherTest::flashBootloaderTest()
@@ -912,7 +883,7 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(recordedMessages[7],test_commands::start_backup_firmware_request);
 
     {
-    actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size()); //backup firmware
+    actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size()); //Backup firmware
     const rapidjson::Value& actualRequest = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"backup_firmware");
     QCOMPARE(actualRequest["status"].GetString(),"init");
@@ -948,7 +919,7 @@ void FlasherTest::setFwClassIdTest()
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
     {
-    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size()); //set assisted platform id request
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size()); //Set assisted platform id request
     const rapidjson::Value& actualRequest = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"set_assisted_platform_id");
     QCOMPARE(actualRequest["fw_class_id"].GetString(),"00000000-0000-4000-0000-000000000000");
@@ -988,7 +959,7 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
     {
-    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size()); //set assisted platform id request
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size()); //Set assisted platform id request
     const rapidjson::Value& actualRequest = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"set_assisted_platform_id");
     QCOMPARE(actualRequest["fw_class_id"].GetString(),"00000000-0000-4000-0000-000000000000");
@@ -1153,7 +1124,7 @@ void FlasherTest::flashFirmwareResendChunkTest()
         QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
     }
     {
-        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size()); //re-sent chunk
+        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size()); //Re-sent chunk
         const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
         QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
         QCOMPARE(actualChunk["number"].GetInt(),0);

@@ -32,7 +32,7 @@ private slots:
     void setFwClassIdTest();
     void setFwClassIdWithoutStartApplicationTest();
 
-    //tests faulty/invalid responses
+    // tests faulty/invalid responses
     void startFlashFirmwareInvalidValueTest();
     void startFlashFirmwareInvalidCommandTest();
     void startFlashFirmwareFirmwareTooLargeTest();
@@ -41,6 +41,7 @@ private slots:
     void flashFirmwareInvalidValueTest();
     void flashFirmwareInvalidCmdSequenceTest();
 
+    // tests faulty scenarios
     void disconnectWhileFlashingTest();
     void setNoFwClassIdTest();
     void flashFirmwareCancelTest();
@@ -49,10 +50,6 @@ private slots:
 protected slots:
    void handleFlasherFinished(strata::Flasher::Result result, QString);
    void handleFlasherState(strata::Flasher::State state, bool done);
-   void handleFlasherFirmwareProgress(int chunk, int total);
-   void handleFlasherBootloaderProgress(int chunk, int total);
-   void handleFlasherDevicePropertiesChanged();
-
    void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
    void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
 
@@ -68,7 +65,6 @@ private:
     strata::platform::PlatformPtr platform_;
     std::shared_ptr<strata::device::MockDevice> mockDevice_;
     QSharedPointer<strata::Flasher> flasher_;
-
     strata::platform::operation::PlatformOperations platformOperations_;
 
     void createFiles();
