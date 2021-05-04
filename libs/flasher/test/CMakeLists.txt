@@ -11,6 +11,7 @@ set(CMAKE_AUTOMOC ON)
 
 add_executable(${PROJECT_NAME}-test
     FlasherTest.cpp
+    FlasherTestConstants.h
     main.cpp
 )
 

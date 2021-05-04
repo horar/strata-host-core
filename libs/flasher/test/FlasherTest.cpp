@@ -1,11 +1,13 @@
 #include <chrono>
 #include <thread>
 
+#include "logging/LoggingQtCategories.h"
 #include "FlasherTest.h"
 #include <rapidjson/writer.h>
 #include <Operations/StartBootloader.h>
 #include <Operations/StartApplication.h>
 #include "FlasherConstants.h"
+#include "FlasherTestConstants.h"
 #include <CodecBase64.h>
 #include <Buypass.h>
 
@@ -28,10 +30,12 @@ FlasherTest::FlasherTest() : platformOperations_(false, false) {
 
 void FlasherTest::initTestCase()
 {
+    createFiles();
 }
 
 void FlasherTest::cleanupTestCase()
 {
+    cleanFiles();
 }
 
 void FlasherTest::init()
@@ -165,14 +169,14 @@ void FlasherTest::handleFlasherDevicePropertiesChanged()
 void FlasherTest::handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total)
 {
     if (chunk >= total/2) {
-        mockDevice_->close(); //Disconnecting device.
+        mockDevice_->close(); //Disconnecting device
     }
 }
 
 void FlasherTest::handleFlashingProgressForCancelFlashOperation(int chunk, int total)
 {
     if (chunk >= total/2) {
-        flasher_->cancel(); //Cancel flashing.
+        flasher_->cancel(); //Cancel flashing
     }
 }
 
@@ -224,6 +228,51 @@ void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flas
     connect(flasher, &strata::Flasher::flashBootloaderProgress, this, &FlasherTest::handleFlashingProgressForCancelFlashOperation);
 }
 
+void FlasherTest::createFiles()
+{
+    fakeFirmware_ = new QFile(QDir(QDir::tempPath()).filePath("fakeFirmware.bin"));
+    fakeBootloader_ = new QFile(QDir(QDir::tempPath()).filePath("fakeBootloader.bin"));
+    fakeFirmwareBackup_ = new QFile(QDir(QDir::tempPath()).filePath("fakeFirmwareBackup.bin"));
+
+    if (fakeFirmware_->open(QIODevice::ReadWrite) == false) {
+        qCCritical(logCategoryFlasher()) << "Cannot open fake firmware file" << fakeFirmware_->fileName() << fakeFirmware_->errorString();
+        delete fakeFirmware_;
+    }
+    if (fakeBootloader_->open(QIODevice::ReadWrite) == false) {
+        qCCritical(logCategoryFlasher()) << "Cannot open fake bootloader file" << fakeBootloader_->fileName() << fakeBootloader_->errorString();
+        delete fakeBootloader_;
+    }
+    if (fakeFirmwareBackup_->open(QIODevice::ReadWrite) == false) {
+        qCCritical(logCategoryFlasher()) << "Cannot open fake firmware for backup file" << fakeFirmwareBackup_->fileName() << fakeFirmwareBackup_->errorString();
+        delete fakeFirmwareBackup_;
+    }
+
+    QTextStream fakeFirmwareOut(fakeFirmware_);
+    QTextStream fakeBootloaderOut(fakeBootloader_);
+    QTextStream fakeFirmwareBackupOut(fakeFirmwareBackup_);
+
+    fakeFirmwareOut << strata::FlasherTestConstants::fakeFirmwareData;
+    fakeFirmwareOut.flush();
+    fakeBootloaderOut << strata::FlasherTestConstants::fakeBootloaderData;
+    fakeBootloaderOut.flush();
+    fakeFirmwareBackupOut << strata::FlasherTestConstants::fakeFirmwareBackupData;
+    fakeFirmwareBackupOut.flush();
+
+    fakeFirmware_->close();
+    fakeBootloader_->close();
+    fakeFirmwareBackup_->close();
+}
+
+void FlasherTest::cleanFiles()
+{
+    fakeFirmware_->remove();
+    fakeFirmware_->deleteLater();
+    fakeBootloader_->remove();
+    fakeBootloader_->deleteLater();
+    fakeFirmwareBackup_->remove();
+    fakeFirmwareBackup_->deleteLater();
+}
+
 void FlasherTest::getMd5(QFile firmware)
 {
     if (firmware.open(QIODevice::ReadOnly)) {
@@ -270,7 +319,7 @@ void FlasherTest::getExpectedValues(QFile firmware)
 void FlasherTest::flashFirmwareTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -490,7 +539,7 @@ void FlasherTest::flashFirmwareTest()
 void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -709,7 +758,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 void FlasherTest::flashBootloaderTest()
 {
     rapidjson::Document actualDoc;
-    QFile bootloader("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeBootloader.bin");
+    QFile bootloader(fakeBootloader_->fileName());
     getExpectedValues(bootloader.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -840,7 +889,7 @@ void FlasherTest::flashBootloaderTest()
 void FlasherTest::backupFirmwareTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmwareBackup.bin");
+    QFile firmware(fakeFirmwareBackup_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -877,7 +926,7 @@ void FlasherTest::backupFirmwareTest()
 void FlasherTest::setFwClassIdTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -916,7 +965,7 @@ void FlasherTest::setFwClassIdTest()
 void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -953,7 +1002,7 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 void FlasherTest::startFlashFirmwareInvalidValueTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -990,7 +1039,7 @@ void FlasherTest::startFlashFirmwareInvalidValueTest()
 void FlasherTest::startFlashFirmwareInvalidCommandTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1027,7 +1076,7 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
 void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1064,7 +1113,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 void FlasherTest::flashFirmwareResendChunkTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1119,7 +1168,7 @@ void FlasherTest::flashFirmwareResendChunkTest()
 void FlasherTest::flashFirmwareMemoryErrorTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1165,7 +1214,7 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
 void FlasherTest::flashFirmwareInvalidValueTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1211,7 +1260,7 @@ void FlasherTest::flashFirmwareInvalidValueTest()
 void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1256,7 +1305,7 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 
 void FlasherTest::disconnectWhileFlashingTest()
 {
-    QFile firmware(QDir::homePath() + "/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
     connectFlasherForDisconnectWhileFlashing(flasher_.data());
@@ -1272,7 +1321,7 @@ void FlasherTest::disconnectWhileFlashingTest()
 void FlasherTest::setNoFwClassIdTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(QDir::homePath() + "/dev/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1290,7 +1339,7 @@ void FlasherTest::setNoFwClassIdTest()
 void FlasherTest::flashFirmwareCancelTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeFirmware.bin");
+    QFile firmware(fakeFirmware_->fileName());
     getExpectedValues(firmware.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1414,7 +1463,7 @@ void FlasherTest::flashFirmwareCancelTest()
 void FlasherTest::flashBootloaderCancelTest()
 {
     rapidjson::Document actualDoc;
-    QFile bootloader("/Users/zbjmjt/work/new/spyglass/libs/flasher/test/fakeBootloader.bin");
+    QFile bootloader(fakeBootloader_->fileName());
     getExpectedValues(bootloader.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(

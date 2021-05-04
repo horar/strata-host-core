@@ -2,6 +2,7 @@
 
 #include <rapidjson/document.h>
 #include <QObject>
+#include <QTemporaryFile>
 #include <Mock/MockDevice.h>
 #include "Operations/PlatformOperations.h"
 #include "Flasher.h"
@@ -70,6 +71,8 @@ private:
 
     strata::platform::operation::PlatformOperations platformOperations_;
 
+    void createFiles();
+    void cleanFiles();
 
     void getExpectedValues(QFile firmware);
     void getMd5(QFile firmware);
@@ -80,6 +83,10 @@ private:
     int flasherDisconnectedCount_ = 0;
     int flasherTimeoutCount_ = 0;
     int flasherCancelledCount_ = 0;
+
+    QPointer<QFile> fakeFirmware_;
+    QPointer<QFile> fakeBootloader_;
+    QPointer<QFile> fakeFirmwareBackup_;
 
     QString expectedMd5_;
     int expectedChunksCount_;
