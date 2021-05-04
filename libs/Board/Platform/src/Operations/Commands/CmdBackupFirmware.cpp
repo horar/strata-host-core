@@ -33,7 +33,7 @@ QByteArray CmdBackupFirmware::message()
     return QByteArray("{\"cmd\":\"backup_firmware\",\"payload\":{\"status\":\"" + status + "\"}}");
 }
 
-bool CmdBackupFirmware::processNotification(rapidjson::Document& doc, CommandResult& result)
+bool CmdBackupFirmware::processNotification(const rapidjson::Document& doc, CommandResult& result)
 {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::backupFirmwareNotif, doc)) {
         if (totalChunks_ <= 0) {

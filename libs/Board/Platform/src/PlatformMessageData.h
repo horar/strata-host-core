@@ -19,7 +19,7 @@ public:
     const QByteArray raw_;
     rapidjson::Document json_;
     QString jsonErrorString_;
-    uint jsonErrorOffset_;
+    ulong jsonErrorOffset_;
 };
 
 }  // namespace

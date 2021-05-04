@@ -17,7 +17,7 @@ public:
     void setFwClassId(const QString &fwClassId);
 
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
 
 private:
     std::optional<CmdSetPlatformIdData> data_;

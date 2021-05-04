@@ -19,7 +19,7 @@ QByteArray CmdStartBackupFirmware::message() {
     return QByteArray("{\"cmd\":\"start_backup_firmware\",\"payload\":{}}");
 }
 
-bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc, CommandResult& result) {
+bool CmdStartBackupFirmware::processNotification(const rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::startBackupFirmwareNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         if (payload.HasMember(JSON_STATUS)) {
