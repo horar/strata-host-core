@@ -366,6 +366,9 @@ Rectangle {
 
             ConsoleContainer {
                 id:consoleContainer
+                onClicked: {
+                    consoleContainer.visible = false
+                }
             }
         }
     }

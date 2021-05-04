@@ -19,6 +19,8 @@ Rectangle {
     color: "#eee"
     z: 3
 
+    signal clicked()
+
     property int warningCount: 0
     property int errorCount: 0
 
@@ -168,7 +170,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
-                            consoleContainer.visible = false
+                           root.clicked()
                         }
                     }
                 }
