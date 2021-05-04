@@ -224,8 +224,9 @@ Item {
             onDoubleClicked: {
                 consoleLogs.deselectAll()
                 var clickedIndex = consoleLogs.indexAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
-                if (clickedIndex > -1 && consoleItems.mapIndexToSource(clickedIndex) > -1) {
-                    consoleModel.get(consoleItems.mapIndexToSource(clickedIndex)).state = "allSelected"
+                var sourceIndex = consoleItems.mapIndexToSource(clickedIndex)
+                if (clickedIndex > -1 && sourceIndex > -1) {
+                    consoleModel.get(sourceIndex).state = "allSelected"
                 }
             }
 
