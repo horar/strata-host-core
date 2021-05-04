@@ -5,16 +5,13 @@
 #include <rapidjson/writer.h>
 #include <Operations/StartBootloader.h>
 #include <Operations/StartApplication.h>
-#include <Operations/Identify.h>
-
 #include "FlasherConstants.h"
-
 #include <CodecBase64.h>
 #include <Buypass.h>
 
-//constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
-
 using strata::Flasher;
+using strata::platform::operation::PlatformOperations;
+using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::BasePlatformOperation;
 using strata::device::MockCommand;
 using strata::device::MockResponse;
@@ -22,6 +19,12 @@ using strata::device::MockVersion;
 
 namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
+
+//constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
+
+FlasherTest::FlasherTest() : platformOperations_(false, false) {
+
+}
 
 void FlasherTest::initTestCase()
 {
@@ -39,11 +42,16 @@ void FlasherTest::init()
     flasherDisconnectedCount_ = 0;
     flasherTimeoutCount_ = 0;
     flasherCancelledCount_ = 0;
+
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     expectedChunksCount_ = 0;
     QVERIFY(!mockDevice_->mockIsOpened());
-    QVERIFY(mockDevice_->open());
+
+    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened(QByteArray)));
+    platform_->open();
+    QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
+    QVERIFY(mockDevice_->mockIsOpened());
 }
 
 void FlasherTest::cleanup()
@@ -55,9 +63,11 @@ void FlasherTest::cleanup()
         flasher_.reset();
     }
 
-    BasePlatformOperation *deviceOperation = deviceOperation_.data();
-    if (deviceOperation != nullptr) {
-        deviceOperation_.reset();
+    disconnect(&platformOperations_, nullptr, this, nullptr);
+    platformOperations_.stopAllOperations();
+
+    if (platform_.get() != nullptr) {
+        platform_.reset();
     }
 
     if (mockDevice_.get() != nullptr) {
@@ -74,7 +84,6 @@ void FlasherTest::clearExpectedValues()
     expectedChunkData_.clear();
     expectedChunkCrc_.clear();
 }
-
 
 void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString er)
 {
@@ -124,12 +133,9 @@ void FlasherTest::handleFlasherState(strata::Flasher::State state, bool done)
             break;
         }
         else {
-            operation::StartBootloader* startBootloaderOperation = new operation::StartBootloader(platform_);
-            deviceOperation_ = QSharedPointer<operation::StartBootloader>(
-                        startBootloaderOperation, &QObject::deleteLater);
-            startBootloaderOperation->setWaitTime(std::chrono::milliseconds(1)); //bypasses the 5-secs wait-time for bootloader to start
+            OperationSharedPtr startBootloaderOperation = platformOperations_.StartBootloader(platform_);
+            static_cast<operation::StartBootloader*>(startBootloaderOperation.get())->setWaitTime(std::chrono::milliseconds(1));
             startBootloaderOperation->run();
-
             QTRY_COMPARE_WITH_TIMEOUT(startBootloaderOperation->isSuccessfullyFinished(), true, 1000);
             QVERIFY(mockDevice_->mockIsBootloader());
         }
@@ -994,7 +1000,7 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 2200);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1031,7 +1037,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 2200);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 

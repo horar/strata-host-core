@@ -3,12 +3,18 @@
 #include <rapidjson/document.h>
 #include <QObject>
 #include <Mock/MockDevice.h>
+#include "Operations/PlatformOperations.h"
 #include "Flasher.h"
+
 #include "QtTest.h"
 
 class FlasherTest : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(FlasherTest)
+
+public:
+    FlasherTest();
 
 private slots:
     // test init/teardown
@@ -34,7 +40,6 @@ private slots:
     void flashFirmwareInvalidValueTest();
     void flashFirmwareInvalidCmdSequenceTest();
 
-    //test faulty scenarios
     void disconnectWhileFlashingTest();
     void setNoFwClassIdTest();
     void flashFirmwareCancelTest();
@@ -62,7 +67,9 @@ private:
     strata::platform::PlatformPtr platform_;
     std::shared_ptr<strata::device::MockDevice> mockDevice_;
     QSharedPointer<strata::Flasher> flasher_;
-    QSharedPointer<strata::platform::operation::BasePlatformOperation> deviceOperation_;
+
+    strata::platform::operation::PlatformOperations platformOperations_;
+
 
     void getExpectedValues(QFile firmware);
     void getMd5(QFile firmware);
