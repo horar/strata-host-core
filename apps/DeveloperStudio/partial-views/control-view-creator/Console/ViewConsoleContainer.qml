@@ -45,7 +45,7 @@ Item {
         drag.maximumY: 166
         drag.minimumX: 0
         drag.maximumX: 0
-        cursorShape: Qt.DragMoveCursor
+        cursorShape: Qt.SplitVCursor
         property var clickPos: "0,0"
         z:3
         onPressed: {
