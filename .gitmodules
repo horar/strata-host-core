@@ -7,10 +7,6 @@
 [submodule "extern/googletest"]
 	path = extern/googletest
 	url = https://github.com/google/googletest.git
-[submodule "extern/couchbase-lite-cpp"]
-	path = extern/couchbase-lite-cpp
-	url = https://github.com/stratadeveloperstudio/couchbase-lite-cpp.git
-	ignore = dirty
 [submodule "extern/qtmqtt"]
 	path = extern/qtmqtt
 	url = https://github.com/qt/qtmqtt.git
@@ -26,4 +22,8 @@
 [submodule "extern/cppzmq"]
 	path = extern/cppzmq
 	url = https://github.com/zeromq/cppzmq.git
+	ignore = dirty
+[submodule "extern/libevent"]
+	path = extern/libevent
+	url = https://github.com/libevent/libevent.git
 	ignore = dirty

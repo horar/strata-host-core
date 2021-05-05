@@ -266,38 +266,57 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     }
 }
 
-void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
-#ifdef QT_RCC_EXECUTABLE
-    const QString rccExecutablePath = QT_RCC_EXECUTABLE;
-#else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
-// Will be completed in CS-1093
+bool ResourceLoader::findRccCompiler() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
-    #ifdef Q_OS_MACOS
-        applicationDir.cdUp();
-        applicationDir.cdUp();
-        applicationDir.cdUp();
-    #endif
+
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
     const QString rccExecutablePath = applicationDir.filePath("rcc");
+#else
+    const QString rccExecutablePath = applicationDir.filePath("rcc.exe");
 #endif
+
+    const QFile rccExecutable(rccExecutablePath);
+    if (rccExecutable.exists()) {
+        rccCompilerPath_ = rccExecutablePath;
+        return true;
+    }
+
+    QString error_str = "Could not find RCC executable at " + rccExecutablePath;
+    qCWarning(logCategoryStrataDevStudio) << error_str;
+    setLastLoggedError(error_str);
+    emit finishedRecompiling(QString());
+    return false;
+}
+
+void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+    clearLastLoggedError();
+    bool rccCompilerFound = false;
+
+#ifdef QT_RCC_EXECUTABLE
+    const QFile rccExecutable(QT_RCC_EXECUTABLE);
+    if (rccExecutable.exists()) {
+        rccCompilerPath_ = QT_RCC_EXECUTABLE;
+        rccCompilerFound = true;
+    } else {
+        rccCompilerFound = findRccCompiler();
+    }
+#else
+    rccCompilerFound = findRccCompiler();
+#endif
+
+    if (!rccCompilerFound) {
+        return;
+    }
 
     qrcFilePath.replace("file://", "");
     if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
         qrcFilePath.remove(0, 1);
     }
 
-    QFile rccExecutable(rccExecutablePath);
     QFile qrcFile(qrcFilePath);
-
-    clearLastLoggedError();
-
-    if (!rccExecutable.exists()) {
-        QString error_str = "Could not find RCC executable at " + rccExecutablePath;
-        qCWarning(logCategoryStrataDevStudio) << error_str;
-        setLastLoggedError(error_str);
-        emit finishedRecompiling(QString());
-        return;
-    }
-
     if (!qrcFile.exists()) {
         QString error_str = "Could not find QRC file at " + qrcFilePath;
         qCWarning(logCategoryStrataDevStudio) << error_str;
@@ -341,13 +360,13 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     // Split qrcFile base name and add ".rcc" extension
     compiledRccFile += qrcFileInfo.baseName() + ".rcc";
-    lastCompiledRccResource = compiledRccFile;
+    lastCompiledRccResource_ = compiledRccFile;
 
     // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
 
     rccCompilerProcess_ = std::make_unique<QProcess>();
-    rccCompilerProcess_->setProgram(rccExecutablePath);
+    rccCompilerProcess_->setProgram(rccCompilerPath_);
     rccCompilerProcess_->setArguments(arguments);
     connect(rccCompilerProcess_.get(), SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
     connect(rccCompilerProcess_.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
@@ -365,22 +384,22 @@ void ResourceLoader::recompileFinished(int exitCode, QProcess::ExitStatus exitSt
 {
     Q_UNUSED(exitCode);
 
-    if (exitStatus == QProcess::CrashExit || lastLoggedError != "") {
+    if (exitStatus == QProcess::CrashExit || lastLoggedError_ != "") {
         emit finishedRecompiling(QString());
     } else {
-        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource;
-        emit finishedRecompiling(lastCompiledRccResource);
+        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource_;
+        emit finishedRecompiling(lastCompiledRccResource_);
     }
 }
 
 void ResourceLoader::clearLastLoggedError() {
-    lastLoggedError = "";
+    lastLoggedError_ = "";
 }
 
 void ResourceLoader::setLastLoggedError(QString &error_str) {
-    lastLoggedError = error_str;
+    lastLoggedError_ = error_str;
 }
 
 QString ResourceLoader::getLastLoggedError() {
-    return lastLoggedError;
+    return lastLoggedError_;
 }

@@ -22,7 +22,7 @@ QByteArray CmdStartFlash::message() {
     );
 }
 
-bool CmdStartFlash::processNotification(rapidjson::Document& doc, CommandResult& result) {
+bool CmdStartFlash::processNotification(const rapidjson::Document& doc, CommandResult& result) {
     CommandValidator::JsonType jsonType = (flashFirmware_)
                                           ? CommandValidator::JsonType::startFlashFirmwareNotif
                                           : CommandValidator::JsonType::startFlashBootloaderNotif;

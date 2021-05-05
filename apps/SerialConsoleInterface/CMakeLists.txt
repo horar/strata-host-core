@@ -19,13 +19,13 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     SciModel.cpp
-    SciDatabaseConnector.cpp
     SciPlatformModel.cpp
     SciPlatform.cpp
     SciScrollbackModel.cpp
     SciCommandHistoryModel.cpp
     SciFilterSuggestionModel.cpp
     SciPlatformSettings.cpp
+    HexModel.cpp
     qml.qrc
     images/images.qrc
 
@@ -51,7 +51,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::WebEngine
     strata::PlatformManager
     strata::FlasherConnector
-    strata::CouchbaseLiteCPP
     strata::QtLogger
     strata::SGUtilsCpp
     strata::SGJsonSyntaxHighlighter

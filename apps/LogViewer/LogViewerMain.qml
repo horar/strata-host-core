@@ -8,6 +8,7 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import tech.strata.theme 1.0
 import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.logger 1.0
 
 FocusScope {
     id: logViewerMain
@@ -44,6 +45,8 @@ FocusScope {
     property bool showDropAreaIndicator: false
     property bool showMarks: false
     property string markColor: TangoTheme.palette.chameleon3
+    readonly property int maxRecentFiles: 5
+    property var recentFiles: []
 
     LogViewModels.LogModel {
         id: logModel
@@ -88,6 +91,7 @@ FocusScope {
         property alias sidePanelWidth: logViewerMain.sidePanelWidth
         property alias automaticScroll: logViewerMain.automaticScroll
         property alias timestampSimpleFormat: logViewerMain.timestampSimpleFormat
+        property alias recentFiles: logViewerMain.recentFiles
     }
 
     Component {
@@ -105,16 +109,13 @@ FocusScope {
         }
     }
 
-    function getFilePath(callback) {
+    function getFilePath() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
                     logViewerMain,
                     fileDialogComponent)
 
         dialog.accepted.connect(function() {
-            if (callback) {
-                lastOpenedFolder = dialog.folder
-                callback(dialog.fileUrl)
-            }
+            lastOpenedFolder = dialog.folder
             dialog.destroy()
         })
 
@@ -131,14 +132,13 @@ FocusScope {
 
         for (var i = 0; i < path.length; ++i) {
             var errorString = logModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
-
+            if (errorString.length === 0) {
+                updateRecentFilesModel(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
+            }
             if (errorString.length > 0) {
                 errorStringList.push(errorString)
-                if (CommonCPP.SGUtilsCpp.fileName(path[i]) === "") {
-                    pathList.push(CommonCPP.SGUtilsCpp.dirName(path[i]))
-                } else {
-                    pathList.push(CommonCPP.SGUtilsCpp.fileName(path[i]))
-                }
+                pathList.push(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
+                removeFromRecentFiles(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
             }
 
             if (errorStringList.length > 0 && fileLoaded === false) {
@@ -154,6 +154,32 @@ FocusScope {
                         errorStringList.length > 1 ? qsTr("Could not open files (" + errorStringList.length + ")") : qsTr("Could not open file"),
                         generateHtmlList(pathList, errorStringList))
         }
+
+    }
+
+    function updateRecentFilesModel(path) {
+        var tmpRecentFiles = recentFiles
+        var index = tmpRecentFiles.indexOf(path);
+        if (index >= 0) {
+	        tmpRecentFiles.splice(index, 1)
+        }
+
+        tmpRecentFiles.splice(0,0,path)
+
+        if (tmpRecentFiles.length > maxRecentFiles) {
+            tmpRecentFiles = tmpRecentFiles.slice(0, maxRecentFiles)
+        }
+        recentFiles = tmpRecentFiles
+    }
+
+    function removeFromRecentFiles(path) {
+        var tmpRecentFiles = recentFiles
+        for (var j = 0; j < tmpRecentFiles.length; ++j) {
+            if (path === tmpRecentFiles[j] && fileModel.containsFilePath(path) === false) {
+                tmpRecentFiles.splice(j, 1)
+            }
+        }
+        recentFiles = tmpRecentFiles
     }
 
     function generateHtmlList(firstList,secondList) {
@@ -169,6 +195,14 @@ FocusScope {
         logModel.clear();
     }
 
+    function closeAllFiles() {
+        logModel.removeAllFiles()
+    }
+
+    function clearRecentFiles() {
+        recentFiles = []
+    }
+
     CommonCPP.SGSortFilterProxyModel {
         id: searchResultModel
         sourceModel: logSortFilterModel
@@ -181,6 +215,10 @@ FocusScope {
 
         function filterAcceptsRow(row) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(row)
+            if (sourceIndex < 0) {
+                console.error(Logger.logviewerCategory, "Index out of scope.")
+                return
+            }
             var isMarked = logModel.data(sourceIndex, "isMarked")
             if (showMarksButton.checked && isMarked === false) {
                 return false
@@ -265,7 +303,7 @@ FocusScope {
             hintText: "Add file"
 
             onClicked:  {
-                getFilePath(function(path) {})
+                getFilePath()
             }
         }
 
@@ -950,7 +988,14 @@ FocusScope {
                                 }
 
                                 onClicked: {
+                                if (index < 0) {
+                                    return
+                                }
                                     var sourceIndex = markedModel.mapIndexToSource(index)
+                                    if (sourceIndex < 0) {
+                                        console.error(Logger.logviewerCategory, "Index out of scope.")
+                                        return
+                                    }
                                     positionView(primaryLogView, sourceIndex)
                                 }
 
@@ -1088,6 +1133,11 @@ FocusScope {
                                 } else {
                                     sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }
+                                if (sourceIndex < 0) {
+                                    console.error(Logger.logviewerCategory, "Index out of scope.")
+                                    return
+                                }
+
                                 primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                                 primaryLogView.currentIndex = sourceIndex
                             }

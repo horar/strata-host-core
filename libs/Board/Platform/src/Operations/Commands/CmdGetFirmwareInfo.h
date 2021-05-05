@@ -9,7 +9,7 @@ class CmdGetFirmwareInfo : public BasePlatformCommand {
 public:
     explicit CmdGetFirmwareInfo(const PlatformPtr& platform, bool requireResponse = true, uint maxRetries = 0);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
     CommandResult onTimeout() override;
     CommandResult onReject() override;
 private:

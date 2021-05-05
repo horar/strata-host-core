@@ -26,7 +26,7 @@ public:
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QString getFilePathAt(const int &pos) const;
-    bool containsFilePath(const QString &path);
+    Q_INVOKABLE bool containsFilePath(const QString &path);
 
 signals:
     void countChanged();

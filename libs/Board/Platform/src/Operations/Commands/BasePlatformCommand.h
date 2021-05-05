@@ -123,7 +123,7 @@ protected:
      * \param result comand result set by this method
      * \return true if notification is valid for sent command, otherwise false
      */
-    virtual bool processNotification(rapidjson::Document& doc, CommandResult& result) = 0;
+    virtual bool processNotification(const rapidjson::Document& doc, CommandResult& result) = 0;
 
     /*!
      * This method is called when expires timeout for sent command.
@@ -144,8 +144,10 @@ protected:
     virtual bool logSendMessage() const;
 
 private slots:
-    void handleDeviceResponse(QByteArray deviceId, const QByteArray data);
+    void handleDeviceResponse(QByteArray deviceId, const PlatformMessage message);
     void handleResponseTimeout();
+
+protected slots:
     void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
 
 protected:
@@ -164,7 +166,7 @@ protected:
 
 private:
     void finishCommand(CommandResult result);
-    void logWrongResponse(const QByteArray& response);
+    void logWrongResponse(const PlatformMessage& response);
     std::chrono::milliseconds ackTimeout_;
     std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;

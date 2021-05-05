@@ -265,17 +265,17 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
     settings_->setAutoExportPath(verboseName_, autoExportPath);
 }
 
-void SciPlatform::messageFromDeviceHandler(QByteArray deviceId, QByteArray message)
+void SciPlatform::messageFromDeviceHandler(QByteArray deviceId, strata::platform::PlatformMessage message)
 {
     Q_UNUSED(deviceId)
-    scrollbackModel_->append(message, false);
-    filterSuggestionModel_->add(message);
+    scrollbackModel_->append(message.raw(), false);
+    filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray deviceId, QByteArray message)
+void SciPlatform::messageToDeviceHandler(QByteArray deviceId, strata::platform::PlatformMessage message)
 {
     Q_UNUSED(deviceId)
-    scrollbackModel_->append(message, true);
+    scrollbackModel_->append(message.raw(), true);
 }
 
 void SciPlatform::deviceErrorHandler(QByteArray deviceId, strata::device::Device::ErrorCode errorCode, QString errorString)
