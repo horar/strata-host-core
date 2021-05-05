@@ -48,10 +48,10 @@ private slots:
     void flashBootloaderCancelTest();
 
 protected slots:
-   void handleFlasherFinished(strata::Flasher::Result result, QString);
-   void handleFlasherState(strata::Flasher::State state, bool done);
-   void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
-   void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
+    void handleFlasherFinished(strata::Flasher::Result result, QString);
+    void handleFlasherState(strata::Flasher::State state, bool done);
+    void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
+    void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
