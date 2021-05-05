@@ -50,7 +50,6 @@ SGWidgets.SGMainWindow {
             title: "Mock"
 
             QtLabsPlatform.MenuItem {
-                property int mockIdx: 1
                 text: qsTr("Connect Device")
                 onTriggered:  {
                     showConnectMockDeviceDialog()
