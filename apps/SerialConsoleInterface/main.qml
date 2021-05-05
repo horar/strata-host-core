@@ -27,7 +27,7 @@ SGWidgets.SGMainWindow {
 
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
-            title: "File"
+            title: qsTr("&File")
 
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Settings")
@@ -47,10 +47,10 @@ SGWidgets.SGMainWindow {
         }
 
         QtLabsPlatform.Menu {
-            title: "Mock"
+            title: qsTr("&Mock")
 
             QtLabsPlatform.MenuItem {
-                text: qsTr("Connect Device")
+                text: qsTr("&Connect Device...")
                 onTriggered:  {
                     showConnectMockDeviceDialog()
                 }
@@ -58,7 +58,7 @@ SGWidgets.SGMainWindow {
 
             QtLabsPlatform.Menu {
                 id: disconnectDeviceSubMenu
-                title: qsTr("Disconnect Device")
+                title: qsTr("&Disconnect Device")
                 enabled: disconnectDeviceInstantiator.count > 0
 
                 Instantiator {
@@ -78,7 +78,7 @@ SGWidgets.SGMainWindow {
         }
 
         QtLabsPlatform.Menu {
-            title: "Help"
+            title: qsTr("&Help")
             QtLabsPlatform.MenuItem {
                 text: qsTr("&About")
                 onTriggered:  {
