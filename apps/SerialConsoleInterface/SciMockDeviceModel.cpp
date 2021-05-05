@@ -88,6 +88,14 @@ bool SciMockDeviceModel::disconnectMockDevice(QByteArray deviceId)
     return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
 }
 
+void SciMockDeviceModel::disconnectAllMockDevices() {
+    if (scanner_ == nullptr) {
+        return;
+    }
+
+    return static_cast<MockDeviceScanner*>(scanner_.get())->mockAllDevicesLost();
+}
+
 QString SciMockDeviceModel::getLatestMockDeviceName() const {
     return "MOCK" + QString::number(latestMockIdx_).rightJustified(3, '0');
 }

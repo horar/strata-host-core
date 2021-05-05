@@ -19,11 +19,7 @@ void MockDeviceScanner::init() {
 void MockDeviceScanner::deinit() {
     running_ = false;
 
-    for (const auto& deviceId : deviceIds_) {
-        emit deviceLost(deviceId);
-    }
-
-    deviceIds_.clear();
+    mockAllDevicesLost();
 }
 
 bool MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages) {
@@ -85,6 +81,14 @@ bool MockDeviceScanner::mockDeviceLost(const QByteArray& deviceId) {
     emit deviceLost(deviceId);
 
     return true;
+}
+
+void MockDeviceScanner::mockAllDevicesLost() {
+    for (const auto& deviceId : deviceIds_) {
+        emit deviceLost(deviceId);
+    }
+
+    deviceIds_.clear();
 }
 
 }  // namespace
