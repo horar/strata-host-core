@@ -113,6 +113,11 @@ FocusScope {
                     logViewerMain,
                     fileDialogComponent)
 
+        dialog.accepted.connect(function() {
+            lastOpenedFolder = dialog.folder
+            dialog.destroy()
+        })
+
         dialog.rejected.connect(function() {
             dialog.destroy()
         })
@@ -153,37 +158,15 @@ FocusScope {
 
     function updateRecentFilesModel(path) {
         var tmpRecentFiles = recentFiles
-        var contains = false
-        for (var i = 0; i < tmpRecentFiles.length; ++i) {
-            if (tmpRecentFiles[i] === path) {
-                contains = true
-                tmpRecentFiles.push(path)
-                var count = tmpRecentFiles.length
-                for (var i = 0; i < count; ++i) {
-                    if (tmpRecentFiles[i] !== path) {
-                        tmpRecentFiles.push(tmpRecentFiles[i])
-                    }
-                }
-                if (count > 1) {
-                    tmpRecentFiles.splice(0, count - 1)
-                }
-                break
-            }
+        var index = tmpRecentFiles.indexOf(path);
+        if (index >= 0) {
+	        tmpRecentFiles.splice(index, 1)
         }
-        if (contains === false) {
-            if (tmpRecentFiles.length === maxRecentFiles) {
-                tmpRecentFiles.splice(tmpRecentFiles.length - 1, 1)
-            }
-            tmpRecentFiles.push(path)
-            var count = tmpRecentFiles.length
-            for (var i = 0; i < count; ++i) {
-                if (tmpRecentFiles[i] !== path) {
-                    tmpRecentFiles.push(tmpRecentFiles[i])
-                }
-            }
-            if (count > 1) {
-                tmpRecentFiles.splice(0, count - 1)
-            }
+
+        tmpRecentFiles.splice(0,0,path)
+
+        if (tmpRecentFiles.length > maxRecentFiles) {
+            tmpRecentFiles = tmpRecentFiles.slice(0, maxRecentFiles)
         }
         recentFiles = tmpRecentFiles
     }
