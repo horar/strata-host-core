@@ -64,13 +64,13 @@ void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
     qCDebug(logCategorySci) << "Device not present in the mock model:" << deviceId;
 }
 
-bool SciMockDeviceModel::connectMockDevice(QString deviceName, QString deviceId)
+bool SciMockDeviceModel::connectMockDevice(QString deviceName, QByteArray deviceId)
 {
     if (scanner_ == nullptr)
         return false;
 
     if (static_cast<MockDeviceScanner*>(scanner_.get())->
-            mockDeviceDetected(deviceId.toUtf8(), deviceName, false) == true) {
+            mockDeviceDetected(deviceId, deviceName, false) == true) {
         ++latestMockIdx_;
         return true;
     }
@@ -78,19 +78,19 @@ bool SciMockDeviceModel::connectMockDevice(QString deviceName, QString deviceId)
     return false;
 }
 
-bool SciMockDeviceModel::disconnectMockDevice(QString deviceId)
+bool SciMockDeviceModel::disconnectMockDevice(QByteArray deviceId)
 {
     if (scanner_ == nullptr)
         return false;
 
-    return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId.toUtf8());
+    return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
 }
 
 QString SciMockDeviceModel::getLatestMockDeviceName() const {
     return "MOCK" + QString::number(latestMockIdx_).rightJustified(3, '0');
 }
 
-QString SciMockDeviceModel::getMockDeviceId(QString deviceName) const {
+QByteArray SciMockDeviceModel::getMockDeviceId(QString deviceName) const {
     return MockDevice::createDeviceId(deviceName);
 }
 

@@ -15,10 +15,10 @@ public:
     virtual ~SciMockDeviceModel() override;
     void init();
 
-    Q_INVOKABLE bool connectMockDevice(QString deviceName, QString deviceId);
-    Q_INVOKABLE bool disconnectMockDevice(QString deviceId);
+    Q_INVOKABLE bool connectMockDevice(QString deviceName, QByteArray deviceId);
+    Q_INVOKABLE bool disconnectMockDevice(QByteArray deviceId);
     Q_INVOKABLE QString getLatestMockDeviceName() const;
-    Q_INVOKABLE QString getMockDeviceId(QString deviceName) const;
+    Q_INVOKABLE QByteArray getMockDeviceId(QString deviceName) const;
 
     enum ModelRole {
         DeviceIdRole = Qt::UserRole + 1,
