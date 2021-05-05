@@ -84,7 +84,7 @@ private:
     QPointer<QFile> fakeFirmwareBackup_;
 
     QString expectedMd5_;
-    int expectedChunksCount_;
+    int expectedChunksCount_ = 0;
     QVector<quint64> expectedChunkSize_;
     QVector<QByteArray> expectedChunkData_;
     QVector<quint16> expectedChunkCrc_;
