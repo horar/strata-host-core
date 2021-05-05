@@ -81,6 +81,7 @@ Item {
                 onSuggestionDelegateSelected: {
                     var sourceIndex = sortFilterModel.mapIndexToSource(index)
                     if (sourceIndex < 0) {
+                        console.error(Logger.wgCategory, "Index out of scope.")
                         return
                     }
 
