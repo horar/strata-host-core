@@ -168,8 +168,7 @@ void PlatformManagerTest::identifyNewPlatformTest()
     QVERIFY(mockDeviceScanner.get() != nullptr);
     QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner.get())->mockDeviceDetected(deviceId, "Mock device", true));
 
-    // TODO Identify operation contains 500 ms timeout set by PlatformManager, set it to less value
-    QCOMPARE(platformRecognizedSignal.wait(750), true);
+    QCOMPARE(platformRecognizedSignal.wait(250), true);
     QList<QVariant> arguments = platformRecognizedSignal.takeFirst();
     QVERIFY(arguments.at(0).type() == QVariant::ByteArray);
     QVERIFY(arguments.at(1).type() == QVariant::Bool);
