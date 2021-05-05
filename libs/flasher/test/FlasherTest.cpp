@@ -124,13 +124,11 @@ void FlasherTest::handleFlasherState(strata::Flasher::State state, bool done)
         if (done) {
             break;
         }
-        else {
-            OperationSharedPtr startBootloaderOperation = platformOperations_.StartBootloader(platform_);
-            static_cast<operation::StartBootloader*>(startBootloaderOperation.get())->setWaitTime(std::chrono::milliseconds(1));
-            startBootloaderOperation->run();
-            QTRY_COMPARE_WITH_TIMEOUT(startBootloaderOperation->isSuccessfullyFinished(), true, 1000);
-            QVERIFY(mockDevice_->mockIsBootloader());
-        }
+        OperationSharedPtr startBootloaderOperation = platformOperations_.StartBootloader(platform_);
+        static_cast<operation::StartBootloader*>(startBootloaderOperation.get())->setWaitTime(std::chrono::milliseconds(1)); //Skipping wait-for-bootloader-to-start 5 sec timeout for Tests purporses
+        startBootloaderOperation->run();
+        QTRY_COMPARE_WITH_TIMEOUT(startBootloaderOperation->isSuccessfullyFinished(), true, 1000);
+        QVERIFY(mockDevice_->mockIsBootloader());
         break;
     }
     default:
