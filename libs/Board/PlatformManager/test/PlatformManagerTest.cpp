@@ -69,9 +69,10 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
     auto platform = platformManager_->getPlatform(deviceId);
+    QSignalSpy platformAboutToCloseSignal(platformManager_.get(), SIGNAL(platformAboutToClose(QByteArray)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
     if (platformManager_->disconnectPlatform(deviceId)) {
-        QCOMPARE_(platformRemovedSignal.wait(250), true);
+        QVERIFY_((platformRemovedSignal.wait(250) == true) && (platformAboutToCloseSignal.count() == 1));
         QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
         QVERIFY_(platform.get() != nullptr);
         auto mockDevice = std::dynamic_pointer_cast<strata::device::MockDevice>(platform->getDevice());
@@ -152,6 +153,29 @@ void PlatformManagerTest::connectMultipleTest()
     QCOMPARE(platformManager_->getPlatform("mock2")->deviceName(), "Mock device 2");
     QCOMPARE(platformManager_->getPlatform("mock4")->deviceName(), "Mock device 4");
     QCOMPARE(platformManager_->getPlatform("mock6")->deviceName(), "Mock device 6");
+}
+
+void PlatformManagerTest::identifyNewPlatformTest()
+{
+    PlatformManager platformManager(true, false, true);
+    platformManager.init(Device::Type::MockDevice);
+
+    const QByteArray deviceId("mock");
+
+    QSignalSpy platformRecognizedSignal(&platformManager, SIGNAL(platformRecognized(QByteArray, bool)));
+
+    strata::device::scanner::DeviceScannerPtr mockDeviceScanner = platformManager.getScanner(Device::Type::MockDevice);
+    QVERIFY(mockDeviceScanner.get() != nullptr);
+    QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner.get())->mockDeviceDetected(deviceId, "Mock device", true));
+
+    // TODO Identify operation contains 500 ms timeout set by PlatformManager, set it to less value
+    QCOMPARE(platformRecognizedSignal.wait(750), true);
+    QList<QVariant> arguments = platformRecognizedSignal.takeFirst();
+    QVERIFY(arguments.at(0).type() == QVariant::ByteArray);
+    QVERIFY(arguments.at(1).type() == QVariant::Bool);
+    QCOMPARE(qvariant_cast<bool>(arguments.at(1)), true);
+
+    QCOMPARE(platformManager.disconnectPlatform(deviceId), true);
 }
 
 // TODO tests for PlatformManager signals:
