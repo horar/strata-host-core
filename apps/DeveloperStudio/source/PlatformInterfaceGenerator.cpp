@@ -8,8 +8,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonParseError>
-#include <QMetaType>
-#include <QVariantList>
 #include <QDateTime>
 
 QString PlatformInterfaceGenerator::lastError_ = QString();

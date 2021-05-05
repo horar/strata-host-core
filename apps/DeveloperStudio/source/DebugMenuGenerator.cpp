@@ -10,10 +10,10 @@
 
 DebugMenuGenerator::DebugMenuGenerator(QObject *parent) : QObject(parent)
 {
-    indentLevel = 0;
+    indentLevel_ = 0;
 }
 
-bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMap> &notifications, QList<QVariantMap> &commands)
+void DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMap> &notifications, QList<QVariantMap> &commands)
 {
     QDir outputDir(outputDirPath);
     QFile outputFile(outputDir.filePath("DebugMenu.qml"));
@@ -25,26 +25,26 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     // Generate the base object and its main properties
     outputStream << writeLine("Rectangle {");
 
-    indentLevel++;
+    indentLevel_++;
 
     outputStream << writeLine("id: root");
 
     // Generate header
     outputStream << writeLine("Text {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("id: header");
     outputStream << writeLine("text: \"Debug Commands and Notifications\"");
     outputStream << writeLine("font.bold: true");
     outputStream << writeLine("font.pointSize: 18");
     outputStream << writeLine("anchors {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("top: parent.top");
     outputStream << writeLine("bottomMargin: 20");
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}");
     outputStream << writeLine("width: parent.width");
     outputStream << writeLine("horizontalAlignment: Text.AlignHCenter");
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}\n");
 
     // Generate the list model
@@ -52,28 +52,28 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
 
     // Generate the two rows
     outputStream << writeLine("ColumnLayout {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("id: columnContainer");
     outputStream << writeLine("anchors {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("left: parent.left");
     outputStream << writeLine("right: parent.right");
     outputStream << writeLine("bottom: parent.bottom");
     outputStream << writeLine("top: header.bottom");
     outputStream << writeLine("margins: 5");
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}\n");
     outputStream << writeLine("spacing: 10");
     outputStream << writeLine();
 
     // Generate column repeater
     outputStream << writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("model: mainModel");
 
     // Repeater delegate for the commands / notifications list view
     outputStream << writeLine("delegate: ColumnLayout {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("id: notificationCommandColumn");
     outputStream << writeLine("Layout.fillHeight: true");
     outputStream << writeLine("Layout.fillWidth: true");
@@ -82,36 +82,35 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     // Generate either "Notifications" or "Commands"
     outputStream << writeLine();
     outputStream << writeLine("Text {");
-    indentLevel++;
+    indentLevel_++;
     outputStream << writeLine("font.pointSize: 16");
     outputStream << writeLine("font.bold: true");
     outputStream << writeLine("text: (model.name === \"commands\" ? \"Commands\" : \"Notifications\")");
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}");
 
     outputStream << generateMainListView();
 
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}");
 
     outputStream << writeLine();
 
     outputStream << generateHelperFunctions();
 
-    indentLevel--;
+    indentLevel_--;
     outputStream << writeLine("}");
 
     outputFile.close();
 
-    indentLevel = 0;
-    return true;
+    indentLevel_ = 0;
 }
 
-bool DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &outputDirPath)
+void DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &outputDirPath)
 {
     QFile file(inputJSONFile);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -134,7 +133,7 @@ bool DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &o
 
     file.close();
 
-    return generate(outputDirPath, notifications, commands);
+    generate(outputDirPath, notifications, commands);
 }
 
 QString DebugMenuGenerator::generateImports()
@@ -163,31 +162,31 @@ QString DebugMenuGenerator::generateListModel(QList<QVariantMap> &notifications,
 {
     QString text = "";
     text += writeLine("ListModel {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: mainModel");
     text += writeLine();
 
     // Generate the baseModel object
     text += writeLine("property var baseModel: ({");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("\"commands\": [");
-    indentLevel++;
+    indentLevel_++;
     text += generateCommands(commands);
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("],");
 
     text += writeLine("\"notifications\": [");
-    indentLevel++;
+    indentLevel_++;
     text += generateNotifications(notifications);
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("]");
 
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("})\n");
 
     // Populate the ListModel on Component.onCompleted
     text += writeLine("Component.onCompleted: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let topLevelKeys = Object.keys(baseModel); // This contains \"commands\" / \"notifications\" arrays");
 
     text += writeLine();
@@ -198,15 +197,15 @@ QString DebugMenuGenerator::generateListModel(QList<QVariantMap> &notifications,
     text += writeLine();
 
     text += writeLine("for (let i = 0; i < topLevelKeys.length; i++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("const topLevelType = topLevelKeys[i];");
     text += writeLine("const arrayOfCommandsOrNotifications = baseModel[topLevelType];");
 
     text += writeLine("let listOfCommandsOrNotifications = {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("\"name\": topLevelType, // \"commands\" / \"notifications\"");
     text += writeLine("\"data\": []");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     text += writeLine();
@@ -216,7 +215,7 @@ QString DebugMenuGenerator::generateListModel(QList<QVariantMap> &notifications,
     text += writeLine();
 
     text += writeLine("for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let commandsModel = mainModel.get(i).data;");
     text += writeLine();
     text += writeLine("let cmd = arrayOfCommandsOrNotifications[j];");
@@ -225,16 +224,16 @@ QString DebugMenuGenerator::generateListModel(QList<QVariantMap> &notifications,
     text += writeLine("let commandObject = {};");
     text += writeLine();
     text += writeLine("if (topLevelType === \"commands\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("// If we are dealing with commands, then look for the \"cmd\" key");
     text += writeLine("commandName = cmd[\"cmd\"];");
     text += writeLine("commandType = \"cmd\";");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("commandName = cmd[\"value\"];");
     text += writeLine("commandType = \"value\";");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("commandObject[\"type\"] = commandType;");
@@ -248,11 +247,11 @@ QString DebugMenuGenerator::generateListModel(QList<QVariantMap> &notifications,
     text += writeLine();
 
     text += writeLine("if (payload) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let payloadProperties = Object.keys(payload);");
     text += writeLine("let payloadModel = commandsModel.get(j).payload;");
     text += writeLine("for (let k = 0; k < payloadProperties.length; k++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("const key = payloadProperties[k];");
     text += writeLine("const type = getType(payload[key]);");
     text += writeLine("let payloadPropObject = {};");
@@ -264,27 +263,27 @@ QString DebugMenuGenerator::generateListModel(QList<QVariantMap> &notifications,
     text += writeLine("payloadModel.append(payloadPropObject);");
     text += writeLine();
     text += writeLine("if (type === \"array\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("generateArrayModel(payload[key], payloadModel.get(k).array);");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (type === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("generateObjectModel(payload[key], payloadModel.get(k).object);");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("mainModel.modelReset()");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     return text;
@@ -314,7 +313,7 @@ QString DebugMenuGenerator::generateMainListView()
 {
     QString text = "";
     text += writeLine("ListView {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: mainListView");
     text += writeLine("Layout.fillWidth: true");
     text += writeLine("Layout.fillHeight: true");
@@ -326,7 +325,7 @@ QString DebugMenuGenerator::generateMainListView()
 
     // Delegate
     text += writeLine("delegate: ColumnLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("width: parent.width\n");
     text += writeLine("property ListModel payloadListModel: model.payload");
     text += writeLine("spacing: 5");
@@ -335,30 +334,30 @@ QString DebugMenuGenerator::generateMainListView()
 
     // Generate horizontal line
     text += writeLine("Rectangle {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.preferredHeight: 1");
     text += writeLine("Layout.fillWidth: true");
     text += writeLine("Layout.rightMargin: 2");
     text += writeLine("Layout.leftMargin: 2");
     text += writeLine("Layout.alignment: Qt.AlignHCenter");
     text += writeLine("color: \"black\"");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}\n");
 
     // Generate the command / notification name Text element
     text += writeLine("Text {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("font.pointSize: 14");
     text += writeLine("font.bold: true");
     text += writeLine("text: model.name");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}\n");
 
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: payloadListModel");
     text += writeLine("delegate: ColumnLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: payloadContainer");
     text += writeLine();
     text += writeLine("Layout.fillWidth: true");
@@ -368,11 +367,11 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("property ListModel subObjectListModel: model.object");
     text += writeLine();
     text += writeLine("RowLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.preferredHeight: 35");
     text += writeLine();
     text += writeLine("Text {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.preferredWidth: 200");
     text += writeLine("text: model.name");
@@ -380,13 +379,13 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("verticalAlignment: Text.AlignVCenter");
     text += writeLine("elide: Text.ElideRight");
     text += writeLine();
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the textfield for the value of the payload property
     text += writeLine("SGTextField {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
     text += writeLine("Layout.maximumWidth: 175");
@@ -395,184 +394,184 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("visible: model.type !== \"array\" && model.type !== \"object\" && model.type !== \"bool\"");
     text += writeLine("contextMenuEnabled: true");
     text += writeLine("validator: RegExpValidator {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("regExp: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (model.type === \"int\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^[0-9]+$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (model.type === \"double\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^[0-9]+\\.[0-9]+$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^.*$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("onTextChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model.value = text");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the switch for boolean values
     text += generateSGSwitch("model");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the array repeater
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: payloadContainer.subArrayListModel");
     text += writeLine("delegate: Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Loader {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("sourceComponent: arrayStaticFieldComponent");
     text += writeLine("onStatusChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (status === Loader.Ready) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("item.modelData = Qt.binding(() => model)");
     text += writeLine("item.modelIndex = index");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the object repeater
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: payloadContainer.subObjectListModel");
     text += writeLine("delegate: Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Loader {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("sourceComponent: objectStaticFieldComponent");
     text += writeLine("onStatusChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (status === Loader.Ready) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("item.modelData = Qt.binding(() => model)");
     text += writeLine("item.modelIndex = index");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the send command / notification button
     text += writeLine("Button {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("text: \"Send \" + (model.type === \"cmd\" ? \"Command\" : \"Notification\")");
 
     // Generate the onClicked functionality for sending the command / notification
     text += writeLine("onClicked: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let payloadArr = model.payload;");
     text += writeLine("let payload = null;");
     text += writeLine("if (payloadArr.count > 0) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload = {}");
     text += writeLine("for (let i = 0; i < payloadArr.count; i++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let payloadProp = payloadArr.get(i);");
     text += writeLine("if (payloadProp.type === \"array\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload[payloadProp.name] = createJsonObjectFromArrayProperty(payloadProp.array, []);");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (payloadProp.type === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload[payloadProp.name] = createJsonObjectFromObjectProperty(payloadProp.object, {});");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (payloadProp.type === \"bool\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload[payloadProp.name] = (payloadProp.value === \"true\");");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (payloadProp.type === \"int\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload[payloadProp.name] = parseInt(payloadProp.value);");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (payloadProp.type === \"double\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload[payloadProp.name] = parseFloat(payloadProp.value);");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("payload[payloadProp.name] = payloadProp.value");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     text += writeLine("if (model.type === \"value\") {");
-    indentLevel++;
+    indentLevel_++;
 
     text += writeLine("let notification = {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("\"notification\": {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("\"value\": model.name,");
     text += writeLine("\"payload\": payload");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     text += writeLine("let wrapper = { \"device_id\": Constants.NULL_DEVICE_ID, \"message\": JSON.stringify(notification) }");
     text += writeLine("coreInterface.notification(JSON.stringify(wrapper))");
 
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let command = { \"cmd\": model.name, \"device_id\": controlViewCreatorRoot.debugPlatform.deviceId }");
     text += writeLine("if (payload) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("command[\"payload\"] = payload;");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine("coreInterface.sendCommand(JSON.stringify(command))");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     return text;
@@ -594,58 +593,58 @@ QString DebugMenuGenerator::generateHelperFunctions()
 
     // Generate the `generatePlaceholder` function
     text += writeLine("function generatePlaceholder(type, value) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (type === \"int\") { return \"0\"; }");
     text += writeLine("else if (type === \"string\") { return \"\\\"\\\"\"; }");
     text += writeLine("else if (type === \"double\") { return \"0.00\"; }");
     text += writeLine("else if (type === \"bool\") { return \"false\"; }");
     text += writeLine("return \"\"");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the `getType` function
     text += writeLine("function getType(value) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (Array.isArray(value)) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return \"array\";");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (typeof value === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return \"object\";");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return value;");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the `generateArrayModel` function
     text += writeLine("function generateArrayModel(arr, parentListModel) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("for (let i = 0; i < arr.length; i++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("const type = getType(arr[i]);");
     text += writeLine("let obj = {\"type\": type, \"array\": [], \"object\": [], \"value\": \"\"};");
     text += writeLine();
     text += writeLine("parentListModel.append(obj);");
     text += writeLine();
     text += writeLine("if (type === \"array\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("generateArrayModel(arr[i], parentListModel.get(i).array)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (type === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("generateObjectModel(arr[i], parentListModel.get(i).object)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
@@ -654,10 +653,10 @@ QString DebugMenuGenerator::generateHelperFunctions()
     text += writeLine("* This function takes an Object and transforms it into an array readable by our delegates");
     text += writeLine("**/");
     text += writeLine("function generateObjectModel(object, parentListModel) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let keys = Object.keys(object);");
     text += writeLine("for (let i = 0; i < keys.length; i++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("const key = keys[i];");
     text += writeLine("const type = getType(object[key]);");
     text += writeLine();
@@ -666,98 +665,98 @@ QString DebugMenuGenerator::generateHelperFunctions()
     text += writeLine("parentListModel.append(obj);");
     text += writeLine();
     text += writeLine("if (type === \"array\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("generateArrayModel(object[key], parentListModel.get(i).array)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (type === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("generateObjectModel(object[key], parentListModel.get(i).object)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the `createJsonObjectFromArrayProperty`
     text += writeLine("function createJsonObjectFromArrayProperty(arrayModel, outputArr) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("for (let m = 0; m < arrayModel.count; m++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let arrayElement = arrayModel.get(m);");
     text += writeLine();
     text += writeLine("if (arrayElement.type === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputArr.push(createJsonObjectFromObjectProperty(arrayElement.object, {}))");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (arrayElement.type === \"array\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (arrayElement.type === \"bool\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputArr.push((arrayElement.value === \"true\"))");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (arrayElement.type === \"int\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputArr.push(parseInt(arrayElement.value))");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (arrayElement.type === \"double\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputArr.push(parseFloat(arrayElement.value))");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputArr.push(arrayElement.value)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine("return outputArr;");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the `createJsonObjectFromObjectProperty` function
     text += writeLine("function createJsonObjectFromObjectProperty(objectModel, outputObj) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("for (let i = 0; i < objectModel.count; i++) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("let objectProperty = objectModel.get(i);");
     text += writeLine();
     text += writeLine("// Recurse through array");
     text += writeLine("if (objectProperty.type === \"array\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputObj[objectProperty.key] = createJsonObjectFromArrayProperty(objectProperty.array, [])");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (objectProperty.type === \"object\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (objectProperty.type === \"bool\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputObj[objectProperty.key] = (objectProperty.value === \"true\")");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (objectProperty.type === \"int\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputObj[objectProperty.key] = parseInt(objectProperty.value)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (objectProperty.type === \"double\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputObj[objectProperty.key] = parseFloat(objectProperty.value)");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("outputObj[objectProperty.key] = objectProperty.value");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine("return outputObj;");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
 
     return text;
 }
@@ -767,11 +766,11 @@ QString DebugMenuGenerator::generateArrayComponent()
     QString text = "";
 
     text += writeLine("Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: arrayStaticFieldComponent");
     text += writeLine();
     text += writeLine("ColumnLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: arrayColumnLayout");
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine();
@@ -782,24 +781,24 @@ QString DebugMenuGenerator::generateArrayComponent()
     text += writeLine("property int modelIndex: index");
     text += writeLine();
     text += writeLine("RowLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.preferredHeight: 30");
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine("spacing: 5");
     text += writeLine();
     text += writeLine("Text {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("text: \"[Index \" + modelIndex  + \"] Element type: \" + modelData.type");
     text += writeLine("Layout.alignment: Qt.AlignVCenter");
     text += writeLine("Layout.preferredWidth: 200");
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("verticalAlignment: Text.AlignVCenter");
     text += writeLine("elide: Text.ElideRight");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("SGTextField {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
     text += writeLine("Layout.maximumWidth: 175");
@@ -808,98 +807,98 @@ QString DebugMenuGenerator::generateArrayComponent()
     text += writeLine("visible: modelData.type !== \"array\" && modelData.type !== \"object\" && modelData.type !== \"bool\"");
     text += writeLine("contextMenuEnabled: true");
     text += writeLine("validator: RegExpValidator {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("regExp: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (modelData.type === \"int\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^[0-9]+$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (modelData.type === \"double\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^[0-9]+\\.[0-9]+$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^.*$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("onTextChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("modelData.value = text");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     text += generateSGSwitch("modelData");
 
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: arrayColumnLayout.subArrayListModel");
     text += writeLine();
     text += writeLine("delegate: Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Loader {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine("sourceComponent: arrayStaticFieldComponent");
     text += writeLine();
     text += writeLine("onStatusChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (status === Loader.Ready) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("item.modelData = Qt.binding(() => model)");
     text += writeLine("item.modelIndex = index");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: arrayColumnLayout.subObjectListModel");
     text += writeLine("delegate: Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Loader {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine("sourceComponent: objectStaticFieldComponent");
     text += writeLine();
     text += writeLine("onStatusChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (status === Loader.Ready) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("item.modelData = Qt.binding(() => model)");
     text += writeLine("item.modelIndex = index");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     return text;
@@ -910,11 +909,11 @@ QString DebugMenuGenerator::generateObjectComponent()
     QString text = "";
 
     text += writeLine("Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: objectStaticFieldComponent");
     text += writeLine();
     text += writeLine("ColumnLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("id: objColumnLayout");
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine();
@@ -925,13 +924,13 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine("property int modelIndex");
     text += writeLine();
     text += writeLine("RowLayout {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.preferredHeight: 30");
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine("spacing: 5");
     text += writeLine();
     text += writeLine("Text {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("text: modelData.key");
     text += writeLine("Layout.alignment: Qt.AlignVCenter");
     text += writeLine("Layout.preferredWidth: 200");
@@ -939,13 +938,13 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine("verticalAlignment: Text.AlignVCenter");
     text += writeLine("font.bold: true");
     text += writeLine("elide: Text.ElideRight");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the textfield for editing strings, ints, and doubles
     text += writeLine("SGTextField {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
     text += writeLine("Layout.maximumWidth: 175");
@@ -954,103 +953,103 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine("visible: modelData.type !== \"array\" && modelData.type !== \"object\" && modelData.type !== \"bool\"");
     text += writeLine("contextMenuEnabled: true");
     text += writeLine("validator: RegExpValidator {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("regExp: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (modelData.type === \"int\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^[0-9]+$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else if (modelData.type === \"double\") {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^[0-9]+\\.[0-9]+$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("} else {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("return /^.*$/");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("onTextChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("modelData.value = text");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the switch for booleans
     text += generateSGSwitch("modelData");
 
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the repeater for nested array
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: objColumnLayout.subArrayListModel");
     text += writeLine();
     text += writeLine("delegate: Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Loader {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine("sourceComponent: arrayStaticFieldComponent");
     text += writeLine();
     text += writeLine("onStatusChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (status === Loader.Ready) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("item.modelData = Qt.binding(() => model)");
     text += writeLine("item.modelIndex = index");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     text += writeLine();
 
     // Generate the repeater for nested objects
     text += writeLine("Repeater {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("model: objColumnLayout.subObjectListModel");
     text += writeLine("delegate: Component {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Loader {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.leftMargin: 10");
     text += writeLine("sourceComponent: objectStaticFieldComponent");
     text += writeLine();
     text += writeLine("onStatusChanged: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("if (status === Loader.Ready) {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("item.modelData = Qt.binding(() => model)");
     text += writeLine("item.modelIndex = index");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
 
     return text;
@@ -1060,18 +1059,18 @@ QString DebugMenuGenerator::generateSGSwitch(const QString &modelName)
 {
     QString text = "";
     text += writeLine("SGSwitch {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine("Layout.preferredWidth: 70");
     text += writeLine("checkedLabel: \"True\"");
     text += writeLine("uncheckedLabel: \"False\"");
     text += writeLine("visible: " + modelName + ".type === \"bool\"");
     text += writeLine();
     text += writeLine("onToggled: {");
-    indentLevel++;
+    indentLevel_++;
     text += writeLine(modelName + ".value = (checked ? \"true\" : \"false\")");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
-    indentLevel--;
+    indentLevel_--;
     text += writeLine("}");
     return text;
 }
@@ -1081,7 +1080,7 @@ QString DebugMenuGenerator::writeLine(const QString &line)
     if (line.isNull()) {
         return "\n";
     } else {
-        return insertTabs(indentLevel) + line + "\n";
+        return insertTabs(indentLevel_) + line + "\n";
     }
 }
 

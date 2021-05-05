@@ -15,17 +15,15 @@ public:
      * @param outputDirPath The directory to output
      * @param notifications The list of notifications
      * @param commands The list of commands
-     * @return Return true if successful, false otherwise
      */
-    bool generate(const QString &outputDirPath, QList<QVariantMap> &notifications, QList<QVariantMap> &commands);
+    void generate(const QString &outputDirPath, QList<QVariantMap> &notifications, QList<QVariantMap> &commands);
 
     /**
      * @brief generate Generate the DebugMenu.qml from an inputJSON file path
      * @param inputJSONFile The path to the JSON file to read
      * @param outputDirPath The output directory path
-     * @return Return true if successful, false otherwise
      */
-    Q_INVOKABLE bool generate(const QString &inputJSONFile, const QString &outputDirPath);
+    Q_INVOKABLE void generate(const QString &inputJSONFile, const QString &outputDirPath);
 
     /**
      * @brief generateImports Generates the imports needed for the debug menu
@@ -95,7 +93,7 @@ public:
     QString generateSGSwitch(const QString &modelName);
 
 private:
-    int indentLevel = 0;
+    int indentLevel_ = 0;
 
     QString writeLine(const QString &line = QString());
 };
