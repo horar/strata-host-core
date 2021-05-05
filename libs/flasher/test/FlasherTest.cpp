@@ -114,8 +114,6 @@ void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString)
         flasherCancelledCount_++;
         break;
     }
-    default:
-        break;
     }
 }
 
