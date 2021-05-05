@@ -544,6 +544,7 @@ Item {
                     onClicked: {
                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
                         if (sourceIndex < 0) {
+                            console.error(Logger.sciCategory, "Index out of scope.")
                             return
                         }
 
@@ -587,6 +588,7 @@ Item {
         for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
             var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
             if (sourceIndex < 0) {
+                console.error(Logger.sciCategory, "Index out of scope.")
                 text = ""
                 break
             }

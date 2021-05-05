@@ -5,6 +5,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import tech.strata.theme 1.0
+import tech.strata.logger 1.0
 
 Item {
     id: logViewWrapper
@@ -621,6 +622,7 @@ Item {
                             logViewWrapper.forceActiveFocus()
                             var sourceIndex = logSortFilterModel.mapIndexToSource(index)
                             if (sourceIndex < 0) {
+                                console.error(Logger.logviewerCategory, "Index out of scope.")
                                 return
                             }
                             delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
@@ -636,16 +638,19 @@ Item {
                         var hackVariable = markedModel.sourceModel.count
                         var sourceIndex = logSortFilterModel.mapIndexToSource(model.index)
                         if (sourceIndex < 0) {
+                            console.error(Logger.logviewerCategory, "Index out of scope.")
                             return ""
                         }
                         if (showMarks) {
                             if (markedModel.mapIndexToSource(sourceIndex) + 1 < 0) {
+                                console.error(Logger.logviewerCategory, "Index out of scope.")
                                 return ""
                             }
                             return markedModel.mapIndexToSource(sourceIndex) + 1
                         } else {
                             if (searchingMode) {
                                 if (searchResultModel.mapIndexToSource(sourceIndex) + 1 < 0) {
+                                    console.error(Logger.logviewerCategory, "Index out of scope.")
                                     return ""
                                 }
                                 return searchResultModel.mapIndexToSource(sourceIndex) + 1
@@ -817,9 +822,10 @@ Item {
         else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
         }
-        else if ((event.key === Qt.Key_M) && markIconVisible && currentIndex >= 0) {
+        else if ((event.key === Qt.Key_M) && markIconVisible) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
             if (sourceIndex < 0) {
+                console.error(Logger.logviewerCategory, "Index out of scope.")
                 return
             }
             logModel.toggleIsMarked(sourceIndex)

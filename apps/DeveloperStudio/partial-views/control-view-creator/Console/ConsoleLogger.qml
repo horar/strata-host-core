@@ -5,6 +5,7 @@ import QtQml 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.logger 1.0
 
 import "ConsoleMessages"
 
@@ -63,6 +64,7 @@ Item {
             for (var i = 0; i < consoleLogs.model.count; i++) {
                 var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i));
                 if (listElement < 0) {
+                    console.error(Logger.devStudioCategory, "Index out of scope.")
                     return
                 }
                 if (i >= start && i < end) {
@@ -227,6 +229,8 @@ Item {
                 var sourceIndex = consoleItems.mapIndexToSource(clickedIndex)
                 if (clickedIndex > -1 && sourceIndex > -1) {
                     consoleModel.get(sourceIndex).state = "allSelected"
+                } else {
+                    console.error(Logger.devStudioCategory, "Index out of scope.")
                 }
             }
 

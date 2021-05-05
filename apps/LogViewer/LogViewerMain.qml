@@ -8,6 +8,7 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import tech.strata.theme 1.0
 import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.logger 1.0
 
 FocusScope {
     id: logViewerMain
@@ -182,6 +183,7 @@ FocusScope {
         function filterAcceptsRow(row) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(row)
             if (sourceIndex < 0) {
+                console.error(Logger.logviewerCategory, "Index out of scope.")
                 return
             }
             var isMarked = logModel.data(sourceIndex, "isMarked")
@@ -958,6 +960,7 @@ FocusScope {
                                 }
                                     var sourceIndex = markedModel.mapIndexToSource(index)
                                     if (sourceIndex < 0) {
+                                        console.error(Logger.logviewerCategory, "Index out of scope.")
                                         return
                                     }
                                     positionView(primaryLogView, sourceIndex)
@@ -1098,6 +1101,7 @@ FocusScope {
                                     sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }
                                 if (sourceIndex < 0) {
+                                    console.error(Logger.logviewerCategory, "Index out of scope.")
                                     return
                                 }
 
