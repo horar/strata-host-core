@@ -1,3 +1,4 @@
+import QtQml 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
@@ -15,6 +16,7 @@ SGWidgets.SGMainWindow {
     title: qsTr("Serial Console Interface")
 
     property variant settingsDialog: null
+    property variant connectMockDeviceDialog: null
     property int defaultWindowHeight: 600
     property int defaultWindowWidth: 800
 
@@ -40,6 +42,38 @@ SGWidgets.SGMainWindow {
                 text: qsTr("&Exit")
                 onTriggered:  {
                     root.close()
+                }
+            }
+        }
+
+        QtLabsPlatform.Menu {
+            title: "Mock"
+
+            QtLabsPlatform.MenuItem {
+                property int mockIdx: 1
+                text: qsTr("Connect Device")
+                onTriggered:  {
+                    showConnectMockDeviceDialog()
+                }
+            }
+
+            QtLabsPlatform.Menu {
+                id: disconnectDeviceSubMenu
+                title: qsTr("Disconnect Device")
+                enabled: disconnectDeviceInstantiator.count > 0
+
+                Instantiator {
+                    id: disconnectDeviceInstantiator
+                    model: sciModel.mockDeviceModel
+                    delegate: QtLabsPlatform.MenuItem {
+                        text: deviceName
+                        onTriggered: {
+                            sciModel.mockDeviceModel.disconnectMockDevice(deviceId)
+                        }
+                    }
+
+                    onObjectAdded: disconnectDeviceSubMenu.insertItem(index, object)
+                    onObjectRemoved: disconnectDeviceSubMenu.removeItem(object)
                 }
             }
         }
@@ -82,5 +116,14 @@ SGWidgets.SGMainWindow {
                         "rootItem": root,
                     })
         settingsDialog.open()
+    }
+
+    function showConnectMockDeviceDialog() {
+        if (connectMockDeviceDialog !== null) {
+            return
+        }
+
+        connectMockDeviceDialog = SGWidgets.SGDialogJS.createDialog(root,"qrc:/SciConnectMockDeviceDialog.qml")
+        connectMockDeviceDialog.open()
     }
 }
