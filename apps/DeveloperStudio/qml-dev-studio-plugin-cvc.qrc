@@ -41,5 +41,6 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/resize.svg">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/resize.svg</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml</file>
+        <file alias="components/MenuButton.qml">partial-views/control-view-creator/components/MenuButton.qml</file>
     </qresource>
 </RCC>

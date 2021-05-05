@@ -12,6 +12,7 @@ import tech.strata.commoncpp 1.0
 
 import "../../general"
 import "../"
+import "../components"
 
 ColumnLayout {
     id: fileContainerRoot
@@ -204,13 +205,14 @@ ColumnLayout {
         id: menuRow
         Layout.fillHeight: false
         Layout.preferredHeight: 40
+        Layout.leftMargin: spacing
 
         ButtonGroup {
             id: buttonGroup
             exclusive: true
         }
 
-        Button {
+        MenuButton {
             id: textEditorButton
             text: "Text Editor"
             checkable: true
@@ -231,7 +233,7 @@ ColumnLayout {
             implicitHeight: visualEditorButton.implicitHeight
             implicitWidth: visualEditorButton.implicitWidth
 
-            Button {
+            MenuButton {
                 id: visualEditorButton
                 text: "Visual Editor"
                 checkable: true
@@ -274,6 +276,7 @@ ColumnLayout {
         Loader {
             id: menuLoader
             active: menuLoaded
+            Layout.fillWidth: true
 
             property bool menuLoaded: false
 
