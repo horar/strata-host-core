@@ -76,9 +76,8 @@ SGWidgets.SGDialog {
 
             SGWidgets.SGText {
                 id: errorText
-                text: "Unable to connect this device, device already exists."
+                text: ""
                 color: "Red"
-                visible: false
 
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignLeft
@@ -106,7 +105,7 @@ SGWidgets.SGDialog {
                     if (sciModel.mockDeviceModel.connectMockDevice(deviceName.text, deviceId.text) === true) {
                         dialog.accept()
                     } else {
-                        errorText.visible = true
+                        errorText.text = "Unable to connect this device, device already exists."
                     }
                 }
             }
