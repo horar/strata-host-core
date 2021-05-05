@@ -114,7 +114,11 @@ QtObject {
     }
 
     function duplicateControl(uuid){
-        let copy = fileContents.match(captureComponentByUuidRegex(uuid))[0]
+        let copy = getObjectFromString(uuid)
+        if (copy === "") {
+            return
+        }
+
         let type = getType(uuid)
         type = type.charAt(0).toLowerCase() + type.slice(1); // lowercase the first letter of the type
         const newUuid = create_UUID()
@@ -137,12 +141,34 @@ QtObject {
                 return `${idKey}${idValue}_${create_UUID()}`
             }
         })
+
+        // if item-to-be-duplicated is not touching the edge of the layout, offset it by 1 row and 1 column
+        let column = getObjectPropertyValueInString(newUuid, "layoutInfo.xColumns", copy)
+        let row = getObjectPropertyValueInString(newUuid, "layoutInfo.yRows", copy)
+        if (column !== "" && row !== "") {
+            row = parseInt(row)
+            column = parseInt(column)
+            if (row < visualEditor.loader.item.rowCount - 1) {
+                row++
+                copy = replaceObjectPropertyValueInString(newUuid, "layoutInfo.yRows", row, copy)
+            }
+            if (column < visualEditor.loader.item.columnCount - 1) {
+                column++
+                copy = replaceObjectPropertyValueInString(newUuid, "layoutInfo.xColumns", column, copy)
+            }
+        } else {
+            console.warn("Problem detected with layoutInfo in object " + newUuid)
+        }
+
         insertTextAtEndOfFile(copy)
     }
 
     function bringToFront(uuid){
-        let copy = fileContents.match(captureComponentByUuidRegex(uuid))[0]
-        fileContents = fileContents.replace(captureComponentByUuidRegex, "");
+        let copy = getObjectFromString(uuid)
+        if (copy === "") {
+            return
+        }
+        fileContents = fileContents.replace(captureComponentByUuidRegex(uuid), "");
         insertTextAtEndOfFile(copy)
     }
 
@@ -163,18 +189,53 @@ QtObject {
         // \\s\\S is "space or not space" ,aka wildcard, since 's' flag does not work in qml
         // *? is lazy find, i.e. stop after first find, otherwise catches last match instead
         // all 3 groups are captured for replacement as it is impossible to replace only one group that is matched
-        let capture1 = "(start_" + uuid + "[\\s\\S]*?" + prop + "\\s*)"
+        let capture1 = "(start_" + uuid + "[\\s\\S]*?" + prop + ":\\s*)"
         let capture2 = "(.*)"
         let capture3 = "([\\s\\S]*?end_" + uuid + ")"
         let regex = new RegExp(capture1 + capture2 + capture3, "gm")
         return string.replace(regex, "$1" + value + "$3");
     }
 
+    /*
+        Given a <string>, find start and end tags for <uuid>, within those tags find the first
+        instance of <prop> and return its value. Only works for one-line properties.
+    */
+    function getObjectPropertyValueInString(uuid, propertyName, string = fileContents) {
+        let objectString = getObjectFromString(uuid, string)
+        if (objectString === "") {
+            return ""
+        }
+
+        propertyName = propertyName.replace(".", "\\.")
+        // regex: matches line starting with whitespace before 'propertyName: ' and captures anything that follows,
+        // stoping at end of line and disregarding trailing whitespace
+        const regex = new RegExp("^\\s*" + propertyName + ":\\s*(.*)\\s*$","m")
+        let value
+        try {
+            value = objectString.match(regex)[1]
+        } catch (e) {
+            value = ""
+            console.warn("No match for " + propertyName + " found in object " + uuid +", may be malformed")
+        }
+        return value;
+    }
+
+    function getObjectFromString(uuid, string = fileContents) {
+        let objectString
+        try {
+            objectString = string.match(captureComponentByUuidRegex(uuid))[0]
+        } catch (e) {
+            objectString = ""
+            console.warn("No match for " + uuid + " found, object start/end tags may be malformed or does not exist")
+        }
+        return objectString;
+    }
+
     function getId(uuid) {
         let capture1 = "start_" + uuid + "[\\s\\S]*?id:\\s*"
         let capture2 = "(.*)"
         let capture3 = "[\\s\\S]*?end_" + uuid + ""
-        let regex = new RegExp(capture1 + capture2 + capture3)
+        const regex = new RegExp(capture1 + capture2 + capture3)
         let id
         try {
             id = fileContents.match(regex)[1]
@@ -186,9 +247,9 @@ QtObject {
     }
 
     function getType(uuid) {
-        let capture1 = "([A-Za-z0-9_]+)" // qml object type, e.g. Rectangle
-        let capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
-        let regex = new RegExp(capture1 + capture2)
+        const capture1 = "([A-Za-z0-9_]+)" // qml object type, e.g. Rectangle
+        const capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
+        const regex = new RegExp(capture1 + capture2)
         let type
         try {
             type = fileContents.match(regex)[1]
@@ -209,5 +270,3 @@ QtObject {
         return uuid;
     }
 }
-
-
