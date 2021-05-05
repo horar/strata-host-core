@@ -66,8 +66,9 @@ void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
 
 bool SciMockDeviceModel::connectMockDevice(QString deviceName, QByteArray deviceId)
 {
-    if (scanner_ == nullptr)
+    if (scanner_ == nullptr) {
         return false;
+    }
 
     if (static_cast<MockDeviceScanner*>(scanner_.get())->
             mockDeviceDetected(deviceId, deviceName, false) == true) {
@@ -80,8 +81,9 @@ bool SciMockDeviceModel::connectMockDevice(QString deviceName, QByteArray device
 
 bool SciMockDeviceModel::disconnectMockDevice(QByteArray deviceId)
 {
-    if (scanner_ == nullptr)
+    if (scanner_ == nullptr) {
         return false;
+    }
 
     return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
 }
