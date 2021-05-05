@@ -120,9 +120,9 @@ Controller.prototype.LicenseAgreementPageCallback = function ()
     if (isSilent == true) {
         var widget = gui.currentPageWidget();
         if (widget != null) {
-            var licenseCheckBox = widget.findChild("AcceptLicenseCheckBox");
-            if (licenseCheckBox != null) {
-                licenseCheckBox.setChecked(true);
+            var licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
+            if (licenseRadioButton != null) {
+                licenseRadioButton.setChecked(true);
             }
         }
         gui.clickButton(buttons.NextButton);
