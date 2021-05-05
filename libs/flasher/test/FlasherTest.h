@@ -57,9 +57,9 @@ private:
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void clearExpectedValues();
-    void connectFlasherHandlers(strata::Flasher* flasher);
-    void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher);
-    void connectFlasherForCancelFirmwareOperation(strata::Flasher* flasher);
+    void connectFlasherHandlers(strata::Flasher* flasher) const;
+    void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher) const;
+    void connectFlasherForCancelFirmwareOperation(strata::Flasher* flasher) const;
 
     strata::platform::PlatformPtr platform_;
     std::shared_ptr<strata::device::MockDevice> mockDevice_;

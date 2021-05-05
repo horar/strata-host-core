@@ -22,8 +22,8 @@ using strata::device::MockVersion;
 namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
 
-FlasherTest::FlasherTest() : platformOperations_(false, false) {
-
+FlasherTest::FlasherTest() : platformOperations_(false, false)
+{
 }
 
 void FlasherTest::initTestCase()
@@ -180,18 +180,19 @@ void FlasherTest::verifyMessage(const QByteArray &msg, const QByteArray &expecte
     QCOMPARE(doc, expectedDoc);
 }
 
-void FlasherTest::connectFlasherHandlers(strata::Flasher *flasher) {
+void FlasherTest::connectFlasherHandlers(strata::Flasher *flasher) const
+{
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flasherState, this, &FlasherTest::handleFlasherState);
 }
 
-void FlasherTest::connectFlasherForDisconnectWhileFlashing(strata::Flasher *flasher)
+void FlasherTest::connectFlasherForDisconnectWhileFlashing(strata::Flasher *flasher) const
 {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForDisconnectWhileFlashing);
 }
 
-void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flasher)
+void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flasher) const
 {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flasherState, this, &FlasherTest::handleFlasherState);
