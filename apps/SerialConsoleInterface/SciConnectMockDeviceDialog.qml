@@ -115,4 +115,8 @@ SGWidgets.SGDialog {
     function updateDeviceId() {
         deviceId.text = sciModel.mockDeviceModel.getMockDeviceId(deviceName.text);
     }
+
+    onOpened: {
+        deviceName.forceActiveFocus()
+    }
 }
