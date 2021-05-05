@@ -2,7 +2,6 @@
 
 #include <rapidjson/document.h>
 #include <QObject>
-#include <QTemporaryFile>
 #include <Mock/MockDevice.h>
 #include "Operations/PlatformOperations.h"
 #include "Flasher.h"
