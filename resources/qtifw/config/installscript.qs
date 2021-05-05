@@ -122,7 +122,14 @@ Controller.prototype.LicenseAgreementPageCallback = function ()
         if (widget != null) {
             var licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
             if (licenseRadioButton != null) {
+                // QTIFW version 3.2
                 licenseRadioButton.setChecked(true);
+            } else {
+                var licenseCheckBox = widget.findChild("AcceptLicenseCheckBox");
+                if (licenseCheckBox != null) {
+                    // QTIFW version 4.1+
+                    licenseCheckBox.setChecked(true);
+                }
             }
         }
         gui.clickButton(buttons.NextButton);
