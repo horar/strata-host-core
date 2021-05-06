@@ -410,7 +410,7 @@ void FlasherTest::flashBootloaderTest()
 
     flasher_->flashBootloader();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1500);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT_BOOTLOADER);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -880,7 +880,7 @@ void FlasherTest::flashBootloaderCancelTest()
 
     flasher_->flashBootloader();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Flash bootlaoder operation was cancelled.
+    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT_BOOTLOADER); //Flash bootlaoder operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
