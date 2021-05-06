@@ -349,13 +349,18 @@ Item {
                     visible: model.program_controller === false && platformControlsColumn.comingSoon === false
 
                     function openView(view) {
-                    let data = {
+                        var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
+                        if (sourceIndex < 0) {
+                            console.error(Logger.devStudioCategory, "Index out of scope.")
+                            return
+                        }
+                        let data = {
                             "device_id": model.device_id,
                             "controller_class_id": model.controller_class_id,
                             "is_assisted": model.is_assisted,
                             "class_id": model.class_id,
                             "name": model.verbose_name,
-                            "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
+                            "index": sourceIndex,
                             "available": model.available,
                             "firmware_version": model.firmware_version,
                             "view": view,

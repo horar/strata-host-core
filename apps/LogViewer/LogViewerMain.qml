@@ -8,6 +8,7 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import tech.strata.theme 1.0
 import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.logger 1.0
 
 FocusScope {
     id: logViewerMain
@@ -214,6 +215,10 @@ FocusScope {
 
         function filterAcceptsRow(row) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(row)
+            if (sourceIndex < 0) {
+                console.error(Logger.logviewerCategory, "Index out of scope.")
+                return
+            }
             var isMarked = logModel.data(sourceIndex, "isMarked")
             if (showMarksButton.checked && isMarked === false) {
                 return false
@@ -983,7 +988,14 @@ FocusScope {
                                 }
 
                                 onClicked: {
+                                if (index < 0) {
+                                    return
+                                }
                                     var sourceIndex = markedModel.mapIndexToSource(index)
+                                    if (sourceIndex < 0) {
+                                        console.error(Logger.logviewerCategory, "Index out of scope.")
+                                        return
+                                    }
                                     positionView(primaryLogView, sourceIndex)
                                 }
 
@@ -1121,6 +1133,11 @@ FocusScope {
                                 } else {
                                     sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }
+                                if (sourceIndex < 0) {
+                                    console.error(Logger.logviewerCategory, "Index out of scope.")
+                                    return
+                                }
+
                                 primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                                 primaryLogView.currentIndex = sourceIndex
                             }

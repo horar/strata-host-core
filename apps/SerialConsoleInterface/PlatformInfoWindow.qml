@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import QtQuick.Window 2.12
+import tech.strata.logger 1.0
 
 Window {
     id: window
@@ -202,6 +203,7 @@ Window {
                     }
                     var index = commandSortedModel.mapIndexToSource(commandView.currentIndex)
                     if(index < 0) {
+                        console.error(Logger.sciCategory, "Index out of scope.")
                         return ""
                     }
 
