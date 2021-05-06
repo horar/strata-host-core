@@ -32,12 +32,10 @@ private slots:
     void setFwClassIdWithoutStartApplicationTest();
 
     // tests faulty/invalid responses
-    void startFlashFirmwareInvalidValueTest();
     void startFlashFirmwareInvalidCommandTest();
     void startFlashFirmwareFirmwareTooLargeTest();
     void flashFirmwareResendChunkTest();
     void flashFirmwareMemoryErrorTest();
-    void flashFirmwareInvalidValueTest();
     void flashFirmwareInvalidCmdSequenceTest();
 
     // tests faulty scenarios

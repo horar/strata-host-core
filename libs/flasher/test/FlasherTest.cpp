@@ -564,43 +564,6 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
     QCOMPARE(recordedMessages.size(),9);
 }
 
-void FlasherTest::startFlashFirmwareInvalidValueTest()
-{
-    rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
-
-    flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
-    connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
-
-    flasher_->flashFirmware();
-
-    QTRY_COMPARE_WITH_TIMEOUT(flasherTimeoutCount_, 1, 2200);
-
-    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
-
-    QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
-    QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
-    QCOMPARE(recordedMessages[3],test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[4],test_commands::request_platform_id_request);
-    QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
-
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
-
-    QCOMPARE(recordedMessages.size(),8);
-}
-
 void FlasherTest::startFlashFirmwareInvalidCommandTest()
 {
     rapidjson::Document actualDoc;
@@ -777,52 +740,6 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
     QCOMPARE(recordedMessages.size(),9);
 }
 
-void FlasherTest::flashFirmwareInvalidValueTest()
-{
-    rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
-
-    flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
-    connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_value,MockCommand::Flash_firmware);
-
-    flasher_->flashFirmware();
-
-    QTRY_COMPARE_WITH_TIMEOUT(flasherTimeoutCount_, 1, 2200);
-
-    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
-
-    QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
-    QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
-    QCOMPARE(recordedMessages[3],test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[4],test_commands::request_platform_id_request);
-    QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
-
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
-    }
-
-    QCOMPARE(recordedMessages.size(),9);
-}
-
 void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 {
     rapidjson::Document actualDoc;
@@ -963,7 +880,7 @@ void FlasherTest::flashBootloaderCancelTest()
 
     flasher_->flashBootloader();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Firmware operation was cancelled.
+    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Flash bootlaoder operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
