@@ -38,6 +38,13 @@ Rectangle {
         user: NavigationControl.context.user_id
     }
 
+    onHeightChanged:  {
+        if(viewConsoleLog.topWallY < viewConsoleLog.setResize) {
+            console.log("height",height)
+            viewConsoleLog.topWallY = viewConsoleLog.setResize
+        }
+    }
+
     ConfirmClosePopup {
         id: confirmClosePopup
         x: (parent.width - width) / 2
@@ -112,11 +119,11 @@ Rectangle {
         buttons: [okButtonObject]
 
         property var okButtonObject: ({
-            buttonText: "Ok",
-            buttonColor: acceptButtonColor,
-            buttonHoverColor: acceptButtonHoverColor,
-            closeReason: acceptCloseReason
-        });
+                                          buttonText: "Ok",
+                                          buttonColor: acceptButtonColor,
+                                          buttonHoverColor: acceptButtonHoverColor,
+                                          closeReason: acceptCloseReason
+                                      });
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
