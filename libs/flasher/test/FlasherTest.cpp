@@ -323,185 +323,19 @@ void FlasherTest::flashFirmwareTest()
         QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),1);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[1]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[1]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[1]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[10].data(), recordedMessages[10].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),2);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[2]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[2]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[2]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[11].data(), recordedMessages[11].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),3);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[3]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[3]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[3]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[12].data(), recordedMessages[12].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),4);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[4]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[4]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[4]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[13].data(), recordedMessages[13].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),5);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[5]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[5]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[5]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[14].data(), recordedMessages[14].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),6);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[6]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[6]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[6]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[15].data(), recordedMessages[15].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),7);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[7]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[7]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[7]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[16].data(), recordedMessages[16].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),8);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[8]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[8]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[8]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[17].data(), recordedMessages[17].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),9);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[9]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[9]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[9]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[18].data(), recordedMessages[18].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),10);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[10]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[10]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[10]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[19].data(), recordedMessages[19].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),11);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[11]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[11]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[11]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[20].data(), recordedMessages[20].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),12);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[12]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[12]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[12]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[21].data(), recordedMessages[21].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),13);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[13]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[13]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[13]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[22].data(), recordedMessages[22].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),14);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[14]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[14]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[14]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[23].data(), recordedMessages[23].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),15);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[15]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[15]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[15]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[24].data(), recordedMessages[24].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),16);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[16]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[16]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[16]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[25].data(), recordedMessages[25].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),17);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[17]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[17]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[17]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[26].data(), recordedMessages[26].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),18);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[18]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[18]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[18]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[27].data(), recordedMessages[27].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),19);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[19]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[19]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[19]);
+
+    int messageNumber = 8;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
+        {
+            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+            QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        }
+        messageNumber++;
     }
 
     QCOMPARE(recordedMessages[28],test_commands::start_application_request); //Start application after flashing
@@ -543,185 +377,19 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
         QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),1);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[1]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[1]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[1]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[10].data(), recordedMessages[10].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),2);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[2]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[2]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[2]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[11].data(), recordedMessages[11].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),3);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[3]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[3]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[3]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[12].data(), recordedMessages[12].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),4);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[4]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[4]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[4]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[13].data(), recordedMessages[13].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),5);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[5]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[5]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[5]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[14].data(), recordedMessages[14].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),6);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[6]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[6]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[6]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[15].data(), recordedMessages[15].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),7);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[7]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[7]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[7]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[16].data(), recordedMessages[16].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),8);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[8]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[8]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[8]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[17].data(), recordedMessages[17].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),9);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[9]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[9]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[9]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[18].data(), recordedMessages[18].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),10);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[10]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[10]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[10]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[19].data(), recordedMessages[19].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),11);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[11]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[11]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[11]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[20].data(), recordedMessages[20].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),12);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[12]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[12]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[12]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[21].data(), recordedMessages[21].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),13);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[13]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[13]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[13]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[22].data(), recordedMessages[22].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),14);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[14]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[14]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[14]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[23].data(), recordedMessages[23].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),15);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[15]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[15]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[15]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[24].data(), recordedMessages[24].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),16);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[16]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[16]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[16]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[25].data(), recordedMessages[25].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),17);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[17]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[17]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[17]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[26].data(), recordedMessages[26].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),18);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[18]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[18]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[18]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[27].data(), recordedMessages[27].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),19);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[19]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[19]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[19]);
+
+    int messageNumber = 8;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
+        {
+            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+            QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        }
+        messageNumber++;
     }
 
     QCOMPARE(recordedMessages[28],test_commands::get_firmware_info_request);
@@ -762,97 +430,19 @@ void FlasherTest::flashBootloaderTest()
         QCOMPARE(expectedPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(expectedPayload["md5"].GetString(),expectedMd5_);
     }
-    qDebug() << recordedMessages[7];
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
-    }
-    qDebug() << recordedMessages[8];
-    {
-        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),1);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[1]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[1]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[1]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[10].data(), recordedMessages[10].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),2);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[2]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[2]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[2]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[11].data(), recordedMessages[11].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),3);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[3]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[3]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[3]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[12].data(), recordedMessages[12].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),4);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[4]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[4]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[4]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[13].data(), recordedMessages[13].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),5);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[5]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[5]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[5]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[14].data(), recordedMessages[14].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),6);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[6]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[6]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[6]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[15].data(), recordedMessages[15].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),7);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[7]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[7]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[7]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[16].data(), recordedMessages[16].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),8);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[8]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[8]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[8]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[17].data(), recordedMessages[17].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),9);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[9]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[9]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[9]);
+
+    int messageNumber = 8;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
+        {
+            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+            QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
+            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        }
+        messageNumber++;
     }
 
     QCOMPARE(recordedMessages[18],test_commands::get_firmware_info_request);
@@ -1343,96 +933,21 @@ void FlasherTest::flashFirmwareCancelTest()
         QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
+
+    int messageNumber = 8;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_/2; chunkNumber++) {
+        {
+            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+            QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        }
+        messageNumber++;
     }
-    {
-        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),1);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[1]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[1]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[1]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[10].data(), recordedMessages[10].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),2);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[2]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[2]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[2]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[11].data(), recordedMessages[11].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),3);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[3]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[3]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[3]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[12].data(), recordedMessages[12].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),4);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[4]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[4]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[4]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[13].data(), recordedMessages[13].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),5);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[5]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[5]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[5]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[14].data(), recordedMessages[14].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),6);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[6]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[6]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[6]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[15].data(), recordedMessages[15].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),7);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[7]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[7]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[7]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[16].data(), recordedMessages[16].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),8);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[8]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[8]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[8]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[17].data(), recordedMessages[17].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),9);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[9]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[9]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[9]);
-    }
+
     QCOMPARE(recordedMessages.size(),18);
 }
 
@@ -1467,50 +982,20 @@ void FlasherTest::flashBootloaderCancelTest()
         QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
+
+    int messageNumber = 8;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_/2; chunkNumber++) {
+        {
+            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+            QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
+            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        }
+        messageNumber++;
     }
-    {
-        actualDoc.Parse(recordedMessages[9].data(), recordedMessages[9].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),1);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[1]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[1]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[1]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[10].data(), recordedMessages[10].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),2);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[2]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[2]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[2]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[11].data(), recordedMessages[11].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),3);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[3]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[3]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[3]);
-    }
-    {
-        actualDoc.Parse(recordedMessages[12].data(), recordedMessages[12].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-        QCOMPARE(actualChunk["number"].GetInt(),4);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[4]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[4]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[4]);
-    }
+
     QCOMPARE(recordedMessages.size(),13);
 }
