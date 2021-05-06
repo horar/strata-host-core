@@ -68,7 +68,7 @@ public:
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false
      */
-    virtual bool sendMessage(const QByteArray msg) override;
+    virtual bool sendMessage(const QByteArray& msg) override;
 
     /**
      * Check if serial device is connected (communication with it is possible - device
