@@ -11,7 +11,7 @@ cd ${SCRIPT_DIR}
 DEFAULT_ARGUMENTS="--create-installer --generate-repo"
 FIXED_ARGUMENTS="--config QA --app --relativerepo --demorepo --nosigning"
 CUSTOM_ARGUMENTS="$@"
-BUILD_SCRIPT=strata-host-core-internal/deployment/OTA/Strata/release_app.sh
+BUILD_SCRIPT=../strata-deployment/OTA/Strata/release_app.sh
 
 usage() {
     echo "bootstrap-host-ota.sh is a simple build script for all 'host' targets configured for OTA release"
