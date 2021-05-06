@@ -24,7 +24,11 @@ void PlatformManagerTest::init()
 {
     onBoardDisconnectedCalls_ = 0;
     lastOnBoardDisconnectedDeviceId_.clear();
-    platformManager_ = std::make_shared<PlatformManager>(true, false, false);
+    bool handleIdentify = false;
+    if (qstrcmp(QTest::currentTestFunction(), "identifyNewPlatformTest") == 0) {
+        handleIdentify = true;
+    }
+    platformManager_ = std::make_shared<PlatformManager>(true, false, handleIdentify);
     connect(platformManager_.get(), &PlatformManager::platformRemoved, this,
             &PlatformManagerTest::onBoardDisconnected);
     platformManager_->init(Device::Type::MockDevice);
@@ -72,12 +76,12 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
     QSignalSpy platformAboutToCloseSignal(platformManager_.get(), SIGNAL(platformAboutToClose(QByteArray)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
     if (platformManager_->disconnectPlatform(deviceId)) {
-        QVERIFY_((platformRemovedSignal.wait(250) == true) && (platformAboutToCloseSignal.count() == 1));
-        QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
-        QVERIFY_(platform.get() != nullptr);
+        QVERIFY((platformRemovedSignal.wait(250) == true) && (platformAboutToCloseSignal.count() == 1));
+        QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
+        QVERIFY(platform.get() != nullptr);
         auto mockDevice = std::dynamic_pointer_cast<strata::device::MockDevice>(platform->getDevice());
         QVERIFY(mockDevice.get() != nullptr);
-        QCOMPARE_(platformManager_->getDeviceIds().count(), --devicesCount);
+        QCOMPARE(platformManager_->getDeviceIds().count(), --devicesCount);
         QVERIFY(!mockDevice->mockIsOpened());
     } else {
         QVERIFY(platform.get() == nullptr);
@@ -157,16 +161,10 @@ void PlatformManagerTest::connectMultipleTest()
 
 void PlatformManagerTest::identifyNewPlatformTest()
 {
-    PlatformManager platformManager(true, false, true);
-    platformManager.init(Device::Type::MockDevice);
+    QSignalSpy platformRecognizedSignal(platformManager_.get(), SIGNAL(platformRecognized(QByteArray, bool)));
 
     const QByteArray deviceId("mock");
-
-    QSignalSpy platformRecognizedSignal(&platformManager, SIGNAL(platformRecognized(QByteArray, bool)));
-
-    strata::device::scanner::DeviceScannerPtr mockDeviceScanner = platformManager.getScanner(Device::Type::MockDevice);
-    QVERIFY(mockDeviceScanner.get() != nullptr);
-    QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner.get())->mockDeviceDetected(deviceId, "Mock device", true));
+    addMockDevice(deviceId, "Mock device");
 
     QCOMPARE(platformRecognizedSignal.wait(250), true);
     QList<QVariant> arguments = platformRecognizedSignal.takeFirst();
@@ -174,7 +172,7 @@ void PlatformManagerTest::identifyNewPlatformTest()
     QVERIFY(arguments.at(1).type() == QVariant::Bool);
     QCOMPARE(qvariant_cast<bool>(arguments.at(1)), true);
 
-    QCOMPARE(platformManager.disconnectPlatform(deviceId), true);
+    removeMockDevice(deviceId);
 }
 
 // TODO tests for PlatformManager signals:
