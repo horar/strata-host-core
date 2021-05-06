@@ -115,9 +115,11 @@ private slots:
 
 private:
     static void loadCoreResources();
+
     void loadPluginResources();
 
     QString getQResourcePrefix(const QString &class_id, const QString &version);
+
     /**
      * @brief getVersionJson Gets the version of the control view according to the version.json
      * @param class_id The class_id of the platform
@@ -126,15 +128,23 @@ private:
      */
     QString getVersionJson(const QString &class_id, const QString &version = "");
 
+    /**
+     * @brief findRccCompiler attempts to find a valid RCC compiler in the current application directory
+     * @return true if a valid RCC compiler was found
+     */
+    bool findRccCompiler();
+
     QHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
 
     std::unique_ptr<QProcess> rccCompilerProcess_ = nullptr;
 
-    QString lastLoggedError = "";
+    QString lastLoggedError_ = "";
 
-    QString lastCompiledRccResource = "";
+    QString lastCompiledRccResource_ = "";
+
+    QString rccCompilerPath_ = "";
 
     void clearLastLoggedError();
 
