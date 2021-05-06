@@ -76,7 +76,8 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
     QSignalSpy platformAboutToCloseSignal(platformManager_.get(), SIGNAL(platformAboutToClose(QByteArray)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
     if (platformManager_->disconnectPlatform(deviceId)) {
-        QVERIFY((platformRemovedSignal.wait(250) == true) && (platformAboutToCloseSignal.count() == 1));
+        QCOMPARE(platformRemovedSignal.wait(250), true);
+        QCOMPARE(platformAboutToCloseSignal.count(), 1);
         QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
         QVERIFY(platform.get() != nullptr);
         auto mockDevice = std::dynamic_pointer_cast<strata::device::MockDevice>(platform->getDevice());

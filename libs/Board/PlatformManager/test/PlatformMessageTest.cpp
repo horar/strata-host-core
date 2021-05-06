@@ -1,6 +1,8 @@
 #include "PlatformMessageTest.h"
 #include <PlatformMessage.h>
 
+#include <rapidjson/document.h>
+
 using strata::platform::PlatformMessage;
 
 PlatformMessageTest::PlatformMessageTest()
@@ -105,4 +107,14 @@ void PlatformMessageTest::copyMessageTest()
         QVERIFY(msg1.jsonErrorOffset() == msg2.jsonErrorOffset());
         QVERIFY(msg1.jsonErrorString() == msg2.jsonErrorString());
     }
+}
+
+void PlatformMessageTest::messageContentTest()
+{
+    const QByteArray source("{\"a\":1}");
+    rapidjson::Document doc;
+    doc.Parse(source.data(), source.size());
+    PlatformMessage msg(source);
+    QVERIFY(msg.raw() == source);
+    QVERIFY(msg.json() == doc);
 }

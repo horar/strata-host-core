@@ -34,5 +34,6 @@ private slots:
     void validJsonTest();
     void invalidJsonTest();
     void copyMessageTest();
+    void messageContentTest();
 
 };
