@@ -28,6 +28,11 @@ Rectangle {
     onDebugPlatformChanged: {
         recompileControlViewQrc();
     }
+
+    ListModel {
+        id: consoleModel
+    }
+
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
     property bool isConsoleLogOpen: false
@@ -36,13 +41,6 @@ Rectangle {
         id: sgUserSettings
         classId: "controlViewCreator"
         user: NavigationControl.context.user_id
-    }
-
-    onHeightChanged:  {
-        if(viewConsoleLog.topWallY < viewConsoleLog.setResize) {
-            console.log("height",height)
-            viewConsoleLog.topWallY = viewConsoleLog.setResize
-        }
     }
 
     ConfirmClosePopup {
@@ -383,7 +381,7 @@ Rectangle {
     ViewConsoleContainer {
         id: viewConsoleLog
         width: parent.width - 71
-        implicitHeight: 200
+        implicitHeight: parent.height
         visible: false
     }
 
