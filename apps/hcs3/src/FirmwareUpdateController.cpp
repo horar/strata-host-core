@@ -40,80 +40,29 @@ FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid,
 {
 }
 
-void FirmwareUpdateController::updateFirmware(const UpdateFirmwareData &data)
+void FirmwareUpdateController::changeFirmware(const ChangeFirmwareData &data)
 {
-    FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareUrl, data.firmwareMD5);
-
-    runUpdate(flashData);
-}
-
-void FirmwareUpdateController::programController(const ProgramControllerData &data)
-{
-    if (data.firmwareClassId.isNull()) {
-        logAndEmitError(data.deviceId, QStringLiteral("Cannot program controller - firmware class ID was not provided."));
-        return;
+    switch (data.action) {
+    case ChangeFirmwareAction::UpdateFirmware :
+        break;
+    case ChangeFirmwareAction::ProgramController :
+        if (data.firmwareClassId.isNull()) {
+            logAndEmitError(data.deviceId, QStringLiteral("Cannot program controller - firmware class ID was not provided."));
+            return;
+        }
+        break;
+    case ChangeFirmwareAction::SetControllerFwClassId :
+        if (data.firmwareClassId.isNull()) {
+            logAndEmitError(data.deviceId, QStringLiteral("Cannot set controller firmware class ID - it is not provided."));
+            return;
+        }
+        break;
     }
 
-    FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
-
-    runUpdate(flashData);
+    runUpdate(data);
 }
 
-void FirmwareUpdateController::setControllerFwClassId(const ProgramControllerData &data)
-{
-    if (data.firmwareClassId.isNull()) {
-        logAndEmitError(data.deviceId, QStringLiteral("Cannot set controller firmware class ID - it is not provided."));
-        return;
-    }
-
-    FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareClassId);
-
-    runUpdate(flashData);
-}
-
-// FlashData constructror for update firmware action
-FirmwareUpdateController::FlashData::FlashData(const QByteArray& deviceId,
-                                               const QByteArray& clientId,
-                                               const QString& jobUuid,
-                                               const QUrl& firmwareUrl,
-                                               const QString& firmwareMD5)
-    : action(Action::UpdateFirmware),
-      deviceId(deviceId),
-      clientId(clientId),
-      jobUuid(jobUuid),
-      firmwareUrl(firmwareUrl),
-      firmwareMD5(firmwareMD5)
-{ }
-
-// FlashData constructror for program controller action
-FirmwareUpdateController::FlashData::FlashData(const QByteArray& deviceId,
-                                               const QByteArray& clientId,
-                                               const QString& jobUuid,
-                                               const QUrl& firmwareUrl,
-                                               const QString& firmwareMD5,
-                                               const QString& firmwareClassId)
-    : action(Action::ProgramController),
-      deviceId(deviceId),
-      clientId(clientId),
-      jobUuid(jobUuid),
-      firmwareUrl(firmwareUrl),
-      firmwareMD5(firmwareMD5),
-      firmwareClassId(firmwareClassId)
-{ }
-
-// FlashData constructror for set controller fw_class_id action
-FirmwareUpdateController::FlashData::FlashData(const QByteArray& deviceId,
-                                               const QByteArray& clientId,
-                                               const QString& jobUuid,
-                                               const QString& firmwareClassId)
-    : action(Action::SetControllerFwClassId),
-      deviceId(deviceId),
-      clientId(clientId),
-      jobUuid(jobUuid),
-      firmwareClassId(firmwareClassId)
-{ }
-
-void FirmwareUpdateController::runUpdate(const FlashData& data)
+void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
 {
     if (platformController_.isNull() || downloadManager_.isNull()) {
         logAndEmitError(data.deviceId, QStringLiteral("FirmwareUpdateController is not properly initialized."));
@@ -133,19 +82,16 @@ void FirmwareUpdateController::runUpdate(const FlashData& data)
     }
 
     FirmwareUpdater *fwUpdater;
-    bool workWithController = false;
+    bool workWithController = true;
 
     switch(data.action) {
-    case Action::UpdateFirmware :
-        fwUpdater = new FirmwareUpdater(platform, downloadManager_, data.firmwareUrl, data.firmwareMD5);
-        break;
-    case Action::ProgramController :
+    case ChangeFirmwareAction::UpdateFirmware :
+        workWithController = false;
+    case ChangeFirmwareAction::ProgramController :
         fwUpdater = new FirmwareUpdater(platform, downloadManager_, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
-        workWithController = true;
         break;
-    case Action::SetControllerFwClassId :
+    case ChangeFirmwareAction::SetControllerFwClassId :
         fwUpdater = new FirmwareUpdater(platform, data.firmwareClassId);
-        workWithController = true;
         break;
     }
 
@@ -156,11 +102,14 @@ void FirmwareUpdateController::runUpdate(const FlashData& data)
     connect(fwUpdater, &FirmwareUpdater::updaterError, this, &FirmwareUpdateController::updaterError);
 
     switch(data.action) {
-    case Action::UpdateFirmware :
-    case Action::ProgramController :
-        fwUpdater->updateFirmware();
+    case ChangeFirmwareAction::UpdateFirmware :
+        fwUpdater->updateFirmware(true);
         break;
-    case Action::SetControllerFwClassId :
+    case ChangeFirmwareAction::ProgramController :
+        // there is no need to backup old firmware if programming aasisted controller (dongle)
+        fwUpdater->updateFirmware(false);
+        break;
+    case ChangeFirmwareAction::SetControllerFwClassId :
         fwUpdater->setFwClassId();
         break;
     }

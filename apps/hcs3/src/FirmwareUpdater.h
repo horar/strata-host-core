@@ -28,17 +28,7 @@ class FirmwareUpdater final : public QObject
     Q_DISABLE_COPY(FirmwareUpdater)
 public:
     /**
-     * FirmwareUpdater constructor for updating firmware in device
-     * @param platform platform
-     * @param downloadManager pointer to DownloadManager
-     * @param url URL where firmware is located
-     * @param md5 MD5 of firmware
-     */
-    FirmwareUpdater(const strata::platform::PlatformPtr& platform, strata::DownloadManager *downloadManager,
-                    const QUrl& url, const QString& md5);
-
-    /**
-     * FirmwareUpdater constructor for programming new firmware to assisted controller (dongle)
+     * FirmwareUpdater constructor for updating firmware or programming new firmware to assisted controller (dongle)
      * @param platform platform
      * @param downloadManager pointer to DownloadManager
      * @param url URL where firmware is located
@@ -62,8 +52,9 @@ public:
 
     /**
      * Update Firmware
+     * @param backupOldFirmware true if backup original firmware, false otherwise
      */
-    void updateFirmware();
+    void updateFirmware(bool backupOldFirmware);
 
     /**
      * Set Firmware ClassId
@@ -98,6 +89,7 @@ private:
     void logAndEmitError(const QString& errorString);
 
     bool running_;
+    bool backupOldFirmware_;
 
     const strata::platform::PlatformPtr platform_;
     const QByteArray deviceId_;
