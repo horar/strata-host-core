@@ -19,7 +19,6 @@ ColumnLayout {
 
     ColorPopup {
         id: colorDialog
-
     }
 
 }

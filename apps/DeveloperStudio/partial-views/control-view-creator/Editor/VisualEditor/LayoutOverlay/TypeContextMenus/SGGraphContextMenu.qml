@@ -11,23 +11,38 @@ ColumnLayout {
     spacing: 1
 
     ContextMenuButton {
-        text: "Set X Min"
+        text: "Set Title"
         onClicked: {
             textDialog.open()
         }
-
     }
 
     TextPopup {
-        id: textDialog
+        id: titleDialog
+        textFieldProperty: "title:"
+    }
 
+    ContextMenuButton {
+        text: "Set X Title"
+        onClicked: {
+            xtitleDialog.open()
+        }
+    }
+
+    TextPopup {
+        id: xtitleDialog
+        textFieldProperty: "xTitle:"
     }
 
 
-//    ContextMenuButton {
-//        text: "Set Y Min"
+    ContextMenuButton {
+        text: "Set Y Title"
+    }
 
-//    }
+    TextPopup {
+        id: ytitleDialog
+        textFieldProperty: "yTitle:"
+    }
 
 
 }
