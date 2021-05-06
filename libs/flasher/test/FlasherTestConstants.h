@@ -5,6 +5,9 @@
 // data for fake firmware/bootloader
 namespace strata::FlasherTestConstants {
 
+// default timeout for QTRY_COMPARE_WITH_TIMEOUT
+constexpr int TEST_TIMEOUT = 1000;
+
 const QByteArray fakeFirmwareData = R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac lobortis tellus. Sed mattis ultricies porta. Aliquam fringilla hendrerit felis, in ultricies odio. Quisque sit amet ex lacinia, dignissim ex et, mollis est. Pellentesque imperdiet nulla vitae velit lacinia fringilla. Integer molestie commodo felis, non condimentum ipsum aliquam ut. Sed vel orci dui.
 
 Pellentesque massa risus, vulputate nec accumsan sed, cursus sit amet metus. Maecenas sed lobortis elit. Donec quis lectus finibus, condimentum turpis at, blandit tortor. Praesent molestie tortor eu diam blandit, et varius nunc rutrum. Vestibulum non placerat massa. Aenean vulputate nibh id pulvinar luctus. Pellentesque facilisis eros magna, et dapibus nulla vestibulum sit amet. Etiam sit amet mattis erat. In eu nulla sollicitudin, dictum dolor viverra, aliquam lectus. In nec odio a tortor tincidunt finibus. Proin efficitur, tortor eget rhoncus scelerisque, dolor dolor viverra sem, vitae maximus ante dui non nulla. Nullam fringilla eros id velit egestas, ut rutrum orci pretium. Sed volutpat quis libero quis lacinia.

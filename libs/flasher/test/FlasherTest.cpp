@@ -21,6 +21,7 @@ using strata::device::MockVersion;
 
 namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
+namespace flasher_test_constants = strata::FlasherTestConstants;
 
 FlasherTest::FlasherTest() : platformOperations_(false, false)
 {
@@ -127,7 +128,7 @@ void FlasherTest::handleFlasherState(strata::Flasher::State state, bool done)
         OperationSharedPtr startBootloaderOperation = platformOperations_.StartBootloader(platform_);
         static_cast<operation::StartBootloader*>(startBootloaderOperation.get())->setWaitTime(std::chrono::milliseconds(1)); //Skipping wait-for-bootloader-to-start 5 sec timeout for Tests purporses
         startBootloaderOperation->run();
-        QTRY_COMPARE_WITH_TIMEOUT(startBootloaderOperation->isSuccessfullyFinished(), true, 1000);
+        QTRY_COMPARE_WITH_TIMEOUT(startBootloaderOperation->isSuccessfullyFinished(), true, flasher_test_constants::TEST_TIMEOUT);
         QVERIFY(mockDevice_->mockIsBootloader());
         break;
     }
@@ -207,7 +208,7 @@ void FlasherTest::createFiles()
         delete fakeFirmware_;
     } else {
         QTextStream fakeFirmwareOut(fakeFirmware_);
-        fakeFirmwareOut << strata::FlasherTestConstants::fakeFirmwareData;
+        fakeFirmwareOut << flasher_test_constants::fakeFirmwareData;
         fakeFirmwareOut.flush();
     }
 
@@ -216,7 +217,7 @@ void FlasherTest::createFiles()
         delete fakeBootloader_;
     } else {
         QTextStream fakeBootloaderOut(fakeBootloader_);
-        fakeBootloaderOut << strata::FlasherTestConstants::fakeBootloaderData;
+        fakeBootloaderOut << flasher_test_constants::fakeFirmwareData;
         fakeBootloaderOut.flush();
     }
 
@@ -225,7 +226,7 @@ void FlasherTest::createFiles()
         delete fakeFirmwareBackup_;
     } else {
         QTextStream fakeFirmwareBackupOut(fakeFirmwareBackup_);
-        fakeFirmwareBackupOut << strata::FlasherTestConstants::fakeFirmwareBackupData;
+        fakeFirmwareBackupOut << flasher_test_constants::fakeFirmwareData;
         fakeFirmwareBackupOut.flush();
     }
 
@@ -299,7 +300,7 @@ void FlasherTest::flashFirmwareTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -519,7 +520,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 
     flasher_->flashFirmware(false);
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -869,7 +870,7 @@ void FlasherTest::backupFirmwareTest()
 
     flasher_->backupFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -906,7 +907,7 @@ void FlasherTest::setFwClassIdTest()
 
     flasher_->setFwClassId();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -945,7 +946,7 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 
     flasher_->setFwClassId(false);
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1020,7 +1021,7 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1057,7 +1058,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1077,6 +1078,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
         QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
         QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     }
+    qDebug() << recordedMessages[7];
 
     QCOMPARE(recordedMessages.size(),8);
 }
@@ -1094,7 +1096,7 @@ void FlasherTest::flashFirmwareResendChunkTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1149,7 +1151,7 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1241,7 +1243,7 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
@@ -1283,7 +1285,7 @@ void FlasherTest::disconnectWhileFlashingTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherDisconnectedCount_, 1, 1000); //Device disconnected during firmware operation.
+    QTRY_COMPARE_WITH_TIMEOUT(flasherDisconnectedCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Device disconnected during firmware operation.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(),0);
@@ -1301,7 +1303,7 @@ void FlasherTest::setNoFwClassIdTest()
 
     flasher_->setFwClassId();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, 1000); //Cannot set firmware class ID, no fwClassId was provided.
+    QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Cannot set firmware class ID, no fwClassId was provided.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(),0);
@@ -1319,7 +1321,7 @@ void FlasherTest::flashFirmwareCancelTest()
 
     flasher_->flashFirmware();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, 1000); //Firmware operation was cancelled.
+    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Firmware operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
@@ -1443,7 +1445,7 @@ void FlasherTest::flashBootloaderCancelTest()
 
     flasher_->flashBootloader();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, 1000); //Firmware operation was cancelled.
+    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Firmware operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
