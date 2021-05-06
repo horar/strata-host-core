@@ -220,7 +220,7 @@ void FlasherTest::createFiles()
         delete fakeBootloader_;
     } else {
         QTextStream fakeBootloaderOut(fakeBootloader_);
-        fakeBootloaderOut << flasher_test_constants::fakeFirmwareData;
+        fakeBootloaderOut << flasher_test_constants::fakeBootloaderData;
         fakeBootloaderOut.flush();
     }
 
