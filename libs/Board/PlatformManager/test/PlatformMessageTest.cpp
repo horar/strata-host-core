@@ -1,8 +1,6 @@
 #include "PlatformMessageTest.h"
 #include <PlatformMessage.h>
 
-#include <rapidjson/document.h>
-
 using strata::platform::PlatformMessage;
 
 PlatformMessageTest::PlatformMessageTest()

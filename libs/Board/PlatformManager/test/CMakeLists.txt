@@ -24,7 +24,6 @@ target_link_libraries(${PROJECT_NAME}-test
     PRIVATE PlatformManager
     PRIVATE CommandValidator
     PRIVATE strata::base64
-    PUBLIC rapidjson::rapidjson
 )
 
 add_test(NAME ${PROJECT_NAME}-test
