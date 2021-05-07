@@ -1493,7 +1493,12 @@ const qtTypeJson = {
                 "checkedIndices": {
                     "meta_properties": []
                 }
-            }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
         },
         "LayoutSGCircularGauge": {
             "properties": {
@@ -1656,7 +1661,10 @@ const qtTypeJson = {
                 "removeCurve()",
                 "update()",
             ],
-            "signals": []
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
         },
         "LayoutSGIcon": {
             "properties": {
