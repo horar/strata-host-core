@@ -42,3 +42,4 @@ components/monaco/qml/tech/strata/monaco/minified/*
 *.pyc
 strata-host-core-internal/
 *strata-platform-control-views/
+strata-deployment/
