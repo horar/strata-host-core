@@ -16,14 +16,6 @@ FirmwareUpdater::FirmwareUpdater(
         const strata::platform::PlatformPtr& platform,
         strata::DownloadManager *downloadManager,
         const QUrl& url,
-        const QString& md5)
-    : FirmwareUpdater(platform, downloadManager, url, md5, QString())
-{ }
-
-FirmwareUpdater::FirmwareUpdater(
-        const strata::platform::PlatformPtr& platform,
-        strata::DownloadManager *downloadManager,
-        const QUrl& url,
         const QString& md5,
         const QString& fwClassId)
     : running_(false),
@@ -53,7 +45,7 @@ FirmwareUpdater::~FirmwareUpdater()
     }
 }
 
-void FirmwareUpdater::updateFirmware()
+void FirmwareUpdater::updateFirmware(bool backupOldFirmware)
 {
     if (running_) {
         logAndEmitError(QStringLiteral("Cannot update firmware, update is already running."));
@@ -78,6 +70,7 @@ void FirmwareUpdater::updateFirmware()
     firmwareFile_.close();
 
     running_ = true;
+    backupOldFirmware_ = backupOldFirmware;
 
     downloadFirmware();
 }
@@ -167,13 +160,10 @@ void FirmwareUpdater::handleFlashFirmware()
         return;
     }
 
-    bool backupOldFirmware = true;
-
     if (fwClassId_.isNull()) {
         flasherConnector_ = new FlasherConnector(platform_, firmwareFile_.fileName(), firmwareMD5_, this);
-    } else {  // program assisted controller (dongle)
+    } else {
         flasherConnector_ = new FlasherConnector(platform_, firmwareFile_.fileName(), firmwareMD5_, fwClassId_, this);
-        backupOldFirmware = false;  // there is no need to backup old firmware if dongle is programmed
     }
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
@@ -182,7 +172,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
-    flasherConnector_->flash(backupOldFirmware);
+    flasherConnector_->flash(backupOldFirmware_);
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)

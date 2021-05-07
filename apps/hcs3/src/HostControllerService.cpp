@@ -473,13 +473,25 @@ void HostControllerService::processCmdDownloadFiles(const QJsonObject &payload, 
 
 void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload, const QByteArray &clientId)
 {
-    FirmwareUpdateController::UpdateFirmwareData updateData;
-    updateData.clientId = clientId;
+    FirmwareUpdateController::ChangeFirmwareData firmwareData;
+    firmwareData.clientId = clientId;
+    firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::UpdateFirmware;
 
-    updateData.deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (updateData.deviceId.isEmpty()) {
+    firmwareData.deviceId = payload.value("device_id").toVariant().toByteArray();
+    if (firmwareData.deviceId.isEmpty()) {
         qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
         return;
+    }
+
+    strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
+    if (platform == nullptr) {
+        qCWarning(logCategoryHcs) << "Platform" << firmwareData.deviceId << "doesn't exist";
+        return;
+    }
+
+    // if firmwareClassId is available, flasher needs it (due to correct flashing of assisted boards)
+    if (platform->controllerType() == strata::platform::Platform::ControllerType::Assisted) {
+        firmwareData.firmwareClassId = platform->firmwareClassId();
     }
 
     QString path = payload.value("path").toString();
@@ -488,14 +500,14 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
 
         QJsonObject payloadBody {
             { "error_string", "path attribute is empty or has bad format" },
-            { "device_id", QLatin1String(updateData.deviceId) }
+            { "device_id", QLatin1String(firmwareData.deviceId) }
         };
         QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-        clients_.sendMessage(updateData.clientId, notification);
+        clients_.sendMessage(firmwareData.clientId, notification);
         return;
     }
 
-    updateData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
+    firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
 
     QString firmwareMD5 = payload.value("md5").toString();
     if (firmwareMD5.isEmpty()) {
@@ -503,34 +515,34 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
         qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
     }
 
-    updateData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    firmwareData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
     QJsonObject payloadBody {
-        { "job_id", updateData.jobUuid },
-        { "device_id", QLatin1String(updateData.deviceId) }
+        { "job_id", firmwareData.jobUuid },
+        { "device_id", QLatin1String(firmwareData.deviceId) }
     };
     QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
-    clients_.sendMessage(updateData.clientId, notification);
+    clients_.sendMessage(firmwareData.clientId, notification);
 
-    updateController_.updateFirmware(updateData);
+    updateController_.changeFirmware(firmwareData);
 }
 
 void HostControllerService::processCmdProgramController(const QJsonObject &payload, const QByteArray &clientId)
 {
-    FirmwareUpdateController::ProgramControllerData programData;
-    programData.clientId = clientId;
+    FirmwareUpdateController::ChangeFirmwareData firmwareData;
+    firmwareData.clientId = clientId;
 
-    programData.deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (programData.deviceId.isEmpty()) {
+    firmwareData.deviceId = payload.value("device_id").toVariant().toByteArray();
+    if (firmwareData.deviceId.isEmpty()) {
         qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
         return;
     }
 
     QString errorString;
     do {
-        strata::platform::PlatformPtr platform = platformController_.getPlatform(programData.deviceId);
+        strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
         if (platform == nullptr) {
-            errorString = "Platform " + programData.deviceId + " doesn't exist";
+            errorString = "Platform " + firmwareData.deviceId + " doesn't exist";
             break;
         }
 
@@ -539,20 +551,20 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
             break;
         }
 
-        programData.firmwareClassId = platform->classId(); // class_id becomes the new fw_class_id
+        firmwareData.firmwareClassId = platform->classId(); // class_id becomes the new fw_class_id
         QString controllerClassId = platform->controllerClassId();
-        if (programData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
+        if (firmwareData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
             errorString = "Platform has no classId or controllerClassId";
             break;
         }
 
-        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassId);
+        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(firmwareData.firmwareClassId, controllerClassId);
         if (firmware.first.isEmpty()) {
             errorString = "No compatible firmware for your combination of controller and platform";
             break;
         }
-        programData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
-        programData.firmwareMD5 = firmware.second;
+        firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
+        firmwareData.firmwareMD5 = firmware.second;
 
         QString currentMD5; // get md5 accorging to old fw_class_id and fw version
         if (platform->applicationVer().isEmpty() == false
@@ -567,22 +579,23 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
             qCWarning(logCategoryHcs) << platform << "Cannot get MD5 of curent firmware from database.";
         }
 
-        programData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        firmwareData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
         QJsonObject payloadBody {
-            { "job_id", programData.jobUuid },
-            { "device_id", QLatin1String(programData.deviceId) }
+            { "job_id", firmwareData.jobUuid },
+            { "device_id", QLatin1String(firmwareData.deviceId) }
         };
         QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-        clients_.sendMessage(programData.clientId, notification);
+        clients_.sendMessage(firmwareData.clientId, notification);
 
-        if (currentMD5 != programData.firmwareMD5
-                || programData.firmwareMD5.isEmpty()
+        if (currentMD5 != firmwareData.firmwareMD5
+                || firmwareData.firmwareMD5.isEmpty()
                 || currentMD5.isEmpty()) {
-            updateController_.programController(programData);
+            firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::ProgramController;
         } else {
-            updateController_.setControllerFwClassId(programData);
+            firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::SetControllerFwClassId;
         }
+        updateController_.changeFirmware(firmwareData);
 
         return;
 
@@ -592,10 +605,10 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
 
     QJsonObject payloadBody {
         { "error_string", errorString },
-        { "device_id", QLatin1String(programData.deviceId) }
+        { "device_id", QLatin1String(firmwareData.deviceId) }
     };
     QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-    clients_.sendMessage(programData.clientId, notification);
+    clients_.sendMessage(firmwareData.clientId, notification);
 }
 
 void HostControllerService::processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId)
