@@ -3,6 +3,9 @@ def REPO_NAME = "s"
 def ROOT_BUILD_DIR = "b"
 def BUILD_NAME = UUID.randomUUID().toString()
 def INSTALLER_PATH = ""
+def INTERNAL_PATH = ""
+def DEPLOY_PATH = ""
+def VIEWS_PATH = ""
 pipeline {
     agent { 
         node { 
@@ -16,9 +19,9 @@ pipeline {
             steps {
                 script {
                     def internalRepoUrl = "https://code.onsemi.com/scm/secswst/strata-host-core-internal.git"
-                    def internalRepoName = "strata-host-core-internal"
+                    INTERNAL_PATH = "${env.workspace}/strata-host-core-internal"
 
-                    dir("${env.workspace}/${internalRepoName}") {
+                    dir("${INTERNAL_PATH}") {
                         git changelog: false,
                             poll: false,
                             credentialsId: 'BB-access-token',
@@ -31,20 +34,42 @@ pipeline {
             steps {
                 script {
                     def repoUrl = "https://code.onsemi.com/scm/secswst/strata-platform-control-views.git"
-                    def repoName = "strata-platform-control-views"
+                    VIEWS_PATH = "${env.workspace}/strata-platform-control-views"
 
-                    dir("${env.workspace}/components/${repoName}") {
+                    dir("${VIEWS_PATH}") {
                         git changelog: false,
-                        poll: false,
-                        credentialsId: 'BB-access-token',
-                        url: "${repoUrl}"
+                            poll: false,
+                            credentialsId: 'BB-access-token',
+                            url: "${repoUrl}"
+                    }
+                }
+            }
+        }
+        stage('Clone Strata Deployment Repository') {
+            steps {
+                script {
+                    def repoUrl = "https://code.onsemi.com/scm/secswst/strata-deployment.git"
+                    DEPLOY_PATH = "${env.workspace}/strata-deployment"
+
+                    dir("${DEPLOY_PATH}") {
+                        git changelog: false,
+                            poll: false,
+                            credentialsId: 'BB-access-token',
+                            url: "${repoUrl}",
+                            branch: "update-deploy-strata-windows-script" // for testing only and needs to be removed!
                     }
                 }
             }
         }
         stage('Build') {
             steps {
-                sh "${env.workspace}/strata-host-core-internal/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
+                sh "${DEPLOY_PATH}/Strata/deploy_strata_windows.sh \
+                        --host-root '${env.workspace}' \
+                        --internal-root '${INTERNAL_PATH}' \
+                        --views-root '${VIEWS_PATH}' \
+                        -r '${env.workspace}/${ROOT_BUILD_DIR}' \
+                        -d '${BUILD_NAME}' \
+                        --nosigning"
             }
         }
         stage('Test') {
@@ -55,15 +80,15 @@ pipeline {
                 }
                 echo "Installer Path: $INSTALLER_PATH"
                 // Tests are disabled at the moment
-                //powershell "${env.workspace}/strata-host-core-internal/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"
+                //powershell "{INTERNAL_PATH}/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"
             }
         }
         stage('Deploy') {
             steps{
-                sh "python -m venv ${env.workspace}/strata-host-core-internal/deployment/OTA/ota-deploy-env"
-                sh "source ${env.workspace}/strata-host-core-internal/deployment/OTA/ota-deploy-env/Scripts/activate"
-                sh "python -m pip install -r ${env.workspace}/strata-host-core-internal/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/strata-host-core-internal/deployment/OTA/main.py' \
+                sh "python -m venv ${DEPLOY_PATH}/OTA/ota-deploy-env"
+                sh "source ${DEPLOY_PATH}/OTA/ota-deploy-env/Scripts/activate"
+                sh "python -m pip install -r ${DEPLOY_PATH}/OTA/requirements.txt"
+                sh """python '${DEPLOY_PATH}/OTA/main.py' \
                     --dir '${BUILD_NAME}' \
                     view \
                     '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/views'
