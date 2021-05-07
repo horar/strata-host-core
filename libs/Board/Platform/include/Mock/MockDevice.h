@@ -11,6 +11,13 @@ class MockDevice : public Device
     Q_OBJECT
     Q_DISABLE_COPY(MockDevice)
 
+    Q_PROPERTY(bool openEnabled READ mockIsOpenEnabled WRITE mockSetOpenEnabled NOTIFY openEnabledChanged)
+    Q_PROPERTY(bool legacyMode READ mockIsLegacy WRITE mockSetLegacy NOTIFY legacyModeChanged)
+    Q_PROPERTY(bool autoResponse READ mockIsAutoResponse WRITE mockSetAutoResponse NOTIFY autoResponseChanged)
+    Q_PROPERTY(strata::device::MockCommand mockCommand READ mockGetCommand WRITE mockSetCommand NOTIFY mockCommandChanged)
+    Q_PROPERTY(strata::device::MockResponse mockResponse READ mockGetResponse WRITE mockSetResponse NOTIFY mockResponseChanged)
+    Q_PROPERTY(strata::device::MockVersion mockVersion READ mockGetVersion WRITE mockSetVersion NOTIFY mockVersionChanged)
+
 public:
     /**
      * MockDevice constructor
@@ -71,6 +78,7 @@ public:
     bool mockIsAutoResponse() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
+    MockVersion mockGetVersion() const;
 
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool isLegacy);
@@ -81,6 +89,14 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
 
+signals:
+    void openEnabledChanged();
+    void legacyModeChanged();
+    void autoResponseChanged();
+    void mockCommandChanged();
+    void mockResponseChanged();
+    void mockVersionChanged();
+
 private:
     bool opened_ = false;
     bool autoResponse_ = true;
@@ -88,5 +104,7 @@ private:
     std::list<QByteArray> recordedMessages_;
     MockDeviceControl control_;
 };
+
+typedef std::shared_ptr<MockDevice> MockDevicePtr;
 
 }  // namespace strata::device

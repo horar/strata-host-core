@@ -43,7 +43,7 @@ void PlatformOperationsV2Test::init()
     flashPartialStatusCount_ = 0;
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
-    QVERIFY(mockDevice_->mockSetVersion(MockVersion::version2));
+    QVERIFY(mockDevice_->mockSetVersion(MockVersion::Version_2));
     QVERIFY(!mockDevice_->mockIsOpened());
 
     QSignalSpy platformOpened(platform_.get(), SIGNAL(opened(QByteArray)));
@@ -140,7 +140,7 @@ QByteArray PlatformOperationsV2Test::dataForChunkSize(int chunkSize) //get actua
 void PlatformOperationsV2Test::flashPartialStatusTest(strata::device::MockResponse response, int status)
 {
     switch(response) {
-    case MockResponse::normal: {
+    case MockResponse::Normal: {
         switch(flashPartialStatusCount_) {
         case 0: QCOMPARE(status,strata::platform::operation::FLASH_STARTED);
             break;
@@ -149,7 +149,7 @@ void PlatformOperationsV2Test::flashPartialStatusTest(strata::device::MockRespon
         }
         break;
     }
-    case MockResponse::flash_resend_chunk: {
+    case MockResponse::Flash_firmware_resend_chunk: {
         switch(flashPartialStatusCount_) {
         case 0: QCOMPARE(status, strata::platform::operation::FLASH_STARTED);
             break;
@@ -158,7 +158,7 @@ void PlatformOperationsV2Test::flashPartialStatusTest(strata::device::MockRespon
         }
         break;
     }
-    case MockResponse::flash_memory_error: {
+    case MockResponse::Flash_firmware_memory_error: {
         switch(flashPartialStatusCount_) {
         case 0: QCOMPARE(status,strata::platform::operation::FLASH_STARTED);
             break;
@@ -167,7 +167,7 @@ void PlatformOperationsV2Test::flashPartialStatusTest(strata::device::MockRespon
         }
         break;
     }
-    case MockResponse::flash_invalid_cmd_sequence: {
+    case MockResponse::Flash_firmware_invalid_cmd_sequence: {
         switch(flashPartialStatusCount_) {
         case 0: QCOMPARE(status,strata::platform::operation::FLASH_STARTED);
             break;
@@ -176,7 +176,7 @@ void PlatformOperationsV2Test::flashPartialStatusTest(strata::device::MockRespon
         }
         break;
     }
-    case MockResponse::flash_invalid_value: {
+    case MockResponse::Flash_firmware_invalid_value: {
         switch(flashPartialStatusCount_) {
         case 0: QCOMPARE(status,strata::platform::operation::FLASH_STARTED);
             break;
@@ -194,7 +194,7 @@ void PlatformOperationsV2Test::identifyEmbeddedApplicationTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::embedded_app);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_embedded_app);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -238,7 +238,7 @@ void PlatformOperationsV2Test::identifyEmbeddedBootloaderTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::embedded_btloader);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_embedded_bootloader);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -282,7 +282,7 @@ void PlatformOperationsV2Test::identifyAssistedApplicationTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::assisted_app);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_assisted_app);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -326,7 +326,7 @@ void PlatformOperationsV2Test::identifyAssistedBootloaderTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::assisted_btloader);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_assisted_bootloader);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -371,7 +371,7 @@ void PlatformOperationsV2Test::identifyAssistedNoBoardTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::assisted_no_board);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_assisted_no_board);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -414,7 +414,7 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::embedded_app);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_embedded_app);
 
     OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1));
@@ -445,7 +445,7 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
         QCOMPARE(platform_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
         QCOMPARE(platform_->applicationVer(), expectedPayload["application"]["version"].GetString());
 
-        mockDevice_->mockSetResponse(MockResponse::embedded_app);
+        mockDevice_->mockSetResponse(MockResponse::Platform_config_embedded_app);
 
         platformOperation = platformOperations_.StartApplication(platform_);
         platformOperation->run();
@@ -488,7 +488,7 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::assisted_app);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_assisted_app);
 
     OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1));
@@ -564,7 +564,7 @@ void PlatformOperationsV2Test::cancelOperationEmbeddedTest()
     rapidjson::Document expectedDoc;
 
     mockDevice_->mockSetAutoResponse(false);
-    mockDevice_->mockSetResponse(MockResponse::embedded_btloader);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_embedded_bootloader);
 
     OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     platformOperation->run();
@@ -591,7 +591,7 @@ void PlatformOperationsV2Test::cancelOperationAssistedTest()
     rapidjson::Document expectedDoc;
 
     mockDevice_->mockSetAutoResponse(false);
-    mockDevice_->mockSetResponse(MockResponse::assisted_btloader);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_assisted_bootloader);
 
     OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
     platformOperation->run();
@@ -616,7 +616,7 @@ void PlatformOperationsV2Test::cancelOperationAssistedTest()
 void PlatformOperationsV2Test::noResponseEmbeddedTest()
 {
     mockDevice_->mockSetAutoResponse(false);
-    mockDevice_->mockSetResponse(MockResponse::embedded_app);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_embedded_app);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -639,7 +639,7 @@ void PlatformOperationsV2Test::noResponseEmbeddedTest()
 void PlatformOperationsV2Test::noResponseAssistedTest()
 {
     mockDevice_->mockSetAutoResponse(false);
-    mockDevice_->mockSetResponse(MockResponse::assisted_app);
+    mockDevice_->mockSetResponse(MockResponse::Platform_config_assisted_app);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -661,7 +661,7 @@ void PlatformOperationsV2Test::noResponseAssistedTest()
 
 void PlatformOperationsV2Test::invalidValueV2Test()
 {
-    mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -802,7 +802,7 @@ void PlatformOperationsV2Test::flashResendChunkTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::flash_resend_chunk);
+    mockDevice_->mockSetResponse(MockResponse::Flash_firmware_resend_chunk);
 
     OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
@@ -853,7 +853,7 @@ void PlatformOperationsV2Test::flashMemoryErrorTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::flash_memory_error);
+    mockDevice_->mockSetResponse(MockResponse::Flash_firmware_memory_error);
 
     OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
@@ -893,7 +893,7 @@ void PlatformOperationsV2Test::flashInvalidCmdSequenceTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::flash_invalid_cmd_sequence);
+    mockDevice_->mockSetResponse(MockResponse::Flash_firmware_invalid_cmd_sequence);
 
     OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
@@ -933,7 +933,7 @@ void PlatformOperationsV2Test::flashInvalidValueTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponse(MockResponse::flash_invalid_value);
+    mockDevice_->mockSetResponse(MockResponse::Flash_firmware_invalid_value);
 
     OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());
@@ -1002,7 +1002,7 @@ void PlatformOperationsV2Test::startFlashInvalidTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::start_flash_firmware_invalid,MockCommand::start_flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
 
     OperationSharedPtr platformOperation = platformOperations_.Flash(platform_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     connectFlashHandlers(platformOperation.get());

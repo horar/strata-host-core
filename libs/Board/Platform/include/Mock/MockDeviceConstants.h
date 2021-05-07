@@ -8,43 +8,99 @@ namespace strata::device {
 
 constexpr unsigned MAX_STORED_MESSAGES = 4096;
 
+constexpr const char* const CMD_GET_FIRMWARE_INFO        = "get_firmware_info";
+constexpr const char* const CMD_REQUEST_PLATFORM_ID      = "request_platform_id";
+constexpr const char* const CMD_START_BOOTLOADER         = "start_bootloader";
+constexpr const char* const CMD_START_APPLICATION        = "start_application";
+constexpr const char* const CMD_START_FLASH_FIRMWARE     = "start_flash_firmware";
+constexpr const char* const CMD_FLASH_FIRMWARE           = "flash_firmware";
+constexpr const char* const CMD_START_FLASH_BOOTLOADER   = "start_flash_bootloader";
+constexpr const char* const CMD_FLASH_BOOTLOADER         = "flash_bootloader";
+constexpr const char* const CMD_START_BACKUP_FIRMWARE    = "start_backup_firmware";
+constexpr const char* const CMD_BACKUP_FIRMWARE          = "backup_firmware";
+constexpr const char* const CMD_SET_ASSISTED_PLATFORM_ID = "set_assisted_platform_id";
+constexpr const char* const CMD_SET_PLATFORM_ID          = "set_platform_id";
+
 Q_NAMESPACE
 
+// when changing these enums, update also their usage in the MockSettingsView.qml
+
 enum class MockCommand {
-    all_commands,
-    get_firmware_info,
-    request_platform_id,
-    start_bootloader,
-    start_application,
-    flash_firmware,
-    flash_bootloader,
-    start_flash_firmware,
-    start_flash_bootloader
+    Any_command,
+    Get_firmware_info,
+    Request_platform_id,
+    Start_bootloader,
+    Start_application,
+    Flash_firmware,
+    Flash_bootloader,
+    Start_flash_firmware,
+    Start_flash_bootloader,
+    Set_assisted_platform_id,
+    Set_platform_id,
+    Start_backup_firmware,
+    Backup_firmware
 };
 Q_ENUM_NS(MockCommand)
 
+inline MockCommand convertCommandToEnum(const std::string& cmd) {
+    if (0 == cmd.compare(CMD_GET_FIRMWARE_INFO)) {
+        return MockCommand::Get_firmware_info;
+    } else if (0 == cmd.compare(CMD_REQUEST_PLATFORM_ID)) {
+        return MockCommand::Request_platform_id;
+    } else if (0 == cmd.compare(CMD_START_BOOTLOADER)) {
+        return MockCommand::Start_bootloader;
+    } else if (0 == cmd.compare(CMD_START_APPLICATION)) {
+        return MockCommand::Start_application;
+    } else if (0 == cmd.compare(CMD_START_FLASH_FIRMWARE)) {
+        return MockCommand::Start_flash_firmware;
+    } else if (0 == cmd.compare(CMD_FLASH_FIRMWARE)) {
+        return MockCommand::Flash_firmware;
+    } else if (0 == cmd.compare(CMD_START_FLASH_BOOTLOADER)) {
+        return MockCommand::Start_flash_bootloader;
+    } else if (0 == cmd.compare(CMD_FLASH_BOOTLOADER)) {
+        return MockCommand::Flash_bootloader;
+    } else if (0 == cmd.compare(CMD_START_BACKUP_FIRMWARE)) {
+        return MockCommand::Start_backup_firmware;
+    } else if (0 == cmd.compare(CMD_BACKUP_FIRMWARE)) {
+        return MockCommand::Backup_firmware;
+    } else if (0 == cmd.compare(CMD_SET_ASSISTED_PLATFORM_ID)) {
+        return MockCommand::Set_assisted_platform_id;
+    } else if (0 == cmd.compare(CMD_SET_PLATFORM_ID)) {
+        return MockCommand::Set_platform_id;
+    }
+    return MockCommand::Any_command;
+}
+
 enum class MockResponse {
-    normal,
-    no_payload,
-    no_JSON,
-    nack,
-    invalid,
-    embedded_app,
-    assisted_app,
-    assisted_no_board,
-    embedded_btloader,
-    assisted_btloader,
-    flash_resend_chunk,
-    flash_memory_error,
-    flash_invalid_cmd_sequence,
-    flash_invalid_value,
-    start_flash_firmware_invalid
+
+    // generic responses
+
+    Normal,
+    No_payload,
+    No_JSON,
+    Nack,
+    Invalid,
+
+    // specific response configurations to a particular test case or command
+
+    Platform_config_embedded_app,
+    Platform_config_assisted_app,
+    Platform_config_assisted_no_board,
+    Platform_config_embedded_bootloader,
+    Platform_config_assisted_bootloader,
+
+    Flash_firmware_resend_chunk,
+    Flash_firmware_memory_error,
+    Flash_firmware_invalid_cmd_sequence,
+    Flash_firmware_invalid_value,
+
+    Start_flash_firmware_invalid
 };
 Q_ENUM_NS(MockResponse)
 
 enum class MockVersion {
-    version1,
-    version2
+    Version_1,
+    Version_2
 };
 Q_ENUM_NS(MockVersion)
 

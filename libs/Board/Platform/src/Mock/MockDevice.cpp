@@ -146,20 +146,34 @@ MockResponse MockDevice::mockGetResponse() const
     return control_.mockGetResponse();
 }
 
+MockVersion MockDevice::mockGetVersion() const
+{
+    return control_.mockGetVersion();
+}
+
 bool MockDevice::mockSetOpenEnabled(bool enabled)
 {
-    return control_.mockSetOpenEnabled(enabled);
+    if (control_.mockSetOpenEnabled(enabled) == true) {
+        emit openEnabledChanged();
+        return true;
+    }
+    return false;
 }
 
 bool MockDevice::mockSetLegacy(bool isLegacy)
 {
-    return control_.mockSetLegacy(isLegacy);
+    if (control_.mockSetLegacy(isLegacy) == true) {
+        emit legacyModeChanged();
+        return true;
+    }
+    return false;
 }
 
 bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
     if (autoResponse_ != autoResponse) {
         autoResponse_ = autoResponse;
+        emit autoResponseChanged();
         return true;
     }
     return false;
@@ -176,22 +190,39 @@ bool MockDevice::mockSetSaveMessages(bool saveMessages)
 
 bool MockDevice::mockSetCommand(MockCommand command)
 {
-    return control_.mockSetCommand(command);
+    if (control_.mockSetCommand(command) == true) {
+        emit mockCommandChanged();
+        return true;
+    }
+    return false;
 }
 
 bool MockDevice::mockSetResponse(MockResponse response)
 {
-    return control_.mockSetResponse(response);
+    if (control_.mockSetResponse(response) == true) {
+        emit mockResponseChanged();
+        return true;
+    }
+    return false;
 }
 
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
 {
-    return control_.mockSetResponseForCommand(response, command);
+    if (control_.mockSetResponseForCommand(response, command) == true) {
+        emit mockCommandChanged();
+        emit mockResponseChanged();
+        return true;
+    }
+    return false;
 }
 
 bool MockDevice::mockSetVersion(MockVersion version)
 {
-    return control_.mockSetVersion(version);
+    if (control_.mockSetVersion(version) == true) {
+        emit mockVersionChanged();
+        return true;
+    }
+    return false;
 }
 
 }  // namespace strata::device

@@ -124,65 +124,9 @@ QVariant SciMockDeviceModel::data(const QModelIndex &index, int role) const
         return mockDevice->deviceId();
     case DeviceNameRole:
         return mockDevice->deviceName();
-    case OpenEnabledRole:
-        return mockDevice->mockIsOpenEnabled();
-    case LegacyModeRole:
-        return mockDevice->mockIsLegacy();
-    case AutoResponseRole:
-        return mockDevice->mockIsAutoResponse();
-    case MockCommandRole:
-        return static_cast<int>(mockDevice->mockGetCommand());
-    case MockResponseRole:
-        return static_cast<int>(mockDevice->mockGetResponse());
     }
 
     return QVariant();
-}
-
-bool SciMockDeviceModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    int row = index.row();
-    if (row < 0 || row >= platforms_.count()) {
-        qCWarning(logCategorySci) << "Trying to access to out of range index when setting data";
-        return false;
-    }
-
-    DevicePtr device = platforms_.at(row)->getDevice();
-    auto mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
-    if (mockDevice == nullptr) {
-        qCCritical(logCategorySci) << "Invalid pointer when setting data";
-        return false;
-    }
-    bool success = false;
-
-    switch (role) {
-    case OpenEnabledRole:
-        success = mockDevice->mockSetOpenEnabled(value.toBool());
-        qCDebug(logCategorySci) << "Set open enabled to:" << mockDevice->mockIsOpenEnabled();
-        break;
-    case LegacyModeRole:
-        success = mockDevice->mockSetLegacy(value.toBool());
-        qCDebug(logCategorySci) << "Set legacy mode to:" << mockDevice->mockIsLegacy();
-        break;
-    case AutoResponseRole:
-        success = mockDevice->mockSetAutoResponse(value.toBool());
-        qCDebug(logCategorySci) << "Set auto response to:" << mockDevice->mockIsAutoResponse();
-        break;
-    case MockCommandRole:
-        success = mockDevice->mockSetCommand(value.value<strata::device::MockCommand>());
-        qCDebug(logCategorySci) << "Set mock command to:" << mockDevice->mockGetCommand();
-        break;
-    case MockResponseRole:
-        success = mockDevice->mockSetResponse(value.value<strata::device::MockResponse>());
-        qCDebug(logCategorySci) << "Set mock response to:" << mockDevice->mockGetResponse();
-        break;
-    }
-
-    if (success) {
-        emit dataChanged(index, index, {role});
-        return true;
-    }
-    return false;
 }
 
 int SciMockDeviceModel::rowCount(const QModelIndex &parent) const
@@ -201,11 +145,6 @@ QHash<int, QByteArray> SciMockDeviceModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[DeviceIdRole] = "deviceId";
     roles[DeviceNameRole] = "deviceName";
-    roles[OpenEnabledRole] = "openEnabled";
-    roles[LegacyModeRole] = "legacyMode";
-    roles[AutoResponseRole] = "autoResponse";
-    roles[MockCommandRole] = "mockCommand";
-    roles[MockResponseRole] = "mockResponse";
 
     return roles;
 }

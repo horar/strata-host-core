@@ -7,6 +7,7 @@
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
+#include <Mock/MockDevice.h>
 #include <QObject>
 #include <QPointer>
 
@@ -21,6 +22,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(QString bootloaderVersion READ bootloaderVersion NOTIFY bootloaderVersionChanged)
     Q_PROPERTY(QString deviceName READ deviceName NOTIFY deviceNameChanged)
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
+    Q_PROPERTY(strata::device::MockDevice* mockDevice READ mockDevice NOTIFY mockDeviceChanged)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
@@ -50,6 +52,8 @@ public:
     void setBootloaderVersion(const QString &bootloaderVersion);
     SciPlatform::PlatformStatus status();
     void setStatus(SciPlatform::PlatformStatus status);
+    strata::device::MockDevice* mockDevice() const;
+    void setMockDevice(const strata::device::MockDevicePtr& mockDevice);
     SciScrollbackModel* scrollbackModel();
     SciCommandHistoryModel* commandHistoryModel();
     SciFilterSuggestionModel* filterSuggestionModel();
@@ -76,6 +80,7 @@ signals:
     void errorStringChanged();
     void programInProgressChanged();
     void deviceNameChanged();
+    void mockDeviceChanged();
     void flasherProgramProgress(int chunk, int total);
     void flasherBackupProgress(int chunk, int total);
     void flasherRestoreProgress(int chunk, int total);
@@ -104,6 +109,7 @@ private slots:
 
 private:
     strata::platform::PlatformPtr platform_;
+    strata::device::MockDevicePtr mockDevice_;
     QByteArray deviceId_;
     QString verboseName_;
     QString appVersion_;

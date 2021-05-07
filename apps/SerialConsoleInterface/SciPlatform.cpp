@@ -46,10 +46,15 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 
         disconnect(platform_.get(), nullptr, this, nullptr);
         platform_.reset();
+        setMockDevice(nullptr);
         setStatus(PlatformStatus::Disconnected);
     } else {
         platform_ = platform;
         deviceId_ = platform_->deviceId();
+        if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
+            strata::device::DevicePtr device = platform_->getDevice();
+            setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
+        }
 
         connect(platform_.get(), &strata::platform::Platform::messageReceived, this, &SciPlatform::messageFromDeviceHandler);
         connect(platform_.get(), &strata::platform::Platform::messageSent, this, &SciPlatform::messageToDeviceHandler);
@@ -108,6 +113,18 @@ void SciPlatform::setStatus(SciPlatform::PlatformStatus status)
     if (status_ != status) {
         status_ = status;
         emit statusChanged();
+    }
+}
+
+strata::device::MockDevice* SciPlatform::mockDevice() const {
+    return mockDevice_.get();
+}
+
+void SciPlatform::setMockDevice(const strata::device::MockDevicePtr& mockDevice)
+{
+    if (mockDevice_ != mockDevice) {
+        mockDevice_ = mockDevice;
+        emit mockDeviceChanged();
     }
 }
 

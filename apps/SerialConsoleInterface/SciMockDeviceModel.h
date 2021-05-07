@@ -2,6 +2,7 @@
 
 #include <QAbstractListModel>
 #include <PlatformManager.h>
+#include <Mock/MockDeviceConstants.h>
 
 class SciMockDeviceModel : public QAbstractListModel
 {
@@ -24,15 +25,9 @@ public:
     enum ModelRole {
         DeviceIdRole = Qt::UserRole + 1,
         DeviceNameRole,
-        OpenEnabledRole,
-        LegacyModeRole,
-        AutoResponseRole,
-        MockCommandRole,
-        MockResponseRole
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
 
