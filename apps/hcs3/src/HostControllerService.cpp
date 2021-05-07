@@ -483,6 +483,17 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
         return;
     }
 
+    strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
+    if (platform == nullptr) {
+        qCWarning(logCategoryHcs) << "Platform" << firmwareData.deviceId << "doesn't exist";
+        return;
+    }
+
+    // if firmwareClassId is available, flasher needs it (due to correct flashing of assisted boards)
+    if (platform->controllerType() == strata::platform::Platform::ControllerType::Assisted) {
+        firmwareData.firmwareClassId = platform->firmwareClassId();
+    }
+
     QString path = payload.value("path").toString();
     if (path.isEmpty()) {
         qCWarning(logCategoryHcs) << "path attribute is empty or has bad format";
