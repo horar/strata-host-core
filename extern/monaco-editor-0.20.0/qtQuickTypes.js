@@ -14,7 +14,8 @@
         "signals": [],
         "inherits": "",
         "source" : "",
-        "nonInstantiable": false
+        "nonInstantiable": false,
+        "isVisualWidget": false,
     },
 */
 
@@ -95,6 +96,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "Action": {
             "properties": {
@@ -135,6 +137,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ApplicationWindow": {
             "properties": {
@@ -177,6 +180,7 @@ const qtTypeJson = {
             "inherits": "Window",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Behavior": {
             "properties": {
@@ -192,6 +196,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Binding": {
             "properties": {
@@ -214,7 +219,9 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "QtQml"
+            "source": "QtQml",
+            "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "BusyIndicator": {
             "properties": {
@@ -227,6 +234,8 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
+
         },
         "Button": {
             "properties": {
@@ -242,6 +251,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Canvas": {
             "properties": {
@@ -286,6 +296,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "CheckBox": {
             "properties": {
@@ -304,6 +315,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "CircularGauge": {
             "properties": {
@@ -328,6 +340,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Extra",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Column": {
             "properties": {
@@ -368,6 +381,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ColumnLayout": {
             "properties": {
@@ -383,6 +397,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ComboBox": {
             "properties": {
@@ -456,6 +471,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Component": {
             "properties": {
@@ -487,6 +503,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Connections": {
             "properties": {
@@ -505,6 +522,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "QtQml",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Control": {
             "properties": {
@@ -604,6 +622,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Dialog": {
             "properties": {
@@ -652,6 +671,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "FileDialog": {
             "properties": {
@@ -703,6 +723,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Dialogs",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Flickable": {
             "properties": {
@@ -844,6 +865,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Flow": {
             "properties": {
@@ -893,6 +915,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Grid": {
             "properties": {
@@ -963,6 +986,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "GridLayout": {
             "properties": {
@@ -990,6 +1014,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Image": {
             "properties": {
@@ -1044,6 +1069,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Item": {
             "properties": {
@@ -1212,6 +1238,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Keys": {
             "properties": {
@@ -1272,6 +1299,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "Label": {
             "properties": {
@@ -1305,6 +1333,7 @@ const qtTypeJson = {
             "inherits": "Text",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Layout": {
             "properties": {
@@ -1368,6 +1397,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Layouts",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "LayoutButton": {
             "properties": {
@@ -1382,11 +1412,18 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "LayoutContainer": {
             "properties": {
                 "layoutInfo": {
-                    "meta_properties": []
+                    "meta_properties": [
+                        "columnsWide: ",
+                        "rowsTall: ",
+                        "xColumns: ",
+                        "yRows: ",
+                        "uuid: ",
+                    ]
                 },
                 "contentItem": {
                     "meta_properties": []
@@ -1397,6 +1434,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "LayoutDivider": {
             "properties": {
@@ -1409,6 +1447,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutInfo":{
             "properties": {
@@ -1433,6 +1472,7 @@ const qtTypeJson = {
             "inherits": "QtObject",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutRadioButtons": {
             "properties": {
@@ -1463,6 +1503,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutRectangle": {
             "properties": {
@@ -1475,6 +1516,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGButtonStrip": {
             "properties": {
@@ -1499,6 +1541,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGCircularGauge": {
             "properties": {
@@ -1549,7 +1592,8 @@ const qtTypeJson = {
             "signals": [],
             "inherits": "LayoutContainer",
             "source": "",
-            "nonInstantiable": false
+            "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGComboBox": {
             "properties": {
@@ -1604,6 +1648,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGGraph": {
             "properties": {
@@ -1665,6 +1710,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGIcon": {
             "properties": {
@@ -1692,6 +1738,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGInfoBox": {
             "properties": {
@@ -1746,6 +1793,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGSlider": {
             "properties": {
@@ -1860,6 +1908,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGStatusLight": {
             "properties": {
@@ -1878,6 +1927,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutSGSwitch": {
             "properties": {
@@ -1927,6 +1977,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "LayoutText": {
             "properties": {
@@ -1976,6 +2027,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "ListElement": {
             "properties": {
@@ -1987,7 +2039,8 @@ const qtTypeJson = {
             "signals": [],
             "inherits": "",
             "source": "",
-            "nonInstantiable": false
+            "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ListModel": {
             "properties": {
@@ -2013,6 +2066,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ListView": {
             "properties": {
@@ -2183,6 +2237,7 @@ const qtTypeJson = {
             "inherits": "Flickable",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Loader": {
             "properties": {
@@ -2217,6 +2272,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Menu": {
             "properties": {
@@ -2272,6 +2328,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "MenuItem": {
             "properties": {
@@ -2295,6 +2352,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "MenuSeparator": {
             "properties": {
@@ -2307,6 +2365,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "MouseArea": {
             "properties": {
@@ -2382,6 +2441,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Overlay": {
             "properties": {
@@ -2403,6 +2463,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Popup": {
             "properties": {
@@ -2588,6 +2649,7 @@ const qtTypeJson = {
             "inherits": "QtObject",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Qt": {
             "properties": {
@@ -2649,6 +2711,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "QtObject": {
             "properties": {
@@ -2661,6 +2724,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "RadioButton": {
             "properties": {
@@ -2673,6 +2737,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false
         },
         "Rectangle": {
             "properties": {
@@ -2700,6 +2765,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "RegExpValidator": {
             "properties": {
@@ -2712,6 +2778,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Repeater": {
             "properties": {
@@ -2735,6 +2802,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Rotation": {
             "properties": {
@@ -2760,6 +2828,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Row": {
             "properties": {
@@ -2817,6 +2886,7 @@ const qtTypeJson = {
             "inherits": "item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Scale": {
             "properties": {
@@ -2838,6 +2908,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ScrollBar": {
             "properties": {
@@ -2892,6 +2963,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ScrollIndicator": {
             "properties": {
@@ -2943,6 +3015,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ScrollView": {
             "properties": {
@@ -2958,6 +3031,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Settings": {
             "properties": {
@@ -2976,6 +3050,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "labs.settings",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGAccordion": {
             "properties": {
@@ -3018,6 +3093,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 0.9",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGAlignedLabel": {
             "properties": {
@@ -3074,6 +3150,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGButton": {
             "properties": {
@@ -3149,6 +3226,7 @@ const qtTypeJson = {
             "inherits": "Button",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGButtonStrip": {
             "properties": {
@@ -3177,6 +3255,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGCircularGauge": {
             "properties": {
@@ -3228,6 +3307,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGComboBox": {
             "properties": {
@@ -3288,6 +3368,7 @@ const qtTypeJson = {
             "inherits": "ComboBox",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGGraph": {
             "properties": {
@@ -3315,6 +3396,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGHueSlider": {
             "properties": {
@@ -3345,6 +3427,7 @@ const qtTypeJson = {
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGIcon": {
             "properties": {
@@ -3399,6 +3482,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGInfoBox": {
             "properties": {
@@ -3482,6 +3566,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGRadioButton": {
             "properties": {
@@ -3512,6 +3597,7 @@ const qtTypeJson = {
             "inherits": "RadioButton",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGRGBSlider": {
             "properties": {
@@ -3530,6 +3616,7 @@ const qtTypeJson = {
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSlider": {
             "properties": {
@@ -3646,6 +3733,7 @@ const qtTypeJson = {
             "inherits": "GridLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSpinBox": {
             "properties": {
@@ -3658,6 +3746,7 @@ const qtTypeJson = {
             "inherits": "SpinBox",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGStatusLight": {
             "properties": {
@@ -3676,6 +3765,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGStatusLogBox": {
             "properties": {
@@ -3749,6 +3839,7 @@ const qtTypeJson = {
             "inherits": "Rectangle",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSubmitInfoBox": {
             "properties": {
@@ -3825,6 +3916,7 @@ const qtTypeJson = {
             "inherits": "RowLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSwitch": {
             "properties": {
@@ -3876,6 +3968,7 @@ const qtTypeJson = {
             "inherits": "RowLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGTextField": {
             "properties": {
@@ -3966,6 +4059,7 @@ const qtTypeJson = {
             "inherits": "TextField",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGUserSettings": {
             "properties": {
@@ -3990,6 +4084,7 @@ const qtTypeJson = {
             "inherits": "QtObject",
             "source": "tech.strata.commoncpp 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Slider": {
             "properties": {
@@ -4053,6 +4148,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SpinBox": {
             "properties": {
@@ -4121,6 +4217,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SplitView": {
             "properties": {
@@ -4142,6 +4239,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Stack": {
             "properties": {
@@ -4160,6 +4258,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Source",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StackLayout": {
             "properties": {
@@ -4175,6 +4274,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StackView": {
             "properties": {
@@ -4242,6 +4342,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "State": {
             "properties": {
@@ -4263,6 +4364,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StatusBar": {
             "properties": {
@@ -4278,6 +4380,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StatusIndicator": {
             "properties": {
@@ -4293,6 +4396,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Extras",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Switch": {
             "properties": {
@@ -4308,6 +4412,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Tab": {
             "properties": {
@@ -4320,6 +4425,7 @@ const qtTypeJson = {
             "inherits": "Loader",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TabBar": {
             "properties": {
@@ -4347,6 +4453,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TabButton": {
             "properties": {
@@ -4359,6 +4466,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TabView": {
             "properties": {
@@ -4392,6 +4500,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Text": {
             "properties": {
@@ -4520,6 +4629,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextArea": {
             "properties": {
@@ -4575,6 +4685,7 @@ const qtTypeJson = {
             "inherits": "TextEdit",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextEdit": {
             "properties": {
@@ -4760,6 +4871,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextField": {
             "properties": {
@@ -4812,6 +4924,7 @@ const qtTypeJson = {
             "inherits": "TextInputs",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextInput": {
             "properties": {
@@ -4991,6 +5104,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextMetrics": {
             "properties": {
@@ -5030,6 +5144,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Timer": {
             "properties": {
@@ -5057,6 +5172,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToggleButton": {
             "properties": {
@@ -5069,6 +5185,7 @@ const qtTypeJson = {
             "inherits": "Button",
             "source": "Extras",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolBar": {
             "properties": {
@@ -5081,6 +5198,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolButton": {
             "properties": {
@@ -5093,6 +5211,7 @@ const qtTypeJson = {
             "inherits": "Button",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolSeparator": {
             "properties": {
@@ -5111,6 +5230,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolTip": {
             "properties": {
@@ -5138,6 +5258,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Transition": {
             "properties": {
@@ -5165,6 +5286,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "UIBase": {
             "properties": {
@@ -5186,6 +5308,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Window": {
             "properties": {
@@ -5269,6 +5392,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Window",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
     },
     "custom_properties": {

@@ -651,8 +651,9 @@ function registerQmlAsLanguage() {
             for (var j = 0; j < qtObjectSuggestions[key].properties.length; j++) {
                 arr.push(qtObjectSuggestions[key].properties[j])
             }
+            var insertWidget = `${key} {\n\tlayoutInfo.uuid: ""\n\tlayoutInfo.columnsWide: 0\n\tlayoutInfo.rowsTall: 0\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n}`
             arr = removeDuplicates(arr)
-            createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
+            createQtObjectValPairs(key, { label: key, insertText: qtTypeJson["sources"][key].isVisualWidget ? insertWidget : key, properties: arr, flag: false, isId: false })
         }
         for (const key in qtTypeJson) {
             if (key === "property") {
