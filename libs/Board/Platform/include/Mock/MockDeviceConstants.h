@@ -2,7 +2,6 @@
 
 #include <QRegularExpression>
 #include <QByteArray>
-#include <QJsonDocument>
 
 namespace strata::device {
 

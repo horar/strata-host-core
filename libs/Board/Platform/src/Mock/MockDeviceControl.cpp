@@ -1,5 +1,7 @@
 #include <Mock/MockDeviceControl.h>
 
+#include <QJsonDocument>
+
 #include "logging/LoggingQtCategories.h"
 
 namespace strata::device {
