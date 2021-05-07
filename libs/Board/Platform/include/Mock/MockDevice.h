@@ -57,8 +57,8 @@ public:
 
     // commands to control mock device behavior
 
-    void mockEmitMessage(const QByteArray msg);
-    void mockEmitResponses(const QByteArray msg);
+    void mockEmitMessage(const QByteArray& msg);
+    void mockEmitResponses(const QByteArray& msg);
 
     std::vector<QByteArray> mockGetRecordedMessages();
     std::vector<QByteArray>::size_type mockGetRecordedMessagesCount() const;
