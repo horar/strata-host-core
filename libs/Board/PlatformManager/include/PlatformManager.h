@@ -23,7 +23,17 @@ namespace strata {
         Q_DISABLE_COPY(PlatformManager)
 
     public:
+        /**
+          * PlatformManager constructor
+          * @param requireFwInfoResponse true if response to 'get_firmware_info' command is required, false otherwise
+          * @param keepDevicesOpen true if to keep devices open if Identify operation fails, false otherwise
+          * @param handleIdentify true if PlatformManager performs Identify operation, false otherwise
+          */
         PlatformManager(bool requireFwInfoResponse, bool keepDevicesOpen, bool handleIdentify);
+
+        /**
+          * PlatformManager destructor
+          */
         ~PlatformManager();
 
         /**

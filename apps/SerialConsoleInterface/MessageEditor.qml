@@ -44,7 +44,7 @@ FocusScope {
     Rectangle {
         id: bg
         anchors.fill: parent
-        color: dummyControl.palette.base
+        color: TangoTheme.palette.componentBase
     }
 
     TextMetrics {
@@ -142,15 +142,15 @@ FocusScope {
         boundsBehavior: Flickable.StopAtBounds
 
         ScrollBar.vertical: ScrollBar {
+            width: 8
             anchors {
                 right: flick.right
                 rightMargin: 1
             }
 
             policy: ScrollBar.AlwaysOn
-            width: 8
             visible: flick.height < flick.contentHeight
-             minimumSize: 0.1
+            minimumSize: 0.1
         }
 
         ScrollBar.horizontal: ScrollBar {

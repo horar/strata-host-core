@@ -27,5 +27,7 @@ QtObject {
     readonly property color warning:        orange2
     readonly property color highlight:      "#0066ff"
     readonly property color selectedText:   Qt.lighter(highlight, 1.2)
+    readonly property color componentBorder: "#bdbdbd"
+    readonly property color componentBase:   "#ffffff"
 
 }

@@ -15,7 +15,7 @@ ProgramSettingsDelegate {
         SGWidgets.SGText {
             id: title
 
-            text: "Do you want to register only a controller ?"
+            text: "Do you want to register only a controller?"
             opacity: isSet ? 0 : 1
 
             Behavior on opacity { OpacityAnimator {} }

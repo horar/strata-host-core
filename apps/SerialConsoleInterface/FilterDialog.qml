@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.logger 1.0
 
 SGWidgets.SGDialog {
     id: dialog
@@ -234,6 +235,7 @@ SGWidgets.SGDialog {
                                 onSuggestionDelegateSelected: {
                                    var sourceIndex = sortFilterModel.mapIndexToSource(index)
                                    if (sourceIndex < 0) {
+                                        console.error(Logger.sciCategory, "Index out of scope.")
                                         return
                                     }
                                     text = filterSuggestionModel.get(sourceIndex)["suggestion"]
