@@ -1,5 +1,4 @@
-#ifndef STORAGE_MANAGER_H
-#define STORAGE_MANAGER_H
+#pragma once
 
 #include <memory>
 
@@ -171,5 +170,3 @@ private:
     QHash<QString /*groupId*/, QString /*partialUri*/ > downloadControlViewUris_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
 };
-
-#endif //STORAGE_MANAGER_H
