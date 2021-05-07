@@ -1,7 +1,5 @@
 #include <Mock/MockDeviceControl.h>
 
-#include <QJsonDocument>
-
 #include "logging/LoggingQtCategories.h"
 
 namespace strata::device {
@@ -113,41 +111,7 @@ bool MockDeviceControl::mockSetVersion(MockVersion version)
     return false;
 }
 
-std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& request) {
-    auto responses = getRawResponses(request);
-    auto normalizedResponses = normalizeResponses(responses);
-
-    return normalizedResponses;
-}
-
-std::vector<QByteArray> MockDeviceControl::normalizeResponses(const std::vector<QByteArray>& responses) const {
-    std::vector<QByteArray> retVal;
-    for (const QByteArray& response : responses) {
-        QJsonParseError error;
-        QJsonDocument document = QJsonDocument::fromJson(response, &error);
-
-        if (document.isNull() == true) {
-            qCWarning(logCategoryDeviceMock) << "Unable to normalize message" << response << ":" << error.errorString();
-
-            // Strata commands must end with new line character ('\n')
-            if (response.endsWith('\n') == false) {
-                QByteArray normalizedResponse(response);
-                normalizedResponse.append('\n');
-                retVal.push_back(normalizedResponse);
-                continue;
-            }
-
-            retVal.push_back(response);
-            continue;
-        }
-
-        retVal.push_back(document.toJson(QJsonDocument::Compact).append('\n'));
-    }
-
-    return retVal;
-}
-
-std::vector<QByteArray> MockDeviceControl::getRawResponses(const QByteArray& request)
+std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& request)
 {
     rapidjson::Document requestDoc;
     rapidjson::ParseResult parseResult = requestDoc.Parse(request.data(), request.size());

@@ -6,7 +6,6 @@
 #include <QMutexLocker>
 #include <QReadLocker>
 #include <QWriteLocker>
-#include <QJsonDocument>
 
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
@@ -127,6 +126,7 @@ bool Platform::sendMessage(const QByteArray& message) {
 
 // private method
 bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+    QByteArray msgToWrite(message);
     bool canWrite = false;
     {
         QMutexLocker lock(&operationMutex_);
@@ -135,7 +135,10 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
         }
     }
     if (canWrite) {
-        QByteArray msgToWrite = normalizeMessage(message);
+        // Strata commands must end with new line character ('\n')
+        if (msgToWrite.endsWith('\n') == false) {
+            msgToWrite.append('\n');
+        }
         return device_->sendMessage(msgToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
@@ -143,26 +146,6 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
         emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceBusy, errMsg);
         return false;
     }
-}
-
-QByteArray Platform::normalizeMessage(const QByteArray& message) const {
-    QJsonParseError error;
-    QJsonDocument document = QJsonDocument::fromJson(message, &error);
-
-    if (document.isNull() == true) {
-        qCWarning(logCategoryPlatform) << "Unable to normalize message" << message << ":" << error.errorString();
-
-        // Strata commands must end with new line character ('\n')
-        if (message.endsWith('\n') == false) {
-            QByteArray normalizedMessage(message);
-            normalizedMessage.append('\n');
-            return normalizedMessage;
-        }
-
-        return message;
-    }
-
-    return document.toJson(QJsonDocument::Compact).append('\n');
 }
 
 QString Platform::name() {

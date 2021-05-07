@@ -2,6 +2,7 @@
 
 #include <QRegularExpression>
 #include <QByteArray>
+#include <QJsonDocument>
 
 namespace strata::device {
 
@@ -52,31 +53,35 @@ namespace test_commands {
 
 const QRegularExpression parameterRegex = QRegularExpression("\\{\\$[^\\{]*\\}");
 
-const QByteArray ack =
+inline QByteArray NormalizeJson(const char* message) {
+    return QJsonDocument::fromJson(message).toJson(QJsonDocument::Compact).append('\n');
+}
+
+const QByteArray ack = NormalizeJson(
 R"({
     "ack":"{$request.cmd}",
     "payload":{"return_value":true,"return_string":"command valid"}
-})";
+})");
 
-const QByteArray nack_badly_formatted_json =
+const QByteArray nack_badly_formatted_json = NormalizeJson(
 R"({
     "ack":"",
     "payload":{"return_value":false,"return_string":"badly formatted json"}
-})";
+})");
 
-const QByteArray nack_command_not_found =
+const QByteArray nack_command_not_found = NormalizeJson(
 R"({
     "ack":"{$request.cmd}",
     "payload":{"return_value":false,"return_string":"command not found"}
-})";
+})");
 
-const QByteArray get_firmware_info_request =
+const QByteArray get_firmware_info_request = NormalizeJson(
 R"({
     "cmd":"get_firmware_info",
     "payload":{}
-})";
+})");
 
-const QByteArray get_firmware_info_response =
+const QByteArray get_firmware_info_response = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -93,9 +98,9 @@ R"({
             }
         }
     }
-})";
+})");
 
-const QByteArray get_firmware_info_response_no_bootloader =
+const QByteArray get_firmware_info_response_no_bootloader = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -108,9 +113,9 @@ R"({
             }
         }
     }
-})";
+})");
 
-const QByteArray get_firmware_info_response_ver2_application =
+const QByteArray get_firmware_info_response_ver2_application = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -127,9 +132,9 @@ R"({
             }
         }
     }
-})";
+})");
 
-const QByteArray get_firmware_info_response_ver2_bootloader =
+const QByteArray get_firmware_info_response_ver2_bootloader = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -146,9 +151,9 @@ R"({
             }
         }
     }
-})";
+})");
 
-const QByteArray get_firmware_info_response_ver2_invalid =
+const QByteArray get_firmware_info_response_ver2_invalid = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -165,16 +170,16 @@ R"({
             }
         }
     }
-})";
+})");
 
-const QByteArray get_firmware_info_response_no_payload =
+const QByteArray get_firmware_info_response_no_payload = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
     }
-})";
+})");
 
-const QByteArray get_firmware_info_response_invalid =
+const QByteArray get_firmware_info_response_invalid = NormalizeJson(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -189,15 +194,15 @@ R"({
             }
         }
     }
-})";
+})");
 
-const QByteArray request_platform_id_request =
+const QByteArray request_platform_id_request = NormalizeJson(
 R"({
     "cmd":"request_platform_id",
     "payload":{}
-})";
+})");
 
-const QByteArray request_platform_id_response =
+const QByteArray request_platform_id_response = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
@@ -210,9 +215,9 @@ R"({
             "verbose_name":"Mock Board"
         }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_ver2_embedded =
+const QByteArray request_platform_id_response_ver2_embedded = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
@@ -224,9 +229,9 @@ R"({
             "board_count":1
         }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_ver2_assisted =
+const QByteArray request_platform_id_response_ver2_assisted = NormalizeJson(
 R"({
     "notification":{
        "value":"platform_id",
@@ -242,9 +247,9 @@ R"({
           "fw_class_id":"00000000-0000-0000-0000-000000000000"
        }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_ver2_assisted_without_board =
+const QByteArray request_platform_id_response_ver2_assisted_without_board = NormalizeJson(
 R"({
     "notification":{
        "value":"platform_id",
@@ -257,9 +262,9 @@ R"({
           "fw_class_id":"00000000-0000-0000-0000-000000000000"
        }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_ver2_assisted_invalid =
+const QByteArray request_platform_id_response_ver2_assisted_invalid = NormalizeJson(
 R"({
     "notification":{
        "value":"platform_id",
@@ -275,9 +280,9 @@ R"({
           "fw_class_id":"00000000-0000-0000-0000-000000000000"
        }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_ver2_embedded_bootloader =
+const QByteArray request_platform_id_response_ver2_embedded_bootloader = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
@@ -289,9 +294,9 @@ R"({
             "board_count":1
         }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_ver2_assisted_bootloader =
+const QByteArray request_platform_id_response_ver2_assisted_bootloader = NormalizeJson(
 R"({
     "notification":{
        "value":"platform_id",
@@ -307,16 +312,16 @@ R"({
           "fw_class_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a"
        }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_no_payload =
+const QByteArray request_platform_id_response_no_payload = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_invalid =
+const QByteArray request_platform_id_response_invalid = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
@@ -329,9 +334,9 @@ R"({
             "verbose_name":-1
         }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_bootloader =
+const QByteArray request_platform_id_response_bootloader = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
@@ -343,16 +348,16 @@ R"({
             "platform_id_version":"2.0"
         }
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_bootloader_no_payload =
+const QByteArray request_platform_id_response_bootloader_no_payload = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
     }
-})";
+})");
 
-const QByteArray request_platform_id_response_bootloader_invalid =
+const QByteArray request_platform_id_response_bootloader_invalid = NormalizeJson(
 R"({
     "notification":{
         "value":"platform_id",
@@ -364,15 +369,15 @@ R"({
             "platform_id_version":"2.0"
         }
     }
-})";
+})");
 
-const QByteArray start_bootloader_request =
+const QByteArray start_bootloader_request = NormalizeJson(
 R"({
     "cmd":"start_bootloader",
     "payload":{}
-})";
+})");
 
-const QByteArray start_bootloader_response =
+const QByteArray start_bootloader_response = NormalizeJson(
 R"({
     "notification":{
         "value":"start_bootloader",
@@ -380,16 +385,16 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
-const QByteArray start_bootloader_response_no_payload =
+const QByteArray start_bootloader_response_no_payload = NormalizeJson(
 R"({
     "notification":{
         "value":"start_bootloader",
     }
-})";
+})");
 
-const QByteArray start_bootloader_response_invalid =
+const QByteArray start_bootloader_response_invalid = NormalizeJson(
 R"({
     "notification":{
         "value":"start_bootloader",
@@ -397,15 +402,15 @@ R"({
             "status":-1
         }
     }
-})";
+})");
 
-const QByteArray start_application_request =
+const QByteArray start_application_request = NormalizeJson(
 R"({
     "cmd":"start_application",
     "payload":{}
-})";
+})");
 
-const QByteArray start_application_response =
+const QByteArray start_application_response = NormalizeJson(
 R"({
     "notification":{
         "value":"start_application",
@@ -413,16 +418,16 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
-const QByteArray start_application_response_no_payload =
+const QByteArray start_application_response_no_payload = NormalizeJson(
 R"({
     "notification":{
         "value":"start_application",
     }
-})";
+})");
 
-const QByteArray start_application_response_invalid =
+const QByteArray start_application_response_invalid = NormalizeJson(
 R"({
     "notification":{
         "value":"start_application",
@@ -430,11 +435,11 @@ R"({
             "status":-1
         }
     }
-})";
+})");
 
 const QByteArray no_JSON_response = "notJSON";
 
-const QByteArray flash_firmware_request =
+const QByteArray flash_firmware_request = NormalizeJson(
 R"({
     "cmd":"flash_firmware",
     "payload":{
@@ -445,9 +450,9 @@ R"({
             "data":"{$request.payload.chunk.data}"
         }
     }
-})";
+})");
 
-const QByteArray flash_bootloader_request =
+const QByteArray flash_bootloader_request = NormalizeJson(
 R"({
     "cmd":"flash_bootloader",
     "payload":{
@@ -458,9 +463,9 @@ R"({
             "data":"{$request.payload.chunk.data}"
         }
     }
-})";
+})");
 
-const QByteArray start_flash_firmware_request =
+const QByteArray start_flash_firmware_request = NormalizeJson(
 R"({
     "cmd":"start_flash_firmware",
     "payload": {
@@ -468,9 +473,9 @@ R"({
         "chunks": {$request.payload.chunks},
         "md5": "{$request.payload.md5}"
     }
-})";
+})");
 
-const QByteArray start_flash_bootloader_request =
+const QByteArray start_flash_bootloader_request = NormalizeJson(
 R"({
     "cmd":"start_flash_bootloader",
     "payload": {
@@ -478,9 +483,9 @@ R"({
         "chunks": {$request.payload.chunks},
         "md5": "{$request.payload.md5}"
     }
-})";
+})");
 
-const QByteArray start_flash_firmware_response =
+const QByteArray start_flash_firmware_response = NormalizeJson(
 R"({
     "notification":{
         "value":"start_flash_firmware",
@@ -488,9 +493,9 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
-const QByteArray start_flash_firmware_response_invalid =
+const QByteArray start_flash_firmware_response_invalid = NormalizeJson(
 R"({
     "notification":{
         "value":"start_flash_firmware",
@@ -498,9 +503,9 @@ R"({
             "status":-1
         }
     }
-})";
+})");
 
-const QByteArray start_flash_bootloader_response =
+const QByteArray start_flash_bootloader_response = NormalizeJson(
 R"({
     "notification":{
         "value":"start_flash_bootloader",
@@ -508,9 +513,9 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
-const QByteArray flash_firmware_response =
+const QByteArray flash_firmware_response = NormalizeJson(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -518,9 +523,9 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
-const QByteArray flash_firmware_response_resend_chunk =
+const QByteArray flash_firmware_response_resend_chunk = NormalizeJson(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -528,9 +533,9 @@ R"({
             "status":"resend_chunk"
         }
     }
-})";
+})");
 
-const QByteArray flash_firmware_response_memory_error =
+const QByteArray flash_firmware_response_memory_error = NormalizeJson(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -538,9 +543,9 @@ R"({
             "status":"flash_memory_error"
         }
     }
-})";
+})");
 
-const QByteArray flash_firmware_response_invalid_cmd_sequence =
+const QByteArray flash_firmware_response_invalid_cmd_sequence = NormalizeJson(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -548,9 +553,9 @@ R"({
             "status":"invalid_cmd_sequence"
         }
     }
-})";
+})");
 
-const QByteArray flash_firmware_invalid_value =
+const QByteArray flash_firmware_invalid_value = NormalizeJson(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -558,9 +563,9 @@ R"({
             "status":"-1
         }
     }
-})";
+})");
 
-const QByteArray flash_bootloader_response =
+const QByteArray flash_bootloader_response = NormalizeJson(
 R"({
     "notification":{
         "value":"flash_bootloader",
@@ -568,7 +573,7 @@ R"({
             "status":"ok"
         }
     }
-})";
+})");
 
 } // namespace strata::device::test_commands
 

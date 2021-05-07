@@ -35,9 +35,6 @@ private:
                                                        const rapidjson::Document &requestDoc);
     static QString getPlaceholderValue(const QString placeholder,
                                        const rapidjson::Document &requestDoc);
-
-    std::vector<QByteArray> normalizeResponses(const std::vector<QByteArray>& responses) const;
-    std::vector<QByteArray> getRawResponses(const QByteArray& request);
 private:
     bool isOpenEnabled_ = true;
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
