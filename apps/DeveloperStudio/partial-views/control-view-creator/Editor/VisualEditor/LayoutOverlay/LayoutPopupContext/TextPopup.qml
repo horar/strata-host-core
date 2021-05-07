@@ -24,11 +24,14 @@ Popup {
         }
         SGTextField {
             id: textContainer
-         onAccepted: {
-             visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + textContainer.text + '"')
-             visualEditor.functions.saveFile()
-             contextMenu.close()
-         }
+            //  displayText:
+
+
+            onAccepted: {
+                visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + textContainer.text + '"')
+                visualEditor.functions.saveFile()
+
+            }
         }
     }
 }

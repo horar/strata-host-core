@@ -10,17 +10,23 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
+
     ContextMenuButton {
         text: "Set Title"
         onClicked: {
-            textDialog.open()
+            //            titleDialog.open()
+            renameLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            renameLoader.active = true
+            renameLoader.item.textFieldProperty = "title:"
+            renameLoader.item.open()
+            contextMenu.close()
         }
     }
 
-    TextPopup {
-        id: titleDialog
-        textFieldProperty: "title:"
-    }
+    //    TextPopup {
+    //        id: titleDialog
+    //        textFieldProperty: "title:"
+    //    }
 
     ContextMenuButton {
         text: "Set X Title"
@@ -33,7 +39,6 @@ ColumnLayout {
         id: xtitleDialog
         textFieldProperty: "xTitle:"
     }
-
 
     ContextMenuButton {
         text: "Set Y Title"
