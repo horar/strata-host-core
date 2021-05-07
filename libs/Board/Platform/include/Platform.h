@@ -329,6 +329,13 @@ namespace strata::platform {
         bool sendMessage(const QByteArray& message, quintptr lockId);
 
         /**
+         * Normalizes json message that is to be sent to device
+         * @param message message to be normalized
+         * @return normalized message in expected format
+         */
+        QByteArray normalizeMessage(const QByteArray& message) const;
+
+        /**
          * Informs the device that Identify operation completed
          * Emits recognized() signal.
          * @param isRecognized if the device was properly recognized
