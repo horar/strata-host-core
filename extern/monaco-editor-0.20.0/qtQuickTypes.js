@@ -1412,7 +1412,7 @@ const qtTypeJson = {
             "inherits": "LayoutContainer",
             "source": "",
             "nonInstantiable": false,
-            "isVisualWidget": false,
+            "isVisualWidget": true,
         },
         "LayoutContainer": {
             "properties": {
