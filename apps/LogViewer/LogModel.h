@@ -41,6 +41,7 @@ public:
     Q_ENUM(LogLevel)
     Q_INVOKABLE QString followFile(const QString &path);
     Q_INVOKABLE void removeFile(const QString &path);
+    Q_INVOKABLE void removeAllFiles();
     Q_INVOKABLE void clear();
     Q_INVOKABLE void toggleIsMarked(int position);
 

@@ -21,6 +21,9 @@ Item {
     property int selectionStartPosition: -1
     property int selectionEndPosition: -1
 
+    property int currentIndex: scrollbackFilterModel.mapIndexToSource(listView.currentIndex)
+    property color highlightNoFocusColor: "#aaaaaa"
+
     signal resendMessageRequested(string message)
 
 
@@ -157,8 +160,16 @@ Item {
     }
 
     Rectangle {
-        anchors.fill: parent
+        id: listViewBg
+        anchors {
+            fill: listView
+            margins: -listViewBg.border.width
+        }
         color: "white"
+        border {
+            width: 1
+            color: TangoTheme.palette.componentBorder
+        }
     }
 
     SGWidgets.SGAbstractContextMenu {
@@ -212,13 +223,13 @@ Item {
         id: listView
         anchors {
             fill: parent
-            leftMargin: 2
-            rightMargin: 2
+            margins: listViewBg.border.width
         }
 
         model: scrollbackFilterModel
         clip: true
         boundsBehavior: Flickable.StopAtBounds
+        highlightMoveDuration: 100
 
         onActiveFocusChanged: {
             if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
@@ -272,6 +283,8 @@ Item {
                 if (position === undefined) {
                     return
                 }
+
+                listView.currentIndex = position.delegate_index
 
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
@@ -343,7 +356,12 @@ Item {
         }
 
         ScrollBar.vertical: ScrollBar {
-            width: 12
+            anchors {
+                right: listView.right
+                rightMargin: 0
+            }
+            width: 8
+
             policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
             visible: listView.height < listView.contentHeight
@@ -393,6 +411,24 @@ Item {
 
                     return "transparent"
                 }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+
+                color: "transparent"
+                border {
+                    width: 2
+                    color: {
+                        if (listView.activeFocus) {
+                            return TangoTheme.palette.highlight
+                        } else {
+                            return highlightNoFocusColor
+                        }
+                    }
+                }
+
+                visible: cmdDelegate.ListView.isCurrentItem
             }
 
             SGWidgets.SGText {
@@ -543,6 +579,11 @@ Item {
 
                     onClicked: {
                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
+                        if (sourceIndex < 0) {
+                            console.error(Logger.sciCategory, "Index out of scope.")
+                            return
+                        }
+
                         var item = scrollbackView.model.setIsCondensed(sourceIndex, !model.isCondensed)
                         clearSelection()
                     }
@@ -583,6 +624,7 @@ Item {
         for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
             var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
             if (sourceIndex < 0) {
+                console.error(Logger.sciCategory, "Index out of scope.")
                 text = ""
                 break
             }

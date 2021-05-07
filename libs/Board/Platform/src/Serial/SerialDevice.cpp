@@ -117,8 +117,9 @@ void SerialDevice::readMessage() {
     int from = 0;
     int end;
     while ((end = data.indexOf('\n', from)) > -1) {
+        ++end;
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
-        from = end + 1;  // +1 due to skip '\n'
+        from = end;
 
         // qCDebug(logCategoryDeviceSerial) << this << ": received message: " << QString::fromStdString(readBuffer_);
         emit messageReceived(QByteArray::fromStdString(readBuffer_));
@@ -131,7 +132,7 @@ void SerialDevice::readMessage() {
     }
 }
 
-bool SerialDevice::sendMessage(const QByteArray msg) {
+bool SerialDevice::sendMessage(const QByteArray& msg) {
     // * Signal must be emitted because of calling this function from another
     //   thread as in which this SerialDevice object was created. Slot connected
     //   to this signal will be executed in correct thread.
@@ -171,14 +172,7 @@ Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPor
 }
 
 void SerialDevice::handleWriteToPort(const QByteArray data) {
-    qint64 writtenBytes = serialPort_->write(data);
-    qint64 dataSize = data.size();
-    // Strata commands must end with '\n'
-    if (data.endsWith('\n') == false) {
-        writtenBytes += serialPort_->write("\n", 1);
-        ++dataSize;
-    }
-    if (writtenBytes == dataSize) {
+    if (serialPort_->write(data) == data.size()) {
         emit messageSent(data);
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));

@@ -3,7 +3,6 @@ project(EventsMgr
     LANGUAGES CXX
 )
 
-find_package(Libevent2 REQUIRED)
 find_package(Threads REQUIRED)
 
 if (APPLE)
@@ -28,9 +27,8 @@ if(WIN32)
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC ${LIBEVENT2_LIBRARIES}
-    PUBLIC ${LIBEVENT2_PTHREAD_LIBRARIES}
-    Threads::Threads
+    PUBLIC Threads::Threads
+    PUBLIC libevent::libevent
 )
 
 if (APPLE)
@@ -48,5 +46,4 @@ endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PUBLIC ${LIBEVENT2_INCLUDE_DIR}
 )

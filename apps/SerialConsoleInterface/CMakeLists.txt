@@ -25,6 +25,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciCommandHistoryModel.cpp
     SciFilterSuggestionModel.cpp
     SciPlatformSettings.cpp
+    SciMockDeviceModel.cpp
+    HexModel.cpp
     qml.qrc
     images/images.qrc
 
