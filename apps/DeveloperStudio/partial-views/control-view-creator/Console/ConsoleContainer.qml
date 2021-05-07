@@ -10,12 +10,7 @@ import "../components"
 
 Rectangle {
     id: root
-    visible: !startContainer.visible
-
-    Layout.minimumHeight: 30
-    implicitHeight: 200
-    Layout.fillWidth: true
-
+    anchors.fill: parent
     color: "#eee"
     z: 3
 

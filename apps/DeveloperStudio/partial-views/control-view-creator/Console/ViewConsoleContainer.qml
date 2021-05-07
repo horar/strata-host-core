@@ -19,6 +19,8 @@ Item {
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
+    property alias consoleLogParent: resizeRect
+
     Rectangle {
         id: resizeRect
         width: parent.width
@@ -57,12 +59,5 @@ Item {
         drag.minimumX: 0
         drag.maximumX: 0
         cursorShape: Qt.SplitVCursor
-    }
-
-    ConsoleContainer {
-        anchors.fill: resizeRect
-        onClicked: {
-            viewConsoleLog.visible = false
-        }
     }
 }

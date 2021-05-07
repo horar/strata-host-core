@@ -281,6 +281,7 @@ Item {
         }
     }
 
+
     Connections {
         id: srcConnection
         target: logger

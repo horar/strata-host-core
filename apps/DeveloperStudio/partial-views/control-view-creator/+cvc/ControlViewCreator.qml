@@ -168,17 +168,9 @@ Rectangle {
                         viewStack.currentIndex = 0
                         break;
                     case editTab:
-                        if(isConsoleLogOpen) {
-                            consoleContainer.visible = true
-                            viewConsoleLog.visible = false
-                        }
                         viewStack.currentIndex = 1
                         break;
                     case viewTab:
-                        if(isConsoleLogOpen) {
-                            consoleContainer.visible = false
-                            viewConsoleLog.visible = true
-                        }
                         if (rccInitialized == false) {
                             recompileControlViewQrc();
                         } else {
@@ -243,7 +235,7 @@ Rectangle {
                     Layout.preferredHeight: 70
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
-                    color: (consoleContainer.visible || viewConsoleLog.visible)  && enabled ? Theme.palette.green : "transparent"
+                    color: isConsoleLogOpen  && enabled ? Theme.palette.green : "transparent"
                     enabled: !startContainer.visible
                     tooltipDescription: "Toggle logger panel"
 
@@ -251,19 +243,15 @@ Rectangle {
                         if(toolBarListView.currentIndex === 1) {
                             if(consoleContainer.visible){
                                 isConsoleLogOpen = false
-                                consoleContainer.visible = false
                             } else {
                                 isConsoleLogOpen = true
-                                consoleContainer.visible = true
                             }
                         }
                         if (toolBarListView.currentIndex === 2) {
                             if(viewConsoleLog.visible){
                                 isConsoleLogOpen = false
-                                viewConsoleLog.visible = false
                             } else {
                                 isConsoleLogOpen = true
-                                viewConsoleLog.visible = true
                             }
                         }
                     }
@@ -299,13 +287,6 @@ Rectangle {
                     id: startContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
-                    onVisibleChanged: {
-                        if(visible){
-                            consoleContainer.visible = false
-                            viewConsoleLog.visible = false
-                        }
-                    }
                 }
 
                 Editor {
@@ -369,12 +350,21 @@ Rectangle {
                 }
             }
 
-            ConsoleContainer {
-                id:consoleContainer
-                onClicked: {
-                    consoleContainer.visible = false
-                }
+            Item {
+                id: editViewConsoleContainer
+                Layout.minimumHeight: 30
+                implicitHeight: 200
+                Layout.fillWidth: true
+                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true
             }
+        }
+    }
+
+    ConsoleContainer {
+        id:consoleContainer
+        parent: (viewStack.currentIndex === 1) ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
+        onClicked: {
+            isConsoleLogOpen === false
         }
     }
 
@@ -382,7 +372,7 @@ Rectangle {
         id: viewConsoleLog
         width: parent.width - 71
         implicitHeight: parent.height
-        visible: false
+        visible: viewStack.currentIndex === 2 &&  isConsoleLogOpen === true
     }
 
     ConfirmClosePopup {
