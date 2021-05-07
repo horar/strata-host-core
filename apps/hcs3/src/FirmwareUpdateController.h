@@ -119,12 +119,6 @@ private slots:
 private:
     void logAndEmitError(const QByteArray& deviceId, const QString& errorString);
 
-    enum class Action {
-        UpdateFirmware,
-        ProgramController,
-        SetControllerFwClassId
-    };
-
     void runUpdate(const ChangeFirmwareData& data);
 
     QPointer<PlatformController> platformController_;
