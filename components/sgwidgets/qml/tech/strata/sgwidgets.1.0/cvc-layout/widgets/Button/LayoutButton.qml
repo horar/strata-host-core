@@ -14,6 +14,7 @@ LayoutContainer {
     property alias down: buttonObject.down
     property alias buttonObject: buttonObject // exposed for advanced customization
 
+    // match default button colors:
     property color textColor: {
         if (buttonObject.checked) {
             if (buttonObject.enabled) {

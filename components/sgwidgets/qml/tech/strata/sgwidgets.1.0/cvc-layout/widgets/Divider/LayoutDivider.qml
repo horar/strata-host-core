@@ -5,7 +5,7 @@ import "../../"
 LayoutContainer {
     id: dividerRoot
 
-    property bool vertical: false
+    property int orientation: Qt.Horizontal
     property alias color: dividerLine.color
     property int thickness: 1 // "width" is a reserved word and ambiguous when vertical
 
@@ -13,8 +13,8 @@ LayoutContainer {
 
         Rectangle {
             id: dividerLine
-            height: dividerRoot.vertical ? parent.height : thickness
-            width: dividerRoot.vertical ? thickness : parent.width
+            height: dividerRoot.orientation === Qt.Horizontal ? thickness : parent.height
+            width: dividerRoot.orientation === Qt.Horizontal ? parent.width : thickness
             anchors {
                 centerIn: parent
             }
