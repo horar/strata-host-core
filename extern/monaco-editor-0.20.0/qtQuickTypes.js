@@ -1391,7 +1391,12 @@ const qtTypeJson = {
                 "contentItem": {
                     "meta_properties": []
                 }
-            }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "Item",
+            "source": "",
+            "nonInstantiable": false,
         },
         "LayoutDivider": {
             "properties": {
