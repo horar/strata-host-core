@@ -53,35 +53,35 @@ namespace test_commands {
 
 const QRegularExpression parameterRegex = QRegularExpression("\\{\\$[^\\{]*\\}");
 
-inline QByteArray NormalizeJson(const char* message) {
+inline QByteArray normalizeMessage(const char* message) {
     return QJsonDocument::fromJson(message).toJson(QJsonDocument::Compact).append('\n');
 }
 
-const QByteArray ack = NormalizeJson(
+const QByteArray ack = normalizeMessage(
 R"({
     "ack":"{$request.cmd}",
     "payload":{"return_value":true,"return_string":"command valid"}
 })");
 
-const QByteArray nack_badly_formatted_json = NormalizeJson(
+const QByteArray nack_badly_formatted_json = normalizeMessage(
 R"({
     "ack":"",
     "payload":{"return_value":false,"return_string":"badly formatted json"}
 })");
 
-const QByteArray nack_command_not_found = NormalizeJson(
+const QByteArray nack_command_not_found = normalizeMessage(
 R"({
     "ack":"{$request.cmd}",
     "payload":{"return_value":false,"return_string":"command not found"}
 })");
 
-const QByteArray get_firmware_info_request = NormalizeJson(
+const QByteArray get_firmware_info_request = normalizeMessage(
 R"({
     "cmd":"get_firmware_info",
     "payload":{}
 })");
 
-const QByteArray get_firmware_info_response = NormalizeJson(
+const QByteArray get_firmware_info_response = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -100,7 +100,7 @@ R"({
     }
 })");
 
-const QByteArray get_firmware_info_response_no_bootloader = NormalizeJson(
+const QByteArray get_firmware_info_response_no_bootloader = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -115,7 +115,7 @@ R"({
     }
 })");
 
-const QByteArray get_firmware_info_response_ver2_application = NormalizeJson(
+const QByteArray get_firmware_info_response_ver2_application = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -134,7 +134,7 @@ R"({
     }
 })");
 
-const QByteArray get_firmware_info_response_ver2_bootloader = NormalizeJson(
+const QByteArray get_firmware_info_response_ver2_bootloader = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -153,7 +153,7 @@ R"({
     }
 })");
 
-const QByteArray get_firmware_info_response_ver2_invalid = NormalizeJson(
+const QByteArray get_firmware_info_response_ver2_invalid = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -172,14 +172,14 @@ R"({
     }
 })");
 
-const QByteArray get_firmware_info_response_no_payload = NormalizeJson(
+const QByteArray get_firmware_info_response_no_payload = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
     }
 })");
 
-const QByteArray get_firmware_info_response_invalid = NormalizeJson(
+const QByteArray get_firmware_info_response_invalid = normalizeMessage(
 R"({
     "notification": {
         "value":"get_firmware_info",
@@ -196,13 +196,13 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_request = NormalizeJson(
+const QByteArray request_platform_id_request = normalizeMessage(
 R"({
     "cmd":"request_platform_id",
     "payload":{}
 })");
 
-const QByteArray request_platform_id_response = NormalizeJson(
+const QByteArray request_platform_id_response = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
@@ -217,7 +217,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_ver2_embedded = NormalizeJson(
+const QByteArray request_platform_id_response_ver2_embedded = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
@@ -231,7 +231,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_ver2_assisted = NormalizeJson(
+const QByteArray request_platform_id_response_ver2_assisted = normalizeMessage(
 R"({
     "notification":{
        "value":"platform_id",
@@ -249,7 +249,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_ver2_assisted_without_board = NormalizeJson(
+const QByteArray request_platform_id_response_ver2_assisted_without_board = normalizeMessage(
 R"({
     "notification":{
        "value":"platform_id",
@@ -264,7 +264,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_ver2_assisted_invalid = NormalizeJson(
+const QByteArray request_platform_id_response_ver2_assisted_invalid = normalizeMessage(
 R"({
     "notification":{
        "value":"platform_id",
@@ -282,7 +282,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_ver2_embedded_bootloader = NormalizeJson(
+const QByteArray request_platform_id_response_ver2_embedded_bootloader = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
@@ -296,7 +296,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_ver2_assisted_bootloader = NormalizeJson(
+const QByteArray request_platform_id_response_ver2_assisted_bootloader = normalizeMessage(
 R"({
     "notification":{
        "value":"platform_id",
@@ -314,14 +314,14 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_no_payload = NormalizeJson(
+const QByteArray request_platform_id_response_no_payload = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
     }
 })");
 
-const QByteArray request_platform_id_response_invalid = NormalizeJson(
+const QByteArray request_platform_id_response_invalid = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
@@ -336,7 +336,7 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_bootloader = NormalizeJson(
+const QByteArray request_platform_id_response_bootloader = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
@@ -350,14 +350,14 @@ R"({
     }
 })");
 
-const QByteArray request_platform_id_response_bootloader_no_payload = NormalizeJson(
+const QByteArray request_platform_id_response_bootloader_no_payload = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
     }
 })");
 
-const QByteArray request_platform_id_response_bootloader_invalid = NormalizeJson(
+const QByteArray request_platform_id_response_bootloader_invalid = normalizeMessage(
 R"({
     "notification":{
         "value":"platform_id",
@@ -371,13 +371,13 @@ R"({
     }
 })");
 
-const QByteArray start_bootloader_request = NormalizeJson(
+const QByteArray start_bootloader_request = normalizeMessage(
 R"({
     "cmd":"start_bootloader",
     "payload":{}
 })");
 
-const QByteArray start_bootloader_response = NormalizeJson(
+const QByteArray start_bootloader_response = normalizeMessage(
 R"({
     "notification":{
         "value":"start_bootloader",
@@ -387,14 +387,14 @@ R"({
     }
 })");
 
-const QByteArray start_bootloader_response_no_payload = NormalizeJson(
+const QByteArray start_bootloader_response_no_payload = normalizeMessage(
 R"({
     "notification":{
         "value":"start_bootloader",
     }
 })");
 
-const QByteArray start_bootloader_response_invalid = NormalizeJson(
+const QByteArray start_bootloader_response_invalid = normalizeMessage(
 R"({
     "notification":{
         "value":"start_bootloader",
@@ -404,13 +404,13 @@ R"({
     }
 })");
 
-const QByteArray start_application_request = NormalizeJson(
+const QByteArray start_application_request = normalizeMessage(
 R"({
     "cmd":"start_application",
     "payload":{}
 })");
 
-const QByteArray start_application_response = NormalizeJson(
+const QByteArray start_application_response = normalizeMessage(
 R"({
     "notification":{
         "value":"start_application",
@@ -420,14 +420,14 @@ R"({
     }
 })");
 
-const QByteArray start_application_response_no_payload = NormalizeJson(
+const QByteArray start_application_response_no_payload = normalizeMessage(
 R"({
     "notification":{
         "value":"start_application",
     }
 })");
 
-const QByteArray start_application_response_invalid = NormalizeJson(
+const QByteArray start_application_response_invalid = normalizeMessage(
 R"({
     "notification":{
         "value":"start_application",
@@ -439,7 +439,7 @@ R"({
 
 const QByteArray no_JSON_response = "notJSON";
 
-const QByteArray flash_firmware_request = NormalizeJson(
+const QByteArray flash_firmware_request = normalizeMessage(
 R"({
     "cmd":"flash_firmware",
     "payload":{
@@ -452,7 +452,7 @@ R"({
     }
 })");
 
-const QByteArray flash_bootloader_request = NormalizeJson(
+const QByteArray flash_bootloader_request = normalizeMessage(
 R"({
     "cmd":"flash_bootloader",
     "payload":{
@@ -465,7 +465,7 @@ R"({
     }
 })");
 
-const QByteArray start_flash_firmware_request = NormalizeJson(
+const QByteArray start_flash_firmware_request = normalizeMessage(
 R"({
     "cmd":"start_flash_firmware",
     "payload": {
@@ -475,7 +475,7 @@ R"({
     }
 })");
 
-const QByteArray start_flash_bootloader_request = NormalizeJson(
+const QByteArray start_flash_bootloader_request = normalizeMessage(
 R"({
     "cmd":"start_flash_bootloader",
     "payload": {
@@ -485,7 +485,7 @@ R"({
     }
 })");
 
-const QByteArray start_flash_firmware_response = NormalizeJson(
+const QByteArray start_flash_firmware_response = normalizeMessage(
 R"({
     "notification":{
         "value":"start_flash_firmware",
@@ -495,7 +495,7 @@ R"({
     }
 })");
 
-const QByteArray start_flash_firmware_response_invalid = NormalizeJson(
+const QByteArray start_flash_firmware_response_invalid = normalizeMessage(
 R"({
     "notification":{
         "value":"start_flash_firmware",
@@ -505,7 +505,7 @@ R"({
     }
 })");
 
-const QByteArray start_flash_bootloader_response = NormalizeJson(
+const QByteArray start_flash_bootloader_response = normalizeMessage(
 R"({
     "notification":{
         "value":"start_flash_bootloader",
@@ -515,7 +515,7 @@ R"({
     }
 })");
 
-const QByteArray flash_firmware_response = NormalizeJson(
+const QByteArray flash_firmware_response = normalizeMessage(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -525,7 +525,7 @@ R"({
     }
 })");
 
-const QByteArray flash_firmware_response_resend_chunk = NormalizeJson(
+const QByteArray flash_firmware_response_resend_chunk = normalizeMessage(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -535,7 +535,7 @@ R"({
     }
 })");
 
-const QByteArray flash_firmware_response_memory_error = NormalizeJson(
+const QByteArray flash_firmware_response_memory_error = normalizeMessage(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -545,7 +545,7 @@ R"({
     }
 })");
 
-const QByteArray flash_firmware_response_invalid_cmd_sequence = NormalizeJson(
+const QByteArray flash_firmware_response_invalid_cmd_sequence = normalizeMessage(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -555,7 +555,7 @@ R"({
     }
 })");
 
-const QByteArray flash_firmware_invalid_value = NormalizeJson(
+const QByteArray flash_firmware_invalid_value = normalizeMessage(
 R"({
     "notification":{
         "value":"flash_firmware",
@@ -565,7 +565,7 @@ R"({
     }
 })");
 
-const QByteArray flash_bootloader_response = NormalizeJson(
+const QByteArray flash_bootloader_response = normalizeMessage(
 R"({
     "notification":{
         "value":"flash_bootloader",
