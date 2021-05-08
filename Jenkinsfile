@@ -56,7 +56,6 @@ pipeline {
                             poll: false,
                             credentialsId: 'BB-access-token',
                             url: "${repoUrl}",
-                            branch: "update-deploy-strata-windows-script" // for testing only and needs to be removed!
                     }
                 }
             }
