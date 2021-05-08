@@ -281,6 +281,9 @@ Item {
         }
     }
 
+    ListModel {
+        id: consoleModel
+    }
 
     Connections {
         id: srcConnection

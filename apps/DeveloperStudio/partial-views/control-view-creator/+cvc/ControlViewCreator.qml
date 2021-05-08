@@ -29,10 +29,6 @@ Rectangle {
         recompileControlViewQrc();
     }
 
-    ListModel {
-        id: consoleModel
-    }
-
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
     property bool isConsoleLogOpen: false
