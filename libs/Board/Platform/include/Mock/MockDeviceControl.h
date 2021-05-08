@@ -15,7 +15,7 @@ public:
     explicit MockDeviceControl(QObject *parent = nullptr);
     ~MockDeviceControl() override;
 
-    std::vector<QByteArray> getResponses(QByteArray request);
+    std::vector<QByteArray> getResponses(const QByteArray& request);
 
     bool mockIsOpenEnabled() const;
     bool mockIsLegacy() const;

@@ -104,10 +104,10 @@ void PlatformOperationsTest::verifyMessage(const QByteArray &msg, const QByteArr
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
-    parseResult = doc.Parse(msg.data());
+    parseResult = doc.Parse(msg.data(), msg.size());
     QVERIFY(!parseResult.IsError());
     QVERIFY(doc.IsObject());
-    expectedDoc.Parse(expectedJson.data());
+    expectedDoc.Parse(expectedJson.data(), expectedJson.size());
     if (doc != expectedDoc) {
         printJsonDoc(doc);
         printJsonDoc(expectedDoc);
