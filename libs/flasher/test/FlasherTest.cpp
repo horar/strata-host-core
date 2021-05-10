@@ -248,23 +248,17 @@ void FlasherTest::cleanFiles()
     fakeFirmwareBackup_->deleteLater();
 }
 
-void FlasherTest::getMd5(QFile firmware)
+void FlasherTest::getExpectedValues(QFile firmware)
 {
     if (firmware.open(QIODevice::ReadOnly)) {
         QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
         hash.addData(&firmware);
-        expectedMd5_ = hash.result().toHex();
-    }
-}
 
-void FlasherTest::getExpectedValues(QFile firmware)
-{
-    if (firmware.open(QIODevice::ReadOnly)) {
+        expectedMd5_ = hash.result().toHex(); //Get expected md5
 
-        getMd5(firmware.fileName());
+        expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + strata::CHUNK_SIZE) / strata::CHUNK_SIZE); //Get expected chunks count
 
-        expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + strata::CHUNK_SIZE) / strata::CHUNK_SIZE);
-
+        firmware.seek(0);
         while (!firmware.atEnd()) {
             int chunkSize = strata::CHUNK_SIZE;
             qint64 remainingFileSize = firmware.size() - firmware.pos();
@@ -275,17 +269,17 @@ void FlasherTest::getExpectedValues(QFile firmware)
             QVector<quint8> chunk(chunkSize);
             qint64 bytesRead = firmware.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
 
-            expectedChunkSize_.append(bytesRead);
+            expectedChunkSize_.append(bytesRead); //Get expected chunk size
 
             size_t firmwareBase64Size = base64::encoded_size(static_cast<size_t>(bytesRead));
             QByteArray firmwareBase64;
             firmwareBase64.resize(static_cast<int>(firmwareBase64Size));
             base64::encode(firmwareBase64.data(), chunk.data(), static_cast<size_t>(bytesRead));
 
-            expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead))));
+            expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead)))); //Get expected chunk crc
 
             if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
-                expectedChunkData_.append(firmwareBase64);
+                expectedChunkData_.append(firmwareBase64); //Get expected chunk data
             }
         }
     }
@@ -482,6 +476,8 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(actualDoc["cmd"].GetString(),"backup_firmware");
     QCOMPARE(actualRequest["status"].GetString(),"init");
     }
+
+    qCritical() << recordedMessages[8];
 
     QCOMPARE(recordedMessages[9],test_commands::start_application_request);
     QCOMPARE(recordedMessages[10],test_commands::get_firmware_info_request);

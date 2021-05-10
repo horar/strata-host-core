@@ -68,7 +68,6 @@ private:
     void cleanFiles();
 
     void getExpectedValues(QFile firmware);
-    void getMd5(QFile firmware);
 
     int flasherFinishedCount_ = 0;
     int flasherNoFirmwareCount_ = 0;
