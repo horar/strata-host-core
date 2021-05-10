@@ -17,6 +17,7 @@ Item {
     id: fileContainerRoot
     Layout.fillHeight: true
     Layout.fillWidth: true
+    focus: true
 
     property int modelIndex: index
     property string file: model.filename
@@ -79,6 +80,8 @@ Item {
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile()
+        } else if(event.matches(StandardKey.Close)){
+            openFilesModel.saveAllRequested(true)
         }
     }
 
@@ -148,7 +151,11 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile(close, true);
+                if(!close){
+                    saveFile(close, true);
+                } else {
+                    closeAllFilesConfirmation.open()
+                }
             }
         }
     }
@@ -216,6 +223,8 @@ Item {
         id: channel
         Component.onCompleted: registerObjects({valueLink: channelObject})
     }
+
+
 
     QtObject {
         id: channelObject

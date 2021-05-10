@@ -31,6 +31,15 @@ Rectangle {
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
 
+    function closeAllFiles(closeWithoutSave){
+        if(!closeWithoutSave){
+            openFilesModel.saveAll(true)
+            openFilesModel.closeAll()
+        } else {
+            openFilesModel.closeAll()
+        }
+    }
+
     SGUserSettings {
         id: sgUserSettings
         classId: "controlViewCreator"
@@ -119,6 +128,25 @@ Rectangle {
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
+    }
+
+    ConfirmClosePopup {
+        id: closeAllFilesConfirmation
+        titleText: "Close all files"
+        popupText: "This will close all tabs. Are you sure you want to close all tabs?"
+        acceptButtonText: "Close all w/saving"
+        closeButtonText: "Close all wo/saving"
+        closeButtonColor: "blue"
+
+        onPopupClosed: {
+            if(closeReason === acceptCloseReason){
+                closeAllFiles(false)
+            } else if(closeReason === closeFilesReason){
+                closeAllFiles(true)
+            }
+
+            isConfirmCloseOpen = false
+        }
     }
 
     RowLayout {
