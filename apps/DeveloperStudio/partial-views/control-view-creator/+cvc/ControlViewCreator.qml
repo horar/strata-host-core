@@ -28,8 +28,10 @@ Rectangle {
     onDebugPlatformChanged: {
         recompileControlViewQrc();
     }
+
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
+    property bool isConsoleLogOpen: false
 
     SGUserSettings {
         id: sgUserSettings
@@ -111,11 +113,11 @@ Rectangle {
         buttons: [okButtonObject]
 
         property var okButtonObject: ({
-            buttonText: "Ok",
-            buttonColor: acceptButtonColor,
-            buttonHoverColor: acceptButtonHoverColor,
-            closeReason: acceptCloseReason
-        });
+                                          buttonText: "Ok",
+                                          buttonColor: acceptButtonColor,
+                                          buttonHoverColor: acceptButtonHoverColor,
+                                          closeReason: acceptCloseReason
+                                      });
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
@@ -170,7 +172,6 @@ Rectangle {
                         } else {
                             viewStack.currentIndex = 2
                         }
-
                         break;
                     default:
                         viewStack.currentIndex = 0
@@ -230,15 +231,24 @@ Rectangle {
                     Layout.preferredHeight: 70
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
-                    color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
+                    color: isConsoleLogOpen  && enabled ? Theme.palette.green : "transparent"
                     enabled: !startContainer.visible
                     tooltipDescription: "Toggle logger panel"
 
                     function onClicked() {
-                        if(consoleContainer.visible){
-                            consoleContainer.visible = false
-                        } else {
-                            consoleContainer.visible = true
+                        if(toolBarListView.currentIndex === 1) {
+                            if(consoleContainer.visible){
+                                isConsoleLogOpen = false
+                            } else {
+                                isConsoleLogOpen = true
+                            }
+                        }
+                        if (toolBarListView.currentIndex === 2) {
+                            if(viewConsoleLog.visible){
+                                isConsoleLogOpen = false
+                            } else {
+                                isConsoleLogOpen = true
+                            }
                         }
                     }
                 }
@@ -265,28 +275,21 @@ Rectangle {
             orientation: Qt.Vertical
 
             StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            Start {
-                id: startContainer
+                id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                onVisibleChanged: {
-                    if(visible){
-                        consoleContainer.visible = false
-                    }
+                Start {
+                    id: startContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                 }
-            }
 
-            Editor {
-                id: editor
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
+                Editor {
+                    id: editor
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
                 SGSplitView {
                     id: controlViewContainer
@@ -343,10 +346,29 @@ Rectangle {
                 }
             }
 
-            ConsoleContainer {
-                id:consoleContainer
+            Item {
+                id: editViewConsoleContainer
+                Layout.minimumHeight: 30
+                implicitHeight: 200
+                Layout.fillWidth: true
+                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true
             }
         }
+    }
+
+    ConsoleContainer {
+        id:consoleContainer
+        parent: (viewStack.currentIndex === 1) ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
+        onClicked: {
+            isConsoleLogOpen = false
+        }
+    }
+
+    ViewConsoleContainer {
+        id: viewConsoleLog
+        width: parent.width - 71
+        implicitHeight: parent.height
+        visible: viewStack.currentIndex === 2 &&  isConsoleLogOpen === true
     }
 
     ConfirmClosePopup {
