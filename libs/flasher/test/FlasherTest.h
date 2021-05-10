@@ -6,7 +6,7 @@
 #include "Operations/PlatformOperations.h"
 #include "Flasher.h"
 
-#include "QtTest.h"
+#include <QtTest>
 
 class FlasherTest : public QObject
 {
