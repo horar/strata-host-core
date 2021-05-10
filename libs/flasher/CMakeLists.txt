@@ -68,6 +68,5 @@ set_target_properties(${PROJECT_NAME}${CONNECTOR_SUFFIX} PROPERTIES
 )
 
 if(BUILD_TESTING)
-    add_compile_definitions(BUILD_TESTING)
     add_subdirectory(test)
 endif()
