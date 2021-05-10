@@ -29,8 +29,10 @@ Rectangle {
     onDebugPlatformChanged: {
         recompileControlViewQrc();
     }
+
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
+    property bool isConsoleLogOpen: false
 
     SGUserSettings {
         id: sgUserSettings
@@ -112,11 +114,11 @@ Rectangle {
         buttons: [okButtonObject]
 
         property var okButtonObject: ({
-            buttonText: "Ok",
-            buttonColor: acceptButtonColor,
-            buttonHoverColor: acceptButtonHoverColor,
-            closeReason: acceptCloseReason
-        });
+                                          buttonText: "Ok",
+                                          buttonColor: acceptButtonColor,
+                                          buttonHoverColor: acceptButtonHoverColor,
+                                          closeReason: acceptCloseReason
+                                      });
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
@@ -146,12 +148,6 @@ Rectangle {
                     id: startContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
-                    onVisibleChanged: {
-                        if(visible){
-                            consoleContainer.visible = false
-                        }
-                    }
                 }
 
                 Editor {
@@ -215,10 +211,29 @@ Rectangle {
                 }
             }
 
-            ConsoleContainer {
-                id:consoleContainer
+            Item {
+                id: editViewConsoleContainer
+                Layout.minimumHeight: 30
+                implicitHeight: 200
+                Layout.fillWidth: true
+                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true
             }
         }
+    }
+
+    ConsoleContainer {
+        id:consoleContainer
+        parent: (viewStack.currentIndex === 1) ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
+        onClicked: {
+            isConsoleLogOpen = false
+        }
+    }
+
+    ViewConsoleContainer {
+        id: viewConsoleLog
+        width: parent.width - 71
+        implicitHeight: parent.height
+        visible: viewStack.currentIndex === 2 &&  isConsoleLogOpen === true
     }
 
     ConfirmClosePopup {

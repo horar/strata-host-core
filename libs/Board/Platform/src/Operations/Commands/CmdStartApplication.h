@@ -9,7 +9,7 @@ class CmdStartApplication : public BasePlatformCommand {
 public:
     explicit CmdStartApplication(const PlatformPtr& platform);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
 };
 
 }  // namespace

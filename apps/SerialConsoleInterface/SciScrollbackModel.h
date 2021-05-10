@@ -29,6 +29,7 @@ public:
 
     enum ModelRole {
         MessageRole = Qt::UserRole,
+        RawMessageRole,
         TypeRole,
         TimestampRole,
         IsCondensedRole,
@@ -105,6 +106,7 @@ private:
 
 struct ScrollbackModelItem {
     QString message;
+    QString rawMessage;
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
     bool isCondensed;

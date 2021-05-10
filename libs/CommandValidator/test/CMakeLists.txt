@@ -4,7 +4,7 @@ add_executable(${PROJECT_NAME}-test
 )
 
 target_link_libraries(${PROJECT_NAME}-test
-    PRIVATE CommandValidator
+    PRIVATE strata::CommandValidator
     PRIVATE gtest::gtest
 )
 

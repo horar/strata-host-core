@@ -66,7 +66,7 @@ void ClientsController::stop()
 void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int)
 {
     std::string read_message;
-    PlatformMessage msg;
+    DispatcherMessage msg;
 
     for(;;) {
         if (client_connector_->read(read_message) == false) {
@@ -75,7 +75,6 @@ void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int
 
         msg.from_client = QByteArray::fromStdString(client_connector_->getDealerID());
         msg.message = QByteArray::fromStdString(read_message);
-        msg.msg_document = nullptr;
 
         dispatcher_->addMessage(msg);
     }

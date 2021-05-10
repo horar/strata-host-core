@@ -116,6 +116,14 @@ void LogModel::removeFile(const QString &path)
     }
 }
 
+void LogModel::removeAllFiles()
+{
+    int count = fileModel_.count();
+    for (int i = count - 1; i >= 0; i--) {
+        removeFile(fileModel_.getFilePathAt(i));
+    }
+}
+
 QString LogModel::getRotatedFilePath(const QString &path) const
 {
     QFileInfo fi(path);

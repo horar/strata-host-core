@@ -87,15 +87,11 @@ Rectangle {
             iconText: "Logs"
             iconSource: "qrc:/sgimages/bars.svg"
             selected: consoleContainer.visible && enabled
-            enabled: viewStack.currentIndex !== 0
+            enabled: viewStack.currentIndex === 1 || viewStack.currentIndex === 2
             tooltipDescription: "Toggle logger panel"
 
             function onClicked() {
-                if(consoleContainer.visible){
-                    consoleContainer.visible = false
-                } else {
-                    consoleContainer.visible = true
-                }
+                isConsoleLogOpen = !isConsoleLogOpen
             }
         }
 

@@ -73,30 +73,33 @@ R"(
     )
 );
 
-void Platform::messageReceivedHandler(QByteArray msg) {
-    // re-emit the message first, then parse
-    emit messageReceived(device_->deviceId(), msg);
+void Platform::messageReceivedHandler(QByteArray rawMsg) {
+    // re-emit the message first, then validate (for platform_id_changed)
 
-    rapidjson::Document doc;
-    if (CommandValidator::parseJsonCommand(msg, doc, true) == false) {
-        return;
-    }
-    if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, doc, true) == false) {
-        return;
+    PlatformMessage message(rawMsg);
+
+    if (message.isJsonValid() == false) {
+        qCDebug(logCategoryPlatform) << this << "JSON error at offset "
+            << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
-    qCInfo(logCategoryPlatform).noquote()
-        << "Received 'platform_id_changed' notification for device" << deviceId();
+    emit messageReceived(device_->deviceId(), message);
 
-    emit platformIdChanged(device_->deviceId());
+    if (message.isJsonValidObject()) {
+        if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
+            qCInfo(logCategoryPlatform) << this << "Received 'platform_id_changed' notification";
+
+            emit platformIdChanged(device_->deviceId());
+        }
+    }
 }
 
-void Platform::messageSentHandler(QByteArray msg) {
-    emit messageSent(device_->deviceId(), msg);
+void Platform::messageSentHandler(QByteArray rawMsg) {
+    emit messageSent(device_->deviceId(), PlatformMessage(rawMsg));
 }
 
-void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString msg) {
-    emit deviceError(device_->deviceId(), errCode, msg);
+void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
+    emit deviceError(device_->deviceId(), errCode, errMsg);
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
@@ -117,12 +120,13 @@ void Platform::abortReconnect() {
 }
 
 // public method
-bool Platform::sendMessage(const QByteArray msg) {
-    return sendMessage(msg, 0);
+bool Platform::sendMessage(const QByteArray& message) {
+    return sendMessage(message, 0);
 }
 
 // private method
-bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
+bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+    QByteArray msgToWrite(message);
     bool canWrite = false;
     {
         QMutexLocker lock(&operationMutex_);
@@ -131,7 +135,11 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
         }
     }
     if (canWrite) {
-        return device_->sendMessage(msg);
+        // Strata commands must end with new line character ('\n')
+        if (msgToWrite.endsWith('\n') == false) {
+            msgToWrite.append('\n');
+        }
+        return device_->sendMessage(msgToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
