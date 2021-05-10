@@ -556,7 +556,7 @@ R"({
 const QByteArray start_flash_bootloader_response = normalizeMessage(
 R"({
     "notification":{
-        "value":"start_flash_bootlaoder",
+        "value":"start_flash_bootloader",
         "payload":{
             "status":"ok"
         }
