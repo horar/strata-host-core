@@ -95,6 +95,7 @@ ColumnLayout {
                 overLayObject.layoutInfo.rowsTall = item.layoutInfo.rowsTall
                 overLayObject.layoutInfo.xColumns = item.layoutInfo.xColumns
                 overLayObject.layoutInfo.yRows = item.layoutInfo.yRows
+                overLayObject.sourceItem = item
 
                 overlayObjects.push(overLayObject)
             }
