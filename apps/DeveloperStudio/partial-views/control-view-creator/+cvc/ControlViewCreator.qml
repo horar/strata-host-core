@@ -360,7 +360,7 @@ Rectangle {
         id:consoleContainer
         parent: (viewStack.currentIndex === 1) ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
         onClicked: {
-            isConsoleLogOpen === false
+            isConsoleLogOpen = false
         }
     }
 

@@ -165,7 +165,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
-                           root.clicked()
+                            root.clicked()
                         }
                     }
                 }
