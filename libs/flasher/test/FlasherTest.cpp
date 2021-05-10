@@ -475,8 +475,6 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(actualRequest["status"].GetString(),"init");
     }
 
-    qCritical() << recordedMessages[8];
-
     QCOMPARE(recordedMessages[9],test_commands::start_application_request);
     QCOMPARE(recordedMessages[10],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[11],test_commands::request_platform_id_request);
