@@ -14,24 +14,19 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Title"
         onClicked: {
-            //            titleDialog.open()
             renameLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             renameLoader.active = true
+            renameLoader.item.text = layoutOverlayRoot.sourceItem.title
             renameLoader.item.textFieldProperty = "title:"
             renameLoader.item.open()
             contextMenu.close()
         }
     }
 
-    //    TextPopup {
-    //        id: titleDialog
-    //        textFieldProperty: "title:"
-    //    }
 
     ContextMenuButton {
         text: "Set X Title"
         onClicked: {
-            xtitleDialog.open()
         }
     }
 

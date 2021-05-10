@@ -27,8 +27,10 @@ Popup {
         ContextMenuButton {
             text: "Set ID"
             onClicked: {
+                renameLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
                 renameLoader.active = true
                 renameLoader.item.text = layoutOverlayRoot.objectName
+                renameLoader.item.textFieldProperty = "id:"
                 renameLoader.item.open()
                 contextMenu.close()
             }
@@ -58,7 +60,7 @@ Popup {
             }
         }
 
-         ContextMenuButton {
+        ContextMenuButton {
             text: "Go to code"
             onClicked : {
                 visualEditor.functions.passUUID(layoutOverlayRoot.layoutInfo.uuid)
