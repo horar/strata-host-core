@@ -1,12 +1,10 @@
 #include <chrono>
 #include <thread>
 
-#include "logging/LoggingQtCategories.h"
 #include "FlasherTest.h"
 #include <rapidjson/writer.h>
 #include <Operations/StartBootloader.h>
 #include <Operations/StartApplication.h>
-#include "FlasherConstants.h"
 #include "FlasherTestConstants.h"
 #include <CodecBase64.h>
 #include <Buypass.h>
@@ -207,7 +205,7 @@ void FlasherTest::createFiles()
     fakeFirmwareBackup_ = new QFile(QDir(QDir::tempPath()).filePath("fakeFirmwareBackup.bin"));
 
     if (fakeFirmware_->open(QIODevice::ReadWrite) == false) {
-        qCCritical(logCategoryFlasher()) << "Cannot open fake firmware file" << fakeFirmware_->fileName() << fakeFirmware_->errorString();
+        qCritical() << "Cannot open fake firmware file" << fakeFirmware_->fileName() << fakeFirmware_->errorString();
         delete fakeFirmware_;
     } else {
         QTextStream fakeFirmwareOut(fakeFirmware_);
@@ -216,7 +214,7 @@ void FlasherTest::createFiles()
     }
 
     if (fakeBootloader_->open(QIODevice::ReadWrite) == false) {
-        qCCritical(logCategoryFlasher()) << "Cannot open fake bootloader file" << fakeBootloader_->fileName() << fakeBootloader_->errorString();
+        qCritical() << "Cannot open fake bootloader file" << fakeBootloader_->fileName() << fakeBootloader_->errorString();
         delete fakeBootloader_;
     } else {
         QTextStream fakeBootloaderOut(fakeBootloader_);
@@ -225,7 +223,7 @@ void FlasherTest::createFiles()
     }
 
     if (fakeFirmwareBackup_->open(QIODevice::ReadWrite) == false) {
-        qCCritical(logCategoryFlasher()) << "Cannot open fake firmware for backup file" << fakeFirmwareBackup_->fileName() << fakeFirmwareBackup_->errorString();
+        qCritical() << "Cannot open fake firmware for backup file" << fakeFirmwareBackup_->fileName() << fakeFirmwareBackup_->errorString();
         delete fakeFirmwareBackup_;
     } else {
         QTextStream fakeFirmwareBackupOut(fakeFirmwareBackup_);
