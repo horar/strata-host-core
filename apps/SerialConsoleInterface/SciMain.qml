@@ -232,7 +232,7 @@ Item {
                                     SGWidgets.SGDialogJS.showConfirmationDialog(
                                                 ApplicationWindow.window,
                                                 "Device is active",
-                                                "Do you really want to disconnect \"" + model.platform.verboseName + "\" board ?",
+                                                "Do you really want to disconnect \"" + model.platform.verboseName + "\" board?",
                                                 "Disconnect",
                                                 function () {
                                                     removeBoard(model.index)

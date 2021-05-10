@@ -11,7 +11,7 @@ class CmdBackupFirmware : public BasePlatformCommand {
 public:
     CmdBackupFirmware(const PlatformPtr& platform, QVector<quint8>& chunk, int totalChunks);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
     bool logSendMessage() const override;
     void setTotalChunks(int totalChunks);
 private:

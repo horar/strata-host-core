@@ -108,30 +108,47 @@ QtObject {
     }
 
     function removeControl(uuid) {
-        let captureComponentByUuidRegex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
-        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
-        fileContents = fileContents.replace(captureComponentByUuidRegex, "");
+        fileContents = fileContents.replace(captureComponentByUuidRegex(uuid), "");
 
         saveFile(file, fileContents)
     }
 
     function duplicateControl(uuid){
-        let captureComponentByUuidRegex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
-        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
-        let copy = fileContents.match(captureComponentByUuidRegex)[0]
-        let newUuid = create_UUID()
-        let allInstancesOfUuidRegex = new RegExp(uuid, "g")
+        let copy = fileContents.match(captureComponentByUuidRegex(uuid))[0]
+        let type = getType(uuid)
+        type = type.charAt(0).toLowerCase() + type.slice(1); // lowercase the first letter of the type
+        const newUuid = create_UUID()
+
+        // replace old uuid in tags
+        const allInstancesOfUuidRegex = new RegExp(uuid, "g")
         copy = copy.replace(allInstancesOfUuidRegex, newUuid)
-        copy = replaceObjectPropertyValueInString(newUuid, "id:", "duplicate_" + newUuid, copy)
+
+        // capture lines that of the format "    id: somePropertyName" as key and value groups
+        const idRegex = new RegExp("(^\\s*id:\\s*)([a-zA-Z0-9_]*)", "gm")
+        var first = true
+
+        // duplicate object's id replaced with "<type>_<newUuid>"
+        // append "_<uuid>" to nested id's, to prevent collision
+        copy = copy.replace(idRegex, function(match, idKey, idValue){
+            if (first) {
+                first = false
+                return `${idKey}${type}_${newUuid}`
+            } else {
+                return `${idKey}${idValue}_${create_UUID()}`
+            }
+        })
         insertTextAtEndOfFile(copy)
     }
 
     function bringToFront(uuid){
-        let captureComponentByUuidRegex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
-        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
-        let copy = fileContents.match(captureComponentByUuidRegex)[0]
+        let copy = fileContents.match(captureComponentByUuidRegex(uuid))[0]
         fileContents = fileContents.replace(captureComponentByUuidRegex, "");
         insertTextAtEndOfFile(copy)
+    }
+
+    function captureComponentByUuidRegex(uuid) {
+        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
+        return new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
     }
 
     /*

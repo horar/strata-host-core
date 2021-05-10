@@ -15,5 +15,6 @@
         <file>InfoPopup.qml</file>
         <file>ScrollbackView.qml</file>
         <file>MessageEditor.qml</file>
+        <file>HexView.qml</file>
     </qresource>
 </RCC>

@@ -101,21 +101,22 @@ bool BasePlatformCommand::logSendMessage() const {
     return true;
 }
 
-void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const QByteArray data)
+void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const PlatformMessage message)
 {
     Q_UNUSED(deviceId)
-    rapidjson::Document doc;
 
-    if (CommandValidator::parseJsonCommand(data, doc) == false) {
-        qCWarning(logCategoryPlatformCommand) << platform_ << "Cannot parse JSON: '" << data << "'.";
+    if (message.isJsonValidObject() == false) {
+        logWrongResponse(message);
         return;
     }
 
-    if (doc.HasMember(JSON_ACK)) {
-        if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
-            const QString ackStr = doc[JSON_ACK].GetString();
+    const rapidjson::Document& json = message.json();
+
+    if (json.HasMember(JSON_ACK)) {
+        if (CommandValidator::validate(CommandValidator::JsonType::ack, json)) {
+            const QString ackStr = json[JSON_ACK].GetString();
             qCDebug(logCategoryPlatformCommand) << platform_ << "Received '" << ackStr << "' ACK.";
-            const rapidjson::Value& payload = doc[JSON_PAYLOAD];
+            const rapidjson::Value& payload = json[JSON_PAYLOAD];
 
             ackOk_ = payload[JSON_RETURN_VALUE].GetBool();
 
@@ -137,15 +138,15 @@ void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const QByteA
                 }
             }
         } else {
-            logWrongResponse(data);
+            logWrongResponse(message);
         }
 
         return;
     }
 
-    if (doc.HasMember(JSON_NOTIFICATION)) {
+    if (json.HasMember(JSON_NOTIFICATION)) {
         CommandResult result = CommandResult::Failure;
-        if (this->processNotification(doc, result)) {
+        if (this->processNotification(json, result)) {
             responseTimer_.stop();
 
             qCDebug(logCategoryPlatformCommand) << platform_ << "Processed '" << cmdName_ << "' notification.";
@@ -153,10 +154,10 @@ void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const QByteA
             if (ackOk_) {
                 if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
                     if (result == CommandResult::Failure) {
-                        qCWarning(logCategoryPlatformCommand) << platform_ << "Received faulty notification: '" << data << "'.";
+                        qCWarning(logCategoryPlatformCommand) << platform_ << "Received faulty notification: '" << message.raw() << "'.";
                     }
 
-                    const QByteArray status = CommandValidator::notificationStatus(doc);
+                    const QByteArray status = CommandValidator::notificationStatus(json);
                     if (status.isEmpty() == false) {
                         qCInfo(logCategoryPlatformCommand) << platform_ << "Command '" << cmdName_ << "' returned '" << status << "'.";
                     }
@@ -167,13 +168,13 @@ void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const QByteA
                 finishCommand(CommandResult::MissingAck);
             }
         } else {
-            logWrongResponse(data);
+            logWrongResponse(message);
         }
 
         return;
     }
 
-    logWrongResponse(data);
+    logWrongResponse(message);
 }
 
 void BasePlatformCommand::handleResponseTimeout()
@@ -211,9 +212,9 @@ void BasePlatformCommand::finishCommand(CommandResult result)
     emit finished(result, status_);
 }
 
-void BasePlatformCommand::logWrongResponse(const QByteArray& response)
+void BasePlatformCommand::logWrongResponse(const PlatformMessage& message)
 {
-    qCWarning(logCategoryPlatformCommand) << platform_ << "Received wrong, unexpected or malformed response: '" << response << "'.";
+    qCWarning(logCategoryPlatformCommand) << platform_ << "Received wrong, unexpected or malformed response: '" << message.raw() << "'.";
 }
 
 void BasePlatformCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {
