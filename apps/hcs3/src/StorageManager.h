@@ -17,6 +17,7 @@ class DownloadManager;
 
 class PlatformDocument;
 class Database;
+struct FirmwareFileItem;
 
 class StorageManager final : public QObject
 {
@@ -52,15 +53,26 @@ public:
     QUrl getBaseUrl() const;
 
     /**
-     * Gets MD5 of firmware
+     * Finds firmware
      * @param class ID of device
      * @param controller class ID
-     * @param version of firmware, if empty latest firmware will be returned
-     * @return firmware URI and firmware MD5 as pair
+     * @param version of firmware
+     * @return firmware
      */
-    QPair<QUrl,QString> getFirmwareUriMd5(const QString &classId,
-                                          const QString &controllerClassId,
-                                          const QString &version = QString());
+    const FirmwareFileItem* findFirmware(
+            const QString &classId,
+            const QString &controllerClassId,
+            const QString &version);
+
+    /**
+     * Finds highest firmware
+     * @param class ID of device
+     * @param controller class ID
+     * @return firmware
+     */
+    const FirmwareFileItem* findHighestFirmware(
+            const QString &classId,
+            const QString &controllerClassId);
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);

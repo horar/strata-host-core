@@ -3,6 +3,7 @@
 #include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
 #include "JsonStrings.h"
+#include "PlatformDocument.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -558,20 +559,20 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
             break;
         }
 
-        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(firmwareData.firmwareClassId, controllerClassId);
-        if (firmware.first.isEmpty()) {
+        const FirmwareFileItem *firmware = storageManager_.findHighestFirmware(firmwareData.firmwareClassId, controllerClassId);
+        if (firmware == nullptr) {
             errorString = "No compatible firmware for your combination of controller and platform";
             break;
         }
-        firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
-        firmwareData.firmwareMD5 = firmware.second;
+        firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware->partialUri);
+        firmwareData.firmwareMD5 = firmware->md5;
 
         QString currentMD5; // get md5 accorging to old fw_class_id and fw version
         if (platform->applicationVer().isEmpty() == false
                 && platform->firmwareClassId().isNull() == false
                 && platform->firmwareClassId().isEmpty() == false) {
-            firmware = storageManager_.getFirmwareUriMd5(platform->firmwareClassId(), controllerClassId, platform->applicationVer());
-            currentMD5 = firmware.second;
+            firmware = storageManager_.findFirmware(platform->firmwareClassId(), controllerClassId, platform->applicationVer());
+            currentMD5 = firmware->md5;
         } else {
             qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
         }

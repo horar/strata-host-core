@@ -76,45 +76,47 @@ QUrl StorageManager::getBaseUrl() const
     return baseUrl_;
 }
 
-QPair<QUrl,QString> StorageManager::getFirmwareUriMd5(const QString &classId, const QString &controllerClassId, const QString &version)
+const FirmwareFileItem *StorageManager::findFirmware(const QString &classId, const QString &controllerClassId, const QString &version)
 {
-    const bool findLatest = version.isEmpty();
-
-    if (findLatest) {
-        qCDebug(logCategoryHcsStorage) << "Searching for latest firmware URI and MD5 for" << classId << "and" << controllerClassId;
-    } else {
-        qCDebug(logCategoryHcsStorage) << "Searching firmware" << version << "URI and MD5 for" << classId << "and" << controllerClassId;
-    }
-
-    QUrl uri;
-    QString md5;
+    qCDebug(logCategoryHcsStorage) << "Searching firmware " << version << " for" << classId << "and" << controllerClassId;
 
     PlatformDocument *platfDoc = fetchPlatformDoc(classId);
-    if (platfDoc) {
-        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
-        if (findLatest) {  // find latest firmware
-            QString currentVersion;
-            for (const auto &item : firmwareList) {
-                if (item.controllerClassId == controllerClassId) {
-                   if (currentVersion.isEmpty() || SGVersionUtils::lessThan(currentVersion, item.version)) {
-                       currentVersion = item.version;
-                       uri = item.partialUri;
-                       md5 = item.md5;
-                   }
-                }
-            }
-        } else {
-            for (const auto &item : firmwareList) {
-                if (item.controllerClassId == controllerClassId && item.version == version) {
-                    uri = item.partialUri;
-                    md5 = item.md5;
-                    break;
-                }
+    if (platfDoc == nullptr) {
+        return nullptr;
+    }
+
+    const FirmwareFileItem* firmware = nullptr;
+    QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+    for (int i = 0; i < firmwareList.length(); ++i) {
+        if (firmwareList.at(i).controllerClassId == controllerClassId && firmwareList.at(i).version == version) {
+            firmware = &firmwareList.at(i);
+            break;
+        }
+    }
+
+    return firmware;
+}
+
+const FirmwareFileItem* StorageManager::findHighestFirmware(const QString &classId, const QString &controllerClassId)
+{
+    qCDebug(logCategoryHcsStorage) << "Searching for highest firmware for " << classId << "and" << controllerClassId;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc == nullptr) {
+        return nullptr;
+    }
+
+    const FirmwareFileItem* firmware = nullptr;
+    QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+    for (int i = 0; i < firmwareList.length(); ++i) {
+        if (firmwareList.at(i).controllerClassId == controllerClassId) {
+            if (firmware == nullptr || SGVersionUtils::lessThan(firmware->version, firmwareList.at(i).version)) {
+                firmware = &firmwareList.at(i);
             }
         }
     }
 
-    return qMakePair(uri, md5);
+    return firmware;
 }
 
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
