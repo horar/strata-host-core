@@ -1403,6 +1403,27 @@ const qtTypeJson = {
             "properties": {
                 "text": {
                     "meta_properties": []
+                },
+                "checkable": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "color": {
+                    "meta_properties": []
+                },
+                "checked": {
+                    "meta_properties": []
+                },
+                "hovered": {
+                    "meta_properties": []
+                },
+                "pressed": {
+                    "meta_properties": []
+                },
+                "down": {
+                    "meta_properties": []
                 }
             },
             "functions": [],
@@ -1438,7 +1459,13 @@ const qtTypeJson = {
         },
         "LayoutDivider": {
             "properties": {
-                "property": {
+                "orientation": {
+                    "meta_properties": []
+                },
+                "color": {
+                    "meta_properties": []
+                },
+                "thickness": {
                     "meta_properties": []
                 }
             },
@@ -1508,6 +1535,18 @@ const qtTypeJson = {
         "LayoutRectangle": {
             "properties": {
                 "color": {
+                    "meta_properties": []
+                },
+                "border": {
+                    "meta_properties": [
+                        "width: ",
+                        "color: ",
+                    ]
+                },
+                "gradient": {
+                    "meta_properties": []
+                },
+                "radius": {
                     "meta_properties": []
                 }
             },
