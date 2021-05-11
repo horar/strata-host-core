@@ -11,19 +11,40 @@ ProgramControllerManager::ProgramControllerManager(
 {
     connect(coreInterface_, &CoreInterface::programControllerReply, this, &ProgramControllerManager::replyHandler);
     connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
+
+    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramControllerManager::replyHandler);
+    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
 }
 
 ProgramControllerManager::~ProgramControllerManager()
 {
 }
 
-void ProgramControllerManager::program(QString deviceId)
+
+void ProgramControllerManager::programAssisted(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
 
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("hcs::cmd", "program_controller");
+    cmdMessageObject.insert("payload", cmdPayloadObject);
+
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    requestedDeviceIds_.append(deviceId);
+
+    coreInterface_->sendCommand(strJson);
+}
+
+void ProgramControllerManager::programEmbedded(QString deviceId)
+{
+    QJsonObject cmdPayloadObject;
+    cmdPayloadObject.insert("device_id", deviceId);
+
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("hcs::cmd", "update_firmware");
     cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);
@@ -75,7 +96,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
         } else {
             qCWarning(logCategoryStrataDevStudio) << "unknown job status";
         }
-    } else if (jobType == "prepare") {        
+    } else if (jobType == "prepare") {
         if (jobStatus == "running") {
             notifyProgressChange(deviceId, ProgressState::PrepareState, 0.5);
         } else if (jobStatus == "failure") {
