@@ -277,11 +277,10 @@ void FlasherTest::getExpectedValues(QFile firmware)
 void FlasherTest::flashFirmwareTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->flashFirmware();
@@ -301,7 +300,7 @@ void FlasherTest::flashFirmwareTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -327,11 +326,10 @@ void FlasherTest::flashFirmwareTest()
 void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->flashFirmware(false);
@@ -351,7 +349,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -376,11 +374,10 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 void FlasherTest::flashBootloaderTest()
 {
     rapidjson::Document actualDoc;
-    QFile bootloader(fakeBootloader_->fileName());
-    getExpectedValues(bootloader.fileName());
+    getExpectedValues(fakeBootloader_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,bootloader.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeBootloader_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->flashBootloader();
@@ -400,7 +397,7 @@ void FlasherTest::flashBootloaderTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& expectedPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
-    QCOMPARE(expectedPayload["size"].GetInt(),bootloader.size());
+    QCOMPARE(expectedPayload["size"].GetInt(),fakeBootloader_->size());
     QCOMPARE(expectedPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(expectedPayload["md5"].GetString(),expectedMd5_);
 
@@ -425,11 +422,10 @@ void FlasherTest::flashBootloaderTest()
 void FlasherTest::backupFirmwareTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmwareBackup_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmwareBackup_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmwareBackup_->fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->backupFirmware();
@@ -460,11 +456,10 @@ void FlasherTest::backupFirmwareTest()
 void FlasherTest::setFwClassIdTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->setFwClassId();
@@ -497,11 +492,10 @@ void FlasherTest::setFwClassIdTest()
 void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->setFwClassId(false);
@@ -532,11 +526,10 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 void FlasherTest::startFlashFirmwareInvalidCommandTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
 
@@ -557,7 +550,7 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -567,11 +560,10 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
 void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
 
@@ -592,7 +584,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -602,11 +594,10 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 void FlasherTest::flashFirmwareResendChunkTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_resend_chunk,MockCommand::Flash_firmware);
 
@@ -627,7 +618,7 @@ void FlasherTest::flashFirmwareResendChunkTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     {
@@ -655,11 +646,10 @@ void FlasherTest::flashFirmwareResendChunkTest()
 void FlasherTest::flashFirmwareMemoryErrorTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_memory_error,MockCommand::Flash_firmware);
 
@@ -680,7 +670,7 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -698,11 +688,10 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
 void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_cmd_sequence,MockCommand::Flash_firmware);
 
@@ -723,7 +712,7 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -740,9 +729,8 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 
 void FlasherTest::disconnectWhileFlashingTest()
 {
-    QFile firmware(fakeFirmware_->fileName());
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherForDisconnectWhileFlashing(flasher_.data());
 
     flasher_->flashFirmware();
@@ -756,11 +744,10 @@ void FlasherTest::disconnectWhileFlashingTest()
 void FlasherTest::setNoFwClassIdTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
     flasher_->setFwClassId();
@@ -774,11 +761,10 @@ void FlasherTest::setNoFwClassIdTest()
 void FlasherTest::flashFirmwareCancelTest()
 {
     rapidjson::Document actualDoc;
-    QFile firmware(fakeFirmware_->fileName());
-    getExpectedValues(firmware.fileName());
+    getExpectedValues(fakeFirmware_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,firmware.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherForCancelFirmwareOperation(flasher_.data());
 
     flasher_->flashFirmware();
@@ -797,7 +783,7 @@ void FlasherTest::flashFirmwareCancelTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
@@ -819,11 +805,10 @@ void FlasherTest::flashFirmwareCancelTest()
 void FlasherTest::flashBootloaderCancelTest()
 {
     rapidjson::Document actualDoc;
-    QFile bootloader(fakeBootloader_->fileName());
-    getExpectedValues(bootloader.fileName());
+    getExpectedValues(fakeBootloader_->fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
-                new strata::Flasher(platform_,bootloader.fileName()), &QObject::deleteLater);
+                new strata::Flasher(platform_,fakeBootloader_->fileName()), &QObject::deleteLater);
     connectFlasherForCancelFirmwareOperation(flasher_.data());
 
     flasher_->flashBootloader();
@@ -842,7 +827,7 @@ void FlasherTest::flashBootloaderCancelTest()
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
     const rapidjson::Value& actualPayload = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
-    QCOMPARE(actualPayload["size"].GetInt(),bootloader.size());
+    QCOMPARE(actualPayload["size"].GetInt(),fakeBootloader_->size());
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
