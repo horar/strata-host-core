@@ -76,12 +76,19 @@ Item {
             console.error("Unable to save file", model.filepath)
         }
     }
+    Keys.onReleased: {
+        if(event.matches(StandardKey.Close)){
+            if(openFilesModel.getUnsavedCount() > 0){
+                closeAllFilesConfirmation.open()
+            } else {
+                openFilesModel.closeTabAt(modelIndex)
+            }
+        }
+    }
 
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile()
-        } else if(event.matches(StandardKey.Close)){
-            openFilesModel.saveAllRequested(true)
         }
     }
 
@@ -151,11 +158,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                if(!close){
-                    saveFile(close, true);
-                } else {
-                    closeAllFilesConfirmation.open()
-                }
+                saveFile(close, true);
             }
         }
     }
@@ -174,6 +177,22 @@ Item {
             }
 
             controlViewCreatorRoot.isConfirmCloseOpen = false
+        }
+    }
+
+    ConfirmClosePopup {
+        id: closeAllFilesConfirmation
+        titleText: "Close this tab"
+        popupText: "This will close this tab. Are you sure you want to close this tab?"
+        acceptButtonText: "Close tab w/saving"
+        closeButtonText: "Close tab wo/saving"
+
+        onPopupClosed: {
+            if(closeReason === acceptCloseReason){
+                saveFile(true)
+            } else if(closeReason === closeFilesReason){
+                openFilesModel.closeTabAt(modelIndex)
+            }
         }
     }
 
@@ -281,7 +300,7 @@ Item {
         settings.showScrollBars: false
 
         anchors {
-           	top: alertRow.bottom
+            top: alertRow.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
@@ -296,7 +315,7 @@ Item {
             var htmlWidth = width - 16
             channelObject.setContainerWidth(htmlWidth.toString())
         }
-        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
+        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
         // the visibilty changed is called when the window is resized from signals outside of the app
         Connections {
             target: mainWindow
