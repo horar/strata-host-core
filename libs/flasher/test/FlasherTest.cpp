@@ -269,9 +269,8 @@ void FlasherTest::getExpectedValues(QFile firmware)
                 expectedChunkData_.append(firmwareBase64);
             }
         }
-    } else {
-        QFAIL("Cannot open firmware.");
     }
+    QFAIL("Cannot open firmware.");
 }
 
 void FlasherTest::flashFirmwareTest()
