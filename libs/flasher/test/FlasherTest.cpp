@@ -252,7 +252,7 @@ void FlasherTest::getExpectedValues(QFile firmware)
         QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
         hash.addData(&firmware);
 
-        expectedMd5_ = hash.result().toHex(); //Get expected md5
+        expectedMd5_ = hash.result().toHex();
 
         expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + strata::CHUNK_SIZE) / strata::CHUNK_SIZE); //Get expected chunks count
 
@@ -261,13 +261,13 @@ void FlasherTest::getExpectedValues(QFile firmware)
             int chunkSize = strata::CHUNK_SIZE;
             qint64 remainingFileSize = firmware.size() - firmware.pos();
 
-            if (remainingFileSize <= strata::CHUNK_SIZE) { //Get size of the last chunk
+            if (remainingFileSize <= strata::CHUNK_SIZE) {
                 chunkSize = static_cast<int>(remainingFileSize);
             }
             QVector<quint8> chunk(chunkSize);
             qint64 bytesRead = firmware.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
 
-            expectedChunkSize_.append(bytesRead); //Get expected chunk size
+            expectedChunkSize_.append(bytesRead);
 
             size_t firmwareBase64Size = base64::encoded_size(static_cast<size_t>(bytesRead));
             QByteArray firmwareBase64;
@@ -277,9 +277,11 @@ void FlasherTest::getExpectedValues(QFile firmware)
             expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead)))); //Get expected chunk crc
 
             if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
-                expectedChunkData_.append(firmwareBase64); //Get expected chunk data
+                expectedChunkData_.append(firmwareBase64);
             }
         }
+    } else {
+        QFAIL("Cannot open firmware.");
     }
 }
 
@@ -307,26 +309,22 @@ void FlasherTest::flashFirmwareTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
     int messageNumber = 8;
     for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
-        {
-            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
-            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-            QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
-            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
-            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
-            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
-        }
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
         messageNumber++;
     }
 
@@ -361,26 +359,22 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
     int messageNumber = 8;
     for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
-        {
-            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
-            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-            QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
-            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
-            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
-            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
-        }
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
         messageNumber++;
     }
 
@@ -414,26 +408,22 @@ void FlasherTest::flashBootloaderTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& expectedPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
-        QCOMPARE(expectedPayload["size"].GetInt(),bootloader.size());
-        QCOMPARE(expectedPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(expectedPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& expectedPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
+    QCOMPARE(expectedPayload["size"].GetInt(),bootloader.size());
+    QCOMPARE(expectedPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(expectedPayload["md5"].GetString(),expectedMd5_);
 
     int messageNumber = 8;
     for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
-        {
-            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
-            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-            QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
-            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
-            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
-            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
-        }
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
         messageNumber++;
     }
 
@@ -468,12 +458,10 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[7],test_commands::start_backup_firmware_request);
 
-    {
     actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size()); //Backup firmware
     const rapidjson::Value& actualRequest = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"backup_firmware");
     QCOMPARE(actualRequest["status"].GetString(),"init");
-    }
 
     QCOMPARE(recordedMessages[9],test_commands::start_application_request);
     QCOMPARE(recordedMessages[10],test_commands::get_firmware_info_request);
@@ -504,12 +492,10 @@ void FlasherTest::setFwClassIdTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size()); //Set assisted platform id request
     const rapidjson::Value& actualRequest = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"set_assisted_platform_id");
     QCOMPARE(actualRequest["fw_class_id"].GetString(),"00000000-0000-4000-0000-000000000000");
-    }
 
     QCOMPARE(recordedMessages[8],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[9],test_commands::start_application_request);
@@ -544,12 +530,10 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
     actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size()); //Set assisted platform id request
     const rapidjson::Value& actualRequest = actualDoc["payload"];
     QCOMPARE(actualDoc["cmd"].GetString(),"set_assisted_platform_id");
     QCOMPARE(actualRequest["fw_class_id"].GetString(),"00000000-0000-4000-0000-000000000000");
-    }
 
     QCOMPARE(recordedMessages[8],test_commands::request_platform_id_request);
 
@@ -581,14 +565,12 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
     QCOMPARE(recordedMessages.size(),8);
 }
@@ -618,15 +600,12 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
-    qDebug() << recordedMessages[7];
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
     QCOMPARE(recordedMessages.size(),8);
 }
@@ -656,14 +635,12 @@ void FlasherTest::flashFirmwareResendChunkTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
     {
         actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
         const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
@@ -711,23 +688,20 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
+
+    actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
+    const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+    QCOMPARE(actualChunk["number"].GetInt(),0);
+    QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
+    QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
+    QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
 
     QCOMPARE(recordedMessages.size(),9);
 }
@@ -757,23 +731,20 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
-    {
-        actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
-        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-        QCOMPARE(actualChunk["number"].GetInt(),0);
-        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
-        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
-        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
+
+    actualDoc.Parse(recordedMessages[8].data(), recordedMessages[8].size());
+    const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+    QCOMPARE(actualChunk["number"].GetInt(),0);
+    QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[0]);
+    QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
+    QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
 
     QCOMPARE(recordedMessages.size(),9);
 }
@@ -834,26 +805,22 @@ void FlasherTest::flashFirmwareCancelTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
-        QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),firmware.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
     int messageNumber = 8;
     for (int chunkNumber = 0; chunkNumber < expectedChunksCount_/2; chunkNumber++) {
-        {
-            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
-            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-            QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
-            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
-            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
-            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
-            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
-        }
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
         messageNumber++;
     }
 
@@ -883,26 +850,22 @@ void FlasherTest::flashBootloaderCancelTest()
     QCOMPARE(recordedMessages[5],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    {
-        actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
-        const rapidjson::Value& actualPayload = actualDoc["payload"];
-        QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
-        QCOMPARE(actualPayload["size"].GetInt(),bootloader.size());
-        QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
-        QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
-    }
+    actualDoc.Parse(recordedMessages[7].data(), recordedMessages[7].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
+    QCOMPARE(actualPayload["size"].GetInt(),bootloader.size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
     int messageNumber = 8;
     for (int chunkNumber = 0; chunkNumber < expectedChunksCount_/2; chunkNumber++) {
-        {
-            actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
-            const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
-            QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
-            QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
-            QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
-            QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
-            QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
-        }
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
         messageNumber++;
     }
 
