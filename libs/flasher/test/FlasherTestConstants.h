@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QByteArray>
-#include <FlasherConstants.h>
 
 // data for fake firmware/bootloader
 namespace strata::FlasherTestConstants {
