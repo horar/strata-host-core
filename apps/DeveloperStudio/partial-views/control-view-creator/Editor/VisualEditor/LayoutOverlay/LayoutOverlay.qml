@@ -11,6 +11,7 @@ LayoutContainer {
     visible: layoutDebugMode
 
     property string type: ""
+    property var sourceItem  // Item that this overlay represents
 
     contentItem: Item {
 
