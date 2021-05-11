@@ -55,7 +55,7 @@ Item {
 
         openProjectContainer.url = path
         console.info(openProjectContainer.url);
-        toolBarListView.currentIndex = toolBarListView.editTab
+        viewStack.currentIndex = 1
         if (addToProjectList) {
             addToTheProjectList(openProjectContainer.url.toString())
         }
