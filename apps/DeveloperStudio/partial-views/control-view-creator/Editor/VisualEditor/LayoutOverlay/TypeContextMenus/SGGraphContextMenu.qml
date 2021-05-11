@@ -124,6 +124,7 @@ ColumnLayout {
             contextMenu.close()
         }
     }
+
 //    ContextMenuButton {
 //        text: "Set GridColor"
 //        onClicked: {
@@ -132,17 +133,16 @@ ColumnLayout {
 //        }
 //    }
 
-
-
     ContextMenuButton {
         text: "Set GridColor"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.active = true
             menuLoader.item.parentProperty = "gridColor:"
             menuLoader.item.open()
+            contextMenu.close()
         }
     }
-
 
     ContextMenuButton {
         text: "Show/hide X Grid"

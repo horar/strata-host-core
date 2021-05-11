@@ -6,21 +6,20 @@ import QtQuick.Dialogs 1.3
 import tech.strata.sgwidgets 1.0
 import ".."
 
-Item {
+ColorDialog {
+    id: colorDialog
+    title: "Please choose a color"
+
     property string parentProperty
-    function open() {
-        colorDialog.open()
+
+    onAccepted: {
+        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, parent.parentProperty, '"' + colorDialog.color + '"')
+        visualEditor.functions.saveFile()
+       // contextMenu.close()
     }
-    ColorDialog {
-        id: colorDialog
-        title: "Please choose a color"
-        onAccepted: {
-            visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, parent.parentProperty, '"' + colorDialog.color + '"')
-            visualEditor.functions.saveFile()
-            contextMenu.close()
-        }
-        onRejected: {
-            contextMenu.close()
-        }
+
+    onRejected: {
+       // contextMenu.close()
     }
 }
+
