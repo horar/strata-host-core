@@ -478,54 +478,85 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
     firmwareData.clientId = clientId;
     firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::UpdateFirmware;
 
-    firmwareData.deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (firmwareData.deviceId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
-        return;
-    }
+    QString errorString;
+    do {
+        firmwareData.deviceId = payload.value("device_id").toVariant().toByteArray();
+        if (firmwareData.deviceId.isEmpty()) {
+            errorString = "device_id attribute is empty or has bad format";
+            break;
+        }
 
-    strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
-    if (platform == nullptr) {
-        qCWarning(logCategoryHcs) << "Platform" << firmwareData.deviceId << "doesn't exist";
-        return;
-    }
+        strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
+        if (platform == nullptr) {
+            errorString = "Platform " + firmwareData.deviceId + " doesn't exist";
+            break;
+        }
 
-    // if firmwareClassId is available, flasher needs it (due to correct flashing of assisted boards)
-    if (platform->controllerType() == strata::platform::Platform::ControllerType::Assisted) {
-        firmwareData.firmwareClassId = platform->firmwareClassId();
-    }
+        // if firmwareClassId is available, flasher needs it (due to correct flashing of assisted boards)
+        if (platform->controllerType() == strata::platform::Platform::ControllerType::Assisted) {
+            firmwareData.firmwareClassId = platform->firmwareClassId();
+        } /*else if (platform->controllerType() == strata::platform::Platform::ControllerType::Embedded) {
+            //get embedded classId
+            firmwareData.firmwareClassId = platform->classId();
+        }*/
 
-    QString path = payload.value("path").toString();
-    if (path.isEmpty()) {
-        qCWarning(logCategoryHcs) << "path attribute is empty or has bad format";
+        if (payload.contains("path") || payload.contains("md5")) {
+            //use provided firmware
+            QString path = payload.value("path").toString();
+            if (path.isEmpty()) {
+                errorString = "path attribute is empty or has bad format";
+                break;
+            }
+
+            firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
+
+            firmwareData.firmwareMD5 = payload.value("md5").toString();
+            if (firmwareData.firmwareMD5.isEmpty()) {
+                errorString = "md5 attribute is empty or has bad format";
+                break;
+            }
+        } else {
+            //find highest firmware
+            if (platform->hasClassId() == false) {
+                errorString = "platform has empty classId";
+                break;
+            }
+
+            const FirmwareFileItem *firmware = storageManager_.findHighestFirmware(platform->classId());
+            if (firmware == nullptr) {
+                errorString = "No firmware for provided classId";
+                break;
+            }
+
+            firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware->partialUri);
+            firmwareData.firmwareMD5 = firmware->md5;
+        }
+
+        firmwareData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
         QJsonObject payloadBody {
-            { "error_string", "path attribute is empty or has bad format" },
+            { "job_id", firmwareData.jobUuid },
             { "device_id", QLatin1String(firmwareData.deviceId) }
         };
-        QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
+        QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
         clients_.sendMessage(firmwareData.clientId, notification);
+
+        updateController_.changeFirmware(firmwareData);
+
         return;
-    }
 
-    firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
+    } while (false);
 
-    QString firmwareMD5 = payload.value("md5").toString();
-    if (firmwareMD5.isEmpty()) {
-        // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be verified.
-        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
-    }
-
-    firmwareData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    //send back error
+    qCWarning(logCategoryHcs) <<  errorString;
 
     QJsonObject payloadBody {
-        { "job_id", firmwareData.jobUuid },
+        { "error_string", errorString },
         { "device_id", QLatin1String(firmwareData.deviceId) }
     };
+
     QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
     clients_.sendMessage(firmwareData.clientId, notification);
-
-    updateController_.changeFirmware(firmwareData);
 }
 
 void HostControllerService::processCmdProgramController(const QJsonObject &payload, const QByteArray &clientId)
@@ -533,14 +564,14 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
     FirmwareUpdateController::ChangeFirmwareData firmwareData;
     firmwareData.clientId = clientId;
 
-    firmwareData.deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (firmwareData.deviceId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
-        return;
-    }
-
     QString errorString;
     do {
+        firmwareData.deviceId = payload.value("device_id").toVariant().toByteArray();
+        if (firmwareData.deviceId.isEmpty()) {
+            errorString = "device_id attribute is empty or has bad format";
+            break;
+        }
+
         strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
         if (platform == nullptr) {
             errorString = "Platform " + firmwareData.deviceId + " doesn't exist";
@@ -548,7 +579,7 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
         }
 
         if (platform->isControllerConnectedToPlatform() == false) {
-            errorString = "Controller (dongle) is not connected to platform (board)";
+            errorString = "Controller (dongle) is not connected to platform";
             break;
         }
 
@@ -572,11 +603,17 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
                 && platform->firmwareClassId().isNull() == false
                 && platform->firmwareClassId().isEmpty() == false) {
             firmware = storageManager_.findFirmware(platform->firmwareClassId(), controllerClassId, platform->applicationVer());
+            if (firmware == nullptr) {
+                errorString = "No compatible firmware";
+                break;
+            }
+
             currentMD5 = firmware->md5;
         } else {
             qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
         }
-        if (currentMD5.isNull()) {
+
+        if (currentMD5.isEmpty()) {
             qCWarning(logCategoryHcs) << platform << "Cannot get MD5 of curent firmware from database.";
         }
 

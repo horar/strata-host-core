@@ -74,6 +74,13 @@ public:
             const QString &classId,
             const QString &controllerClassId);
 
+    /**
+     * Finds highest firmware
+     * @param class ID of device
+     * @return firmware
+     */
+    const FirmwareFileItem* findHighestFirmware(const QString &classId);
+
 public slots:
     void requestPlatformList(const QByteArray &clientId);
 

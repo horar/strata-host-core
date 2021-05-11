@@ -119,6 +119,27 @@ const FirmwareFileItem* StorageManager::findHighestFirmware(const QString &class
     return firmware;
 }
 
+const FirmwareFileItem* StorageManager::findHighestFirmware(const QString &classId)
+{
+    qCDebug(logCategoryHcsStorage) << "Searching for highest firmware for" << classId;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc == nullptr) {
+        return nullptr;
+    }
+
+    const FirmwareFileItem* firmware = nullptr;
+    QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+
+    for (int i = 0; i < firmwareList.length(); ++i) {
+        if (firmware == nullptr || SGVersionUtils::lessThan(firmware->version, firmwareList.at(i).version)) {
+            firmware = &firmwareList.at(i);
+        }
+    }
+
+    return firmware;
+}
+
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
 {
     QString tmpName = QDir(prefix).filePath( item );
