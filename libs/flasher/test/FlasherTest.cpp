@@ -32,7 +32,6 @@ void FlasherTest::initTestCase()
 
 void FlasherTest::cleanupTestCase()
 {
-    cleanFiles();
 }
 
 void FlasherTest::init()
@@ -199,51 +198,40 @@ void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flas
 }
 
 void FlasherTest::createFiles()
-{
-    fakeFirmware_ = new QFile(QDir(QDir::tempPath()).filePath("fakeFirmware.bin"));
-    fakeBootloader_ = new QFile(QDir(QDir::tempPath()).filePath("fakeBootloader.bin"));
-    fakeFirmwareBackup_ = new QFile(QDir(QDir::tempPath()).filePath("fakeFirmwareBackup.bin"));
+{   
+    fakeFirmware_.reset(new QTemporaryFile("fakeFirmware.bin"));
+    fakeBootloader_.reset(new QTemporaryFile("fakeBootloader.bin"));
+    fakeFirmwareBackup_.reset(new QTemporaryFile("fakeFirmwareBackup.bin"));
 
-    if (fakeFirmware_->open(QIODevice::ReadWrite) == false) {
+    if (fakeFirmware_->open() == false) {
         qCritical() << "Cannot open fake firmware file" << fakeFirmware_->fileName() << fakeFirmware_->errorString();
-        delete fakeFirmware_;
+        fakeFirmware_->deleteLater();
     } else {
-        QTextStream fakeFirmwareOut(fakeFirmware_);
+        QTextStream fakeFirmwareOut(fakeFirmware_.data());
         fakeFirmwareOut << flasher_test_constants::fakeFirmwareData;
         fakeFirmwareOut.flush();
+        fakeFirmware_->close();
     }
 
-    if (fakeBootloader_->open(QIODevice::ReadWrite) == false) {
+    if (fakeBootloader_->open() == false) {
         qCritical() << "Cannot open fake bootloader file" << fakeBootloader_->fileName() << fakeBootloader_->errorString();
-        delete fakeBootloader_;
+        fakeBootloader_->deleteLater();
     } else {
-        QTextStream fakeBootloaderOut(fakeBootloader_);
+        QTextStream fakeBootloaderOut(fakeBootloader_.data());
         fakeBootloaderOut << flasher_test_constants::fakeBootloaderData;
         fakeBootloaderOut.flush();
+        fakeBootloader_->close();
     }
 
-    if (fakeFirmwareBackup_->open(QIODevice::ReadWrite) == false) {
+    if (fakeFirmwareBackup_->open() == false) {
         qCritical() << "Cannot open fake firmware for backup file" << fakeFirmwareBackup_->fileName() << fakeFirmwareBackup_->errorString();
-        delete fakeFirmwareBackup_;
+        fakeFirmwareBackup_->deleteLater();
     } else {
-        QTextStream fakeFirmwareBackupOut(fakeFirmwareBackup_);
+        QTextStream fakeFirmwareBackupOut(fakeFirmwareBackup_.data());
         fakeFirmwareBackupOut << flasher_test_constants::fakeFirmwareData;
         fakeFirmwareBackupOut.flush();
+        fakeFirmwareBackup_->close();
     }
-
-    fakeFirmware_->close();
-    fakeBootloader_->close();
-    fakeFirmwareBackup_->close();
-}
-
-void FlasherTest::cleanFiles()
-{
-    fakeFirmware_->remove();
-    fakeFirmware_->deleteLater();
-    fakeBootloader_->remove();
-    fakeBootloader_->deleteLater();
-    fakeFirmwareBackup_->remove();
-    fakeFirmwareBackup_->deleteLater();
 }
 
 void FlasherTest::getExpectedValues(QFile firmware)

@@ -65,7 +65,6 @@ private:
     strata::platform::operation::PlatformOperations platformOperations_;
 
     void createFiles();
-    void cleanFiles();
 
     void getExpectedValues(QFile firmware);
 
@@ -76,9 +75,9 @@ private:
     int flasherTimeoutCount_ = 0;
     int flasherCancelledCount_ = 0;
 
-    QPointer<QFile> fakeFirmware_;
-    QPointer<QFile> fakeBootloader_;
-    QPointer<QFile> fakeFirmwareBackup_;
+    QScopedPointer<QTemporaryFile> fakeFirmware_;
+    QScopedPointer<QTemporaryFile> fakeBootloader_;
+    QScopedPointer<QTemporaryFile> fakeFirmwareBackup_;
 
     QString expectedMd5_;
     int expectedChunksCount_ = 0;
