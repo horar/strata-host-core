@@ -21,17 +21,19 @@ Popup {
         contextLoader.active = false
     }
 
+
     ColumnLayout {
         spacing: 1
 
         ContextMenuButton {
             text: "Set ID"
+
             onClicked: {
-                renameLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
-                renameLoader.active = true
-                renameLoader.item.text = layoutOverlayRoot.objectName
-                renameLoader.item.textFieldProperty = "id:"
-                renameLoader.item.open()
+                menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+                menuLoader.active = true
+                menuLoader.item.text = layoutOverlayRoot.objectName
+                menuLoader.item.textFieldProperty = "id:"
+                menuLoader.item.open()
                 contextMenu.close()
             }
         }
@@ -86,6 +88,8 @@ Popup {
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml"
                 case "LayoutSGGraph":
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGGraphContextMenu.qml"
+                case "LayoutButton":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml"
                 default:
                     return ""
                 }

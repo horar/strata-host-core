@@ -14,8 +14,8 @@
         yMax: 1
         xTitle: "X Axis"
         yTitle: "Y Axis"
-        xGrid : true
-        yGrid : true
+        xGrid: true
+        yGrid: true
         gridColor: "black"
         // end_user_content
     } // end_%1

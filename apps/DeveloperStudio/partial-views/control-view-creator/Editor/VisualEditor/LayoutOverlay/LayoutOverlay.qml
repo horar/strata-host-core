@@ -204,11 +204,11 @@ LayoutContainer {
         }
 
         Loader {
-            id: renameLoader
+            id: menuLoader
             active: false
-            sourceComponent: RenamePopup {
-                id: renamePopup
-            }
+//            sourceComponent: RenamePopup {
+//                id: renamePopup
+//            }
         }
 
 

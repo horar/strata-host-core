@@ -13,12 +13,14 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Color"
         onClicked: {
+            colorDialog.parentProperty = "color:"
             colorDialog.open()
         }
     }
 
     ColorPopup {
         id: colorDialog
+
     }
 
 }

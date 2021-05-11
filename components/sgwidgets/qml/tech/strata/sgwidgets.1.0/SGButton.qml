@@ -15,6 +15,7 @@ Button {
 
     property bool alternativeColorEnabled: false
     property alias fontSizeMultiplier: textItem.fontSizeMultiplier
+    property alias textColor: textItem.color
     property int minimumContentHeight: -1
     property int minimumContentWidth: -1
     readonly property int preferredContentWidth: wrapper.width

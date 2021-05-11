@@ -24,7 +24,11 @@ Popup {
     }
 
     property alias text: textField.text
+    property alias validator: textField.validator
+    property alias label: label.text
     property string textFieldProperty
+    property bool isString: true
+
 
     onVisibleChanged: {
         if (visible) {
@@ -33,11 +37,12 @@ Popup {
         }
     }
 
-    onClosed: renameLoader.active = false
+    onClosed: menuLoader.active = false
 
     ColumnLayout {
 
         Text {
+            id: label
             text: "Ensure all id's are unique, otherwise build will fail. Id's must start with lower case letter, and contain only letters, numbers and underscores."
             Layout.fillWidth: true
             Layout.maximumWidth: textField.implicitWidth
@@ -49,6 +54,7 @@ Popup {
             id: textField
             implicitWidth: 400
             validator: RegExpValidator {
+                id: validatorValue
                 regExp: /^[a-z_][a-zA-Z0-9_]*/
             }
             onAccepted: {
@@ -67,7 +73,12 @@ Popup {
                 enabled: textField.text !== ""
                 onClicked: {
                     renamePopup.close()
-                    visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + renamePopup.text + '"')
+                    if(isString) {
+                        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + renamePopup.text + '"')
+                    }
+                    else  {
+                        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , renamePopup.text)
+                    }
                     visualEditor.functions.saveFile()
                 }
             }
