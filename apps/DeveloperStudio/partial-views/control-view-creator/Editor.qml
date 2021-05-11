@@ -19,6 +19,7 @@ Item {
     property alias openFilesModel: openFilesModel
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
+    property alias fileTabRepeater: fileTabRepeater
 
     SGQrcTreeModel {
         id: treeModel

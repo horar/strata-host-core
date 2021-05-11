@@ -34,11 +34,20 @@ Rectangle {
     property bool isConsoleLogOpen: false
 
     function closeAllFiles(closeWithoutSave){
+        var count = editor.fileTabRepeater.count
         if(!closeWithoutSave){
-            openFilesModel.saveAll(true)
-            openFilesModel.closeAll()
+            for(var i = 0; i < count; i++){
+                if(openFilesModel.getUnsavedCount() > 0){
+                    openFilesModel.saveFileAt(i, true)
+                } else {
+                    openFilesModel.closeTabAt(i)
+                }
+
+            }
         } else {
-            openFilesModel.closeAll()
+            for(var i = 0; i < count; i++){
+                openFilesModel.closeTabAt(i)
+            }
         }
     }
 
