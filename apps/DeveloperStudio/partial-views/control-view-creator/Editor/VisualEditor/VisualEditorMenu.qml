@@ -84,7 +84,7 @@ RowLayout {
                         onValueChanged: {
                             if (visualEditor.loader.item && visualEditor.loader.item.columnCount !== undefined) {
                                 if (value !== visualEditor.loader.item.columnCount) {
-                                    setRowsColumns("columnCount:", value)
+                                    setRowsColumns("columnCount", value)
                                 }
                             }
                         }
@@ -104,7 +104,7 @@ RowLayout {
                         onValueChanged: {
                             if (visualEditor.loader.item && visualEditor.loader.item.rowCount !== undefined) {
                                 if (value !== visualEditor.loader.item.rowCount) {
-                                    setRowsColumns("rowCount:", value)
+                                    setRowsColumns("rowCount", value)
                                 }
                             }
                         }
