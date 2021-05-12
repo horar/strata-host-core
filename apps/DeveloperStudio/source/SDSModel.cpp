@@ -46,7 +46,7 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete debugMenuGenerator_;
     delete remoteHcsNode_;
-    if (urlConfig_) { delete urlConfig_; }
+    delete urlConfig_;
 }
 
 bool SDSModel::startHcs()
