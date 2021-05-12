@@ -24,7 +24,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
-            menuLoader.item.textFieldProperty = "title:"
+            menuLoader.item.textFieldProperty = "title"
             menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
             contextMenu.close()
@@ -39,7 +39,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
-            menuLoader.item.textFieldProperty = "xTitle:"
+            menuLoader.item.textFieldProperty = "xTitle"
             menuLoader.item.validator = inputValidator
             menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
@@ -55,7 +55,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
-            menuLoader.item.textFieldProperty = "yTitle:"
+            menuLoader.item.textFieldProperty = "yTitle"
             menuLoader.item.validator = inputValidator
             menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
@@ -70,7 +70,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMin
-            menuLoader.item.textFieldProperty = "xMin:"
+            menuLoader.item.textFieldProperty = "xMin"
             menuLoader.item.validator = numberRange
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter graph's X Minimum. X Min can only contain numbers."
@@ -85,7 +85,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMax
-            menuLoader.item.textFieldProperty = "xMax:"
+            menuLoader.item.textFieldProperty = "xMax"
             menuLoader.item.validator = numberRange
             menuLoader.item.label = "Enter graph's X Maximum. X Max can only contain numbers."
             menuLoader.item.open()
@@ -101,7 +101,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMin
-            menuLoader.item.textFieldProperty = "yMin:"
+            menuLoader.item.textFieldProperty = "yMin"
             menuLoader.item.validator = numberRange
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter graph's Y Minimum. Y Min can only contain positive/negtative numbers."
@@ -116,7 +116,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMax
-            menuLoader.item.textFieldProperty = "yMax:"
+            menuLoader.item.textFieldProperty = "yMax"
             menuLoader.item.validator = numberRange
             menuLoader.item.label = "Enter graph's Y Maximum. Y max can only contain numbers."
             menuLoader.item.open()
@@ -125,20 +125,12 @@ ColumnLayout {
         }
     }
 
-//    ContextMenuButton {
-//        text: "Set GridColor"
-//        onClicked: {
-//            colorDialog.parentProperty = "gridColor:"
-//            colorDialog.open()
-//        }
-//    }
-
     ContextMenuButton {
         text: "Set GridColor"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "gridColor:"
+            menuLoader.item.parentProperty = "gridColor"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -149,7 +141,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
-            menuLoader.item.textFieldProperty = "xGrid:"
+            menuLoader.item.textFieldProperty = "xGrid"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -160,7 +152,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
-            menuLoader.item.textFieldProperty = "yGrid:"
+            menuLoader.item.textFieldProperty = "yGrid"
             menuLoader.item.open()
             contextMenu.close()
         }

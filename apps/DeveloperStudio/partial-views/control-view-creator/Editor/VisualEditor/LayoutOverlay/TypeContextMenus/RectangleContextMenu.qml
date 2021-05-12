@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Color"
         onClicked: {
-            colorDialog.parentProperty = "color:"
+            colorDialog.parentProperty = "color"
             colorDialog.open()
         }
     }
@@ -21,8 +21,6 @@ ColumnLayout {
     ColorPopup {
         id: colorDialog
 
-<<<<<<< HEAD
-=======
         onAccepted: {
             visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, "color", '"' + colorDialog.color + '"')
             visualEditor.functions.saveFile()
@@ -32,7 +30,6 @@ ColumnLayout {
         onRejected: {
             contextMenu.close()
         }
->>>>>>> CS-1705-layout-creator-integration-into-cvc
     }
 
 }

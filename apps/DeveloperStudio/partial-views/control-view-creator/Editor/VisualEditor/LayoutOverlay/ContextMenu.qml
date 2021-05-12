@@ -32,7 +32,7 @@ Popup {
                 menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
                 menuLoader.active = true
                 menuLoader.item.text = layoutOverlayRoot.objectName
-                menuLoader.item.textFieldProperty = "id:"
+                menuLoader.item.textFieldProperty = "id"
                 menuLoader.item.open()
                 contextMenu.close()
             }
@@ -92,6 +92,8 @@ Popup {
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml"
                 case "LayoutText":
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGTextContextMenu.qml"
+                case "LayoutSGSwitch":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSwitchContextMenu.qml"
                 default:
                     return ""
                 }
