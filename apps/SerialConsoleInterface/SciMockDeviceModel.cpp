@@ -18,7 +18,17 @@ SciMockDeviceModel::SciMockDeviceModel(PlatformManager *platformManager):
 
 SciMockDeviceModel::~SciMockDeviceModel()
 {
+    clear();
+}
+
+void SciMockDeviceModel::clear()
+{
+    beginResetModel();
+
     platforms_.clear();
+
+    endResetModel();
+    emit countChanged();
 }
 
 void SciMockDeviceModel::init()

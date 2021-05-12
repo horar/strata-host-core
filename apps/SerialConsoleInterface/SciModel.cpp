@@ -31,3 +31,18 @@ SciMockDeviceModel *SciModel::mockDeviceModel()
 {
     return &mockDeviceModel_;
 }
+
+SciMockCommandModel *SciModel::mockCommandModel()
+{
+    return &mockCommandModel_;
+}
+
+SciMockResponseModel *SciModel::mockResponseModel()
+{
+    return &mockResponseModel_;
+}
+
+SciMockVersionModel *SciModel::mockVersionModel()
+{
+    return &mockVersionModel_;
+}

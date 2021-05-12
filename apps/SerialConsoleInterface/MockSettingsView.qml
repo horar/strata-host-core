@@ -118,35 +118,23 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockCommandComboBox
-                    model: [
-                        "Any Command",
-                        "Get Firmware Info",
-                        "Request Platform Id",
-                        "Start Bootloader",
-                        "Start Application",
-                        "Flash Firmware",
-                        "Flash Bootloader",
-                        "Start Flash Firmware",
-                        "Start Flash Bootloader",
-                        "Set Assisted Platform id",
-                        "Set Platform Id",
-                        "Start Backup Firmware",
-                        "Backup Firmware"
-                    ]
+                    model: sciModel.mockCommandModel
+                    textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Command to be replied with a custom Response")
                     ToolTip.delay: 1000
 
                     onActivated: {
                         if (currentIndex !== -1) {
-                            if (mockDevice.mockCommand !== currentIndex) {
-                                mockDevice.mockCommand = currentIndex
+                            let command = model.data(currentIndex,"type")
+                            if (mockDevice.mockCommand !== command) {
+                                mockDevice.mockCommand = command
                             }
                         }
                     }
 
                     Component.onCompleted: {
-                        currentIndex = (mockDevice !== null) ? mockDevice.mockCommand : 0
+                        currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockCommand) : -1
                     }
                 }
             }
@@ -167,37 +155,23 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockResponseComboBox
-                    model: [
-                        "Normal",
-                        "No Payload",
-                        "No JSON",
-                        "Nack",
-                        "Invalid",
-                        "Platform Config: Embedded App",
-                        "Platform Config: Assisted App",
-                        "Platform Config: Assisted No Board",
-                        "Platform Config: Embedded Bootloader",
-                        "Platform Config: Assisted Bootloader",
-                        "Flash Firmware: Resend Chunk",
-                        "Flash Firmware: Memory Error",
-                        "Flash Firmware: Invalid Cmd Sequence",
-                        "Flash Firmware: Invalid Value",
-                        "Start Flash Firmware: Invalid"
-                    ]
+                    model: sciModel.mockResponseModel
+                    textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Response to be sent for selected Command")
                     ToolTip.delay: 1000
 
                     onActivated: {
                         if (currentIndex !== -1) {
-                            if (mockDevice.mockResponse !== currentIndex) {
-                                mockDevice.mockResponse = currentIndex
+                            let response = model.data(currentIndex,"type")
+                            if (mockDevice.mockResponse !== response) {
+                                mockDevice.mockResponse = response
                             }
                         }
                     }
 
                     Component.onCompleted: {
-                        currentIndex = (mockDevice !== null) ? mockDevice.mockResponse : 0
+                        currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockResponse) : -1
                     }
                 }
             }
@@ -218,21 +192,23 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockVersionComboBox
-                    model: [ "Version 1", "Version 2" ]
+                    model: sciModel.mockVersionModel
+                    textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Version of device which affects sent Response")
                     ToolTip.delay: 1000
 
                     onActivated: {
                         if (currentIndex !== -1) {
-                            if (mockDevice.mockVersion !== currentIndex) {
-                                mockDevice.mockVersion = currentIndex
+                            let version = model.data(currentIndex,"type")
+                            if (mockDevice.mockVersion !== version) {
+                                mockDevice.mockVersion = version
                             }
                         }
                     }
 
                     Component.onCompleted: {
-                        currentIndex = (mockDevice !== null) ? mockDevice.mockVersion : 0
+                        currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockVersion) : -1
                     }
                 }
             }

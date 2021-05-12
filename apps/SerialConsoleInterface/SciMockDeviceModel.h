@@ -42,6 +42,8 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
+    void clear();
+
     QList<strata::platform::PlatformPtr> platforms_;
     strata::PlatformManager *platformManager_ = nullptr;
     strata::device::scanner::DeviceScannerPtr scanner_;
