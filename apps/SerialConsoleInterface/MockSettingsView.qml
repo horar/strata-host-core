@@ -42,6 +42,7 @@ FocusScope {
                 text: "Open Disabled"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate faulty device that cannot be reopened")
+                ToolTip.delay: 1000
 
                 onCheckedChanged : {
                     mockDevice.openEnabled = !checked
@@ -56,6 +57,7 @@ FocusScope {
                 text: "Legacy Mode"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
+                ToolTip.delay: 1000
 
                 onCheckedChanged : {
                     mockDevice.legacyMode = checked
@@ -71,6 +73,7 @@ FocusScope {
                 text: "Response Disabled"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate faulty device that does not responds")
+                ToolTip.delay: 1000
 
                 onCheckedChanged : {
                     mockDevice.autoResponse = !checked
@@ -132,6 +135,7 @@ FocusScope {
                     ]
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Command to be replied with a custom Response")
+                    ToolTip.delay: 1000
 
                     onActivated: {
                         if (currentIndex !== -1) {
@@ -182,6 +186,7 @@ FocusScope {
                     ]
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Response to be sent for selected Command")
+                    ToolTip.delay: 1000
 
                     onActivated: {
                         if (currentIndex !== -1) {
@@ -215,7 +220,8 @@ FocusScope {
                     id: mockVersionComboBox
                     model: [ "Version 1", "Version 2" ]
                     ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Configure device version")
+                    ToolTip.text: qsTr("Version of device which affects sent Response")
+                    ToolTip.delay: 1000
 
                     onActivated: {
                         if (currentIndex !== -1) {
