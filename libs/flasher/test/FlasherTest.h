@@ -66,7 +66,7 @@ private:
 
     void createFiles();
 
-    void getExpectedValues(QFile firmware);
+    void getExpectedValues(QString firmwarePath);
 
     int flasherFinishedCount_ = 0;
     int flasherNoFirmwareCount_ = 0;

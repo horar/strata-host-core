@@ -238,8 +238,10 @@ void FlasherTest::createFiles()
     }
 }
 
-void FlasherTest::getExpectedValues(QFile firmware)
+void FlasherTest::getExpectedValues(QString firmwarePath)
 {
+    QFile firmware(firmwarePath);
+
     if (firmware.open(QIODevice::ReadOnly)) {
         QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
         hash.addData(&firmware);
