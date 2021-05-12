@@ -170,12 +170,12 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='" + urls.privacyPolicyUrl + "'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"
 
-                onLinkActivated: { Qt.openUrlExternally(urls.privacyPolicyUrl)}
+                onLinkActivated: { Qt.openUrlExternally(sdsModel.urls.privacyPolicyUrl)}
 
                 MouseArea {
                     anchors.fill: parent

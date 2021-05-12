@@ -19,7 +19,7 @@
 #include <Shlwapi.h>
 #endif
 
-SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
+SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
       coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
       documentManager_(new DocumentManager(coreInterface_, this)),
@@ -27,9 +27,14 @@ SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
       newControlView_(new SGNewControlView(this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       debugMenuGenerator_(new DebugMenuGenerator(this)),
-      remoteHcsNode_(new HcsNode(this))
+      remoteHcsNode_(new HcsNode(this)),
+      urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
+    if (urlConfig_->parseUrl() == false) {
+        delete urlConfig_;
+        urlConfig_ = nullptr;
+    }
 }
 
 SDSModel::~SDSModel()
@@ -41,6 +46,7 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete debugMenuGenerator_;
     delete remoteHcsNode_;
+    if (urlConfig_) { delete urlConfig_; }
 }
 
 bool SDSModel::startHcs()
@@ -180,6 +186,11 @@ PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
 DebugMenuGenerator *SDSModel::debugMenuGenerator() const
 {
     return debugMenuGenerator_;
+}
+
+strata::sds::config::UrlConfig *SDSModel::urls() const
+{
+    return urlConfig_;
 }
 
 void SDSModel::shutdownService()

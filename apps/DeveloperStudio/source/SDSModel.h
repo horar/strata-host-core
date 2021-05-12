@@ -4,6 +4,8 @@
 #include <QPointer>
 #include <QProcess>
 
+#include "config/UrlConfig.h"
+
 class DocumentManager;
 class CoreInterface;
 class HcsNode;
@@ -24,9 +26,10 @@ class SDSModel: public QObject
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
     Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
+    Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
 
 public:
-    explicit SDSModel(const QUrl &dealerAddress, QObject *parent = nullptr);
+    explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
     virtual ~SDSModel();
 
     bool startHcs();
@@ -39,6 +42,7 @@ public:
     SGNewControlView* newControlView() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
     DebugMenuGenerator* debugMenuGenerator() const;
+    strata::sds::config::UrlConfig* urls() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -65,6 +69,7 @@ private:
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
     DebugMenuGenerator *debugMenuGenerator_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
+    strata::sds::config::UrlConfig *urlConfig_{nullptr};
     QPointer<QProcess> hcsProcess_;
     bool externalHcsConnected_{false};
 
