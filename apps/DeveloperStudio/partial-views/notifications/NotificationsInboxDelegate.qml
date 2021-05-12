@@ -6,6 +6,7 @@ import QtQml 2.12
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.logger 1.0
 
 Rectangle {
     id: root
@@ -22,11 +23,21 @@ Rectangle {
         id: content
 
         onActionClicked: {
-            Notifications.model.remove(sortedModel.mapIndexToSource(modelIndex))
+            var sourceIndex = sortedModel.mapIndexToSource(modelIndex)
+            if (sourceIndex > -1) {
+                Notifications.model.remove(sourceIndex)
+            } else {
+                console.error(Logger.devStudioCategory, "Index out of scope.")
+            }
         }
 
         onCloseClicked: {
-            Qt.callLater(Notifications.model.remove, sortedModel.mapIndexToSource(modelIndex))
+            var sourceIndex = sortedModel.mapIndexToSource(modelIndex)
+            if (sourceIndex > -1) {
+                Qt.callLater(Notifications.model.remove, sourceIndex)
+            } else {
+                console.error(Logger.devStudioCategory, "Index out of scope.")
+            }
         }
     }
 }

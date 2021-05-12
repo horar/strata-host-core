@@ -62,6 +62,11 @@ public:
      */
     bool mockDeviceLost(const QByteArray& deviceId);
 
+    /**
+     * Will emit lost signal for all previously detected devices
+     */
+    void mockAllDevicesLost();
+
 private:
     std::set<QByteArray> deviceIds_;
     bool running_ = false;

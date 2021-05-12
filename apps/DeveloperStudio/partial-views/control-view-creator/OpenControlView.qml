@@ -55,7 +55,7 @@ Item {
 
         openProjectContainer.url = path
         console.info(openProjectContainer.url);
-        toolBarListView.currentIndex = toolBarListView.editTab
+        viewStack.currentIndex = 1
         if (addToProjectList) {
             addToTheProjectList(openProjectContainer.url.toString())
         }
@@ -269,7 +269,7 @@ Item {
                                     }
                                 } else {
                                     openProjectContainer.url = model.url
-                                    toolBarListView.currentIndex = toolBarListView.editTab
+                                    viewStack.currentIndex = 1 // switch to edit view
                                     controlViewCreatorRoot.rccInitialized = false
                                 }
                             }

@@ -176,7 +176,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
     for (const string &document_key : document_keys_) {
         Document doc = sg_db_.get()->getDocument(document_key);
         fleece::Dict read_dict = doc.properties();
-        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+        QJsonDocument json_doc = QJsonDocument::fromJson(QByteArray::fromStdString(read_dict.toJSONString()));
 
         if (json_doc.isNull() || json_doc.isEmpty()) {
             qCCritical(cb_browser_) << "Received empty or invalid JSON message.";
@@ -751,7 +751,7 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     for (const string &iter : docs) {
         Document doc = sg_db_.get()->getDocument(iter);
         fleece::Dict read_dict = doc.properties();
-        document_json = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+        document_json = QJsonDocument::fromJson(QByteArray::fromStdString(read_dict.toJSONString()));
         total_json_message.insert(QString::fromStdString(iter), document_json.object());
     }
 
@@ -820,7 +820,7 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
     // Need to return a JSON response corresponding only to the channels requested
     for (const string &document_key : document_keys_) {
         Document doc = sg_db_->getDocument(document_key);
-        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.propertiesAsJSON()).toUtf8());
+        QJsonDocument json_doc = QJsonDocument::fromJson(QByteArray::fromStdString(doc.propertiesAsJSON()));
 
         if (json_doc.isNull() || json_doc.isEmpty()) {
             qCCritical(cb_browser_) << "Received empty or invalid JSON message.";
