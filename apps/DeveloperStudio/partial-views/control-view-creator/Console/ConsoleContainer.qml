@@ -10,14 +10,11 @@ import "../components"
 
 Rectangle {
     id: root
-    visible: !startContainer.visible
-
-    Layout.minimumHeight: 30
-    implicitHeight: 200
-    Layout.fillWidth: true
-
+    anchors.fill: parent
     color: "#eee"
     z: 3
+
+    signal clicked()
 
     property int warningCount: 0
     property int errorCount: 0
@@ -168,7 +165,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
-                            consoleContainer.visible = false
+                            root.clicked()
                         }
                     }
                 }

@@ -78,7 +78,7 @@ namespace strata::device {
          * @param msg message to be written to device
          * @return true if message can be sent, otherwise false
          */
-        virtual bool sendMessage(const QByteArray msg) = 0;
+        virtual bool sendMessage(const QByteArray& msg) = 0;
 
         /**
          * Get device ID.

@@ -36,6 +36,9 @@ private slots:
     void connectDisconnectTest();
     void connectMultipleTest();
 
+    // identify platform test
+    void identifyNewPlatformTest();
+
     // signals tests
     void boardConnectedSignalTest();
     void boardDisconnected();

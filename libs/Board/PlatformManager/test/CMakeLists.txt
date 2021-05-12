@@ -14,14 +14,15 @@ add_executable(${PROJECT_NAME}-test
     PlatformManagerTest.cpp
     PlatformOperationsTest.cpp
     PlatformOperationsV2Test.cpp
+    PlatformMessageTest.cpp
     main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}-test
     PRIVATE Qt5::Test
-    PRIVATE Platform
-    PRIVATE PlatformManager
-    PRIVATE CommandValidator
+    PRIVATE strata::Platform
+    PRIVATE strata::PlatformManager
+    PRIVATE strata::CommandValidator
     PRIVATE strata::base64
 )
 

@@ -120,12 +120,13 @@ void Platform::abortReconnect() {
 }
 
 // public method
-bool Platform::sendMessage(const QByteArray msg) {
-    return sendMessage(msg, 0);
+bool Platform::sendMessage(const QByteArray& message) {
+    return sendMessage(message, 0);
 }
 
 // private method
-bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
+bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+    QByteArray msgToWrite(message);
     bool canWrite = false;
     {
         QMutexLocker lock(&operationMutex_);
@@ -134,7 +135,11 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
         }
     }
     if (canWrite) {
-        return device_->sendMessage(msg);
+        // Strata commands must end with new line character ('\n')
+        if (msgToWrite.endsWith('\n') == false) {
+            msgToWrite.append('\n');
+        }
+        return device_->sendMessage(msgToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;

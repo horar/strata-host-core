@@ -46,7 +46,7 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
     return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
 }
 
-bool MockDevice::sendMessage(const QByteArray msg)
+bool MockDevice::sendMessage(const QByteArray& msg)
 {
     if (opened_ == false) {
         return false;
@@ -75,12 +75,12 @@ bool MockDevice::isConnected() const
     return opened_;
 }
 
-void MockDevice::mockEmitMessage(const QByteArray msg)
+void MockDevice::mockEmitMessage(const QByteArray& msg)
 {
     emit messageReceived(msg);
 }
 
-void MockDevice::mockEmitResponses(const QByteArray msg)
+void MockDevice::mockEmitResponses(const QByteArray& msg)
 {
     auto responses = control_.getResponses(msg);
     QTimer::singleShot(
