@@ -13,13 +13,13 @@ ColorDialog {
     property string parentProperty
 
     onAccepted: {
-        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, parent.parentProperty, '"' + colorDialog.color + '"')
+        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, parentProperty, '"' + colorDialog.color + '"')
         visualEditor.functions.saveFile()
-       // contextMenu.close()
     }
 
     onRejected: {
-       // contextMenu.close()
+        menuLodder.active = false
     }
+
 }
 

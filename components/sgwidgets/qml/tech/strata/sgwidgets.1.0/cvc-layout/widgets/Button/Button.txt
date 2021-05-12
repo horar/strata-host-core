@@ -8,6 +8,8 @@
 
         // start_user_content
         text: "Button"
+        textColor: "black"
+        color: "gray"
         onClicked: {
             console.log("Clicked:", objectName, layoutInfo.uuid)
         }

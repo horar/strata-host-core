@@ -25,7 +25,7 @@ Popup {
     }
 
     property string textFieldProperty
-    onClosed: renameLoader.active = false
+    onClosed: menuLoader.active = false
 
     ColumnLayout {
         anchors.fill: parent
