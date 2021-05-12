@@ -182,14 +182,14 @@ QtObject {
         instance of <prop> and replace its value with <value>
     */
     function replaceObjectPropertyValueInString (uuid, prop, value, string = fileContents) {
-        // total regex: (start_42e89[\\s\\S]*?yRows:\\s*)(.*)([\\s\\S]*?end_42e89)
+        // total regex: (start_42e89[\\s\\S]*?yRows\\s*:\\s*)(.*)([\\s\\S]*?end_42e89)
         // explanation: find "yRows" prop, only occurring between start and end uuid tags, replace anything following with value
 
         // regex notes:
         // \\s\\S is "space or not space" ,aka wildcard, since 's' flag does not work in qml
         // *? is lazy find, i.e. stop after first find, otherwise catches last match instead
         // all 3 groups are captured for replacement as it is impossible to replace only one group that is matched
-        let capture1 = "(start_" + uuid + "[\\s\\S]*?" + prop + ":\\s*)"
+        let capture1 = "(start_" + uuid + "[\\s\\S]*?" + prop + "\\s*:\\s*)"
         let capture2 = "(.*)"
         let capture3 = "([\\s\\S]*?end_" + uuid + ")"
         let regex = new RegExp(capture1 + capture2 + capture3, "gm")
