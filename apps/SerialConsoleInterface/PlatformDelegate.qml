@@ -152,7 +152,7 @@ FocusScope {
                     id: toolButtonRow
                     anchors {
                         top: parent.top
-                        topMargin: 8
+                        topMargin: 12
                         left: messageEditor.left
                     }
 
@@ -254,7 +254,7 @@ FocusScope {
                     SGWidgets.SGIconButton {
                         text: "Mock Settings"
                         hintText: qsTr("Modify Mock Device settings")
-                        icon.source: "qrc:/sgimages/file-export.svg"
+                        icon.source: "qrc:/sgimages/tools.svg"
                         iconSize: toolButtonRow.iconHeight
                         visible: (model.platform.mockDevice !== null)
                         onClicked: showMockSettingsView()
