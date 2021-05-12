@@ -27,7 +27,6 @@ var uuid_map = {
     "entice_rgb" : "entice_rgb",
     "template": "template",
     "core-test-ui":"core-test-ui",
-    "266":"ncs32100",
 
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
