@@ -193,6 +193,11 @@ strata::sds::config::UrlConfig *SDSModel::urls() const
     return urlConfig_;
 }
 
+strata::loggers::QtLogger *SDSModel::logger() const
+{
+    return &strata::loggers::QtLogger::instance();
+}
+
 void SDSModel::shutdownService()
 {
     if (externalHcsConnected_) {

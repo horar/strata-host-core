@@ -19,7 +19,6 @@
 #include "Timestamp.h"
 
 #include <QtLoggerSetup.h>
-#include <QtLogger.h>
 #include "logging/LoggingQtCategories.h"
 
 #include "SDSModel.h"
@@ -164,7 +163,6 @@ int main(int argc, char *argv[])
 
     addImportPaths(&engine);
 
-    engine.rootContext()->setContextProperty ("logger", &strata::loggers::QtLogger::instance());
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
 
     /* deprecated context property, use sdsModel.coreInterface instead */
