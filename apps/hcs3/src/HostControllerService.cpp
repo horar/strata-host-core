@@ -495,10 +495,7 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
         // if firmwareClassId is available, flasher needs it (due to correct flashing of assisted boards)
         if (platform->controllerType() == strata::platform::Platform::ControllerType::Assisted) {
             firmwareData.firmwareClassId = platform->firmwareClassId();
-        } /*else if (platform->controllerType() == strata::platform::Platform::ControllerType::Embedded) {
-            //get embedded classId
-            firmwareData.firmwareClassId = platform->classId();
-        }*/
+        }
 
         if (payload.contains("path") || payload.contains("md5")) {
             //use provided firmware
