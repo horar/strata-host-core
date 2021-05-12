@@ -23,8 +23,6 @@ constexpr const char* const CMD_SET_PLATFORM_ID          = "set_platform_id";
 
 Q_NAMESPACE
 
-// when changing these enums, update also their usage in the MockSettingsView.qml
-
 enum class MockCommand {
     Any_command,
     Get_firmware_info,
@@ -107,7 +105,7 @@ Q_ENUM_NS(MockVersion)
 // these are global constants for testing
 namespace test_commands {
 
-// matches strings like [$...] or ["$..."], where the ... is captured in group 1 (the whole match is group 0)
+// matches strings like [$...] or ["$..."], where the ... is captured in group 1 (the whole match is in group 0)
 // usage:
 //     "string_data":"[$replacement_string]"    ->   "string_data":"abc"
 //     "integer_data":["$replacement_string"]   ->   "integer_data":123
