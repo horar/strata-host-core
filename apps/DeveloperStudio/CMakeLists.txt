@@ -132,10 +132,10 @@ if(WIN32)
     endif()
 endif()
 
-set(SDS_CONFIG_LOCATION ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/sds)
-
-if(NOT EXISTS ${SDS_CONFIG_LOCATION})
-    message(FATAL_ERROR "SDS config file location does not exist. You might need to clone strata-host-core-internal repository.")
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/sds")
+    set(SDS_CONFIG_LOCATION ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/sds)
+else()
+    set(SDS_CONFIG_LOCATION ${CMAKE_HOME_DIRECTORY}/assets/config/sds)
 endif()
 
 if(NOT APPS_CORESW_SDS_CONFIG)
