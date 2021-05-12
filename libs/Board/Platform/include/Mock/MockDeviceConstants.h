@@ -107,7 +107,11 @@ Q_ENUM_NS(MockVersion)
 // these are global constants for testing
 namespace test_commands {
 
-const QRegularExpression parameterRegex = QRegularExpression("\\{\\$[^\\{]*\\}");
+// matches strings like [$...] or ["$..."], where the ... is captured in group 1 (the whole match is group 0)
+// usage:
+//     "string_data":"[$replacement_string]"    ->   "string_data":"abc"
+//     "integer_data":["$replacement_string"]   ->   "integer_data":123
+const QRegularExpression parameterRegex = QRegularExpression("\\[\"?\\$([^\\[\"]*)\"?\\]");
 
 inline QByteArray normalizeMessage(const char* message) {
     return QJsonDocument::fromJson(message).toJson(QJsonDocument::Compact).append('\n');
@@ -115,7 +119,7 @@ inline QByteArray normalizeMessage(const char* message) {
 
 const QByteArray ack = normalizeMessage(
 R"({
-    "ack":"{$request.cmd}",
+    "ack":"[$request.cmd]",
     "payload":{"return_value":true,"return_string":"command valid"}
 })");
 
@@ -127,7 +131,7 @@ R"({
 
 const QByteArray nack_command_not_found = normalizeMessage(
 R"({
-    "ack":"{$request.cmd}",
+    "ack":"[$request.cmd]",
     "payload":{"return_value":false,"return_string":"command not found"}
 })");
 
@@ -231,7 +235,7 @@ R"({
 const QByteArray get_firmware_info_response_no_payload = normalizeMessage(
 R"({
     "notification": {
-        "value":"get_firmware_info",
+        "value":"get_firmware_info"
     }
 })");
 
@@ -245,7 +249,7 @@ R"({
                 "date":"20180401_123420"
             },
             "application": {
-                "version":-1
+                "version":-1,
                 "date":"20180401_131410"
             }
         }
@@ -373,7 +377,7 @@ R"({
 const QByteArray request_platform_id_response_no_payload = normalizeMessage(
 R"({
     "notification":{
-        "value":"platform_id",
+        "value":"platform_id"
     }
 })");
 
@@ -385,8 +389,8 @@ R"({
             "name":-1,
             "platform_id":"platform",
             "class_id":"class",
-            "count":count,
-            "platform_id_version":"version",
+            "count":-1,
+            "platform_id_version":-1,
             "verbose_name":-1
         }
     }
@@ -409,7 +413,7 @@ R"({
 const QByteArray request_platform_id_response_bootloader_no_payload = normalizeMessage(
 R"({
     "notification":{
-        "value":"platform_id",
+        "value":"platform_id"
     }
 })");
 
@@ -446,7 +450,7 @@ R"({
 const QByteArray start_bootloader_response_no_payload = normalizeMessage(
 R"({
     "notification":{
-        "value":"start_bootloader",
+        "value":"start_bootloader"
     }
 })");
 
@@ -479,7 +483,7 @@ R"({
 const QByteArray start_application_response_no_payload = normalizeMessage(
 R"({
     "notification":{
-        "value":"start_application",
+        "value":"start_application"
     }
 })");
 
@@ -500,10 +504,10 @@ R"({
     "cmd":"flash_firmware",
     "payload":{
         "chunk":{
-            "number":{$request.payload.chunk.number},
-            "size":{$request.payload.chunk.size},
-            "crc":{$request.payload.chunk.crc},
-            "data":"{$request.payload.chunk.data}"
+            "number":["$request.payload.chunk.number"],
+            "size":["$request.payload.chunk.size"],
+            "crc":["$request.payload.chunk.crc"],
+            "data":"[$request.payload.chunk.data]"
         }
     }
 })");
@@ -513,10 +517,10 @@ R"({
     "cmd":"flash_bootloader",
     "payload":{
         "chunk":{
-            "number":{$request.payload.chunk.number},
-            "size":{$request.payload.chunk.size},
-            "crc":{$request.payload.chunk.crc},
-            "data":"{$request.payload.chunk.data}"
+            "number":["$request.payload.chunk.number"],
+            "size":["$request.payload.chunk.size"],
+            "crc":["$request.payload.chunk.crc"],
+            "data":"[$request.payload.chunk.data]"
         }
     }
 })");
@@ -525,9 +529,9 @@ const QByteArray start_flash_firmware_request = normalizeMessage(
 R"({
     "cmd":"start_flash_firmware",
     "payload": {
-        "size": {$request.payload.size},
-        "chunks": {$request.payload.chunks},
-        "md5": "{$request.payload.md5}"
+        "size": ["$request.payload.size"],
+        "chunks": ["$request.payload.chunks"],
+        "md5": "[$request.payload.md5]"
     }
 })");
 
@@ -535,9 +539,9 @@ const QByteArray start_flash_bootloader_request = normalizeMessage(
 R"({
     "cmd":"start_flash_bootloader",
     "payload": {
-        "size": {$request.payload.size},
-        "chunks": {$request.payload.chunks},
-        "md5": "{$request.payload.md5}"
+        "size": ["$request.payload.size"],
+        "chunks": ["$request.payload.chunks"],
+        "md5": "[$request.payload.md5]"
     }
 })");
 
@@ -616,7 +620,7 @@ R"({
     "notification":{
         "value":"flash_firmware",
         "payload":{
-            "status":"-1
+            "status":-1
         }
     }
 })");

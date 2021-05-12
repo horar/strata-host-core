@@ -406,10 +406,11 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
             test_commands::parameterRegex.globalMatch(responseString);
         while (rxIterator.hasNext()) {
             QRegularExpressionMatch match = rxIterator.next();
-            QString matchStr = match.captured().mid(2).chopped(1);
-            // qDebug("%s -> %s", matchStr.toStdString().c_str(), getPlaceholderValue(matchStr,
+            QString matchStr = match.captured(0);
+            QString matchSubStr = match.captured(1);
+            // qDebug("%s -> %s", matchSubStr.toStdString().c_str(), getPlaceholderValue(matchSubStr,
             // requestDoc).toStdString().c_str());
-            replacements.insert({matchStr, getPlaceholderValue(matchStr, requestDoc)});
+            replacements.insert({matchStr, getPlaceholderValue(matchSubStr, requestDoc)});
         }
     }
 
@@ -417,7 +418,7 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
     for (const auto& response : responses) {
         QString responseStr(response);
         for (const auto& replacement : replacements) {
-            responseStr = responseStr.replace("{$" + replacement.first + "}", replacement.second);
+            responseStr = responseStr.replace(replacement.first, replacement.second);
         }
         // qDebug("%s", responseStr.toStdString().c_str());
         retVal.push_back(responseStr.toUtf8());
