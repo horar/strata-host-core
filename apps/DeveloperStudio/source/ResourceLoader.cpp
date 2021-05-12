@@ -13,7 +13,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include <QQmlContext>
 
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
@@ -39,76 +38,25 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
-void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
-    if (removeFromSystem) {
-        qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
-    } else {
-        qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
-    }
-    QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent, removeFromSystem]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
-}
-
-bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
-    if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
-        return false;
-    }
-
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
-
-    QFile resourceInfo(rccPath);
+bool ResourceLoader::registerResource(const QString &path, const QString &prefix) {
+    QFileInfo resourceInfo(path);
 
     if (resourceInfo.exists()) {
-        if (QResource::unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version)) == false) {
-            qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource " << resourceInfo.fileName() << " either wasn't registered or is still in use for class id: " << class_id;
-        } else {
-            qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource version " << version << " for " << resourceInfo.fileName();
-        }
-
-        if (removeFromSystem) {
-            if (resourceInfo.remove() == false) {
-                qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << resourceInfo.fileName();
-                return false;
-            }
-        }
-    } else {
-        qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist - " << resourceInfo.fileName();
-        return false;
-    }
-
-    QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
-    // Only reset this view in viewsRegistered if we have not already registered a different version
-    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one.
-    // In this case, the viewsRegistered_[class_id] will already contain the updated version
-    if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
-        ResourceItem *info = itr.value();
-        info->filepath = "";
-        info->gitTaggedVersion = "";
-        info->version = "";
-    }
-    return true;
-}
-
-bool ResourceLoader::registerResource(const QString &path, const QString &prefix) {
-    QFileInfo viewFileInfo(path);
-
-    if (viewFileInfo.exists()) {
-        qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.filePath() << " into virtual directory: " << prefix;
+        qCDebug(logCategoryResourceLoader) << "Loading resource" << resourceInfo.filePath() << "into virtual directory:" << prefix;
 
         /*********
          * Virtual directory prefix avoids conflicts when registering resources with same internal names or structure
          * Ex: qrc:/<prefix>/Control.qml
          *********/
-        if (QResource::registerResource(viewFileInfo.filePath(), prefix) == false) {
-            qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName();
-            return false;
-        } else {
+        if (QResource::registerResource(resourceInfo.filePath(), prefix)) {
             qCDebug(logCategoryResourceLoader) << "Successfully registered resource.";
             return true;
+        } else {
+            qCCritical(logCategoryResourceLoader) << "Failed to register resource" << resourceInfo.fileName();
+            return false;
         }
     } else {
-        qCCritical(logCategoryResourceLoader) << "Could not find resource file. Looked in " << viewFileInfo.filePath();
+        qCCritical(logCategoryResourceLoader) << "Could not find resource file. Looked in" << resourceInfo.filePath();
         return false;
     }
 }
@@ -137,6 +85,99 @@ bool ResourceLoader::registerControlViewResource(const QString &rccPath, const Q
     } else {
         return false;
     }
+}
+
+void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
+    if (removeFromSystem) {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
+    } else {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
+    }
+    QTimer::singleShot(100, this, [&]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
+}
+
+bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
+    if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
+        return false;
+    }
+
+    QQmlEngine *eng = qmlEngine(parent);
+    eng->collectGarbage();
+    eng->trimComponentCache();
+
+    QFile resourceInfo(rccPath);
+
+    if (resourceInfo.exists()) {
+        if (QResource::unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version))) {
+            qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource version" << version << "for" << resourceInfo.fileName();
+        } else {
+            qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource" << resourceInfo.fileName() << "either wasn't registered or is still in use for class id:" << class_id;
+        }
+
+        if (removeFromSystem) {
+            if (resourceInfo.remove() == false) {
+                qCCritical(logCategoryResourceLoader) << "Could not delete the resource" << resourceInfo.fileName();
+                return false;
+            }
+        }
+    } else {
+        qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist -" << resourceInfo.fileName();
+        return false;
+    }
+
+    QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
+    // Only reset this view in viewsRegistered if we have not already registered a different version
+    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one.
+    // In this case, the viewsRegistered_[class_id] will already contain the updated version
+    if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
+        ResourceItem *info = itr.value();
+        info->filepath = "";
+        info->gitTaggedVersion = "";
+        info->version = "";
+    }
+    return true;
+}
+
+void ResourceLoader::requestUnregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {
+    if (removeFromSystem) {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << path;
+    } else {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << path;
+    }
+    QTimer::singleShot(100, this, [&]{ unregisterResource(path, prefix, parent, removeFromSystem); });
+}
+
+bool ResourceLoader::unregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {
+    if (path.isEmpty() || prefix.isEmpty()) {
+        return false;
+    }
+
+    QQmlEngine *eng = qmlEngine(parent);
+    eng->collectGarbage();
+    eng->trimComponentCache();
+
+    QFileInfo resourceInfo(path);
+
+    if (resourceInfo.exists()) {
+        if (QResource::unregisterResource(resourceInfo.filePath(), prefix)) {
+            qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource" << resourceInfo.fileName() << "with prefix" << prefix;
+        } else {
+            qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource" << resourceInfo.fileName() << "either wasn't registered or is still in use with prefix:" << prefix;
+        }
+
+        if (removeFromSystem) {
+            QFile resourceFile(path);
+            if (resourceFile.remove() == false) {
+                qCCritical(logCategoryResourceLoader) << "Could not delete the resource" << resourceInfo.fileName();
+                return false;
+            }
+        }
+    } else {
+        qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist -" << resourceInfo.fileName();
+        return false;
+    }
+
+    return true;
 }
 
 void ResourceLoader::loadCoreResources()
@@ -254,7 +295,7 @@ QString ResourceLoader::getVersionJson(const QString &class_id, const QString &v
     }
     QJsonValue versionJson = docObj.value(QString("version"));
 
-    qCInfo(logCategoryResourceLoader) << "Found version of " << versionJson.toString() << "for class id" << class_id;
+    qCInfo(logCategoryResourceLoader) << "Found version of" << versionJson.toString() << "for class id" << class_id;
     return versionJson.toString();
 }
 
@@ -327,7 +368,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     QFileInfo qrcFileInfo = QFileInfo(qrcFile);
     QDir qrcFileParent = qrcFileInfo.dir();
-    QString compiledRccFile = qrcFileParent.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
+    QString compiledRccFile = qrcFileParent.path() + QDir::separator() + "build" + QDir::separator();
     QDir qrcDevControlView(compiledRccFile);
 
     if (qrcDevControlView.exists()) {
@@ -387,7 +428,7 @@ void ResourceLoader::recompileFinished(int exitCode, QProcess::ExitStatus exitSt
     if (exitStatus == QProcess::CrashExit || lastLoggedError_ != "") {
         emit finishedRecompiling(QString());
     } else {
-        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource_;
+        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to" << lastCompiledRccResource_;
         emit finishedRecompiling(lastCompiledRccResource_);
     }
 }
