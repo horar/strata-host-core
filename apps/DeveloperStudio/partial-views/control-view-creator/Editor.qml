@@ -19,7 +19,6 @@ Item {
     property alias openFilesModel: openFilesModel
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
-    property alias fileTabRepeater: fileTabRepeater
 
     SGQrcTreeModel {
         id: treeModel
@@ -213,7 +212,6 @@ Item {
                         property color color: "#aaaaaa"
                         property int modelIndex: index
 
-
                         MouseArea {
                             anchors.fill: fileTab
                             acceptedButtons: Qt.MiddleButton
@@ -232,7 +230,7 @@ Item {
                         }
 
                         onClicked: {
-                              openFilesModel.currentIndex = index
+                        	openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
