@@ -227,8 +227,6 @@ Item {
         Component.onCompleted: registerObjects({valueLink: channelObject})
     }
 
-
-
     QtObject {
         id: channelObject
         objectName: "fileChannel"
