@@ -152,7 +152,7 @@ FocusScope {
                     id: toolButtonRow
                     anchors {
                         top: parent.top
-                        topMargin: 12
+                        topMargin: handle.height + 4
                         left: messageEditor.left
                     }
 
