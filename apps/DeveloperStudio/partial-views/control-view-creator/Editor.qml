@@ -41,6 +41,22 @@ Item {
         }
     }
 
+    ConfirmClosePopup {
+        id: closeAllFilesConfirmation
+        titleText: "Close this tab"
+        popupText: "This will close this tab. Are you sure you want to close this tab?"
+        acceptButtonText: "Close tab w/saving"
+        closeButtonText: "Close tab wo/saving"
+
+        onPopupClosed: {
+            if(closeReason === acceptCloseReason){
+                openFilesModel.saveFileAt(openFilesModel.currentIndex, true)
+            } else if(closeReason === closeFilesReason){
+                openFilesModel.closeTabAt(openFilesModel.currentIndex)
+            }
+        }
+    }
+
     SGFileTabModel {
         id: openFilesModel
 
@@ -212,6 +228,20 @@ Item {
 
                         property color color: "#aaaaaa"
                         property int modelIndex: index
+
+                        MouseArea {
+                            anchors.fill: fileTab
+
+                            acceptedButtons: Qt.MiddleButton
+
+                            onClicked: {
+                                if(openFilesModel.getUnsavedCount() > 0){
+                                    closeAllFilesConfirmation.open()
+                                } else {
+                                    openFilesModel.closeTabAt(openFilesModel.currentIndex)
+                                }
+                            }
+                        }
 
                         onClicked: {
                             openFilesModel.currentIndex = index

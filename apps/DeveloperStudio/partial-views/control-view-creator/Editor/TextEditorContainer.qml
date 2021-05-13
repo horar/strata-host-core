@@ -181,22 +181,6 @@ Item {
     }
 
     ConfirmClosePopup {
-        id: closeAllFilesConfirmation
-        titleText: "Close this tab"
-        popupText: "This will close this tab. Are you sure you want to close this tab?"
-        acceptButtonText: "Close tab w/saving"
-        closeButtonText: "Close tab wo/saving"
-
-        onPopupClosed: {
-            if(closeReason === acceptCloseReason){
-                saveFile(true)
-            } else if(closeReason === closeFilesReason){
-                openFilesModel.closeTabAt(modelIndex)
-            }
-        }
-    }
-
-    ConfirmClosePopup {
         id: externalChangesConfirmation
         titleText: "Newer version of this file is available!"
         popupText: "This file has been modified externally. Would you like to overwrite the external changes or abandon your changes?"
