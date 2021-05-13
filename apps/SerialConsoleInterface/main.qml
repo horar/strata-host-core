@@ -62,11 +62,11 @@ SGWidgets.SGMainWindow {
 
                 Instantiator {
                     id: disconnectDeviceInstantiator
-                    model: sciModel.mockDeviceModel
+                    model: sciModel.mockDevice.mockDeviceModel
                     delegate: QtLabsPlatform.MenuItem {
                         text: deviceName
                         onTriggered: {
-                            sciModel.mockDeviceModel.disconnectMockDevice(deviceId)
+                            sciModel.mockDevice.mockDeviceModel.disconnectMockDevice(deviceId)
                         }
                     }
 
@@ -80,7 +80,7 @@ SGWidgets.SGMainWindow {
                     text: qsTr("Disconnect all")
                     enabled: disconnectDeviceInstantiator.count > 0
                     onTriggered:  {
-                        sciModel.mockDeviceModel.disconnectAllMockDevices()
+                        sciModel.mockDevice.mockDeviceModel.disconnectAllMockDevices()
                     }
                 }
             }

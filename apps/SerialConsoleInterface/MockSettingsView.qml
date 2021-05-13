@@ -119,7 +119,7 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockCommandComboBox
-                    model: sciModel.mockCommandModel
+                    model: sciModel.mockDevice.mockCommandModel
                     textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Command to be replied with a custom Response")
@@ -147,7 +147,7 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockResponseComboBox
-                    model: sciModel.mockResponseModel
+                    model: sciModel.mockDevice.mockResponseModel
                     textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Response to be sent for selected Command")
@@ -175,7 +175,7 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockVersionComboBox
-                    model: sciModel.mockVersionModel
+                    model: sciModel.mockDevice.mockVersionModel
                     textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Version of device which affects sent Response")

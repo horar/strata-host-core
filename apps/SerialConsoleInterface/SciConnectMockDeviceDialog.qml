@@ -37,7 +37,7 @@ SGWidgets.SGDialog {
 
             SGWidgets.SGTextField {
                 id: deviceName
-                text: sciModel.mockDeviceModel.getLatestMockDeviceName();
+                text: sciModel.mockDevice.mockDeviceModel.getLatestMockDeviceName();
                 placeholderText: "Device Name..."
                 Layout.alignment: Qt.AlignLeft
                 contextMenuEnabled: true
@@ -102,7 +102,7 @@ SGWidgets.SGDialog {
                 text: "Connect"
                 enabled: (deviceName.text.length > 0) && (deviceId.text.length > 0)
                 onClicked: {
-                    if (sciModel.mockDeviceModel.connectMockDevice(deviceName.text, deviceId.text) === true) {
+                    if (sciModel.mockDevice.mockDeviceModel.connectMockDevice(deviceName.text, deviceId.text) === true) {
                         dialog.accept()
                     } else {
                         errorText.text = "Unable to connect this device, device already exists."
@@ -113,7 +113,7 @@ SGWidgets.SGDialog {
     }
 
     function updateDeviceId() {
-        deviceId.text = sciModel.mockDeviceModel.getMockDeviceId(deviceName.text);
+        deviceId.text = sciModel.mockDevice.mockDeviceModel.getMockDeviceId(deviceName.text);
     }
 
     onOpened: {
