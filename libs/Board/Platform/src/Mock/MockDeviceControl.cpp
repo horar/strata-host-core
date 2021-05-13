@@ -111,10 +111,10 @@ bool MockDeviceControl::mockSetVersion(MockVersion version)
     return false;
 }
 
-std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
+std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& request)
 {
     rapidjson::Document requestDoc;
-    rapidjson::ParseResult parseResult = requestDoc.Parse(request.toStdString().c_str());
+    rapidjson::ParseResult parseResult = requestDoc.Parse(request.data(), request.size());
     std::vector<QByteArray> retVal;
 
     if (parseResult.IsError()) {

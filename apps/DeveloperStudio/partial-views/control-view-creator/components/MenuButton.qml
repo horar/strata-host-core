@@ -8,14 +8,11 @@ Button {
         contentItem.color = Qt.binding(() => {
                                        if (enabled === false) {
                                                return "#bbb"
-                                           } /*else if (button.hovered) {
-                                               return "#555"
-                                           }*/ else {
+                                           } else {
                                                return "black"
                                            }
                                        })
     }
-
 
     background: Rectangle {
         color: enabled === false ? "transparent" : button.hovered ? "#eee" : "#fff"

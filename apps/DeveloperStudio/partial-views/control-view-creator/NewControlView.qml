@@ -377,7 +377,7 @@ Item {
             openProjectContainer.url = qrcUrl
             openProjectContainer.addToTheProjectList(qrcUrl.toString())
             controlViewCreatorRoot.rccInitialized = false
-            toolBarListView.currentIndex = toolBarListView.editTab
+            viewStack.currentIndex = 1
         }
 
         return true

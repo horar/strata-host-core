@@ -11,6 +11,7 @@ LayoutContainer {
     visible: layoutDebugMode
 
     property string type: ""
+    property var sourceItem  // Item that this overlay represents
 
     contentItem: Item {
 
@@ -65,8 +66,8 @@ LayoutContainer {
                     let newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
 
-                    fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.xColumns:",  colRow.x)
-                    fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.yRows:",  colRow.y)
+                    fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.xColumns",  colRow.x)
+                    fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.yRows",  colRow.y)
 
                     visualEditor.functions.saveFile(file, fileContents)
                 }
@@ -169,8 +170,8 @@ LayoutContainer {
 
                     if (colRow.x !== layoutOverlayRoot.layoutInfo.columnsWide || colRow.y !== layoutOverlayRoot.layoutInfo.rowsTall) {
                         // if actually resized, edit file
-                        fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.columnsWide:",  colRow.x)
-                        fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.rowsTall:",  colRow.y)
+                        fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.columnsWide",  colRow.x)
+                        fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.rowsTall",  colRow.y)
 
                         visualEditor.functions.saveFile(file, fileContents)
                     } else {
