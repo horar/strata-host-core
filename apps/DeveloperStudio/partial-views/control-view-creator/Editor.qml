@@ -251,7 +251,7 @@ Item {
                         }
 
                         onClicked: {
-                              openFilesModel.currentIndex = index
+                        	openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
