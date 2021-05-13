@@ -8,8 +8,8 @@ FocusScope {
     id: mockSettingsView
 
     onMockDeviceChanged: {
-        if (mockDevice === null) {
-            closeView()
+        if (mockDevice !== null) {
+            initValues()
         }
     }
 
@@ -41,6 +41,7 @@ FocusScope {
             }
 
             SGWidgets.SGCheckBox {
+                id: openEnabledCheckBox
                 text: "Device will not reconnect after disconnection"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate faulty device that cannot be reopened")
@@ -50,12 +51,13 @@ FocusScope {
                     mockDevice.openEnabled = !checked
                 }
 
-                Component.onCompleted: {
-                    checked = (mockDevice !== null) ? !mockDevice.openEnabled : false
+                function init() {
+                    checked = !mockDevice.openEnabled
                 }
             }
 
             SGWidgets.SGCheckBox {
+                id: legacyModeCheckBox
                 text: "Legacy Mode"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
@@ -65,8 +67,8 @@ FocusScope {
                     mockDevice.legacyMode = checked
                 }
 
-                Component.onCompleted: {
-                    checked = (mockDevice !== null) ? mockDevice.legacyMode : true
+                function init() {
+                    checked = mockDevice.legacyMode
                 }
             }
 
@@ -81,8 +83,8 @@ FocusScope {
                     mockDevice.autoResponse = !checked
                 }
 
-                Component.onCompleted: {
-                    checked = (mockDevice !== null) ? !mockDevice.autoResponse : false
+                function init() {
+                    checked = !mockDevice.autoResponse
                 }
             }
 
@@ -134,8 +136,8 @@ FocusScope {
                         }
                     }
 
-                    Component.onCompleted: {
-                        currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockCommand) : -1
+                    function init() {
+                        currentIndex = model.find(mockDevice.mockCommand)
                     }
                 }
 
@@ -162,8 +164,8 @@ FocusScope {
                         }
                     }
 
-                    Component.onCompleted: {
-                        currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockResponse) : -1
+                    function init() {
+                        currentIndex = model.find(mockDevice.mockResponse)
                     }
                 }
 
@@ -190,8 +192,8 @@ FocusScope {
                         }
                     }
 
-                    Component.onCompleted: {
-                        currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockVersion) : -1
+                    function init() {
+                        currentIndex = model.find(mockDevice.mockVersion)
                     }
                 }
             }
@@ -214,5 +216,14 @@ FocusScope {
     function closeView() {
         model.platform.scrollbackModel.clearAutoExportError()
         StackView.view.pop();
+    }
+
+    function initValues() {
+        openEnabledCheckBox.init()
+        legacyModeCheckBox.init()
+        responseDisabledCheckBox.init()
+        mockCommandComboBox.init()
+        mockResponseComboBox.init()
+        mockVersionComboBox.init()
     }
 }

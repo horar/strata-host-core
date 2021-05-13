@@ -17,6 +17,7 @@ class SciPlatform: public QObject {
     Q_DISABLE_COPY(SciPlatform)
 
     Q_PROPERTY(QString deviceId READ deviceId CONSTANT)
+    Q_PROPERTY(strata::device::Device::Type deviceType READ deviceType NOTIFY deviceTypeChanged)
     Q_PROPERTY(QString verboseName READ verboseName NOTIFY verboseNameChanged)
     Q_PROPERTY(QString appVersion READ appVersion NOTIFY appVersionChanged)
     Q_PROPERTY(QString bootloaderVersion READ bootloaderVersion NOTIFY bootloaderVersionChanged)
@@ -42,7 +43,13 @@ public:
     };
     Q_ENUM(PlatformStatus)
 
+    // redeclaration of Type Q_ENUM required for custom-type properties to work properly in QML
+    // because Q_ENUM macro is constrained to the class it is used in and doesn't work well between classes
+    Q_ENUM(strata::device::Device::Type)
+
     QByteArray deviceId();
+    strata::device::Device::Type deviceType();
+    void setDeviceType(const strata::device::Device::Type &type);
     void setPlatform(const strata::platform::PlatformPtr& platform);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
@@ -73,6 +80,7 @@ public:
     void storeAutoExportPath(const QString &autoExportPath);
 
 signals:
+    void deviceTypeChanged();
     void verboseNameChanged();
     void appVersionChanged();
     void bootloaderVersionChanged();
@@ -111,6 +119,7 @@ private:
     strata::platform::PlatformPtr platform_;
     strata::device::MockDevicePtr mockDevice_;
     QByteArray deviceId_;
+    strata::device::Device::Type deviceType_;
     QString verboseName_;
     QString appVersion_;
     QString bootloaderVersion_;

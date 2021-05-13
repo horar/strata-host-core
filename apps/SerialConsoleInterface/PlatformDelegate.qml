@@ -258,7 +258,7 @@ FocusScope {
                         hintText: qsTr("Modify Mock Device settings")
                         icon.source: "qrc:/sgimages/tools.svg"
                         iconSize: toolButtonRow.iconHeight
-                        visible: (model.platform.mockDevice !== null)
+                        visible: (model.platform.deviceType === Sci.SciPlatform.MockDevice)
                         onClicked: showMockSettingsView()
                     }
                 }

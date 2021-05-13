@@ -36,6 +36,19 @@ QByteArray SciPlatform::deviceId()
     return deviceId_;
 }
 
+strata::device::Device::Type SciPlatform::deviceType()
+{
+    return deviceType_;
+}
+
+void SciPlatform::setDeviceType(const strata::device::Device::Type &type)
+{
+    if (deviceType_ != type) {
+        deviceType_ = type;
+        emit deviceTypeChanged();
+    }
+}
+
 void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 {
     if (platform == nullptr) {
@@ -51,6 +64,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
     } else {
         platform_ = platform;
         deviceId_ = platform_->deviceId();
+        setDeviceType(platform_->deviceType());
         if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
             strata::device::DevicePtr device = platform_->getDevice();
             setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
