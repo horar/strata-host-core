@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.sci 1.0 as Sci
 
@@ -14,6 +15,7 @@ FocusScope {
 
     property variant mockDevice: model.platform.mockDevice
     property int baseSpacing: 10
+    property int gridColumnSpacing: 6
 
     FocusScope {
         id: content
@@ -39,7 +41,7 @@ FocusScope {
             }
 
             SGWidgets.SGCheckBox {
-                text: "Open Disabled"
+                text: "Device will not reconnect after disconnection"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate faulty device that cannot be reopened")
                 ToolTip.delay: 1000
@@ -70,7 +72,7 @@ FocusScope {
 
             SGWidgets.SGCheckBox {
                 id: responseDisabledCheckBox
-                text: "Response Disabled"
+                text: "Device does not responds"
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate faulty device that does not responds")
                 ToolTip.delay: 1000
@@ -102,17 +104,16 @@ FocusScope {
                 font.bold: true
             }
 
-            Row {
+            GridLayout {
+                id: mockResponseSettings
+                columns: 2
+                rowSpacing: baseSpacing
+                columnSpacing: gridColumnSpacing
                 enabled: !responseDisabledCheckBox.checked
 
-                TextArea {
+                SGWidgets.SGText {
                     id: mockCommandComboBoxLabel
-                    implicitHeight: mockCommandComboBox.height
-                    implicitWidth: 100
-                    readOnly: true
-                    horizontalAlignment: TextEdit.AlignLeft
-                    verticalAlignment: TextEdit.AlignVCenter
-                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * 1.2
+                    fontSizeMultiplier: 1.2
                     text: "Command:"
                 }
 
@@ -137,19 +138,10 @@ FocusScope {
                         currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockCommand) : -1
                     }
                 }
-            }
 
-            Row {
-                enabled: !responseDisabledCheckBox.checked
-
-                TextArea {
+                SGWidgets.SGText {
                     id: mockResponseComboBoxLabel
-                    implicitHeight: mockResponseComboBox.height
-                    implicitWidth: 100
-                    readOnly: true
-                    horizontalAlignment: TextEdit.AlignLeft
-                    verticalAlignment: TextEdit.AlignVCenter
-                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * 1.2
+                    fontSizeMultiplier: 1.2
                     text: "Response:"
                 }
 
@@ -174,19 +166,10 @@ FocusScope {
                         currentIndex = (mockDevice !== null) ? model.find(mockDevice.mockResponse) : -1
                     }
                 }
-            }
 
-            Row {
-                enabled: !responseDisabledCheckBox.checked
-
-                TextArea {
+                SGWidgets.SGText {
                     id: mockVersionComboBoxLabel
-                    implicitHeight: mockVersionComboBox.height
-                    implicitWidth: 100
-                    readOnly: true
-                    horizontalAlignment: TextEdit.AlignLeft
-                    verticalAlignment: TextEdit.AlignVCenter
-                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * 1.2
+                    fontSizeMultiplier: 1.2
                     text: "Version:"
                 }
 
