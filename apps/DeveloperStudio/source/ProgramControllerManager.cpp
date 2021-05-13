@@ -131,7 +131,14 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
             int total = payload.value("total").toInt();
             int complete = payload.value("complete").toInt();
 
-            notifyProgressChange(deviceId, ProgressState::ProgramState, complete/(float)total);
+            float progress;
+            if (total <= 0) {
+                progress = 0;
+            } else {
+                progress = complete/(float)total;
+            }
+
+            notifyProgressChange(deviceId, ProgressState::ProgramState, progress);
         } else if (jobStatus == "failure") {
             notifyFailure(deviceId, payload);
         } else {
