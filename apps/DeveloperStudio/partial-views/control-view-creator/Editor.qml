@@ -48,8 +48,6 @@ Item {
         acceptButtonText: "Close tab w/saving"
         closeButtonText: "Close tab wo/saving"
 
-
-
         onPopupClosed: {
             if(closeReason === acceptCloseReason){
                 openFilesModel.saveFileAt(openFilesModel.currentIndex, true)
@@ -230,7 +228,6 @@ Item {
 
                         property color color: "#aaaaaa"
                         property int modelIndex: index
-
 
                         MouseArea {
                             anchors.fill: fileTab
