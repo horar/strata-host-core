@@ -19,7 +19,6 @@
 #include "Timestamp.h"
 
 #include <QtLoggerSetup.h>
-#include <QtLogger.h>
 #include "logging/LoggingQtCategories.h"
 
 #include "SDSModel.h"
@@ -37,7 +36,6 @@
 #include "AppUi.h"
 
 #include "config/AppConfig.h"
-#include "config/UrlConfig.h"
 
 
 void addImportPaths(QQmlApplicationEngine *engine)
@@ -124,14 +122,14 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    strata::sds::config::UrlConfig urlCfg(configFilePath);
-    if (urlCfg.parseUrl() == false) {
-        return EXIT_FAILURE;
-    }
-
     RunGuard appGuard{QStringLiteral("tech.strata.sds:%1").arg(cfg.hcsDealerAddresss().port())};
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
+        return EXIT_FAILURE;
+    }
+
+    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss(), configFilePath)};
+    if (sdsModel->urls() == nullptr) {
         return EXIT_FAILURE;
     }
 
@@ -150,8 +148,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<DebugMenuGenerator>("tech.strata.DebugMenuGenerator", 1, 0, "DebugMenuGenerator", "You can't instantiate DebugMenuGenerator in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
-
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
                      sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
@@ -167,8 +163,6 @@ int main(int argc, char *argv[])
 
     addImportPaths(&engine);
 
-    engine.rootContext()->setContextProperty ("logger", &strata::loggers::QtLogger::instance());
-    engine.rootContext()->setContextProperty ("urls", &urlCfg);
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
 
     /* deprecated context property, use sdsModel.coreInterface instead */
