@@ -79,7 +79,8 @@ Item {
     Keys.onReleased: {
         if(event.matches(StandardKey.Close)){
             if(openFilesModel.getUnsavedCount() > 0){
-                closeAllFilesConfirmation.open()
+                confirmClosePopup.open()
+                isConfirmCloseOpen = true
             } else {
                 openFilesModel.closeTabAt(modelIndex)
             }

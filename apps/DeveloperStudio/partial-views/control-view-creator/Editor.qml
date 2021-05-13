@@ -41,24 +41,6 @@ Item {
         }
     }
 
-    ConfirmClosePopup {
-        id: closeAllFilesConfirmation
-        titleText: "Close this tab"
-        popupText: "This will close this tab. Are you sure you want to close this tab?"
-        acceptButtonText: "Close tab w/saving"
-        closeButtonText: "Close tab wo/saving"
-
-
-
-        onPopupClosed: {
-            if(closeReason === acceptCloseReason){
-                openFilesModel.saveFileAt(openFilesModel.currentIndex, true)
-            } else if(closeReason === closeFilesReason){
-                openFilesModel.closeTabAt(openFilesModel.currentIndex)
-            }
-        }
-    }
-
     SGFileTabModel {
         id: openFilesModel
 
@@ -234,21 +216,17 @@ Item {
 
                         MouseArea {
                             anchors.fill: fileTab
-
                             acceptedButtons: Qt.MiddleButton
-                            hoverEnabled: true
-
-                            property int hoveredIndex: index
-
-                            onEntered: {
-                                hoveredIndex = modelIndex
-                            }
 
                             onClicked: {
-                                if(openFilesModel.hasUnsavedChanges(hoveredIndex)){
-                                    closeAllFilesConfirmation.open()
+                                 if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
+                                    confirmClosePopup.filename = model.filename
+                                    confirmClosePopup.index = index
+                                    confirmClosePopup.exists = model.exists
+                                    confirmClosePopup.open()
+                                    controlViewCreatorRoot.isConfirmCloseOpen = true
                                 } else {
-                                    openFilesModel.closeTabAt(modelIndex)
+                                    openFilesModel.closeTabAt(index);
                                 }
                             }
                         }
