@@ -69,14 +69,14 @@ public:
      */
     struct UpdateProgress {
         UpdateProgress();  // Q_DECLARE_METATYPE needs default constructor
-        UpdateProgress(const QString& jobUuid, bool workWithController);
+        UpdateProgress(const QString& jobUuid, bool programController);
         UpdateOperation operation;
         UpdateStatus status;
         int complete;
         int total;
         QString error;
         const QString jobUuid;
-        const bool workWithController;
+        const bool programController;
     };
 
     /**
@@ -125,7 +125,7 @@ private:
     QPointer<strata::DownloadManager> downloadManager_;
 
     struct UpdateInfo {
-        UpdateInfo(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool workWithController);
+        UpdateInfo(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool programController);
         const QByteArray clientId;
         FirmwareUpdater* fwUpdater;
         UpdateProgress updateProgress;

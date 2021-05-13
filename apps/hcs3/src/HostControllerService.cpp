@@ -818,7 +818,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
             progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
         payload.insert("error_string", progress.error);
     }
-    hcsNotificationType type = (progress.workWithController)
+    hcsNotificationType type = (progress.programController)
             ? hcsNotificationType::programControllerJob
             : hcsNotificationType::updateFirmwareJob;
     QByteArray notification = createHcsNotification(type, payload, true);
