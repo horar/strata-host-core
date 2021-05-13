@@ -1,7 +1,7 @@
 #include "SciMockCommandModel.h"
 #include "logging/LoggingQtCategories.h"
 
-using strata::device::MockCommand;
+using namespace strata::device;
 
 SciMockCommandModel::SciMockCommandModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -108,16 +108,16 @@ void SciMockCommandModel::setModelData()
 {
     commands_.clear();
     commands_.push_back({MockCommand::Any_command, "Any Command"});
-    commands_.push_back({MockCommand::Get_firmware_info, "Get Firmware Info"});
-    commands_.push_back({MockCommand::Request_platform_id, "Request Platform Id"});
-    commands_.push_back({MockCommand::Start_bootloader, "Start Bootloader"});
-    commands_.push_back({MockCommand::Start_application, "Start Application"});
-    commands_.push_back({MockCommand::Flash_firmware, "Flash Firmware"});
-    commands_.push_back({MockCommand::Flash_bootloader, "Flash Bootloader"});
-    commands_.push_back({MockCommand::Start_flash_firmware, "Start Flash Firmware"});
-    commands_.push_back({MockCommand::Start_flash_bootloader, "Start Flash Bootloader"});
-    commands_.push_back({MockCommand::Set_assisted_platform_id, "Set Assisted Platform id"});
-    commands_.push_back({MockCommand::Set_platform_id, "Set Platform Id"});
-    commands_.push_back({MockCommand::Start_backup_firmware, "Start Backup Firmware"});
-    commands_.push_back({MockCommand::Backup_firmware, "Backup Firmware"});
+    commands_.push_back({MockCommand::Get_firmware_info, CMD_GET_FIRMWARE_INFO});
+    commands_.push_back({MockCommand::Request_platform_id, CMD_REQUEST_PLATFORM_ID});
+    commands_.push_back({MockCommand::Start_bootloader, CMD_START_BOOTLOADER});
+    commands_.push_back({MockCommand::Start_application, CMD_START_APPLICATION});
+    commands_.push_back({MockCommand::Flash_firmware, CMD_FLASH_FIRMWARE});
+    commands_.push_back({MockCommand::Flash_bootloader, CMD_FLASH_BOOTLOADER});
+    commands_.push_back({MockCommand::Start_flash_firmware, CMD_START_FLASH_FIRMWARE});
+    commands_.push_back({MockCommand::Start_flash_bootloader, CMD_START_FLASH_BOOTLOADER});
+    commands_.push_back({MockCommand::Set_assisted_platform_id, CMD_SET_ASSISTED_PLATFORM_ID});
+    commands_.push_back({MockCommand::Set_platform_id, CMD_SET_PLATFORM_ID});
+    commands_.push_back({MockCommand::Start_backup_firmware, CMD_START_BACKUP_FIRMWARE});
+    commands_.push_back({MockCommand::Backup_firmware, CMD_BACKUP_FIRMWARE});
 }
