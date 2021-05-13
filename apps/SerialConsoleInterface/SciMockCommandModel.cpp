@@ -107,17 +107,17 @@ void SciMockCommandModel::setModelRoles()
 void SciMockCommandModel::setModelData()
 {
     commands_.clear();
-    commands_.push_back({MockCommand::Any_command,              "Any Command"});
-    commands_.push_back({MockCommand::Get_firmware_info,        "Get Firmware Info"});
-    commands_.push_back({MockCommand::Request_platform_id,      "Request Platform Id"});
-    commands_.push_back({MockCommand::Start_bootloader,         "Start Bootloader"});
-    commands_.push_back({MockCommand::Start_application,        "Start Application"});
-    commands_.push_back({MockCommand::Flash_firmware,           "Flash Firmware"});
-    commands_.push_back({MockCommand::Flash_bootloader,         "Flash Bootloader"});
-    commands_.push_back({MockCommand::Start_flash_firmware,     "Start Flash Firmware"});
-    commands_.push_back({MockCommand::Start_flash_bootloader,   "Start Flash Bootloader"});
+    commands_.push_back({MockCommand::Any_command, "Any Command"});
+    commands_.push_back({MockCommand::Get_firmware_info, "Get Firmware Info"});
+    commands_.push_back({MockCommand::Request_platform_id, "Request Platform Id"});
+    commands_.push_back({MockCommand::Start_bootloader, "Start Bootloader"});
+    commands_.push_back({MockCommand::Start_application, "Start Application"});
+    commands_.push_back({MockCommand::Flash_firmware, "Flash Firmware"});
+    commands_.push_back({MockCommand::Flash_bootloader, "Flash Bootloader"});
+    commands_.push_back({MockCommand::Start_flash_firmware, "Start Flash Firmware"});
+    commands_.push_back({MockCommand::Start_flash_bootloader, "Start Flash Bootloader"});
     commands_.push_back({MockCommand::Set_assisted_platform_id, "Set Assisted Platform id"});
-    commands_.push_back({MockCommand::Set_platform_id,          "Set Platform Id"});
-    commands_.push_back({MockCommand::Start_backup_firmware,    "Start Backup Firmware"});
-    commands_.push_back({MockCommand::Backup_firmware,          "Backup Firmware"});
+    commands_.push_back({MockCommand::Set_platform_id, "Set Platform Id"});
+    commands_.push_back({MockCommand::Start_backup_firmware, "Start Backup Firmware"});
+    commands_.push_back({MockCommand::Backup_firmware, "Backup Firmware"});
 }
