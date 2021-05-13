@@ -249,9 +249,11 @@ FocusScope {
 
                     VerticalDivider {
                         anchors.verticalCenter: parent.verticalCenter
+                        visible: mockSettingsButton.visible
                     }
 
                     SGWidgets.SGIconButton {
+                        id: mockSettingsButton
                         text: "Mock Settings"
                         hintText: qsTr("Modify Mock Device settings")
                         icon.source: "qrc:/sgimages/tools.svg"
