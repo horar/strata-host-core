@@ -8,9 +8,7 @@ FocusScope {
     id: mockSettingsView
 
     onMockDeviceChanged: {
-        if (mockDevice !== null) {
-            initValues()
-        }
+        initValues()
     }
 
     property variant mockDevice: model.platform.mockDevice
@@ -27,12 +25,12 @@ FocusScope {
         focus: true
 
         Column {
+            id: settingsWrapper
             anchors {
                 left: parent.left
                 right: parent.right
             }
             spacing: baseSpacing
-            enabled: mockDevice !== null
 
             SGWidgets.SGText {
                 text: "Mock Settings"
@@ -48,7 +46,15 @@ FocusScope {
                 ToolTip.delay: 1000
 
                 onCheckedChanged : {
-                    mockDevice.openEnabled = !checked
+                    if (mockDevice === null) {
+                        if (checked === false) {
+                            if (sciModel.mockDevice.mockDeviceModel.reconnectMockDevice(model.platform.deviceId) === false) {
+                                checked = true
+                            }
+                        }
+                    } else {
+                        mockDevice.openEnabled = !checked
+                    }
                 }
 
                 function init() {
@@ -62,6 +68,7 @@ FocusScope {
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
                 ToolTip.delay: 1000
+                enabled: mockDevice !== null
 
                 onCheckedChanged : {
                     mockDevice.legacyMode = checked
@@ -78,6 +85,7 @@ FocusScope {
                 ToolTip.visible: hovered
                 ToolTip.text: qsTr("Simulate faulty device that does not responds")
                 ToolTip.delay: 1000
+                enabled: mockDevice !== null
 
                 onCheckedChanged : {
                     mockDevice.autoResponse = !checked
@@ -87,18 +95,30 @@ FocusScope {
                     checked = !mockDevice.autoResponse
                 }
             }
+        }
 
-            Rectangle {
-                id: divider
-                anchors {
-                    topMargin: baseSpacing
-                }
-
-                width: parent.width
-                height: 1
-                color: "black"
-                opacity: 0.4
+        Rectangle {
+            id: divider
+            anchors {
+                top: settingsWrapper.bottom
+                topMargin: baseSpacing
             }
+
+            width: parent.width
+            height: 1
+            color: "black"
+            opacity: 0.4
+        }
+
+        Column {
+            id: responseSettingsWrapper
+            anchors {
+                top: divider.bottom
+                left: parent.left
+                right: parent.right
+            }
+            spacing: baseSpacing
+            enabled: mockDevice !== null
 
             SGWidgets.SGText {
                 text: "Mock Response Configuration"
@@ -219,11 +239,15 @@ FocusScope {
     }
 
     function initValues() {
-        openEnabledCheckBox.init()
-        legacyModeCheckBox.init()
-        responseDisabledCheckBox.init()
-        mockCommandComboBox.init()
-        mockResponseComboBox.init()
-        mockVersionComboBox.init()
+        if (mockDevice !== null) {
+            openEnabledCheckBox.init()
+            legacyModeCheckBox.init()
+            responseDisabledCheckBox.init()
+            mockCommandComboBox.init()
+            mockResponseComboBox.init()
+            mockVersionComboBox.init()
+        } else {
+            openEnabledCheckBox.checked = true;
+        }
     }
 }

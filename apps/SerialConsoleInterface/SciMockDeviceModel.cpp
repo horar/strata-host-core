@@ -7,6 +7,7 @@ using strata::PlatformManager;
 using strata::device::Device;
 using strata::device::DevicePtr;
 using strata::device::MockDevice;
+using strata::device::MockDevicePtr;
 using strata::device::scanner::DeviceScanner;
 using strata::device::scanner::MockDeviceScanner;
 using strata::platform::Platform;
@@ -98,6 +99,29 @@ bool SciMockDeviceModel::disconnectMockDevice(QByteArray deviceId)
     return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
 }
 
+bool SciMockDeviceModel::reconnectMockDevice(QByteArray deviceId)
+{
+    for (int index = 0; index < platforms_.count(); ++index) {
+        if (platforms_[index]->deviceId() == deviceId) {
+            DevicePtr device = platforms_[index]->getDevice();
+            MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
+            if (mockDevice == nullptr) {
+                qCCritical(logCategorySci) << "Invalid pointer when acquiring data";
+                return false;
+            }
+            if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
+                mockDevice->mockSetOpenEnabled(true);
+                qCDebug(logCategorySci) << "Mock Device configured to open during next interval:" << deviceId;
+                return true;
+            }
+            qCWarning(logCategorySci) << "Mock Device in invalid state:" << deviceId;
+            return false;
+        }
+    }
+    qCDebug(logCategorySci) << "Mock Device not found (probably already erased):" << deviceId;
+    return false;
+}
+
 void SciMockDeviceModel::disconnectAllMockDevices() {
     if (scanner_ == nullptr) {
         return;
@@ -123,7 +147,7 @@ QVariant SciMockDeviceModel::data(const QModelIndex &index, int role) const
     }
 
     const DevicePtr device = platforms_.at(row)->getDevice();
-    const auto mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
+    const MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
     if (mockDevice == nullptr) {
         qCCritical(logCategorySci) << "Invalid pointer when acquiring data";
         return QVariant();

@@ -18,6 +18,7 @@ public:
 
     Q_INVOKABLE bool connectMockDevice(QString deviceName, QByteArray deviceId);
     Q_INVOKABLE bool disconnectMockDevice(QByteArray deviceId);
+    Q_INVOKABLE bool reconnectMockDevice(QByteArray deviceId);
     Q_INVOKABLE void disconnectAllMockDevices();
     Q_INVOKABLE QString getLatestMockDeviceName() const;
     Q_INVOKABLE QByteArray getMockDeviceId(QString deviceName) const;
