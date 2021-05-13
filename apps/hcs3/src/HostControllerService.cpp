@@ -810,7 +810,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
         { "job_type", jobType },
         { "job_status", jobStatus }
     };
-    if ((progress.complete >= 0) && (progress.total > 0)) {
+    if ((progress.complete >= 0) && (progress.total >= 0)) {
         payload.insert("complete", progress.complete);
         payload.insert("total", progress.total);
     }
