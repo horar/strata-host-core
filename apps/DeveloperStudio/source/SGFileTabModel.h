@@ -76,6 +76,7 @@ public:
     Q_INVOKABLE int getIndexById(const QString &id) const;
     Q_INVOKABLE void setExists(const QString &id, const bool &exists);
     Q_INVOKABLE int findTabByFilepath(const QUrl &filepath);
+    Q_INVOKABLE bool hasUnsavedChanges(const int index);
 
     /**
      * @brief updateTab Updates the filename, filepath, and filetype of the tab with id equal to `id`

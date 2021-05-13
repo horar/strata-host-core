@@ -48,6 +48,8 @@ Item {
         acceptButtonText: "Close tab w/saving"
         closeButtonText: "Close tab wo/saving"
 
+
+
         onPopupClosed: {
             if(closeReason === acceptCloseReason){
                 openFilesModel.saveFileAt(openFilesModel.currentIndex, true)
@@ -229,22 +231,30 @@ Item {
                         property color color: "#aaaaaa"
                         property int modelIndex: index
 
+
                         MouseArea {
                             anchors.fill: fileTab
 
                             acceptedButtons: Qt.MiddleButton
+                            hoverEnabled: true
+
+                            property int hoveredIndex: index
+
+                            onEntered: {
+                                hoveredIndex = modelIndex
+                            }
 
                             onClicked: {
-                                if(openFilesModel.getUnsavedCount() > 0){
+                                if(openFilesModel.hasUnsavedChanges(hoveredIndex)){
                                     closeAllFilesConfirmation.open()
                                 } else {
-                                    openFilesModel.closeTabAt(openFilesModel.currentIndex)
+                                    openFilesModel.closeTabAt(modelIndex)
                                 }
                             }
                         }
 
                         onClicked: {
-                            openFilesModel.currentIndex = index
+                              openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {

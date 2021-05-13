@@ -382,6 +382,10 @@ int SGFileTabModel::getUnsavedCount() const
     return count;
 }
 
+bool SGFileTabModel::hasUnsavedChanges(const int index){
+    return data_[index]->unsavedChanges();
+}
+
 bool SGFileTabModel::updateTab(const QString &id, const QString &filename, const QUrl &filepath, const QString &filetype)
 {
     for (int i = 0; i < data_.count(); ++i) {
