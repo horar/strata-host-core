@@ -155,7 +155,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
     } else if (jobType == "finished") {
         if (jobStatus == "success") {
             notifyProgressChange(deviceId, ProgressState::DoneState, 1);
-        } else if (jobStatus == "failure") {
+        } else if (jobStatus == "failure" || jobStatus == "unsuccess") {
             emit jobStatusChanged(deviceId, "failure", payload.value("error_string").toString());
         } else {
             qCWarning(logCategoryStrataDevStudio) << "unknown job status";
