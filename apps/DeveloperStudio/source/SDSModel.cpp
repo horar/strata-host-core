@@ -1,10 +1,11 @@
 #include "SDSModel.h"
 
 #include "DocumentManager.h"
-#include "ResourceLoader.h"
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "ResourceLoader.h"
+#include "DebugMenuGenerator.h"
+#include "PlatformInterfaceGenerator.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -24,6 +25,8 @@ SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
+      platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
+      debugMenuGenerator_(new DebugMenuGenerator(this)),
       remoteHcsNode_(new HcsNode(this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -35,6 +38,8 @@ SDSModel::~SDSModel()
     delete coreInterface_;
     delete resourceLoader_;
     delete newControlView_;
+    delete platformInterfaceGenerator_;
+    delete debugMenuGenerator_;
     delete remoteHcsNode_;
 }
 
@@ -165,6 +170,16 @@ ResourceLoader *SDSModel::resourceLoader() const
 SGNewControlView *SDSModel::newControlView() const
 {
     return newControlView_;
+}
+
+PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
+{
+    return platformInterfaceGenerator_;
+}
+
+DebugMenuGenerator *SDSModel::debugMenuGenerator() const
+{
+    return debugMenuGenerator_;
 }
 
 void SDSModel::shutdownService()
