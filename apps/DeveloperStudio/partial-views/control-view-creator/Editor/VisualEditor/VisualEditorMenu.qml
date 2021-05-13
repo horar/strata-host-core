@@ -7,23 +7,12 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
+import "../../components"
+
 RowLayout {
     id: controls
 
-    Button {
-        text: "Reload"
-        implicitHeight: menuRow.height - 10
-        implicitWidth: implicitContentWidth + 10
-        padding: 0
-
-        onClicked: {
-            // todo: add file listener so external changes are auto reloaded?
-            // changes are reloaded when switching between visual editor and text editor, but not if changes are made from another app
-            visualEditor.functions.reload()
-        }
-    }
-
-    Button {
+    MenuButton {
         text: "Layout mode"
         checkable: true
         checked: visualEditor.layoutDebugMode
@@ -36,7 +25,7 @@ RowLayout {
         }
     }
 
-    Button {
+    MenuButton {
         text: "Add..."
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
@@ -51,7 +40,7 @@ RowLayout {
         }
     }
 
-    Button {
+    MenuButton {
         text: "Rows/Cols..."
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
@@ -108,6 +97,57 @@ RowLayout {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    Item {
+        //filler
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+    }
+
+    SGIcon {
+        Layout.fillHeight: true
+        Layout.topMargin: 3
+        Layout.bottomMargin: 3
+        Layout.preferredWidth: height
+        source: "qrc:/sgimages/three-dots.svg"
+        iconColor: dotsMouse.containsMouse ? "black" : "grey"
+
+        MouseArea {
+            id: dotsMouse
+            anchors {
+                fill: parent
+            }
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked:  {
+                dotsMenu.open()
+            }
+        }
+
+        Popup {
+            id: dotsMenu
+            y: parent.height
+            x: parent.width - width
+
+            ColumnLayout {
+
+                MenuButton {
+                    text: "Force Visual Editor Reload"
+                    implicitHeight: menuRow.height - 10
+                    implicitWidth: implicitContentWidth + 10
+                    padding: 0
+
+                    onClicked: {
+                        // todo: add file listener so external changes are auto reloaded?
+                        // changes are reloaded when switching between visual editor and text editor, but not if changes are made from another app
+                        visualEditor.functions.reload()
+                        dotsMenu.close()
                     }
                 }
             }

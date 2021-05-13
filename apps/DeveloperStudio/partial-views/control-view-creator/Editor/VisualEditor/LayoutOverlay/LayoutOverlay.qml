@@ -24,6 +24,7 @@ LayoutContainer {
             Drag.hotSpot.x: width/2
             Drag.hotSpot.y: height/2
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            hoverEnabled: true
 
             property point startPoint
 
@@ -98,28 +99,35 @@ LayoutContainer {
             height: parent.height
         }
 
-        Rectangle {
-            opacity: .85
+        Item {
             anchors {
-                fill: nameString
+                fill: parent
             }
-        }
+            clip: dragMouseArea.containsMouse === false
 
-        ColumnLayout {
-            id: nameString
-            x: 1
-            y: x
-            spacing: 2
-
-            Text {
-                font.pixelSize: 10
-                text: layoutOverlayRoot.objectName
+            Rectangle {
+                opacity: .85
+                anchors {
+                    fill: nameString
+                }
             }
 
-            Text {
-                font.pixelSize: 8
-                text: layoutOverlayRoot.type
-                opacity: .5
+            ColumnLayout {
+                id: nameString
+                x: 1
+                y: x
+                spacing: 2
+
+                Text {
+                    font.pixelSize: 10
+                    text: layoutOverlayRoot.objectName
+                }
+
+                Text {
+                    font.pixelSize: 8
+                    text: layoutOverlayRoot.type
+                    opacity: .5
+                }
             }
         }
 
