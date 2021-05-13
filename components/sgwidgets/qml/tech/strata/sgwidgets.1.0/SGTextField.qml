@@ -42,10 +42,7 @@ TextField {
     signal suggestionDelegateRemoveRequested(int index)
 
     /*private*/
-    property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
-                                 || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
-                                 || (clearButtonLoader !== null && clearButtonLoader.status === Loader.Ready)
-                                 || rightIconItem.source
+    property bool hasRightIcons: (cursorInfoLoader !== null || revelPasswordLoader !== null || clearButtonLoader !== null || rightIconItem !== null)
 
     property bool revealPassword: false
 
