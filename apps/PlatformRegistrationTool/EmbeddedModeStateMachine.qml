@@ -380,7 +380,6 @@ BaseStateMachine {
                 targetState: stateNotifyCloudService
                 signal: prtModel.flasherFinished
                 guard: result == FlasherConnector.Success
-
             }
 
             DSM.SignalTransition {
