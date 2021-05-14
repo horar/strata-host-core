@@ -11,7 +11,15 @@ FocusScope {
         initValues()
     }
 
+    onDeviceTypeChanged: {
+        // force close the view in case the same deviceId is reused for non-mock device
+        if (deviceType !== Sci.SciPlatform.MockDevice) {
+            closeView()
+        }
+    }
+
     property variant mockDevice: model.platform.mockDevice
+    property variant deviceType: model.platform.deviceType
     property int baseSpacing: 10
     property int gridColumnSpacing: 6
 
@@ -48,8 +56,10 @@ FocusScope {
                 onCheckedChanged : {
                     if (mockDevice === null) {
                         if (checked === false) {
-                            if (sciModel.mockDevice.mockDeviceModel.reconnectMockDevice(model.platform.deviceId) === false) {
+                            if (sciModel.mockDevice.mockDeviceModel.reopenMockDevice(model.platform.deviceId) === false) {
                                 checked = true
+                            } else {
+                                enabled = false
                             }
                         }
                     } else {
@@ -58,7 +68,17 @@ FocusScope {
                 }
 
                 function init() {
-                    checked = !mockDevice.openEnabled
+                    if (mockDevice !== null) {
+                        checked = !mockDevice.openEnabled
+                        enabled = true;
+                    } else {
+                        if (sciModel.mockDevice.mockDeviceModel.canReopenMockDevice(model.platform.deviceId) === true) {
+                            enabled = true;
+                            openEnabledCheckBox.checked = true;
+                        } else {
+                            enabled = false;
+                        }
+                    }
                 }
             }
 
@@ -239,15 +259,13 @@ FocusScope {
     }
 
     function initValues() {
+        openEnabledCheckBox.init()
         if (mockDevice !== null) {
-            openEnabledCheckBox.init()
             legacyModeCheckBox.init()
             responseDisabledCheckBox.init()
             mockCommandComboBox.init()
             mockResponseComboBox.init()
             mockVersionComboBox.init()
-        } else {
-            openEnabledCheckBox.checked = true;
         }
     }
 }

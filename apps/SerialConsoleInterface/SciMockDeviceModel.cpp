@@ -52,7 +52,7 @@ void SciMockDeviceModel::handleDeviceDetected(PlatformPtr platform) {
     }
 
     beginInsertRows(QModelIndex(), platforms_.length(), platforms_.length());
-    platforms_.append(platform);
+    platforms_.append({platform->deviceId(), platform->deviceName()});
     endInsertRows();
 
     qCDebug(logCategorySci) << "Added new mock device to the model:" << platform->deviceId();
@@ -61,7 +61,7 @@ void SciMockDeviceModel::handleDeviceDetected(PlatformPtr platform) {
 
 void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
     for (int index = 0; index < platforms_.count(); ++index) {
-        if (platforms_[index]->deviceId() == deviceId) {
+        if (platforms_[index].deviceId_ == deviceId) {
             beginRemoveRows(QModelIndex(), index, index);
             platforms_.removeAt(index);
             endRemoveRows();
@@ -75,7 +75,7 @@ void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
     qCDebug(logCategorySci) << "Device not present in the mock model:" << deviceId;
 }
 
-bool SciMockDeviceModel::connectMockDevice(QString deviceName, QByteArray deviceId)
+bool SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByteArray& deviceId)
 {
     if (scanner_ == nullptr) {
         return false;
@@ -90,36 +90,13 @@ bool SciMockDeviceModel::connectMockDevice(QString deviceName, QByteArray device
     return false;
 }
 
-bool SciMockDeviceModel::disconnectMockDevice(QByteArray deviceId)
+bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
 {
     if (scanner_ == nullptr) {
         return false;
     }
 
     return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
-}
-
-bool SciMockDeviceModel::reconnectMockDevice(QByteArray deviceId)
-{
-    for (int index = 0; index < platforms_.count(); ++index) {
-        if (platforms_[index]->deviceId() == deviceId) {
-            DevicePtr device = platforms_[index]->getDevice();
-            MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
-            if (mockDevice == nullptr) {
-                qCCritical(logCategorySci) << "Invalid pointer when acquiring data";
-                return false;
-            }
-            if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
-                mockDevice->mockSetOpenEnabled(true);
-                qCDebug(logCategorySci) << "Mock Device configured to open during next interval:" << deviceId;
-                return true;
-            }
-            qCWarning(logCategorySci) << "Mock Device in invalid state:" << deviceId;
-            return false;
-        }
-    }
-    qCDebug(logCategorySci) << "Mock Device not found (probably already erased):" << deviceId;
-    return false;
 }
 
 void SciMockDeviceModel::disconnectAllMockDevices() {
@@ -130,11 +107,74 @@ void SciMockDeviceModel::disconnectAllMockDevices() {
     return static_cast<MockDeviceScanner*>(scanner_.get())->mockAllDevicesLost();
 }
 
+bool SciMockDeviceModel::reopenMockDevice(const QByteArray& deviceId)
+{
+    PlatformPtr platform = platformManager_->getPlatform(deviceId, false, true);
+    if (platform == nullptr) {
+        qCDebug(logCategorySci) << "Closed Mock Device not found (probably already erased):" << deviceId;
+        return false;
+    }
+
+    if (platform->deviceType() != strata::device::Device::Type::MockDevice) {
+        qCWarning(logCategorySci) << "non-Mock device acquired, it cannot be reopen:" << deviceId;
+        return false;
+    }
+
+    DevicePtr device = platform->getDevice();
+    if (device == nullptr) {
+        qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId;
+        return false;
+    }
+
+    MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
+    if (mockDevice == nullptr) {
+        qCCritical(logCategorySci) << "Corrupt device pointer in platform:" << deviceId;
+        return false;
+    }
+
+    if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
+        mockDevice->mockSetOpenEnabled(true);
+        qCDebug(logCategorySci) << "Mock Device configured to open during next interval:" << deviceId;
+        return true;
+    }
+
+    qCWarning(logCategorySci) << "Mock Device in invalid state:" << deviceId;
+    return false;
+}
+
+bool SciMockDeviceModel::canReopenMockDevice(const QByteArray& deviceId) const {
+    const PlatformPtr platform = platformManager_->getPlatform(deviceId, true, true);
+    if (platform == nullptr) {
+        qCDebug(logCategorySci) << "Mock Device not found:" << deviceId;
+        return false;
+    }
+
+    if (platform->deviceType() != strata::device::Device::Type::MockDevice) {
+        qCWarning(logCategorySci) << "non-Mock device acquired:" << deviceId;
+        return false;
+    }
+
+    const DevicePtr device = platform->getDevice();
+    if (device == nullptr) {
+        qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId;
+        return false;
+    }
+
+    const MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
+    if (mockDevice == nullptr) {
+        qCCritical(logCategorySci) << "Corrupt device pointer in platform:" << deviceId;
+        return false;
+    }
+
+    qCDebug(logCategorySci) << "Mock Device is valid:" << deviceId << "open enabled:" << mockDevice->mockIsOpenEnabled();
+    return !mockDevice->mockIsOpenEnabled();
+}
+
 QString SciMockDeviceModel::getLatestMockDeviceName() const {
     return "MOCK" + QString::number(latestMockIdx_).rightJustified(3, '0');
 }
 
-QByteArray SciMockDeviceModel::getMockDeviceId(QString deviceName) const {
+QByteArray SciMockDeviceModel::getMockDeviceId(const QString& deviceName) const {
     return MockDevice::createDeviceId(deviceName);
 }
 
@@ -146,18 +186,11 @@ QVariant SciMockDeviceModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    const DevicePtr device = platforms_.at(row)->getDevice();
-    const MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
-    if (mockDevice == nullptr) {
-        qCCritical(logCategorySci) << "Invalid pointer when acquiring data";
-        return QVariant();
-    }
-
     switch (role) {
     case DeviceIdRole:
-        return mockDevice->deviceId();
+        return platforms_.at(row).deviceId_;
     case DeviceNameRole:
-        return mockDevice->deviceName();
+        return platforms_.at(row).deviceName_;
     }
 
     return QVariant();
