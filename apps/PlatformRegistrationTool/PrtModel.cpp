@@ -21,22 +21,7 @@ PrtModel::PrtModel(QObject *parent)
       downloadManager_(&networkManager_),
       authenticator_(&restClient_)
 {
-    QString configFilePath = resolveConfigFilePath();
-
-    qCDebug(logCategoryPrt) << "config file:" << configFilePath;
-
-    QSettings settings(configFilePath, QSettings::IniFormat);
-
-    cloudServiceUrl_ = settings.value("cloud-service/url").toUrl();
-    serverType_ = settings.value("cloud-service/server").toString();
-
-    if (cloudServiceUrl_.isValid() == false) {
-        qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
-    }
-
-    if (cloudServiceUrl_.scheme().isEmpty()) {
-        qCCritical(logCategoryPrt) << "cloud service url does not have scheme:" << cloudServiceUrl_.toString();
-    }
+    readConfigFile();
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
@@ -222,7 +207,7 @@ void PrtModel::downloadBinaries(
 
     if (bootloaderUrl.isEmpty() == false) {
         strata::DownloadManager::DownloadRequestItem bootloaderItem;
-        bootloaderItem.url = cloudServiceUrl_.resolved(bootloaderUrl);
+        bootloaderItem.url = fileServiceUrl_.resolved(bootloaderUrl);
         bootloaderItem.md5 = bootloaderMd5;
         bootloaderItem.filePath = bootloaderFile_->fileName();
         downloadRequestList << bootloaderItem;
@@ -233,7 +218,7 @@ void PrtModel::downloadBinaries(
 
     if (firmwareUrl.isEmpty() == false) {
         strata::DownloadManager::DownloadRequestItem firmwareItem;
-        firmwareItem.url = cloudServiceUrl_.resolved(firmwareUrl);
+        firmwareItem.url = fileServiceUrl_.resolved(firmwareUrl);
         firmwareItem.md5 = firmwareMd5;
         firmwareItem.filePath = firmwareFile_->fileName();
         downloadRequestList << firmwareItem;
@@ -584,6 +569,35 @@ QString PrtModel::resolveConfigFilePath()
 #endif
 
     return applicationDir.filePath("prt-config.ini");
+}
+
+void PrtModel::readConfigFile()
+{
+    QString configFilePath = resolveConfigFilePath();
+
+    qCDebug(logCategoryPrt) << "config file:" << configFilePath;
+
+    QSettings settings(configFilePath, QSettings::IniFormat);
+
+    cloudServiceUrl_ = settings.value("cloud-service/url").toUrl();
+    serverType_ = settings.value("cloud-service/server").toString();
+    fileServiceUrl_ = settings.value("file-service/url").toUrl();
+
+    if (cloudServiceUrl_.isValid() == false) {
+        qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
+    }
+
+    if (cloudServiceUrl_.scheme().isEmpty()) {
+        qCCritical(logCategoryPrt) << "cloud service url does not have scheme:" << cloudServiceUrl_.toString();
+    }
+
+    if (fileServiceUrl_.isValid() == false) {
+        qCCritical(logCategoryPrt) << "file service url is not valid:" << fileServiceUrl_.toString();
+    }
+
+    if (fileServiceUrl_.scheme().isEmpty()) {
+        qCCritical(logCategoryPrt) << "file service url does not have scheme:" << fileServiceUrl_.toString();
+    }
 }
 
 QString PrtModel::serverType() const
