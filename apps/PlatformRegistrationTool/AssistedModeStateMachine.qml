@@ -263,7 +263,12 @@ BaseStateMachine {
 
             onEntered: {
                 if (prtModel.deviceControllerPlatformId().length > 0 && prtModel.deviceControllerClassId().length > 0) {
-                    stateMachine.controllerRegistered()
+                    if (stateMachine.controllerClassId === prtModel.deviceControllerClassId()) {
+                         stateMachine.controllerRegistered()
+                    } else {
+                        console.warn("controller is already registered with wrong class_id", stateMachine.controllerClassId)
+                        stateMachine.controllerNotRegistered()
+                    }
                 } else {
                     stateMachine.controllerNotRegistered()
                 }
