@@ -320,7 +320,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     }
 
     QJsonParseError parseError;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(platform_list_body.c_str(), &parseError);
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(QByteArray::fromStdString(platform_list_body), &parseError);
     if (parseError.error != QJsonParseError::NoError ) {
         qCCritical(logCategoryHcsStorage) << "Parse error" << parseError.errorString();
         handlePlatformListResponse(clientId, QJsonArray());

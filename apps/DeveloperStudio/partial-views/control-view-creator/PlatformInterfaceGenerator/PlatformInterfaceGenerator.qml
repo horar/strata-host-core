@@ -2,10 +2,11 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
-import tech.strata.sgwidgets 1.0
-import tech.strata.SGUtilsCpp 1.0
 
-Rectangle {
+import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
+
+Item {
     id: root
 
     readonly property var baseModel: ({
@@ -33,7 +34,7 @@ Rectangle {
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
-        "type": generator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
+        "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
         "indexSelected": 0,
         "valid": false,
         "array": [], // This is only filled if the type == "array"
@@ -296,24 +297,10 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 20
 
         AlertToast {
             id: alertToast
-        }
-
-        Text {
-            // Todo: in >1-2 months (past June 2021), remove PIG application from spyglass. Ticket here: https://jira.onsemi.com/browse/CS-1836
-            text: "Notice: PIG has been integrated into SDS/CVC.<br>This independent application is deprecated and will be removed. See documentation for new method of usage."
-            Layout.fillWidth: true
-            Layout.leftMargin: 20
-            Layout.rightMargin: 20
-            wrapMode: Text.Wrap
-            font {
-                bold: true
-                pointSize: 24
-            }
-            horizontalAlignment: Text.AlignHCenter
-            color: "#940000"
         }
 
         Text {
@@ -820,26 +807,25 @@ Rectangle {
 
         let jsonObject = createJsonObject();
         let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
-
-        let result = generator.generate(jsonInputFilePath, outputFileText.text);
+        let result = sdsModel.platformInterfaceGenerator.generate(jsonInputFilePath, outputFileText.text);
         if (!result) {
-            alertToast.text = "Generation Failed: " + generator.lastError
+            alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
 
             alertToast.color = "#D10000"
             alertToast.interval = 0
-        } else if (generator.lastError.length > 0) {
-            alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
+        } else if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
+            alertToast.text = "Generation Succeeded, but with warnings: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
-            debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
+            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         } else {
             alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.color = "green"
             alertToast.interval = 4000
-            debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
+            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         }
         alertToast.show();
     }

@@ -252,9 +252,9 @@ QString ResourceLoader::getVersionJson(const QString &class_id, const QString &v
         return QString();
     }
 
-    QString fileText = versionJsonFile.readAll();
+    QByteArray fileText = versionJsonFile.readAll();
     versionJsonFile.close();
-    QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(fileText);
     QJsonObject docObj = doc.object();
 
     if (!docObj.contains(QString("version"))) {

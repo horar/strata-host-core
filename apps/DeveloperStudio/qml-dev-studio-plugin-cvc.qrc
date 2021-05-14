@@ -16,6 +16,7 @@
         <file alias="Editor/UnsupportedFileType.qml">partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
         <file alias="navigation/SGSideNavItem.qml">partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
         <file alias="navigation/SideNavFooter.qml">partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
+        <file alias="navigation/NavigationBar.qml">partial-views/control-view-creator/navigation/NavigationBar.qml</file>
         <file alias="Sidebar/SideBarDelegate.qml">partial-views/control-view-creator/Sidebar/SideBarDelegate.qml</file>
         <file alias="Sidebar/FileContextMenu.qml">partial-views/control-view-creator/Sidebar/FileContextMenu.qml</file>
         <file alias="Sidebar/FolderContextMenu.qml">partial-views/control-view-creator/Sidebar/FolderContextMenu.qml</file>
@@ -23,12 +24,21 @@
         <file alias="utils/template_selection.js">partial-views/control-view-creator/utils/template_selection.js</file>
         <file alias="Console/ConsoleLogger.qml">partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
         <file alias="Console/ConsoleContainer.qml">partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
+        <file alias="Console/ViewConsoleContainer.qml">partial-views/control-view-creator/Console/ViewConsoleContainer.qml</file>
         <file alias="components/SGControlViewButton.qml">partial-views/control-view-creator/components/SGControlViewButton.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleMessage.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleMessage.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleTime.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTime.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleTypes.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTypes.qml</file>
         <file alias="components/SGControlViewIconButton.qml">partial-views/control-view-creator/components/SGControlViewIconButton.qml</file>
         <file alias="components/SGControlSearchComboBox.qml">partial-views/control-view-creator/components/SGControlSearchComboBox.qml</file>
+        <file alias="components/PlatformInterfaceGeneratorIcon.svg">partial-views/control-view-creator/components/PlatformInterfaceGeneratorIcon.svg</file>
         <file alias="DebugPanel.qml">partial-views/control-view-creator/DebugPanel.qml</file>
+        <file alias="PlatformInterfaceGenerator/PlatformInterfaceGenerator.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PlatformInterfaceGenerator.qml</file>
+        <file alias="PlatformInterfaceGenerator/AlertToast.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/AlertToast.qml</file>
+        <file alias="PlatformInterfaceGenerator/CommandNotificationDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/CommandNotificationDelegate.qml</file>
+        <file alias="PlatformInterfaceGenerator/PayloadArrayPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadArrayPropertyDelegate.qml</file>
+        <file alias="PlatformInterfaceGenerator/PayloadObjectPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadObjectPropertyDelegate.qml</file>
+        <file alias="PlatformInterfaceGenerator/PayloadPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadPropertyDelegate.qml</file>
+        <file alias="PlatformInterfaceGenerator/TypeSelectorComboBox.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/TypeSelectorComboBox.qml</file>
     </qresource>
 </RCC>

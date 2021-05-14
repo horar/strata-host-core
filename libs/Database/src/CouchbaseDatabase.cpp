@@ -138,7 +138,7 @@ QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
         return QJsonObject();
     }
     auto doc_json = doc.properties();
-    return QJsonDocument::fromJson(QString::fromStdString(doc_json.toJSONString()).toUtf8()).object();
+    return QJsonDocument::fromJson(QByteArray::fromStdString(doc_json.toJSONString())).object();
 }
 
 QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
@@ -343,7 +343,7 @@ void CouchbaseDatabase::joinChannel(const QString &strataLoginUsername, const QS
     auto temp_doc = database_->getMutableDocument(database_name_);
     auto read_dict = temp_doc.properties();
 
-    QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+    QJsonDocument json_doc = QJsonDocument::fromJson(QByteArray::fromStdString(read_dict.toJSONString()));
     QJsonArray channels_arr = json_doc[channel].toArray();
     channels_arr.append(strataLoginUsername);
 
@@ -359,7 +359,7 @@ void CouchbaseDatabase::leaveChannel(const QString &strataLoginUsername, const Q
     auto temp_doc = database_->getMutableDocument(database_name_);
     auto read_dict = temp_doc.properties();
 
-    QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+    QJsonDocument json_doc = QJsonDocument::fromJson(QByteArray::fromStdString(read_dict.toJSONString()));
     QJsonArray channels_arr = json_doc[channel].toArray();
 
     // find matching value

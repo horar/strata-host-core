@@ -4,7 +4,6 @@ import QtQuick.Controls 2.12
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
-import tech.strata.ResourceLoader 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 

@@ -13,6 +13,7 @@ import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
 import "Console"
+import "PlatformInterfaceGenerator"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -28,8 +29,10 @@ Rectangle {
     onDebugPlatformChanged: {
         recompileControlViewQrc();
     }
+
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
+    property bool isConsoleLogOpen: false
 
     SGUserSettings {
         id: sgUserSettings
@@ -111,11 +114,11 @@ Rectangle {
         buttons: [okButtonObject]
 
         property var okButtonObject: ({
-            buttonText: "Ok",
-            buttonColor: acceptButtonColor,
-            buttonHoverColor: acceptButtonHoverColor,
-            closeReason: acceptCloseReason
-        });
+                                          buttonText: "Ok",
+                                          buttonColor: acceptButtonColor,
+                                          buttonHoverColor: acceptButtonHoverColor,
+                                          closeReason: acceptCloseReason
+                                      });
 
         titleText: "Missing Control.qml"
         popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
@@ -127,136 +130,8 @@ Rectangle {
         }
         spacing:  0
 
-        Rectangle {
-            id: tool
-            Layout.fillHeight: true
-            Layout.preferredWidth: 71
-            Layout.maximumWidth: 71
-            Layout.alignment: Qt.AlignTop
-            color: "#444"
-
-            Rectangle {
-                // divider
-                color: "black"
-                width: 2
-                height: parent.height
-                anchors.right: parent.right
-                opacity: .25
-            }
-
-            ColumnLayout {
-                id: toolBarListView
-
-                anchors.fill: parent
-                spacing: 5
-
-                property int currentIndex: 0
-                property int startTab: 0
-                property int editTab: 1
-                property int viewTab: 2
-                property int debugTab: 3
-
-                onCurrentIndexChanged: {
-                    switch (currentIndex) {
-                    case startTab:
-                        viewStack.currentIndex = 0
-                        break;
-                    case editTab:
-                        viewStack.currentIndex = 1
-                        break;
-                    case viewTab:
-                        if (rccInitialized == false) {
-                            recompileControlViewQrc();
-                        } else {
-                            viewStack.currentIndex = 2
-                        }
-
-                        break;
-                    default:
-                        viewStack.currentIndex = 0
-                        break;
-                    }
-                }
-
-                /*****************************************
-                  Main Navigation Items
-                    * Start
-                    * Editor
-                    * View
-                *****************************************/
-                Repeater {
-                    id: mainNavItems
-
-                    model: [
-                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start", description: "Go to the start screen." },
-                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit", description: "Edit your control view project." },
-                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View", description: "View your control view" },
-                    ]
-
-                    delegate: SGSideNavItem {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 70
-                        modelIndex: index
-                        tooltipDescription: modelData.description
-                        iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
-                    }
-                }
-
-                /*****************************************
-                  Additional items go below here, but above filler
-                *****************************************/
-
-                SGSideNavItem {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-                    modelIndex: toolBarListView.debugTab
-                    iconText: "Debug"
-                    iconSource: "qrc:/sgimages/tools.svg"
-                    enabled: viewStack.currentIndex === 2 && debugPanel.visible
-                    color: debugPanel.expanded ? Theme.palette.green : "transparent"
-                    tooltipDescription: "Toggle debug panel"
-
-                    function onClicked() {
-                        if (debugPanel.expanded) {
-                            debugPanel.collapse()
-                        } else {
-                            debugPanel.expand()
-                        }
-                    }
-                }
-
-                SGSideNavItem {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-                    iconText: "Logs"
-                    iconSource: "qrc:/sgimages/bars.svg"
-                    color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
-                    enabled: !startContainer.visible
-                    tooltipDescription: "Toggle logger panel"
-
-                    function onClicked() {
-                        if(consoleContainer.visible){
-                            consoleContainer.visible = false
-                        } else {
-                            consoleContainer.visible = true
-                        }
-                    }
-                }
-
-                Item {
-                    id: filler
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
-
-                SideNavFooter {
-                    id: footer
-                    Layout.preferredHeight: 70
-                    Layout.minimumHeight: footer.implicitHeight
-                    Layout.fillWidth: true
-                }
-
-            }
+        NavigationBar {
+            id: navigationBar
         }
 
         SGSplitView {
@@ -265,28 +140,21 @@ Rectangle {
             orientation: Qt.Vertical
 
             StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            Start {
-                id: startContainer
+                id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                onVisibleChanged: {
-                    if(visible){
-                        consoleContainer.visible = false
-                    }
+                Start {
+                    id: startContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                 }
-            }
 
-            Editor {
-                id: editor
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
+                Editor {
+                    id: editor
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
                 SGSplitView {
                     id: controlViewContainer
@@ -318,10 +186,6 @@ Rectangle {
                                 delete NavigationControl.context.device_id
 
                                 recompileRequested = false
-                                if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                        || source === NavigationControl.screens.LOAD_ERROR) {
-                                    viewStack.currentIndex = 2
-                                }
                             } else if (status === Loader.Error) {
                                 // Tear Down creation context
                                 delete NavigationControl.context.class_id
@@ -341,12 +205,35 @@ Rectangle {
                         Layout.fillHeight: true
                     }
                 }
+
+                PlatformInterfaceGenerator {
+                    id: platformInterfaceGenerator
+                }
             }
 
-            ConsoleContainer {
-                id:consoleContainer
+            Item {
+                id: editViewConsoleContainer
+                Layout.minimumHeight: 30
+                implicitHeight: 200
+                Layout.fillWidth: true
+                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true
             }
         }
+    }
+
+    ConsoleContainer {
+        id:consoleContainer
+        parent: (viewStack.currentIndex === 1) ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
+        onClicked: {
+            isConsoleLogOpen = false
+        }
+    }
+
+    ViewConsoleContainer {
+        id: viewConsoleLog
+        width: parent.width - 71
+        implicitHeight: parent.height
+        visible: viewStack.currentIndex === 2 &&  isConsoleLogOpen === true
     }
 
     ConfirmClosePopup {
