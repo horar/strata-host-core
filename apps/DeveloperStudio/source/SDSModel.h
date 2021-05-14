@@ -29,7 +29,7 @@ class SDSModel: public QObject
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
     Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
-    Q_PROPERTY(strata::loggers::QtLogger* logger READ logger CONSTANT)
+    Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -46,7 +46,7 @@ public:
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
     DebugMenuGenerator* debugMenuGenerator() const;
     strata::sds::config::UrlConfig* urls() const;
-    strata::loggers::QtLogger *logger() const;
+    strata::loggers::QtLogger *qtLogger() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 

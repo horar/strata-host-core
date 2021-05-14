@@ -193,7 +193,7 @@ strata::sds::config::UrlConfig *SDSModel::urls() const
     return urlConfig_;
 }
 
-strata::loggers::QtLogger *SDSModel::logger() const
+strata::loggers::QtLogger *SDSModel::qtLogger() const
 {
     return &strata::loggers::QtLogger::instance();
 }
