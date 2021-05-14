@@ -14,7 +14,7 @@
 
 #include <QStandardPaths>
 
-#include <memory>  // std::addressof
+#include <memory>
 
 #ifdef Q_OS_WIN
 #include <ShlObj.h>
