@@ -266,7 +266,7 @@ BaseStateMachine {
                     if (stateMachine.controllerClassId === prtModel.deviceControllerClassId()) {
                          stateMachine.controllerRegistered()
                     } else {
-                        console.warn(Logger.prtCategory, "controller is already registered with wrong class_id", stateMachine.controllerClassId)
+                        console.warn(Logger.prtCategory, "controller is already registered with wrong class_id", prtModel.deviceControllerClassId())
                         stateMachine.controllerNotRegistered()
                     }
                 } else {
