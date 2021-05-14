@@ -156,7 +156,7 @@ FocusScope {
                 SGWidgets.SGText {
                     id: mockCommandComboBoxLabel
                     fontSizeMultiplier: 1.2
-                    text: "Command:"
+                    text: "Input Command:"
                 }
 
                 SGWidgets.SGComboBox {
@@ -164,7 +164,7 @@ FocusScope {
                     model: sciModel.mockDevice.mockCommandModel
                     textRole: "name"
                     ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Command to be replied with a custom Response")
+                    ToolTip.text: qsTr("Command which is to be replied with a custom Response")
                     ToolTip.delay: 1000
 
                     onActivated: {
@@ -184,7 +184,7 @@ FocusScope {
                 SGWidgets.SGText {
                     id: mockResponseComboBoxLabel
                     fontSizeMultiplier: 1.2
-                    text: "Response:"
+                    text: "Output Response:"
                 }
 
                 SGWidgets.SGComboBox {
@@ -212,7 +212,7 @@ FocusScope {
                 SGWidgets.SGText {
                     id: mockVersionComboBoxLabel
                     fontSizeMultiplier: 1.2
-                    text: "Version:"
+                    text: "Communication Protocol Version:"
                 }
 
                 SGWidgets.SGComboBox {
@@ -220,7 +220,7 @@ FocusScope {
                     model: sciModel.mockDevice.mockVersionModel
                     textRole: "name"
                     ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Version of device which affects sent Response")
+                    ToolTip.text: qsTr("Version of protocol used for communication")
                     ToolTip.delay: 1000
 
                     onActivated: {

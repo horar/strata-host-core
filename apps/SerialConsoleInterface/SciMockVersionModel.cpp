@@ -107,6 +107,6 @@ void SciMockVersionModel::setModelRoles()
 void SciMockVersionModel::setModelData()
 {
     versions_.clear();
-    versions_.push_back({MockVersion::Version_1, "Version 1"});
-    versions_.push_back({MockVersion::Version_2, "Version 2"});
+    versions_.push_back({MockVersion::Version_1, "Version 1 (non-OTA)"});
+    versions_.push_back({MockVersion::Version_2, "Version 2 (OTA)"});
 }
