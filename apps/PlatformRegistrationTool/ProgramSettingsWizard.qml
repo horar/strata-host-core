@@ -546,7 +546,7 @@ FocusScope {
     }
 
     function findPlatform(opn) {
-        findPlatformDelayTimer.opn = opn
+        findPlatformDelayTimer.opn = opn.trim()
         findPlatformDelayTimer.restart()
     }
 
