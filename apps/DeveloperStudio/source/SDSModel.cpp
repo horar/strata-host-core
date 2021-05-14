@@ -12,7 +12,9 @@
 
 #include <QThread>
 
-#include<QStandardPaths>
+#include <QStandardPaths>
+
+#include <memory>
 
 #ifdef Q_OS_WIN
 #include <ShlObj.h>
@@ -193,9 +195,9 @@ strata::sds::config::UrlConfig *SDSModel::urls() const
     return urlConfig_;
 }
 
-strata::loggers::QtLogger *SDSModel::logger() const
+strata::loggers::QtLogger *SDSModel::qtLogger() const
 {
-    return &strata::loggers::QtLogger::instance();
+    return std::addressof(strata::loggers::QtLogger::instance());
 }
 
 void SDSModel::shutdownService()
