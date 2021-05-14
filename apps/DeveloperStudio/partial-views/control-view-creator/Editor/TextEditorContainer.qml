@@ -278,6 +278,8 @@ Item {
             bottom: parent.bottom
         }
 
+        onJavaScriptConsoleMessage: console.log(message)
+
         onHeightChanged: {
             var htmlHeight = height - 16
             channelObject.setContainerHeight(htmlHeight.toString())
