@@ -32,11 +32,23 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.textFieldProperty = "thickness"
-             menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
+            menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
             menuLoader.item.open()
             menuLoader.item.validator = inputValidator
             menuLoader.item.label = "Enter A Number. Thickness can only contain numbers."
             menuLoader.item.isString = false
+            contextMenu.close()
+        }
+    }
+
+    ContextMenuButton {
+        text: "Set Orientation"
+        onClicked: {
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
+            menuLoader.active = true
+            menuLoader.item.parentProperty = "orientation"
+            menuLoader.item.open()
+            menuLoader.item.label = "Select the divider orientation."
             contextMenu.close()
         }
     }

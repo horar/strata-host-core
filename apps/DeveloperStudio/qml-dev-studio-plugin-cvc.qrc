@@ -35,23 +35,23 @@
         <file alias="Editor/VisualEditor/VisualEditorMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml</file>
         <file alias="Editor/VisualEditor/VisualEditorFunctions.qml">partial-views/control-view-creator/Editor/VisualEditor/VisualEditorFunctions.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/ContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/ContextMenu.qml</file>
-
         <file alias="Editor/VisualEditor/LayoutOverlay/ContextMenuButton.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/ContextMenuButton.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutOverlay.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutOverlay.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/RenamePopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/RenamePopup.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSwitchContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSwitchContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGDividerContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGDividerContextMenu.qml</file>
-
         <file alias="Editor/VisualEditor/LayoutOverlay/resize.svg">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/resize.svg</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml</file>
-
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGGraphContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGGraphContextMenu.qml</file>
 	<file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGTextContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGTextContextMenu.qml</file>
+	<file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGInfoBoxContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGInfoBoxContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml</file>
 	<file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml</file>
+	<file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml</file>
         <file alias="components/MenuButton.qml">partial-views/control-view-creator/components/MenuButton.qml</file>
-<file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml</file>
+	<file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml</file>
+	
     </qresource>
 </RCC>
