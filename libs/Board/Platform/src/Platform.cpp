@@ -103,20 +103,24 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString err
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
-    retryInterval_ = retryInterval;
     abortReconnect();
+    retryInterval_ = retryInterval;
     openDevice();
 }
 
 void Platform::close(const std::chrono::milliseconds waitInterval, const std::chrono::milliseconds retryInterval) {
-    retryInterval_ = retryInterval;
     abortReconnect();
+    retryInterval_ = retryInterval;
     closeDevice(waitInterval);
 }
 
-void Platform::abortReconnect() {
-    if (reconnectTimer_.isActive())
-        reconnectTimer_.stop();
+void Platform::terminate(bool close) {
+    abortReconnect();
+    retryInterval_ = std::chrono::milliseconds::zero();
+    if (close) {
+        closeDevice(std::chrono::milliseconds::zero());
+    }
+    emit terminated(device_->deviceId());
 }
 
 // public method
@@ -324,6 +328,11 @@ void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
     if (waitInterval != std::chrono::milliseconds::zero()) {
         reconnectTimer_.start(waitInterval.count());
     }
+}
+
+void Platform::abortReconnect() {
+    if (reconnectTimer_.isActive())
+        reconnectTimer_.stop();
 }
 
 }  // namespace
