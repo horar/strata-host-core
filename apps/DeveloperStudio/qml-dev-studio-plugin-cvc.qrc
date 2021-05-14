@@ -41,6 +41,7 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSwitchContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSwitchContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGDividerContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGDividerContextMenu.qml</file>
+        <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSliderContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSliderContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/resize.svg">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/resize.svg</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml</file>

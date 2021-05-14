@@ -34,7 +34,6 @@ ColumnLayout {
 
     ContextMenuButton {
         text: "Set X Title"
-
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
@@ -50,7 +49,6 @@ ColumnLayout {
 
     ContextMenuButton {
         text: "Set Y Title"
-
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
@@ -65,7 +63,6 @@ ColumnLayout {
 
     ContextMenuButton {
         text: "Set X Min"
-
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
