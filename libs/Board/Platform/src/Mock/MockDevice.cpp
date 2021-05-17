@@ -153,18 +153,12 @@ MockVersion MockDevice::mockGetVersion() const
 
 bool MockDevice::mockSetOpenEnabled(bool enabled)
 {
-    if (control_.mockSetOpenEnabled(enabled) == true) {
-        return true;
-    }
-    return false;
+    return control_.mockSetOpenEnabled(enabled);
 }
 
 bool MockDevice::mockSetLegacy(bool isLegacy)
 {
-    if (control_.mockSetLegacy(isLegacy) == true) {
-        return true;
-    }
-    return false;
+    return control_.mockSetLegacy(isLegacy);
 }
 
 bool MockDevice::mockSetAutoResponse(bool autoResponse)
@@ -191,34 +185,22 @@ bool MockDevice::mockSetSaveMessages(bool saveMessages)
 
 bool MockDevice::mockSetCommand(MockCommand command)
 {
-    if (control_.mockSetCommand(command) == true) {
-        return true;
-    }
-    return false;
+    return control_.mockSetCommand(command);
 }
 
 bool MockDevice::mockSetResponse(MockResponse response)
 {
-    if (control_.mockSetResponse(response) == true) {
-        return true;
-    }
-    return false;
+    return control_.mockSetResponse(response);
 }
 
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
 {
-    if (control_.mockSetResponseForCommand(response, command) == true) {
-        return true;
-    }
-    return false;
+    return control_.mockSetResponseForCommand(response, command);
 }
 
 bool MockDevice::mockSetVersion(MockVersion version)
 {
-    if (control_.mockSetVersion(version) == true) {
-        return true;
-    }
-    return false;
+    return control_.mockSetVersion(version);
 }
 
 }  // namespace strata::device
