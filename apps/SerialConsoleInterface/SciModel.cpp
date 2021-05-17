@@ -5,8 +5,8 @@
 SciModel::SciModel(QObject *parent)
     : QObject(parent),
       platformManager_(true, true, true),
-      platformModel_(&platformManager_),
-      mockDeviceModel_(&platformManager_)
+      mockDeviceModel_(&platformManager_),
+      platformModel_(&platformManager_)
 {
     platformManager_.init(strata::device::Device::Type::SerialDevice);
     platformManager_.init(strata::device::Device::Type::MockDevice);
@@ -22,12 +22,13 @@ strata::PlatformManager *SciModel::platformManager()
     return &platformManager_;
 }
 
-SciPlatformModel *SciModel::platformModel()
-{
-    return &platformModel_;
-}
-
 SciMockDeviceModel *SciModel::mockDeviceModel()
 {
     return &mockDeviceModel_;
+}
+
+
+SciPlatformModel *SciModel::platformModel()
+{
+    return &platformModel_;
 }

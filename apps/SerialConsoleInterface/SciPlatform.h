@@ -4,9 +4,11 @@
 #include "SciCommandHistoryModel.h"
 #include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
+#include "SciMockDevice.h"
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
+#include <Mock/MockDevice.h>
 #include <QObject>
 #include <QPointer>
 
@@ -16,11 +18,13 @@ class SciPlatform: public QObject {
     Q_DISABLE_COPY(SciPlatform)
 
     Q_PROPERTY(QString deviceId READ deviceId CONSTANT)
+    Q_PROPERTY(strata::device::Device::Type deviceType READ deviceType NOTIFY deviceTypeChanged)
     Q_PROPERTY(QString verboseName READ verboseName NOTIFY verboseNameChanged)
     Q_PROPERTY(QString appVersion READ appVersion NOTIFY appVersionChanged)
     Q_PROPERTY(QString bootloaderVersion READ bootloaderVersion NOTIFY bootloaderVersionChanged)
     Q_PROPERTY(QString deviceName READ deviceName NOTIFY deviceNameChanged)
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
+    Q_PROPERTY(SciMockDevice* mockDevice READ mockDevice CONSTANT)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
@@ -28,7 +32,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
 
 public:
-    SciPlatform(SciPlatformSettings *settings, QObject *parent = nullptr);
+    SciPlatform(SciPlatformSettings *settings, strata::PlatformManager *platformManager, QObject *parent = nullptr);
 
     virtual ~SciPlatform();
 
@@ -40,7 +44,13 @@ public:
     };
     Q_ENUM(PlatformStatus)
 
+    // redeclaration of Type Q_ENUM required for custom-type properties to work properly in QML
+    // because Q_ENUM macro is constrained to the class it is used in and doesn't work well between classes
+    Q_ENUM(strata::device::Device::Type)
+
     QByteArray deviceId();
+    strata::device::Device::Type deviceType();
+    void setDeviceType(const strata::device::Device::Type &type);
     void setPlatform(const strata::platform::PlatformPtr& platform);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
@@ -50,6 +60,7 @@ public:
     void setBootloaderVersion(const QString &bootloaderVersion);
     SciPlatform::PlatformStatus status();
     void setStatus(SciPlatform::PlatformStatus status);
+    SciMockDevice* mockDevice();
     SciScrollbackModel* scrollbackModel();
     SciCommandHistoryModel* commandHistoryModel();
     SciFilterSuggestionModel* filterSuggestionModel();
@@ -69,6 +80,7 @@ public:
     void storeAutoExportPath(const QString &autoExportPath);
 
 signals:
+    void deviceTypeChanged();
     void verboseNameChanged();
     void appVersionChanged();
     void bootloaderVersionChanged();
@@ -76,6 +88,7 @@ signals:
     void errorStringChanged();
     void programInProgressChanged();
     void deviceNameChanged();
+    void mockDeviceChanged();
     void flasherProgramProgress(int chunk, int total);
     void flasherBackupProgress(int chunk, int total);
     void flasherRestoreProgress(int chunk, int total);
@@ -105,6 +118,7 @@ private slots:
 private:
     strata::platform::PlatformPtr platform_;
     QByteArray deviceId_;
+    strata::device::Device::Type deviceType_;
     QString verboseName_;
     QString appVersion_;
     QString bootloaderVersion_;
@@ -113,6 +127,7 @@ private:
     bool programInProgress_ = false;
     QString deviceName_;
 
+    SciMockDevice* mockDevice_;
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;

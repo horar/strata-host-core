@@ -357,7 +357,7 @@ BaseStateMachine {
                     } else if (operation == FlasherConnector.Flash) {
                         if (state == FlasherConnector.Started) {
                             stateMachine.internalSubtext = "Programming"
-                        } else if (state === FlasherConnector.Failed) {
+                        } else if (state == FlasherConnector.Failed) {
                             stateMachine.internalSubtext = errorString
                         }
                     } else if (operation == FlasherConnector.BackupBeforeFlash
@@ -380,7 +380,6 @@ BaseStateMachine {
                 targetState: stateNotifyCloudService
                 signal: prtModel.flasherFinished
                 guard: result == FlasherConnector.Success
-
             }
 
             DSM.SignalTransition {

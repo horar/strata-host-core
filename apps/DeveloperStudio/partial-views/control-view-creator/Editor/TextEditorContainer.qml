@@ -326,6 +326,8 @@ ColumnLayout {
             settings.pluginsEnabled: true
             settings.showScrollBars: false
 
+            onJavaScriptConsoleMessage: console.log(message)
+
             onHeightChanged: {
                 var htmlHeight = height - 16
                 channelObject.setContainerHeight(htmlHeight.toString())
