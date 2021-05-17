@@ -105,6 +105,7 @@ private:
     RestClient restClient_;
     Authenticator authenticator_;
     QUrl cloudServiceUrl_;
+    QUrl fileServiceUrl_;
     QString serverType_;
 
     QString downloadJobId_;
@@ -116,4 +117,5 @@ private:
                 const QString &firmwareUrl = QString());
 
     QString resolveConfigFilePath();
+    void readConfigFile();
 };

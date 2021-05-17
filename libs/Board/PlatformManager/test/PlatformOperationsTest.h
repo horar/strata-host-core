@@ -47,7 +47,7 @@ private:
     void connectRetryGetFirmwareInfoHandler(strata::platform::operation::BasePlatformOperation* operation);
 
     strata::platform::PlatformPtr platform_;
-    std::shared_ptr<strata::device::MockDevice> mockDevice_;
+    strata::device::MockDevicePtr mockDevice_;
     strata::platform::operation::PlatformOperations platformOperations_;
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
