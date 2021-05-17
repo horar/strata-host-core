@@ -92,7 +92,8 @@ enum class MockResponse {
     Flash_firmware_invalid_cmd_sequence,
     Flash_firmware_invalid_value,
 
-    Start_flash_firmware_invalid
+    Start_flash_firmware_invalid,
+    Start_flash_firmware_too_large
 };
 Q_ENUM_NS(MockResponse)
 

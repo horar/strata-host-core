@@ -535,7 +535,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid,MockCommand::Start_flash_firmware);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_too_large,MockCommand::Start_flash_firmware);
 
     flasher_->flashFirmware();
 

@@ -38,9 +38,15 @@ MockResponse MockDeviceControl::mockGetResponse() const
     return response_;
 }
 
+<<<<<<< HEAD
 MockVersion MockDeviceControl::mockGetVersion() const
 {
     return version_;
+=======
+void MockDeviceControl::mockSetAsBootloader(bool isBootloader)
+{
+    isBootloader_ = isBootloader;
+>>>>>>> 9a201f4fa... MockDevice/MockDeviceControl: added set as bootloader capability for MockDevice
 }
 
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
@@ -340,10 +346,7 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 case MockResponse::Start_flash_firmware_invalid: {
                     retVal.push_back(test_commands::start_flash_firmware_response_invalid);
                 } break;
-                case MockResponse::start_flash_firmware_invalid_command: {
-                    retVal.push_back(test_commands::start_flash_firmware_response_invalid_command);
-                } break;
-                case MockResponse::start_flash_firmware_too_large: {
+                case MockResponse::Start_flash_firmware_too_large: {
                     retVal.push_back(test_commands::start_flash_firmware_response_firmware_too_large);
                 } break;
                 default: {

@@ -24,6 +24,7 @@ public:
     MockResponse mockGetResponse() const;
     MockVersion mockGetVersion() const;
 
+    void mockSetAsBootloader(bool isBootloader);
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool legacy);
     bool mockSetCommand(MockCommand command);
