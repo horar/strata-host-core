@@ -579,6 +579,11 @@ Item {
 
                     onClicked: {
                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
+                        if (sourceIndex < 0) {
+                            console.error(Logger.sciCategory, "Index out of scope.")
+                            return
+                        }
+
                         var item = scrollbackView.model.setIsCondensed(sourceIndex, !model.isCondensed)
                         clearSelection()
                     }
@@ -619,6 +624,7 @@ Item {
         for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
             var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
             if (sourceIndex < 0) {
+                console.error(Logger.sciCategory, "Index out of scope.")
                 text = ""
                 break
             }

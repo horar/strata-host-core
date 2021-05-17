@@ -86,17 +86,18 @@ namespace strata::platform {
                    const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
 
         /**
-         * Stop reconnection timer if active.
+         * Terminate all operations
+         * @param close true if device communication channel should be closed, false otherwise
          */
-        void abortReconnect();
+        void terminate(bool close);
 
         /**
          * Send message to device (public).
-         * Emits messageSent() signal in case of success.
          * Emits deviceError() signal in case of failure.
-         * @param msg message to be written to device
+         * @param message message to be written to device
+         * @return true if message can be sent, false otherwise
          */
-        bool sendMessage(const QByteArray msg);
+        bool sendMessage(const QByteArray& message);
 
         // *** Platform properties (start) ***
 
@@ -252,6 +253,11 @@ namespace strata::platform {
         void closed(QByteArray deviceId);
 
         /**
+         * Emitted when device is about to be erased from maps and no more operations shall be executed.
+         */
+        void terminated(QByteArray deviceId);
+
+        /**
          * Emitted when device was identified using Identify operation.
          * @param success true if successfully recognized, otherwise false
          */
@@ -321,12 +327,12 @@ namespace strata::platform {
 
         /**
          * Send message to device using the specified lock Id (internal).
-         * Emits messageSent() signal in case of success.
          * Emits deviceError() signal in case of failure.
-         * @param msg message to be written to device
+         * @param message message to be written to device
          * @param lockId lock Id
+         * @return true if message can be sent, false otherwise
          */
-        bool sendMessage(const QByteArray msg, quintptr lockId);
+        bool sendMessage(const QByteArray& message, quintptr lockId);
 
         /**
          * Informs the device that Identify operation completed
@@ -336,8 +342,21 @@ namespace strata::platform {
         void identifyFinished(bool isRecognized);
       // ***
 
+        /**
+         * Open device communication channel (internal).
+         */
         void openDevice();
+
+        /**
+         * Close device communication channel (internal).
+         * @param waitInterval how long to remain in closed state before re-attempting to open the device (0 - stay closed)
+         */
         void closeDevice(const std::chrono::milliseconds waitInterval);
+
+        /**
+         * Stop reconnection timer if active.
+         */
+        void abortReconnect();
 
     protected:
         device::DevicePtr device_;

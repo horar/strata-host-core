@@ -46,7 +46,7 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
     return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
 }
 
-bool MockDevice::sendMessage(const QByteArray msg)
+bool MockDevice::sendMessage(const QByteArray& msg)
 {
     if (opened_ == false) {
         return false;
@@ -75,12 +75,12 @@ bool MockDevice::isConnected() const
     return opened_;
 }
 
-void MockDevice::mockEmitMessage(const QByteArray msg)
+void MockDevice::mockEmitMessage(const QByteArray& msg)
 {
     emit messageReceived(msg);
 }
 
-void MockDevice::mockEmitResponses(const QByteArray msg)
+void MockDevice::mockEmitResponses(const QByteArray& msg)
 {
     auto responses = control_.getResponses(msg);
     QTimer::singleShot(
@@ -146,6 +146,11 @@ MockResponse MockDevice::mockGetResponse() const
     return control_.mockGetResponse();
 }
 
+MockVersion MockDevice::mockGetVersion() const
+{
+    return control_.mockGetVersion();
+}
+
 bool MockDevice::mockSetOpenEnabled(bool enabled)
 {
     return control_.mockSetOpenEnabled(enabled);
@@ -160,8 +165,10 @@ bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
     if (autoResponse_ != autoResponse) {
         autoResponse_ = autoResponse;
+        qCDebug(logCategoryDeviceMock) << "Configured auto-response to" << autoResponse_;
         return true;
     }
+    qCDebug(logCategoryDeviceMock) << "Auto-response already configured to" << autoResponse_;
     return false;
 }
 
@@ -169,8 +176,10 @@ bool MockDevice::mockSetSaveMessages(bool saveMessages)
 {
     if (saveMessages_ != saveMessages) {
         saveMessages_ = saveMessages;
+        qCDebug(logCategoryDeviceMock) << "Configured save-messages mode to" << saveMessages_;
         return true;
     }
+    qCDebug(logCategoryDeviceMock) << "Save-messages already configured to" << saveMessages_;
     return false;
 }
 

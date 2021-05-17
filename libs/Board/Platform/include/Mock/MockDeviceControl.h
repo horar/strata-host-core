@@ -15,13 +15,14 @@ public:
     explicit MockDeviceControl(QObject *parent = nullptr);
     ~MockDeviceControl() override;
 
-    std::vector<QByteArray> getResponses(QByteArray request);
+    std::vector<QByteArray> getResponses(const QByteArray& request);
 
     bool mockIsOpenEnabled() const;
     bool mockIsLegacy() const;
     bool mockIsBootloader() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
+    MockVersion mockGetVersion() const;
 
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool legacy);
@@ -39,9 +40,9 @@ private:
     bool isOpenEnabled_ = true;
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
     bool isBootloader_ = false;
-    MockCommand command_ = MockCommand::all_commands;
-    MockResponse response_ = MockResponse::normal;
-    MockVersion version_ = MockVersion::version1;
+    MockCommand command_ = MockCommand::Any_command;
+    MockResponse response_ = MockResponse::Normal;
+    MockVersion version_ = MockVersion::Version_1;
 };
 
 } // namespace strata::device

@@ -1,32 +1,42 @@
 #include "SDSModel.h"
 
 #include "DocumentManager.h"
-#include "ResourceLoader.h"
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "ResourceLoader.h"
+#include "DebugMenuGenerator.h"
+#include "PlatformInterfaceGenerator.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QThread>
 
-#include<QStandardPaths>
+#include <QStandardPaths>
+
+#include <memory>
 
 #ifdef Q_OS_WIN
 #include <ShlObj.h>
 #include <Shlwapi.h>
 #endif
 
-SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
+SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
       coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      remoteHcsNode_(new HcsNode(this))
+      platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
+      debugMenuGenerator_(new DebugMenuGenerator(this)),
+      remoteHcsNode_(new HcsNode(this)),
+      urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
+    if (urlConfig_->parseUrl() == false) {
+        delete urlConfig_;
+        urlConfig_ = nullptr;
+    }
 }
 
 SDSModel::~SDSModel()
@@ -35,7 +45,10 @@ SDSModel::~SDSModel()
     delete coreInterface_;
     delete resourceLoader_;
     delete newControlView_;
+    delete platformInterfaceGenerator_;
+    delete debugMenuGenerator_;
     delete remoteHcsNode_;
+    delete urlConfig_;
 }
 
 bool SDSModel::startHcs()
@@ -165,6 +178,26 @@ ResourceLoader *SDSModel::resourceLoader() const
 SGNewControlView *SDSModel::newControlView() const
 {
     return newControlView_;
+}
+
+PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
+{
+    return platformInterfaceGenerator_;
+}
+
+DebugMenuGenerator *SDSModel::debugMenuGenerator() const
+{
+    return debugMenuGenerator_;
+}
+
+strata::sds::config::UrlConfig *SDSModel::urls() const
+{
+    return urlConfig_;
+}
+
+strata::loggers::QtLogger *SDSModel::qtLogger() const
+{
+    return std::addressof(strata::loggers::QtLogger::instance());
 }
 
 void SDSModel::shutdownService()

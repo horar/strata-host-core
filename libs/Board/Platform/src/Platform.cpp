@@ -103,29 +103,34 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString err
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
-    retryInterval_ = retryInterval;
     abortReconnect();
+    retryInterval_ = retryInterval;
     openDevice();
 }
 
 void Platform::close(const std::chrono::milliseconds waitInterval, const std::chrono::milliseconds retryInterval) {
-    retryInterval_ = retryInterval;
     abortReconnect();
+    retryInterval_ = retryInterval;
     closeDevice(waitInterval);
 }
 
-void Platform::abortReconnect() {
-    if (reconnectTimer_.isActive())
-        reconnectTimer_.stop();
+void Platform::terminate(bool close) {
+    abortReconnect();
+    retryInterval_ = std::chrono::milliseconds::zero();
+    if (close) {
+        closeDevice(std::chrono::milliseconds::zero());
+    }
+    emit terminated(device_->deviceId());
 }
 
 // public method
-bool Platform::sendMessage(const QByteArray msg) {
-    return sendMessage(msg, 0);
+bool Platform::sendMessage(const QByteArray& message) {
+    return sendMessage(message, 0);
 }
 
 // private method
-bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
+bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+    QByteArray msgToWrite(message);
     bool canWrite = false;
     {
         QMutexLocker lock(&operationMutex_);
@@ -134,7 +139,11 @@ bool Platform::sendMessage(const QByteArray msg, quintptr lockId) {
         }
     }
     if (canWrite) {
-        return device_->sendMessage(msg);
+        // Strata commands must end with new line character ('\n')
+        if (msgToWrite.endsWith('\n') == false) {
+            msgToWrite.append('\n');
+        }
+        return device_->sendMessage(msgToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
@@ -318,6 +327,12 @@ void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
     emit closed(device_->deviceId());
     if (waitInterval != std::chrono::milliseconds::zero()) {
         reconnectTimer_.start(waitInterval.count());
+    }
+}
+
+void Platform::abortReconnect() {
+    if (reconnectTimer_.isActive()) {
+        reconnectTimer_.stop();
     }
 }
 

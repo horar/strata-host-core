@@ -23,7 +23,17 @@ namespace strata {
         Q_DISABLE_COPY(PlatformManager)
 
     public:
+        /**
+          * PlatformManager constructor
+          * @param requireFwInfoResponse true if response to 'get_firmware_info' command is required, false otherwise
+          * @param keepDevicesOpen true if to keep devices open if Identify operation fails, false otherwise
+          * @param handleIdentify true if PlatformManager performs Identify operation, false otherwise
+          */
         PlatformManager(bool requireFwInfoResponse, bool keepDevicesOpen, bool handleIdentify);
+
+        /**
+          * PlatformManager destructor
+          */
         ~PlatformManager();
 
         /**
@@ -61,7 +71,7 @@ namespace strata {
          * @param closed true if closed platforms are considered, false otherwise
          * @return platform pointer
          */
-        platform::PlatformPtr getPlatform(const QByteArray& deviceId, bool open = true, bool closed = false);
+        platform::PlatformPtr getPlatform(const QByteArray& deviceId, bool open = true, bool closed = false) const;
 
         /**
          * Get list of smart pointers to all the opened and/or closed platforms.
@@ -69,7 +79,7 @@ namespace strata {
          * @param closed true if closed platforms are considered, false otherwise
          * @return list of platform pointers
          */
-        QList<platform::PlatformPtr> getPlatforms(bool open = true, bool closed = false);
+        QList<platform::PlatformPtr> getPlatforms(bool open = true, bool closed = false) const;
 
         /**
          * Get list of device Ids of all the opened and/or closed platforms.
@@ -120,6 +130,7 @@ namespace strata {
         void handlePlatformOpened(QByteArray deviceId);
         void handlePlatformAboutToClose(QByteArray deviceId);
         void handlePlatformClosed(QByteArray deviceId);
+        void handlePlatformTerminated(QByteArray deviceId);
         void handlePlatformRecognized(QByteArray deviceId, bool isRecognized);
         void handlePlatformIdChanged(QByteArray deviceId);
         void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);

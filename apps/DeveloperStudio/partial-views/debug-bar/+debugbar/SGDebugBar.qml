@@ -216,12 +216,12 @@ Item {
 
             Button {
                 id: serverChange
-                enabled: urls.testAuthServer !== ""
+                enabled: sdsModel.urls.testAuthServer !== ""
                 onClicked: {
-                    if (Rest.url !== urls.authServer) {
-                        Rest.url = urls.authServer
+                    if (Rest.url !== sdsModel.urls.authServer) {
+                        Rest.url = sdsModel.urls.authServer
                     } else {
-                        Rest.url = urls.testAuthServer
+                        Rest.url = sdsModel.urls.testAuthServer
                     }
                     Signals.serverChanged()
                 }
@@ -231,7 +231,7 @@ Item {
                 }
 
                 function setButtonText () {
-                    if (Rest.url !== urls.authServer ) {
+                    if (Rest.url !== sdsModel.urls.authServer ) {
                         text = "Switch to Prod Auth Server"
                     } else {
                         text = "Switch to Test Auth Server"

@@ -3,6 +3,7 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
 import QtQuick.Controls 2.12
+import QtQml 2.12
 
 SGWidgets.SGMainWindow {
     id: root
@@ -12,11 +13,73 @@ SGWidgets.SGMainWindow {
     minimumHeight: 600
 
     property int statusBarHeight: logViewerMain.statusBarHeight
+    property var recentFiles: logViewerMain.recentFiles
 
     visible: true
     title: qsTr("Log Viewer")
 
+    Shortcut {
+        sequence: StandardKey.Open
+        onActivated: logViewerMain.getFilePath()
+    }
+
     QtLabsPlatform.MenuBar {
+        QtLabsPlatform.Menu {
+            title: qsTr("&File")
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Open...")
+                shortcut: StandardKey.Open
+                onTriggered: {
+                    logViewerMain.getFilePath()
+                }
+            }
+
+            QtLabsPlatform.Menu {
+                id: recentFilesSubMenu
+                title: qsTr("&Recent Files")
+                enabled: recentFilesInstantiator.count > 0
+
+                Instantiator {
+                    id: recentFilesInstantiator
+                    model: recentFiles
+                    delegate: QtLabsPlatform.MenuItem {
+                        text: qsTr("&%1: %2").arg(index + 1).arg(recentFiles[index])
+                        onTriggered: logViewerMain.loadFiles(["file:" + recentFiles[index]])
+                    }
+
+                    onObjectAdded: recentFilesSubMenu.insertItem(index, object)
+                    onObjectRemoved: recentFilesSubMenu.removeItem(object)
+                }
+
+                QtLabsPlatform.MenuSeparator {}
+
+                QtLabsPlatform.MenuItem {
+                    text: qsTr("&Clear Recent")
+                    onTriggered: {
+                        logViewerMain.clearRecentFiles()
+                    }
+                }
+            }
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Close All Files")
+                onTriggered: {
+                    logViewerMain.closeAllFiles()
+                }
+            }
+
+            QtLabsPlatform.MenuSeparator {}
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Exit")
+                shortcut: "Ctrl+Q"
+                onTriggered: {
+                    root.close()
+                }
+            }
+        }
+
         QtLabsPlatform.Menu {
             title: "Help"
             QtLabsPlatform.MenuItem {
@@ -71,7 +134,7 @@ SGWidgets.SGMainWindow {
 
         focus: true
         Component.onCompleted: {
-            if(Qt.application.arguments.length > 1) {
+            if (Qt.application.arguments.length > 1) {
                 popup.open()
                 loadingTimer.start()
             }

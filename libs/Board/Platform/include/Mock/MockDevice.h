@@ -47,7 +47,7 @@ public:
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false
      */
-    virtual bool sendMessage(const QByteArray msg) override;
+    virtual bool sendMessage(const QByteArray& msg) override;
 
     /**
      * Check if mock device is connected (communication with it is possible).
@@ -57,8 +57,8 @@ public:
 
     // commands to control mock device behavior
 
-    void mockEmitMessage(const QByteArray msg);
-    void mockEmitResponses(const QByteArray msg);
+    void mockEmitMessage(const QByteArray& msg);
+    void mockEmitResponses(const QByteArray& msg);
 
     std::vector<QByteArray> mockGetRecordedMessages();
     std::vector<QByteArray>::size_type mockGetRecordedMessagesCount() const;
@@ -71,6 +71,7 @@ public:
     bool mockIsAutoResponse() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
+    MockVersion mockGetVersion() const;
 
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool isLegacy);
@@ -88,5 +89,7 @@ private:
     std::list<QByteArray> recordedMessages_;
     MockDeviceControl control_;
 };
+
+typedef std::shared_ptr<MockDevice> MockDevicePtr;
 
 }  // namespace strata::device
