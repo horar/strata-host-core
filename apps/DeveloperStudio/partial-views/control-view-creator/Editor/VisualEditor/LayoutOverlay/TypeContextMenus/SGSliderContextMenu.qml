@@ -16,7 +16,7 @@ ColumnLayout {
     }
 
     ContextMenuButton {
-        text: "Set From Text"
+        text: "Set From Value"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
@@ -31,7 +31,7 @@ ColumnLayout {
     }
 
     ContextMenuButton {
-        text: "Set To Text"
+        text: "Set To Value"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
