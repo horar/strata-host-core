@@ -7,10 +7,6 @@ import tech.strata.sci 1.0 as Sci
 FocusScope {
     id: mockSettingsView
 
-    onMockDeviceChanged: {
-        initValues()
-    }
-
     onDeviceTypeChanged: {
         // force close the view in case the same deviceId is reused for non-mock device
         if (deviceType !== Sci.SciPlatform.MockDevice) {
@@ -20,6 +16,7 @@ FocusScope {
 
     property variant mockDevice: model.platform.mockDevice
     property variant deviceType: model.platform.deviceType
+    property bool isValid: mockDevice.isValid
     property int baseSpacing: 10
     property int gridColumnSpacing: 6
 
@@ -46,73 +43,79 @@ FocusScope {
                 font.bold: true
             }
 
-            SGWidgets.SGCheckBox {
-                id: openEnabledCheckBox
-                text: "Device will not reconnect after disconnection"
-                ToolTip.visible: hovered
-                ToolTip.text: qsTr("Simulate faulty device that cannot be reopened")
-                ToolTip.delay: 1000
+            GridLayout {
+                id: mockSettings
+                columns: 2
+                rowSpacing: baseSpacing
+                columnSpacing: gridColumnSpacing
 
-                onCheckedChanged : {
-                    if (mockDevice === null) {
-                        if (checked === false) {
-                            if (sciModel.mockDevice.mockDeviceModel.reopenMockDevice(model.platform.deviceId) === false) {
-                                checked = true
-                            } else {
-                                enabled = false
-                            }
-                        }
-                    } else {
+                SGWidgets.SGCheckBox {
+                    id: openEnabledCheckBox
+                    text: "Device will not reconnect after disconnection"
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Simulate faulty device that cannot be reopened")
+                    ToolTip.delay: 1000
+                    enabled: isValid
+
+                    onCheckStateChanged: {
                         mockDevice.openEnabled = !checked
                     }
-                }
 
-                function init() {
-                    if (mockDevice !== null) {
-                        checked = !mockDevice.openEnabled
-                        enabled = true;
-                    } else {
-                        if (sciModel.mockDevice.mockDeviceModel.canReopenMockDevice(model.platform.deviceId) === true) {
-                            enabled = true;
-                            openEnabledCheckBox.checked = true;
-                        } else {
-                            enabled = false;
-                        }
+                    Binding {
+                        target: openEnabledCheckBox
+                        property: "checked"
+                        value: !mockDevice.openEnabled
                     }
                 }
-            }
 
-            SGWidgets.SGCheckBox {
-                id: legacyModeCheckBox
-                text: "Legacy Mode"
-                ToolTip.visible: hovered
-                ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
-                ToolTip.delay: 1000
-                enabled: mockDevice !== null
-
-                onCheckedChanged : {
-                    mockDevice.legacyMode = checked
+                SGWidgets.SGButton {
+                    text: "Reopen"
+                    enabled: mockDevice.canReopenMockDevice
+                    onClicked: {
+                        mockDevice.reopenMockDevice()
+                    }
                 }
 
-                function init() {
-                    checked = mockDevice.legacyMode
+                SGWidgets.SGCheckBox {
+                    id: legacyModeCheckBox
+                    text: "Legacy Mode"
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
+                    ToolTip.delay: 1000
+                    enabled: isValid
+                    Layout.columnSpan: 2
+                    Layout.alignment: Qt.AlignLeft
+
+                    onCheckStateChanged: {
+                        mockDevice.legacyMode = checked
+                    }
+
+                    Binding {
+                        target: legacyModeCheckBox
+                        property: "checked"
+                        value: mockDevice.legacyMode
+                    }
                 }
-            }
 
-            SGWidgets.SGCheckBox {
-                id: responseDisabledCheckBox
-                text: "Device does not responds"
-                ToolTip.visible: hovered
-                ToolTip.text: qsTr("Simulate faulty device that does not responds")
-                ToolTip.delay: 1000
-                enabled: mockDevice !== null
+                SGWidgets.SGCheckBox {
+                    id: responseDisabledCheckBox
+                    text: "Device does not responds"
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Simulate faulty device that does not responds")
+                    ToolTip.delay: 1000
+                    enabled: isValid
+                    Layout.columnSpan: 2
+                    Layout.alignment: Qt.AlignLeft
 
-                onCheckedChanged : {
-                    mockDevice.autoResponse = !checked
-                }
+                    onCheckStateChanged: {
+                        mockDevice.autoResponse = !checked
+                    }
 
-                function init() {
-                    checked = !mockDevice.autoResponse
+                    Binding {
+                        target: responseDisabledCheckBox
+                        property: "checked"
+                        value: !mockDevice.autoResponse
+                    }
                 }
             }
         }
@@ -138,7 +141,7 @@ FocusScope {
                 right: parent.right
             }
             spacing: baseSpacing
-            enabled: mockDevice !== null
+            enabled: isValid
 
             SGWidgets.SGText {
                 text: "Mock Response Configuration"
@@ -161,7 +164,7 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockCommandComboBox
-                    model: sciModel.mockDevice.mockCommandModel
+                    model: mockDevice.mockCommandModel
                     textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Command which is to be replied with a custom Response")
@@ -176,8 +179,10 @@ FocusScope {
                         }
                     }
 
-                    function init() {
-                        currentIndex = model.find(mockDevice.mockCommand)
+                    Binding {
+                        target: mockCommandComboBox
+                        property: "currentIndex"
+                        value: mockDevice.mockCommandModel.find(mockDevice.mockCommand)
                     }
                 }
 
@@ -189,7 +194,7 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockResponseComboBox
-                    model: sciModel.mockDevice.mockResponseModel
+                    model: mockDevice.mockResponseModel
                     textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Response to be sent for selected Command")
@@ -204,8 +209,10 @@ FocusScope {
                         }
                     }
 
-                    function init() {
-                        currentIndex = model.find(mockDevice.mockResponse)
+                    Binding {
+                        target: mockResponseComboBox
+                        property: "currentIndex"
+                        value: mockDevice.mockResponseModel.find(mockDevice.mockResponse)
                     }
                 }
 
@@ -217,7 +224,7 @@ FocusScope {
 
                 SGWidgets.SGComboBox {
                     id: mockVersionComboBox
-                    model: sciModel.mockDevice.mockVersionModel
+                    model: mockDevice.mockVersionModel
                     textRole: "name"
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Version of protocol used for communication")
@@ -232,8 +239,10 @@ FocusScope {
                         }
                     }
 
-                    function init() {
-                        currentIndex = model.find(mockDevice.mockVersion)
+                    Binding {
+                        target: mockVersionComboBox
+                        property: "currentIndex"
+                        value: mockDevice.mockVersionModel.find(mockDevice.mockVersion)
                     }
                 }
             }
@@ -256,16 +265,5 @@ FocusScope {
     function closeView() {
         model.platform.scrollbackModel.clearAutoExportError()
         StackView.view.pop();
-    }
-
-    function initValues() {
-        openEnabledCheckBox.init()
-        if (mockDevice !== null) {
-            legacyModeCheckBox.init()
-            responseDisabledCheckBox.init()
-            mockCommandComboBox.init()
-            mockResponseComboBox.init()
-            mockVersionComboBox.init()
-        }
     }
 }

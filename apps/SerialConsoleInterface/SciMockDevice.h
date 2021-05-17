@@ -1,10 +1,11 @@
 #pragma once
 
-#include <PlatformManager.h>
-#include "SciMockDeviceModel.h"
 #include "SciMockCommandModel.h"
 #include "SciMockResponseModel.h"
 #include "SciMockVersionModel.h"
+
+#include <PlatformManager.h>
+#include <Mock/MockDevice.h>
 
 #include <QObject>
 
@@ -13,24 +14,62 @@ class SciMockDevice : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(SciMockDevice)
 
-    Q_PROPERTY(SciMockDeviceModel* mockDeviceModel READ mockDeviceModel CONSTANT)
+public:
+    Q_PROPERTY(bool isValid READ isValid NOTIFY isValidChanged)
+    Q_PROPERTY(bool canReopenMockDevice READ canReopenMockDevice NOTIFY canReopenMockDeviceChanged)
+    Q_PROPERTY(bool openEnabled READ mockIsOpenEnabled WRITE mockSetOpenEnabled NOTIFY openEnabledChanged)
+    Q_PROPERTY(bool legacyMode READ mockIsLegacy WRITE mockSetLegacy NOTIFY legacyModeChanged)
+    Q_PROPERTY(bool autoResponse READ mockIsAutoResponse WRITE mockSetAutoResponse NOTIFY autoResponseChanged)
+    Q_PROPERTY(strata::device::MockCommand mockCommand READ mockGetCommand WRITE mockSetCommand NOTIFY mockCommandChanged)
+    Q_PROPERTY(strata::device::MockResponse mockResponse READ mockGetResponse WRITE mockSetResponse NOTIFY mockResponseChanged)
+    Q_PROPERTY(strata::device::MockVersion mockVersion READ mockGetVersion WRITE mockSetVersion NOTIFY mockVersionChanged)
     Q_PROPERTY(SciMockCommandModel* mockCommandModel READ mockCommandModel CONSTANT)
     Q_PROPERTY(SciMockResponseModel* mockResponseModel READ mockResponseModel CONSTANT)
     Q_PROPERTY(SciMockVersionModel* mockVersionModel READ mockVersionModel CONSTANT)
 
-public:
     explicit SciMockDevice(strata::PlatformManager *platformManager);
     virtual ~SciMockDevice();
-    void init();
 
-    SciMockDeviceModel* mockDeviceModel();
+    void setMockDevice(const strata::device::MockDevicePtr& mockDevice);
+
+    Q_INVOKABLE bool reopenMockDevice();
+
     SciMockCommandModel* mockCommandModel();
     SciMockResponseModel* mockResponseModel();
     SciMockVersionModel* mockVersionModel();
 
+    bool isValid() const;
+    bool canReopenMockDevice() const;
+    bool mockIsOpenEnabled() const;
+    bool mockIsLegacy() const;
+    bool mockIsAutoResponse() const;
+    strata::device::MockCommand mockGetCommand() const;
+    strata::device::MockResponse mockGetResponse() const;
+    strata::device::MockVersion mockGetVersion() const;
+
+    void mockSetDeviceId(const QByteArray& deviceId);
+    void mockSetOpenEnabled(bool enabled);
+    void mockSetLegacy(bool isLegacy);
+    void mockSetAutoResponse(bool autoResponse);
+    void mockSetCommand(strata::device::MockCommand command);
+    void mockSetResponse(strata::device::MockResponse response);
+    void mockSetVersion(strata::device::MockVersion version);
+
+signals:
+    void isValidChanged();
+    void canReopenMockDeviceChanged();
+    void openEnabledChanged();
+    void legacyModeChanged();
+    void autoResponseChanged();
+    void mockCommandChanged();
+    void mockResponseChanged();
+    void mockVersionChanged();
+
 private:
-    SciMockDeviceModel mockDeviceModel_;
+    QByteArray deviceId_;
+    strata::PlatformManager *platformManager_;
     SciMockCommandModel mockCommandModel_;
     SciMockResponseModel mockResponseModel_;
     SciMockVersionModel mockVersionModel_;
+    strata::device::MockDevicePtr mockDevice_;
 };

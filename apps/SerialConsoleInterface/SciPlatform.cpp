@@ -9,9 +9,9 @@
 #include <QDir>
 #include <QSaveFile>
 
-
 SciPlatform::SciPlatform(
         SciPlatformSettings *settings,
+        strata::PlatformManager *platformManager,
         QObject *parent)
     : QObject(parent),
       settings_(settings)
@@ -19,6 +19,7 @@ SciPlatform::SciPlatform(
     verboseName_ = "Unknown Board";
     status_ = PlatformStatus::Disconnected;
 
+    mockDevice_ = new SciMockDevice(platformManager);
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
@@ -26,6 +27,7 @@ SciPlatform::SciPlatform(
 
 SciPlatform::~SciPlatform()
 {
+    mockDevice_->deleteLater();
     scrollbackModel_->deleteLater();
     commandHistoryModel_->deleteLater();
     filterSuggestionModel_->deleteLater();
@@ -59,15 +61,16 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 
         disconnect(platform_.get(), nullptr, this, nullptr);
         platform_.reset();
-        setMockDevice(nullptr);
+        mockDevice_->setMockDevice(nullptr);
         setStatus(PlatformStatus::Disconnected);
     } else {
         platform_ = platform;
         deviceId_ = platform_->deviceId();
         setDeviceType(platform_->deviceType());
+        mockDevice_->mockSetDeviceId(deviceId_);
         if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
             strata::device::DevicePtr device = platform_->getDevice();
-            setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
+            mockDevice_->setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
         }
 
         connect(platform_.get(), &strata::platform::Platform::messageReceived, this, &SciPlatform::messageFromDeviceHandler);
@@ -130,16 +133,9 @@ void SciPlatform::setStatus(SciPlatform::PlatformStatus status)
     }
 }
 
-strata::device::MockDevice* SciPlatform::mockDevice() const {
-    return mockDevice_.get();
-}
-
-void SciPlatform::setMockDevice(const strata::device::MockDevicePtr& mockDevice)
+SciMockDevice* SciPlatform::mockDevice()
 {
-    if (mockDevice_ != mockDevice) {
-        mockDevice_ = mockDevice;
-        emit mockDeviceChanged();
-    }
+    return mockDevice_;
 }
 
 SciScrollbackModel *SciPlatform::scrollbackModel()

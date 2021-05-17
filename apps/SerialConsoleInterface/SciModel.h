@@ -2,7 +2,7 @@
 
 #include <PlatformManager.h>
 #include "SciPlatformModel.h"
-#include "SciMockDevice.h"
+#include "SciMockDeviceModel.h"
 
 #include <QObject>
 
@@ -12,19 +12,19 @@ class SciModel : public QObject
     Q_DISABLE_COPY(SciModel)
 
     Q_PROPERTY(strata::PlatformManager* platformManager READ platformManager CONSTANT)
+    Q_PROPERTY(SciMockDeviceModel* mockDeviceModel READ mockDeviceModel CONSTANT)
     Q_PROPERTY(SciPlatformModel* platformModel READ platformModel CONSTANT)
-    Q_PROPERTY(SciMockDevice* mockDevice READ mockDevice CONSTANT)
 
 public:
     explicit SciModel(QObject *parent = nullptr);
     virtual ~SciModel();
 
     strata::PlatformManager* platformManager();
+    SciMockDeviceModel* mockDeviceModel();
     SciPlatformModel* platformModel();
-    SciMockDevice* mockDevice();
 
 private:
     strata::PlatformManager platformManager_;
+    SciMockDeviceModel mockDeviceModel_;
     SciPlatformModel platformModel_;
-    SciMockDevice mockDevice_;
 };

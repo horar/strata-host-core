@@ -5,12 +5,9 @@
 
 using strata::PlatformManager;
 using strata::device::Device;
-using strata::device::DevicePtr;
 using strata::device::MockDevice;
-using strata::device::MockDevicePtr;
 using strata::device::scanner::DeviceScanner;
 using strata::device::scanner::MockDeviceScanner;
-using strata::platform::Platform;
 using strata::platform::PlatformPtr;
 
 SciMockDeviceModel::SciMockDeviceModel(PlatformManager *platformManager):
@@ -105,69 +102,6 @@ void SciMockDeviceModel::disconnectAllMockDevices() {
     }
 
     return static_cast<MockDeviceScanner*>(scanner_.get())->mockAllDevicesLost();
-}
-
-bool SciMockDeviceModel::reopenMockDevice(const QByteArray& deviceId)
-{
-    PlatformPtr platform = platformManager_->getPlatform(deviceId, false, true);
-    if (platform == nullptr) {
-        qCDebug(logCategorySci) << "Closed Mock Device not found (probably already erased):" << deviceId;
-        return false;
-    }
-
-    if (platform->deviceType() != strata::device::Device::Type::MockDevice) {
-        qCWarning(logCategorySci) << "non-Mock device acquired, it cannot be reopen:" << deviceId;
-        return false;
-    }
-
-    DevicePtr device = platform->getDevice();
-    if (device == nullptr) {
-        qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId;
-        return false;
-    }
-
-    MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
-    if (mockDevice == nullptr) {
-        qCCritical(logCategorySci) << "Corrupt device pointer in platform:" << deviceId;
-        return false;
-    }
-
-    if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
-        mockDevice->mockSetOpenEnabled(true);
-        qCDebug(logCategorySci) << "Mock Device configured to open during next interval:" << deviceId;
-        return true;
-    }
-
-    qCWarning(logCategorySci) << "Mock Device in invalid state:" << deviceId;
-    return false;
-}
-
-bool SciMockDeviceModel::canReopenMockDevice(const QByteArray& deviceId) const {
-    const PlatformPtr platform = platformManager_->getPlatform(deviceId, true, true);
-    if (platform == nullptr) {
-        qCDebug(logCategorySci) << "Mock Device not found:" << deviceId;
-        return false;
-    }
-
-    if (platform->deviceType() != strata::device::Device::Type::MockDevice) {
-        qCWarning(logCategorySci) << "non-Mock device acquired:" << deviceId;
-        return false;
-    }
-
-    const DevicePtr device = platform->getDevice();
-    if (device == nullptr) {
-        qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId;
-        return false;
-    }
-
-    const MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
-    if (mockDevice == nullptr) {
-        qCCritical(logCategorySci) << "Corrupt device pointer in platform:" << deviceId;
-        return false;
-    }
-
-    qCDebug(logCategorySci) << "Mock Device is valid:" << deviceId << "open enabled:" << mockDevice->mockIsOpenEnabled();
-    return !mockDevice->mockIsOpenEnabled();
 }
 
 QString SciMockDeviceModel::getLatestMockDeviceName() const {

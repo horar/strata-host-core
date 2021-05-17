@@ -11,13 +11,6 @@ class MockDevice : public Device
     Q_OBJECT
     Q_DISABLE_COPY(MockDevice)
 
-    Q_PROPERTY(bool openEnabled READ mockIsOpenEnabled WRITE mockSetOpenEnabled NOTIFY openEnabledChanged)
-    Q_PROPERTY(bool legacyMode READ mockIsLegacy WRITE mockSetLegacy NOTIFY legacyModeChanged)
-    Q_PROPERTY(bool autoResponse READ mockIsAutoResponse WRITE mockSetAutoResponse NOTIFY autoResponseChanged)
-    Q_PROPERTY(strata::device::MockCommand mockCommand READ mockGetCommand WRITE mockSetCommand NOTIFY mockCommandChanged)
-    Q_PROPERTY(strata::device::MockResponse mockResponse READ mockGetResponse WRITE mockSetResponse NOTIFY mockResponseChanged)
-    Q_PROPERTY(strata::device::MockVersion mockVersion READ mockGetVersion WRITE mockSetVersion NOTIFY mockVersionChanged)
-
 public:
     /**
      * MockDevice constructor
@@ -88,14 +81,6 @@ public:
     bool mockSetResponse(MockResponse response);
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
-
-signals:
-    void openEnabledChanged();
-    void legacyModeChanged();
-    void autoResponseChanged();
-    void mockCommandChanged();
-    void mockResponseChanged();
-    void mockVersionChanged();
 
 private:
     bool opened_ = false;

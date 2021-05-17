@@ -154,7 +154,6 @@ MockVersion MockDevice::mockGetVersion() const
 bool MockDevice::mockSetOpenEnabled(bool enabled)
 {
     if (control_.mockSetOpenEnabled(enabled) == true) {
-        emit openEnabledChanged();
         return true;
     }
     return false;
@@ -163,7 +162,6 @@ bool MockDevice::mockSetOpenEnabled(bool enabled)
 bool MockDevice::mockSetLegacy(bool isLegacy)
 {
     if (control_.mockSetLegacy(isLegacy) == true) {
-        emit legacyModeChanged();
         return true;
     }
     return false;
@@ -173,9 +171,10 @@ bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
     if (autoResponse_ != autoResponse) {
         autoResponse_ = autoResponse;
-        emit autoResponseChanged();
+        qCDebug(logCategoryDeviceMock) << "Configured auto-response to" << autoResponse_;
         return true;
     }
+    qCDebug(logCategoryDeviceMock) << "Auto-response already configured to" << autoResponse_;
     return false;
 }
 
@@ -183,15 +182,16 @@ bool MockDevice::mockSetSaveMessages(bool saveMessages)
 {
     if (saveMessages_ != saveMessages) {
         saveMessages_ = saveMessages;
+        qCDebug(logCategoryDeviceMock) << "Configured save-messages mode to" << saveMessages_;
         return true;
     }
+    qCDebug(logCategoryDeviceMock) << "Save-messages already configured to" << saveMessages_;
     return false;
 }
 
 bool MockDevice::mockSetCommand(MockCommand command)
 {
     if (control_.mockSetCommand(command) == true) {
-        emit mockCommandChanged();
         return true;
     }
     return false;
@@ -200,7 +200,6 @@ bool MockDevice::mockSetCommand(MockCommand command)
 bool MockDevice::mockSetResponse(MockResponse response)
 {
     if (control_.mockSetResponse(response) == true) {
-        emit mockResponseChanged();
         return true;
     }
     return false;
@@ -209,8 +208,6 @@ bool MockDevice::mockSetResponse(MockResponse response)
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
 {
     if (control_.mockSetResponseForCommand(response, command) == true) {
-        emit mockCommandChanged();
-        emit mockResponseChanged();
         return true;
     }
     return false;
@@ -219,7 +216,6 @@ bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand co
 bool MockDevice::mockSetVersion(MockVersion version)
 {
     if (control_.mockSetVersion(version) == true) {
-        emit mockVersionChanged();
         return true;
     }
     return false;
