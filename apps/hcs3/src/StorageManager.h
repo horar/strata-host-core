@@ -1,5 +1,4 @@
-#ifndef STORAGE_MANAGER_H
-#define STORAGE_MANAGER_H
+#pragma once
 
 #include <memory>
 
@@ -18,6 +17,7 @@ class DownloadManager;
 
 class PlatformDocument;
 class Database;
+struct FirmwareFileItem;
 
 class StorageManager final : public QObject
 {
@@ -53,15 +53,33 @@ public:
     QUrl getBaseUrl() const;
 
     /**
-     * Gets MD5 of firmware
+     * Finds firmware
      * @param class ID of device
      * @param controller class ID
-     * @param version of firmware, if empty latest firmware will be returned
-     * @return firmware URI and firmware MD5 as pair
+     * @param version of firmware
+     * @return firmware
      */
-    QPair<QUrl,QString> getFirmwareUriMd5(const QString &classId,
-                                          const QString &controllerClassId,
-                                          const QString &version = QString());
+    const FirmwareFileItem* findFirmware(
+            const QString &classId,
+            const QString &controllerClassId,
+            const QString &version);
+
+    /**
+     * Finds highest firmware
+     * @param class ID of device
+     * @param controller class ID
+     * @return firmware
+     */
+    const FirmwareFileItem* findHighestFirmware(
+            const QString &classId,
+            const QString &controllerClassId);
+
+    /**
+     * Finds highest firmware
+     * @param class ID of device
+     * @return firmware
+     */
+    const FirmwareFileItem* findHighestFirmware(const QString &classId);
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);
@@ -171,5 +189,3 @@ private:
     QHash<QString /*groupId*/, QString /*partialUri*/ > downloadControlViewUris_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
 };
-
-#endif //STORAGE_MANAGER_H

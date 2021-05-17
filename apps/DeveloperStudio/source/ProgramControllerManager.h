@@ -25,7 +25,8 @@ public:
         DoneState,
     };
 
-    Q_INVOKABLE void program(QString deviceId);
+    Q_INVOKABLE void programAssisted(QString deviceId);
+    Q_INVOKABLE void programEmbedded(QString deviceId);
 
 signals:
     void jobProgressUpdate(QString deviceId, float progress);
@@ -38,7 +39,7 @@ private slots:
 private:
     CoreInterface *coreInterface_;
     QList<QString> requestedDeviceIds_;
-    QHash<QString, QString> jobIdHash_;  // jobId <-> deviceId
+    QHash<QString /*jobId*/, QString /*deviceId*/> jobIdHash_;
 
     /*0.99 together*/
     const float downloadStateRange_ = 0.10;
