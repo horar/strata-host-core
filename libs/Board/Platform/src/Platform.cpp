@@ -331,8 +331,9 @@ void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
 }
 
 void Platform::abortReconnect() {
-    if (reconnectTimer_.isActive())
+    if (reconnectTimer_.isActive()) {
         reconnectTimer_.stop();
+    }
 }
 
 }  // namespace
