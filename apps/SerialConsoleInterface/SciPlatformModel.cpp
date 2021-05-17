@@ -219,7 +219,7 @@ void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 
     beginInsertRows(QModelIndex(), platformList_.length(), platformList_.length());
 
-    SciPlatform *item = new SciPlatform(&sciSettings_, this);
+    SciPlatform *item = new SciPlatform(&sciSettings_, platformManager_, this);
     item->setPlatform(platform);
     item->setStatus(SciPlatform::PlatformStatus::Connected);
     item->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
