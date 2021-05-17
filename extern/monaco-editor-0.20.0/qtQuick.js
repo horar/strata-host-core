@@ -88,7 +88,6 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         if (!qtObjectKeyValues.hasOwnProperty(type)) {
             type = "Item"
         }
-
         qtIdPairs[position.lineNumber][idText] = type
         var arr = []
         arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[qtIdPairs[position.lineNumber][idText]].properties)))
@@ -106,7 +105,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         if (!qtIdPairs[position.lineNumber].hasOwnProperty(idText)) {
             var keys = Object.keys(qtIdPairs[position.lineNumber])
             delete functionSuggestions[keys[0]]
-            //delete qtObjectKeyValues[keys[0]]
+            delete qtObjectKeyValues[keys[0]]
             delete qtIdPairs[position.lineNumber]
             qtIdPairs[position.lineNumber] = {}
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
@@ -114,9 +113,6 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             }
             qtIdPairs[position.lineNumber][idText] = type
             var arr = []
-            if(!qtObjectKeyValues.hasOwnProperty(type)){
-                alert(JSON.stringify(qtObjectKeyValues))
-            }
             arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[qtIdPairs[position.lineNumber][idText]].properties)))
             arr = arr.concat(removeDuplicates(qtObjectSuggestions[qtIdPairs[position.lineNumber][idText]].functions))
             arr = arr.concat(qtObjectSuggestions[qtIdPairs[position.lineNumber][idText]].signals)
