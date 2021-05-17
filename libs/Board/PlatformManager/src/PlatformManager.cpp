@@ -97,7 +97,7 @@ bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
     return false;
 }
 
-PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, bool closed) {
+PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, bool closed) const {
     if ((open == true) && (closed == false)) {
         return openedPlatforms_.value(deviceId);
     } else if ((open == false) && (closed == true)) {
@@ -116,7 +116,7 @@ PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, 
     return PlatformPtr();
 }
 
-QList<PlatformPtr> PlatformManager::getPlatforms(bool open, bool closed) {
+QList<PlatformPtr> PlatformManager::getPlatforms(bool open, bool closed) const {
     if ((open == true) && (closed == false)) {
         return openedPlatforms_.values();
     } else if ((open == false) && (closed == true)) {
