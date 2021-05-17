@@ -38,15 +38,14 @@ MockResponse MockDeviceControl::mockGetResponse() const
     return response_;
 }
 
-<<<<<<< HEAD
 MockVersion MockDeviceControl::mockGetVersion() const
 {
     return version_;
-=======
+}
+
 void MockDeviceControl::mockSetAsBootloader(bool isBootloader)
 {
     isBootloader_ = isBootloader;
->>>>>>> 9a201f4fa... MockDevice/MockDeviceControl: added set as bootloader capability for MockDevice
 }
 
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
@@ -365,15 +364,6 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
         case MockCommand::Set_assisted_platform_id:
             retVal.push_back(test_commands::set_assisted_platform_id_response);
             break;
-
-        case MockCommand::Start_backup_firmware:
-            retVal.push_back(test_commands::start_backup_firmware_response);
-            break;
-
-        case MockCommand::Backup_firmware:
-            retVal.push_back(test_commands::backup_firmware_response);
-            break;
-
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);

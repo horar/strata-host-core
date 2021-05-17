@@ -24,6 +24,7 @@ constexpr const char* const CMD_SET_PLATFORM_ID          = "set_platform_id";
 Q_NAMESPACE
 
 enum class MockCommand {
+<<<<<<< HEAD
     Any_command,
     Get_firmware_info,
     Request_platform_id,
@@ -37,6 +38,18 @@ enum class MockCommand {
     Set_platform_id,
     Start_backup_firmware,
     Backup_firmware
+=======
+    all_commands,
+    get_firmware_info,
+    request_platform_id,
+    start_bootloader,
+    start_application,
+    flash_firmware,
+    flash_bootloader,
+    start_flash_firmware,
+    start_flash_bootloader,
+    set_assisted_platform_id
+>>>>>>> 9ab2acfed... MockDevice/FlasherTest: removed backup firmware tests for now - caused too much trouble will be part of different Ticket
 };
 Q_ENUM_NS(MockCommand)
 
@@ -70,7 +83,6 @@ inline MockCommand convertCommandToEnum(const std::string& cmd) {
 }
 
 enum class MockResponse {
-
     // generic responses
 
     Normal,
@@ -664,6 +676,7 @@ R"({
     }
 })");
 
+<<<<<<< HEAD
 const QByteArray start_backup_firmware_request = normalizeMessage(R"({"cmd":"start_backup_firmware","payload":{}})");
 
 const QByteArray start_backup_firmware_response = normalizeMessage(
@@ -692,4 +705,7 @@ R"({
     }
 })");
 }
+=======
+} // namespace strata::device::mock::test_commands
+>>>>>>> 9ab2acfed... MockDevice/FlasherTest: removed backup firmware tests for now - caused too much trouble will be part of different Ticket
 }

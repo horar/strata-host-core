@@ -29,9 +29,9 @@ private slots:
     void flashFirmwareStartInBootloaderTest();
     void flashBootloaderTest();
     void flashBootloaderStartInBootloaderTest();
-    void backupFirmwareTest();
     void setFwClassIdTest();
     void setFwClassIdWithoutStartApplicationTest();
+    //TODO: Add Backup Firmware tests standard & faulty/invalid responses
 
     // tests faulty/invalid responses
     void startFlashFirmwareInvalidCommandTest();
@@ -78,7 +78,6 @@ private:
 
     QScopedPointer<QTemporaryFile> fakeFirmware_;
     QScopedPointer<QTemporaryFile> fakeBootloader_;
-    QScopedPointer<QTemporaryFile> fakeFirmwareBackup_;
 
     QString expectedMd5_;
     int expectedChunksCount_ = 0;
