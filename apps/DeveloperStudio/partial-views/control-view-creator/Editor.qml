@@ -217,15 +217,7 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                 if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
-                                    confirmClosePopup.filename = model.filename
-                                    confirmClosePopup.index = index
-                                    confirmClosePopup.exists = model.exists
-                                    confirmClosePopup.open()
-                                    controlViewCreatorRoot.isConfirmCloseOpen = true
-                                } else {
-                                    openFilesModel.closeTabAt(index);
-                                }
+                                 closeFileTab(index,model)
                             }
                         }
 
@@ -281,15 +273,7 @@ Item {
                                     }
 
                                     onClicked: {
-                                        if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
-                                            confirmClosePopup.filename = model.filename
-                                            confirmClosePopup.index = index
-                                            confirmClosePopup.exists = model.exists
-                                            confirmClosePopup.open()
-                                            controlViewCreatorRoot.isConfirmCloseOpen = true
-                                        } else {
-                                            openFilesModel.closeTabAt(index);
-                                        }
+                                        closeFileTab(index,model)
                                     }
                                 }
                             }
@@ -407,6 +391,19 @@ Item {
                 }
             }
 
+        }
+    }
+
+
+    function closeFileTab(index,model){
+        if(model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen){
+            confirmClosePopup.filename = model.filename
+            confirmClosePopup.index = index
+            confirmClosePopup.exists = model.exists
+            confirmClosePopup.open()
+            controlViewCreatorRoot.isConfirmCloseOpen = true
+        } else {
+            openFilesModel.closeTabAt(index);
         }
     }
 }
