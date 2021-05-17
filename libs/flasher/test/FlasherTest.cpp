@@ -349,6 +349,53 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
     QCOMPARE(recordedMessages.size(),28); //Without start application
 }
 
+void FlasherTest::flashFirmwareStartInBootloaderTest()
+{
+    rapidjson::Document actualDoc;
+    getExpectedValues(fakeFirmware_->fileName());
+
+    mockDevice_->mockSetAsBootloader(true); // MockDevice starts in Bootloader mode
+    QVERIFY(mockDevice_->mockIsBootloader());
+
+    flasher_ = QSharedPointer<strata::Flasher>(
+                new strata::Flasher(platform_,fakeFirmware_->fileName()), &QObject::deleteLater);
+    connectFlasherHandlers(flasher_.data());
+
+    flasher_->flashFirmware();
+
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
+
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
+    QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
+
+    actualDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
+    const rapidjson::Value& actualPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_firmware");
+    QCOMPARE(actualPayload["size"].GetInt(),fakeFirmware_->size());
+    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
+
+    int messageNumber = 3;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        messageNumber++;
+    }
+
+    QCOMPARE(recordedMessages[23],test_commands::start_application_request); //Start application after flashing
+    QCOMPARE(recordedMessages[24],test_commands::get_firmware_info_request);
+    QCOMPARE(recordedMessages[25],test_commands::request_platform_id_request);
+
+    QCOMPARE(recordedMessages.size(),26);
+}
+
 void FlasherTest::flashBootloaderTest()
 {
     rapidjson::Document actualDoc;
@@ -427,6 +474,52 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(recordedMessages[9],test_commands::request_platform_id_request);
 
     QCOMPARE(recordedMessages.size(),10);
+}
+
+void FlasherTest::flashBootloaderStartInBootloaderTest()
+{
+    rapidjson::Document actualDoc;
+    getExpectedValues(fakeBootloader_->fileName());
+
+    mockDevice_->mockSetAsBootloader(true); // MockDevice starts in Bootloader mode
+    QVERIFY(mockDevice_->mockIsBootloader());
+
+    flasher_ = QSharedPointer<strata::Flasher>(
+                new strata::Flasher(platform_,fakeBootloader_->fileName()), &QObject::deleteLater);
+    connectFlasherHandlers(flasher_.data());
+
+    flasher_->flashBootloader();
+
+    QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT_BOOTLOADER);
+
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
+    QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
+
+    actualDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
+    const rapidjson::Value& expectedPayload = actualDoc["payload"];
+    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
+    QCOMPARE(expectedPayload["size"].GetInt(),fakeBootloader_->size());
+    QCOMPARE(expectedPayload["chunks"].GetInt(),expectedChunksCount_);
+    QCOMPARE(expectedPayload["md5"].GetString(),expectedMd5_);
+
+    int messageNumber = 3;
+    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_; chunkNumber++) {
+        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+        messageNumber++;
+    }
+
+    QCOMPARE(recordedMessages[13],test_commands::get_firmware_info_request);
+    QCOMPARE(recordedMessages[14],test_commands::request_platform_id_request);
+
+    QCOMPARE(recordedMessages.size(),15);
 }
 
 void FlasherTest::setFwClassIdTest()

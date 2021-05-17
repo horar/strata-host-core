@@ -26,7 +26,9 @@ private slots:
     // tests standard responses
     void flashFirmwareTest();
     void flashFirmwareWithoutStartApplicationTest();
+    void flashFirmwareStartInBootloaderTest();
     void flashBootloaderTest();
+    void flashBootloaderStartInBootloaderTest();
     void backupFirmwareTest();
     void setFwClassIdTest();
     void setFwClassIdWithoutStartApplicationTest();
