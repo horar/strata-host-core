@@ -123,56 +123,56 @@ bool SciMockDevice::isValid() const
 
 bool SciMockDevice::mockIsOpenEnabled() const
 {
-    if (mockDevice_ != nullptr) {
-        return mockDevice_->mockIsOpenEnabled();
-    } else {
+    if (mockDevice_ == nullptr) {
         return true;
     }
+
+    return mockDevice_->mockIsOpenEnabled();
 }
 
 bool SciMockDevice::mockIsLegacy() const
 {
-    if (mockDevice_ != nullptr) {
-        return mockDevice_->mockIsLegacy();
-    } else {
+    if (mockDevice_ == nullptr) {
         return false;
     }
+
+    return mockDevice_->mockIsLegacy();
 }
 
 bool SciMockDevice::mockIsAutoResponse() const
 {
-    if (mockDevice_ != nullptr) {
-        return mockDevice_->mockIsAutoResponse();
-    } else {
+    if (mockDevice_ == nullptr) {
         return true;
     }
+
+    return mockDevice_->mockIsAutoResponse();
 }
 
 MockCommand SciMockDevice::mockGetCommand() const
 {
-    if (mockDevice_ != nullptr) {
-        return mockDevice_->mockGetCommand();
-    } else {
+    if (mockDevice_ == nullptr) {
         return MockCommand::Any_command;
     }
+
+    return mockDevice_->mockGetCommand();
 }
 
 MockResponse SciMockDevice::mockGetResponse() const
 {
-    if (mockDevice_ != nullptr) {
-        return mockDevice_->mockGetResponse();
-    } else {
+    if (mockDevice_ == nullptr) {
         return MockResponse::Normal;
     }
+
+    return mockDevice_->mockGetResponse();
 }
 
 MockVersion SciMockDevice::mockGetVersion() const
 {
-    if (mockDevice_ != nullptr) {
-        return mockDevice_->mockGetVersion();
-    } else {
+    if (mockDevice_ == nullptr) {
         return MockVersion::Version_1;
     }
+
+    return mockDevice_->mockGetVersion();
 }
 
 void SciMockDevice::mockSetDeviceId(const QByteArray& deviceId)
