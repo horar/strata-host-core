@@ -35,7 +35,7 @@ ColumnLayout {
             menuLoader.item.textFieldProperty = "minimumValue"
             menuLoader.item.validator = inputValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the minimum value of the gauge. Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter The Minimum Value of the Gauge. Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -50,7 +50,7 @@ ColumnLayout {
             menuLoader.item.textFieldProperty = "maximumValue"
             menuLoader.item.validator = inputValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the maximum value of the gauge.Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter The maximum Value of the Gauge.Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -78,8 +78,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.value
             menuLoader.item.validator = inputValidator
             menuLoader.item.textFieldProperty = "value"
-            menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the Initial value of the gauge.Text can only numbers, letters and any special characters."
+            menuLoader.item.label = "Enter the Initial value of the gauge.Text can only numbers, letters and any special characters. "
             menuLoader.item.open()
             contextMenu.close()
         }

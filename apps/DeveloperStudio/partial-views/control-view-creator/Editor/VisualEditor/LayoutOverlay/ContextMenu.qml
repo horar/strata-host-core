@@ -83,7 +83,7 @@ Popup {
             source: {
                 switch (layoutOverlayRoot.type) {
                 case "LayoutRectangle":
-                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml"
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRectangleContextMenu.qml"
                 case "LayoutSGIcon":
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml"
                 case "LayoutSGGraph":
@@ -102,6 +102,8 @@ Popup {
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSliderContextMenu.qml"
                 case "LayoutSGCircularGauge":
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGGaugeContextMenu.qml"
+                case "LayoutSGStatusLight":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGStatusLightContextMenu.qml"
 
                 default:
                     return ""
