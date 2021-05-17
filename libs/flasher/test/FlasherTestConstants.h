@@ -9,7 +9,7 @@ namespace strata::FlasherTestConstants {
 constexpr int TEST_TIMEOUT = 1000;
 
 // default timeout for QTRY_COMPARE_WITH_TIMEOUT for flash_bootloader
-constexpr int TEST_TIMEOUT_BOOTLOADER = 1250;
+constexpr int TEST_TIMEOUT_BOOTLOADER = 1300;
 
 const QByteArray fakeFirmwareData = R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac lobortis tellus. Sed mattis ultricies porta. Aliquam fringilla hendrerit felis, in ultricies odio. Quisque sit amet ex lacinia, dignissim ex et, mollis est. Pellentesque imperdiet nulla vitae velit lacinia fringilla. Integer molestie commodo felis, non condimentum ipsum aliquam ut. Sed vel orci dui.
 
