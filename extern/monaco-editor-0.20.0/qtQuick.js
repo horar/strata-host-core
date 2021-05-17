@@ -88,6 +88,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         if (!qtObjectKeyValues.hasOwnProperty(type)) {
             type = "Item"
         }
+
         qtIdPairs[position.lineNumber][idText] = type
         var arr = []
         arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[qtIdPairs[position.lineNumber][idText]].properties)))
@@ -105,7 +106,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         if (!qtIdPairs[position.lineNumber].hasOwnProperty(idText)) {
             var keys = Object.keys(qtIdPairs[position.lineNumber])
             delete functionSuggestions[keys[0]]
-            delete qtObjectKeyValues[keys[0]]
+            //delete qtObjectKeyValues[keys[0]]
             delete qtIdPairs[position.lineNumber]
             qtIdPairs[position.lineNumber] = {}
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
@@ -113,6 +114,9 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             }
             qtIdPairs[position.lineNumber][idText] = type
             var arr = []
+            if(!qtObjectKeyValues.hasOwnProperty(type)){
+                alert(JSON.stringify(qtObjectKeyValues))
+            }
             arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[qtIdPairs[position.lineNumber][idText]].properties)))
             arr = arr.concat(removeDuplicates(qtObjectSuggestions[qtIdPairs[position.lineNumber][idText]].functions))
             arr = arr.concat(qtObjectSuggestions[qtIdPairs[position.lineNumber][idText]].signals)
@@ -737,17 +741,11 @@ function registerQmlAsLanguage() {
                 var currText = model.getLineContent(position.lineNumber)
                 var currWords = currText.replace("\t", "").split(" ");
                 var active = currWords[currWords.length - 1]
-                fullRange = model.getFullModelRange()
-                topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-                bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 if (topOfFile !== null && bottomOfFile !== null) {
                     var getLineContent = model.getLineContent(topOfFile.range.startLineNumber)
                     var checkLine = getLineContent.replace("\t", "").split(/\{|\t/)[0].trim()
-                    if (qtTypeJson["sources"].hasOwnProperty(checkLine)) {
-                        createMatchingPairs(model)
-                        initializeQtQuick(model)
-                    } else {
+                    if (!qtTypeJson["sources"].hasOwnProperty(checkLine)) {
                         return { suggestions: [] }
                     }
                 }
@@ -1030,6 +1028,12 @@ function registerQmlAsLanguage() {
     }
 
     editor.getModel().onDidChangeContent((event) => {
+        const model = editor.getModel()
+        fullRange = model.getFullModelRange()
+        topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
+        bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
+        createMatchingPairs(model)
+        initializeQtQuick(model)
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getLine.includes("id:")) {
