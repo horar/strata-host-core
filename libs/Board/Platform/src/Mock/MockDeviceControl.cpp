@@ -345,6 +345,9 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 case MockResponse::Start_flash_firmware_invalid: {
                     retVal.push_back(test_commands::start_flash_firmware_response_invalid);
                 } break;
+                case MockResponse::Start_flash_firmware_invalid_command: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_invalid_command);
+                } break;
                 case MockResponse::Start_flash_firmware_too_large: {
                     retVal.push_back(test_commands::start_flash_firmware_response_firmware_too_large);
                 } break;
