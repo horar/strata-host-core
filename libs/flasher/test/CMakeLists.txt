@@ -26,7 +26,3 @@ add_test(NAME ${PROJECT_NAME}-test
     COMMAND ${PROJECT_NAME}-test
 )
 
-if(BUILD_TESTING)
-    add_compile_definitions(BUILD_TESTING)
-endif()
-
