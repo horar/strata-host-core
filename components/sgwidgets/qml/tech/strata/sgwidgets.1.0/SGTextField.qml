@@ -186,19 +186,19 @@ TextField {
             Loader {
                 id: clearButtonLoader
                 anchors.verticalCenter: parent.verticalCenter
-                sourceComponent: showClearButton && control.text.length > 0 ? clearButtonComponent : null
+                sourceComponent: showClearButton && control.text.length > 0 ? clearButtonComponent : undefined
             }
 
             Loader {
                 id: cursorInfoLoader
                 anchors.verticalCenter: parent.verticalCenter
-                sourceComponent: showCursorPosition ? cursorInfoComponent : null
+                sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
             }
 
             Loader {
                 id: revelPasswordLoader
                 anchors.verticalCenter: parent.verticalCenter
-                sourceComponent: passwordMode ? revealPasswordComponent : null
+                sourceComponent: passwordMode ? revealPasswordComponent : undefined
             }
 
             SGWidgets.SGIcon {
