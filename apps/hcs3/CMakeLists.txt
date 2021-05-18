@@ -70,23 +70,54 @@ endif()
 generate_app_version(GITTAG_PREFIX "hcs_" MACBUNDLE OFF)
 generate_app_build_timestamp()
 
-if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs/credentials")
-    set(HCS_CREDENTIALS_LOCATION ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs/credentials)
-else()
-    set(HCS_CREDENTIALS_LOCATION ${CMAKE_HOME_DIRECTORY}/assets/config/hcs/credentials)
+set(HCS_CONFIG_PATHS_LIST)
+set(HCS_CREDENTIALS_PATHS_LIST)
+
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs")
+    list(APPEND HCS_CONFIG_PATHS_LIST ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs)
 endif()
+list(APPEND HCS_CONFIG_PATHS_LIST ${CMAKE_HOME_DIRECTORY}/assets/config/hcs)
+
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs/credentials")
+    list(APPEND HCS_CONFIG_PATHS_LIST ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs/credentials)
+endif()
+list(APPEND HCS_CONFIG_PATHS_LIST ${CMAKE_HOME_DIRECTORY}/assets/config/hcs/credentials)
+
+foreach(CONFIG_PATH IN LISTS HCS_CONFIG_PATHS_LIST)
+    file(GLOB TEMP_FILES_LIST
+        RELATIVE ${CONFIG_PATH}
+        ${CONFIG_PATH}/*.config
+    )
+    list(APPEND APPS_CORESW_HCS_CONFIG_CHOICES ${TEMP_FILES_LIST})
+endforeach()
+
+foreach(CREDENTIALS_PATH IN LISTS HCS_CONFIG_PATHS_LIST)
+    file(GLOB TEMP_FILES_LIST
+        RELATIVE ${CREDENTIALS_PATH}
+        ${CREDENTIALS_PATH}/*.json
+    )
+    list(APPEND APPS_CORESW_HCS_CREDENTIALS_PATH_CHOICES ${TEMP_FILES_LIST})
+endforeach()
 
 if(NOT APPS_CORESW_HCS_CREDENTIALS)
-    set(APPS_CORESW_HCS_CREDENTIALS qa.json CACHE STRING "Desired HCS configuration file with credentials." FORCE)
-    message(STATUS "Defaulting 'APPS_CORESW_HCS_CREDENTIALS' to ${APPS_CORESW_HCS_CREDENTIALS}.")
+    if("qa.json" IN_LIST APPS_CORESW_HCS_CREDENTIALS_PATH_CHOICES)
+        set(APPS_CORESW_HCS_CREDENTIALS qa.json CACHE STRING "Desired HCS configuration file with credentials." FORCE)
+    else()
+        set(APPS_CORESW_HCS_CREDENTIALS template.json CACHE STRING "Desired HCS configuration file with credentials." FORCE)
+    endif()
 endif()
-file(GLOB HCS_CREDENTIALS_LOCATION_CHOICES
-    RELATIVE ${HCS_CREDENTIALS_LOCATION}
-    ${HCS_CREDENTIALS_LOCATION}/*.json
-)
+
 set_property(CACHE APPS_CORESW_HCS_CREDENTIALS PROPERTY STRINGS ${HCS_CREDENTIALS_LOCATION_CHOICES})
 
-file(READ ${HCS_CREDENTIALS_LOCATION}/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
+find_file(HCS_CREDENTIALS_ABSOLUTE_PATH 
+    NAMES "${APPS_CORESW_HCS_CREDENTIALS}"
+    PATHS ${HCS_CONFIG_PATHS_LIST}
+    NO_DEFAULT_PATH
+    REQUIRED
+)
+
+file(READ ${HCS_CREDENTIALS_ABSOLUTE_PATH} JSON_CREDENTIALS)
+
 generate_replicator_credentials(JSON_FILE ${JSON_CREDENTIALS})
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
@@ -137,31 +168,30 @@ if(WIN32)
     endif()
 endif()
 
-
-# deploy desired config file into side-by-side to compiled binary
-if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs")
-    set(HCS_CONFIG_LOCATION ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/hcs)
-else()
-    set(HCS_CONFIG_LOCATION ${CMAKE_HOME_DIRECTORY}/assets/config/hcs)
-endif()
-
 if(NOT APPS_CORESW_HCS_CONFIG)
-    set(APPS_CORESW_HCS_CONFIG hcs_qa.config CACHE STRING "Desired HCS configuration file." FORCE)
-    message(STATUS "Defaulting 'APPS_CORESW_HCS_CONFIG' to ${APPS_CORESW_HCS_CONFIG}.")
+    if("hcs_qa.config" IN_LIST APPS_CORESW_HCS_CONFIG_CHOICES)
+        set(APPS_CORESW_HCS_CONFIG "hcs_qa.config" CACHE STRING "Desired HCS configuration file." FORCE)
+    else()
+        set(APPS_CORESW_HCS_CONFIG "hcs_template.config" CACHE STRING "Desired HCS configuration file." FORCE)
+    endif()
 endif()
-file(GLOB APPS_CORESW_HCS_CONFIG_CHOICES
-    RELATIVE ${HCS_CONFIG_LOCATION}
-    ${HCS_CONFIG_LOCATION}/*.config
-)
+
 set_property(CACHE APPS_CORESW_HCS_CONFIG PROPERTY STRINGS ${APPS_CORESW_HCS_CONFIG_CHOICES})
 if(NOT APPS_CORESW_HCS_CONFIG IN_LIST APPS_CORESW_HCS_CONFIG_CHOICES)
     message(FATAL_ERROR "Specify 'APPS_CORESW_HCS_CONFIG'. Must be one of ${APPS_CORESW_HCS_CONFIG_CHOICES}")
 endif()
 
+find_file(HCS_CONFIG_ABSOLUTE_PATH 
+    NAMES "${APPS_CORESW_HCS_CONFIG}"
+    PATHS ${HCS_CONFIG_PATHS_LIST}
+    NO_DEFAULT_PATH
+    REQUIRED
+)
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${HCS_CONFIG_LOCATION}/${APPS_CORESW_HCS_CONFIG}
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
+    ${HCS_CONFIG_ABSOLUTE_PATH}
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
     COMMENT "Deploying 'hcs.config'..."
     VERBATIM
 )
