@@ -207,6 +207,7 @@ TextField {
                 width: leftIconItem.width
                 height: leftIconItem.height
                 iconColor: "darkgray"
+                visible: source.toString().length > 0
             }
         }
     }
