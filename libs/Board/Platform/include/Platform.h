@@ -34,7 +34,6 @@ namespace strata::platform {
         Q_DISABLE_COPY(Platform)
 
     friend class strata::platform::operation::BasePlatformOperation;
-    friend class strata::platform::operation::Identify;
     friend class strata::platform::command::BasePlatformCommand;
 
     public:
@@ -335,12 +334,11 @@ namespace strata::platform {
         bool sendMessage(const QByteArray& message, quintptr lockId);
 
         /**
-         * Informs the device that Identify operation completed
-         * Emits recognized() signal.
+         * Sets flag if device was recognized and emits 'recognized()' signal.
          * @param isRecognized if the device was properly recognized
          */
-        void identifyFinished(bool isRecognized);
-      // ***
+        void setRecognized(bool isRecognized);
+      // *** functions used by friend classes (end)
 
         /**
          * Open device communication channel (internal).
