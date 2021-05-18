@@ -217,7 +217,7 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                 closeFileTab(index,model)
+                                 closeFileTab(index, model)
                             }
                         }
 
@@ -273,7 +273,7 @@ Item {
                                     }
 
                                     onClicked: {
-                                        closeFileTab(index,model)
+                                        closeFileTab(index, model)
                                     }
                                 }
                             }
@@ -394,9 +394,8 @@ Item {
         }
     }
 
-
-    function closeFileTab(index,model){
-        if(model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen){
+    function closeFileTab(index, model) {
+        if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
             confirmClosePopup.filename = model.filename
             confirmClosePopup.index = index
             confirmClosePopup.exists = model.exists

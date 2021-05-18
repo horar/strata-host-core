@@ -17,7 +17,12 @@ Item {
     id: fileContainerRoot
     Layout.fillHeight: true
     Layout.fillWidth: true
-    focus: true
+    
+    onVisibleChanged: {
+        if (visible) {
+            forceActiveFocus()
+        }
+    }
 
     property int modelIndex: index
     property string file: model.filename
@@ -77,8 +82,8 @@ Item {
         }
     }
     Keys.onReleased: {
-        if(event.matches(StandardKey.Close)){
-            closeFileTab(index,model)
+        if (event.matches(StandardKey.Close)) {
+            closeFileTab(index, model)
         }
     }
 
