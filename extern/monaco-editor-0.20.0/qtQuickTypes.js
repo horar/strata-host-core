@@ -1476,31 +1476,6 @@ const qtTypeJson = {
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
-        "LayoutInfo":{
-            "properties": {
-                "columnsWide": {
-                    "meta_properties": []
-                },
-                "rowsTall": {
-                    "meta_properties": []
-                },
-                "xColumns": {
-                    "meta_properties": []
-                },
-                "yRows": {
-                    "meta_properties": []
-                },
-                "uuid": {
-                    "meta_properties": []
-                },
-            },
-            "functions": [],
-            "signals": [],
-            "inherits": "QtObject",
-            "source": "",
-            "nonInstantiable": false,
-            "isVisualWidget": true,
-        },
         "LayoutRadioButtons": {
             "properties": {
                 "model": {
