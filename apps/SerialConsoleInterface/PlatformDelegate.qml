@@ -152,7 +152,7 @@ FocusScope {
                     id: toolButtonRow
                     anchors {
                         top: parent.top
-                        topMargin: 2
+                        topMargin: handle.height + 4
                         left: messageEditor.left
                     }
 
@@ -245,6 +245,21 @@ FocusScope {
                             property: "checked"
                             value: platformDelegate.hexViewShown
                         }
+                    }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: mockSettingsButton.visible
+                    }
+
+                    SGWidgets.SGIconButton {
+                        id: mockSettingsButton
+                        text: "Mock Settings"
+                        hintText: qsTr("Modify Mock Device settings")
+                        icon.source: "qrc:/sgimages/tools.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        visible: (model.platform.deviceType === Sci.SciPlatform.MockDevice)
+                        onClicked: showMockSettingsView()
                     }
                 }
 
@@ -614,12 +629,23 @@ FocusScope {
         }
     }
 
+    Component {
+        id: mockSettingsComponent
+
+        MockSettingsView {
+        }
+    }
+
     function showProgramView() {
         stackView.push(programDeviceComponent)
     }
 
     function showExportView() {
         stackView.push(exportComponent)
+    }
+
+    function showMockSettingsView() {
+        stackView.push(mockSettingsComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {

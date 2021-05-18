@@ -295,7 +295,7 @@ Item {
 
     Connections {
         id: srcConnection
-        target: logger
+        target: sdsModel.qtLogger
         onLogMsg: {
             if(controlViewCreatorRoot.visible && msg){
                 consoleModel.append({

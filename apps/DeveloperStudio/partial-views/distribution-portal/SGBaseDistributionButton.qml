@@ -25,17 +25,17 @@ RowLayout {
         },
         {
             name: "Avnet",
-            url: urls.avnetUrl,
+            url: sdsModel.urls.avnetUrl,
             visible: true
         },
         {
             name: "Digi-Key",
-            url: urls.digiKeyUrl,
+            url: sdsModel.urls.digiKeyUrl,
             visible: true
         },
         {
             name: "Mouser",
-            url: urls.mouserUrl,
+            url: sdsModel.urls.mouserUrl,
             visible: true
         }
     ]
