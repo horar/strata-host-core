@@ -302,6 +302,21 @@ Rectangle {
         }
 
         Text {
+            // Todo: in >1-2 months (past June 2021), remove PIG application from spyglass. Ticket here: https://jira.onsemi.com/browse/CS-1836
+            text: "Notice: PIG has been integrated into SDS/CVC.<br>This independent application is deprecated and will be removed. See documentation for new method of usage."
+            Layout.fillWidth: true
+            Layout.leftMargin: 20
+            Layout.rightMargin: 20
+            wrapMode: Text.Wrap
+            font {
+                bold: true
+                pointSize: 24
+            }
+            horizontalAlignment: Text.AlignHCenter
+            color: "#940000"
+        }
+
+        Text {
             Layout.alignment: Qt.AlignHCenter
             text: "Platform Interface Generator"
             padding: 0

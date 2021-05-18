@@ -533,18 +533,6 @@ FocusScope {
         }
     }
 
-    function createEnterOpnBlob() {
-        var blob = {
-            "type": "enter_opn",
-            "is_set": false,
-            "opn": "",
-            "title": "Orderable Part Number",
-            "set_title": "",
-        }
-
-        return blob
-    }
-
     Timer {
         id: findPlatformDelayTimer
         repeat: false
@@ -553,30 +541,13 @@ FocusScope {
         property string opn
 
         onTriggered: {
-            //doFindPlatform(opn)
-            doFindFakePlatform(opn)
+            doFindPlatform(opn)
         }
     }
 
     function findPlatform(opn) {
-        findPlatformDelayTimer.opn = opn
+        findPlatformDelayTimer.opn = opn.trim()
         findPlatformDelayTimer.restart()
-    }
-
-    function doFindFakePlatform(opn) {
-        var opnLowered = opn.toLowerCase()
-        var data = {}
-        if (opnLowered === "str-embedded") {
-            data = JsonSchemas.fakeEmbeddedData
-        } else if (opnLowered === "str-assisted") {
-            data = JsonSchemas.fakeAssistedData
-        } else if (opnLowered === "str-controller") {
-            data = JsonSchemas.fakeControllerData
-        } else {
-            data = []
-        }
-
-        processReplyData(opnLowered, JSON.stringify(data));
     }
 
     function doFindPlatform(opn) {

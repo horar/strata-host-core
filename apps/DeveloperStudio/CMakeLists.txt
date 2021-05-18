@@ -38,6 +38,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/SGNewControlView.cpp
     source/ResourcePath.cpp
     source/RunGuard.cpp
+    source/PlatformInterfaceGenerator.cpp
+    source/DebugMenuGenerator.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp

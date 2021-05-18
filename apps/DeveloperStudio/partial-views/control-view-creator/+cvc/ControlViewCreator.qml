@@ -13,6 +13,7 @@ import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
 import "Console"
+import "PlatformInterfaceGenerator"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -129,144 +130,8 @@ Rectangle {
         }
         spacing:  0
 
-        Rectangle {
-            id: tool
-            Layout.fillHeight: true
-            Layout.preferredWidth: 71
-            Layout.maximumWidth: 71
-            Layout.alignment: Qt.AlignTop
-            color: "#444"
-
-            Rectangle {
-                // divider
-                color: "black"
-                width: 2
-                height: parent.height
-                anchors.right: parent.right
-                opacity: .25
-            }
-
-            ColumnLayout {
-                id: toolBarListView
-
-                anchors.fill: parent
-                spacing: 5
-
-                property int currentIndex: 0
-                property int startTab: 0
-                property int editTab: 1
-                property int viewTab: 2
-                property int debugTab: 3
-
-                onCurrentIndexChanged: {
-                    switch (currentIndex) {
-                    case startTab:
-                        viewStack.currentIndex = 0
-                        break;
-                    case editTab:
-                        viewStack.currentIndex = 1
-                        break;
-                    case viewTab:
-                        if (rccInitialized == false) {
-                            recompileControlViewQrc();
-                        } else {
-                            viewStack.currentIndex = 2
-                        }
-                        break;
-                    default:
-                        viewStack.currentIndex = 0
-                        break;
-                    }
-                }
-
-                /*****************************************
-                  Main Navigation Items
-                    * Start
-                    * Editor
-                    * View
-                *****************************************/
-                Repeater {
-                    id: mainNavItems
-
-                    model: [
-                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start", description: "Go to the start screen." },
-                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit", description: "Edit your control view project." },
-                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View", description: "View your control view" },
-                    ]
-
-                    delegate: SGSideNavItem {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 70
-                        modelIndex: index
-                        tooltipDescription: modelData.description
-                        iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
-                    }
-                }
-
-                /*****************************************
-                  Additional items go below here, but above filler
-                *****************************************/
-
-                SGSideNavItem {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-                    modelIndex: toolBarListView.debugTab
-                    iconText: "Debug"
-                    iconSource: "qrc:/sgimages/tools.svg"
-                    enabled: viewStack.currentIndex === 2 && debugPanel.visible
-                    color: debugPanel.expanded ? Theme.palette.green : "transparent"
-                    tooltipDescription: "Toggle debug panel"
-
-                    function onClicked() {
-                        if (debugPanel.expanded) {
-                            debugPanel.collapse()
-                        } else {
-                            debugPanel.expand()
-                        }
-                    }
-                }
-
-                SGSideNavItem {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-                    iconText: "Logs"
-                    iconSource: "qrc:/sgimages/bars.svg"
-                    color: isConsoleLogOpen  && enabled ? Theme.palette.green : "transparent"
-                    enabled: !startContainer.visible
-                    tooltipDescription: "Toggle logger panel"
-
-                    function onClicked() {
-                        if(toolBarListView.currentIndex === 1) {
-                            if(consoleContainer.visible){
-                                isConsoleLogOpen = false
-                            } else {
-                                isConsoleLogOpen = true
-                            }
-                        }
-                        if (toolBarListView.currentIndex === 2) {
-                            if(viewConsoleLog.visible){
-                                isConsoleLogOpen = false
-                            } else {
-                                isConsoleLogOpen = true
-                            }
-                        }
-                    }
-                }
-
-                Item {
-                    id: filler
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
-
-                SideNavFooter {
-                    id: footer
-                    Layout.preferredHeight: 70
-                    Layout.minimumHeight: footer.implicitHeight
-                    Layout.fillWidth: true
-                }
-
-            }
+        NavigationBar {
+            id: navigationBar
         }
 
         SGSplitView {
@@ -321,10 +186,6 @@ Rectangle {
                                 delete NavigationControl.context.device_id
 
                                 recompileRequested = false
-                                if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                        || source === NavigationControl.screens.LOAD_ERROR) {
-                                    viewStack.currentIndex = 2
-                                }
                             } else if (status === Loader.Error) {
                                 // Tear Down creation context
                                 delete NavigationControl.context.class_id
@@ -343,6 +204,10 @@ Rectangle {
                         id: debugPanel
                         Layout.fillHeight: true
                     }
+                }
+
+                PlatformInterfaceGenerator {
+                    id: platformInterfaceGenerator
                 }
             }
 

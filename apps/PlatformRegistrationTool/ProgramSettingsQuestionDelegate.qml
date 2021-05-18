@@ -34,7 +34,7 @@ ProgramSettingsDelegate {
             Behavior on opacity { OpacityAnimator {} }
 
             SGWidgets.SGButton {
-                text: "Controller"
+                text: "Controller only"
                 onClicked: {
                     onlyController = true
                     userResponse(true)

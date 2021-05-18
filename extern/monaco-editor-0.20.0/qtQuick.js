@@ -230,7 +230,7 @@ function registerQmlAsLanguage() {
         }
     })
     monaco.languages.setMonarchTokensProvider('qml', {
-        keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
+        keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function","case","break"],
         typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool', 'double'],
         operators: [
             '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=', '===', '<==', '>==', '!==',
@@ -765,7 +765,10 @@ function registerQmlAsLanguage() {
                     return { suggestions: [] }
                 }
                 if (active.includes(".")) {
-                    const activeWord = active.substring(0, active.length - 1).split('.')[0]
+                    var activeWord = active.substring(0, active.length - 1).split('.')[0]
+                    if(activeWord.includes("switch(")){
+                       activeWord = activeWord.replace("switch(","")
+                    }
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
                         var others = []
@@ -925,7 +928,7 @@ function registerQmlAsLanguage() {
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
-        } else if (bracketWord.includes("function") || bracketWord.substring(0, 2) === "on" || bracketWord.includes("if")) {
+        } else if (bracketWord.includes("function") || bracketWord.substring(0, 2) === "on" || bracketWord.includes("if") || bracketWord.includes("switch") || bracketWord.includes(":")) {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(functionSuggestions)
         } else {
