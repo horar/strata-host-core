@@ -590,7 +590,7 @@ function generateUnknownListing (platform) {
 
 function generateUnregisteredListing (platform) {
     let description = "Unregistered platform. Contact local support."
-    return generateErrorListing(platform, "Unregistered Platform", "", "N/A", description)
+    return generateErrorListing(platform, "Unregistered Platform", String(platform.class_id), "N/A", description)
 }
 
 function generateAssistedNoPlatformListing (platform) {
