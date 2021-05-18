@@ -299,6 +299,7 @@ function previousDeviceIndex(device_id) {
 function addConnectedPlatform(platform) {
     let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
     let data
+    let is_assisted = (platform.controller_type === 2)
 
     if (platform.controller_class_id === undefined) {
         // Embedded Strata
@@ -326,7 +327,8 @@ function addConnectedPlatform(platform) {
         data = {
             "class_id": class_id_string,
             "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version
+            "firmware_version": platform.firmware_version,
+            "is_assisted": is_assisted
         }
     } else {
         // Assisted Strata
@@ -370,7 +372,8 @@ function addConnectedPlatform(platform) {
             "class_id": class_id_string,
             "controller_class_id": platform.controller_class_id,
             "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version
+            "firmware_version": platform.firmware_version,
+            "is_assisted": is_assisted
         }
     }
 
@@ -464,7 +467,7 @@ function openPlatformView(platform) {
         "available": platform.available,
         "firmware_version": platform.firmware_version,
         "controller_class_id": platform.controller_class_id,
-        "is_assisted": platform.is_assisted,
+        "is_assisted": platform.is_assisted
     }
 
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
