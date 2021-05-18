@@ -42,7 +42,10 @@ TextField {
     signal suggestionDelegateRemoveRequested(int index)
 
     /*private*/
-    property bool hasRightIcons: (cursorInfoLoader !== null || revelPasswordLoader !== null || clearButtonLoader !== null || rightIconItem !== null)
+    property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
+                                 || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
+                                 || (clearButtonLoader !== null && clearButtonLoader.status === Loader.Ready)
+                                 || (rightIconItem !== null && rightIconItem.source)
 
     property bool revealPassword: false
 
@@ -183,19 +186,19 @@ TextField {
             Loader {
                 id: clearButtonLoader
                 anchors.verticalCenter: parent.verticalCenter
-                sourceComponent: showClearButton && control.text.length > 0 ? clearButtonComponent : undefined
+                sourceComponent: showClearButton && control.text.length > 0 ? clearButtonComponent : null
             }
 
             Loader {
                 id: cursorInfoLoader
                 anchors.verticalCenter: parent.verticalCenter
-                sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
+                sourceComponent: showCursorPosition ? cursorInfoComponent : null
             }
 
             Loader {
                 id: revelPasswordLoader
                 anchors.verticalCenter: parent.verticalCenter
-                sourceComponent: passwordMode ? revealPasswordComponent : undefined
+                sourceComponent: passwordMode ? revealPasswordComponent : null
             }
 
             SGWidgets.SGIcon {
@@ -204,7 +207,6 @@ TextField {
                 width: leftIconItem.width
                 height: leftIconItem.height
                 iconColor: "darkgray"
-                visible: source.toString().length > 0
             }
         }
     }
