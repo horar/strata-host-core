@@ -651,8 +651,10 @@ function registerQmlAsLanguage() {
             for (var j = 0; j < qtObjectSuggestions[key].properties.length; j++) {
                 arr.push(qtObjectSuggestions[key].properties[j])
             }
+            var uuid = create_UUID()
+            var insertWidget = `${key} { // start_${uuid}\n\tlayoutInfo.uuid: "${uuid}"\n\tlayoutInfo.columnsWide: 1\n\tlayoutInfo.rowsTall: 1\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n} // end_${uuid}`
             arr = removeDuplicates(arr)
-            createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
+            createQtObjectValPairs(key, { label: key, insertText: qtTypeJson["sources"][key].isVisualWidget ? insertWidget : key, properties: arr, flag: false, isId: false })
         }
         for (const key in qtTypeJson) {
             if (key === "property") {
@@ -1084,4 +1086,14 @@ function searchForUUID(uuid){
         err_flag = true
         err_msg = ERROR_TYPES.UUID_ERROR
     }
+}
+
+function create_UUID(){
+    var dt = new Date().getTime();
+    var uuid = 'xxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c =='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+    return uuid;
 }
