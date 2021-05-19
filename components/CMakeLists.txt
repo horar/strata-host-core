@@ -14,6 +14,8 @@ if(APPS_CORECOMPONENTS)
         generate_ifw_version(GITTAG_PREFIX "components_")
 
         add_subdirectory(qt)
+        add_subdirectory(addons)
+        add_subdirectory(openssl)
     endif()
 
     add_subdirectory(theme)
