@@ -76,14 +76,6 @@ void FlasherTest::cleanup()
     clearExpectedValues();
 }
 
-void FlasherTest::clearExpectedValues()
-{
-    expectedMd5_.clear();
-    expectedChunkSize_.clear();
-    expectedChunkData_.clear();
-    expectedChunkCrc_.clear();
-}
-
 void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString)
 {
     switch (result) {
@@ -238,6 +230,14 @@ void FlasherTest::getExpectedValues(QString firmwarePath)
     } else {
         QFAIL("Cannot open firmware.");
     }
+}
+
+void FlasherTest::clearExpectedValues()
+{
+    expectedMd5_.clear();
+    expectedChunkSize_.clear();
+    expectedChunkData_.clear();
+    expectedChunkCrc_.clear();
 }
 
 void FlasherTest::flashFirmwareTest()

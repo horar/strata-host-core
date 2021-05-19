@@ -55,19 +55,18 @@ private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
-    void clearExpectedValues();
     void connectFlasherHandlers(strata::Flasher* flasher) const;
     void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher) const;
     void connectFlasherForCancelFirmwareOperation(strata::Flasher* flasher) const;
 
+    void createFiles();
+    void getExpectedValues(QString firmwarePath);
+    void clearExpectedValues();
+
     strata::platform::PlatformPtr platform_;
-    std::shared_ptr<strata::device::MockDevice> mockDevice_;
+    strata::device::MockDevicePtr mockDevice_;
     QSharedPointer<strata::Flasher> flasher_;
     strata::platform::operation::PlatformOperations platformOperations_;
-
-    void createFiles();
-
-    void getExpectedValues(QString firmwarePath);
 
     int flasherFinishedCount_ = 0;
     int flasherNoFirmwareCount_ = 0;
