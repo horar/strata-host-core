@@ -30,6 +30,7 @@ SGWidgets.SGMainWindow {
     minimumWidth: 1024
     title: Qt.application.displayName
 
+    property bool fullScreenMode: false
     property alias notificationsInbox: notificationsInbox
 
     signal initialized()
@@ -39,6 +40,43 @@ SGWidgets.SGMainWindow {
     {
         mainWindow.width = 1200
         mainWindow.height = 900
+    }
+
+    function changeFullScreenMode() {
+        if (fullScreenMode === false) {
+                mainWindow.showFullScreen()
+                fullScreenMode = true
+                Notifications.createNotification(
+                    "Press " + escapeFullScreenMode.sequence + " to exit full screen",
+                    Notifications.Info,
+                    "current",
+                    {
+                        "singleton": true
+                    }
+                )
+            } else {
+                mainWindow.showNormal()
+                fullScreenMode = false
+            }
+    }
+
+    Shortcut {
+        id: enterFullScreenMode
+        sequence: StandardKey.FullScreen
+        onActivated: {
+            changeFullScreenMode()
+        }
+    }
+
+    Shortcut {
+        id: escapeFullScreenMode
+        sequence: "Escape"
+        onActivated: {
+            if (fullScreenMode) {
+                mainWindow.showNormal()
+                fullScreenMode = false
+            }
+        }
     }
 
     Component.onCompleted: {
