@@ -102,7 +102,7 @@ void Flasher::flashBootloader()
     addFlashOperation(flashingFw);                               // flash bootloader
 
     // starting new bootloader takes some time
-    addIdentifyOperation(flashingFw, identifyDelay);  // identify board
+    addIdentifyOperation(flashingFw, identifyDelay);             // identify board
 
     currentOperation_ = operationList_.begin();
 
