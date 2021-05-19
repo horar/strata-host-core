@@ -85,6 +85,7 @@ void Flasher::flashBootloader()
 {
     constexpr bool flashingFw = false;
     action_ = Action::FlashBootloader;
+    std::chrono::milliseconds identifyDelay = (platform_->deviceType() == device::Device::Type::MockDevice) ? IDENTIFY_OPERATION_MOCK_DELAY : IDENTIFY_OPERATION_DELAY;
 
     if (startActionCheck(QStringLiteral("Cannot flash bootloader")) == false) {
         return;
@@ -101,7 +102,7 @@ void Flasher::flashBootloader()
     addFlashOperation(flashingFw);                               // flash bootloader
 
     // starting new bootloader takes some time
-    addIdentifyOperation(flashingFw, IDENTIFY_OPERATION_DELAY);  // identify board
+    addIdentifyOperation(flashingFw, identifyDelay);  // identify board
 
     currentOperation_ = operationList_.begin();
 
