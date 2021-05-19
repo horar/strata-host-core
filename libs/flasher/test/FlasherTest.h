@@ -76,8 +76,8 @@ private:
     int flasherTimeoutCount_ = 0;
     int flasherCancelledCount_ = 0;
 
-    QScopedPointer<QTemporaryFile> fakeFirmware_;
-    QScopedPointer<QTemporaryFile> fakeBootloader_;
+    QTemporaryFile fakeFirmware_;
+    QTemporaryFile fakeBootloader_;
 
     QString expectedMd5_;
     int expectedChunksCount_ = 0;
