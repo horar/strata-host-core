@@ -3,8 +3,6 @@
 
 #include "FlasherTest.h"
 #include <rapidjson/writer.h>
-#include <Operations/StartBootloader.h>
-#include <Operations/StartApplication.h>
 #include "FlasherTestConstants.h"
 #include <FlasherConstants.h>
 #include <CodecBase64.h>
