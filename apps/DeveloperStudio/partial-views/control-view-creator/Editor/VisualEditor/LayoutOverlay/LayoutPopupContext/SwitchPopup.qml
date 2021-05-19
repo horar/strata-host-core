@@ -25,6 +25,8 @@ Popup {
     }
 
     property string textFieldProperty
+    property alias switchChecked: switchContainer.checked
+    property alias switchText: label.text
     onClosed: menuLoader.active = false
 
     ColumnLayout {

@@ -27,7 +27,6 @@ Popup {
 
         ContextMenuButton {
             text: "Set ID"
-
             onClicked: {
                 menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
                 menuLoader.active = true

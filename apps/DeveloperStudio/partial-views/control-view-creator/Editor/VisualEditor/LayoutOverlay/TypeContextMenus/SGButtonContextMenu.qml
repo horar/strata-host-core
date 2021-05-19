@@ -10,10 +10,6 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-    RegExpValidator {
-        id: inputValidator
-        regExp: /^[a-z_][a-zA-Z0-9_]*/
-    }
 
     ContextMenuButton {
         text: "Set Text"
@@ -22,7 +18,6 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
             menuLoader.item.textFieldProperty = "text"
-            menuLoader.item.validator = inputValidator
             menuLoader.item.label = "Enter the text.Text can contain only letters, numbers, underscores and spaces."
             menuLoader.item.open()
             contextMenu.close()

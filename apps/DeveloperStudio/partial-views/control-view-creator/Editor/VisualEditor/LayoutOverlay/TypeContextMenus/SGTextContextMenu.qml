@@ -23,7 +23,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
             menuLoader.item.textFieldProperty = "text"
             menuLoader.item.validator = inputValidator
-            menuLoader.item.label = "Enter The Text.Text can contain only letters, numbers, underscores and spaces."
+            menuLoader.item.label = "Enter the text. Text can contain only letters, numbers, underscores and spaces."
             menuLoader.item.open()
             contextMenu.close()
         }

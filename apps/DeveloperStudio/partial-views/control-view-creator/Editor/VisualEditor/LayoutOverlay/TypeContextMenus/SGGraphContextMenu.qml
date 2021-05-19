@@ -138,6 +138,8 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
+            menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.xGrid
+            menuLoader.item.switchText = "Toggle switch to show hide X Grid"
             menuLoader.item.textFieldProperty = "xGrid"
             menuLoader.item.open()
             contextMenu.close()
@@ -149,6 +151,8 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
+            menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.yGrid
+            menuLoader.item.switchText = "Toggle switch to show hide Y Grid"
             menuLoader.item.textFieldProperty = "yGrid"
             menuLoader.item.open()
             contextMenu.close()

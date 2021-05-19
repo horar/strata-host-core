@@ -33,9 +33,11 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.textFieldProperty = "thickness"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
+            menuLoader.item.intValidator.bottom = 0
+            menuLoader.item.intValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.open()
-            menuLoader.item.validator = inputValidator
-            menuLoader.item.label = "Enter A Number. Thickness can only contain numbers."
+            menuLoader.item.label = "Enter A Number. Thickness can only contain integer value."
             menuLoader.item.isString = false
             contextMenu.close()
         }

@@ -23,6 +23,19 @@ Popup {
         }
     }
 
+    property alias doubleValidator: doubleValidator
+    property alias intValidator: intValidator
+    property alias regExpValidator: regExpValidator
+    DoubleValidator {
+        id: doubleValidator
+    }
+    IntValidator {
+        id: intValidator
+    }
+    RegExpValidator {
+        id: regExpValidator
+    }
+
     property alias text: textField.text
     property alias validator: textField.validator
     property alias label: label.text
