@@ -154,6 +154,7 @@ protected:
     void initCommandList();
     void finishOperation(Result result, const QString &errorString);
     void resume();
+    void setPlatformRecognized(bool isRecognozed);
 
     PlatformPtr platform_;
 

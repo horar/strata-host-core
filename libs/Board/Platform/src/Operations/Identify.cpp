@@ -45,7 +45,7 @@ Identify::BoardMode Identify::boardMode()
 void Identify::setPlatformRecognized(Result result) {
     // do not emit recognized signal if operation was cancelled
     if (result != Result::Cancel) {
-        platform_->identifyFinished(result == Result::Success);
+        BasePlatformOperation::setPlatformRecognized(result == Result::Success);
     }
 }
 

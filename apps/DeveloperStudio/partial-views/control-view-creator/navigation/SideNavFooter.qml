@@ -121,7 +121,7 @@ Item {
                 if (recompileRequested) { // enforce that CVC requested this recompile
                     rccInitialized = true
                     if (filepath !== '') {
-                        loadDebugView(filepath)
+                        registerAndSetRecompiledRccFile(filepath)
                     } else {
                         let error_str = sdsModel.resourceLoader.getLastLoggedError()
                         controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
