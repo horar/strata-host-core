@@ -301,7 +301,7 @@ void Platform::setApiVersion(ApiVersion apiVersion) {
     apiVersion_ = apiVersion;
 }
 
-void Platform::identifyFinished(bool isRecognized) {
+void Platform::setRecognized(bool isRecognized) {
     {
         QWriteLocker wLock(&properiesLock_);
         isRecognized_ = isRecognized;
