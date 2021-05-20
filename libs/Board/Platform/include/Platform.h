@@ -370,7 +370,7 @@ namespace strata::platform {
         QTimer reconnectTimer_;
         std::chrono::milliseconds retryInterval_;
 
-        QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
+        QReadWriteLock propertiesLock_;  // Lock for protect access to device properties.
 
         bool bootloaderMode_;
         bool isRecognized_;
