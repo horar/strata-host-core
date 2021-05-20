@@ -1,4 +1,4 @@
-if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
+if(EXISTS ${GIT_ROOT_DIR}/.git OR NOT USE_GITTAG_VERSION)
     if (USE_GITTAG_VERSION)
         message(STATUS "Searching for tag: '${GITTAG_PREFIX}v...'")
         execute_process(
