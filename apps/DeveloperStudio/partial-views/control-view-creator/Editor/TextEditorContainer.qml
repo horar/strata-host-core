@@ -16,18 +16,13 @@ import "../components"
 
 ColumnLayout {
     id: fileContainerRoot
-<<<<<<< HEAD
     spacing: 0
-=======
-    Layout.fillHeight: true
-    Layout.fillWidth: true
     
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus()
         }
     }
->>>>>>> develop
 
     property int modelIndex: index
     property string file: model.filename
