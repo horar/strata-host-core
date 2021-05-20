@@ -39,6 +39,7 @@ include(GitVersionMacro)
 include(TimestampMacro)
 include(ReplicatorCredentialsMacro)
 include(AddQmlImportPathMacro)
+include(DeployConfigFilesHelpers)
 
 # common for 'apps' and 'components' that use resource files
 add_qml_import_path(PATH ":/")
