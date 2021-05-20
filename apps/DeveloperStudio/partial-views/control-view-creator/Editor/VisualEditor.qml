@@ -84,7 +84,7 @@ ColumnLayout {
                 var overLayObject = overlayComponent.createObject(overlayContainer)
 
                 // overlay's object name is equivalent to the id of the item since id's are not accessible at runtime
-                overLayObject.objectName = functions.getId(item.layoutInfo.uuid)
+                overLayObject.objectName = functions.getObjectPropertyValue(item.layoutInfo.uuid, "id")
                 overLayObject.type = functions.getType(item.layoutInfo.uuid)
                 if (overLayObject.objectName === null || overLayObject.type === null) {
                     overLayObject.destroy()

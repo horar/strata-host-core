@@ -306,21 +306,6 @@ QtObject {
         return string.match(objectDeclarationRegex)
     }
 
-    function getId(uuid) {
-        let capture1 = "start_" + uuid + "[\\s\\S]*?id:\\s*"
-        let capture2 = "(.*)"
-        let capture3 = "[\\s\\S]*?end_" + uuid + ""
-        const regex = new RegExp(capture1 + capture2 + capture3)
-        let id
-        try {
-            id = fileContents.match(regex)[1]
-        } catch (e) {
-            id = null
-            console.warn("No match for uuid '" + uuid + "' found, start/end tags may be malformed")
-        }
-        return id;
-    }
-
     function getType(uuid) {
         const capture1 = "([A-Z][A-Za-z0-9_]*)" // qml object type, e.g. Rectangle
         const capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
