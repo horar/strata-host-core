@@ -66,7 +66,7 @@ ColumnLayout {
             menuLoader.item.textFieldProperty = "radius"
             menuLoader.item.validator = positiveInputValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle"
+            menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle."
             menuLoader.item.open()
             contextMenu.close()
         }

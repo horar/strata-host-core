@@ -10,7 +10,6 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-
     ContextMenuButton {
         text: "Set Text"
         onClicked: {

@@ -22,5 +22,4 @@ ColumnLayout {
             contextMenu.close()
         }
     }
-
 }

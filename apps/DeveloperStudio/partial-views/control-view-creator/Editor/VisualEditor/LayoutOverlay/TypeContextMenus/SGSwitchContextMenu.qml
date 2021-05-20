@@ -9,12 +9,6 @@ import "../LayoutPopupContext"
 
 ColumnLayout {
     spacing: 1
-
-    //    RegExpValidator {
-    //        id: inputValidator
-    //        regExp: /^[a-z_][a-zA-Z0-9_]*/
-    //    }
-
     ContextMenuButton {
         text: "Set Checked Label"
         onClicked: {
@@ -22,7 +16,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.checkedLabel
             menuLoader.item.textFieldProperty = "checkedLabel"
-            menuLoader.item.label = "Enter The Text.Text can contain only letters, numbers, underscores."
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
+            menuLoader.item.label = "Enter The Text.Text can contain only letters, numbers, and underscores."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -33,15 +29,18 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.uncheckedLabel
+            menuLoader.item.textFieldProperty = "checkedLabel"
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.textFieldProperty = "uncheckedLabel"
-            menuLoader.item.label = "Enter The Text. Text can contain only letters, numbers, underscores."
+            menuLoader.item.label = "Enter The Text. Text can contain only letters, numbers, and underscores."
             menuLoader.item.open()
             contextMenu.close()
         }
     }
 
     ContextMenuButton {
-        text: "Set Checked Color "
+        text: "Set Groove Color"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
@@ -52,7 +51,7 @@ ColumnLayout {
     }
 
     ContextMenuButton {
-        text: "Set Unchecked Color"
+        text: "Set Groove FillColor"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true

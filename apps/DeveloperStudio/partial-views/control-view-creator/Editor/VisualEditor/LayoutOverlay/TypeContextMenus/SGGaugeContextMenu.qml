@@ -10,40 +10,17 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-//    RegExpValidator {
-//        id: inputValidator
-//        regExp: /^[+-]?[0-9]*/
-//    }
-
-//    DoubleValidator {
-//        id: positiveInputValidator
-//        bottom:  -2147483647
-//        top: 2147483647
-//    }
-
-
-
-//    //    RegExpValidator {
-//    //        id: positiveInputValidator
-//    //        regExp: /^-?[0-9]\d*(\.\d+)*/
-//    //    }
-//    RegExpValidator {
-//        id: specialInputValidator
-//        regExp: /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/
-//    }
-
-
-
     ContextMenuButton {
         text: "Set Min Value"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SpinBoxPopup.qml")
             menuLoader.active = true
-            menuLoader.item.text = layoutOverlayRoot.sourceItem.minimumValue
-            menuLoader.item.decimals = 0
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.textFieldProperty = "minimumValue"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the minimum value of the gauge."
+            menuLoader.item.label = "Enter the minimum value of the gauge. Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -52,12 +29,14 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Max Value"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SpinBoxPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
-            menuLoader.item.text = layoutOverlayRoot.sourceItem.maximumValue
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.textFieldProperty = "maximumValue"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Select the maximum value of the gauge"
+            menuLoader.item.label = "Enter the maximum value of the gauge.Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
             contextMenu.close()
 
@@ -74,7 +53,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.tickmarkStepSize
             menuLoader.item.textFieldProperty = "tickmarkStepSize"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge.Text can only contain decimal values."
+            menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge.Text can only contain numbers or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -91,7 +70,7 @@ ColumnLayout {
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.textFieldProperty = "value"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the Initial value of the gauge.Text can only numbers, letters and any special characters. "
+            menuLoader.item.label = "Enter the initial value of the gauge. Text can only positive/negtaive numbers"
             menuLoader.item.open()
             contextMenu.close()
         }

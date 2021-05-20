@@ -22,9 +22,11 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fromText.text
             menuLoader.item.textFieldProperty = "from"
-            menuLoader.item.validator = inputValidator
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter The Start Value Of The Slider. Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter the start value of the slider. Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -37,13 +39,16 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.toText.text
             menuLoader.item.textFieldProperty = "to"
-            menuLoader.item.validator = inputValidator
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter The End Value Of The Slider.Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter the End Value Of The Slider.Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set Text Color"
         onClicked: {
