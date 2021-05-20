@@ -1,5 +1,5 @@
 if (CMAKE_BUILD_TYPE STREQUAL "OTA")
-    project(Qt
+    project(Addons
         DESCRIPTION "Strata Addons"
         LANGUAGES NONE
     )
