@@ -4,7 +4,7 @@ project(Platform
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort
+    COMPONENTS Core SerialPort Bluetooth
     REQUIRED
 )
 
@@ -70,6 +70,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
+    PUBLIC Qt5::Bluetooth
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PRIVATE strata::CommandValidator
