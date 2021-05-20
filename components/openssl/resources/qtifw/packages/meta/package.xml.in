@@ -7,4 +7,7 @@
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>61</SortingPriority>
+    <Licenses>
+        <License name="OpenSSL and SSLeay License Agreement" file="license-openssl-ssleay.txt" />
+    </Licenses>
 </Package>

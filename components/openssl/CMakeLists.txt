@@ -1,6 +1,6 @@
 if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     project(OpenSSL
-        DESCRIPTION "OpenSSL libraries"
+        DESCRIPTION "OpenSSL Libraries"
         LANGUAGES NONE
     )
 
