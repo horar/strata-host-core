@@ -34,7 +34,7 @@ Item {
             treeView.selection.select(index, ItemSelectionModel.Rows);
             treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
         }
-                    
+
         Connections {
             target: treeModel
 
@@ -58,7 +58,7 @@ Item {
                     }
                 }
             }
-                        
+
             onModelReset: {
                 // Find the Control.qml file and select it
                 for (let i = 0; i < treeModel.root.childCount(); i++) {

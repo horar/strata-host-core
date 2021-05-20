@@ -224,6 +224,11 @@ void BasePlatformOperation::resume()
     }
 }
 
+void BasePlatformOperation::setPlatformRecognized(bool isRecognized)
+{
+    platform_->setRecognized(isRecognized);
+}
+
 void BasePlatformOperation::reset()
 {
     commandList_.clear();
