@@ -4,11 +4,8 @@ function(find_all_config_files PATHS_LIST FILE_PATTERN FILE_LIST)
             RELATIVE ${CONFIG_PATH}
             ${CONFIG_PATH}/${FILE_PATTERN}
         )
-        message("looking in ${CONFIG_PATH}")
-        message("found ${TEMP_LIST}")
         list(APPEND TEMP_FILES_LIST ${TEMP_LIST})
     endforeach()
-    message("done. found ${TEMP_FILES_LIST}")
     set(${FILE_LIST} ${TEMP_FILES_LIST} PARENT_SCOPE)
 endfunction(find_all_config_files)
 
