@@ -69,6 +69,7 @@ private:
     strata::platform::operation::PlatformOperations platformOperations_;
 
     int flasherFinishedCount_ = 0;
+    int flasherOkCount_ = 0;
     int flasherNoFirmwareCount_ = 0;
     int flasherErrorCount_ = 0;
     int flasherDisconnectedCount_ = 0;
