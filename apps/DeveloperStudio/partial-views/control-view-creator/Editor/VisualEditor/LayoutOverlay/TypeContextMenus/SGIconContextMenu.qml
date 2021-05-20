@@ -68,8 +68,7 @@ ColumnLayout {
                         Layout.alignment: Qt.AlignTop
 
                         onClicked: {
-                            visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, "source", '"' + model.source + '"')
-                            visualEditor.functions.saveFile()
+                            visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, "source", '"' + model.source + '"')
                             iconPicker.close()
                         }
 

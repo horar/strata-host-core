@@ -101,25 +101,36 @@ QtObject {
     }
 
     function insertTextAtEndOfFile(text) {
-        let regex = new RegExp("([\\s\\S]*)(\})","gm")  // insert text before ending '}' in file
-        fileContents = fileContents.replace(regex, "$1\n" + text + "$2");
+        let regex = new RegExp(endOfObjectRegexString("uibase"))  // insert text before file ending '} // end_uibase'
+        let endOfFile = fileContents.match(regex)
+        if (endOfFile === null) {
+            return
+        }
+        fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile);
         // console.log("fileContents:", fileContents)
         saveFile()
     }
 
     function removeControl(uuid) {
-        fileContents = fileContents.replace(captureComponentByUuidRegex(uuid), "");
+        const objectString = getObjectFromString(uuid)
+        if (objectString === null) {
+            return
+        }
+        fileContents = fileContents.replace(objectString, "\n");
 
         saveFile(file, fileContents)
     }
 
     function duplicateControl(uuid){
         let copy = getObjectFromString(uuid)
-        if (copy === "") {
+        if (copy === null) {
             return
         }
 
         let type = getType(uuid)
+        if (type === null) {
+            return
+        }
         type = type.charAt(0).toLowerCase() + type.slice(1); // lowercase the first letter of the type
         const newUuid = create_UUID()
 
@@ -143,18 +154,18 @@ QtObject {
         })
 
         // if item-to-be-duplicated is not touching the edge of the layout, offset it by 1 row and 1 column
-        let column = getObjectPropertyValueInString(newUuid, "layoutInfo.xColumns", copy)
-        let row = getObjectPropertyValueInString(newUuid, "layoutInfo.yRows", copy)
-        if (column !== "" && row !== "") {
+        let column = getObjectPropertyValue(newUuid, "layoutInfo.xColumns", copy)
+        let row = getObjectPropertyValue(newUuid, "layoutInfo.yRows", copy)
+        if (column !== null && row !== null) {
             row = parseInt(row)
             column = parseInt(column)
             if (row < visualEditor.loader.item.rowCount - 1) {
                 row++
-                copy = replaceObjectPropertyValueInString(newUuid, "layoutInfo.yRows", row, copy)
+                copy = setObjectProperty(newUuid, "layoutInfo.yRows", row, copy)
             }
             if (column < visualEditor.loader.item.columnCount - 1) {
                 column++
-                copy = replaceObjectPropertyValueInString(newUuid, "layoutInfo.xColumns", column, copy)
+                copy = setObjectProperty(newUuid, "layoutInfo.xColumns", column, copy)
             }
         } else {
             console.warn("Problem detected with layoutInfo in object " + newUuid)
@@ -165,57 +176,36 @@ QtObject {
 
     function bringToFront(uuid){
         let copy = getObjectFromString(uuid)
-        if (copy === "") {
+        if (copy === null) {
             return
         }
-        fileContents = fileContents.replace(captureComponentByUuidRegex(uuid), "");
+        fileContents = fileContents.replace(copy, "\n");
         insertTextAtEndOfFile(copy)
     }
 
-    function captureComponentByUuidRegex(uuid) {
-        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
-        return new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
-    }
-
     /*
-        Given a <string>, find start and end tags for <uuid>, within those tags find the first
-        instance of <prop> and replace its value with <value>
+        Given a <string>, find object's start and end tags for <uuid>, within those tags find the first
+        instance of <propertyName> and return its value.
+            ** Only works for one-line properties.
+            ** Only works for properties declared above children - see getObjectContents
     */
-    function replaceObjectPropertyValueInString (uuid, prop, value, string = fileContents) {
-        // total regex: (start_42e89[\\s\\S]*?yRows\\s*:\\s*)(.*)([\\s\\S]*?end_42e89)
-        // explanation: find "yRows" prop, only occurring between start and end uuid tags, replace anything following with value
-
-        // regex notes:
-        // \\s\\S is "space or not space" ,aka wildcard, since 's' flag does not work in qml
-        // *? is lazy find, i.e. stop after first find, otherwise catches last match instead
-        // all 3 groups are captured for replacement as it is impossible to replace only one group that is matched
-        let capture1 = "(start_" + uuid + "[\\s\\S]*?" + prop + "\\s*:\\s*)"
-        let capture2 = "(.*)"
-        let capture3 = "([\\s\\S]*?end_" + uuid + ")"
-        let regex = new RegExp(capture1 + capture2 + capture3, "gm")
-        return string.replace(regex, "$1" + value + "$3");
-    }
-
-    /*
-        Given a <string>, find start and end tags for <uuid>, within those tags find the first
-        instance of <prop> and return its value. Only works for one-line properties.
-    */
-    function getObjectPropertyValueInString(uuid, propertyName, string = fileContents) {
+    function getObjectPropertyValue(uuid, propertyName, string = fileContents) {
         let objectString = getObjectFromString(uuid, string)
-        if (objectString === "") {
-            return ""
+        if (objectString === null) {
+            return null
         }
 
-        propertyName = propertyName.replace(".", "\\.")
-        // regex: matches line starting with whitespace before 'propertyName: ' and captures anything that follows,
-        // stoping at end of line and disregarding trailing whitespace
-        const regex = new RegExp("^\\s*" + propertyName + ":\\s*(.*)\\s*$","m")
+        let objectContents = getObjectContents(objectString)
+        if (objectContents === null) {
+            return null
+        }
+
         let value
         try {
-            value = objectString.match(regex)[1]
+            value = getPropertyFromString(propertyName, objectContents)[1]
         } catch (e) {
-            value = ""
             console.warn("No match for " + propertyName + " found in object " + uuid +", may be malformed")
+            value = null
         }
         return value;
     }
@@ -223,12 +213,97 @@ QtObject {
     function getObjectFromString(uuid, string = fileContents) {
         let objectString
         try {
-            objectString = string.match(captureComponentByUuidRegex(uuid))[0]
+            objectString = string.match(captureObjectByUuidRegex(uuid))[0]
         } catch (e) {
-            objectString = ""
+            objectString = null
             console.warn("No match for " + uuid + " found, object start/end tags may be malformed or does not exist")
         }
         return objectString;
+    }
+
+    function setObjectPropertyAndSave(uuid, propertyName, value) {
+        fileContents = setObjectProperty(uuid, propertyName, value, fileContents)
+        saveFile()
+    }
+
+    /*
+        Sets <propertyName> to <value> in object with <uuid>
+        If <propertyName> is not found, it will be appended as a new property above the first child or end of object
+        ** Only works on properties declared above children - see getObjectContents
+    */
+    function setObjectProperty(uuid, propertyName, value, string = fileContents) {
+        let objectString = getObjectFromString(uuid, string)
+        if (objectString === null) {
+            return
+        }
+
+        objectString = getObjectContents(objectString)
+        if (objectString === null) {
+            return
+        }
+
+        let newObjectString
+        let propertyMatch = getPropertyFromString(propertyName, objectString)
+        if (propertyMatch !== null) {
+            // property found in objectString, replace its value
+            let propertyLine = propertyMatch[0]
+            let propertyValue = propertyMatch[1]
+            let newPropertyLine = propertyLine.replace(propertyValue, value)
+            newObjectString = objectString.replace(propertyLine, newPropertyLine)
+        } else {
+            // property not currently assigned in objectString, append property to end
+            newObjectString = objectString + getIndentLevel(objectString) + propertyName +": " + value +"\n"
+        }
+
+        return string.replace(objectString, newObjectString);
+    }
+
+    // returns object contents between tags
+    // and if removeChildren, return object contents that occur before first child
+    function getObjectContents(objectString, removeChildren = true) {
+        let captureContentsRegex = new RegExp(startOfObjectRegexString() + "([\\S\\s]*(?:\\r\\n|\\r|\\n))" +  endOfObjectRegexString())
+        let objectContents
+
+        try {
+            objectContents = objectString.match(captureContentsRegex)[1]
+        } catch (e) {
+            console.warn("Object contents could not be determined, object start/end tags may be malformed")
+            return null
+        }
+        if (removeChildren === false) {
+            return objectContents
+        }
+
+        let objectNames = getObjectNames(objectContents)
+        if (objectNames !== null && objectNames.length > 0) {
+            objectContents = objectContents.split(objectNames[0])[0] // split on first child object and keep content before it
+        }
+        return objectContents;
+    }
+
+    // returns match array for propertyName in string - array[0] is whole property line, array[1] is property value match
+    // returns null if no match
+    // note: meant to operate on a string where only one instance of the property can be found, e.g. after getObjectContents() has been run
+    function getPropertyFromString(propertyName, string) {
+        propertyName = formatPropertyNameForRegex(propertyName)
+
+        const propertyValueCapture = new RegExp("^\\s*" + propertyName + "\\s*:\\s*(.*)\\s*$","m")
+        return string.match(propertyValueCapture)
+    }
+
+    // given a string of an object's contents (after getObjectContents()) return the indent level based on its layoutInfo.uuid property
+    function getIndentLevel(objectContent) {
+        let propertyMatch = getPropertyFromString("layoutInfo.uuid", objectContent)
+        if (propertyMatch === null) {
+            return ""
+        }
+        return propertyMatch[0].split("layoutInfo.uuid")[0]
+    }
+
+    // in string, find all QML object declaration instances (e.g. 'Rectangle {')
+    function getObjectNames(string) {
+        const objectDeclarationRegex = new RegExp("^\\s*[A-Z][A-Za-z0-9_]*\\s*{.*$", "gm")
+        return string.match(objectDeclarationRegex)
     }
 
     function getId(uuid) {
@@ -240,7 +315,7 @@ QtObject {
         try {
             id = fileContents.match(regex)[1]
         } catch (e) {
-            id = ""
+            id = null
             console.warn("No match for uuid '" + uuid + "' found, start/end tags may be malformed")
         }
         return id;
@@ -254,7 +329,7 @@ QtObject {
         try {
             type = fileContents.match(regex)[1]
         } catch (e) {
-            type = ""
+            type = null
             console.warn("No match for " + uuid + " found, start/end tags may be malformed")
         }
         return type;
@@ -268,5 +343,28 @@ QtObject {
             return (c =='x' ? r :(r&0x3|0x8)).toString(16);
         });
         return uuid;
+    }
+
+    function formatPropertyNameForRegex(propertyName) {
+        return propertyName.replace(".", "\\.") // escape property names with "." for regex (e.g. layoutInfo.rowCount)
+    }
+
+    function captureObjectByUuidRegex(uuid) {
+        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
+        return new RegExp(startOfObjectRegexString(uuid) + "[\\s\\S]*" + endOfObjectRegexString(uuid))
+    }
+
+    function uuidRegex() {
+        return "[a-z0-9]{5,6}" //{5,6} as either 5 digit uuid or "uibase"
+    }
+
+    function startOfObjectRegexString(uuid = uuidRegex()) {
+        // matches "   <ObjectName> { // start_<uuid> " where [^\S\r\n] is whitespace-but-not-newline"
+        return "[^\S\r\n]*[A-Z][A-Za-z0-9_]*\\s*\\{\\s*\\/\\/\\s*start_" + uuid + ".*"
+    }
+
+    function endOfObjectRegexString(uuid = uuidRegex()) {
+        // matches "   } // end_<uuid> "
+        return "[^\S\r\n]*\\}\\s*\\/\\/\\s*end_" + uuid + ".*"
     }
 }
