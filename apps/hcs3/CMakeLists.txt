@@ -170,21 +170,6 @@ endif()
 
 deploy_config_file("${HCS_CONFIG_PATHS_LIST}" ${APPS_CORESW_HCS_CONFIG} "hcs.config")
 
-# find_file(HCS_CONFIG_ABSOLUTE_PATH 
-#     NAMES "${APPS_CORESW_HCS_CONFIG}"
-#     PATHS ${HCS_CONFIG_PATHS_LIST}
-#     NO_DEFAULT_PATH
-#     REQUIRED
-# )
-
-# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#     ${HCS_CONFIG_ABSOLUTE_PATH}
-#     $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
-#     COMMENT "Deploying 'hcs.config'..."
-#     VERBATIM
-# )
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
