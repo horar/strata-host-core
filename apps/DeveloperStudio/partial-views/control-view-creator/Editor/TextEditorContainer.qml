@@ -16,7 +16,18 @@ import "../components"
 
 ColumnLayout {
     id: fileContainerRoot
+<<<<<<< HEAD
     spacing: 0
+=======
+    Layout.fillHeight: true
+    Layout.fillWidth: true
+    
+    onVisibleChanged: {
+        if (visible) {
+            forceActiveFocus()
+        }
+    }
+>>>>>>> develop
 
     property int modelIndex: index
     property string file: model.filename
@@ -75,6 +86,11 @@ ColumnLayout {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
             alertToast.show()
             console.error("Unable to save file", model.filepath)
+        }
+    }
+    Keys.onReleased: {
+        if (event.matches(StandardKey.Close)) {
+            closeFileTab(index, model)
         }
     }
 

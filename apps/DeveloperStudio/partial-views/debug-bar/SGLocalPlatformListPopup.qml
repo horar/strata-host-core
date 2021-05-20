@@ -463,14 +463,7 @@ Window {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 enabled: !platformRow.connected
-
-                                background: Rectangle {
-                                    color: "transparent"
-                                    border.color: parent.enabled ? "gray" : "lightGray"
-                                    border.width: 0.5
-                                    anchors.fill: parent
-                                }
-
+                                
                                 property bool textChanged: false
 
                                 onTextChanged: {
