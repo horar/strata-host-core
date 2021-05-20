@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciFilterSuggestionModel>("tech.strata.sci", 1, 0, "SciFilterSuggestionModel", "cannot instantiate SciFilterSuggestionModel in qml");
     qmlRegisterUncreatableType<strata::PlatformManager>("tech.strata.sci", 1, 0, "PlatformManager", "can not instantiate PlatformManager in qml");
     qmlRegisterUncreatableType<SciMockDeviceModel>("tech.strata.sci", 1, 0, "SciMockDeviceModel", "cannot instantiate SciMockDeviceModel in qml");
+    qmlRegisterUncreatableType<SciBleDeviceModel>("tech.strata.sci", 1, 0, "SciBleDeviceModel", "cannot instantiate SciBleDeviceModel in qml");
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
 
