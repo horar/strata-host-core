@@ -54,8 +54,7 @@ Popup {
                 text: "OK"
                 onClicked: {
                     comboBoxPopup.close()
-                    visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, parentProperty, comboBox.currentText)
-                    visualEditor.functions.saveFile()
+                    visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, parentProperty, comboBox.currentText)
                 }
             }
 

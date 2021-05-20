@@ -31,7 +31,7 @@ ColumnLayout {
         }
     }
     ContextMenuButton {
-        text: "Set placeholderText"
+        text: "Set PlaceholderText"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
@@ -46,7 +46,7 @@ ColumnLayout {
     }
 
     ContextMenuButton {
-        text: "Set Text Color"
+        text: "Set TextColor"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
@@ -57,7 +57,7 @@ ColumnLayout {
     }
 
     ContextMenuButton {
-        text: "Set Box Color"
+        text: "Set BoxColor"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true

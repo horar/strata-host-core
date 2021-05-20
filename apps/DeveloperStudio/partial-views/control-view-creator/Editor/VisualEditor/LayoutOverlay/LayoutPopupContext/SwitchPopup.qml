@@ -54,9 +54,8 @@ Popup {
                 text: "OK"
                 onClicked: {
                     switchPopup.close()
-                    visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty,switchContainer.checked)
-                    console.log(layoutOverlayRoot.layoutInfo.uuid,textFieldProperty,switchContainer.checked)
-                    visualEditor.functions.saveFile()
+                    visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty,switchContainer.checked)
+
                 }
             }
 

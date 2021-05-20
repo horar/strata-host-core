@@ -10,15 +10,15 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-    RegExpValidator {
-        id: positiveInputValidator
-        regExp: /^-?[0-9]\d*(\.\d+)*/
-    }
+//    RegExpValidator {
+//        id: positiveInputValidator
+//        regExp: /^-?[0-9]\d*(\.\d+)*/
+//    }
 
-    RegExpValidator {
-        id: radiusInputValidator
-        regExp: /^-[+-]?[0-9]\d*(\.\d+)*/
-    }
+//    RegExpValidator {
+//        id: radiusInputValidator
+//        regExp: /^-[+-]?[0-9]\d*(\.\d+)*/
+//    }
 
     ContextMenuButton {
         text: "Set Border Width"
@@ -27,7 +27,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.border.width
             menuLoader.item.textFieldProperty = "border.width"
-            menuLoader.item.validator = positiveInputValidator
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0 or a transparent color."
             menuLoader.item.open()
@@ -64,7 +66,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radius
             menuLoader.item.textFieldProperty = "radius"
-            menuLoader.item.validator = positiveInputValidator
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle."
             menuLoader.item.open()

@@ -31,7 +31,6 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-
             menuLoader.item.parentProperty = "radioColor"
             menuLoader.item.open()
             contextMenu.close()

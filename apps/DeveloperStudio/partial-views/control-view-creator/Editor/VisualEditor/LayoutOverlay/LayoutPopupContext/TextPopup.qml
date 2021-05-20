@@ -87,10 +87,10 @@ Popup {
                 onClicked: {
                     renamePopup.close()
                     if(isString) {
-                        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + renamePopup.text + '"')
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + renamePopup.text + '"')
                     }
                     else  {
-                        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , renamePopup.text)
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , renamePopup.text)
                     }
                     visualEditor.functions.saveFile()
                 }
