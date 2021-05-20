@@ -1,11 +1,6 @@
 #pragma once
-#include <QStringList>
-#include <QObject>
+
 #include <QString>
-#include <QHash>
-#include <QDir>
-#include <QUrl>
-#include <QQmlEngine>
 #include <QQuickItem>
 #include <QProcess>
 
@@ -39,9 +34,18 @@ public:
      * @brief registerResource Registers a resource file.
      * @param path The path to the RCC file to be registered.
      * @param prefix The virtual directory prefix of the RCC file once registered.
-     * @return True if successfully registered, false if unsucessful.
+     * @return True if successfully registered, false if unsuccessful.
      */
     Q_INVOKABLE bool registerResource(const QString &path, const QString &prefix);
+
+    /**
+     * @brief registerControlViewResource Registers a control view's resource file.
+     * @param rccPath The path to the RCC file to be registered.
+     * @param class_id The class_id to be associated with this RCC file/control view.
+     * @param version The version of the RCC file/control view.
+     * @return True if successfully registered, false if unsuccessful.
+     */
+    Q_INVOKABLE bool registerControlViewResource(const QString &rccPath, const QString &class_id, const QString &version);
 
     /**
      * @brief requestUnregisterDeleteViewResource Asynchronously requests resource unregistration (and optionally deletion from disk) so that asynchronous QML item destruction can complete first.
@@ -54,13 +58,22 @@ public:
     Q_INVOKABLE void requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem = true);
 
     /**
-     * @brief registerControlViewResource Registers a control view's resource file.
-     * @param rccPath The path to the RCC file to be registered.
-     * @param class_id The class_id to be associated with this RCC file/control view.
-     * @param version The version of the RCC file/control view.
-     * @return True if successfully registered, false if unsucessful.
+     * @brief requestUnregisterResource Asynchronously requests resource unregistration (and optionally deletion from disk) so that asynchronous QML item destruction can complete first.
+     * @param path The path to the RCC file to be unregistered.
+     * @param prefix The virtual directory prefix of the RCC file to be unregistered.
+     * @param parent The parent/container
+     * @param removeFromSystem Whether to remove the resource from the system or not
      */
-    Q_INVOKABLE bool registerControlViewResource(const QString &rccPath, const QString &class_id, const QString &version);
+    Q_INVOKABLE void requestUnregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem = true);
+
+    /**
+     * @brief unregisterResource Unregisters a resource file.
+     * @param path The path to the RCC file to be registered.
+     * @param prefix The virtual directory prefix of the RCC file once registered.
+     * @param parent The parent/container
+     * @param removeFromSystem Whether to remove the resource from the system or not
+     */
+    Q_INVOKABLE bool unregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem = true);
 
     /**
      * @brief isViewRegistered Checks if a view is registed in viewsRegistered_.

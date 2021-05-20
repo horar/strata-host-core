@@ -19,20 +19,24 @@ Rectangle {
     id: controlViewCreatorRoot
 
     property bool isConfirmCloseOpen: false
-    property bool rccInitialized: false
-    property bool recompileRequested: false
+
     property var debugPlatform: ({
                                      deviceId: Constants.NULL_DEVICE_ID,
                                      classId: ""
                                  })
 
-    onDebugPlatformChanged: {
-        recompileControlViewQrc();
-    }
-
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
     property bool isConsoleLogOpen: false
+
+    property bool rccInitialized: false
+    property bool recompileRequested: false
+    property string previousCompiledRccFilePath: ""
+    property string previousCompiledRccFileUniquePrefix: ""
+
+    onDebugPlatformChanged: {
+        recompileControlViewQrc();
+    }
 
     SGUserSettings {
         id: sgUserSettings
@@ -276,15 +280,23 @@ Rectangle {
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
-    function loadDebugView (compiledRccFile) {
+    function registerAndSetRecompiledRccFile (compiledRccFile) {
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
 
-        // Register debug control view object
+        // Unregister previous (cached) resource
+        if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
+            sdsModel.resourceLoader.unregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, controlViewLoader, false)
+        }
+
+        // Register new control view resource
         if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
             console.error("Failed to register resource")
             return
         }
+
+        controlViewCreatorRoot.previousCompiledRccFilePath = compiledRccFile
+        controlViewCreatorRoot.previousCompiledRccFileUniquePrefix = uniquePrefix
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
 

@@ -153,57 +153,57 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
 }
 
 QString Platform::name() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return name_;
 }
 
 QString Platform::bootloaderVer() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return bootloaderVer_;
 }
 
 QString Platform::applicationVer() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return applicationVer_;
 }
 
 QString Platform::platformId() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return platformId_;
 }
 
 bool Platform::hasClassId() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return (classId_.isNull() == false);
 }
 
 QString Platform::classId() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return classId_;
 }
 
 QString Platform::controllerPlatformId() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return controllerPlatformId_;
 }
 
 QString Platform::controllerClassId() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return controllerClassId_;
 }
 
 QString Platform::firmwareClassId() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return firmwareClassId_;
 }
 
 Platform::ApiVersion Platform::apiVersion() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return apiVersion_;
 }
 
 Platform::ControllerType Platform::controllerType() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return controllerType_;
 }
 
@@ -212,7 +212,7 @@ bool Platform::isControllerConnectedToPlatform() {
 }
 
 bool Platform::isRecognized() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return isRecognized_;
 }
 
@@ -234,14 +234,14 @@ bool Platform::deviceConnected() const {
 
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {
     // Do not change property if parameter is nullptr.
-    QWriteLocker wLock(&properiesLock_);
+    QWriteLocker wLock(&propertiesLock_);
     if (bootloaderVer)  { bootloaderVer_ = bootloaderVer; }
     if (applicationVer) { applicationVer_ = applicationVer; }
 }
 
 void Platform::setProperties(const char* name, const char* platformId, const char* classId, ControllerType type) {
     // Clear property of parameter is nullptr.
-    QWriteLocker wLock(&properiesLock_);
+    QWriteLocker wLock(&propertiesLock_);
     if (name) { name_ = name; }
     else { name_.clear(); }
 
@@ -256,7 +256,7 @@ void Platform::setProperties(const char* name, const char* platformId, const cha
 
 void Platform::setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
     // Clear property of parameter is nullptr.
-    QWriteLocker wLock(&properiesLock_);
+    QWriteLocker wLock(&propertiesLock_);
     if (platformId) { controllerPlatformId_ = platformId; }
     else { controllerPlatformId_.clear(); }
 
@@ -287,23 +287,23 @@ void Platform::unlockDevice(quintptr lockId) {
 }
 
 void Platform::setBootloaderMode(bool inBootloaderMode) {
-    QWriteLocker wLock(&properiesLock_);
+    QWriteLocker wLock(&propertiesLock_);
     bootloaderMode_ = inBootloaderMode;
 }
 
 bool Platform::bootloaderMode() {
-    QReadLocker rLock(&properiesLock_);
+    QReadLocker rLock(&propertiesLock_);
     return bootloaderMode_;
 }
 
 void Platform::setApiVersion(ApiVersion apiVersion) {
-    QWriteLocker wLock(&properiesLock_);
+    QWriteLocker wLock(&propertiesLock_);
     apiVersion_ = apiVersion;
 }
 
-void Platform::identifyFinished(bool isRecognized) {
+void Platform::setRecognized(bool isRecognized) {
     {
-        QWriteLocker wLock(&properiesLock_);
+        QWriteLocker wLock(&propertiesLock_);
         isRecognized_ = isRecognized;
     }
     emit recognized(device_->deviceId(), isRecognized);
