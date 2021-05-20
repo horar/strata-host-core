@@ -322,7 +322,7 @@ QtObject {
     }
 
     function getType(uuid) {
-        const capture1 = "([A-Za-z0-9_]+)" // qml object type, e.g. Rectangle
+        const capture1 = "([A-Z][A-Za-z0-9_]*)" // qml object type, e.g. Rectangle
         const capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
         const regex = new RegExp(capture1 + capture2)
         let type
