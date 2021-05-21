@@ -203,5 +203,10 @@ bool MockDevice::mockSetVersion(MockVersion version)
     return control_.mockSetVersion(version);
 }
 
+void MockDevice::mockSetAsBootloader(bool isBootloader)
+{
+    control_.mockSetAsBootloader(isBootloader);
+}
+
 }  // namespace strata::device
 

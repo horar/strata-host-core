@@ -134,29 +134,29 @@ if(WIN32)
     endif()
 endif()
 
-set(SDS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/internal/assets/config/sds)
+set(SDS_CONFIG_PATHS_LIST)
+
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/sds")
+    list(APPEND SDS_CONFIG_PATHS_LIST ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/sds)
+endif()
+list(APPEND SDS_CONFIG_PATHS_LIST ${CMAKE_HOME_DIRECTORY}/assets/config/sds)
+
+find_all_config_files("${SDS_CONFIG_PATHS_LIST}" "*.config" APPS_CORESW_SDS_CONFIG_CHOICES)
 
 if(NOT APPS_CORESW_SDS_CONFIG)
-    set(APPS_CORESW_SDS_CONFIG sds_qa.config CACHE STRING "Desired SDS configuration file." FORCE)
-    message(STATUS "Defaulting 'APPS_CORESW_SDS_CONFIG' to ${APPS_CORESW_SDS_CONFIG}.")
+    if("sds_qa.config" IN_LIST APPS_CORESW_SDS_CONFIG_CHOICES)
+        set(APPS_CORESW_SDS_CONFIG "sds_qa.config" CACHE STRING "Desired SDS configuration file." FORCE)
+    else()
+        set(APPS_CORESW_SDS_CONFIG "sds_template.config" CACHE STRING "Desired SDS configuration file." FORCE)
+    endif()
 endif()
-file(GLOB APPS_CORESW_SDS_CONFIG_CHOICES
-    RELATIVE ${SDS_CONFIG_LOCATION}
-    ${SDS_CONFIG_LOCATION}/*.config
-)
 
 set_property(CACHE APPS_CORESW_SDS_CONFIG PROPERTY STRINGS ${APPS_CORESW_SDS_CONFIG_CHOICES})
 if(NOT APPS_CORESW_SDS_CONFIG IN_LIST APPS_CORESW_SDS_CONFIG_CHOICES)
     message(FATAL_ERROR "Specify 'APPS_CORESW_SDS_CONFIG'. Must be one of ${APPS_CORESW_SDS_CONFIG_CHOICES}")
 endif()
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${SDS_CONFIG_LOCATION}/${APPS_CORESW_SDS_CONFIG}
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/sds.config
-    COMMENT "Deploying 'sds.config'..."
-    VERBATIM
-)
+deploy_config_file("${SDS_CONFIG_PATHS_LIST}" ${APPS_CORESW_SDS_CONFIG} "sds.config")
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp source/SDSModel.cpp source/config/ConfigFile.cpp PROPERTIES
