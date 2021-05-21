@@ -56,9 +56,9 @@ ColumnLayout {
             menuLoader.item.textFieldProperty = "radioSize"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radioSize
             menuLoader.item.open()
-            menuLoader.item.intValidator.bottom = 0
-            menuLoader.item.intValidator.top = 2147483647
-            menuLoader.item.validator = menuLoader.item.intValidator
+            menuLoader.item.doubleValidator.bottom = 0
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.label = "Enter a radioSize. RadioSize can only contain a numbers."
             menuLoader.item.isString = false
             contextMenu.close()
@@ -73,9 +73,9 @@ ColumnLayout {
             menuLoader.item.textFieldProperty = "fontSizeMultiplier"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fontSizeMultiplier
             menuLoader.item.open()
-            menuLoader.item.intValidator.bottom = 0
-            menuLoader.item.intValidator.top = 2147483647
-            menuLoader.item.validator = menuLoader.item.intValidator
+            menuLoader.item.doubleValidator.bottom = 0
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.label = "Enter a fontSizeMultiplier of the labels. FontSizeMultiplier can only contain a numbers."
             menuLoader.item.isString = false
             contextMenu.close()

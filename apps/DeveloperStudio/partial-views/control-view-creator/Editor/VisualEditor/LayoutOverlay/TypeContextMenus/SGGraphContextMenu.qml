@@ -11,7 +11,7 @@ ColumnLayout {
     spacing: 1
     RegExpValidator {
         id: inputValidator
-        regExp: /^[a-zA-Z0-9_]*/
+        regExp: /^[a-zA-Z0-9_ ]*/
     }
     RegExpValidator {
         id: numberRange
@@ -25,6 +25,8 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
             menuLoader.item.textFieldProperty = "title"
+            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
             contextMenu.close()
@@ -39,7 +41,8 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
             menuLoader.item.textFieldProperty = "xTitle"
-            menuLoader.item.validator = inputValidator
+            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
             contextMenu.close()
@@ -54,7 +57,8 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
             menuLoader.item.textFieldProperty = "yTitle"
-            menuLoader.item.validator = inputValidator
+            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
             contextMenu.close()
@@ -68,7 +72,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMin
             menuLoader.item.textFieldProperty = "xMin"
-            menuLoader.item.validator = numberRange
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter graph's X Minimum. X Min can only contain numbers."
             menuLoader.item.open()
@@ -83,7 +89,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMax
             menuLoader.item.textFieldProperty = "xMax"
-            menuLoader.item.validator = numberRange
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.label = "Enter graph's X Maximum. X Max can only contain numbers."
             menuLoader.item.open()
             menuLoader.item.isString = false
@@ -99,7 +107,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMin
             menuLoader.item.textFieldProperty = "yMin"
-            menuLoader.item.validator = numberRange
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter graph's Y Minimum. Y Min can only contain positive/negtative numbers."
             menuLoader.item.open()
@@ -114,7 +124,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMax
             menuLoader.item.textFieldProperty = "yMax"
-            menuLoader.item.validator = numberRange
+            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.label = "Enter graph's Y Maximum. Y max can only contain numbers."
             menuLoader.item.open()
             menuLoader.item.isString = false
