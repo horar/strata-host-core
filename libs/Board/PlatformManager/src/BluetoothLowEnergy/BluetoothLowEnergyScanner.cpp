@@ -26,7 +26,7 @@ void BluetoothLowEnergyScanner::init()
             this, &BluetoothLowEnergyScanner::discoveryFinishedHandler);
 
     connect(&discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::canceled,
-            this, &BluetoothLowEnergyScanner::discoveryCanceledHandler);
+            this, &BluetoothLowEnergyScanner::discoveryCancelledHandler);
 
     connect(&discoveryAgent_, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
             this, &BluetoothLowEnergyScanner::discoveryErrorHandler);
@@ -103,9 +103,9 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
     emit discoveryFinished();
 }
 
-void BluetoothLowEnergyScanner::discoveryCanceledHandler()
+void BluetoothLowEnergyScanner::discoveryCancelledHandler()
 {
-    qCDebug(logCategoryDeviceScanner()) << "device discovery canceled";
+    qCDebug(logCategoryDeviceScanner()) << "device discovery cancelled";
 
     emit discoveryFinished();
 }

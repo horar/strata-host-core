@@ -40,7 +40,7 @@ signals:
 
 private slots:
     void discoveryFinishedHandler();
-    void discoveryCanceledHandler();
+    void discoveryCancelledHandler();
     void discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error);
 
 private:
