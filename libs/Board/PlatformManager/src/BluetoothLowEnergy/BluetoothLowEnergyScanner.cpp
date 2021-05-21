@@ -49,6 +49,7 @@ void BluetoothLowEnergyScanner::startDiscovery()
 
 void BluetoothLowEnergyScanner::stopDiscovery()
 {
+    qCDebug(logCategoryDeviceScanner) << "device discovery is about to be cancelled";
     discoveryAgent_.stop();
 }
 
@@ -100,19 +101,21 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
         }
     }
 
-    emit discoveryFinished();
+    emit discoveryFinished(DiscoveryFinishStatus::Finished, "");
 }
 
 void BluetoothLowEnergyScanner::discoveryCancelledHandler()
 {
     qCDebug(logCategoryDeviceScanner()) << "device discovery cancelled";
 
-    emit discoveryFinished();
+    emit discoveryFinished(DiscoveryFinishStatus::Cancelled, "");
 }
 
 void BluetoothLowEnergyScanner::discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error)
 {
-    qCWarning(logCategoryDeviceScanner()) << error;
+    qCWarning(logCategoryDeviceScanner()) << error << discoveryAgent_.errorString();
+
+    emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, discoveryAgent_.errorString());
 }
 
 bool BluetoothLowEnergyScanner::isEligible(const QBluetoothDeviceInfo &info) const

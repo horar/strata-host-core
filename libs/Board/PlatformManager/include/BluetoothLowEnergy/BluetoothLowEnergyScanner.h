@@ -23,6 +23,13 @@ class BluetoothLowEnergyScanner : public DeviceScanner
     Q_DISABLE_COPY(BluetoothLowEnergyScanner);
 
 public:
+
+    enum DiscoveryFinishStatus {
+        Finished,
+        Cancelled,
+        DiscoveryError,
+    };
+
     BluetoothLowEnergyScanner();
 
     ~BluetoothLowEnergyScanner() override;
@@ -36,7 +43,7 @@ public:
     void tryConnectDevice(const QString &address);
 
 signals:
-    void discoveryFinished();
+    void discoveryFinished(DiscoveryFinishStatus status, QString errorString);
 
 private slots:
     void discoveryFinishedHandler();
