@@ -87,6 +87,7 @@ SGWidgets.SGMainWindow {
             PlatformSelection.initialize(sdsModel.coreInterface)
         }
         initialized()
+        fullScreenMode = (mainWindow.visibility === ApplicationWindow.FullScreen) ? true : false
     }
 
     onClosing: {

@@ -8,8 +8,12 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 ApplicationWindow {
     id: window
 
+    property bool fullScreen: false
+
     onClosing: {
         settings.visibility = window.visibility
+        fullScreen = (Window.FullScreen) ? true : false
+
         if (settings.visibility === Window.Maximized) {
             window.showNormal()
         }
@@ -24,6 +28,7 @@ ApplicationWindow {
         property alias y: window.y
         property alias width: window.width
         property alias height: window.height
+        property alias fullScreen: window.fullScreen
 
         property int visibility: 0
         property int desktopAvailableWidth
@@ -36,6 +41,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        fullScreen = settings.fullScreen
         var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
                 && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
 
@@ -44,6 +50,10 @@ ApplicationWindow {
 
         if (settings.visibility === Window.Maximized && savedScreenLayout) {
             window.showMaximized()
+        }
+
+        if (fullScreen) {
+            window.showFullScreen()
         }
     }
 }
