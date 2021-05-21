@@ -24,4 +24,5 @@ function(deploy_config_file PATHS_LIST CONFIG_FILE_NAME TARGET_CONFIG_NAME)
         COMMENT "Deploying '${TARGET_CONFIG_NAME}'..."
         VERBATIM
     )
+    unset(CONFIG_ABSOLUTE_PATH CACHE)
 endfunction(deploy_config_file)
