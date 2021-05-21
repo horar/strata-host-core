@@ -4,6 +4,8 @@
 #include <PlatformManager.h>
 #include <BluetoothLowEnergy/BluetoothLowEnergyScanner.h>
 
+using strata::device::scanner::BluetoothLowEnergyScanner;
+
 struct SciBleDeviceModelItem {
     QString name;
     QString address;
@@ -39,12 +41,18 @@ public:
 
 signals:
     void inDiscoveryModeChanged();
+    void discoveryFinished(QString errorString);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
+    void discoveryFinishedHandler(
+            BluetoothLowEnergyScanner::DiscoveryFinishStatus status,
+            QString errorString);
+
     void populateModel();
+    void clearModel();
 
 private:
     void setModelRoles();

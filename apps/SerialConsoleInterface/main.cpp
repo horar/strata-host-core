@@ -39,7 +39,6 @@ void loadResources() {
     }
 }
 
-
 void addImportPaths(QQmlApplicationEngine *engine) {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 

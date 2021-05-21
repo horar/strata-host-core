@@ -12,6 +12,7 @@ SGWidgets.SGDialog {
     modal: true
 
     property int innerSpacing: 6
+    property alias errorString: errorText.text
 
     CommonCpp.SGSortFilterProxyModel {
         id: deviceSortFilterModel
@@ -51,6 +52,19 @@ SGWidgets.SGDialog {
             }
 
             return false
+        }
+    }
+
+    Connections {
+        target: sciModel.bleDeviceModel
+        onDiscoveryFinished: {
+            dialog.errorString = errorString
+        }
+
+        onInDiscoveryModeChanged: {
+            if (sciModel.bleDeviceModel.inDiscoveryMode) {
+                dialog.errorString = ""
+            }
         }
     }
 
@@ -262,6 +276,18 @@ SGWidgets.SGDialog {
                 height: width
                 running: deviceView.enabled === false
             }
+        }
+
+        SGWidgets.SGText {
+            id: errorText
+            anchors.fill: deviceView
+
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            wrapMode: Text.WordWrap
+            fontSizeMultiplier: 1.4
+            font.italic: true
         }
     }
 

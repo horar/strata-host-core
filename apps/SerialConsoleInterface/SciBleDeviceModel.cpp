@@ -2,7 +2,6 @@
 #include "logging/LoggingQtCategories.h"
 
 using strata::device::Device;
-using strata::device::scanner::BluetoothLowEnergyScanner;
 using strata::device::scanner::BlootoothLowEnergyInfo;
 
 SciBleDeviceModel::SciBleDeviceModel(
@@ -55,7 +54,7 @@ void SciBleDeviceModel::init()
     }
 
     connect(scanner_.get(), &BluetoothLowEnergyScanner::discoveryFinished,
-            this, &SciBleDeviceModel::populateModel);
+            this, &SciBleDeviceModel::discoveryFinishedHandler);
 }
 
 void SciBleDeviceModel::startDiscovery()
@@ -96,6 +95,25 @@ QHash<int, QByteArray> SciBleDeviceModel::roleNames() const
     return roleByEnumHash_;
 }
 
+void SciBleDeviceModel::discoveryFinishedHandler(
+        BluetoothLowEnergyScanner::DiscoveryFinishStatus status,
+        QString errorString)
+{
+    QString effectiveErrorString;
+    if (status == BluetoothLowEnergyScanner::DiscoveryFinishStatus::Finished) {
+        populateModel();
+    } else if (status == BluetoothLowEnergyScanner::DiscoveryFinishStatus::Cancelled) {
+        clearModel();
+        effectiveErrorString = "Discovery cancelled.";
+    } else if (status == BluetoothLowEnergyScanner::DiscoveryFinishStatus::DiscoveryError) {
+        clearModel();
+        effectiveErrorString = errorString;
+    }
+
+    emit discoveryFinished(effectiveErrorString);
+    setInDiscoveryMode(false);
+}
+
 void SciBleDeviceModel::populateModel()
 {
     const QList<BlootoothLowEnergyInfo> infoList = scanner_->discoveredDevices();
@@ -115,8 +133,13 @@ void SciBleDeviceModel::populateModel()
     }
 
     endResetModel();
+}
 
-    setInDiscoveryMode(false);
+void SciBleDeviceModel::clearModel()
+{
+    beginResetModel();
+    data_.clear();
+    endResetModel();
 }
 
 void SciBleDeviceModel::setModelRoles()
