@@ -664,5 +664,53 @@ R"({
     }
 })");
 
-} // namespace strata::device::mock::test_commands
+const QByteArray start_backup_firmware_request = normalizeMessage(R"({"cmd":"start_backup_firmware","payload":{}})");
+
+const QByteArray start_backup_firmware_response = normalizeMessage(
+R"({
+    "notification":{
+        "value":"start_backup_firmware",
+        "payload": {
+            "size":["$response.payload.size"],
+            "chunks":["$response.payload.chunks"]
+        }
+    }
+})");
+
+const QByteArray backup_firmware_request_init = normalizeMessage(
+R"({
+    "notification":{
+        "value":"backup_firmware",
+        "payload":{
+            "status":"init"
+        }
+    }
+})");
+
+const QByteArray backup_firmware_request = normalizeMessage(
+R"({
+    "notification":{
+        "value":"backup_firmware",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})");
+
+const QByteArray backup_firmware_response = normalizeMessage(
+R"({
+    "notification":{
+        "value":"backup_firmware",
+        "payload":{
+            "chunk":{
+                "number":["$response.payload.chunk.number"],
+                "size":["$response.payload.chunk.size"],
+                "crc":["$response.payload.chunk.crc"],
+                "data":"[$response.payload.chunk.data]"
+            }
+        }
+    }
+})");
+
+} // namespace strata::device::test_commands
 }

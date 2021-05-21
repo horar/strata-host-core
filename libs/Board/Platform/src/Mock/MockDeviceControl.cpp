@@ -367,6 +367,15 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
         case MockCommand::Set_assisted_platform_id:
             retVal.push_back(test_commands::set_assisted_platform_id_response);
             break;
+
+        case MockCommand::Start_backup_firmware:
+            retVal.push_back(test_commands::start_backup_firmware_response);
+            break;
+
+        case MockCommand::Backup_firmware:
+            retVal.push_back(test_commands::backup_firmware_response);
+            break;
+
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);
@@ -386,6 +395,7 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
     placeholderSplit.removeAt(0);
 
     if (0 == placeholderNamespace.compare("request") && placeholderSplit.length() >= 1) {
+        qCritical() << placeholder << "REQUEST!";
         const rapidjson::Value *targetDocumentNode = &requestDoc;
         for (auto placeholderPart : placeholderSplit) {
             if (!targetDocumentNode->IsObject() ||
@@ -400,9 +410,27 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
         if (targetDocumentNode->IsString()) {
             return targetDocumentNode->GetString();
         }
+    }
+
+    if (0 == placeholderNamespace.compare("response") && placeholderSplit.length() >= 1) {
+        qCritical() << placeholder << "RESPONSE!";
+        const rapidjson::Value *targetDocumentNode = &requestDoc;
+        for (auto placeholderPart : placeholderSplit) {
+            if (!targetDocumentNode->IsObject() ||
+                    !targetDocumentNode->HasMember(placeholderPart.toStdString().c_str())) {
+                //QFAIL_(
+                qCritical() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
+                return placeholder;
+            }
+            targetDocumentNode = &(*targetDocumentNode)[placeholderPart.toStdString().c_str()];
+        }
+
+        if (targetDocumentNode->IsString()) {
+            return targetDocumentNode->GetString();
+        }
         // fallthrough
     } // add other namespaces as required in the future (e.g. refer to mock variables)
-    //QFAIL_(("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
+    qWarning() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
     return placeholder;  // fallback, return the value as is
 }
 
