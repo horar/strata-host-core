@@ -17,6 +17,8 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
             menuLoader.item.textFieldProperty = "text"
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter the text.Text can contain only letters, numbers, underscores and spaces."
             menuLoader.item.open()
             contextMenu.close()

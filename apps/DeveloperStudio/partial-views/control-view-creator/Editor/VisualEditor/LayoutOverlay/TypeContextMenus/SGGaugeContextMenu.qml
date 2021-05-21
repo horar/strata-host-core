@@ -18,6 +18,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
+            menuLoader.item.text = layoutOverlayRoot.sourceItem.minimumValue
             menuLoader.item.textFieldProperty = "minimumValue"
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the minimum value of the gauge. Text can only contain positive/negtaive numbers."
@@ -35,6 +36,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.textFieldProperty = "maximumValue"
+            menuLoader.item.text = layoutOverlayRoot.sourceItem.maximumValue
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the maximum value of the gauge.Text can only contain positive/negtaive numbers."
             menuLoader.item.open()

@@ -25,7 +25,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
             menuLoader.item.textFieldProperty = "title"
-            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9_ ]*/
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
@@ -41,7 +41,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
             menuLoader.item.textFieldProperty = "xTitle"
-            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9_ ]*/
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
@@ -57,7 +57,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
             menuLoader.item.textFieldProperty = "yTitle"
-            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9_ ]*/
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and underscores."
             menuLoader.item.open()
