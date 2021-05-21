@@ -37,7 +37,7 @@ public:
     Q_INVOKABLE void tryConnectDevice(int index);
     Q_INVOKABLE QVariantMap get(int row);
 
-    bool inDiscoveryMode();
+    bool inDiscoveryMode() const;
 
 signals:
     void inDiscoveryModeChanged();

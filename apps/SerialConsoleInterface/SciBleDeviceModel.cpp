@@ -85,7 +85,7 @@ QVariantMap SciBleDeviceModel::get(int row)
     return res;
 }
 
-bool SciBleDeviceModel::inDiscoveryMode()
+bool SciBleDeviceModel::inDiscoveryMode() const
 {
     return inDiscoveryMode_;
 }
