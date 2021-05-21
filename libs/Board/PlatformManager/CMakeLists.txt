@@ -4,7 +4,7 @@ project(PlatformManager
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort
+    COMPONENTS Core SerialPort Bluetooth
     REQUIRED
 )
 
@@ -14,12 +14,14 @@ add_library(${PROJECT_NAME}
     src/logging/LoggingQtCategories.cpp
     src/Serial/SerialDeviceScanner.cpp
     src/Mock/MockDeviceScanner.cpp
+    src/BluetoothLowEnergy/BluetoothLowEnergyScanner.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/PlatformManager.h
     include/DeviceScanner.h
     include/Serial/SerialDeviceScanner.h
     include/Mock/MockDeviceScanner.h
+    include/BluetoothLowEnergy/BluetoothLowEnergyScanner.h
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -33,6 +35,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
+    PUBLIC Qt5::Bluetooth
     PUBLIC strata::QtLogger
     PUBLIC strata::Platform
     PRIVATE strata::CommandValidator

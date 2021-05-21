@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Device.h>
+#include <QBluetoothDeviceInfo>
+#include <QLowEnergyController>
 
 namespace strata::device {
 
@@ -15,7 +17,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    BluetoothLowEnergyDevice(const QByteArray& deviceId, const QString& name);
+    BluetoothLowEnergyDevice(const QBluetoothDeviceInfo &info);
 
     /**
      * BluetoothLowEnergyDevice destructor
@@ -46,8 +48,17 @@ public:
      */
     virtual bool isConnected() const override;
 
+private slots:
+    void deviceConnectedHandler();
+    void deviceErrorReceivedHandler(QLowEnergyController::Error error);
+    void deviceDisconnectedHandler();
+    void deviceStateChangeHandler(QLowEnergyController::ControllerState state);
+
 private:
-    bool connected_ = false;
+    QByteArray deviceId_;
+
+    QBluetoothDeviceInfo info_;
+    QLowEnergyController *controller_{nullptr};
 };
 
 }  // namespace

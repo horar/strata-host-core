@@ -4,6 +4,7 @@
 
 #include <Serial/SerialDeviceScanner.h>
 #include <Mock/MockDeviceScanner.h>
+#include <BluetoothLowEnergy/BluetoothLowEnergyScanner.h>
 
 namespace strata {
 
@@ -14,6 +15,7 @@ using device::scanner::DeviceScanner;
 using device::scanner::DeviceScannerPtr;
 using device::scanner::MockDeviceScanner;
 using device::scanner::SerialDeviceScanner;
+using device::scanner::BluetoothLowEnergyScanner;
 
 namespace operation = platform::operation;
 
@@ -47,6 +49,9 @@ void PlatformManager::init(Device::Type scannerType) {
     } break;
     case Device::Type::MockDevice: {
         scanner = std::make_shared<MockDeviceScanner>();
+    } break;
+    case Device::Type::BLEDevice: {
+        scanner = std::make_shared<BluetoothLowEnergyScanner>();
     } break;
     default: {
         qCCritical(logCategoryPlatformManager) << "Invalid DeviceScanner type:" << scannerType;
