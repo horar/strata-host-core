@@ -55,7 +55,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.tickmarkStepSize
             menuLoader.item.textFieldProperty = "tickmarkStepSize"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge.Text can only contain numbers or decimal values."
+            menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge. Text can only contain whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -72,7 +72,7 @@ ColumnLayout {
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.textFieldProperty = "value"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the initial value of the gauge. Text can only positive/negtaive numbers"
+            menuLoader.item.label = "Enter the initial value of the gauge. Text can only positive/negtaive whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -84,6 +84,8 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.unitText
+            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.textFieldProperty = "unitText"
             menuLoader.item.label = "Enter the unit of the gauge. Text can only numbers, letters and any special characters. "
             menuLoader.item.open()

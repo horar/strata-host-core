@@ -24,7 +24,7 @@ Popup {
         }
     }
 
-    property string textFieldProperty
+    property string sourceProperty
     property alias switchChecked: switchContainer.checked
     property alias switchText: label.text
     onClosed: menuLoader.active = false
@@ -54,7 +54,7 @@ Popup {
                 text: "OK"
                 onClicked: {
                     switchPopup.close()
-                    visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty,switchContainer.checked)
+                    visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid,sourceProperty,switchContainer.checked)
 
                 }
             }

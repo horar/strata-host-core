@@ -26,6 +26,7 @@ Popup {
     property alias doubleValidator: doubleValidator
     property alias intValidator: intValidator
     property alias regExpValidator: regExpValidator
+
     DoubleValidator {
         id: doubleValidator
     }
