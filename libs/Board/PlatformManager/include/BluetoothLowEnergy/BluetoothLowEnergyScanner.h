@@ -54,10 +54,12 @@ private:
     bool isEligible(const QBluetoothDeviceInfo &info) const;
     QString getDeviceAddress(const QBluetoothDeviceInfo &info) const;
 
-    QBluetoothDeviceDiscoveryAgent discoveryAgent_;
+    QBluetoothDeviceDiscoveryAgent *discoveryAgent_ = nullptr;
     const std::chrono::milliseconds discoveryTimeout_ = std::chrono::milliseconds(5000);
     const QVector<quint16> eligibleIds_ = {866};
     QList<BlootoothLowEnergyInfo> discoveredDevices_;
+
+    void createDiscoveryAgent();
 };
 
 typedef std::shared_ptr<BluetoothLowEnergyScanner> BluetoothLowEnergyScannerPtr;

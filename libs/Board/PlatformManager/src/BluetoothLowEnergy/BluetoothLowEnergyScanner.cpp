@@ -20,37 +20,52 @@ BluetoothLowEnergyScanner::~BluetoothLowEnergyScanner()
 
 void BluetoothLowEnergyScanner::init()
 {
-    discoveryAgent_.setLowEnergyDiscoveryTimeout(discoveryTimeout_.count());
-
-    connect(&discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::finished,
-            this, &BluetoothLowEnergyScanner::discoveryFinishedHandler);
-
-    connect(&discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::canceled,
-            this, &BluetoothLowEnergyScanner::discoveryCancelledHandler);
-
-    connect(&discoveryAgent_, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
-            this, &BluetoothLowEnergyScanner::discoveryErrorHandler);
 }
 
 void BluetoothLowEnergyScanner::deinit()
 {
-    discoveryAgent_.disconnect();
 }
 
 void BluetoothLowEnergyScanner::startDiscovery()
 {
+    if (discoveryAgent_ != nullptr) {
+        if (discoveryAgent_->isActive()) {
+            qCDebug(logCategoryDeviceScanner) << "device discovery is already in progress";
+            return;
+        } else {
+            discoveryAgent_->disconnect();
+            discoveryAgent_->deleteLater();
+        }
+    }
+
+    createDiscoveryAgent();
+    if (discoveryAgent_ == nullptr) {
+        qCCritical(logCategoryDeviceScanner) << "discovery agent not created";
+
+        //make sure signal is emitted after this slot is executed
+        QTimer::singleShot(1, this, [this](){
+            emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, "Discovery agent could not be created.");
+        });
+
+        return;
+    }
+
     qCDebug(logCategoryDeviceScanner)
             << "device discovery is about to start"
-            << "(takes"<< discoveryAgent_.lowEnergyDiscoveryTimeout() << "ms)";
+            << "(duration" << discoveryAgent_->lowEnergyDiscoveryTimeout() << "ms)";
 
-    discoveryAgent_.start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
+    discoveryAgent_->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
     discoveredDevices_.clear();
 }
 
 void BluetoothLowEnergyScanner::stopDiscovery()
 {
+    if (discoveryAgent_ == nullptr) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceScanner) << "device discovery is about to be cancelled";
-    discoveryAgent_.stop();
+    discoveryAgent_->stop();
 }
 
 const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredDevices()
@@ -62,9 +77,13 @@ void BluetoothLowEnergyScanner::tryConnectDevice(const QString &address)
 {
     //TODO if we are in the middle of scannig, we should wait until it finishes
 
+    if (discoveryAgent_ == nullptr) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceScanner()) << address;
 
-    const QList<QBluetoothDeviceInfo> infoList = discoveryAgent_.discoveredDevices();
+    const QList<QBluetoothDeviceInfo> infoList = discoveryAgent_->discoveredDevices();
     for (const auto &info : infoList) {
         QString infoAddress = getDeviceAddress(info);
         if (infoAddress == address) {
@@ -78,7 +97,7 @@ void BluetoothLowEnergyScanner::tryConnectDevice(const QString &address)
 
 void BluetoothLowEnergyScanner::discoveryFinishedHandler()
 {
-    const QList<QBluetoothDeviceInfo> infoList = discoveryAgent_.discoveredDevices();
+    const QList<QBluetoothDeviceInfo> infoList = discoveryAgent_->discoveredDevices();
 
     qCDebug(logCategoryDeviceScanner()) << "discovered devices:" << infoList.length();
 
@@ -113,9 +132,9 @@ void BluetoothLowEnergyScanner::discoveryCancelledHandler()
 
 void BluetoothLowEnergyScanner::discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error)
 {
-    qCWarning(logCategoryDeviceScanner()) << error << discoveryAgent_.errorString();
+    qCWarning(logCategoryDeviceScanner()) << error << discoveryAgent_->errorString();
 
-    emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, discoveryAgent_.errorString());
+    emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, discoveryAgent_->errorString());
 }
 
 bool BluetoothLowEnergyScanner::isEligible(const QBluetoothDeviceInfo &info) const
@@ -147,6 +166,25 @@ QString BluetoothLowEnergyScanner::getDeviceAddress(const QBluetoothDeviceInfo &
 #endif
 
     return address;
+}
+
+void BluetoothLowEnergyScanner::createDiscoveryAgent()
+{
+    discoveryAgent_ = new QBluetoothDeviceDiscoveryAgent(this);
+    if (discoveryAgent_ == nullptr) {
+        return;
+    }
+
+    discoveryAgent_->setLowEnergyDiscoveryTimeout(discoveryTimeout_.count());
+
+    connect(discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::finished,
+            this, &BluetoothLowEnergyScanner::discoveryFinishedHandler);
+
+    connect(discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::canceled,
+            this, &BluetoothLowEnergyScanner::discoveryCancelledHandler);
+
+    connect(discoveryAgent_, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
+            this, &BluetoothLowEnergyScanner::discoveryErrorHandler);
 }
 
 }  // namespace
