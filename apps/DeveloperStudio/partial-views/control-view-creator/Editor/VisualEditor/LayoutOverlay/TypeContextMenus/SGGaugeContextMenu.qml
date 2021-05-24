@@ -19,7 +19,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.text = layoutOverlayRoot.sourceItem.minimumValue
-            menuLoader.item.textFieldProperty = "minimumValue"
+            menuLoader.item.sourceProperty = "minimumValue"
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the minimum value of the gauge. Text can only contain positive/negtaive numbers."
             menuLoader.item.open()
@@ -35,7 +35,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.textFieldProperty = "maximumValue"
+            menuLoader.item.sourceProperty = "maximumValue"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.maximumValue
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the maximum value of the gauge.Text can only contain positive/negtaive numbers."
@@ -53,7 +53,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.text = layoutOverlayRoot.sourceItem.tickmarkStepSize
-            menuLoader.item.textFieldProperty = "tickmarkStepSize"
+            menuLoader.item.sourceProperty = "tickmarkStepSize"
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge. Text can only contain whole or decimal values."
             menuLoader.item.open()
@@ -70,7 +70,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.textFieldProperty = "value"
+            menuLoader.item.sourceProperty = "value"
             menuLoader.item.isString = false
             menuLoader.item.label = "Enter the initial value of the gauge. Text can only positive/negtaive whole or decimal values."
             menuLoader.item.open()
@@ -86,7 +86,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.unitText
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.textFieldProperty = "unitText"
+            menuLoader.item.sourceProperty = "unitText"
             menuLoader.item.label = "Enter the unit of the gauge. Text can only numbers, letters and any special characters. "
             menuLoader.item.open()
             contextMenu.close()

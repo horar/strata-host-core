@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fromText.text
-            menuLoader.item.textFieldProperty = "from"
+            menuLoader.item.sourceProperty = "from"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -38,7 +38,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.toText.text
-            menuLoader.item.textFieldProperty = "to"
+            menuLoader.item.sourceProperty = "to"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -54,7 +54,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "textColor"
+            menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -65,7 +65,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "inputBox.boxColor"
+            menuLoader.item.sourceProperty = "inputBox.boxColor"
             menuLoader.item.open()
             contextMenu.close()
         }

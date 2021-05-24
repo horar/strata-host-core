@@ -24,7 +24,7 @@ Popup {
         }
     }
 
-    property string parentProperty
+    property string sourceProperty
     property var model: ["Qt.Horizontal", "Qt.Vertical"]
     property alias label: label.text
     onClosed: menuLoader.active = false
@@ -54,7 +54,7 @@ Popup {
                 text: "OK"
                 onClicked: {
                     comboBoxPopup.close()
-                    visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, parentProperty, comboBox.currentText)
+                    visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty, comboBox.currentText)
                 }
             }
 

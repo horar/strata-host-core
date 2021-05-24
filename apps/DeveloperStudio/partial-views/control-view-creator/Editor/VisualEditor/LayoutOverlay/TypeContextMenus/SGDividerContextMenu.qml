@@ -10,17 +10,12 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-    RegExpValidator {
-        id: inputValidator
-        regExp: /^[0-9]*/
-    }
-
     ContextMenuButton {
         text: "Set Divider Color"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "color"
+            menuLoader.item.sourceProperty = "color"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -31,7 +26,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
-            menuLoader.item.textFieldProperty = "thickness"
+            menuLoader.item.sourceProperty = "thickness"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
             menuLoader.item.intValidator.bottom = 0
             menuLoader.item.intValidator.top = 2147483647
@@ -48,7 +43,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "orientation"
+            menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
             menuLoader.item.label = "Select the divider orientation. "
             contextMenu.close()

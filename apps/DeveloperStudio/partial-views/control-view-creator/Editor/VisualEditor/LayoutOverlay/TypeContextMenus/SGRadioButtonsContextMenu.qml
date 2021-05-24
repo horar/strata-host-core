@@ -20,7 +20,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "orientation"
+            menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
             menuLoader.item.label = "Select the divider orientation."
             contextMenu.close()
@@ -31,7 +31,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "radioColor"
+            menuLoader.item.sourceProperty = "radioColor"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -42,7 +42,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "textColor"
+            menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -53,7 +53,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
-            menuLoader.item.textFieldProperty = "radioSize"
+            menuLoader.item.sourceProperty = "radioSize"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radioSize
             menuLoader.item.open()
             menuLoader.item.doubleValidator.bottom = 0
@@ -70,7 +70,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
-            menuLoader.item.textFieldProperty = "fontSizeMultiplier"
+            menuLoader.item.sourceProperty = "fontSizeMultiplier"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fontSizeMultiplier
             menuLoader.item.open()
             menuLoader.item.doubleValidator.bottom = 0

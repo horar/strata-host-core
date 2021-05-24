@@ -15,7 +15,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "status"
+            menuLoader.item.sourceProperty = "status"
             menuLoader.item.model = ["SGStatusLight.Yellow","SGStatusLight.Green", "SGStatusLight.Blue", "SGStatusLight.Orange", "SGStatusLight.Red"]
             menuLoader.item.open()
             menuLoader.item.label = "Select the color of the status light."

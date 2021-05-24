@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
-            menuLoader.item.textFieldProperty = "checkedLabel"
+            menuLoader.item.sourceProperty = "checkedLabel"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -36,7 +36,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.placeholderText
-            menuLoader.item.textFieldProperty = "placeholderText"
+            menuLoader.item.sourceProperty = "placeholderText"
             menuLoader.item.regExpValidator.regExp = /^[0-9-0-9]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter The PlaceholderText .Text can contain only letters, numbers, underscores and spaces."
@@ -50,7 +50,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "textColor"
+            menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -61,7 +61,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "boxColor"
+            menuLoader.item.sourceProperty = "boxColor"
             menuLoader.item.open()
             contextMenu.close()
         }

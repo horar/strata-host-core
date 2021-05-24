@@ -55,7 +55,6 @@ Popup {
                 onClicked: {
                     switchPopup.close()
                     visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid,sourceProperty,switchContainer.checked)
-
                 }
             }
 

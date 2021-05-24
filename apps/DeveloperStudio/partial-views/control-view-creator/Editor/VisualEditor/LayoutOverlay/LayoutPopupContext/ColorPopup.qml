@@ -10,10 +10,10 @@ ColorDialog {
     id: colorDialog
     title: "Please choose a color"
 
-    property string parentProperty
+    property string sourceProperty
 
     onAccepted: {
-        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, parentProperty, '"' + colorDialog.color + '"')
+        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty, '"' + colorDialog.color + '"')
     }
 
     onRejected: {

@@ -24,7 +24,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
-            menuLoader.item.textFieldProperty = "title"
+            menuLoader.item.sourceProperty = "title"
             menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and special character."
@@ -40,7 +40,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
-            menuLoader.item.textFieldProperty = "xTitle"
+            menuLoader.item.sourceProperty = "xTitle"
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and special character."
@@ -56,7 +56,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
-            menuLoader.item.textFieldProperty = "yTitle"
+            menuLoader.item.sourceProperty = "yTitle"
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and and special character."
@@ -71,7 +71,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMin
-            menuLoader.item.textFieldProperty = "xMin"
+            menuLoader.item.sourceProperty = "xMin"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -88,7 +88,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMax
-            menuLoader.item.textFieldProperty = "xMax"
+            menuLoader.item.sourceProperty = "xMax"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -106,7 +106,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMin
-            menuLoader.item.textFieldProperty = "yMin"
+            menuLoader.item.sourceProperty = "yMin"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -123,7 +123,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMax
-            menuLoader.item.textFieldProperty = "yMax"
+            menuLoader.item.sourceProperty = "yMax"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
@@ -139,7 +139,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
-            menuLoader.item.parentProperty = "gridColor"
+            menuLoader.item.sourceProperty = "gridColor"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -152,7 +152,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.xGrid
             menuLoader.item.switchText = "Toggle switch to show hide X Grid"
-            menuLoader.item.textFieldProperty = "xGrid"
+            menuLoader.item.sourceProperty = "xGrid"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -165,7 +165,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.yGrid
             menuLoader.item.switchText = "Toggle switch to show hide Y Grid"
-            menuLoader.item.textFieldProperty = "yGrid"
+            menuLoader.item.sourceProperty = "yGrid"
             menuLoader.item.open()
             contextMenu.close()
         }

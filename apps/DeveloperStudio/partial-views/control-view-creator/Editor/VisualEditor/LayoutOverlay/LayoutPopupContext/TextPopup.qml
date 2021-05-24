@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
 Popup {
-    id: renamePopup
+    id: textPopup
     padding: 10
     anchors {
         centerIn: Overlay.overlay
@@ -40,9 +40,8 @@ Popup {
     property alias text: textField.text
     property alias validator: textField.validator
     property alias label: label.text
-    property string textFieldProperty
+    property string sourceProperty
     property bool isString: true
-
 
     onVisibleChanged: {
         if (visible) {
@@ -86,12 +85,12 @@ Popup {
                 text: "OK"
                 enabled: textField.text !== ""
                 onClicked: {
-                    renamePopup.close()
+                    textPopup.close()
                     if(isString) {
-                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , '"' + renamePopup.text + '"')
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , '"' + textPopup.text + '"')
                     }
                     else  {
-                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, textFieldProperty , renamePopup.text)
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , textPopup.text)
                     }
                     visualEditor.functions.saveFile()
                 }
@@ -100,8 +99,8 @@ Popup {
             Button {
                 text: "Cancel"
                 onClicked: {
-                    renamePopup.text = ""
-                    renamePopup.close()
+                    textPopup.text = ""
+                    textPopup.close()
                 }
             }
         }
