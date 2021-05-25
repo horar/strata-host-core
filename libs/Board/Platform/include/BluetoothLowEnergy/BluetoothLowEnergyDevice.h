@@ -141,7 +141,6 @@ private:
      * @return sender service of signal
      */
     QByteArray getSignalSenderService() const;
-    // If uuid is invalid, returns null uuid (00000000-0000- ...)
     /**
      * Creates QBluetoothUuid from string. Accepts 2B, 4B and 32B UUIDs.
      * If uuid is invalid, returns null uuid (00000000-0000-0000-0000-000000000000)
