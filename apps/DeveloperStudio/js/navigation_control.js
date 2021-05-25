@@ -302,6 +302,7 @@ function updateState(event, data)
                     connected_view = platform_view_model_.get(view_index)
                     connected_view.device_id = data.device_id
                     connected_view.connected = true
+                    connected_view.is_assisted = data.is_assisted
                     if (data.controller_class_id !== undefined) {
                         connected_view.controller_class_id = data.controller_class_id
                     }

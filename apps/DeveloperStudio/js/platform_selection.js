@@ -213,7 +213,15 @@ function parseConnectedPlatforms (connected_platform_list_json) {
         let previousIndex = previousDeviceIndex(platform.device_id)
         if (previousIndex > -1) {
             if (platform.controller_class_id === undefined) {
-                refreshFirmwareVersion(platform)
+                if (previouslyConnected[previousIndex].class_id !== platform.class_id
+                        || previouslyConnected[previousIndex].platform_id !== platform.platform_id
+                        || previouslyConnected[previousIndex].firmware_version !== platform.firmware_version ) {
+
+                    disconnectPlatform(previouslyConnected[previousIndex])
+                    addConnectedPlatform(platform)
+                } else {
+                    refreshFirmwareVersion(platform)
+                }
             } else {
                 // Assisted Strata
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
@@ -222,7 +230,8 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                         previouslyConnected[previousIndex].controller_class_id !== platform.controller_class_id ||
                         previouslyConnected[previousIndex].fw_class_id !== platform.fw_class_id ||
                         previouslyConnected[previousIndex].platform_id !== platform.platform_id ||
-                        previouslyConnected[previousIndex].controller_platform_id !== platform.controller_platform_id) {
+                        previouslyConnected[previousIndex].controller_platform_id !== platform.controller_platform_id ||
+                        previouslyConnected[previousIndex].firmware_version !== platform.firmware_version) {
 
                     disconnectPlatform(previouslyConnected[previousIndex])
                     addConnectedPlatform(platform)
@@ -288,31 +297,11 @@ function previousDeviceIndex(device_id) {
     Determine if connected platform exists in model or if unrecognized
 */
 function addConnectedPlatform(platform) {
-    let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
+    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
+    const is_assisted = (platform.controller_class_id !== undefined)
     let data
 
-    if (platform.controller_class_id === undefined) {
-        // Embedded Strata
-
-        if (platform.class_id === "") {
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
-            insertUnregisteredListing(platform)
-        } else {
-            if (classMap.hasOwnProperty(class_id_string)) {
-                connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
-            } else {
-                // connected platform class_id not listed in DP platform list
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
-                insertUnknownListing(platform)
-            }
-        }
-
-        data = {
-            "class_id": class_id_string,
-            "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version
-        }
-    } else {
+    if (is_assisted) {
         // Assisted Strata
 
         if (platform.controller_class_id === "") {
@@ -330,16 +319,23 @@ function addConnectedPlatform(platform) {
         } else {
             if (platform.class_id === platform.fw_class_id) {
                 if (classMap.hasOwnProperty(class_id_string)) {
-                    connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                    if (platform.firmware_version.length === 0) {
+                        //controller with invalid firmware
+                        insertProgramControllerListing(platform)
+                        sdsModel.programControllerManager.programAssisted(platform.device_id)
+                    } else {
+                        connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                    }
+
                 } else {
                     // connected platform class_id not listed in DP platform list
                     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
                     insertUnknownListing(platform)
                 }
             } else {
-                //program controller
+                //uncompatible firmware installed
                 insertProgramControllerListing(platform)
-                sdsModel.programControllerManager.program(platform.device_id)
+                sdsModel.programControllerManager.programAssisted(platform.device_id)
             }
         }
 
@@ -347,7 +343,37 @@ function addConnectedPlatform(platform) {
             "class_id": class_id_string,
             "controller_class_id": platform.controller_class_id,
             "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version
+            "firmware_version": platform.firmware_version,
+            "is_assisted": is_assisted
+        }
+    } else {
+        // Embedded Strata
+
+        if (platform.class_id === "") {
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
+            insertUnregisteredListing(platform)
+        } else {
+            if (classMap.hasOwnProperty(class_id_string)) {
+                if (platform.firmware_version.length === 0) {
+                    //device without firmware
+                    insertMissingFirmwareListing(platform)
+                    sdsModel.programControllerManager.programEmbedded(platform.device_id)
+                } else {
+                    connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
+                }
+
+            } else {
+                // connected platform class_id not listed in DP platform list
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
+                insertUnknownListing(platform)
+            }
+        }
+
+        data = {
+            "class_id": class_id_string,
+            "device_id": platform.device_id,
+            "firmware_version": platform.firmware_version,
+            "is_assisted": is_assisted
         }
     }
 
@@ -441,7 +467,7 @@ function openPlatformView(platform) {
         "available": platform.available,
         "firmware_version": platform.firmware_version,
         "controller_class_id": platform.controller_class_id,
-        "is_assisted": platform.is_assisted,
+        "is_assisted": platform.is_assisted
     }
 
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
@@ -554,6 +580,10 @@ function insertProgramControllerListing(platform) {
     insertErrorListing(generateProgramControllerListing(platform))
 }
 
+function insertMissingFirmwareListing(platform) {
+    insertErrorListing(generateMissingFirmwareListing(platform))
+}
+
 function generateUnknownListing (platform) {
     let class_id = String(platform.class_id)
     let opn = "Class id: " + class_id
@@ -563,7 +593,7 @@ function generateUnknownListing (platform) {
 
 function generateUnregisteredListing (platform) {
     let description = "Unregistered platform. Contact local support."
-    return generateErrorListing(platform, "Unregistered Platform", "", "N/A", description)
+    return generateErrorListing(platform, "Unregistered Platform", String(platform.class_id), "N/A", description)
 }
 
 function generateAssistedNoPlatformListing (platform) {
@@ -595,6 +625,20 @@ function generateProgramControllerListing(platform) {
 
     if (classMap.hasOwnProperty(class_id)) {
         opn = classMap[platform.class_id].original_listing.opn
+    }
+
+    return generateErrorListing(platform, verbose_name, class_id, opn, "", true)
+}
+
+function generateMissingFirmwareListing(platform) {
+    let class_id = String(platform.class_id)
+
+    let opn = "N/A"
+    let verbose_name = "Strata Embedded Platform"
+
+    if (classMap.hasOwnProperty(class_id)) {
+        opn = classMap[platform.class_id].original_listing.opn
+        verbose_name = classMap[platform.class_id].original_listing.verbose_name
     }
 
     return generateErrorListing(platform, verbose_name, class_id, opn, "", true)

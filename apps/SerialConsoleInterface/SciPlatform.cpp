@@ -9,9 +9,9 @@
 #include <QDir>
 #include <QSaveFile>
 
-
 SciPlatform::SciPlatform(
         SciPlatformSettings *settings,
+        strata::PlatformManager *platformManager,
         QObject *parent)
     : QObject(parent),
       settings_(settings)
@@ -19,6 +19,7 @@ SciPlatform::SciPlatform(
     verboseName_ = "Unknown Board";
     status_ = PlatformStatus::Disconnected;
 
+    mockDevice_ = new SciMockDevice(platformManager);
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
@@ -26,6 +27,7 @@ SciPlatform::SciPlatform(
 
 SciPlatform::~SciPlatform()
 {
+    mockDevice_->deleteLater();
     scrollbackModel_->deleteLater();
     commandHistoryModel_->deleteLater();
     filterSuggestionModel_->deleteLater();
@@ -34,6 +36,19 @@ SciPlatform::~SciPlatform()
 QByteArray SciPlatform::deviceId()
 {
     return deviceId_;
+}
+
+strata::device::Device::Type SciPlatform::deviceType()
+{
+    return deviceType_;
+}
+
+void SciPlatform::setDeviceType(const strata::device::Device::Type &type)
+{
+    if (deviceType_ != type) {
+        deviceType_ = type;
+        emit deviceTypeChanged();
+    }
 }
 
 void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
@@ -46,10 +61,17 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 
         disconnect(platform_.get(), nullptr, this, nullptr);
         platform_.reset();
+        mockDevice_->setMockDevice(nullptr);
         setStatus(PlatformStatus::Disconnected);
     } else {
         platform_ = platform;
         deviceId_ = platform_->deviceId();
+        setDeviceType(platform_->deviceType());
+        mockDevice_->mockSetDeviceId(deviceId_);
+        if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
+            strata::device::DevicePtr device = platform_->getDevice();
+            mockDevice_->setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
+        }
 
         connect(platform_.get(), &strata::platform::Platform::messageReceived, this, &SciPlatform::messageFromDeviceHandler);
         connect(platform_.get(), &strata::platform::Platform::messageSent, this, &SciPlatform::messageToDeviceHandler);
@@ -109,6 +131,11 @@ void SciPlatform::setStatus(SciPlatform::PlatformStatus status)
         status_ = status;
         emit statusChanged();
     }
+}
+
+SciMockDevice* SciPlatform::mockDevice()
+{
+    return mockDevice_;
 }
 
 SciScrollbackModel *SciPlatform::scrollbackModel()

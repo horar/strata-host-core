@@ -11,19 +11,40 @@ ProgramControllerManager::ProgramControllerManager(
 {
     connect(coreInterface_, &CoreInterface::programControllerReply, this, &ProgramControllerManager::replyHandler);
     connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
+
+    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramControllerManager::replyHandler);
+    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
 }
 
 ProgramControllerManager::~ProgramControllerManager()
 {
 }
 
-void ProgramControllerManager::program(QString deviceId)
+
+void ProgramControllerManager::programAssisted(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
 
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("hcs::cmd", "program_controller");
+    cmdMessageObject.insert("payload", cmdPayloadObject);
+
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+
+    requestedDeviceIds_.append(deviceId);
+
+    coreInterface_->sendCommand(strJson);
+}
+
+void ProgramControllerManager::programEmbedded(QString deviceId)
+{
+    QJsonObject cmdPayloadObject;
+    cmdPayloadObject.insert("device_id", deviceId);
+
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("hcs::cmd", "update_firmware");
     cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);
@@ -75,7 +96,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
         } else {
             qCWarning(logCategoryStrataDevStudio) << "unknown job status";
         }
-    } else if (jobType == "prepare") {        
+    } else if (jobType == "prepare") {
         if (jobStatus == "running") {
             notifyProgressChange(deviceId, ProgressState::PrepareState, 0.5);
         } else if (jobStatus == "failure") {
@@ -110,7 +131,14 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
             int total = payload.value("total").toInt();
             int complete = payload.value("complete").toInt();
 
-            notifyProgressChange(deviceId, ProgressState::ProgramState, complete/(float)total);
+            float progress;
+            if (total <= 0) {
+                progress = 0;
+            } else {
+                progress = complete/(float)total;
+            }
+
+            notifyProgressChange(deviceId, ProgressState::ProgramState, progress);
         } else if (jobStatus == "failure") {
             notifyFailure(deviceId, payload);
         } else {
@@ -127,7 +155,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
     } else if (jobType == "finished") {
         if (jobStatus == "success") {
             notifyProgressChange(deviceId, ProgressState::DoneState, 1);
-        } else if (jobStatus == "failure") {
+        } else if (jobStatus == "failure" || jobStatus == "unsuccess") {
             emit jobStatusChanged(deviceId, "failure", payload.value("error_string").toString());
         } else {
             qCWarning(logCategoryStrataDevStudio) << "unknown job status";

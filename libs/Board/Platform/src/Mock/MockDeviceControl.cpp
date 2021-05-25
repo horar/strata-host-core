@@ -38,6 +38,16 @@ MockResponse MockDeviceControl::mockGetResponse() const
     return response_;
 }
 
+MockVersion MockDeviceControl::mockGetVersion() const
+{
+    return version_;
+}
+
+void MockDeviceControl::mockSetAsBootloader(bool isBootloader)
+{
+    isBootloader_ = isBootloader;
+}
+
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
 {
     if (isOpenEnabled_ != enabled) {
@@ -128,59 +138,34 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
     auto *qCmd = &requestDoc["cmd"];
     if (qCmd->IsString()) {
         std::string cmd = qCmd->GetString();
-        MockCommand recievedCommand = MockCommand::all_commands;
-
-        if (0 == cmd.compare("get_firmware_info")) {
-            recievedCommand = MockCommand::get_firmware_info;
-        }
-        if (0 == cmd.compare("request_platform_id")) {
-            recievedCommand = MockCommand::request_platform_id;
-        }
-        if (0 == cmd.compare("start_bootloader")) {
-            recievedCommand = MockCommand::start_bootloader;
-        }
-        if (0 == cmd.compare("start_application")) {
-            recievedCommand = MockCommand::start_application;
-        }
-        if (0 == cmd.compare("start_flash_firmware")) {
-            recievedCommand = MockCommand::start_flash_firmware;
-        }
-        if (0 == cmd.compare("flash_firmware")) {
-            recievedCommand = MockCommand::flash_firmware;
-        }
-        if (0 == cmd.compare("start_flash_bootloader")) {
-            recievedCommand = MockCommand::start_flash_bootloader;
-        }
-        if (0 == cmd.compare("flash_bootloader")) {
-            recievedCommand = MockCommand::flash_bootloader;
-        }
+        MockCommand recievedCommand = convertCommandToEnum(cmd);
 
         retVal.push_back(test_commands::ack);
 
-        bool customResponse = (command_ == recievedCommand) || (command_ == MockCommand::all_commands);
+        bool customResponse = (command_ == recievedCommand) || (command_ == MockCommand::Any_command);
         if (customResponse) {
-            if (response_ == MockResponse::nack) {
+            if (response_ == MockResponse::Nack) {
                 retVal.pop_back();  // remove ack
                 retVal.push_back(test_commands::nack_command_not_found);
                 return replacePlaceholders(retVal, requestDoc);
-            } else if (response_ == MockResponse::no_JSON) {
+            } else if (response_ == MockResponse::No_JSON) {
                 retVal.push_back(test_commands::no_JSON_response);
                 return replacePlaceholders(retVal, requestDoc);
             }
         }
 
         switch (recievedCommand) {
-        case MockCommand::get_firmware_info:
-            if (version_ == MockVersion::version1) {
+        case MockCommand::Get_firmware_info:
+            if (version_ == MockVersion::Version_1) {
                 if (isLegacy_) {
                     retVal.pop_back();  // remove ack
                     retVal.push_back(test_commands::nack_command_not_found);
                 } else if (customResponse) {
                     switch(response_) {
-                    case MockResponse::no_payload: {
+                    case MockResponse::No_payload: {
                         retVal.push_back(test_commands::get_firmware_info_response_no_payload);
                     } break;
-                    case MockResponse::invalid: {
+                    case MockResponse::Invalid: {
                         retVal.push_back(test_commands::get_firmware_info_response_invalid);
                     } break;
                     default: {
@@ -190,22 +175,22 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 } else {
                     retVal.push_back(test_commands::get_firmware_info_response);
                 }
-            } else if (version_ == MockVersion::version2) {
+            } else if (version_ == MockVersion::Version_2) {
                 if (customResponse) {
                     switch(response_) {
-                    case MockResponse::embedded_app:
-                    case MockResponse::assisted_app:
-                    case MockResponse::assisted_no_board: {
+                    case MockResponse::Platform_config_embedded_app:
+                    case MockResponse::Platform_config_assisted_app:
+                    case MockResponse::Platform_config_assisted_no_board: {
                         retVal.push_back(test_commands::get_firmware_info_response_ver2_application);
                     } break;
-                    case MockResponse::embedded_btloader:
-                    case MockResponse::assisted_btloader:{
+                    case MockResponse::Platform_config_embedded_bootloader:
+                    case MockResponse::Platform_config_assisted_bootloader:{
                         retVal.push_back(test_commands::get_firmware_info_response_ver2_bootloader);
                     } break;
-                    case MockResponse::no_payload: {
+                    case MockResponse::No_payload: {
                         retVal.push_back(test_commands::get_firmware_info_response_no_payload);
                     } break;
-                    case MockResponse::invalid:{
+                    case MockResponse::Invalid:{
                         retVal.push_back(test_commands::get_firmware_info_response_ver2_invalid);
                     } break;
                     default: {
@@ -219,15 +204,15 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 retVal.push_back(test_commands::get_firmware_info_response);
             }
             break;
-        case MockCommand::request_platform_id:
-            if (version_ == MockVersion::version1) {
+        case MockCommand::Request_platform_id:
+            if (version_ == MockVersion::Version_1) {
                 if (isBootloader_) {
                     if (customResponse) {
                         switch(response_) {
-                        case MockResponse::no_payload: {
+                        case MockResponse::No_payload: {
                             retVal.push_back(test_commands::request_platform_id_response_bootloader_no_payload);
                         } break;
-                        case MockResponse::invalid: {
+                        case MockResponse::Invalid: {
                             retVal.push_back(test_commands::request_platform_id_response_bootloader_invalid);
                         } break;
                         default: {
@@ -240,10 +225,10 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 } else {
                     if (customResponse) {
                         switch(response_) {
-                        case MockResponse::no_payload: {
+                        case MockResponse::No_payload: {
                             retVal.push_back(test_commands::request_platform_id_response_no_payload);
                         } break;
-                        case MockResponse::invalid: {
+                        case MockResponse::Invalid: {
                             retVal.push_back(test_commands::request_platform_id_response_invalid);
                         } break;
                         default: {
@@ -254,28 +239,28 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                         retVal.push_back(test_commands::request_platform_id_response);
                     }
                 }
-            } else if (version_ == MockVersion::version2) {
+            } else if (version_ == MockVersion::Version_2) {
                 if (customResponse) {
                     switch(response_) {
-                    case MockResponse::embedded_app: {
+                    case MockResponse::Platform_config_embedded_app: {
                         retVal.push_back(test_commands::request_platform_id_response_ver2_embedded);
                     } break;
-                    case MockResponse::assisted_app: {
+                    case MockResponse::Platform_config_assisted_app: {
                         retVal.push_back(test_commands::request_platform_id_response_ver2_assisted);
                     } break;
-                    case MockResponse::assisted_no_board: {
+                    case MockResponse::Platform_config_assisted_no_board: {
                         retVal.push_back(test_commands::request_platform_id_response_ver2_assisted_without_board);
                     } break;
-                    case MockResponse::embedded_btloader: {
+                    case MockResponse::Platform_config_embedded_bootloader: {
                         retVal.push_back(test_commands::request_platform_id_response_ver2_embedded_bootloader);
                     } break;
-                    case MockResponse::assisted_btloader:{
+                    case MockResponse::Platform_config_assisted_bootloader:{
                         retVal.push_back(test_commands::request_platform_id_response_ver2_assisted_bootloader);
                     } break;
-                    case MockResponse::no_payload: {
+                    case MockResponse::No_payload: {
                         retVal.push_back(test_commands::request_platform_id_response_no_payload);
                     } break;
-                    case MockResponse::invalid: {
+                    case MockResponse::Invalid: {
                         retVal.push_back(test_commands::request_platform_id_response_invalid);
                     } break;
                     default: {
@@ -289,14 +274,14 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 retVal.push_back(test_commands::request_platform_id_response);
             }
             break;
-        case MockCommand::start_bootloader:
+        case MockCommand::Start_bootloader:
             isBootloader_ = true;
             if (customResponse) {
                 switch(response_) {
-                case MockResponse::no_payload: {
+                case MockResponse::No_payload: {
                     retVal.push_back(test_commands::start_bootloader_response_no_payload);
                 } break;
-                case MockResponse::invalid: {
+                case MockResponse::Invalid: {
                     retVal.push_back(test_commands::start_bootloader_response_invalid);
                 } break;
                 default: {
@@ -307,14 +292,14 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 retVal.push_back(test_commands::start_bootloader_response);
             }
             break;
-        case MockCommand::start_application:
+        case MockCommand::Start_application:
             isBootloader_ = false;
             if (customResponse) {
                 switch(response_) {
-                case MockResponse::no_payload: {
+                case MockResponse::No_payload: {
                     retVal.push_back(test_commands::start_application_response_no_payload);
                 } break;
-                case MockResponse::invalid: {
+                case MockResponse::Invalid: {
                     retVal.push_back(test_commands::start_application_response_invalid);
                 } break;
                 default: {
@@ -326,19 +311,19 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
             }
             break;
 
-        case MockCommand::flash_firmware:
+        case MockCommand::Flash_firmware:
             if (customResponse) {
                 switch (response_) {
-                case MockResponse::flash_resend_chunk: {
+                case MockResponse::Flash_firmware_resend_chunk: {
                     retVal.push_back(test_commands::flash_firmware_response_resend_chunk);
                 } break;
-                case MockResponse::flash_memory_error: {
+                case MockResponse::Flash_firmware_memory_error: {
                     retVal.push_back(test_commands::flash_firmware_response_memory_error);
                 } break;
-                case MockResponse::flash_invalid_cmd_sequence: {
+                case MockResponse::Flash_firmware_invalid_cmd_sequence: {
                     retVal.push_back(test_commands::flash_firmware_response_invalid_cmd_sequence);
                 } break;
-                case MockResponse::flash_invalid_value: {
+                case MockResponse::Flash_firmware_invalid_value: {
                     retVal.push_back(test_commands::flash_firmware_invalid_value);
                 } break;
                 default: {
@@ -350,15 +335,21 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
             }
             break;
 
-        case MockCommand::flash_bootloader:
+        case MockCommand::Flash_bootloader:
             retVal.push_back(test_commands::flash_bootloader_response);
             break;
 
-        case MockCommand::start_flash_firmware:
+        case MockCommand::Start_flash_firmware:
             if (customResponse) {
                 switch (response_) {
-                case MockResponse::start_flash_firmware_invalid: {
+                case MockResponse::Start_flash_firmware_invalid: {
                     retVal.push_back(test_commands::start_flash_firmware_response_invalid);
+                } break;
+                case MockResponse::Start_flash_firmware_invalid_command: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_invalid_command);
+                } break;
+                case MockResponse::Start_flash_firmware_too_large: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_firmware_too_large);
                 } break;
                 default: {
                     retVal.push_back(test_commands::start_flash_firmware_response);
@@ -369,10 +360,13 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
             }
             break;
 
-        case MockCommand::start_flash_bootloader:
+        case MockCommand::Start_flash_bootloader:
             retVal.push_back(test_commands::start_flash_bootloader_response);
             break;
 
+        case MockCommand::Set_assisted_platform_id:
+            retVal.push_back(test_commands::set_assisted_platform_id_response);
+            break;
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);
@@ -426,10 +420,11 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
             test_commands::parameterRegex.globalMatch(responseString);
         while (rxIterator.hasNext()) {
             QRegularExpressionMatch match = rxIterator.next();
-            QString matchStr = match.captured().mid(2).chopped(1);
-            // qDebug("%s -> %s", matchStr.toStdString().c_str(), getPlaceholderValue(matchStr,
+            QString matchStr = match.captured(0);
+            QString matchSubStr = match.captured(1);
+            // qDebug("%s -> %s", matchSubStr.toStdString().c_str(), getPlaceholderValue(matchSubStr,
             // requestDoc).toStdString().c_str());
-            replacements.insert({matchStr, getPlaceholderValue(matchStr, requestDoc)});
+            replacements.insert({matchStr, getPlaceholderValue(matchSubStr, requestDoc)});
         }
     }
 
@@ -437,7 +432,7 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
     for (const auto& response : responses) {
         QString responseStr(response);
         for (const auto& replacement : replacements) {
-            responseStr = responseStr.replace("{$" + replacement.first + "}", replacement.second);
+            responseStr = responseStr.replace(replacement.first, replacement.second);
         }
         // qDebug("%s", responseStr.toStdString().c_str());
         retVal.push_back(responseStr.toUtf8());

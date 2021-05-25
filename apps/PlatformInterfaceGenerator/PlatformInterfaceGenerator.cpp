@@ -35,11 +35,11 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
     QFile inputFile(pathToJson);
     inputFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
-    QString fileText = inputFile.readAll();
+    QByteArray fileText = inputFile.readAll();
     inputFile.close();
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8(), &parseError);
+    QJsonDocument doc = QJsonDocument::fromJson(fileText, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
         lastError_ = "Failed to parse json: " + parseError.errorString();

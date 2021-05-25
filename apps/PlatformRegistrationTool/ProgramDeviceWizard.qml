@@ -356,7 +356,8 @@ FocusScope {
             anchors {
                 top: statusIndicator.visible ? statusIndicator.bottom : statusTextItem.bottom
                 topMargin: content.verticalSpacing
-                horizontalCenter: parent.horizontalCenter
+                left: parent.left
+                right: parent.right
             }
 
             horizontalAlignment: Text.AlignHCenter
@@ -364,6 +365,7 @@ FocusScope {
             fontSizeMultiplier: 1.2
             font.italic: true
             text: wizard.subtext
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         }
 
         Image {

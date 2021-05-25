@@ -24,19 +24,29 @@ FirmwareUpdateController::~FirmwareUpdateController()
     }
 }
 
-void FirmwareUpdateController::initialize(PlatformController *platformController, strata::DownloadManager *downloadManager)
+void FirmwareUpdateController::initialize(
+        PlatformController *platformController,
+        strata::DownloadManager *downloadManager)
 {
     platformController_ = platformController;
     downloadManager_ = downloadManager;
 }
 
-FirmwareUpdateController::UpdateProgress::UpdateProgress() :
-    complete(-1), total(-1), jobUuid(QString()), workWithController(false)
+FirmwareUpdateController::UpdateProgress::UpdateProgress()
+    : complete(-1),
+      total(-1),
+      jobUuid(QString()),
+      programController(false)
 {
 }
 
-FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool workWithController) :
-    complete(-1), total(-1), jobUuid(jobUuid), workWithController(workWithController)
+FirmwareUpdateController::UpdateProgress::UpdateProgress(
+        const QString& jobUuid,
+        bool programController)
+    : complete(-1),
+      total(-1),
+      jobUuid(jobUuid),
+      programController(programController)
 {
 }
 
@@ -82,11 +92,11 @@ void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
     }
 
     FirmwareUpdater *fwUpdater;
-    bool workWithController = true;
+    bool programController = true;
 
     switch(data.action) {
     case ChangeFirmwareAction::UpdateFirmware :
-        workWithController = false;
+        programController = false;
     case ChangeFirmwareAction::ProgramController :
         fwUpdater = new FirmwareUpdater(platform, downloadManager_, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
         break;
@@ -95,7 +105,7 @@ void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
         break;
     }
 
-    UpdateInfo *updateData = new UpdateInfo(data.clientId, fwUpdater, data.jobUuid, workWithController);
+    UpdateInfo *updateData = new UpdateInfo(data.clientId, fwUpdater, data.jobUuid, programController);
     updates_.insert(data.deviceId, updateData);
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
@@ -154,7 +164,13 @@ void FirmwareUpdateController::logAndEmitError(const QByteArray& deviceId, const
     emit updaterError(deviceId, errorString);
 }
 
-FirmwareUpdateController::UpdateInfo::UpdateInfo(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool workWithController) :
-    clientId(client), fwUpdater(updater), updateProgress(jobUuid, workWithController)
+FirmwareUpdateController::UpdateInfo::UpdateInfo(
+        const QByteArray& client,
+        FirmwareUpdater* updater,
+        const QString& jobUuid,
+        bool programController)
+    : clientId(client),
+      fwUpdater(updater),
+      updateProgress(jobUuid, programController)
 {
 }

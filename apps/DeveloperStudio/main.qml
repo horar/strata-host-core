@@ -126,7 +126,7 @@ SGWidgets.SGMainWindow {
         onJobStatusChanged: {
             if (status === "running") {
                 PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0)
-            } else if(status === "failure") {
+            } else if (status === "failure") {
                 PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
             }
         }

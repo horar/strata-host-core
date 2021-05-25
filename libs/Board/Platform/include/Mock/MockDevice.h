@@ -71,6 +71,7 @@ public:
     bool mockIsAutoResponse() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
+    MockVersion mockGetVersion() const;
 
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool isLegacy);
@@ -80,6 +81,7 @@ public:
     bool mockSetResponse(MockResponse response);
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
+    void mockSetAsBootloader(bool isBootloader);
 
 private:
     bool opened_ = false;
@@ -88,5 +90,7 @@ private:
     std::list<QByteArray> recordedMessages_;
     MockDeviceControl control_;
 };
+
+typedef std::shared_ptr<MockDevice> MockDevicePtr;
 
 }  // namespace strata::device

@@ -98,7 +98,7 @@ void CoreInterface::notificationsThread()
             continue;
         }
 
-        QString n(QString::fromStdString(message));
+        QByteArray n(QByteArray::fromStdString(message));
 
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
@@ -107,7 +107,7 @@ void CoreInterface::notificationsThread()
           qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n.left(500) << " ...' (message over 500 chars truncated)";
         }
 
-        QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
+        QJsonDocument doc = QJsonDocument::fromJson(n);
         if(doc.isNull()) {
             // TODO [ian] fix the "ONSEMI" message from fouling up all this
             //qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle()."

@@ -4,12 +4,18 @@
 #include <QPointer>
 #include <QProcess>
 
+#include "config/UrlConfig.h"
+
+#include <QtLogger.h>
+
 class DocumentManager;
 class CoreInterface;
 class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
 class ProgramControllerManager;
+class PlatformInterfaceGenerator;
+class DebugMenuGenerator;
 
 class SDSModel: public QObject
 {
@@ -22,9 +28,13 @@ class SDSModel: public QObject
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
     Q_PROPERTY(ProgramControllerManager* programControllerManager READ programControllerManager CONSTANT)
+    Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
+    Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
+    Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
+    Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
 
 public:
-    explicit SDSModel(const QUrl &dealerAddress, QObject *parent = nullptr);
+    explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
     virtual ~SDSModel();
 
     bool startHcs();
@@ -36,7 +46,10 @@ public:
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
     ProgramControllerManager* programControllerManager() const;
-
+    PlatformInterfaceGenerator* platformInterfaceGenerator() const;
+    DebugMenuGenerator* debugMenuGenerator() const;
+    strata::sds::config::UrlConfig* urls() const;
+    strata::loggers::QtLogger *qtLogger() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -61,7 +74,10 @@ private:
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
     ProgramControllerManager *programControllerManager_{nullptr};
+    PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
+    DebugMenuGenerator *debugMenuGenerator_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
+    strata::sds::config::UrlConfig *urlConfig_{nullptr};
     QPointer<QProcess> hcsProcess_;
     bool externalHcsConnected_{false};
 

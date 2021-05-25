@@ -34,7 +34,6 @@ namespace strata::platform {
         Q_DISABLE_COPY(Platform)
 
     friend class strata::platform::operation::BasePlatformOperation;
-    friend class strata::platform::operation::Identify;
     friend class strata::platform::command::BasePlatformCommand;
 
     public:
@@ -86,9 +85,10 @@ namespace strata::platform {
                    const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
 
         /**
-         * Stop reconnection timer if active.
+         * Terminate all operations
+         * @param close true if device communication channel should be closed, false otherwise
          */
-        void abortReconnect();
+        void terminate(bool close);
 
         /**
          * Send message to device (public).
@@ -252,6 +252,11 @@ namespace strata::platform {
         void closed(QByteArray deviceId);
 
         /**
+         * Emitted when device is about to be erased from maps and no more operations shall be executed.
+         */
+        void terminated(QByteArray deviceId);
+
+        /**
          * Emitted when device was identified using Identify operation.
          * @param success true if successfully recognized, otherwise false
          */
@@ -329,15 +334,27 @@ namespace strata::platform {
         bool sendMessage(const QByteArray& message, quintptr lockId);
 
         /**
-         * Informs the device that Identify operation completed
-         * Emits recognized() signal.
+         * Sets flag if device was recognized and emits 'recognized()' signal.
          * @param isRecognized if the device was properly recognized
          */
-        void identifyFinished(bool isRecognized);
-      // ***
+        void setRecognized(bool isRecognized);
+      // *** functions used by friend classes (end)
 
+        /**
+         * Open device communication channel (internal).
+         */
         void openDevice();
+
+        /**
+         * Close device communication channel (internal).
+         * @param waitInterval how long to remain in closed state before re-attempting to open the device (0 - stay closed)
+         */
         void closeDevice(const std::chrono::milliseconds waitInterval);
+
+        /**
+         * Stop reconnection timer if active.
+         */
+        void abortReconnect();
 
     protected:
         device::DevicePtr device_;
@@ -353,7 +370,7 @@ namespace strata::platform {
         QTimer reconnectTimer_;
         std::chrono::milliseconds retryInterval_;
 
-        QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
+        QReadWriteLock propertiesLock_;  // Lock for protect access to device properties.
 
         bool bootloaderMode_;
         bool isRecognized_;

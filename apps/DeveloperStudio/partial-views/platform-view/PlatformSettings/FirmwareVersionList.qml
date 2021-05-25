@@ -236,8 +236,14 @@ ColumnLayout {
                                         fillBar.width = (barBackground.width * .25) * (payload.complete / 121528)
                                         break
                                     default:
-                                        statusText.text = "Downloading... " + (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
-                                        fillBar.width = (barBackground.width * .25) * (payload.complete / payload.total)
+                                        if (payload.total > 0) {
+                                            var progress = payload.complete / payload.total
+                                        } else {
+                                            progress = 0;
+                                        }
+
+                                        statusText.text = "Downloading... " + (100 * (progress)).toFixed(0) + "% complete"
+                                        fillBar.width = (barBackground.width * .25) * (progress)
                                         break
                                     }
                                     break;

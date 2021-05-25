@@ -2,6 +2,7 @@
 
 #include <QAbstractListModel>
 #include <PlatformManager.h>
+#include <Mock/MockDeviceConstants.h>
 
 class SciMockDeviceModel : public QAbstractListModel
 {
@@ -15,24 +16,23 @@ public:
     virtual ~SciMockDeviceModel() override;
     void init();
 
-    Q_INVOKABLE bool connectMockDevice(QString deviceName, QByteArray deviceId);
-    Q_INVOKABLE bool disconnectMockDevice(QByteArray deviceId);
+    Q_INVOKABLE bool connectMockDevice(const QString& deviceName, const QByteArray& deviceId);
+    Q_INVOKABLE bool disconnectMockDevice(const QByteArray& deviceId);
     Q_INVOKABLE void disconnectAllMockDevices();
     Q_INVOKABLE QString getLatestMockDeviceName() const;
-    Q_INVOKABLE QByteArray getMockDeviceId(QString deviceName) const;
+    Q_INVOKABLE QByteArray getMockDeviceId(const QString& deviceName) const;
 
     enum ModelRole {
         DeviceIdRole = Qt::UserRole + 1,
         DeviceNameRole,
-        OpenEnabledRole,
-        LegacyModeRole,
-        AutoResponseRole,
-        MockCommandRole,
-        MockResponseRole
+    };
+
+    struct DeviceData {
+        QByteArray deviceId_;
+        QString deviceName_;
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
 
@@ -47,8 +47,10 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QList<strata::platform::PlatformPtr> platforms_;
-    strata::PlatformManager *platformManager_ = nullptr;
+    void clear();
+
+    QList<DeviceData> platforms_;
+    strata::PlatformManager *platformManager_;
     strata::device::scanner::DeviceScannerPtr scanner_;
     unsigned latestMockIdx_ = 1;
 };
