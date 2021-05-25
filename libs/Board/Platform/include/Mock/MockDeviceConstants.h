@@ -70,7 +70,6 @@ inline MockCommand convertCommandToEnum(const std::string& cmd) {
 }
 
 enum class MockResponse {
-
     // generic responses
 
     Normal,
@@ -92,7 +91,9 @@ enum class MockResponse {
     Flash_firmware_invalid_cmd_sequence,
     Flash_firmware_invalid_value,
 
-    Start_flash_firmware_invalid
+    Start_flash_firmware_invalid,
+    Start_flash_firmware_invalid_command,
+    Start_flash_firmware_too_large
 };
 Q_ENUM_NS(MockResponse)
 
@@ -553,6 +554,16 @@ R"({
     }
 })");
 
+const QByteArray start_flash_bootloader_response = normalizeMessage(
+R"({
+    "notification":{
+        "value":"start_flash_bootloader",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})");
+
 const QByteArray start_flash_firmware_response_invalid = normalizeMessage(
 R"({
     "notification":{
@@ -563,12 +574,22 @@ R"({
     }
 })");
 
-const QByteArray start_flash_bootloader_response = normalizeMessage(
+const QByteArray start_flash_firmware_response_invalid_command = normalizeMessage(
 R"({
     "notification":{
-        "value":"start_flash_bootloader",
+        "value":"start_flash_firmware",
         "payload":{
-            "status":"ok"
+            "status":"invalid_command"
+        }
+    }
+})");
+
+const QByteArray start_flash_firmware_response_firmware_too_large = normalizeMessage(
+R"({
+    "notification":{
+        "value":"start_flash_firmware",
+        "payload":{
+            "status":"firmware_too_large"
         }
     }
 })");
@@ -633,6 +654,15 @@ R"({
     }
 })");
 
-} // namespace strata::device::test_commands
+const QByteArray set_assisted_platform_id_response = normalizeMessage(
+R"({
+    "notification":{
+        "value":"set_assisted_platform_id",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})");
 
-} // namespace strata::device
+} // namespace strata::device::mock::test_commands
+}
