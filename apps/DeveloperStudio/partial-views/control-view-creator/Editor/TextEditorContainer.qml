@@ -17,6 +17,12 @@ Item {
     id: fileContainerRoot
     Layout.fillHeight: true
     Layout.fillWidth: true
+    
+    onVisibleChanged: {
+        if (visible) {
+            forceActiveFocus()
+        }
+    }
 
     property int modelIndex: index
     property string file: model.filename
@@ -73,6 +79,11 @@ Item {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
             alertToast.show()
             console.error("Unable to save file", model.filepath)
+        }
+    }
+    Keys.onReleased: {
+        if (event.matches(StandardKey.Close)) {
+            closeFileTab(index, model)
         }
     }
 
@@ -272,11 +283,13 @@ Item {
         settings.showScrollBars: false
 
         anchors {
-           	top: alertRow.bottom
+            top: alertRow.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
         }
+
+        onJavaScriptConsoleMessage: console.log(message)
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -287,7 +300,7 @@ Item {
             var htmlWidth = width - 16
             channelObject.setContainerWidth(htmlWidth.toString())
         }
-        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
+        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
         // the visibilty changed is called when the window is resized from signals outside of the app
         Connections {
             target: mainWindow

@@ -22,7 +22,9 @@ public:
     bool mockIsBootloader() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
+    MockVersion mockGetVersion() const;
 
+    void mockSetAsBootloader(bool isBootloader);
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool legacy);
     bool mockSetCommand(MockCommand command);
@@ -39,9 +41,9 @@ private:
     bool isOpenEnabled_ = true;
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
     bool isBootloader_ = false;
-    MockCommand command_ = MockCommand::all_commands;
-    MockResponse response_ = MockResponse::normal;
-    MockVersion version_ = MockVersion::version1;
+    MockCommand command_ = MockCommand::Any_command;
+    MockResponse response_ = MockResponse::Normal;
+    MockVersion version_ = MockVersion::Version_1;
 };
 
 } // namespace strata::device

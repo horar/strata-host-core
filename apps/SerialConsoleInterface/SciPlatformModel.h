@@ -89,7 +89,6 @@ private:
     int maxCmdInHistoryCount_ = 99;
     bool condensedAtStartup_ = false;
 
-    void setModelRoles();
     int findPlatform(const QByteArray& deviceId) const;
 
     void appendNewPlatform(const QByteArray& deviceId);

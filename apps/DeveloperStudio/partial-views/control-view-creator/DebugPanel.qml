@@ -15,42 +15,6 @@ Rectangle {
     property int expandWidth: minimumExpandWidth
     property alias mainContainer: mainContainer
 
-    Button {
-        id: expandButton
-        height: 40
-        width: 20
-        x: -20
-        y: (parent.height - height) / 2
-        z: 100
-
-        background: Rectangle {
-            color: "lightgrey"
-            radius: 1
-        }
-
-        contentItem: Text {
-            text: root.expanded ? "\u25b6" : "\u25c0"
-            font.pointSize: 13
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-
-            onClicked: {
-                if (root.expanded) {
-                    collapse()
-                } else {
-                    expand()
-                }
-            }
-        }
-    }
-
-
     Rectangle {
         id: mainContainer
         width: parent.width
@@ -66,7 +30,6 @@ Rectangle {
         }
     }
 
-
     NumberAnimation {
         id: collapseAnimation
         target: root
@@ -75,7 +38,6 @@ Rectangle {
         easing.type: Easing.InOutQuad
         to: 0
     }
-
 
     NumberAnimation {
         id: expandAnimation

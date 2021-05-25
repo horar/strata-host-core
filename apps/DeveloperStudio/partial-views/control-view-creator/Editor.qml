@@ -212,8 +212,17 @@ Item {
                         property color color: "#aaaaaa"
                         property int modelIndex: index
 
+                        MouseArea {
+                            anchors.fill: fileTab
+                            acceptedButtons: Qt.MiddleButton
+
+                            onClicked: {
+                                 closeFileTab(index, model)
+                            }
+                        }
+
                         onClicked: {
-                            openFilesModel.currentIndex = index
+                        	openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
@@ -264,15 +273,7 @@ Item {
                                     }
 
                                     onClicked: {
-                                        if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
-                                            confirmClosePopup.filename = model.filename
-                                            confirmClosePopup.index = index
-                                            confirmClosePopup.exists = model.exists
-                                            confirmClosePopup.open()
-                                            controlViewCreatorRoot.isConfirmCloseOpen = true
-                                        } else {
-                                            openFilesModel.closeTabAt(index);
-                                        }
+                                        closeFileTab(index, model)
                                     }
                                 }
                             }
@@ -390,6 +391,18 @@ Item {
                 }
             }
 
+        }
+    }
+
+    function closeFileTab(index, model) {
+        if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
+            confirmClosePopup.filename = model.filename
+            confirmClosePopup.index = index
+            confirmClosePopup.exists = model.exists
+            confirmClosePopup.open()
+            controlViewCreatorRoot.isConfirmCloseOpen = true
+        } else {
+            openFilesModel.closeTabAt(index);
         }
     }
 }

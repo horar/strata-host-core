@@ -77,7 +77,7 @@ void PlatformOperationsTest::handleOperationFinished(QByteArray, operation::Type
 void PlatformOperationsTest::handleRetryGetFirmwareInfo()
 {
     if (operationCommandsCount_ == 1) {
-        mockDevice_->mockSetResponseForCommand(MockResponse::normal, MockCommand::get_firmware_info);
+        mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Get_firmware_info);
     }
     operationCommandsCount_++;
 }
@@ -173,7 +173,7 @@ void PlatformOperationsTest::noResponseTest()
 
 void PlatformOperationsTest::notJSONTest()
 {
-    mockDevice_->mockSetResponse(MockResponse::no_JSON);
+    mockDevice_->mockSetResponse(MockResponse::No_JSON);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -197,7 +197,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::get_firmware_info);
+    mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -211,7 +211,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
     QVERIFY(platform_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::request_platform_id);
+    mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Request_platform_id);
 
     platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -228,7 +228,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
     QCOMPARE(operationTimeoutCount_,2);
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::start_application);
+    mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Start_application);
 
     platformOperation = platformOperations_.StartApplication(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -248,7 +248,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
     QVERIFY(platform_->classId().isEmpty());
     QCOMPARE(operationTimeoutCount_,3);
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::start_bootloader);
+    mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Start_bootloader);
 
     platformOperation = platformOperations_.StartBootloader(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -285,7 +285,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
 void PlatformOperationsTest::nackTest()
 {
-    mockDevice_->mockSetResponse(MockResponse::nack);
+    mockDevice_->mockSetResponse(MockResponse::Nack);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -307,7 +307,7 @@ void PlatformOperationsTest::invalidValueTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -321,7 +321,7 @@ void PlatformOperationsTest::invalidValueTest()
     QVERIFY(platform_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::request_platform_id);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Request_platform_id);
 
     platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -338,7 +338,7 @@ void PlatformOperationsTest::invalidValueTest()
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
     QCOMPARE(operationTimeoutCount_,2);
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::start_application);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Start_application);
 
     platformOperation = platformOperations_.StartApplication(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -358,7 +358,7 @@ void PlatformOperationsTest::invalidValueTest()
     QVERIFY(platform_->classId().isEmpty());
     QCOMPARE(operationTimeoutCount_,3);
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::start_bootloader);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Start_bootloader);
 
     platformOperation = platformOperations_.StartBootloader(platform_);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -503,7 +503,7 @@ void PlatformOperationsTest::retryGetFirmwareInfoTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetResponseForCommand(MockResponse::no_payload, MockCommand::get_firmware_info);
+    mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     connectRetryGetFirmwareInfoHandler(platformOperation.get());

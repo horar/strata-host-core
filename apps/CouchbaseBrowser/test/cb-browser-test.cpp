@@ -303,7 +303,7 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
         slice value_sl = r.valueAtIndex(0).asString();
         Document d = db2->getMutableDocument(std::string(value_sl));
         Dict read_dict = d.properties();
-        document_json = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+        document_json = QJsonDocument::fromJson(QByteArray::fromStdString(read_dict.toJSONString()));
         total_json_obj.insert(QString::fromStdString(std::string(value_sl)), document_json.object());
     }
 
