@@ -24,7 +24,15 @@ ColumnLayout {
     property alias functions: functions
 
     Component.onCompleted: {
-        functions.reload()
+        functions.checkFile()
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            functions.load()
+        } else {
+            functions.unload(false)
+        }
     }
 
     VisualEditorFunctions {

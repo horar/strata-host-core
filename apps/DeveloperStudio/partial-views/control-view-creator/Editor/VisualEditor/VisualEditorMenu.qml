@@ -146,7 +146,7 @@ RowLayout {
                     onClicked: {
                         // todo: add file listener so external changes are auto reloaded?
                         // changes are reloaded when switching between visual editor and text editor, but not if changes are made from another app
-                        visualEditor.functions.reload()
+                        visualEditor.functions.unload(true)
                         dotsMenu.close()
                     }
                 }

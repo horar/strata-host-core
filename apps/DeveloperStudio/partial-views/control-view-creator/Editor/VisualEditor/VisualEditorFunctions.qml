@@ -13,24 +13,32 @@ QtObject {
     signal passUUID(string uuid)
 
     property Timer destructionTimer: Timer {
-        interval: 16 // 16ms ~ 1 frame
+        interval: 1
+
+        property bool reload
 
         onTriggered: {
-            finishReload()
+            // Asynchronously wait for loader components to finish destruction before trimComponentCache
+            // in order to purge cache and force all files to refresh when reloaded
+            sdsModel.resourceLoader.trimComponentCache(visualEditor)
+
+            if (reload) {
+                // reload after cleanup in some cases
+                reload = false
+                load()
+            }
         }
     }
 
     Component.onDestruction: {
-        for (let i = 0; i < overlayObjects.length; i++) {
-            overlayObjects[i].destroy()
-        }
+        unload(false)
     }
 
-    function openFile(fileUrl) {
+    function readFileContents(fileUrl) {
         if (fileUrl.startsWith("file")) {
             fileUrl = SGUtilsCpp.urlToLocalFile(fileUrl)
         }
-        // console.log("OpenFile:", fileUrl)
+        // console.log("readFileContents:", fileUrl)
 
         let fileContent = SGUtilsCpp.readTextFileContent(fileUrl)
         // console.log("content:", fileContent)
@@ -40,54 +48,62 @@ QtObject {
     function saveFile(fileUrl = file, text = fileContents) {
         // todo: potentially clean up empty lines in file before save, e.g. more than 2 empty lines in a row -> 1 empty line
         SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text)
-        reload()
+        unload(true)
     }
 
-    function reload() {
+    function checkFile() {
+        loader.setSource(visualEditor.file)
+
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+            visualEditor.fileValid = true
+            unload(false)
+        } else {
+            loadError()
+        }
+    }
+
+    function unload(reload = false) {
+        loader.setSource("")
         for (let i = 0; i < overlayObjects.length; i++) {
             overlayObjects[i].destroy()
         }
         overlayObjects = []
+        destructionTimer.reload = reload
+        destructionTimer.start()
+    }
 
+    function load() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")){
-            loader.setSource("")
-            fileContents = openFile(visualEditor.file)
+            fileContents = readFileContents(visualEditor.file)
 
-            // Asynchronously wait for loader components to finish destruction before trimComponentCache
-            // in order to force all files to refresh if possible
-            destructionTimer.start()
+            loader.setSource(visualEditor.file)
+
+            if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+                overlayContainer.rowCount = loader.children[0].rowCount
+                overlayContainer.columnCount = loader.children[0].columnCount
+                identifyChildren(loader.children[0])
+                visualEditor.fileValid = true
+            } else {
+                loadError()
+            }
         } else {
             visualEditor.fileValid = false
             visualEditor.error = "Visual Editor supports QML files only"
         }
     }
 
-    function finishReload() {
-        // Trim the component cache to clear out old components to prevent memory leak
-        sdsModel.resourceLoader.trimComponentCache(visualEditor)
-
-        // Append a numerical string to the end of each file, otherwise Loader will not refresh:
-        // see: https://stackoverflow.com/questions/19604552/qml-loader-not-shows-changes-on-qml-file
-        loader.setSource(visualEditor.file + "?t=" + Date.now())
-
-        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-            overlayContainer.rowCount = loader.children[0].rowCount
-            overlayContainer.columnCount = loader.children[0].columnCount
-            identifyChildren(loader.children[0])
-            visualEditor.fileValid = true
+    function loadError() {
+        unload(false)
+        loader.setSource("qrc:/partial-views/SGLoadError.qml")
+        if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
+            console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
+            loader.item.error_intro = "Unable to display file"
+            loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
+            visualEditor.fileValid = false
+            visualEditor.error = "Visual Editor supports files derived from UIBase only"
         } else {
-            if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-                loader.setSource("qrc:/partial-views/SGLoadError.qml")
-                console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
-                loader.item.error_intro = "Unable to display file"
-                loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
-                visualEditor.fileValid = false
-                visualEditor.error = "Visual Editor supports files derived from UIBase only"
-            } else {
-                loader.setSource("qrc:/partial-views/SGLoadError.qml")
-                loader.item.error_intro = "Unable to display file"
-                loader.item.error_message = "Build error, see logs"
-            }
+            loader.item.error_intro = "Unable to display file"
+            loader.item.error_message = "Build error, see logs"
         }
     }
 
@@ -106,7 +122,7 @@ QtObject {
 
     function addControl(controlPath){
         // console.log("addControl:", controlPath)
-        let testComponent = openFile(controlPath)
+        let testComponent = readFileContents(controlPath)
         testComponent = testComponent.arg(create_UUID()) // replace all instances of %1 with uuid
 
         insertTextAtEndOfFile(testComponent)
