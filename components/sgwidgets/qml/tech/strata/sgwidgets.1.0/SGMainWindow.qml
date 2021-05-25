@@ -12,7 +12,7 @@ ApplicationWindow {
 
     onClosing: {
         settings.visibility = window.visibility
-        fullScreen = (Window.FullScreen) ? true : false
+        fullScreen = (settings.visibility === Window.FullScreen) ? true : false
 
         if (settings.visibility === Window.Maximized) {
             window.showNormal()

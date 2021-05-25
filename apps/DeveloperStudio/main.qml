@@ -75,6 +75,9 @@ SGWidgets.SGMainWindow {
             if (fullScreenMode) {
                 mainWindow.showNormal()
                 fullScreenMode = false
+                if(mainWindow.width === Screen.width && mainWindow.height === Screen.height) {
+                    resetWindowSize()
+                }
             }
         }
     }
