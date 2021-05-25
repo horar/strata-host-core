@@ -43,6 +43,11 @@ MockVersion MockDeviceControl::mockGetVersion() const
     return version_;
 }
 
+void MockDeviceControl::mockSetAsBootloader(bool isBootloader)
+{
+    isBootloader_ = isBootloader;
+}
+
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
 {
     if (isOpenEnabled_ != enabled) {
@@ -340,6 +345,12 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
                 case MockResponse::Start_flash_firmware_invalid: {
                     retVal.push_back(test_commands::start_flash_firmware_response_invalid);
                 } break;
+                case MockResponse::Start_flash_firmware_invalid_command: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_invalid_command);
+                } break;
+                case MockResponse::Start_flash_firmware_too_large: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_firmware_too_large);
+                } break;
                 default: {
                     retVal.push_back(test_commands::start_flash_firmware_response);
                 } break;
@@ -353,6 +364,9 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
             retVal.push_back(test_commands::start_flash_bootloader_response);
             break;
 
+        case MockCommand::Set_assisted_platform_id:
+            retVal.push_back(test_commands::set_assisted_platform_id_response);
+            break;
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);

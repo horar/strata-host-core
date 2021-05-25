@@ -17,6 +17,7 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     BasePlatformOperation(platform, Type::StartBootloader)
 {
     commandList_.reserve(6);
+    std::chrono::milliseconds bootingDelay = (platform_->deviceType() == device::Device::Type::MockDevice) ? BOOTLOADER_MOCK_BOOT_TIME : BOOTLOADER_BOOT_TIME;
 
     // BasePlatformOperation member platform_ must be used as a parameter for commands!
 
@@ -27,7 +28,7 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     // jumps to bootloader, it will have a hardware fault which requires board to be reset.
     std::unique_ptr<CmdWait> cmdWait = std::make_unique<CmdWait>(
                 platform_,
-                BOOTLOADER_BOOT_TIME,
+                bootingDelay,
                 QStringLiteral("Waiting for bootloader to start"));
     cmdWait_ = cmdWait.get();
 

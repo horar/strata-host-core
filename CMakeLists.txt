@@ -26,6 +26,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_package(Git)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
 
 include(SetupConfigurations)
@@ -37,6 +39,7 @@ include(GitVersionMacro)
 include(TimestampMacro)
 include(ReplicatorCredentialsMacro)
 include(AddQmlImportPathMacro)
+include(DeployConfigFilesHelpers)
 
 # common for 'apps' and 'components' that use resource files
 add_qml_import_path(PATH ":/")
@@ -57,16 +60,33 @@ option(BUILD_TESTING "Build the testing tree" ON)
 add_feature_info(BUILD_TESTING BUILD_TESTING "Build the testing tree.")
 enable_testing()
 
-if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/internal")
-    add_subdirectory(internal)
+option(BUILD_EXAMPLES "Build project examples" OFF)
+add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
+
+option(APPS_UTILS "Build project supplementary utils" ON)
+add_feature_info(APPS_UTILS APPS_UTILS "Build project supplementary utils")
+
+if(NOT STRATA_HOST_CORE_INTERNAL_PATH)
+    set(STRATA_HOST_CORE_INTERNAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../strata-host-core-internal")
+endif()
+
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}")
+    add_subdirectory("${STRATA_HOST_CORE_INTERNAL_PATH}" "${CMAKE_BINARY_DIR}/strata-host-core-internal")
+endif()
+
+if(NOT STRATA_PLATFORM_CONTROL_VIEWS)
+    set(STRATA_PLATFORM_CONTROL_VIEWS "${CMAKE_CURRENT_SOURCE_DIR}/../strata-platform-control-views")
+endif()
+
+if(IS_DIRECTORY "${STRATA_PLATFORM_CONTROL_VIEWS}")
+    add_subdirectory("${STRATA_PLATFORM_CONTROL_VIEWS}" "${CMAKE_BINARY_DIR}/strata-platform-control-views")
 endif()
 
 add_subdirectory(extern)
-option(BUILD_EXAMPLES "Build project examples" OFF)
-add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
+add_subdirectory(components)
 add_subdirectory(apps)
 add_subdirectory(libs)
-add_subdirectory(components)
+add_subdirectory(utils)
 
 message(STATUS "=============================================================================")
 message(STATUS "QML import paths:")

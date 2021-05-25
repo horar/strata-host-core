@@ -22,6 +22,7 @@ add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -65,3 +66,7 @@ target_compile_definitions(${PROJECT_NAME}${CONNECTOR_SUFFIX} PRIVATE
 set_target_properties(${PROJECT_NAME}${CONNECTOR_SUFFIX} PROPERTIES
     AUTOMOC ON
 )
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
