@@ -15,7 +15,8 @@ BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QBluetoothDeviceInfo &i
           createDeviceId(info),
           info.name(),
           Type::BLEDevice),
-      bluetoothDeviceInfo_(info)
+      bluetoothDeviceInfo_(info),
+      allDiscovered_(false)
 {
 
     qCDebug(logCategoryDeviceBLE).nospace().noquote()
@@ -43,6 +44,7 @@ void BluetoothLowEnergyDevice::deinit()
         service.second->deleteLater();
     }
     discoveredServices_.clear();
+    allDiscovered_ = false;
 }
 
 bool BluetoothLowEnergyDevice::open()
@@ -195,8 +197,6 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
         return false;
     }
 
-    service->discoverDetails();//TODO!!! move to initial discovery
-
     QLowEnergyCharacteristic characteristic = service->characteristic(attributes.characteristic);
     if (characteristic.isValid() == false) {
         qWarning(logCategoryDeviceBLE) << "Invalid characteristic";
@@ -234,8 +234,6 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
     if (service == nullptr) {
         return false;
     }
-
-    service->discoverDetails();//TODO!!! move to initial discovery
 
     QLowEnergyCharacteristic characteristic = service->characteristic(addresses.characteristic);
     if (characteristic.isValid() == false) {
@@ -316,7 +314,7 @@ bool BluetoothLowEnergyDevice::isConnected() const
         return false;
     }
 
-    return lowEnergyController_->state() == QLowEnergyController::DiscoveredState;//TODO!!! check that this works
+    return lowEnergyController_->state() == QLowEnergyController::DiscoveredState && allDiscovered_;//TODO!!! check that this works
 }
 
 void BluetoothLowEnergyDevice::connectToDevice()
@@ -337,14 +335,54 @@ void BluetoothLowEnergyDevice::connectToDevice()
 
 void BluetoothLowEnergyDevice::deviceConnectedHandler()
 {
+    qDebug(logCategoryDeviceBLE) << "Device connected, discovering services...";
     emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_connected"}})"));//TODO remove
     lowEnergyController_->discoverServices();
 }
 
 void BluetoothLowEnergyDevice::discoveryFinishedHandler()
 {
-    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})"));//TODO remove
-    //TODO discover characteristics for all services
+    qDebug(logCategoryDeviceBLE) << "Service discovery finished, discovering service details...";
+    discoverServiceDetails();
+}
+
+void BluetoothLowEnergyDevice::discoverServiceDetails()
+{
+    for (const QBluetoothUuid &serviceUuid : lowEnergyController_->services()) {
+        addDiscoveredService(serviceUuid);
+    }
+    checkServiceDetailsDiscovery();
+}
+
+void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
+{
+    bool allDiscovered = true;
+    for (const auto &service : discoveredServices_) {
+        switch (service.second->state()) {
+            case QLowEnergyService::InvalidService:
+                break;
+            case QLowEnergyService::DiscoveryRequired:
+                qDebug(logCategoryDeviceBLE).nospace().noquote() << "Discovering details of service " << service.second->serviceUuid() << " ...";;
+                service.second->discoverDetails();
+                allDiscovered = false;
+                break;
+            case QLowEnergyService::DiscoveringServices:
+                allDiscovered = false;
+                break;
+            case QLowEnergyService::ServiceDiscovered:
+                break;
+            case QLowEnergyService::LocalService:
+                break;
+        }
+    }
+    if (allDiscovered && allDiscovered_ == false) {
+        allDiscovered_ = true;
+        qDebug(logCategoryDeviceBLE) << "Service details discovery finished";
+        for (const auto &service : discoveredServices_) {
+            qDebug(logCategoryDeviceBLE).nospace().noquote() << "Service " << service.second->serviceUuid() << " state " << service.second->state();
+        }
+        emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})"));//TODO remove
+    }
 }
 
 void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::Error error)
@@ -377,6 +415,7 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
             statusString = "remote host closed error";
             break;
     }
+    qDebug(logCategoryDeviceBLE).nospace().noquote() << "Device error: " << error;
     emit messageReceived(QByteArray(R"({"notification":{"value":"error","payload":{"status":")" + statusString.toUtf8() + R"(","details":")" + errorString.toUtf8() + R"("}}})"));
     //TODO maybe also notify platform manager to disconnect device? emit deviceError(errorCode, errorString);
 }
@@ -418,6 +457,12 @@ void BluetoothLowEnergyDevice::descriptorReadHandler(const QLowEnergyDescriptor 
 {
     emit messageReceived(QByteArray(R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid"}})"));//TODO take out the constant
     emitResponses(std::vector<QByteArray>({R"({"notification":{"value":"read","payload":{"service":")" + getSignalSenderService() + R"(","descriptor":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"}));//TODO take out the constant
+}
+
+void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
+{
+    Q_UNUSED(newState);
+    checkServiceDetailsDiscovery();
 }
 
 void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceError error)
@@ -471,11 +516,10 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
         delete service;
         return;
     }
-    if (discoveredServices_.count(service->serviceUuid()) != 0) {
+    if (discoveredServices_.count(serviceUuid) != 0) {
         //It is allowed to have multiple services with the same UUID, so this is a correct situation.
         //If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
-        qCInfo(logCategoryDeviceBLE).nospace().noquote() << "Duplicate service UUID " << service->serviceUuid() << ", ignoring the latter.";
-        delete service;
+        qCInfo(logCategoryDeviceBLE).nospace().noquote() << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
         return;
     }
     discoveredServices_[service->serviceUuid()] = service;
@@ -486,14 +530,11 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
     connect(service, &QLowEnergyService::descriptorRead, this, &BluetoothLowEnergyDevice::descriptorReadHandler);
     connect(service, &QLowEnergyService::characteristicChanged, this, &BluetoothLowEnergyDevice::characteristicChangedHandler);
     connect(service, (void (QLowEnergyService::*)(QLowEnergyService::ServiceError)) &QLowEnergyService::error, this, &BluetoothLowEnergyDevice::serviceErrorHandler);
+    connect(service, &QLowEnergyService::stateChanged, this, &BluetoothLowEnergyDevice::serviceStateChangedHandler);
 }
 
 QLowEnergyService * BluetoothLowEnergyDevice::getService(const QBluetoothUuid & serviceUuid)
 {
-    if (discoveredServices_.count(serviceUuid) == 0) {
-        addDiscoveredService(serviceUuid); //TODO!!! call during service discovery
-    }
-
     if (discoveredServices_.count(serviceUuid) == 0) {
         return nullptr;
     }

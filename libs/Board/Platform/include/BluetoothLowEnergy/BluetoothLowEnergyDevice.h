@@ -70,6 +70,7 @@ private slots:
     void descriptorReadHandler(const QLowEnergyDescriptor &info, const QByteArray &value);
     void characteristicChangedHandler(const QLowEnergyCharacteristic &info,
                                       const QByteArray &value);
+    void serviceStateChangedHandler(QLowEnergyService::ServiceState newState);
     void serviceErrorHandler(QLowEnergyService::ServiceError error);
 
 private:
@@ -82,6 +83,17 @@ private:
      * Tries to connect to the device identified by bluetoothDeviceInfo_
      */
     void connectToDevice();
+
+    /**
+     * Starts detail discovery for all discovered services.
+     */
+    void discoverServiceDetails();
+
+    /**
+     * Checks the state of service details discovery.
+     * Runs discovery where necessary, notifies about complete discovery.
+     */
+    void checkServiceDetailsDiscovery();
 
     /**
      * Creates a service object and stores it into internal map
@@ -160,6 +172,7 @@ private:
     QBluetoothDeviceInfo bluetoothDeviceInfo_;
     QLowEnergyController *lowEnergyController_{nullptr};
     std::map<QBluetoothUuid, QLowEnergyService *> discoveredServices_;
+    bool allDiscovered_;
 };
 
 }  // namespace strata::device
