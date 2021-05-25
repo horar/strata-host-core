@@ -504,7 +504,13 @@ void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceErr
 
 void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & serviceUuid)
 {
-    qDebug(logCategoryDeviceBLE).nospace().noquote() << "Creating service for UUID '" << serviceUuid << "' ...";
+    qDebug(logCategoryDeviceBLE).nospace().noquote() << "Creating service for UUID " << serviceUuid << " ...";
+    if (discoveredServices_.count(serviceUuid) != 0) {
+        //It is allowed to have multiple services with the same UUID, so this is a correct situation.
+        //If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
+        qCInfo(logCategoryDeviceBLE).nospace().noquote() << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
+        return;
+    }
     QLowEnergyService * service = lowEnergyController_->createServiceObject(serviceUuid);
     if (service == nullptr) {
         qWarning(logCategoryDeviceBLE) << "Invalid service";
@@ -514,12 +520,6 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
         //this should never happen, but we rely on this condition later, so let's better check it
         qWarning(logCategoryDeviceBLE) << "Invalid service: inconsistent uuid";
         delete service;
-        return;
-    }
-    if (discoveredServices_.count(serviceUuid) != 0) {
-        //It is allowed to have multiple services with the same UUID, so this is a correct situation.
-        //If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
-        qCInfo(logCategoryDeviceBLE).nospace().noquote() << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
         return;
     }
     discoveredServices_[service->serviceUuid()] = service;
