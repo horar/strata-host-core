@@ -55,7 +55,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.tickmarkStepSize
             menuLoader.item.sourceProperty = "tickmarkStepSize"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge. Text can only contain whole or decimal values."
+            menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge. Text can only contain postive whole/decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -87,7 +87,7 @@ ColumnLayout {
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.sourceProperty = "unitText"
-            menuLoader.item.label = "Enter the unit of the gauge. Text can only numbers, letters and any special characters. "
+            menuLoader.item.label = "Enter the unit of the gauge. Text can only numbers, letters and special characters. "
             menuLoader.item.open()
             contextMenu.close()
         }

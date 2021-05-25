@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the start value of the slider. Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter the minimum value of the slider. Text can only contain positive/negtaive whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -38,7 +38,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the End Value Of The Slider.Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter the maximum value of tthe Slider. Text can only contain positive/negtaive whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }

@@ -25,7 +25,6 @@ ColumnLayout {
         }
     }
 
-
     ContextMenuButton {
         text: "Set X Title"
         onClicked: {
@@ -40,7 +39,6 @@ ColumnLayout {
             contextMenu.close()
         }
     }
-
 
     ContextMenuButton {
         text: "Set Y Title"
