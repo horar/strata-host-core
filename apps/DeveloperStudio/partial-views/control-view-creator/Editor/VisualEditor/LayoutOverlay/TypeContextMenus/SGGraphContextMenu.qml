@@ -19,7 +19,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "title"
             menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and special characters."
+            menuLoader.item.label = "Enter graph's title. Text can contain only letters, numbers and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -34,7 +34,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "xTitle"
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and special characters."
+            menuLoader.item.label = "Enter graph's X Title. Text can contain only letters, numbers and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -49,7 +49,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "yTitle"
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and and special characters."
+            menuLoader.item.label = "Enter graph's Y Title. Text can contain only letters, numbers and and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -141,7 +141,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.xGrid
-            menuLoader.item.switchText = "Toggle switch to show hide X Grid"
+            menuLoader.item.switchText = "Toggle switch to show/hide X Grid"
             menuLoader.item.sourceProperty = "xGrid"
             menuLoader.item.open()
             contextMenu.close()
@@ -154,7 +154,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.yGrid
-            menuLoader.item.switchText = "Toggle switch to show hide Y Grid"
+            menuLoader.item.switchText = "Toggle switch to show/hide Y Grid"
             menuLoader.item.sourceProperty = "yGrid"
             menuLoader.item.open()
             contextMenu.close()
