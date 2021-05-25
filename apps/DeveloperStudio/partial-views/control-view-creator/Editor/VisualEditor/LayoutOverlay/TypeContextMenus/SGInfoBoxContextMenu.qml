@@ -34,7 +34,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "placeholderText"
             menuLoader.item.regExpValidator.regExp = /^[0-9-0-9 ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter the placeholder text. Text can contain only letters, numbers, underscores and spaces."
+            menuLoader.item.label = "Enter the placeholder text. PlaceholderText Text's can contain only letters, numbers, underscores and spaces."
             menuLoader.item.open()
             contextMenu.close()
         }

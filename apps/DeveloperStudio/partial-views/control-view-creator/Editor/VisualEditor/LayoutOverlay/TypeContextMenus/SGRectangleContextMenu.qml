@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0. Text can contain positive/negtaive whole or decimal values"
+            menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0. Border width value's can contain positive/negtaive whole or decimal values"
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -60,7 +60,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle. Text can contain positive/negtaive whole or decimal values"
+            menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle. Radius value's can contain positive/negtaive whole or decimal values"
             menuLoader.item.open()
             contextMenu.close()
         }
