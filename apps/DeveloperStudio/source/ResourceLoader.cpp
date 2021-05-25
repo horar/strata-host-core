@@ -447,6 +447,7 @@ QString ResourceLoader::getLastLoggedError() {
 
 void ResourceLoader::trimComponentCache(QObject *parent) {
     QQmlEngine *eng = qmlEngine(parent);
+    eng->collectGarbage();
     eng->trimComponentCache();
 }
 

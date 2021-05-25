@@ -12,6 +12,14 @@ QtObject {
 
     signal passUUID(string uuid)
 
+    property Timer destructionTimer: Timer {
+        interval: 16 // 16ms ~ 1 frame
+
+        onTriggered: {
+            finishReload()
+        }
+    }
+
     Component.onDestruction: {
         for (let i = 0; i < overlayObjects.length; i++) {
             overlayObjects[i].destroy()
@@ -42,36 +50,44 @@ QtObject {
         overlayObjects = []
 
         if (visualEditor.file.toLowerCase().endsWith(".qml")){
+            loader.setSource("")
             fileContents = openFile(visualEditor.file)
 
-            // Append a numerical string to the end of each file since the component cache cannot be trimmed synchronously
-            // Trim the component cache to clear out old components to prevent memory leak
-            // see: https://stackoverflow.com/questions/19604552/qml-loader-not-shows-changes-on-qml-file
-            loader.setSource(visualEditor.file + "?t=" + Date.now())
-            sdsModel.resourceLoader.trimComponentCache(visualEditor)
-
-            if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-                overlayContainer.rowCount = loader.children[0].rowCount
-                overlayContainer.columnCount = loader.children[0].columnCount
-                identifyChildren(loader.children[0])
-                visualEditor.fileValid = true
-            } else {
-                if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-                    loader.setSource("qrc:/partial-views/SGLoadError.qml")
-                    console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
-                    loader.item.error_intro = "Unable to display file"
-                    loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
-                    visualEditor.fileValid = false
-                    visualEditor.error = "Visual Editor supports files derived from UIBase only"
-                } else {
-                    loader.setSource("qrc:/partial-views/SGLoadError.qml")
-                    loader.item.error_intro = "Unable to display file"
-                    loader.item.error_message = "Build error, see logs"
-                }
-            }
+            // Asynchronously wait for loader components to finish destruction before trimComponentCache
+            // in order to force all files to refresh if possible
+            destructionTimer.start()
         } else {
             visualEditor.fileValid = false
             visualEditor.error = "Visual Editor supports QML files only"
+        }
+    }
+
+    function finishReload() {
+        // Trim the component cache to clear out old components to prevent memory leak
+        sdsModel.resourceLoader.trimComponentCache(visualEditor)
+
+        // Append a numerical string to the end of each file, otherwise Loader will not refresh:
+        // see: https://stackoverflow.com/questions/19604552/qml-loader-not-shows-changes-on-qml-file
+        loader.setSource(visualEditor.file + "?t=" + Date.now())
+
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+            overlayContainer.rowCount = loader.children[0].rowCount
+            overlayContainer.columnCount = loader.children[0].columnCount
+            identifyChildren(loader.children[0])
+            visualEditor.fileValid = true
+        } else {
+            if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
+                loader.setSource("qrc:/partial-views/SGLoadError.qml")
+                console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
+                loader.item.error_intro = "Unable to display file"
+                loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
+                visualEditor.fileValid = false
+                visualEditor.error = "Visual Editor supports files derived from UIBase only"
+            } else {
+                loader.setSource("qrc:/partial-views/SGLoadError.qml")
+                loader.item.error_intro = "Unable to display file"
+                loader.item.error_message = "Build error, see logs"
+            }
         }
     }
 
