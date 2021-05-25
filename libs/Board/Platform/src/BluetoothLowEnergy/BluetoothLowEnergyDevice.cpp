@@ -6,6 +6,7 @@
 #include <QLowEnergyController>
 #include <QLowEnergyService>
 #include <QTimer>
+#include <QRandomGenerator>
 
 namespace strata::device {
 
@@ -546,15 +547,22 @@ QBluetoothUuid BluetoothLowEnergyDevice::normalizeBleUuid(std::string uuid)
 
 QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &info)
 {
+    QByteArray idBase;
     if (info.deviceUuid().isNull() == false) {
-        return info.deviceUuid().toByteArray(QBluetoothUuid::WithoutBraces);
-    }
-    if (info.address().isNull() == false) {
-        return info.address().toString().toUtf8();
+        idBase = info.deviceUuid().toByteArray(QBluetoothUuid::WithoutBraces);
+    } else if (info.address().isNull() == false) {
+        idBase = info.address().toString().toUtf8();
+    } else {
+        qWarning(logCategoryDeviceBLE)  << "No device ID, using random";
+        QVector<quint32> data;
+        data.resize(4);
+        QRandomGenerator::system()->fillRange(data.data(), data.size());
+        for (quint32 value : data) {
+            idBase.append((char *)&value, sizeof(value));
+        }
     }
 
-    qWarning(logCategoryDeviceBLE)  << "No device ID, using empty";
-    return QByteArray();
+    return QByteArray('b' + QByteArray::number(qHash(idBase), 16));
 }
 
 }  // namespace
