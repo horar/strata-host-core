@@ -54,7 +54,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = 0
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter a radioSize. RadioSize can only contain a numbers."
+            menuLoader.item.label = "Enter a radioSize. RadioSize can only contain a postive whole or decimal values."
             menuLoader.item.isString = false
             contextMenu.close()
         }
@@ -71,7 +71,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = 0
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter a fontSizeMultiplier of the labels. FontSizeMultiplier can only contain a numbers."
+            menuLoader.item.label = "Enter a fontSizeMultiplier of the labels. FontSizeMultiplier can only contain a postive whole or decimal values."
             menuLoader.item.isString = false
             contextMenu.close()
         }

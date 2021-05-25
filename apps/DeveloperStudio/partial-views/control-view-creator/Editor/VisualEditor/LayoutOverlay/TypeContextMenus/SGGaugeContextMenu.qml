@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.minimumValue
             menuLoader.item.sourceProperty = "minimumValue"
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the minimum value of the gauge. Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter the minimum value of the gauge. Text can only positive/negtaive whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -38,7 +38,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "maximumValue"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.maximumValue
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the maximum value of the gauge.Text can only contain positive/negtaive numbers."
+            menuLoader.item.label = "Enter the maximum value of the gauge.Text can only contain positive/negtaive whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
 

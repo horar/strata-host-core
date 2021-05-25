@@ -19,7 +19,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "title"
             menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and special character."
+            menuLoader.item.label = "Enter graph's title. Title's can contain only letters, numbers and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -34,7 +34,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "xTitle"
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and special character."
+            menuLoader.item.label = "Enter graph's X Title. X Title's can contain only letters, numbers and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -49,7 +49,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "yTitle"
             menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and and special character."
+            menuLoader.item.label = "Enter graph's Y Title. Y Title's can contain only letters, numbers and and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -82,7 +82,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter graph's X Maximum. X Max can only contain numbers."
+            menuLoader.item.label = "Enter graph's X Maximum. X Max can only  positive/negtaive whole or decimal values."
             menuLoader.item.open()
             menuLoader.item.isString = false
             contextMenu.close()

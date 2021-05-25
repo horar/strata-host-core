@@ -16,11 +16,11 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
-            menuLoader.item.sourceProperty = "checkedLabel"
+            menuLoader.item.sourceProperty = "text"
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter The Text.Text can contain only letters, numbers, underscores and spaces."
+            menuLoader.item.label = "Enter the text. Text can contain only postive/negative whole or decimal numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -32,9 +32,9 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.placeholderText
             menuLoader.item.sourceProperty = "placeholderText"
-            menuLoader.item.regExpValidator.regExp = /^[0-9-0-9]*/
+            menuLoader.item.regExpValidator.regExp = /^[0-9-0-9 ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter The PlaceholderText .Text can contain only letters, numbers, underscores and spaces."
+            menuLoader.item.label = "Enter the placeholder text. Text can contain only letters, numbers, underscores and spaces."
             menuLoader.item.open()
             contextMenu.close()
         }
