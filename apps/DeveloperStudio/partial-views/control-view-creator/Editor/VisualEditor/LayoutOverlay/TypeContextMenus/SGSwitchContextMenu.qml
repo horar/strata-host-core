@@ -9,6 +9,7 @@ import "../LayoutPopupContext"
 
 ColumnLayout {
     spacing: 1
+
     ContextMenuButton {
         text: "Set Checked Label"
         onClicked: {

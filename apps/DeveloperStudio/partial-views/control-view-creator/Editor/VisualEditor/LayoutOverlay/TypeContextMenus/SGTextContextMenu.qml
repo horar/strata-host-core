@@ -10,20 +10,15 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-    RegExpValidator {
-        id: inputValidator
-        regExp: /^[a-z_][a-zA-Z0-9_]*/
-    }
-
     ContextMenuButton {
         text: "Set Text"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
-            menuLoader.item.sourceProperty = "text"
-            menuLoader.item.validator = inputValidator
-            menuLoader.item.label = "Enter the text. Text can contain only letters, numbers, underscores and spaces."
+            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
+            menuLoader.item.label = "Enter the text. Text can contain only letters, numbers, underscores, spaces and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }

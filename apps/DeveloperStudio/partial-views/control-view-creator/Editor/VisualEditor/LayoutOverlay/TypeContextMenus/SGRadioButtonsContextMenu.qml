@@ -10,11 +10,6 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-    RegExpValidator {
-        id: inputValidator
-        regExp: /^[0-9_]*/
-    }
-
     ContextMenuButton {
         text: "Set Orientation"
         onClicked: {

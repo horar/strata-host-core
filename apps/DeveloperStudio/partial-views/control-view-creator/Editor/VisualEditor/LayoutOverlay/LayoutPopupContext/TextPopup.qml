@@ -26,6 +26,11 @@ Popup {
     property alias doubleValidator: doubleValidator
     property alias intValidator: intValidator
     property alias regExpValidator: regExpValidator
+    property alias text: textField.text
+    property alias validator: textField.validator
+    property alias label: label.text
+    property string sourceProperty
+    property bool isString: true
 
     DoubleValidator {
         id: doubleValidator
@@ -36,12 +41,6 @@ Popup {
     RegExpValidator {
         id: regExpValidator
     }
-
-    property alias text: textField.text
-    property alias validator: textField.validator
-    property alias label: label.text
-    property string sourceProperty
-    property bool isString: true
 
     onVisibleChanged: {
         if (visible) {

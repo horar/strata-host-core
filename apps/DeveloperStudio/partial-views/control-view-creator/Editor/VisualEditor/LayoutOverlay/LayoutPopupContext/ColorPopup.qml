@@ -19,6 +19,5 @@ ColorDialog {
     onRejected: {
         menuLoader.active = false
     }
-
 }
 

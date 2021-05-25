@@ -9,14 +9,6 @@ import "../LayoutPopupContext"
 
 ColumnLayout {
     spacing: 1
-    RegExpValidator {
-        id: inputValidator
-        regExp: /^[a-zA-Z0-9_ ]*/
-    }
-    RegExpValidator {
-        id: numberRange
-        regExp: /^[+-]?[0-9]*/
-    }
 
     ContextMenuButton {
         text: "Set Title"

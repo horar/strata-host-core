@@ -10,16 +10,6 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-//    RegExpValidator {
-//        id: positiveInputValidator
-//        regExp: /^-?[0-9]\d*(\.\d+)*/
-//    }
-
-//    RegExpValidator {
-//        id: radiusInputValidator
-//        regExp: /^-[+-]?[0-9]\d*(\.\d+)*/
-//    }
-
     ContextMenuButton {
         text: "Set Border Width"
         onClicked: {

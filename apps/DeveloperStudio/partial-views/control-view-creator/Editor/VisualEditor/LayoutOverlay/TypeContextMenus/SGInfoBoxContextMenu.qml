@@ -10,11 +10,6 @@ import "../LayoutPopupContext"
 ColumnLayout {
     spacing: 1
 
-    RegExpValidator {
-        id: inputValidator
-        regExp: /^[a-z_][a-zA-Z0-9_]*/
-    }
-
     ContextMenuButton {
         text: "Set Text"
         onClicked: {
