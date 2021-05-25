@@ -45,7 +45,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
-            menuLoader.item.label = "Select the divider orientation. "
+            menuLoader.item.label = "Select the divider orientation."
             contextMenu.close()
         }
     }

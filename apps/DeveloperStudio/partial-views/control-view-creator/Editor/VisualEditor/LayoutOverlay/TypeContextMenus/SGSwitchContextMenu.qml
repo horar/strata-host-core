@@ -19,7 +19,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "checkedLabel"
             menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter The Text. Checked label text can contain only letters, numbers, and underscores."
+            menuLoader.item.label = "Enter The Text. Checked label can only contain letters, numbers, and underscores."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -34,7 +34,7 @@ ColumnLayout {
             menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9_ ]*/
             menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.sourceProperty = "uncheckedLabel"
-            menuLoader.item.label = "Enter The Text. Unchecked label text can contain only letters, numbers, and underscores."
+            menuLoader.item.label = "Enter The Text. Unchecked label can only contain letters, numbers, and underscores."
             menuLoader.item.open()
             contextMenu.close()
         }
