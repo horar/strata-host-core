@@ -164,8 +164,7 @@ RowLayout {
     }
 
     function setRowsColumns(type, count) {
-        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString ("uibase", type, count)
-        visualEditor.functions.saveFile()
+        visualEditor.functions.setObjectPropertyAndSave("uibase", type, count)
         
         if (!visualEditor.layoutDebugMode) {
             visualEditor.layoutDebugMode = true
