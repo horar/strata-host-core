@@ -21,8 +21,7 @@ ColumnLayout {
         title: "Please choose a color"
 
         onAccepted: {
-            visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, "color", '"' + colorDialog.color + '"')
-            visualEditor.functions.saveFile()
+            visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, "color", '"' + colorDialog.color + '"')
             contextMenu.close()
         }
 

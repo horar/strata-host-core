@@ -58,7 +58,7 @@ Popup {
             }
         }
 
-         ContextMenuButton {
+        ContextMenuButton {
             text: "Go to code"
             onClicked : {
                 visualEditor.functions.passUUID(layoutOverlayRoot.layoutInfo.uuid)
