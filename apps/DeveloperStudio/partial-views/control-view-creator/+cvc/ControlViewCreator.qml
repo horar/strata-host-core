@@ -35,7 +35,14 @@ Rectangle {
     property string previousCompiledRccFileUniquePrefix: ""
 
     onDebugPlatformChanged: {
-        recompileControlViewQrc();
+        recompileControlViewQrc()
+    }
+
+    Component.onDestruction: {
+        controlViewLoader.setSource("")
+        if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
+            sdsModel.resourceLoader.requestUnregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, cvcLoader, false)
+        }
     }
 
     SGUserSettings {
@@ -298,12 +305,11 @@ Rectangle {
         controlViewCreatorRoot.previousCompiledRccFilePath = compiledRccFile
         controlViewCreatorRoot.previousCompiledRccFileUniquePrefix = uniquePrefix
 
-        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-
         Help.setDeviceId(debugPlatform.deviceId)
         NavigationControl.context.class_id = debugPlatform.classId
         NavigationControl.context.device_id = debugPlatform.deviceId
 
+        const qml_control = "qrc:" + uniquePrefix + "/Control.qml"
         controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
     }
 

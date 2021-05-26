@@ -17,7 +17,7 @@ Item {
     id: fileContainerRoot
     Layout.fillHeight: true
     Layout.fillWidth: true
-    
+
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus()
@@ -271,6 +271,8 @@ Item {
     WebEngineView {
         id: webEngine
         webChannel: channel
+        url: "qrc:///tech/strata/monaco/minified/editor.html"
+
         settings.localContentCanAccessRemoteUrls: false
         settings.localContentCanAccessFileUrls: true
         settings.localStorageEnabled: true
@@ -320,8 +322,6 @@ Item {
                 channelObject.fileText = fileText
             }
         }
-
-        url: "qrc:///tech/strata/monaco/minified/editor.html"
 
         Rectangle {
             id: barContainer
