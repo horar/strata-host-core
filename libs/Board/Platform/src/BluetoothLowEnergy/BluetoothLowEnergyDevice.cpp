@@ -36,11 +36,15 @@ BluetoothLowEnergyDevice::~BluetoothLowEnergyDevice()
 
 void BluetoothLowEnergyDevice::deinit()
 {
+    qCDebug(logCategoryDeviceBLE) << "Deinitializing BLE device";
+
     // No need to disconnect here, deleteLater will do it
     // lowEnergyController_->disconnectFromDevice();
+    disconnect(lowEnergyController_, nullptr, this, nullptr);
     lowEnergyController_->deleteLater();
     lowEnergyController_ = nullptr;
     for (auto service : discoveredServices_) {
+        disconnect(service.second, nullptr, this, nullptr);
         service.second->deleteLater();
     }
     discoveredServices_.clear();
