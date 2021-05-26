@@ -126,7 +126,6 @@ Item {
         }
     }
 
-
     function openControlQML() {
         // Find the Control.qml file and select it
         for (let i = 0; i < treeModel.root.childCount(); i++) {
