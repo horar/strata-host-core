@@ -49,6 +49,7 @@ private slots:
     void discoveryFinishedHandler();
     void discoveryCancelledHandler();
     void discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error);
+    void deviceErrorHandler(Device::ErrorCode error, QString errorString);
 
 private:
     bool isEligible(const QBluetoothDeviceInfo &info) const;
