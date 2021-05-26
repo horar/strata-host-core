@@ -59,24 +59,6 @@ Item {
                 }
             }
 
-            onModelReset: {
-                // Find the Control.qml file and select it
-                for (let i = 0; i < treeModel.root.childCount(); i++) {
-                    if (treeModel.root.childNode(i).filename === "Control.qml") {
-                        let idx = treeModel.index(i);
-                        let node = treeModel.root.childNode(i);
-
-                        openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
-                        // Need to use callLater here because the model indices haven't been set yet
-                        Qt.callLater(treeView.selectItem, idx);
-                        return;
-                    }
-                }
-
-                console.error("Project does not have Control.qml at the top level")
-                missingControlQml.open();
-            }
-
             onFileDeleted: {
                 // If the file is open, then set the `exists` property of the tab to false
                 let idx = openFilesModel.findTabByFilepath(path);
@@ -142,5 +124,24 @@ Item {
                 callerIndex = null;
             }
         }
+    }
+
+
+    function openControlQML() {
+        // Find the Control.qml file and select it
+        for (let i = 0; i < treeModel.root.childCount(); i++) {
+            if (treeModel.root.childNode(i).filename === "Control.qml") {
+                let idx = treeModel.index(i);
+                let node = treeModel.root.childNode(i);
+
+                openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
+                // Need to use callLater here because the model indices haven't been set yet
+                Qt.callLater(treeView.selectItem, idx);
+                return;
+            }
+        }
+
+        console.error("Project does not have Control.qml at the top level")
+        missingControlQml.open();
     }
 }
