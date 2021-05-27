@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QThread>
 #include <functional>
 
 #include "DeferredRequest.h"
@@ -12,6 +13,7 @@ class Dispatcher;
 class ClientConnector;
 class RequestsController;
 struct Message;
+enum class ClientConnectorError : short;
 
 class StrataClient : public QObject
 {
@@ -125,6 +127,11 @@ signals:
      */
     void errorOccurred(StrataClient::ClientError errorType, const QString &errorMessage);
 
+    void initializeConnector();
+    void connectClient();
+    void disconnectClient();
+    void sendMessage(const QByteArray &message);
+
 private slots:
     /**
      * Slot to handle new incoming messages from StrataServer.
@@ -146,6 +153,8 @@ private slots:
      */
     void dispatchHandler(const Message &serverMessage);
 
+    void connectorErrorHandler(ClientConnectorError errorType, const QString &errorMessage);
+
 private:
     /**
      * Parse the incoming json message from StrataServer into a Message object.
@@ -157,8 +166,11 @@ private:
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
                             DeferredRequest **deferredRequest);
 
+    void connectorSetup();
+
     std::unique_ptr<Dispatcher<const QJsonObject &>> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;
     std::unique_ptr<RequestsController> requestController_;
+    QThread *connectorThread_;
 };
 }  // namespace strata::strataRPC

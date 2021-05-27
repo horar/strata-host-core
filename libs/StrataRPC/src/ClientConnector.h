@@ -12,10 +12,22 @@ class Connector;
 
 namespace strata::strataRPC
 {
+/**
+ * Enum to describe errors
+ */
+enum class ClientConnectorError : short {
+    FailedToInitialize,
+    FailedToConnect,
+    FailedToDisconnect,
+    FailedToSend,
+    FailedToRead
+};
+
 class ClientConnector : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(ClientConnector);
+    Q_ENUM(ClientConnectorError);
 
 public:
     /**
@@ -34,6 +46,7 @@ public:
      */
     ~ClientConnector();
 
+public slots:
     /**
      * initialize the client's zmq connector, then calls ClientConnector::connectClient()
      * @return True if the initialization is successful and "register_client" request is sent to the
@@ -58,11 +71,6 @@ public:
     bool connectClient();
 
     /**
-     * Empties the receive buffer and emits newMessageReceived signal for each new message.
-     */
-    void readMessages();
-
-    /**
      * Sends a message to the server.
      * @param [in] message QByteArray of the message
      * @return True if the message was sent successfully, False otherwise.
@@ -76,6 +84,11 @@ signals:
      */
     void newMessageReceived(const QByteArray &message);
 
+    void errorOccured(ClientConnectorError errorType, const QString &errorMessage);
+    void clientInitialized();
+    void clientConnected();
+    void clientDisconnected();
+
 private slots:
     /**
      * Slot to handle QSocketNotifier::activated signal.
@@ -87,6 +100,11 @@ private slots:
     void readNewMessages(/*int socket*/);
 
 private:
+    /**
+     * Empties the receive buffer and emits newMessageReceived signal for each new message.
+     */
+    void readMessages();
+
     std::unique_ptr<strata::connector::Connector> connector_;
     std::unique_ptr<QSocketNotifier> readSocketNotifier_;
     QString serverAddress_;
