@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QThread>
 
 #include "Message.h"
 
@@ -10,6 +11,7 @@ template <class HandlerArgument>
 class Dispatcher;
 class ServerConnector;
 class ClientsController;
+enum class ServerConnectorError : short;
 
 class StrataServer : public QObject
 {
@@ -113,6 +115,8 @@ private slots:
      */
     void dispatchHandler(const Message &clientMessage);
 
+    void connectorErrorHandler(ServerConnectorError errorType, const QString &errorMessage);
+
 signals:
     /**
      * Signal emitted when a new client message is parsed and ready to be dispatched
@@ -126,6 +130,9 @@ signals:
      * @param [in] errorMessage QString of the actual error.
      */
     void errorOccurred(StrataServer::ServerError errorType, const QString &errorMessage);
+
+    void connectServer();
+    void sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 private:
     /**
@@ -185,6 +192,7 @@ private:
     std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
     std::unique_ptr<ClientsController> clientsController_;
     std::unique_ptr<ServerConnector> connector_;
+    QThread *connectorThread_;
 };
 
 }  // namespace strata::strataRPC

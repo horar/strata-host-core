@@ -12,7 +12,8 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
     : QObject(parent),
       dispatcher_(new Dispatcher<const Message &>()),
       clientsController_(new ClientsController(this)),
-      connector_(new ServerConnector(address, this))
+      connector_(new ServerConnector(address)),
+      connectorThread_(new QThread())
 {
     if (true == useDefaultHandlers) {
         dispatcher_->registerHandler(
@@ -21,27 +22,67 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
         dispatcher_->registerHandler("unregister", std::bind(&StrataServer::unregisterClientHandler,
                                                              this, std::placeholders::_1));
     }
+
+    qCDebug(logCategoryStrataServer) << "thread id:" << QThread::currentThreadId();
+
+    connector_->moveToThread(connectorThread_);
+
+    connect(this, &StrataServer::connectServer, connector_.get(),
+            &ServerConnector::initilizeConnector, Qt::QueuedConnection);
+    connect(this, &StrataServer::sendMessage, connector_.get(), &ServerConnector::sendMessage,
+            Qt::QueuedConnection);
+
+    connectorThread_->start();
 }
 
 StrataServer::~StrataServer()
 {
+    // TODO: stop the thread & clean up!
 }
 
 bool StrataServer::initializeServer()
 {
-    if (true == connector_->initilizeConnector()) {
-        qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
-        connect(connector_.get(), &ServerConnector::newMessageReceived, this,
-                &StrataServer::newClientMessage);
-        connect(this, &StrataServer::newClientMessageParsed, this, &StrataServer::dispatchHandler);
+    qCDebug(logCategoryStrataServer) << "thread id:" << QThread::currentThreadId();
 
-        return true;
-    } else {
-        QString errorMessage(QStringLiteral("Failed to initialize Strata Server."));
-        qCCritical(logCategoryStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
-        return false;
-    }
+    // connect handlers
+    connect(
+        connector_.get(), &ServerConnector::serverConnected, this,
+        [this]() {
+            qCDebug(logCategoryStrataServer) << "thread id:" << QThread::currentThreadId();
+
+            qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
+            connect(connector_.get(), &ServerConnector::newMessageReceived, this,
+                    &StrataServer::newClientMessage);
+            connect(this, &StrataServer::newClientMessageParsed, this,
+                    &StrataServer::dispatchHandler);
+        },
+        Qt::QueuedConnection);
+
+    connect(
+        connector_.get(), &ServerConnector::errorOccred, this,
+        [this]() {
+            qCDebug(logCategoryStrataServer) << "thread id:" << QThread::currentThreadId();
+
+            emit errorOccurred(ServerError::FailedToInitializeServer, "connector error");
+        },
+        Qt::QueuedConnection);
+
+    emit connectServer();
+    // if (true == connector_->initilizeConnector()) {
+    //     qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
+    //     connect(connector_.get(), &ServerConnector::newMessageReceived, this,
+    //             &StrataServer::newClientMessage);
+    //     connect(this, &StrataServer::newClientMessageParsed, this,
+    //     &StrataServer::dispatchHandler);
+
+    //     return true;
+    // } else {
+    //     QString errorMessage(QStringLiteral("Failed to initialize Strata Server."));
+    //     qCCritical(logCategoryStrataServer) << errorMessage;
+    //     emit errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
+    //     return false;
+    // }
+    return true;
 }
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)
@@ -263,7 +304,8 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
             break;
     }
 
-    connector_->sendMessage(clientMessage.clientID, serverMessage);
+    // connector_->sendMessage(clientMessage.clientID, serverMessage);
+    emit sendMessage(clientMessage.clientID, serverMessage);
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
@@ -294,11 +336,11 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
     for (const auto &client : allClients) {
         switch (client.getApiVersion()) {
             case ApiVersion::v1:
-                connector_->sendMessage(client.getClientID(), serverMessageAPI_v1);
+                emit sendMessage(client.getClientID(), serverMessageAPI_v1);
                 break;
 
             case ApiVersion::v2:
-                connector_->sendMessage(client.getClientID(), serverMessageAPI_v2);
+                emit sendMessage(client.getClientID(), serverMessageAPI_v2);
                 break;
 
             case ApiVersion::none:
@@ -450,4 +492,25 @@ void StrataServer::dispatchHandler(const Message &clientMessage)
     }
 
     qCDebug(logCategoryStrataServer) << "Handler executed.";
+}
+
+void StrataServer::connectorErrorHandler(ServerConnectorError errorType,
+                                         const QString &errorMessage)
+{
+    switch (errorType) {
+        case ServerConnectorError::FailedToInitialize:
+            qCCritical(logCategoryStrataServer) << errorMessage;
+            errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
+            break;
+        case ServerConnectorError::FailedToSend:
+            qCCritical(logCategoryStrataServer) << errorMessage;
+            // error need to be updated
+            errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+            break;
+        case ServerConnectorError::FailedToRead:
+            qCCritical(logCategoryStrataServer) << errorMessage;
+            // error need to be updated
+            errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+            break;
+    }
 }

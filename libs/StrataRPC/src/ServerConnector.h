@@ -7,12 +7,19 @@
 
 namespace strata::strataRPC
 {
+/**
+ * Enum to describe errors
+ */
+enum class ServerConnectorError : short { FailedToInitialize, FailedToSend, FailedToRead };
+
 class ServerConnector : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(ServerConnector);
 
 public:
+    Q_ENUM(ServerConnectorError);
+
     /**
      * ServerConnector constructor
      * @param [in] serverAddress sets the server address
@@ -27,17 +34,13 @@ public:
      */
     ~ServerConnector();
 
+public slots:
     /**
      * initialize the client's zmq connector and star it. Also this connects QSocketNotifier
      * signals.
      * @return True if the initialization is successful, False otherwise.
      */
     bool initilizeConnector();
-
-    /**
-     * Empties the receive buffer and emits newMessageReceived signal for each new message.
-     */
-    void readMessages();
 
     /**
      * Sends a message to a client.
@@ -55,6 +58,10 @@ signals:
      */
     void newMessageReceived(const QByteArray &clientId, const QByteArray &message);
 
+    void errorOccred(ServerConnectorError errorType, const QString &errorMessage);
+    void serverConnected();
+    void serverDisconnected();
+
 private slots:
     /**
      * Slot to handle QSocketNotifier::activated signal.
@@ -66,6 +73,11 @@ private slots:
     void readNewMessages(/*int socket*/);
 
 private:
+    /**
+     * Empties the receive buffer and emits newMessageReceived signal for each new message.
+     */
+    void readMessages();
+
     std::unique_ptr<strata::connector::Connector> connector_;
     QSocketNotifier *readSocketNotifier_;
     QString serverAddress_;

@@ -2,6 +2,7 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <QString>
+#include <QThread>
 
 using namespace strata::strataRPC;
 
@@ -14,6 +15,7 @@ ServerConnector::~ServerConnector()
 
 bool ServerConnector::initilizeConnector()
 {
+    qCDebug(logCategoryStrataServerConnector) << "thread id:" << QThread::currentThreadId();
     using Connector = strata::connector::Connector;
 
     if (connector_) {
@@ -24,6 +26,8 @@ bool ServerConnector::initilizeConnector()
 
     if (false == connector_->open(serverAddress_.toStdString())) {
         qCCritical(logCategoryStrataServerConnector) << "Failed to open ServerConnector.";
+        emit errorOccred(ServerConnectorError::FailedToInitialize,
+                         "Failed to open ServerConnector.");
         return false;
     }
 
@@ -32,11 +36,14 @@ bool ServerConnector::initilizeConnector()
     connect(readSocketNotifier_, &QSocketNotifier::activated, this,
             &ServerConnector::readNewMessages);
 
+    emit serverConnected();
     return true;
 }
 
 void ServerConnector::readNewMessages(/*int socket*/)
 {
+    qCDebug(logCategoryStrataServerConnector) << "thread id:" << QThread::currentThreadId();
+
     readSocketNotifier_->setEnabled(false);
     std::string message;
     for (;;) {
@@ -65,6 +72,8 @@ void ServerConnector::readMessages()
 
 bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message)
 {
+    qCDebug(logCategoryStrataServerConnector) << "thread id:" << QThread::currentThreadId();
+
     qCDebug(logCategoryStrataServerConnector).nospace().noquote()
         << "Sending message. Client ID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
@@ -76,11 +85,15 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
         if (false == connector_->send(message.toStdString())) {
             qCCritical(logCategoryStrataServerConnector)
                 << "Failed to send message to client ID:" << clientId;
+            emit errorOccred(ServerConnectorError::FailedToSend,
+                             "Failed to send message to client");
             return false;
         }
     } else {
         qCCritical(logCategoryStrataServerConnector)
             << "Failed to send message. Connector is not initialized.";
+        emit errorOccred(ServerConnectorError::FailedToSend,
+                         "Failed to send message. Connector is not initialized.");
         return false;
     }
     return true;
