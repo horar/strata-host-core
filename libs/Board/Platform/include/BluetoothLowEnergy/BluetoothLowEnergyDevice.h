@@ -146,8 +146,6 @@ private:
      */
     static QByteArray createDeviceId(const QBluetoothDeviceInfo &info);
 
-    QByteArray deviceId_;
-
     QBluetoothDeviceInfo bluetoothDeviceInfo_;
     QLowEnergyController *lowEnergyController_{nullptr};
     std::map<QBluetoothUuid, QLowEnergyService *> discoveredServices_;
