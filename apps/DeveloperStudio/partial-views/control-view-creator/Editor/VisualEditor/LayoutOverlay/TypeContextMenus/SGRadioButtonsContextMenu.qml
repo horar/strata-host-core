@@ -59,6 +59,7 @@ ColumnLayout {
             menuLoader.item.validator = menuLoader.item.intValidator
             menuLoader.item.label = "Enter a radioSize. Must be a whole number."
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             contextMenu.close()
         }
     }
@@ -76,6 +77,7 @@ ColumnLayout {
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.label = "Enter a fontSizeMultiplier of the labels. Must be a positive whole or decimal number."
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             contextMenu.close()
         }
     }

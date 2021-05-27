@@ -21,6 +21,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.minimumValue
             menuLoader.item.sourceProperty = "minimumValue"
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter the minimum value of the gauge. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
@@ -38,6 +39,7 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "maximumValue"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.maximumValue
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter the maximum value of the gauge. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
@@ -55,6 +57,7 @@ ColumnLayout {
             menuLoader.item.text = layoutOverlayRoot.sourceItem.tickmarkStepSize
             menuLoader.item.sourceProperty = "tickmarkStepSize"
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge. Must be a positive whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
@@ -72,6 +75,7 @@ ColumnLayout {
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.sourceProperty = "value"
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter the initial value of the gauge. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()

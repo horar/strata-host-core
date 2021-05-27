@@ -60,6 +60,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter graph's X Minimum. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
@@ -79,6 +80,7 @@ ColumnLayout {
             menuLoader.item.label = "Enter graph's X Maximum. Must be a whole or decimal number."
             menuLoader.item.open()
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             contextMenu.close()
         }
     }
@@ -94,6 +96,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter graph's Y Minimum. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
@@ -113,6 +116,7 @@ ColumnLayout {
             menuLoader.item.label = "Enter graph's Y Maximum. Must be a whole or decimal number."
             menuLoader.item.open()
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             contextMenu.close()
         }
     }

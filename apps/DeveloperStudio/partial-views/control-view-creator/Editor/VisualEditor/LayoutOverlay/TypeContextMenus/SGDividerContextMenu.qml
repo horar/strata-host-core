@@ -34,6 +34,7 @@ ColumnLayout {
             menuLoader.item.open()
             menuLoader.item.label = "Enter the thickness for divider. Must be a positive whole number."
             menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
             contextMenu.close()
         }
     }
