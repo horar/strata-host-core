@@ -4,36 +4,19 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 import tech.strata.sgwidgets 1.0
 
-Popup {
+GenericPopup {
     id: comboBoxPopup
-    padding: 10
-    anchors {
-        centerIn: Overlay.overlay
-    }
-    closePolicy: Popup.NoAutoClose
-    modal: true
-
-    background: Rectangle {
-        layer.enabled: true
-        layer.effect: DropShadow {
-            horizontalOffset: 1
-            verticalOffset: 3
-            radius: 6.0
-            samples: 12
-            color: "#99000000"
-        }
-    }
 
     property string sourceProperty
-    property var model: ["Qt.Horizontal", "Qt.Vertical"]
+    property alias model: comboBox.model
     property alias label: label.text
-    onClosed: menuLoader.active = false
 
     ColumnLayout {
         anchors.fill: parent
+
         Text {
             id: label
-            text: "Please toggle the switch:"
+            text: "Please select from the drop down:"
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
@@ -42,9 +25,8 @@ Popup {
         SGComboBox {
             id: comboBox
             Layout.alignment: Qt.AlignHCenter
-            model: comboBoxPopup.model
+            model: ["Qt.Horizontal", "Qt.Vertical"]
         }
-
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
@@ -53,8 +35,8 @@ Popup {
                 id: okButton
                 text: "OK"
                 onClicked: {
-                    comboBoxPopup.close()
                     visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty, comboBox.currentText)
+                    comboBoxPopup.close()
                 }
             }
 

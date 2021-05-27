@@ -3,25 +3,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
-Popup {
+GenericPopup {
     id: textPopup
-    padding: 10
-    anchors {
-        centerIn: Overlay.overlay
-    }
-    closePolicy: Popup.NoAutoClose
-    modal: true
-
-    background: Rectangle {
-        layer.enabled: true
-        layer.effect: DropShadow {
-            horizontalOffset: 1
-            verticalOffset: 3
-            radius: 6.0
-            samples: 12
-            color: "#99000000"
-        }
-    }
 
     property alias doubleValidator: doubleValidator
     property alias intValidator: intValidator
@@ -29,18 +12,9 @@ Popup {
     property alias text: textField.text
     property alias validator: textField.validator
     property alias label: label.text
-    property string sourceProperty
+    property string sourceProperty: "text"
     property bool isString: true
-
-    DoubleValidator {
-        id: doubleValidator
-    }
-    IntValidator {
-        id: intValidator
-    }
-    RegExpValidator {
-        id: regExpValidator
-    }
+    property bool mustNotBeEmpty: false
 
     onVisibleChanged: {
         if (visible) {
@@ -49,13 +23,24 @@ Popup {
         }
     }
 
-    onClosed: menuLoader.active = false
+    DoubleValidator {
+        id: doubleValidator
+    }
+
+    IntValidator {
+        id: intValidator
+    }
+
+    RegExpValidator {
+        id: regExpValidator
+        regExp: /^[a-z_][a-zA-Z0-9_]*/
+    }
 
     ColumnLayout {
 
         Text {
             id: label
-            text: "Ensure all id's are unique, otherwise build will fail. Id's must start with lower case letter, and contain only letters, numbers and underscores."
+            text: "Enter the desired text."
             Layout.fillWidth: true
             Layout.maximumWidth: textField.implicitWidth
             horizontalAlignment: Text.AlignHCenter
@@ -65,12 +50,10 @@ Popup {
         TextField {
             id: textField
             implicitWidth: 400
-            validator: RegExpValidator {
-                id: validatorValue
-                regExp: /^[a-z_][a-zA-Z0-9_]*/
-            }
             onAccepted: {
-                if (text !=="") {
+                if (mustNotBeEmpty && text !== "") {
+                    okButton.clicked()
+                } else {
                     okButton.clicked()
                 }
             }
@@ -82,16 +65,22 @@ Popup {
             Button {
                 id: okButton
                 text: "OK"
-                enabled: textField.text !== ""
-                onClicked: {
-                    textPopup.close()
-                    if(isString) {
-                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , '"' + textPopup.text + '"')
+                enabled: {
+                    if (mustNotBeEmpty) {
+                        return textField.text !== ""
+                    } else {
+                        return true
                     }
-                    else  {
+                }
+                onClicked: {
+                    if (isString) {
+                        let newString = textPopup.text
+                        newString = newString.replace(/[\""]/g, '\\"') // escape any quotes in the string to avoid string errors
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , '"' + newString + '"')
+                    } else {
                         visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , textPopup.text)
                     }
-                    visualEditor.functions.saveFile()
+                    textPopup.close()
                 }
             }
 

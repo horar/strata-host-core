@@ -21,7 +21,6 @@ Popup {
         contextLoader.active = false
     }
 
-
     ColumnLayout {
         spacing: 1
 
@@ -31,7 +30,11 @@ Popup {
                 menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
                 menuLoader.active = true
                 menuLoader.item.text = layoutOverlayRoot.objectName
+                menuLoader.item.validator = menuLoader.item.regExpValidator
+                menuLoader.item.label = "Ensure all id's are unique, otherwise build will fail. Id's must start with lower case letter or underscore, and contain only letters, numbers and underscores."
                 menuLoader.item.sourceProperty = "id"
+                menuLoader.item.isString = false
+                menuLoader.item.mustNotBeEmpty = true
                 menuLoader.item.open()
                 contextMenu.close()
             }

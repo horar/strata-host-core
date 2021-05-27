@@ -17,9 +17,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
             menuLoader.item.sourceProperty = "title"
-            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's title. Text can only contain letters, numbers and special characters."
+            menuLoader.item.label = "Enter graph's title."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -32,9 +30,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
             menuLoader.item.sourceProperty = "xTitle"
-            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's X Title. X title text's can only contain letters, numbers and special characters."
+            menuLoader.item.label = "Enter graph's X Title."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -47,9 +43,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
             menuLoader.item.sourceProperty = "yTitle"
-            menuLoader.item.regExpValidator.regExp = /^[a-zA-Z0-9@./#&+-()_ ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter graph's Y Title. Y title text's can only contain letters, numbers and and special characters."
+            menuLoader.item.label = "Enter graph's Y Title."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -66,7 +60,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter graph's X Minimum. X minimum value's can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter graph's X Minimum. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -82,7 +76,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter graph's X Maximum. X maximum value's can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter graph's X Maximum. Must be a whole or decimal number."
             menuLoader.item.open()
             menuLoader.item.isString = false
             contextMenu.close()
@@ -91,7 +85,6 @@ ColumnLayout {
 
     ContextMenuButton {
         text: "Set Y Min"
-
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
@@ -101,7 +94,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter graph's Y Minimum. Y minimum value's can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter graph's Y Minimum. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -117,7 +110,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = -2147483647
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter graph's Y Maximum. Y maximum value's can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter graph's Y Maximum. Must be a whole or decimal number."
             menuLoader.item.open()
             menuLoader.item.isString = false
             contextMenu.close()
@@ -129,6 +122,7 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.gridColor
             menuLoader.item.sourceProperty = "gridColor"
             menuLoader.item.open()
             contextMenu.close()
@@ -141,7 +135,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.xGrid
-            menuLoader.item.switchText = "Toggle switch to show/hide X Grid"
+            menuLoader.item.label = "Toggle switch to show/hide X Grid"
             menuLoader.item.sourceProperty = "xGrid"
             menuLoader.item.open()
             contextMenu.close()
@@ -154,7 +148,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.yGrid
-            menuLoader.item.switchText = "Toggle switch to show/hide Y Grid"
+            menuLoader.item.label = "Toggle switch to show/hide Y Grid"
             menuLoader.item.sourceProperty = "yGrid"
             menuLoader.item.open()
             contextMenu.close()

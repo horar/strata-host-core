@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the minimum value of the slider. Minimum value's of slider can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter the minimum value of the slider. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -38,7 +38,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the maximum value of the slider. Maximum value's of slider can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter the maximum value of the slider. Must be a whole or decimal number."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -50,6 +50,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -61,6 +62,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "inputBox.boxColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.inputBox.boxColor
             menuLoader.item.open()
             contextMenu.close()
         }

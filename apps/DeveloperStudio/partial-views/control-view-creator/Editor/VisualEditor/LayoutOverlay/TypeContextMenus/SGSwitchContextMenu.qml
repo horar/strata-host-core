@@ -17,24 +17,18 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.checkedLabel
             menuLoader.item.sourceProperty = "checkedLabel"
-            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9_ ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter The Text. Checked label can only contain letters, numbers, and underscores."
             menuLoader.item.open()
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set Unchecked Label"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.uncheckedLabel
-            menuLoader.item.sourceProperty = "checkedLabel"
-            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9_ ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.sourceProperty = "uncheckedLabel"
-            menuLoader.item.label = "Enter The Text. Unchecked label can only contain letters, numbers, and underscores."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -46,6 +40,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "grooveColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.grooveColor
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -57,6 +52,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "grooveFillColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.grooveFillColor
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -68,6 +64,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
             menuLoader.item.open()
             contextMenu.close()
         }

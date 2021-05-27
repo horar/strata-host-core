@@ -65,5 +65,6 @@
         <file alias="PlatformInterfaceGenerator/PayloadObjectPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadObjectPropertyDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/PayloadPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadPropertyDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/TypeSelectorComboBox.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/TypeSelectorComboBox.qml</file>
+        <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml</file>
     </qresource>
 </RCC>

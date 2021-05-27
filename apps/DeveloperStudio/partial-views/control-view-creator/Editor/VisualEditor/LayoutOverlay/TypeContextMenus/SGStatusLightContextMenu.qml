@@ -11,7 +11,7 @@ ColumnLayout {
     spacing: 1
 
     ContextMenuButton {
-        text: "Set StatusLight"
+        text: "Set status"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
             menuLoader.active = true

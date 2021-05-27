@@ -15,20 +15,19 @@ ColumnLayout {
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
-            menuLoader.item.sourceProperty = "text"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter the text. Text can only contain letters, numbers, and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set Text Color"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "color"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.color
             menuLoader.item.open()
             contextMenu.close()
         }

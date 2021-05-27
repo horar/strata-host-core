@@ -21,33 +21,8 @@ Popup {
                 }
 
                 ListElement {
-                    text: "Text"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Text/Text.txt"
-                }
-
-                ListElement {
-                    text: "Divider"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Divider/Divider.txt"
-                }
-
-                ListElement {
-                    text: "Icon"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/SGIcon/SGIcon.txt"
-                }
-
-                ListElement {
-                    text: "Rectangle"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Rectangle/Rectangle.txt"
-                }
-
-                ListElement {
-                    text: "Switch"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Switch/SGSwitch.txt"
-                }
-
-                ListElement {
-                    text: "InfoBox"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/InfoBox/SGInfoBox.txt"
+                    text: "ButtonStrip"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt"
                 }
 
                 ListElement {
@@ -56,13 +31,13 @@ Popup {
                 }
 
                 ListElement {
-                    text: "StatusLight"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLight/SGStatusLight.txt"
+                    text: "ComboBox"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ComboBox/SGComboBox.txt"
                 }
 
                 ListElement {
-                    text: "ComboBox"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ComboBox/SGComboBox.txt"
+                    text: "Divider"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Divider/Divider.txt"
                 }
 
                 ListElement {
@@ -71,18 +46,43 @@ Popup {
                 }
 
                 ListElement {
-                    text: "Slider"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Slider/SGSlider.txt"
+                    text: "Icon"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/SGIcon/SGIcon.txt"
                 }
 
                 ListElement {
-                    text: "ButtonStrip"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt"
+                    text: "InfoBox"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/InfoBox/SGInfoBox.txt"
                 }
 
                 ListElement {
                     text: "RadioButtons"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/RadioButtons/SGRadioButtons.txt"
+                }
+
+                ListElement {
+                    text: "Rectangle"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Rectangle/Rectangle.txt"
+                }
+
+                ListElement {
+                    text: "Slider"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Slider/SGSlider.txt"
+                }
+
+                ListElement {
+                    text: "StatusLight"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLight/SGStatusLight.txt"
+                }
+
+                ListElement {
+                    text: "Switch"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Switch/SGSwitch.txt"
+                }
+
+                ListElement {
+                    text: "Text"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Text/Text.txt"
                 }
             }
 
