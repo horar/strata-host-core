@@ -5,9 +5,31 @@ import QtQml.Models 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
+import "../components"
+
 Item {
     id: itemContainer
     anchors.verticalCenter: parent.verticalCenter
+
+    MouseArea {
+        anchors.fill: itemContainer
+        hoverEnabled: true
+
+        onEntered: {
+            hoverToolTip.openToolTip()
+        }
+
+        onExited: {
+            hoverToolTip.closeToolTip()
+        }
+    }
+
+    SGHoverToolTip {
+        id: hoverToolTip
+        delay: 500
+        text: `${styleData.value} is part of this Qrc`
+        toolTipEnabled: model && !model.isDir && model.inQrc
+    }
 
     Text {
         id: itemFilename
