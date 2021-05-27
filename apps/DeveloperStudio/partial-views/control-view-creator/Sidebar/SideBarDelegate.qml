@@ -12,7 +12,7 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
 
     MouseArea {
-        anchors.fill: itemContainer
+        anchors.fill: inQrcIcon
         hoverEnabled: true
 
         onEntered: {
@@ -26,9 +26,11 @@ Item {
 
     SGHoverToolTip {
         id: hoverToolTip
-        delay: 500
-        text: `${styleData.value} is part of this Qrc`
+        delay: 800
+        text: "This checkmark ensures this file is a part of the Qrc extension"
         toolTipEnabled: model && !model.isDir && model.inQrc
+        anchors.left: inQrcIcon.right
+        anchors.verticalCenter: inQrcIcon.verticalCenter
     }
 
     Text {
@@ -219,6 +221,13 @@ Item {
             } else if (openFilesModel.hasTab(childNode.uid)) {
                 openFilesModel.updateTab(childNode.uid, childNode.filename, childNode.filepath, childNode.filetype)
             }
+        }
+    }
+
+    function validQrcExtension(fileTypes,fileName){
+        switch(fileTypes){
+            case "qml": "This is a valid qml file"
+            cas
         }
     }
 
