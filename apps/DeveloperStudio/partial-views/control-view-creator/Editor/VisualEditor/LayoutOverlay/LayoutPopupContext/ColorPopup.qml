@@ -14,6 +14,7 @@ ColorDialog {
 
     onAccepted: {
         visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty, '"' + colorDialog.color + '"')
+        menuLoader.active = false
     }
 
     onRejected: {

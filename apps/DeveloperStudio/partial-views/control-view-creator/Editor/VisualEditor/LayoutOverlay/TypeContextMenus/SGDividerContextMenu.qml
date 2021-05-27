@@ -29,9 +29,8 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.sourceProperty = "thickness"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
-            menuLoader.item.intValidator.bottom = 1
-            menuLoader.item.intValidator.top = 2147483647
-            menuLoader.item.validator = menuLoader.item.intValidator
+            menuLoader.item.regExpValidator.regExp = /^[1-9][0-9]*/
+            menuLoader.item.validator = menuLoader.item.regExpValidator
             menuLoader.item.open()
             menuLoader.item.label = "Enter the thickness for divider. Must be a positive whole number."
             menuLoader.item.isString = false
