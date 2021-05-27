@@ -29,7 +29,7 @@ Item {
         delay: 800
         text: "This checkmark ensures this file is a part of the Qrc extension"
         toolTipEnabled: model && !model.isDir && model.inQrc
-        anchors.left: inQrcIcon.right
+        anchors.left: itemContainer.right
         anchors.verticalCenter: inQrcIcon.verticalCenter
     }
 

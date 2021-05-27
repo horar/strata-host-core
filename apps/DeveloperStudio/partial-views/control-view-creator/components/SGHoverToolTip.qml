@@ -15,8 +15,9 @@ Item {
 
     ToolTip {
         id: toolTip
-        anchors.centerIn: parent
         enabled: toolTipEnabled
+        x: childrenRect.width / 2
+        y: -15
         background: Rectangle {
             color: "#FAFAFA"
             border.color: "black"
