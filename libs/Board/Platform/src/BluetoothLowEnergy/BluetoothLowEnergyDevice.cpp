@@ -349,7 +349,6 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationError(
         statusString.toUtf8(),
         errorString.toUtf8()));
-    //TODO maybe also notify platform manager to disconnect device? emit deviceError(errorCode, errorString);
 }
 
 void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
@@ -361,7 +360,7 @@ void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
 
 void BluetoothLowEnergyDevice::deviceStateChangeHandler(QLowEnergyController::ControllerState state)
 {
-    //TODO!!!
+    qDebug(logCategoryDeviceBLE).nospace().noquote() << "Device state changed: " << state;
 }
 
 void BluetoothLowEnergyDevice::characteristicWrittenHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
