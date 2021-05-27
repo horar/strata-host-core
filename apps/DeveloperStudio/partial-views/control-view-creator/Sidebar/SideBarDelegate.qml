@@ -27,7 +27,7 @@ Item {
     SGHoverToolTip {
         id: hoverToolTip
         delay: 800
-        text: "This checkmark ensures this file is part of the Qrc"
+        text: "This file is in the project’s QRC resource file"
         toolTipEnabled: model && !model.isDir && model.inQrc
         anchors.left: itemContainer.right
         anchors.verticalCenter: inQrcIcon.verticalCenter
