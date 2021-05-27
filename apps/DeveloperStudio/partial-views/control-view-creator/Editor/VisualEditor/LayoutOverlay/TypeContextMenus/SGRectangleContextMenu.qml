@@ -17,11 +17,11 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.border.width
             menuLoader.item.sourceProperty = "border.width"
-            menuLoader.item.doubleValidator.bottom = -2147483647
-            menuLoader.item.doubleValidator.top = 2147483647
-            menuLoader.item.validator = menuLoader.item.doubleValidator
+            menuLoader.item.intValidator.bottom = 0
+            menuLoader.item.intValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.intValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0. Border width value's can only contain positive/negtaive whole or decimal values."
+            menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0. Border width value's can only contain whole values."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -56,11 +56,11 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radius
             menuLoader.item.sourceProperty = "radius"
-            menuLoader.item.doubleValidator.bottom = -2147483647
+            menuLoader.item.doubleValidator.bottom = 0
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle. Radius value's can contain positive/negtaive whole or decimal values"
+            menuLoader.item.label = "Enter the corner radius used to draw a rounded rectangle. If radius is non-zero, the rectangle will be painted as a rounded rectangle, otherwise it will be painted as a normal rectangle. Radius value's can contain positive whole or decimal values."
             menuLoader.item.open()
             contextMenu.close()
         }

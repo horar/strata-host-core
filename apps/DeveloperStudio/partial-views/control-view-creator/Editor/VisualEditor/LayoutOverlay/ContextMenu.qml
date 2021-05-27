@@ -31,7 +31,7 @@ Popup {
                 menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
                 menuLoader.active = true
                 menuLoader.item.text = layoutOverlayRoot.objectName
-                menuLoader.item.textFieldProperty = "id"
+                menuLoader.item.sourceProperty = "id"
                 menuLoader.item.open()
                 contextMenu.close()
             }
