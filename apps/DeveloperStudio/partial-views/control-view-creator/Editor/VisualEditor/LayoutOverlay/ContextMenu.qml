@@ -27,9 +27,15 @@ Popup {
         ContextMenuButton {
             text: "Set ID"
             onClicked: {
-                renameLoader.active = true
-                renameLoader.item.text = layoutOverlayRoot.objectName
-                renameLoader.item.open()
+                menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+                menuLoader.active = true
+                menuLoader.item.text = layoutOverlayRoot.objectName
+                menuLoader.item.validator = menuLoader.item.regExpValidator
+                menuLoader.item.label = "Ensure all id's are unique, otherwise build will fail. Id's must start with lower case letter or underscore, and contain only letters, numbers and underscores."
+                menuLoader.item.sourceProperty = "id"
+                menuLoader.item.isString = false
+                menuLoader.item.mustNotBeEmpty = true
+                menuLoader.item.open()
                 contextMenu.close()
             }
         }
@@ -79,9 +85,29 @@ Popup {
             source: {
                 switch (layoutOverlayRoot.type) {
                 case "LayoutRectangle":
-                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml"
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRectangleContextMenu.qml"
                 case "LayoutSGIcon":
                     return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGIconContextMenu.qml"
+                case "LayoutSGGraph":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGGraphContextMenu.qml"
+                case "LayoutButton":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonContextMenu.qml"
+                case "LayoutText":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGTextContextMenu.qml"
+                case "LayoutSGSwitch":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSwitchContextMenu.qml"
+                case "LayoutDivider":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGDividerContextMenu.qml"
+                case "LayoutSGInfoBox":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGInfoBoxContextMenu.qml"
+                case "LayoutSGSlider":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGSliderContextMenu.qml"
+                case "LayoutSGCircularGauge":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGGaugeContextMenu.qml"
+                case "LayoutSGStatusLight":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGStatusLightContextMenu.qml"
+                case "LayoutRadioButtons":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRadioButtonsContextMenu.qml"
                 default:
                     return ""
                 }

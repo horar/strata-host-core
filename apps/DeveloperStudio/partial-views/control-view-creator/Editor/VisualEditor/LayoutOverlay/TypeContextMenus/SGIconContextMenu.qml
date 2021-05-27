@@ -16,6 +16,18 @@ ColumnLayout {
         }
     }
 
+    ContextMenuButton {
+        text: "Set iconColor"
+        onClicked: {
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.active = true
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.iconColor
+            menuLoader.item.sourceProperty = "iconColor"
+            menuLoader.item.open()
+            contextMenu.close()
+        }
+    }
+
     Popup {
         id: iconPicker
         anchors.centerIn: Overlay.overlay
