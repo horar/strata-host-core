@@ -16,6 +16,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "color"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.color
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -28,11 +29,11 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.sourceProperty = "thickness"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
-            menuLoader.item.intValidator.bottom = 0
+            menuLoader.item.intValidator.bottom = 1
             menuLoader.item.intValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.intValidator
             menuLoader.item.open()
-            menuLoader.item.label = "Enter the thickness for divider. Thickness can only contain postive value."
+            menuLoader.item.label = "Enter the thickness for divider. Must be a positive whole number."
             menuLoader.item.isString = false
             contextMenu.close()
         }

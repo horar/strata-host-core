@@ -16,30 +16,30 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
-            menuLoader.item.sourceProperty = "text"
-            menuLoader.item.regExpValidator.regExp = /^[a-z_ ][a-zA-Z0-9@./#&+-()_ ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter the text. Text can contain only letters, numbers, underscores, spaces and special characters."
             menuLoader.item.open()
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set Text Color"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
             menuLoader.item.open()
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set Background Color"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "color"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.color
             menuLoader.item.open()
             contextMenu.close()
         }

@@ -17,14 +17,11 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
             menuLoader.item.sourceProperty = "text"
-            menuLoader.item.doubleValidator.bottom = -2147483647
-            menuLoader.item.doubleValidator.top = 2147483647
-            menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter the text. Text can contain only postive/negative whole or decimal numbers."
             menuLoader.item.open()
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set PlaceholderText"
         onClicked: {
@@ -32,9 +29,7 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.placeholderText
             menuLoader.item.sourceProperty = "placeholderText"
-            menuLoader.item.regExpValidator.regExp = /^[0-9-0-9 ]*/
-            menuLoader.item.validator = menuLoader.item.regExpValidator
-            menuLoader.item.label = "Enter the placeholder text. Placeholder text's can only contain letters, numbers, underscores and spaces."
+            menuLoader.item.label = "Enter the desired placeholder text."
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -46,6 +41,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -57,6 +53,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "boxColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.boxColor
             menuLoader.item.open()
             contextMenu.close()
         }

@@ -17,16 +17,18 @@ ColumnLayout {
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
-            menuLoader.item.label = "Select the divider orientation."
+            menuLoader.item.label = "Select the orientation."
             contextMenu.close()
         }
     }
+
     ContextMenuButton {
         text: "Set RadioButton Color"
         onClicked: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "radioColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.radioColor
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -38,6 +40,7 @@ ColumnLayout {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
+            menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
             menuLoader.item.open()
             contextMenu.close()
         }
@@ -51,10 +54,10 @@ ColumnLayout {
             menuLoader.item.sourceProperty = "radioSize"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radioSize
             menuLoader.item.open()
-            menuLoader.item.doubleValidator.bottom = 0
-            menuLoader.item.doubleValidator.top = 2147483647
-            menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter a radioSize. RadioSize can only contain a postive whole or decimal values."
+            menuLoader.item.intValidator.bottom = 0
+            menuLoader.item.intValidator.top = 2147483647
+            menuLoader.item.validator = menuLoader.item.intValidator
+            menuLoader.item.label = "Enter a radioSize. Must be a whole number."
             menuLoader.item.isString = false
             contextMenu.close()
         }
@@ -71,7 +74,7 @@ ColumnLayout {
             menuLoader.item.doubleValidator.bottom = 0
             menuLoader.item.doubleValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.doubleValidator
-            menuLoader.item.label = "Enter a fontSizeMultiplier of the labels. FontSizeMultiplier can only contain a postive whole or decimal values."
+            menuLoader.item.label = "Enter a fontSizeMultiplier of the labels. Must be a positive whole or decimal number."
             menuLoader.item.isString = false
             contextMenu.close()
         }
