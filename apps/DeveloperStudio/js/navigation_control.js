@@ -307,22 +307,22 @@ function updateState(event, data)
 
                     break;
 
-            case events.PLATFORM_DISCONNECTED_EVENT:
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
-                // Disconnect any matching open platform view
-                for (let k = 0; k < platform_view_model_.count; k++) {
-                    let disconnected_view = platform_view_model_.get(k)
-                    if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
-                        disconnected_view.connected = false
-                        disconnected_view.firmware_version = ""
+                case events.PLATFORM_DISCONNECTED_EVENT:
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
+                    // Disconnect any matching open platform view
+                    for (let k = 0; k < platform_view_model_.count; k++) {
+                        let disconnected_view = platform_view_model_.get(k)
+                        if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
+                            disconnected_view.connected = false
+                            disconnected_view.firmware_version = ""
 
-                        if (userSettings.closeOnDisconnect) {
-                            updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
+                            if (userSettings.closeOnDisconnect) {
+                                updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
+                            }
+                            break
                         }
-                        break
                     }
-                }
-                break;
+                    break;
 
                 case events.CLOSE_PLATFORM_VIEW_EVENT:
                     let l
