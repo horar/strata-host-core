@@ -131,7 +131,6 @@ function removeView(parent)
 */
 function globalEventHandler(event, data)
 {
-
     switch(event) {
         case events.PROMPT_SPLASH_SCREEN_EVENT:
             navigation_state_ = states.NOT_CONNECTED_STATE
