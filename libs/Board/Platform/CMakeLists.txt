@@ -18,6 +18,7 @@ add_library(${PROJECT_NAME}
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
     src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
+    src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
 
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp
@@ -51,6 +52,7 @@ add_library(${PROJECT_NAME}
     include/Mock/MockDeviceControl.h
     include/Mock/MockDeviceConstants.h
     include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
+    include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
 
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h

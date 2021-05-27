@@ -1,4 +1,5 @@
 #include "BluetoothLowEnergy/BluetoothLowEnergyDevice.h"
+#include "BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -110,89 +111,14 @@ bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
     return false;
 }
 
-bool BluetoothLowEnergyDevice::parseRequest(const rapidjson::Document & requestDocument, BluetoothLowEnergyAttributes & addresses)
-{
-    if (requestDocument.HasMember("payload") == false) {
-        qCWarning(logCategoryDeviceBLE) << "Request missing payload";
-        return false;
-    }
-
-    auto *payloadObject = &requestDocument["payload"];
-    if (payloadObject->IsObject() == false) {
-        qCWarning(logCategoryDeviceBLE) << "Payload is not an object";
-        return false;
-    }
-
-    const rapidjson::GenericObject payload = payloadObject->GetObject();
-
-    std::string serviceUuid;
-    if (payload.HasMember("service") && payload["service"].IsString()) {
-        serviceUuid = payload["service"].GetString();
-    } else {
-        qCWarning(logCategoryDeviceBLE) << "Request missing service";
-        return false;
-    }
-
-    std::string characteristicUuid;
-    if (payload.HasMember("characteristic") && payload["characteristic"].IsString()) {
-        characteristicUuid = payload["characteristic"].GetString();
-    } else {
-        qCWarning(logCategoryDeviceBLE) << "Request missing characteristic";
-        return false;
-    }
-
-    std::string descriptorUuid;
-    if (payload.HasMember("descriptor")) {
-        if (payload["descriptor"].IsString()) {
-            descriptorUuid = payload["descriptor"].GetString();
-        } else {
-            qCWarning(logCategoryDeviceBLE) << "Request missing descriptor";
-            return false;
-        }
-    }
-
-    QBluetoothUuid serviceUuidObject = normalizeBleUuid(serviceUuid);
-    if (serviceUuidObject.isNull())
-    {
-        qCWarning(logCategoryDeviceBLE) << "Invalid service uuid";
-        return false;
-    }
-    QBluetoothUuid characteristicUuidObject = normalizeBleUuid(characteristicUuid);
-    if (characteristicUuidObject.isNull())
-    {
-        qCWarning(logCategoryDeviceBLE) << "Invalid characteristic uuid";
-        return false;
-    }
-    QBluetoothUuid descriptorUuidObject;
-    if (descriptorUuid.empty() == false) {
-        descriptorUuidObject = normalizeBleUuid(descriptorUuid);
-        if (descriptorUuidObject.isNull())
-        {
-            qCWarning(logCategoryDeviceBLE) << "Invalid descriptor uuid";
-            return false;
-        }
-    }
-    std::string data;
-    if (payload.HasMember("data") && payload["data"].IsString()) {
-        data = payload["data"].GetString();
-    }
-    QByteArray dataObject = QByteArray::fromHex(data.c_str());
-
-    addresses.service = serviceUuidObject;
-    addresses.characteristic = characteristicUuidObject;
-    addresses.descriptor = descriptorUuidObject;
-    addresses.data = dataObject;
-    return true;
-}
-
 bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & requestDocument)
 {
     if (isConnected() == false) {
         return false;
     }
 
-    BluetoothLowEnergyAttributes attributes;
-    if (parseRequest(requestDocument, attributes) == false) {
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttributes attributes;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attributes) == false) {
         return false;
     }
 
@@ -229,8 +155,8 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
         return false;
     }
 
-    BluetoothLowEnergyAttributes addresses;
-    if (parseRequest(requestDocument, addresses) == false) {
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttributes addresses;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, addresses) == false) {
         return false;
     }
 
@@ -420,7 +346,9 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
             break;
     }
     qDebug(logCategoryDeviceBLE).nospace().noquote() << "Device error: " << error;
-    emit messageReceived(QByteArray(R"({"notification":{"value":"error","payload":{"status":")" + statusString.toUtf8() + R"(","details":")" + errorString.toUtf8() + R"("}}})"));
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationError(
+        statusString.toUtf8(),
+        errorString.toUtf8()));
     //TODO maybe also notify platform manager to disconnect device? emit deviceError(errorCode, errorString);
 }
 
@@ -438,29 +366,48 @@ void BluetoothLowEnergyDevice::deviceStateChangeHandler(QLowEnergyController::Co
 
 void BluetoothLowEnergyDevice::characteristicWrittenHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + getSignalSenderService() + R"(","characteristic":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckWriteCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::characteristicReadHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid"}})"));//TODO take out the constant
-    emitResponses(std::vector<QByteArray>({R"({"notification":{"value":"read","payload":{"service":")" + getSignalSenderService() + R"(","characteristic":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"}));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckReadCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces)));
+    emitResponses(std::vector<QByteArray>({BluetoothLowEnergyJsonEncoder::encodeNotificationReadCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex())}));
 }
 
 void BluetoothLowEnergyDevice::characteristicChangedHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"notification":{"value":"notify","payload":{"service":")" + getSignalSenderService() + R"(","characteristic":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + getSignalSenderService() + R"(","descriptor":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckWriteDescriptor(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::descriptorReadHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid"}})"));//TODO take out the constant
-    emitResponses(std::vector<QByteArray>({R"({"notification":{"value":"read","payload":{"service":")" + getSignalSenderService() + R"(","descriptor":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"}));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckReadDescriptor(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces)));
+    emitResponses(std::vector<QByteArray>({BluetoothLowEnergyJsonEncoder::encodeNotificationReadDescriptor(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex())}));
 }
 
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
@@ -503,7 +450,10 @@ void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceErr
             details = "descriptor read error";
             break;
     }
-    emit messageReceived(QByteArray(R"({"ack":")" + command.toUtf8() + R"(","payload":{"return_value":false,"return_string":")" + details.toUtf8() + R"(","service":")" + getSignalSenderService() + R"("}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNAck(
+        command.toUtf8(),
+        details.toUtf8(),
+        getSignalSenderService()));
 }
 
 void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & serviceUuid)
@@ -564,30 +514,6 @@ QByteArray BluetoothLowEnergyDevice::getSignalSenderService() const
         serviceUuid = service->serviceUuid().toByteArray(QBluetoothUuid::WithoutBraces);
     }
     return serviceUuid;
-}
-
-QBluetoothUuid BluetoothLowEnergyDevice::normalizeBleUuid(std::string uuid)
-{
-    QString tmpUuid = QString::fromStdString(uuid);
-    tmpUuid = tmpUuid.remove('-').toLower();
-    for (const auto &ch : tmpUuid) {
-        if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= "f")) {
-            continue;
-        }
-        return QBluetoothUuid();//error
-    }
-
-    if (tmpUuid.length() == 32) {
-        tmpUuid.insert(8, '-').insert(13, '-').insert(18, '-').insert(23, '-');
-    } else if (tmpUuid.length() == 8) {
-        tmpUuid = tmpUuid + "-0000-1000-8000-00805f9b34fb";
-    } else if (tmpUuid.length() == 4) {
-        tmpUuid = "0000" + tmpUuid + "-0000-1000-8000-00805f9b34fb";
-    } else {
-        return QBluetoothUuid();//error
-    }
-    tmpUuid = '{' + tmpUuid + '}';
-    return QBluetoothUuid(tmpUuid);
 }
 
 QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &info)

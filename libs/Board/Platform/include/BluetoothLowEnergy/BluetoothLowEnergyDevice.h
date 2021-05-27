@@ -7,12 +7,6 @@
 
 namespace strata::device
 {
-struct BluetoothLowEnergyAttributes {
-    QBluetoothUuid service;
-    QBluetoothUuid characteristic;
-    QBluetoothUuid descriptor;
-    QByteArray data;
-};
 
 class BluetoothLowEnergyDevice : public Device
 {
@@ -115,14 +109,6 @@ private:
      */
     [[nodiscard]] bool processRequest(const QByteArray &message);
     /**
-     * Parses GATT related data out of JSON request.
-     * @param requestDocument Document to be parsed.
-     * @param[out] addresses After successful call, will contained parsed data.
-     * @return true iff document was parsed successfully.
-     */
-    [[nodiscard]] static bool parseRequest(const rapidjson::Document &requestDocument,
-                                           BluetoothLowEnergyAttributes &addresses);
-    /**
      * Forwards write command to BLE device.
      * @param requestDocument request with the command.
      * @return true iff message was correct and processed.
@@ -153,13 +139,6 @@ private:
      * @return sender service of signal
      */
     QByteArray getSignalSenderService() const;
-    /**
-     * Creates QBluetoothUuid from string. Accepts 2B, 4B and 32B UUIDs.
-     * If uuid is invalid, returns null uuid (00000000-0000-0000-0000-000000000000)
-     * @param uuid UUID string to be processed.
-     * @return QBluetoothUuid based on the UUID string.
-     */
-    static QBluetoothUuid normalizeBleUuid(std::string uuid);
     /**
      * Creates device ID string, based on discovered data.
      * @param info Info about discovered BLE device.
