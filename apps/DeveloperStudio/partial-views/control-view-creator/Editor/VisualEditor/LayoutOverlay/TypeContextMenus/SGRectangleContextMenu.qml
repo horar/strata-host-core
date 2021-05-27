@@ -21,7 +21,7 @@ ColumnLayout {
             menuLoader.item.intValidator.top = 2147483647
             menuLoader.item.validator = menuLoader.item.intValidator
             menuLoader.item.isString = false
-            menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0. Border width values can only contain whole values."
+            menuLoader.item.label = "Enter the border width. A width of 1 creates a thin line. For no line, use a width of 0. Must be a positive whole number."
             menuLoader.item.open()
             contextMenu.close()
         }
