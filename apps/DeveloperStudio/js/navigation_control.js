@@ -21,9 +21,9 @@ var context = {
 var screens = {
     SPLASH_SCREEN: "qrc:/SplashScreen.qml",
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
-    PLATFORM_SELECTOR : "qrc:/SGPlatformSelector.qml",
-    PLATFORM_VIEW : "qrc:/partial-views/platform-view/SGPlatformView.qml",
-    CONTENT_SCREEN : "qrc:/Content.qml",
+    PLATFORM_SELECTOR: "qrc:/SGPlatformSelector.qml",
+    PLATFORM_VIEW: "qrc:/partial-views/platform-view/SGPlatformView.qml",
+    CONTENT_SCREEN: "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml",
     LOAD_ERROR: "qrc:/partial-views/SGLoadError.qml"
 }
@@ -33,7 +33,7 @@ var screens = {
 */
 var states = {
     UNINITIALIZED: 1,       // Init() has not been called
-    NOT_CONNECTED_STATE : 2,// HCS not connected
+    NOT_CONNECTED_STATE: 2, // HCS not connected
     LOGIN_STATE: 3,         // User needs to login
     CONTROL_STATE: 4,       // Platform is connected and we are ready for control
 }
@@ -129,7 +129,7 @@ function removeView(parent)
   A catch-all for events that are required to be handled for default event behaviors
   or handle events that were not caught in the main state machine handler
 */
-function globalEventHandler(event,data)
+function globalEventHandler(event, data)
 {
 
     switch(event) {
@@ -193,7 +193,7 @@ function globalEventHandler(event,data)
 */
 function updateState(event)
 {
-    updateState(event,null)
+    updateState(event, null)
 }
 
 /*
@@ -350,21 +350,21 @@ function updateState(event, data)
 
                     if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
                         (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
-                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex - 1
                     } else {
-                        platform_tab_list_view_.currentIndex =  -1
+                        platform_tab_list_view_.currentIndex = -1
                     }
 
                     break;
 
                 default:
-                    globalEventHandler(event,data)
+                    globalEventHandler(event, data)
                     break;
             }
             break;
 
         default:
-            globalEventHandler(event,data)
+            globalEventHandler(event, data)
             break;
     }
 }
