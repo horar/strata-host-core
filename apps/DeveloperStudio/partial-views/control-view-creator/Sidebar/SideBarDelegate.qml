@@ -27,7 +27,7 @@ Item {
     SGHoverToolTip {
         id: hoverToolTip
         delay: 800
-        text: "This checkmark ensures this file is a part of the Qrc extension"
+        text: "This checkmark ensures this file is part of the Qrc"
         toolTipEnabled: model && !model.isDir && model.inQrc
         anchors.left: itemContainer.right
         anchors.verticalCenter: inQrcIcon.verticalCenter
