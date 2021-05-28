@@ -6,7 +6,5 @@
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        // start_user_content
         source: "qrc:/sgimages/exclamation-circle.svg"
-        // end_user_content
     } // end_%1

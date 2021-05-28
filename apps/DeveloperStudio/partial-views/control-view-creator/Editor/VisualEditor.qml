@@ -20,6 +20,7 @@ ColumnLayout {
     property var overlayObjects: []
     property string file: ""
     property string fileContents: ""
+
     property alias loader: loader
     property alias functions: functions
 
@@ -40,6 +41,12 @@ ColumnLayout {
             id: loader
             anchors {
                 fill: parent
+            }
+
+            onStatusChanged: {
+                if (loader.status == Loader.Error) {
+                    visualEditor.error = "Error occurred checking this file, see logs"
+                }
             }
         }
 

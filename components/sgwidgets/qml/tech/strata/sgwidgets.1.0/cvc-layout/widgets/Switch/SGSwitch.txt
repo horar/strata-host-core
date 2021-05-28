@@ -6,13 +6,12 @@
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        // start_user_content
-        checked : true
-        checkedLabel : "on"
-        uncheckedLabel : "off"
-        labelsInside : true
+        checked: true
+        checkedLabel: "on"
+        uncheckedLabel: "off"
+        labelsInside: true
+
         onToggled: {
-              console.log("onToggled:",checked,layoutInfo.uuid)
+            console.log("onToggled:", checked)
         }
-        // end_user_content
     } // end_%1
