@@ -183,7 +183,7 @@ Item {
 
             function closeToolTip(){
                 if(enabled){
-                    toolTip.close()
+                    close()
                 }
             }
         }
