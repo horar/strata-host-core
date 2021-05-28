@@ -519,7 +519,7 @@ void Flasher::manageBackup(int chunkNumber)
         if (chunkCount_ <= 0) {
             qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks.";
             // Operation 'Backup' is currently runing, it must be cancelled.
-            currentOperation_->operation->disconnect();  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
+            currentOperation_->operation->disconnect(this);  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
             currentOperation_->operation->cancelOperation();
             finish(Result::NoFirmware);
             return;
