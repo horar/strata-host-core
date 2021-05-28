@@ -170,8 +170,6 @@ void Flasher::cancel()
 {
     if ((operationList_.size() != 0) && (currentOperation_ != operationList_.end())) {
         currentOperation_->operation->cancelOperation();
-        qCWarning(logCategoryFlasher) << platform_ << "Firmware operation was cancelled.";
-        finish(Result::Cancelled);
     }
 }
 
@@ -292,7 +290,8 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
         finish(Result::Timeout);
         break;
     case operation::Result::Cancel :
-        // Do nothing
+        qCWarning(logCategoryFlasher) << platform_ << "Firmware operation was cancelled.";
+        finish(Result::Cancelled);
         break;
     case operation::Result::Reject :
     case operation::Result::Failure :
@@ -509,6 +508,7 @@ void Flasher::manageBackup(int chunkNumber)
         if (chunkCount_ <= 0) {
             qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks.";
             // Operation 'Backup' is currently runing, it must be cancelled.
+            currentOperation_->operation->disconnect();  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
             currentOperation_->operation->cancelOperation();
             finish(Result::NoFirmware);
             return;
