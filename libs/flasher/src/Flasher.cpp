@@ -38,7 +38,7 @@ Flasher::Flasher(const PlatformPtr& platform, const QString& fileName, const QSt
 Flasher::~Flasher()
 {
     if ((operationList_.size() != 0) && (currentOperation_ != operationList_.end())) {
-        currentOperation_->operation->disconnect();
+        currentOperation_->operation->disconnect(this);
         currentOperation_->operation->cancelOperation();
     }
     qCDebug(logCategoryFlasher) << platform_ << "Flasher deleted (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
