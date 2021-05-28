@@ -88,7 +88,7 @@ QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(std::string uuid)
         if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= "f")) {
             continue;
         }
-        return QBluetoothUuid();//error
+        return QBluetoothUuid(); // error
     }
 
     if (tmpUuid.length() == 32) {
@@ -98,7 +98,7 @@ QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(std::string uuid)
     } else if (tmpUuid.length() == 4) {
         tmpUuid = "0000" + tmpUuid + BASE_UUID_SUFFIX;
     } else {
-        return QBluetoothUuid();//error
+        return QBluetoothUuid(); // error
     }
     tmpUuid = '{' + tmpUuid + '}';
     return QBluetoothUuid(tmpUuid);
