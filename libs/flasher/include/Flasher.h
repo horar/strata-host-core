@@ -150,8 +150,9 @@ class Flasher : public QObject
          */
         void devicePropertiesChanged();
 
-        // private signal:
+        // private signals:
         void nextOperation(QPrivateSignal);
+        void flashNextChunk(QPrivateSignal);
 
     private slots:
         // run current operation from operationList_
@@ -160,6 +161,8 @@ class Flasher : public QObject
         void handleOperationFinished(platform::operation::Result result, int status, QString errStr);
         // process operation partialStatus signal
         void handleOperationPartialStatus(int status);
+        // flash next firmware/bootloader chunk
+        void handleFlashNextChunk();
 
     private:
         // check if flasher action can start
