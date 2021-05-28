@@ -37,7 +37,12 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
 
 StrataServer::~StrataServer()
 {
-    // TODO: stop the thread & clean up!
+    connectorThread_->exit(0);
+    if (false == connectorThread_->wait(500)) {
+        qCCritical(logCategoryStrataServer) << "Terminating connector thread.";
+        connectorThread_->terminate();
+    }
+    connectorThread_->deleteLater();
 }
 
 bool StrataServer::initializeServer()
