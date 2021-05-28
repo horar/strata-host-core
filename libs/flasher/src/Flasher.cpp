@@ -29,6 +29,7 @@ Flasher::Flasher(const PlatformPtr& platform, const QString& fileName, const QSt
     platform_(platform), binaryFile_(fileName), fileMD5_(fileMD5), fwClassId_(fwClassId)
 {
     connect(this, &Flasher::nextOperation, this, &Flasher::runFlasherOperation, Qt::QueuedConnection);
+    connect(this, &Flasher::flashNextChunk, this, &Flasher::handleFlashNextChunk, Qt::QueuedConnection);
     currentOperation_ = operationList_.end();
 
     qCDebug(logCategoryFlasher) << platform_ << "Flasher created (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
@@ -466,10 +467,10 @@ void Flasher::manageFlash(bool flashingFirmware, int lastFlashedChunk)
         }
     }
 
-    flashNextChunk();
+    emit flashNextChunk(QPrivateSignal());
 }
 
-void Flasher::flashNextChunk()
+void Flasher::handleFlashNextChunk()
 {
     if (operationList_.empty() || currentOperation_ == operationList_.end()) {
         // flashing was cancelled or did not started yet
