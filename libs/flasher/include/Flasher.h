@@ -184,6 +184,7 @@ class Flasher : public QObject
 
         // flash logic
         void manageFlash(bool flashingFirmware, int lastFlashedChunk);
+        void flashNextChunk();
         // backup logic
         void manageBackup(int chunkNumber);
 

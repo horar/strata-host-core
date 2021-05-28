@@ -466,6 +466,16 @@ void Flasher::manageFlash(bool flashingFirmware, int lastFlashedChunk)
         }
     }
 
+    flashNextChunk();
+}
+
+void Flasher::flashNextChunk()
+{
+    if (operationList_.empty() || currentOperation_ == operationList_.end()) {
+        // flashing was cancelled or did not started yet
+        return;
+    }
+
     if (binaryFile_.atEnd()) {
         QString errStr(QStringLiteral("Unexpected end of file."));
         qCCritical(logCategoryFlasher) << platform_ << errStr << ' ' <<  binaryFile_.fileName();
