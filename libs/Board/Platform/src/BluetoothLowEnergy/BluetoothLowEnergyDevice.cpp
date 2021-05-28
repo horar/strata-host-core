@@ -133,7 +133,7 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
         return false;
     }
     if (attributes.descriptor.isNull()) {
-        qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Writing: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "' data '" << attributes.data << "'";
+        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attributes.data.toHex();
         service->writeCharacteristic(characteristic, attributes.data);
         return true;
     } else
@@ -143,7 +143,7 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
             qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
             return false;
         }
-        qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Writing: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "' descriptor '" << descriptor.uuid() << "' data '" << attributes.data << "'";
+        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attributes.data.toHex();
         service->writeDescriptor(descriptor, attributes.data);
         return true;
     }
@@ -171,7 +171,7 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
         return false;
     }
     if (addresses.descriptor.isNull()) {
-        qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Reading: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "''";
+        qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
         service->readCharacteristic(characteristic);
         return true;
     } else
@@ -182,7 +182,7 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
             qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
             return false;
         }
-        qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Reading: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "' descriptor '" << descriptor.uuid() << "'";
+        qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid();
         service->readDescriptor(descriptor);
         return true;
     }
@@ -292,7 +292,7 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
             case QLowEnergyService::InvalidService:
                 break;
             case QLowEnergyService::DiscoveryRequired:
-                qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Discovering details of service " << service.second->serviceUuid() << " ...";;
+                qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";;
                 service.second->discoverDetails();
                 allDiscovered = false;
                 break;
@@ -309,7 +309,7 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
         allDiscovered_ = true;
         qCDebug(logCategoryDeviceBLE) << this << "Service details discovery finished";
         for (const auto &service : discoveredServices_) {
-            qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
+            qCDebug(logCategoryDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
         }
         emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})")); // TODO remove
     }
@@ -345,7 +345,7 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
             statusString = "remote host closed error";
             break;
     }
-    qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Error: " << error;
+    qCDebug(logCategoryDeviceBLE) << this << "Error: " << error;
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationError(
         statusString.toUtf8(),
         errorString.toUtf8()));
@@ -360,7 +360,7 @@ void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
 
 void BluetoothLowEnergyDevice::deviceStateChangeHandler(QLowEnergyController::ControllerState state)
 {
-    qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Device state changed: " << state;
+    qCDebug(logCategoryDeviceBLE) << this << "Device state changed: " << state;
 }
 
 void BluetoothLowEnergyDevice::characteristicWrittenHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
@@ -457,11 +457,11 @@ void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceErr
 
 void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & serviceUuid)
 {
-    qCDebug(logCategoryDeviceBLE).nospace().noquote() << this << "Creating service for UUID " << serviceUuid << " ...";
+    qCDebug(logCategoryDeviceBLE) << this << "Creating service for UUID " << serviceUuid << " ...";
     if (discoveredServices_.count(serviceUuid) != 0) {
         // It is allowed to have multiple services with the same UUID, so this is a correct situation.
         // If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
-        qCInfo(logCategoryDeviceBLE).nospace().noquote() << this << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
+        qCInfo(logCategoryDeviceBLE) << this << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
         return;
     }
     QLowEnergyService * service = lowEnergyController_->createServiceObject(serviceUuid);
