@@ -702,25 +702,9 @@ R"({
     }
 })");
 
-const QByteArray backup_firmware_request_init = normalizeMessage(
-R"({
-    "notification":{
-        "value":"backup_firmware",
-        "payload":{
-            "status":"init"
-        }
-    }
-})");
+const QByteArray backup_firmware_request_init = normalizeMessage(R"({"cmd":"backup_firmware","payload":{"status":"init"}})");
 
-const QByteArray backup_firmware_request = normalizeMessage(
-R"({
-    "notification":{
-        "value":"backup_firmware",
-        "payload":{
-            "status":"ok"
-        }
-    }
-})");
+const QByteArray backup_firmware_request = normalizeMessage(R"({"cmd":"backup_firmware","payload":{"status":"ok"}})");
 
 const QByteArray backup_firmware_response = normalizeMessage(
 R"({

@@ -53,6 +53,7 @@ private:
     MockVersion version_ = MockVersion::Version_1;
 
     //variables used to store mock firmware's expected values
+    bool startBackup_ = false;
     QTemporaryFile mockFirmware_;
     int actualChunk_ = -1;
     int expectedChunksCount_ = 0;

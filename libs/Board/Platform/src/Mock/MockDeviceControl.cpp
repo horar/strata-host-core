@@ -451,7 +451,12 @@ const std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::
             //qDebug("%s -> %s", matchSubStr.toStdString().c_str(), getPlaceholderValue(matchSubStr,
             //requestDoc).toStdString().c_str());
 
-            if (actualChunk_ < expectedChunksCount_) {
+            if (requestCmd == "start_backup_firmware") {
+                actualChunk_ = -1; //begin of backup_firmware
+                startBackup_ = true;
+            }
+
+            if (actualChunk_ < expectedChunksCount_ && startBackup_) {
 
                 if (matchSubStr == "response.payload.size") {
                     replacements.insert({matchStr, QString::number(mockFirmware_.size())});
@@ -459,7 +464,6 @@ const std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::
                 if (matchSubStr == "response.payload.chunks") {
                     replacements.insert({matchStr, QString::number(expectedChunksCount_)});
                 }
-
                 if (matchSubStr == "response.payload.chunk.number") {
                     replacements.insert({matchStr, QString::number(actualChunk_)});
                 }
@@ -473,21 +477,17 @@ const std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::
                     replacements.insert({matchStr, expectedChunkData_.at(actualChunk_)});
                 }
 
-                if (requestCmd == "start_backup_firmware") {
-                    actualChunk_ = -1;
-                }
-
                 if (requestCmd == "backup_firmware") {
                     actualChunk_++;
                 }
             } else {
+                startBackup_ = false;
                 if (matchSubStr == "response.payload.size") {
                     replacements.insert({matchStr, QString::number(0)});
                 }
                 if (matchSubStr == "response.payload.chunks") {
                     replacements.insert({matchStr, QString::number(0)});
                 }
-
                 if (matchSubStr == "response.payload.chunk.number") {
                     replacements.insert({matchStr, QString::number(0)});
                 }
