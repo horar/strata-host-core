@@ -94,9 +94,9 @@ QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(std::string uuid)
     if (tmpUuid.length() == 32) {
         tmpUuid.insert(8, '-').insert(13, '-').insert(18, '-').insert(23, '-');
     } else if (tmpUuid.length() == 8) {
-        tmpUuid = tmpUuid + "-0000-1000-8000-00805f9b34fb";
+        tmpUuid = tmpUuid + BASE_UUID_SUFFIX;
     } else if (tmpUuid.length() == 4) {
-        tmpUuid = "0000" + tmpUuid + "-0000-1000-8000-00805f9b34fb";
+        tmpUuid = "0000" + tmpUuid + BASE_UUID_SUFFIX;
     } else {
         return QBluetoothUuid();//error
     }
@@ -104,44 +104,57 @@ QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(std::string uuid)
     return QBluetoothUuid(tmpUuid);
 }
 
+QByteArray BluetoothLowEnergyJsonEncoder::shortenBleUuid(const QByteArray &uuid)
+{
+    if (uuid.endsWith(BASE_UUID_SUFFIX_BYTES)) {
+        if (uuid.startsWith("0000")) {
+            return QByteArray(uuid).remove(8, BASE_UUID_SUFFIX_BYTES.length()).remove(0, 4);
+        } else
+        {
+            return QByteArray(uuid).remove(8, BASE_UUID_SUFFIX_BYTES.length());
+        }
+    }
+    return uuid;
+}
+
 QByteArray BluetoothLowEnergyJsonEncoder::encodeAckWriteCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid, const QByteArray &data)
 {
-    return R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + serviceUuid + R"(","characteristic":")" + characteristicUuid + R"(","data":")" + data + R"("}})";
+    return R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + shortenBleUuid(serviceUuid) + R"(","characteristic":")" + shortenBleUuid(characteristicUuid) + R"(","data":")" + data + R"("}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeAckReadCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid)
 {
-    return R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid","service":")" + serviceUuid + R"(","characteristic":")" + characteristicUuid + R"("}})";
+    return R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid","service":")" + shortenBleUuid(serviceUuid) + R"(","characteristic":")" + shortenBleUuid(characteristicUuid) + R"("}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid, const QByteArray &data)
 {
-    return R"({"notification":{"value":"notify","payload":{"service":")" + serviceUuid + R"(","characteristic":")" + characteristicUuid + R"(","data":")" + data + R"("}}})";
+    return R"({"notification":{"value":"notify","payload":{"service":")" + shortenBleUuid(serviceUuid) + R"(","characteristic":")" + shortenBleUuid(characteristicUuid) + R"(","data":")" + data + R"("}}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationReadCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid, const QByteArray &data)
 {
-    return R"({"notification":{"value":"read","payload":{"service":")" + serviceUuid + R"(","characteristic":")" + characteristicUuid + R"(","data":")" + data + R"("}}})";
+    return R"({"notification":{"value":"read","payload":{"service":")" + shortenBleUuid(serviceUuid) + R"(","characteristic":")" + shortenBleUuid(characteristicUuid) + R"(","data":")" + data + R"("}}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeAckWriteDescriptor(const QByteArray &serviceUuid, const QByteArray &descriptorUuid, const QByteArray &data)
 {
-    return R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + serviceUuid + R"(","descriptor":")" + descriptorUuid + R"(","data":")" + data + R"("}})";
+    return R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + shortenBleUuid(serviceUuid) + R"(","descriptor":")" + shortenBleUuid(descriptorUuid) + R"(","data":")" + data + R"("}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeAckReadDescriptor(const QByteArray &serviceUuid, const QByteArray &descriptorUuid)
 {
-    return R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid","service":")" + serviceUuid + R"(","descriptor":")" + descriptorUuid + R"("}})";
+    return R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid","service":")" + shortenBleUuid(serviceUuid) + R"(","descriptor":")" + shortenBleUuid(descriptorUuid) + R"("}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationReadDescriptor(const QByteArray &serviceUuid, const QByteArray &descriptorUuid, const QByteArray &data)
 {
-    return R"({"notification":{"value":"read","payload":{"service":")" + serviceUuid + R"(","descriptor":")" + descriptorUuid + R"(","data":")" + data + R"("}}})";
+    return R"({"notification":{"value":"read","payload":{"service":")" + shortenBleUuid(serviceUuid) + R"(","descriptor":")" + shortenBleUuid(descriptorUuid) + R"(","data":")" + data + R"("}}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeNAck(const QByteArray &command, const QByteArray &details, const QByteArray &serviceUuid)
 {
-    return R"({"ack":")" + command + R"(","payload":{"return_value":false,"return_string":")" + details + R"(","service":")" + serviceUuid + R"("}})";
+    return R"({"ack":")" + command + R"(","payload":{"return_value":false,"return_string":")" + details + R"(","service":")" + shortenBleUuid(serviceUuid) + R"("}})";
 }
 
 QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationError(const QByteArray &status, const QByteArray &details)

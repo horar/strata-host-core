@@ -5,6 +5,10 @@
 
 namespace strata::device
 {
+const QString BASE_UUID_SUFFIX = "-0000-1000-8000-00805f9b34fb";
+const QByteArray BASE_UUID_SUFFIX_BYTES = BASE_UUID_SUFFIX.toUtf8();
+
+
 class BluetoothLowEnergyJsonEncoder
 {
 public:
@@ -35,6 +39,13 @@ public:
      * @return QBluetoothUuid based on the UUID string.
      */
     static QBluetoothUuid normalizeBleUuid(std::string uuid);
+
+    /**
+     * If the UUID can be shortened to 32bit or 16bit, it will be shortened.
+     * @param uuid the original UUID
+     * @return resulting UUID, shortened if possible
+     */
+    static QByteArray shortenBleUuid(const QByteArray &uuid);
 
     static QByteArray encodeAckWriteCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid, const QByteArray &data);
     static QByteArray encodeAckReadCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid);
