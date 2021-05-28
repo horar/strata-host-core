@@ -5,33 +5,9 @@ import QtQml.Models 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
-import "../components"
-
 Item {
     id: itemContainer
     anchors.verticalCenter: parent.verticalCenter
-
-    MouseArea {
-        anchors.fill: inQrcIcon
-        hoverEnabled: true
-
-        onEntered: {
-            hoverToolTip.openToolTip()
-        }
-
-        onExited: {
-            hoverToolTip.closeToolTip()
-        }
-    }
-
-    SGHoverToolTip {
-        id: hoverToolTip
-        delay: 800
-        text: "This file is in the project’s QRC resource file"
-        toolTipEnabled: model && !model.isDir && model.inQrc
-        anchors.left: itemContainer.right
-        anchors.verticalCenter: inQrcIcon.verticalCenter
-    }
 
     Text {
         id: itemFilename
@@ -170,6 +146,47 @@ Item {
 
         iconColor: "green"
         source: "qrc:/sgimages/check-circle.svg"
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+
+            onEntered: {
+                toolTip.openToolTip()
+            }
+
+            onExited: {
+                toolTip.closeToolTip()
+            }
+        }
+
+        ToolTip {
+            id: toolTip
+            x: inQrcIcon.width + 5
+            y: -5
+
+            delay: 800
+            text: "This file is in the project’s QRC resource file"
+            enabled:  model && !model.isDir && model.inQrc
+
+            background: Rectangle {
+                color: "#FAFAFA"
+                border.color: "black"
+                border.width: 0.5
+            }
+
+            function openToolTip(){
+                if(enabled){
+                    open()
+                }
+            }
+
+            function closeToolTip(){
+                if(enabled){
+                    toolTip.close()
+                }
+            }
+        }
     }
 
     Loader {
