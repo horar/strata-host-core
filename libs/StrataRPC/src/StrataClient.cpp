@@ -31,6 +31,8 @@ StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *
 
 StrataClient::~StrataClient()
 {
+    connector_->deleteLater();
+
     connectorThread_->exit(0);
     if (false == connectorThread_->wait(500)) {
         qCCritical(logCategoryStrataClient) << "Terminating connector thread.";
