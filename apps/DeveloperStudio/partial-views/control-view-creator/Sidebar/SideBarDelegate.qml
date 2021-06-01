@@ -241,13 +241,6 @@ Item {
         }
     }
 
-    function validQrcExtension(fileTypes,fileName){
-        switch(fileTypes){
-            case "qml": "This is a valid qml file"
-            cas
-        }
-    }
-
     Connections {
         target: openFilesModel
 
