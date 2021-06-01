@@ -11,6 +11,8 @@ Item {
     readonly property alias count: repeater.count
     property bool exclusive: true
     property int orientation: Qt.Horizontal
+//    property color textColor: "red"
+//    property color color: "green"
 
     /* Holds indexes of checked buttons in power of 2 format:
        for example:
@@ -34,6 +36,39 @@ Item {
         return checkedIndices & (1 << index)
     }
 
+    property color textColor: {
+        if (repeater.children.checked) {
+            if (repeater.children.enabled) {
+                return "#ffffff"
+            } else {
+                return "#4dffffff"
+            }
+        } else {
+            if (repeater.children.enabled) {
+                return "#26282a"
+            } else {
+                return "#4d26282a"
+            }
+        }
+    }
+
+    property color color: {
+        if (repeater.children.checked) {
+            if (repeater.children.down) {
+                return "#79797a"
+            } else {
+                return "#353637"
+            }
+        } else {
+            if (repeater.children.down) {
+                return "#cfcfcf"
+            } else {
+                return "#e0e0e0"
+            }
+        }
+    }
+
+
     GridLayout {
         id: strip
         anchors.fill: parent
@@ -46,7 +81,7 @@ Item {
         Repeater {
             id: repeater
 
-            delegate: SGWidgets.SGButton {
+            delegate: Button {
                 id: buttonDelegate
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -54,16 +89,20 @@ Item {
                 text: modelData
                 checkable: true
                 checked: checkedIndices & powIndex
-                roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
-                roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
-                roundedTop: orientation == Qt.Vertical ? index === 0 : true
-                roundedBottom: orientation == Qt.Vertical ? index === repeater.count - 1 : true
+
+                Component.onCompleted: {
+                    background.color = Qt.binding(() => {return control.color})
+                    contentItem.color = Qt.binding(() => {return control.textColor})
+                }
+
+                // roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
+                // roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
+                // roundedTop: orientation == Qt.Vertical ? index === 0 : true
+                // roundedBottom: orientation == Qt.Vertical ? index === repeater.count - 1 : true
 
                 property int powIndex: 1 << index
-
                 onClicked: {
                     control.clicked(index)
-
                     if (control.exclusive) {
                         checkedIndices = 0
                         checkedIndices = powIndex
@@ -75,3 +114,5 @@ Item {
         }
     }
 }
+
+

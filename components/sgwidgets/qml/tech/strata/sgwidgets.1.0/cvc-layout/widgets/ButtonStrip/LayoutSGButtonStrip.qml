@@ -12,6 +12,9 @@ LayoutContainer {
     property alias exclusive: buttonStripObject.exclusive
     property alias orientation: buttonStripObject.orientation
     property alias checkedIndices: buttonStripObject.checkedIndices
+    property alias textColor: buttonStripObject.textColor
+    property alias color: buttonStripObject.color
+
 
     signal clicked ()
 
