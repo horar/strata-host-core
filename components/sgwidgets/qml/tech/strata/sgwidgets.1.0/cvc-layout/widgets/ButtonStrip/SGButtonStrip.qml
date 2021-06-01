@@ -11,8 +11,8 @@ Item {
     readonly property alias count: repeater.count
     property bool exclusive: true
     property int orientation: Qt.Horizontal
-//    property color textColor: "red"
-//    property color color: "green"
+    //    property color textColor: "red"
+    //    property color color: "green"
 
     /* Holds indexes of checked buttons in power of 2 format:
        for example:
@@ -110,6 +110,16 @@ Item {
                         checkedIndices ^= powIndex
                     }
                 }
+            }
+            MouseArea {
+                id: mouse
+                anchors {
+                    fill: parent
+                }
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                onPressed:  mouse.accepted = false
             }
         }
     }
