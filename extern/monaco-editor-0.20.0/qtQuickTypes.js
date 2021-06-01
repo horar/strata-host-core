@@ -5322,7 +5322,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
-            "isVisualWidget": false,
+            "isVisualWidget": true,
         },
         "Window": {
             "properties": {
