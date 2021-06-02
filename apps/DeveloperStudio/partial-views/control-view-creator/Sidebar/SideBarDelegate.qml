@@ -148,43 +148,24 @@ Item {
         source: "qrc:/sgimages/check-circle.svg"
 
         MouseArea {
+            id: toolTipMouse
             anchors.fill: parent
             hoverEnabled: true
-
-            onEntered: {
-                toolTip.openToolTip()
-            }
-
-            onExited: {
-                toolTip.closeToolTip()
-            }
         }
 
         ToolTip {
             id: toolTip
             x: inQrcIcon.width + 5
-            y: -5
+            y:  (inQrcIcon.height - height) / 2
+            visible: toolTipMouse.containsMouse
 
-            delay: 800
+            delay: 300
             text: "This file is in the project’s QRC resource file"
-            enabled:  model && !model.isDir && model.inQrc
 
             background: Rectangle {
                 color: "#FAFAFA"
                 border.color: "black"
                 border.width: 0.5
-            }
-
-            function openToolTip(){
-                if(enabled){
-                    open()
-                }
-            }
-
-            function closeToolTip(){
-                if(enabled){
-                    close()
-                }
             }
         }
     }
