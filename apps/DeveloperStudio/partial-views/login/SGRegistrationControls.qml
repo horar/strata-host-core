@@ -45,14 +45,14 @@ Item {
             ValidationField {
                 id: firstNameField
                 placeholderText: "First Name"
-                valid: text !== ""
+                valid: text.match(/(?:\S)/)
                 Layout.preferredWidth: 50
             }
 
             ValidationField {
                 id: lastNameField
                 placeholderText: "Last Name"
-                valid: text !== ""
+                valid: text.match(/(?:\S)/)
                 Layout.preferredWidth: 50
             }
         }
@@ -61,7 +61,7 @@ Item {
             id: companyField
             placeholderText: "Company"
             Layout.fillWidth: true
-            valid: text !== ""
+            valid: text.match(/(?:\S)/)
         }
 
         ValidationField {
