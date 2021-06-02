@@ -37,6 +37,9 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
 
 StrataServer::~StrataServer()
 {
+    connector_->deleteLater();
+    connector_.release();
+
     connectorThread_->exit(0);
     if (false == connectorThread_->wait(500)) {
         qCCritical(logCategoryStrataServer) << "Terminating connector thread.";
@@ -508,11 +511,6 @@ void StrataServer::connectorErrorHandler(ServerConnectorError errorType,
             errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
             break;
         case ServerConnectorError::FailedToSend:
-            qCCritical(logCategoryStrataServer) << errorMessage;
-            // error need to be updated
-            errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-            break;
-        case ServerConnectorError::FailedToRead:
             qCCritical(logCategoryStrataServer) << errorMessage;
             // error need to be updated
             errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
