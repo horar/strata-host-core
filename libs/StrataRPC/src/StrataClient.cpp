@@ -44,6 +44,7 @@ StrataClient::~StrataClient()
 
 void StrataClient::connectorSetup()
 {
+    qRegisterMetaType<strataRPC::ClientConnectorError>("ClientConnectorError");
     connector_->moveToThread(connectorThread_);
 
     connect(this, &StrataClient::initializeConnector, connector_.get(),
