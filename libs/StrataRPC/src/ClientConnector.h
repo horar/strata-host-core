@@ -12,6 +12,7 @@ class Connector;
 
 namespace strata::strataRPC
 {
+
 /**
  * Enum to describe errors
  */
@@ -26,7 +27,6 @@ class ClientConnector : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(ClientConnector);
-    Q_ENUM(ClientConnectorError);
 
 public:
     /**
@@ -111,3 +111,5 @@ private:
 };
 
 }  // namespace strata::strataRPC
+
+Q_DECLARE_METATYPE(strata::strataRPC::ClientConnectorError);

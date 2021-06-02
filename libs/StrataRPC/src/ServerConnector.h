@@ -10,7 +10,7 @@ namespace strata::strataRPC
 /**
  * Enum to describe errors
  */
-enum class ServerConnectorError : short { FailedToInitialize, FailedToSend, FailedToRead };
+enum class ServerConnectorError : short { FailedToInitialize, FailedToSend };
 
 class ServerConnector : public QObject
 {
@@ -18,8 +18,6 @@ class ServerConnector : public QObject
     Q_DISABLE_COPY(ServerConnector);
 
 public:
-    Q_ENUM(ServerConnectorError);
-
     /**
      * ServerConnector constructor
      * @param [in] serverAddress sets the server address
@@ -84,3 +82,5 @@ private:
 };
 
 }  // namespace strata::strataRPC
+
+Q_DECLARE_METATYPE(strata::strataRPC::ServerConnectorError);
