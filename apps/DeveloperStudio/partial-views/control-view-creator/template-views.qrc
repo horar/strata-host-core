@@ -18,5 +18,12 @@
         <file>template-views/basic/platformInterface.json</file>
         <file>template-views/template/control-views/DebugMenu.qml</file>
         <file>template-views/template/control-views/platformInterface.json</file>
+        <file>template-views/visual-editor/BlankSandbox.qml</file>
+        <file>template-views/visual-editor/CMakeLists.txt</file>
+        <file>template-views/visual-editor/Control.qml</file>
+        <file>template-views/visual-editor/Example.qml</file>
+        <file>template-views/visual-editor/qml.qrc</file>
+        <file>template-views/visual-editor/Warning.qml</file>
+        <file>template-views/images/visual-editor.jpg</file>
     </qresource>
 </RCC>
