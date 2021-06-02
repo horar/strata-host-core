@@ -19,8 +19,7 @@ enum class ClientConnectorError : short {
     FailedToInitialize,
     FailedToConnect,
     FailedToDisconnect,
-    FailedToSend,
-    FailedToRead
+    FailedToSend
 };
 
 class ClientConnector : public QObject
@@ -84,7 +83,7 @@ signals:
      */
     void newMessageReceived(const QByteArray &message);
 
-    void errorOccured(ClientConnectorError errorType, const QString &errorMessage);
+    void errorOccurred(ClientConnectorError errorType, const QString &errorMessage);
     void clientInitialized();
     void clientConnected();
     void clientDisconnected();
