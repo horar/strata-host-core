@@ -24,7 +24,7 @@ bool ClientConnector::initializeConnector()
     if (false == connectClient()) {
         qCCritical(logCategoryStrataClientConnector)
             << "Failed to open ClientConnector. Or Client already connected.";
-        emit errorOccurred(ClientConnectorError::FailedToConnect,
+        emit errorOccurred(ClientConnectorError::FailedToInitialize,
                           "Failed to open ClientConnector. Or Client already connected.");
         return false;
     }
