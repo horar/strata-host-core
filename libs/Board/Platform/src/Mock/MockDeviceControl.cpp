@@ -1,4 +1,8 @@
 #include <Mock/MockDeviceControl.h>
+#include <QFile>
+#include <Buypass.h>
+#include <CodecBase64.h>
+#include <QCryptographicHash>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -41,11 +45,6 @@ MockResponse MockDeviceControl::mockGetResponse() const
 MockVersion MockDeviceControl::mockGetVersion() const
 {
     return version_;
-}
-
-void MockDeviceControl::mockSetAsBootloader(bool isBootloader)
-{
-    isBootloader_ = isBootloader;
 }
 
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
@@ -119,6 +118,23 @@ bool MockDeviceControl::mockSetVersion(MockVersion version)
     }
     qCDebug(logCategoryDeviceMock) << "Version already configured to" << version_;
     return false;
+}
+
+bool MockDeviceControl::mockSetAsBootloader(bool isBootloader)
+{
+    if (isBootloader_ != isBootloader) {
+        isBootloader_ = isBootloader;
+        qCDebug(logCategoryDeviceMock) << "Configured is bootloader to" << isBootloader_;
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Is bootloader already configured to" << isBootloader_;
+    return false;
+}
+
+void MockDeviceControl::mockCreateMockFirmware()
+{
+    createMockFirmware();
+    getExpectedValues(mockFirmware_.fileName());
 }
 
 std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& request)
@@ -395,7 +411,6 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
     placeholderSplit.removeAt(0);
 
     if (0 == placeholderNamespace.compare("request") && placeholderSplit.length() >= 1) {
-        qCritical() << placeholder << "REQUEST!";
         const rapidjson::Value *targetDocumentNode = &requestDoc;
         for (auto placeholderPart : placeholderSplit) {
             if (!targetDocumentNode->IsObject() ||
@@ -410,31 +425,13 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
         if (targetDocumentNode->IsString()) {
             return targetDocumentNode->GetString();
         }
-    }
-
-    if (0 == placeholderNamespace.compare("response") && placeholderSplit.length() >= 1) {
-        qCritical() << placeholder << "RESPONSE!";
-        const rapidjson::Value *targetDocumentNode = &requestDoc;
-        for (auto placeholderPart : placeholderSplit) {
-            if (!targetDocumentNode->IsObject() ||
-                    !targetDocumentNode->HasMember(placeholderPart.toStdString().c_str())) {
-                //QFAIL_(
-                qCritical() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
-                return placeholder;
-            }
-            targetDocumentNode = &(*targetDocumentNode)[placeholderPart.toStdString().c_str()];
-        }
-
-        if (targetDocumentNode->IsString()) {
-            return targetDocumentNode->GetString();
-        }
         // fallthrough
     } // add other namespaces as required in the future (e.g. refer to mock variables)
-    qWarning() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
+    //qWarning() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
     return placeholder;  // fallback, return the value as is
 }
 
-std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector<QByteArray> &responses,
+const std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector<QByteArray> &responses,
                                                                const rapidjson::Document &requestDoc)
 {
     std::vector<QByteArray> retVal;
@@ -450,8 +447,61 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
             QRegularExpressionMatch match = rxIterator.next();
             QString matchStr = match.captured(0);
             QString matchSubStr = match.captured(1);
-            // qDebug("%s -> %s", matchSubStr.toStdString().c_str(), getPlaceholderValue(matchSubStr,
-            // requestDoc).toStdString().c_str());
+            QString requestCmd = getPlaceholderValue(matchSubStr,requestDoc);
+            //qDebug("%s -> %s", matchSubStr.toStdString().c_str(), getPlaceholderValue(matchSubStr,
+            //requestDoc).toStdString().c_str());
+
+            if (actualChunk_ < expectedChunksCount_) {
+
+                if (matchSubStr == "response.payload.size") {
+                    replacements.insert({matchStr, QString::number(mockFirmware_.size())});
+                }
+                if (matchSubStr == "response.payload.chunks") {
+                    replacements.insert({matchStr, QString::number(expectedChunksCount_)});
+                }
+
+                if (matchSubStr == "response.payload.chunk.number") {
+                    replacements.insert({matchStr, QString::number(actualChunk_)});
+                }
+                if (matchSubStr == "response.payload.chunk.size") {
+                    replacements.insert({matchStr, QString::number(expectedChunkSize_.at(actualChunk_))});
+                }
+                if (matchSubStr == "response.payload.chunk.crc") {
+                    replacements.insert({matchStr, QString::number(expectedChunkCrc_.at(actualChunk_))});
+                }
+                if (matchSubStr == "response.payload.chunk.data") {
+                    replacements.insert({matchStr, expectedChunkData_.at(actualChunk_)});
+                }
+
+                if (requestCmd == "start_backup_firmware") {
+                    actualChunk_ = -1;
+                }
+
+                if (requestCmd == "backup_firmware") {
+                    actualChunk_++;
+                }
+            } else {
+                if (matchSubStr == "response.payload.size") {
+                    replacements.insert({matchStr, QString::number(0)});
+                }
+                if (matchSubStr == "response.payload.chunks") {
+                    replacements.insert({matchStr, QString::number(0)});
+                }
+
+                if (matchSubStr == "response.payload.chunk.number") {
+                    replacements.insert({matchStr, QString::number(0)});
+                }
+                if (matchSubStr == "response.payload.chunk.size") {
+                    replacements.insert({matchStr, QString::number(0)});
+                }
+                if (matchSubStr == "response.payload.chunk.crc") {
+                    replacements.insert({matchStr, QString::number(0)});
+                }
+                if (matchSubStr == "response.payload.chunk.data") {
+                    replacements.insert({matchStr, ""});
+                }
+            }
+
             replacements.insert({matchStr, getPlaceholderValue(matchSubStr, requestDoc)});
         }
     }
@@ -462,10 +512,67 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
         for (const auto& replacement : replacements) {
             responseStr = responseStr.replace(replacement.first, replacement.second);
         }
-        // qDebug("%s", responseStr.toStdString().c_str());
+        //qDebug("%s", responseStr.toStdString().c_str());
         retVal.push_back(responseStr.toUtf8());
     }
     return retVal;
+}
+
+void MockDeviceControl::getExpectedValues(QString firmwarePath)
+{
+    QFile firmware(firmwarePath);
+
+    if (firmware.open(QIODevice::ReadOnly)) {
+        QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
+        hash.addData(&firmware);
+
+        expectedMd5_ = hash.result().toHex();
+
+        expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + mock_firmware_constants::CHUNK_SIZE) / mock_firmware_constants::CHUNK_SIZE); //Get expected chunks count
+
+        firmware.seek(0);
+        while (!firmware.atEnd()) {
+            int chunkSize = mock_firmware_constants::CHUNK_SIZE;
+            qint64 remainingFileSize = firmware.size() - firmware.pos();
+
+            if (remainingFileSize <= mock_firmware_constants::CHUNK_SIZE) {
+                chunkSize = static_cast<int>(remainingFileSize);
+            }
+            QVector<quint8> chunk(chunkSize);
+            qint64 bytesRead = firmware.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
+
+            expectedChunkSize_.append(bytesRead);
+
+            size_t firmwareBase64Size = base64::encoded_size(static_cast<size_t>(bytesRead));
+            QByteArray firmwareBase64;
+            firmwareBase64.resize(static_cast<int>(firmwareBase64Size));
+            base64::encode(firmwareBase64.data(), chunk.data(), static_cast<size_t>(bytesRead));
+
+            expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead)))); //Get expected chunk crc
+
+            if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
+                expectedChunkData_.append(firmwareBase64);
+            }
+        }
+    }
+    else {
+        qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
+    }
+}
+
+void MockDeviceControl::createMockFirmware()
+{
+    mockFirmware_.createNativeFile(QStringLiteral("mockFirmware"));
+
+    if (mockFirmware_.open() == false) {
+        qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
+    } else {
+        QTextStream mockFirmwareOut(&mockFirmware_);
+        mockFirmwareOut << mock_firmware_constants::mockFirmwareData;
+        mockFirmwareOut.flush();
+        mockFirmware_.close();
+        qCDebug(logCategoryDeviceMock) << "Mock firmware file prepared with the size of" << mockFirmware_.size() << "bytes";
+    }
 }
 
 } // namespace strata::device

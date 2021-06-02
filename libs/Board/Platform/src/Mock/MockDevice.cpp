@@ -13,6 +13,7 @@ MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bo
     qCDebug(logCategoryDeviceMock).nospace().noquote()
         << "Created new mock device, ID: " << deviceId_ << ", name: " << deviceName_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
+    control_.mockCreateMockFirmware();
 }
 
 MockDevice::~MockDevice()

@@ -3,6 +3,8 @@
 #include <Mock/MockDeviceConstants.h>
 #include <rapidjson/document.h>
 #include <QString>
+#include <QVector>
+#include <QTemporaryFile>
 
 namespace strata::device {
 
@@ -24,19 +26,24 @@ public:
     MockResponse mockGetResponse() const;
     MockVersion mockGetVersion() const;
 
-    void mockSetAsBootloader(bool isBootloader);
     bool mockSetOpenEnabled(bool enabled);
     bool mockSetLegacy(bool legacy);
     bool mockSetCommand(MockCommand command);
     bool mockSetResponse(MockResponse response);
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
+    bool mockSetAsBootloader(bool isBootloader);
+    void mockCreateMockFirmware();
 
 private:
-    static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
+    const std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
                                                        const rapidjson::Document &requestDoc);
-    static QString getPlaceholderValue(const QString placeholder,
+    QString getPlaceholderValue(const QString placeholder,
                                        const rapidjson::Document &requestDoc);
+
+    void createMockFirmware();
+    void getExpectedValues(QString firmwarePath);
+
 private:
     bool isOpenEnabled_ = true;
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
@@ -44,6 +51,15 @@ private:
     MockCommand command_ = MockCommand::Any_command;
     MockResponse response_ = MockResponse::Normal;
     MockVersion version_ = MockVersion::Version_1;
+
+    //variables used to store mock firmware's expected values
+    QTemporaryFile mockFirmware_;
+    int actualChunk_ = -1;
+    int expectedChunksCount_ = 0;
+    QString expectedMd5_;
+    QVector<quint64> expectedChunkSize_;
+    QVector<QByteArray> expectedChunkData_;
+    QVector<quint16> expectedChunkCrc_;
 };
 
 } // namespace strata::device
