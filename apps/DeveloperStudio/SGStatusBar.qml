@@ -41,8 +41,6 @@ Rectangle {
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
 
-    property bool fullScreenMode: mainWindow.fullScreenMode
-
     onHasNotificationsChanged: {
         alertIconContainer.visible = hasNotifications
     }
@@ -557,8 +555,7 @@ Rectangle {
                     hoverEnabled: false
                     text: qsTr("Full Screen")
                     onClicked: {
-                        mainWindow.changeFullScreenMode()
-                        profileMenu.close()
+                        fullScreenSwitch.toggled()
                     }
                 }
 
@@ -566,9 +563,23 @@ Rectangle {
                     id: fullScreenSwitch
                     Layout.preferredWidth: 26
                     Layout.preferredHeight: 16
-                    checked: fullScreenMode
+                    checked: mainWindow.visibility === Window.FullScreen
                     onToggled: {
-                        mainWindow.changeFullScreenMode()
+                        if (mainWindow.visibility === Window.FullScreen) {
+                            mainWindow.showNormal()
+                        } else {
+                            mainWindow.showFullScreen()
+
+                            Notifications.createNotification(
+                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
+                            Notifications.Info,
+                            "current",
+                            {
+                                "singleton": true,
+                                "timeout": 4000
+                            }
+                            )
+                        }
                         profileMenu.close()
                     }
                 }

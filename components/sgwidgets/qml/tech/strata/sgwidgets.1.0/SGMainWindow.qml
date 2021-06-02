@@ -8,15 +8,9 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 ApplicationWindow {
     id: window
 
-    property bool fullScreen: false
+    flags: flags | Qt.WindowFullscreenButtonHint
 
     onClosing: {
-        settings.visibility = window.visibility
-        fullScreen = (settings.visibility === Window.FullScreen) ? true : false
-
-        if (settings.visibility === Window.Maximized) {
-            window.showNormal()
-        }
         SGWidgets.SGDialogJS.destroyAllDialogs()
     }
 
@@ -24,13 +18,12 @@ ApplicationWindow {
         id: settings
         category: "ApplicationWindow"
 
-        property alias x: window.x
-        property alias y: window.y
-        property alias width: window.width
-        property alias height: window.height
-        property alias fullScreen: window.fullScreen
+        property int x: window.x
+        property int y: window.y
+        property int width: window.width
+        property int height: window.height
 
-        property int visibility: 0
+        property alias visibility: window.visibility
         property int desktopAvailableWidth
         property int desktopAvailableHeight
 
@@ -41,7 +34,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        fullScreen = settings.fullScreen
         var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
                 && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
 
@@ -50,10 +42,6 @@ ApplicationWindow {
 
         if (settings.visibility === Window.Maximized && savedScreenLayout) {
             window.showMaximized()
-        }
-
-        if (fullScreen) {
-            window.showFullScreen()
         }
     }
 }

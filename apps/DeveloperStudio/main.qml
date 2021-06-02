@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 
@@ -23,6 +24,7 @@ import tech.strata.notifications 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
+
     visible: true
     width: 1200
     height: 900
@@ -30,7 +32,6 @@ SGWidgets.SGMainWindow {
     minimumWidth: 1024
     title: Qt.application.displayName
 
-    property bool fullScreenMode: false
     property alias notificationsInbox: notificationsInbox
 
     signal initialized()
@@ -42,43 +43,35 @@ SGWidgets.SGMainWindow {
         mainWindow.height = 900
     }
 
-    function changeFullScreenMode() {
-        if (fullScreenMode === false) {
-                mainWindow.showFullScreen()
-                fullScreenMode = true
-                Notifications.createNotification(
-                    "Press " + escapeFullScreenMode.sequence + " to exit full screen",
-                    Notifications.Info,
-                    "current",
-                    {
-                        "singleton": true
-                    }
-                )
-            } else {
-                mainWindow.showNormal()
-                fullScreenMode = false
-            }
-    }
-
     Shortcut {
         id: enterFullScreenMode
         sequence: StandardKey.FullScreen
         onActivated: {
-            changeFullScreenMode()
+            if (mainWindow.visibility === Window.FullScreen) {
+                mainWindow.showNormal()
+            } else {
+                mainWindow.showFullScreen()
+
+                Notifications.createNotification(
+                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
+                            Notifications.Info,
+                            "current",
+                            {
+                                "singleton": true,
+                                "timeout": 4000
+                            }
+                            )
+            }
         }
     }
 
     Shortcut {
         id: escapeFullScreenMode
+
+        enabled: mainWindow.visibility === Window.FullScreen
         sequence: "Escape"
         onActivated: {
-            if (fullScreenMode) {
-                mainWindow.showNormal()
-                fullScreenMode = false
-                if(mainWindow.width === Screen.width && mainWindow.height === Screen.height) {
-                    resetWindowSize()
-                }
-            }
+            mainWindow.showNormal()
         }
     }
 
@@ -90,7 +83,6 @@ SGWidgets.SGMainWindow {
             PlatformSelection.initialize(sdsModel.coreInterface)
         }
         initialized()
-        fullScreenMode = (mainWindow.visibility === ApplicationWindow.FullScreen) ? true : false
     }
 
     onClosing: {
