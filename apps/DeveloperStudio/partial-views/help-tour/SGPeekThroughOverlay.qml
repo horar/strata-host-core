@@ -14,11 +14,16 @@ Item {
      property real globalOpacity: .5
 
      function setTarget(target) {
-         var remappedTarget = target.mapToItem(root.parent, 0, 0)
-         mockTarget.x = remappedTarget.x
-         mockTarget.y = remappedTarget.y
-         mockTarget.width = target.width
-         mockTarget.height = target.height
+         mockTarget.x = Qt.binding(function() {
+             target.x // dummy to force evaluation
+             return target.mapToItem(root.parent, 0, 0).x
+         })
+         mockTarget.y = Qt.binding(function() {
+             target.y // dummy to force evaluation
+             return target.mapToItem(root.parent, 0, 0).y
+         })
+         mockTarget.width = Qt.binding(function() { return target.width })
+         mockTarget.height = Qt.binding(function() { return target.height })
 
          updateAlignment()
      }
