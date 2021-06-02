@@ -32,6 +32,7 @@ StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *
 StrataClient::~StrataClient()
 {
     connector_->deleteLater();
+    connector_.release();
 
     connectorThread_->exit(0);
     if (false == connectorThread_->wait(500)) {
@@ -54,7 +55,7 @@ void StrataClient::connectorSetup()
     connect(connector_.get(), &ClientConnector::newMessageReceived, this,
             &StrataClient::newServerMessage);
     connect(this, &StrataClient::newServerMessageParsed, this, &StrataClient::dispatchHandler);
-    connect(connector_.get(), &ClientConnector::errorOccured, this,
+    connect(connector_.get(), &ClientConnector::errorOccurred, this,
             &StrataClient::connectorErrorHandler);
 
     connectorThread_->start();
@@ -83,7 +84,7 @@ bool StrataClient::connectServer()
         }
     });
 
-    connect(connector_.get(), &ClientConnector::errorOccured, this, [this]() {
+    connect(connector_.get(), &ClientConnector::errorOccurred, this, [this]() {
         QString errorMessage(QStringLiteral("Failed to connect to the server."));
         qCCritical(logCategoryStrataClient) << errorMessage;
         emit errorOccurred(ClientError::FailedToConnect, errorMessage);
@@ -364,11 +365,6 @@ void StrataClient::connectorErrorHandler(ClientConnectorError errorType,
             // log and handle the error here!
             qCCritical(logCategoryStrataClient) << errorMessage;
             emit errorOccurred(ClientError::FailedToSendRequest, errorMessage);
-            break;
-        case ClientConnectorError::FailedToRead:
-            // log and handle the error here!
-            qCCritical(logCategoryStrataClient) << errorMessage;
-            emit errorOccurred(ClientError::FailedToBuildServerMessage, errorMessage);
             break;
     }
 }
