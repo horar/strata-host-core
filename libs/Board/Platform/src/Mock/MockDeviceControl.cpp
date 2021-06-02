@@ -2,6 +2,7 @@
 #include <QFile>
 #include <Buypass.h>
 #include <CodecBase64.h>
+#include <QDir>
 #include <QCryptographicHash>
 
 #include "logging/LoggingQtCategories.h"
@@ -563,6 +564,7 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
 void MockDeviceControl::createMockFirmware()
 {
     mockFirmware_.createNativeFile(QStringLiteral("mockFirmware"));
+    mockFirmware_.setAutoRemove(true);
 
     if (mockFirmware_.open() == false) {
         qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";

@@ -36,4 +36,6 @@ Ut id sapien nec neque gravida feugiat a nec arcu. Integer id est sit amet tellu
 
 Nunc malesuada, ipsum eu dapibus euismod, tortor nibh bibendum ex, a feugiat turpis elit id libero. Fusce laoreet, eros sagittis vestibulum dapibus, purus orci pulvinar nisi, dignissim egestas quam sapien vel enim. Cras consequat, purus vitae iaculis mattis, nisl tortor lobortis nibh, pulvinar consequat purus justo nec lacus. Nunc rhoncus aliquet accumsan. Aliquam vitae diam tristique, finibus lectus a, pulvinar diam. Maecenas iaculis ex vitae quam placerat, vitae maximus neque vehicula. Nunc vel rhoncus justo, imperdiet mattis diam. Etiam rhoncus consectetur volutpat.)";
 
+const QByteArray emptyString = "";
+
 } // namespace strata::FlasherTestConstants
