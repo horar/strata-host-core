@@ -1,5 +1,6 @@
 #include "ConnectorsTest.h"
 
+#include <QSignalSpy>
 #include <QVector>
 
 void ConnectorsTest::waitForZmqMessages(int delay)
@@ -17,10 +18,24 @@ void ConnectorsTest::waitForZmqMessages(int delay)
 void ConnectorsTest::testOpenServerConnectorFaild()
 {
     strata::strataRPC::ServerConnector connector(address_);
+    QSignalSpy serverConnected_1(&connector, &strata::strataRPC::ServerConnector::serverConnected);
+    QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccred);
     QCOMPARE_(connector.initilizeConnector(), true);
+    QCOMPARE_(serverConnected_1.isEmpty(), false);
+    QCOMPARE_(errorOccured_1.isEmpty(), true);
 
     strata::strataRPC::ServerConnector connectorDublicate(address_);
+    QSignalSpy serverConnected_2(&connectorDublicate,
+                                 &strata::strataRPC::ServerConnector::serverConnected);
+    QSignalSpy errorOccured_2(&connectorDublicate,
+                              &strata::strataRPC::ServerConnector::errorOccred);
     QCOMPARE_(connectorDublicate.initilizeConnector(), false);
+    QCOMPARE_(serverConnected_2.isEmpty(), true);
+    QCOMPARE_(errorOccured_2.isEmpty(), false);
+    QCOMPARE_(errorOccured_2.count(), 1);
+    auto errorType =
+        qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured_2.takeFirst().at(0));
+    QCOMPARE_(errorType, strata::strataRPC::ServerConnectorError::FailedToInitialize);
 }
 
 void ConnectorsTest::testServerAndClient()
@@ -32,7 +47,14 @@ void ConnectorsTest::testServerAndClient()
 
     QByteArray client_id = "client_1";
     strata::strataRPC::ClientConnector client(address_, client_id);
+
+    QSignalSpy clientInitialized(&client, &strata::strataRPC::ClientConnector::clientInitialized);
+    QSignalSpy clientConnected(&client, &strata::strataRPC::ClientConnector::clientConnected);
+
     QCOMPARE_(client.initializeConnector(), true);
+
+    QCOMPARE_(clientInitialized.count(), 1);
+    QCOMPARE_(clientConnected.count(), 1);
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
@@ -167,6 +189,9 @@ void ConnectorsTest::testDisconnectClient()
 
     bool clientReceivedMessage = false;
     strata::strataRPC::ClientConnector client(address_, "AA");
+
+    QSignalSpy clientDisconnected(&client, &strata::strataRPC::ClientConnector::clientDisconnected);
+
     QCOMPARE_(client.initializeConnector(), true);
     connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&clientReceivedMessage](const QByteArray &) { clientReceivedMessage = true; });
@@ -179,6 +204,9 @@ void ConnectorsTest::testDisconnectClient()
     QVERIFY_(true == clientReceivedMessage);
 
     QCOMPARE_(client.disconnectClient(), true);
+    QCOMPARE_(clientDisconnected.count(), 1);
+    clientDisconnected.clear();
+
     waitForZmqMessages();
 
     QCOMPARE_(client.connectClient(), true);
@@ -193,15 +221,23 @@ void ConnectorsTest::testDisconnectClient()
     serverReceivedMessage = false;
     clientReceivedMessage = false;
     QCOMPARE_(client.disconnectClient(), true);
+    QCOMPARE_(clientDisconnected.count(), 1);
+    clientDisconnected.clear();
+
     server.sendMessage("AA", "test from the server");
     waitForZmqMessages();
     QVERIFY_(false == serverReceivedMessage);
     QVERIFY_(false == clientReceivedMessage);
 
     QCOMPARE_(client.disconnectClient(), false);
+    QCOMPARE_(clientDisconnected.count(), 0);
+    clientDisconnected.clear();
+
     QCOMPARE_(client.connectClient(), true);
     QCOMPARE_(client.connectClient(), false);
     QCOMPARE_(client.disconnectClient(), true);
+    QCOMPARE_(clientDisconnected.count(), 1);
+    clientDisconnected.clear();
 }
 
 void ConnectorsTest::testFailedToSendMessageFromClientConnector()
@@ -219,10 +255,72 @@ void ConnectorsTest::testFailedToSendMessageFromClientConnector()
 
 void ConnectorsTest::testFailedToSendMessageFromServerConnector()
 {
+    qRegisterMetaType<strata::strataRPC::ServerConnectorError>("ServerConnectorError");
     strata::strataRPC::ServerConnector server(address_);
-
+    QSignalSpy errorOccured(&server, &strata::strataRPC::ServerConnector::errorOccred);
     QVERIFY_(false == server.sendMessage("RANDOMID", "This should fail."));
+    QCOMPARE_(errorOccured.isEmpty(), false);
+    auto errorType =
+        qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured.takeFirst().at(0));
+    QCOMPARE_(errorType, strata::strataRPC::ServerConnectorError::FailedToSend);
 
     QVERIFY_(server.initilizeConnector());
     QVERIFY_(server.sendMessage("RANDOMID", "This should pass."));
+}
+
+void ConnectorsTest::testClientConnectorErrorSignals()
+{
+    qRegisterMetaType<strata::strataRPC::ClientConnectorError>("ClientConnectorError");
+
+    // create connector & initialize it
+    strata::strataRPC::ClientConnector client(address_);
+    client.initializeConnector();
+
+    QSignalSpy errorOccurred(&client, &strata::strataRPC::ClientConnector::errorOccurred);
+
+    // try to re init --> this will cause an error
+    {
+        QCOMPARE_(client.initializeConnector(), false);
+        QCOMPARE_(errorOccurred.count(), 2);
+        auto errorType =
+            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
+        QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToConnect);
+        errorType =
+            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeLast().at(0));
+        QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToInitialize);
+        errorOccurred.clear();
+    }
+
+    // try to reconnect --> this will cause an error
+    {
+        QCOMPARE_(client.connectClient(), false);
+        QCOMPARE_(errorOccurred.count(), 1);
+        auto errorType =
+            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
+        QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToConnect);
+        errorOccurred.clear();
+    }
+
+    // disconnect
+    client.disconnectClient();
+
+    // re disconnect --> this will cause error
+    {
+        QCOMPARE_(client.disconnectClient(), false);
+        QCOMPARE_(errorOccurred.count(), 1);
+        auto errorType =
+            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
+        QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToDisconnect);
+        errorOccurred.clear();
+    }
+
+    // try to send --> this will cause an error
+    {
+        QCOMPARE_(client.sendMessage("test"), false);
+        QCOMPARE_(errorOccurred.count(), 1);
+        auto errorType =
+            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
+        QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToSend);
+        errorOccurred.clear();
+    }
 }
