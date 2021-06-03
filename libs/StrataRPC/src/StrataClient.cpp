@@ -59,12 +59,6 @@ void StrataClient::connectorSetup()
     connect(connector_.get(), &ClientConnector::errorOccurred, this,
             &StrataClient::connectorErrorHandler);
 
-    connectorThread_->start();
-}
-
-bool StrataClient::connectServer()
-{
-    // this might duplicate signal/slot connection!
     connect(connector_.get(), &ClientConnector::clientInitialized, this, [this]() {
         auto deferredRequest = sendRequest("register_client", {{"api_version", "2.0"}});
 
@@ -91,13 +85,17 @@ bool StrataClient::connectServer()
         emit errorOccurred(ClientError::FailedToConnect, errorMessage);
     });
 
+    connectorThread_->start();
+}
+
+bool StrataClient::connectServer()
+{
     emit initializeConnector();
     return true;
 }
 
 bool StrataClient::disconnectServer()
 {
-    // we might need to sunchornize this, to make sure that the message is sent before closing the socket.
     sendRequest("unregister", {});
     emit disconnectClient();
 
