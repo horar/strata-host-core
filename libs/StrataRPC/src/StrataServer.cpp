@@ -23,8 +23,6 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
                                                              this, std::placeholders::_1));
     }
 
-    qCDebug(logCategoryStrataServer) << "thread id:" << QThread::currentThreadId();
-
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
     connector_->moveToThread(connectorThread_);
 

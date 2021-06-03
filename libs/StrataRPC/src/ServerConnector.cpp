@@ -15,7 +15,6 @@ ServerConnector::~ServerConnector()
 
 bool ServerConnector::initilizeConnector()
 {
-    qCDebug(logCategoryStrataServerConnector) << "thread id:" << QThread::currentThreadId();
     using Connector = strata::connector::Connector;
 
     if (connector_) {
@@ -42,8 +41,6 @@ bool ServerConnector::initilizeConnector()
 
 void ServerConnector::readNewMessages(/*int socket*/)
 {
-    qCDebug(logCategoryStrataServerConnector) << "thread id:" << QThread::currentThreadId();
-
     readSocketNotifier_->setEnabled(false);
     std::string message;
     for (;;) {
@@ -72,8 +69,6 @@ void ServerConnector::readMessages()
 
 bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServerConnector) << "thread id:" << QThread::currentThreadId();
-
     qCDebug(logCategoryStrataServerConnector).nospace().noquote()
         << "Sending message. Client ID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
