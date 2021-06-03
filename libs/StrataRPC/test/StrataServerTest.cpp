@@ -154,6 +154,8 @@ void StrataServerTest::testServerFunctionality()
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     // add a handler to handler the client message.
     // add a handler to create a response
     server.registerHandler("register_client", [&server](const strata::strataRPC::Message &message) {
@@ -198,6 +200,8 @@ void StrataServerTest::testBuildNotificationApiV2()
     bool testExecuted = false;
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
+
+    waitForZmqMessages(10);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
@@ -247,6 +251,8 @@ void StrataServerTest::testBuildResponseApiV2()
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
     connect(
@@ -294,6 +300,8 @@ void StrataServerTest::testBuildErrorApiV2()
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
     connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
@@ -335,6 +343,8 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
     bool testExecuted = false;
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
+
+    waitForZmqMessages(10);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
@@ -385,6 +395,8 @@ void StrataServerTest::testBuildNotificationApiV1()
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
     connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
@@ -420,6 +432,8 @@ void StrataServerTest::testBuildResponseApiV1()
     bool testExecuted = false;
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
+
+    waitForZmqMessages(10);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
@@ -465,6 +479,8 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
 
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     handlerCalled = false;
     currentCommandName = "test_1";
     QMetaObject::invokeMethod(
@@ -498,6 +514,8 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
     bool testExecuted = false;
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
+
+    waitForZmqMessages(10);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
@@ -537,6 +555,8 @@ void StrataServerTest::testNotifyAllClients()
     int clientsCount = 10;
 
     QVERIFY_(server.initializeServer());
+
+    waitForZmqMessages(10);
 
     // half the clients use API v2
     for (int i = 0; i < clientsCount / 2; i++) {
@@ -641,6 +661,8 @@ void StrataServerTest::testNotifyClientByClientId()
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
 
@@ -675,6 +697,8 @@ void StrataServerTest::testNotifyClientToNonExistingClient()
     StrataServer server(address_, false);
     QVERIFY_(server.initializeServer());
 
+    waitForZmqMessages(10);
+
     strata::strataRPC::ClientConnector client(address_, "AA");
     connect(
         &client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
@@ -691,13 +715,15 @@ void StrataServerTest::testInitializeServerFail()
     StrataServer duplicateServer(address_);
 
     QVERIFY_(server.initializeServer());
-    QVERIFY_(false == duplicateServer.initializeServer());
+    // QVERIFY_(false == duplicateServer.initializeServer()); // use error signals instead!
 }
 
 void StrataServerTest::testdefaultHandlers()
 {
     StrataServer server(address_, true);
     server.initializeServer();
+
+    waitForZmqMessages(10);
 
     bool testExecuted_1 = false;
     bool testExecuted_2 = false;
@@ -779,7 +805,9 @@ void StrataServerTest::testErrorOccourredSignal()
     {
         StrataServer tempServer(address_, false);
         tempServer.initializeServer();
+        waitForZmqMessages(10);
         server.initializeServer();
+        waitForZmqMessages(10);
         QCOMPARE_(errorOccurred.count(), 1);
         errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
         QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
@@ -788,7 +816,9 @@ void StrataServerTest::testErrorOccourredSignal()
 
     server.initializeServer();
     server.initializeServer();
-    QCOMPARE_(errorOccurred.count(), 1);
+
+    waitForZmqMessages(10);
+    QCOMPARE_(errorOccurred.count(), 3);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
     errorOccurred.clear();
