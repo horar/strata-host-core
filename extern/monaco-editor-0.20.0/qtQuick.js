@@ -746,17 +746,11 @@ function registerQmlAsLanguage() {
                 var currText = model.getLineContent(position.lineNumber)
                 var currWords = currText.replace("\t", "").split(" ");
                 var active = currWords[currWords.length - 1]
-                fullRange = model.getFullModelRange()
-                topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-                bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 if (topOfFile !== null && bottomOfFile !== null) {
                     var getLineContent = model.getLineContent(topOfFile.range.startLineNumber)
                     var checkLine = getLineContent.replace("\t", "").split(/\{|\t/)[0].trim()
-                    if (qtTypeJson["sources"].hasOwnProperty(checkLine)) {
-                        createMatchingPairs(model)
-                        initializeQtQuick(model)
-                    } else {
+                    if (!qtTypeJson["sources"].hasOwnProperty(checkLine)) {
                         return { suggestions: [] }
                     }
                 }
@@ -1039,6 +1033,12 @@ function registerQmlAsLanguage() {
     }
 
     editor.getModel().onDidChangeContent((event) => {
+        const model = editor.getModel()
+        fullRange = model.getFullModelRange()
+        topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
+        bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
+        createMatchingPairs(model)
+        initializeQtQuick(model)
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getLine.includes("id:")) {

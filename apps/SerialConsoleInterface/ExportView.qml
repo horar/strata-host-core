@@ -44,9 +44,10 @@ FocusScope {
                 hasHelperText: false
                 filePath: model.platform.scrollbackModel.exportFilePath
                 label: "Output File"
-                dialogLabel: "Select Export File"
+                dialogLabel: "Export to file"
                 dialogSelectExisting: false
-                dialogDefaultSuffix: "txt"
+                dialogDefaultSuffix: "log"
+                dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
                 focus: true
             }
 
@@ -146,9 +147,10 @@ FocusScope {
                 label: "Output File"
                 enabled: model.platform.scrollbackModel.autoExportIsActive === false
 
-                dialogLabel: "Select Export File"
+                dialogLabel: "Export to file"
                 dialogSelectExisting: false
-                dialogDefaultSuffix: "txt"
+                dialogDefaultSuffix: "log"
+                dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
             }
 
             SGWidgets.SGTag {

@@ -279,7 +279,10 @@ function change_password_result(response) {
 function validate_token()
 {
     if (Rest.jwt !== ""){
-        var headers = {"app": "strata"}
+        let headers = {
+            "app": "strata",
+            "version": Rest.versionNumber(),
+        }
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")

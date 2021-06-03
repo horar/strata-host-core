@@ -14,8 +14,8 @@ const data = [
                    "path": ":/partial-views/control-view-creator/template-views/template/"
                },
                {
-                   "name": "Motor Development Kit",
-                   "image": "qrc:/partial-views/control-view-creator/template-views/images/mdk.jpg",
-                   "path": ":/partial-views/control-view-creator/template-views/mdk/"
+                   "name": "Visual Editor Example",
+                   "image": "qrc:/partial-views/control-view-creator/template-views/images/visual-editor.jpg",
+                   "path": ":/partial-views/control-view-creator/template-views/visual-editor/"
                },
            ]

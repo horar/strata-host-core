@@ -6,9 +6,7 @@
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        // start_user_content
         onClicked: {
-            console.log("Clicked:", objectName, layoutInfo.uuid)
+            console.log("Clicked!")
         }
-        // end_user_content
     } // end_%1
