@@ -60,6 +60,16 @@ Item {
 
      Item {
          id: mockTarget
+
+         onVisibleChanged: {
+             if (visible === false) {
+                 // remove bindings if no longer required
+                 x = 0
+                 y = 0
+                 width = 0
+                 height = 0
+             }
+         }
      }
 
      Rectangle {
