@@ -12,11 +12,6 @@ Item {
     property bool exclusive: true
     property int orientation: Qt.Horizontal
 
-
-    //    property color textColor: "red"
-
-    //    property color color: "green"
-
     /* Holds indexes of checked buttons in power of 2 format:
        for example:
        0       - no button checked
@@ -38,8 +33,6 @@ Item {
     function isChecked(index) {
         return checkedIndices & (1 << index)
     }
-
-
 
     GridLayout {
         id: strip
@@ -66,7 +59,6 @@ Item {
                     contentItem.color = Qt.binding(() => {return buttonStripContainer.textColor(buttonDelegate)})
                 }
 
-
                 property bool scaleToFit: false
                 property int powIndex: 1 << index
                 property bool roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
@@ -90,11 +82,11 @@ Item {
                         }
 
                         opacity: enabled ? 1 : 0.5
+                        radius: 4
+
                         Component.onCompleted: {
                             color = Qt.binding(() => {return buttonStripContainer.color(buttonDelegate)})
                         }
-                        radius: 4
-
                     }
                 }
 
@@ -110,9 +102,7 @@ Item {
 
                 MouseArea {
                     id: mouse
-                    anchors {
-                        fill: parent
-                    }
+                    anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
 
@@ -124,5 +114,3 @@ Item {
         }
     }
 }
-
-
