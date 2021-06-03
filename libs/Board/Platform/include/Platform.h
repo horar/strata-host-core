@@ -219,15 +219,17 @@ namespace strata::platform {
     signals:
         /**
          * Emitted when there is available new message from device.
+         * @param deviceId device ID
          * @param msg message from device
          */
         void messageReceived(QByteArray deviceId, PlatformMessage msg);
 
         /**
          * Emitted when message was written to device.
-         * @param msg writen message to device
+         * @param deviceId device ID
+         * @param msg writen raw message to device
          */
-        void messageSent(QByteArray deviceId, PlatformMessage msg);
+        void messageSent(QByteArray deviceId, QByteArray msg);
 
         /**
          * Emitted when error occured during communication on the serial port.

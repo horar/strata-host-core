@@ -95,7 +95,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
 }
 
 void Platform::messageSentHandler(QByteArray rawMsg) {
-    emit messageSent(device_->deviceId(), PlatformMessage(rawMsg));
+    emit messageSent(device_->deviceId(), rawMsg);
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
