@@ -58,6 +58,7 @@ Item {
          anchors {
              fill: root
          }
+         acceptedButtons: Qt.AllButtons
          onClicked: tourControl.close()
          onWheel: {} // Prevent views behind from scrolling, which will misalign the peekthrough
      }
