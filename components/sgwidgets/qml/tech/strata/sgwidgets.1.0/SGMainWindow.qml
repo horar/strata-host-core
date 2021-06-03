@@ -34,11 +34,15 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
-                && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
 
-        window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
-        window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
+        window.x = settings.x
+        window.y = settings.y
+
+        window.width = settings.width
+        window.height = settings.height
+
+        var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
+            && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
 
         if (settings.visibility === Window.Maximized && savedScreenLayout) {
             window.showMaximized()
