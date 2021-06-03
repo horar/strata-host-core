@@ -158,15 +158,8 @@ Item {
             x: inQrcIcon.width + 5
             y:  (inQrcIcon.height - height) / 2
             visible: toolTipMouse.containsMouse
-
             delay: 300
             text: "This file is in the project’s QRC resource file"
-
-            background: Rectangle {
-                color: "#FAFAFA"
-                border.color: "black"
-                border.width: 0.5
-            }
         }
     }
 
