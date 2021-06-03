@@ -75,7 +75,7 @@ ColumnLayout {
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
             } else {
-                visualEditor.functions.reload()
+                visualEditor.functions.checkFile()
             }
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
