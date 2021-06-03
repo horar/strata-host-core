@@ -8,6 +8,7 @@
 
         // start_user_content
         model: ["One","Two","Three","Four"]
+
         onClicked: {
              console.info("Clicked", checkedIndices)
         }

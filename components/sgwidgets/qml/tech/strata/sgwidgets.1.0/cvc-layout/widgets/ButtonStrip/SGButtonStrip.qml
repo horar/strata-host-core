@@ -11,7 +11,10 @@ Item {
     readonly property alias count: repeater.count
     property bool exclusive: true
     property int orientation: Qt.Horizontal
+
+
     //    property color textColor: "red"
+
     //    property color color: "green"
 
     /* Holds indexes of checked buttons in power of 2 format:
@@ -36,37 +39,6 @@ Item {
         return checkedIndices & (1 << index)
     }
 
-    property color textColor: {
-        if (repeater.children.checked) {
-            if (repeater.children.enabled) {
-                return "#ffffff"
-            } else {
-                return "#4dffffff"
-            }
-        } else {
-            if (repeater.children.enabled) {
-                return "#26282a"
-            } else {
-                return "#4d26282a"
-            }
-        }
-    }
-
-    property color color: {
-        if (repeater.children.checked) {
-            if (repeater.children.down) {
-                return "#79797a"
-            } else {
-                return "#353637"
-            }
-        } else {
-            if (repeater.children.down) {
-                return "#cfcfcf"
-            } else {
-                return "#e0e0e0"
-            }
-        }
-    }
 
 
     GridLayout {
@@ -91,16 +63,41 @@ Item {
                 checked: checkedIndices & powIndex
 
                 Component.onCompleted: {
-                    background.color = Qt.binding(() => {return control.color})
-                    contentItem.color = Qt.binding(() => {return control.textColor})
+                    contentItem.color = Qt.binding(() => {return buttonStripContainer.textColor(buttonDelegate)})
                 }
 
-                // roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
-                // roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
-                // roundedTop: orientation == Qt.Vertical ? index === 0 : true
-                // roundedBottom: orientation == Qt.Vertical ? index === repeater.count - 1 : true
 
+                property bool scaleToFit: false
                 property int powIndex: 1 << index
+                property bool roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
+                property bool roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
+                property bool roundedTop: orientation == Qt.Vertical ? index === 0 : true
+                property bool roundedBottom :  orientation == Qt.Vertical ? index === repeater.count - 1 : true
+
+
+                background:Item {
+                    implicitHeight: scaleToFit ? 0 : 40
+                    implicitWidth: scaleToFit ? 0 : 100
+                    clip: true
+                    Rectangle {
+                        id:buttonBackground
+                        anchors {
+                            fill:parent
+                            leftMargin: roundedLeft ? 0 : -radius
+                            rightMargin: roundedRight ? 0 : -radius
+                            topMargin: roundedTop ? 0 : -radius
+                            bottomMargin: roundedBottom ? 0 : -radius
+                        }
+
+                        opacity: enabled ? 1 : 0.5
+                        Component.onCompleted: {
+                            color = Qt.binding(() => {return buttonStripContainer.color(buttonDelegate)})
+                        }
+                        radius: 4
+
+                    }
+                }
+
                 onClicked: {
                     control.clicked(index)
                     if (control.exclusive) {
@@ -110,16 +107,19 @@ Item {
                         checkedIndices ^= powIndex
                     }
                 }
-            }
-            MouseArea {
-                id: mouse
-                anchors {
-                    fill: parent
-                }
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
 
-                onPressed:  mouse.accepted = false
+                MouseArea {
+                    id: mouse
+                    anchors {
+                        fill: parent
+                    }
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onPressed:  {
+                        mouse.accepted = false
+                    }
+                }
             }
         }
     }
