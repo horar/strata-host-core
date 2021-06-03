@@ -113,23 +113,5 @@ Item {
         function onClicked() {
             recompileControlViewQrc();
         }
-
-        Connections {
-            target: sdsModel.resourceLoader
-
-            onFinishedRecompiling: {
-                if (recompileRequested) { // enforce that CVC requested this recompile
-                    rccInitialized = true
-                    if (filepath !== '') {
-                        registerAndSetRecompiledRccFile(filepath)
-                    } else {
-                        let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                        controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
-                                                    { "error_message": error_str });
-                        recompileRequested = false
-                    }
-                }
-            }
-        }
     }
 }

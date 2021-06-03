@@ -241,15 +241,15 @@ Item {
                         let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
                         if (unsavedFileCount > 0) {
                             if (!controlViewCreatorRoot.isConfirmCloseOpen) {
-                                confirmClosePopup.unsavedFileCount = unsavedFileCount
-                                confirmClosePopup.open()
                                 controlViewCreatorRoot.isConfirmCloseOpen = true
+                                startConfirmClosePopup.callback = function () {
+                                    createControlView()
+                                }
+                                startConfirmClosePopup.unsavedFileCount = unsavedFileCount
+                                startConfirmClosePopup.open()
                             }
                         } else {
-                            if (createControlView(projectName.text, fileOutput.text)) {
-                                projectName.text = ""
-                                fileOutput.text = ""
-                            }
+                            createControlView()
                         }
                     }
                 }
@@ -283,76 +283,25 @@ Item {
             }
         }
 
-        FileDialog {
-            id: fileDialog
-            selectMultiple: false
-            selectFolder: true
-            folder: fileDialog.shortcuts.home
-
-            onAccepted: {
-                fileOutput.text = fileDialog.fileUrl
-            }
-        }
-
         Item {
             // space filler
             Layout.fillHeight: true
         }
     }
 
-    ConfirmClosePopup {
-        id: confirmClosePopup
-        parent: controlViewCreatorRoot
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
+    FileDialog {
+        id: fileDialog
+        selectMultiple: false
+        selectFolder: true
+        folder: fileDialog.shortcuts.home
 
-        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
-        popupText: "Your changes will be lost if you choose to not save them."
-        acceptButtonText: "Save all"
-
-        property int unsavedFileCount
-
-        onPopupClosed: {
-            if (closeReason === confirmClosePopup.closeFilesReason) {
-                editor.openFilesModel.closeAll()
-            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                editor.openFilesModel.saveAll(true)
-            }
-
-            controlViewCreatorRoot.isConfirmCloseOpen = false
-
-            if (closeReason !== confirmClosePopup.cancelCloseReason) {
-                if (createControlView(projectName.text, fileOutput.text)) {
-                    projectName.text = ""
-                    fileOutput.text = fileOutput.defaultText
-                }
-            }
+        onAccepted: {
+            fileOutput.text = fileDialog.fileUrl
         }
     }
 
-    SGConfirmationPopup {
-        id: projectExistsPopup
-        parent: controlViewCreatorRoot
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        titleText: "This project already exists in the selected location"
-        popupText: "A non-empty project '" + projectName.text + "' already exists in the selected location"
-
-        modal: true
-        padding: 0
-        closePolicy: Popup.NoAutoClose
-        buttons: [okButtonObject]
-
-        property var okButtonObject: ({
-            buttonText: "OK",
-            buttonColor: acceptButtonColor,
-            buttonHoverColor: acceptButtonHoverColor
-        });
-    }
-
-    function createControlView(projectName, filePath) {
-        let path = filePath.trim();
+    function createControlView() {
+        let path = fileOutput.text.trim();
         if (path.startsWith("file:")) {
             // type is url
             path = SGUtilsCpp.urlToLocalFile(path);
@@ -365,21 +314,28 @@ Item {
             }
             alertMessage.text = "Cannot create project. Destination folder does not exist"
             alertMessage.show()
-            return false
+            return
         }
 
-        const projectExists = sdsModel.newControlView.projectExists(projectName, SGUtilsCpp.pathToUrl(path))
+        const projectExists = sdsModel.newControlView.projectExists(projectName.text, SGUtilsCpp.pathToUrl(path))
         if (projectExists) {
-            projectExistsPopup.open()
-            return false
-        } else {
-            const qrcUrl = sdsModel.newControlView.createNewProject(projectName, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath)
-            openProjectContainer.url = qrcUrl
-            openProjectContainer.addToTheProjectList(qrcUrl.toString())
-            controlViewCreatorRoot.rccInitialized = false
-            viewStack.currentIndex = 1
+            console.warn("Identically-named project already exists in this location")
+            if (alertMessage.visible) {
+                alertMessage.Layout.preferredHeight = 0
+            }
+            alertMessage.text = "A non-empty project '" + projectName.text + "' already exists in the selected location"
+            alertMessage.show()
+            return
         }
 
-        return true
+        const qrcUrl = sdsModel.newControlView.createNewProject(projectName.text, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath)
+        openProjectContainer.url = qrcUrl
+        openProjectContainer.addToTheProjectList(qrcUrl.toString())
+        viewStack.currentIndex = 1
+        controlViewCreatorRoot.projectInitialization = true
+        controlViewCreatorRoot.recompileControlViewQrc();
+
+        projectName.text = ""
+        fileOutput.text = ""
     }
 }
