@@ -12,16 +12,10 @@ class Connector;
 
 namespace strata::strataRPC
 {
-
 /**
  * Enum to describe errors
  */
-enum class ClientConnectorError : short {
-    FailedToInitialize,
-    FailedToConnect,
-    FailedToDisconnect,
-    FailedToSend
-};
+enum class ClientConnectorError : short { FailedToConnect, FailedToDisconnect, FailedToSend };
 
 class ClientConnector : public QObject
 {

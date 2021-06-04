@@ -10,7 +10,7 @@ ClientConnector::~ClientConnector()
     disconnectClient();
 }
 
-bool ClientConnector::isConnected() 
+bool ClientConnector::isConnected()
 {
     if (connector_) {
         return connector_->isConnected();
@@ -32,8 +32,6 @@ bool ClientConnector::initializeConnector()
     if (false == connectClient()) {
         qCCritical(logCategoryStrataClientConnector)
             << "Failed to open ClientConnector. Or Client already connected.";
-        emit errorOccurred(ClientConnectorError::FailedToInitialize,
-                          "Failed to open ClientConnector. Or Client already connected.");
         return false;
     }
 
@@ -76,7 +74,8 @@ bool ClientConnector::connectClient()
 
     if (false == connector_->open(serverAddress_.toStdString())) {
         qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector.";
-        emit errorOccurred(ClientConnectorError::FailedToConnect, "Failed to open ClientConnector.");
+        emit errorOccurred(ClientConnectorError::FailedToConnect,
+                           "Failed to open ClientConnector.");
         return false;
     }
 
@@ -116,7 +115,7 @@ bool ClientConnector::sendMessage(const QByteArray &message)
             qCCritical(logCategoryStrataClientConnector)
                 << "Failed to send message. Client is not connected.";
             emit errorOccurred(ClientConnectorError::FailedToSend,
-                              "Failed to send message. Client is not connected.");
+                               "Failed to send message. Client is not connected.");
             return false;
         }
 
@@ -130,7 +129,7 @@ bool ClientConnector::sendMessage(const QByteArray &message)
         qCCritical(logCategoryStrataClientConnector)
             << "Failed to send message. Connector is not initialized.";
         emit errorOccurred(ClientConnectorError::FailedToSend,
-                          "Failed to send message. Connector is not initialized.");
+                           "Failed to send message. Connector is not initialized.");
 
         return false;
     }

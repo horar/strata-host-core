@@ -281,13 +281,10 @@ void ConnectorsTest::testClientConnectorErrorSignals()
 
     {
         QCOMPARE_(client.initializeConnector(), false);
-        QCOMPARE_(errorOccurred.count(), 2);
+        QCOMPARE_(errorOccurred.count(), 1);
         auto errorType =
             qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
         QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToConnect);
-        errorType =
-            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeLast().at(0));
-        QCOMPARE_(errorType, strata::strataRPC::ClientConnectorError::FailedToInitialize);
         errorOccurred.clear();
     }
 
