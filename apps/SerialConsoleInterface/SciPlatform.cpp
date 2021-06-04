@@ -299,10 +299,10 @@ void SciPlatform::messageFromDeviceHandler(QByteArray deviceId, strata::platform
     filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray deviceId, strata::platform::PlatformMessage message)
+void SciPlatform::messageToDeviceHandler(QByteArray deviceId, QByteArray message)
 {
     Q_UNUSED(deviceId)
-    scrollbackModel_->append(message.raw(), true);
+    scrollbackModel_->append(message, true);
 }
 
 void SciPlatform::deviceErrorHandler(QByteArray deviceId, strata::device::Device::ErrorCode errorCode, QString errorString)

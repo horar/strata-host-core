@@ -326,10 +326,11 @@ ColumnLayout {
         WebEngineView {
             id: webEngine
             webChannel: channel
+            url: "qrc:///tech/strata/monaco/minified/editor.html"
+            
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: true
-
             settings.errorPageEnabled: false
             settings.javascriptCanOpenWindows: false
             settings.javascriptEnabled: true

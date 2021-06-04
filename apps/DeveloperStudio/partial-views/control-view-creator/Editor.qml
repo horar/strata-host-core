@@ -19,6 +19,7 @@ Item {
     property alias openFilesModel: openFilesModel
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
+    property alias sideBar: sideBar
 
     SGQrcTreeModel {
         id: treeModel
@@ -332,7 +333,6 @@ Item {
                 y: (parent.height - height) / 2
 
                 titleText: "Do you want to save the changes made to " + filename + (!exists ? " (deleted)?" : "?")
-                popupText: "Your changes will be lost if you choose to not save them."
 
                 property string filename: ""
                 property int index

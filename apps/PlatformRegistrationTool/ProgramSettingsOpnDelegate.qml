@@ -51,7 +51,7 @@ ProgramSettingsDelegate {
             Behavior on opacity { OpacityAnimator {} }
 
             onTextChanged: {
-                delegate.opn = text.toUpperCase()
+                delegate.opn = text
                 errorText = ""
             }
 
