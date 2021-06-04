@@ -8,7 +8,7 @@
 namespace strata::strataRPC
 {
 /**
- * Enum to describe errors
+ * Enum to describe ServerConnector errors
  */
 enum class ServerConnectorError : short { FailedToInitialize, FailedToSend };
 
@@ -56,9 +56,17 @@ signals:
      */
     void newMessageReceived(const QByteArray &clientId, const QByteArray &message);
 
+    /**
+     * Emitted when an error has occurred.
+     * @param [in] errorType error category description.
+     * @param [in] errorMessage QString of the actual error.
+     */
     void errorOccred(ServerConnectorError errorType, const QString &errorMessage);
-    void serverConnected();
-    void serverDisconnected();
+
+    /**
+     * Emitted when the client connector was initialized successfully.
+     */
+    void serverInitialized();
 
 private slots:
     /**

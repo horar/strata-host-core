@@ -13,7 +13,7 @@ class Connector;
 namespace strata::strataRPC
 {
 /**
- * Enum to describe errors
+ * Enum to describe ClientConnector errors.
  */
 enum class ClientConnectorError : short { FailedToConnect, FailedToDisconnect, FailedToSend };
 
@@ -39,6 +39,10 @@ public:
      */
     ~ClientConnector();
 
+    /**
+     * Function to return the connection status.
+     * @return True if the client is connected, false otherwise.
+     */
     bool isConnected();
 
 public slots:
@@ -79,9 +83,26 @@ signals:
      */
     void newMessageReceived(const QByteArray &message);
 
+    /**
+     * Emitted when an error has occurred.
+     * @param [in] errorType error category description.
+     * @param [in] errorMessage QString of the actual error.
+     */
     void errorOccurred(ClientConnectorError errorType, const QString &errorMessage);
+
+    /**
+     * Emitted when the client connector was initialized successfully.
+     */
     void clientInitialized();
+
+    /**
+     * Emitted when the client connector was connected successfully.
+     */
     void clientConnected();
+
+    /**
+     * Emitted when the client connector was disconnected successfully.
+     */
     void clientDisconnected();
 
 private slots:

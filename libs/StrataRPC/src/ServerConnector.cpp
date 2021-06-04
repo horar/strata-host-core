@@ -35,7 +35,7 @@ bool ServerConnector::initilizeConnector()
     connect(readSocketNotifier_, &QSocketNotifier::activated, this,
             &ServerConnector::readNewMessages);
 
-    emit serverConnected();
+    emit serverInitialized();
     return true;
 }
 

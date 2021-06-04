@@ -18,7 +18,7 @@ void ConnectorsTest::waitForZmqMessages(int delay)
 void ConnectorsTest::testOpenServerConnectorFaild()
 {
     strata::strataRPC::ServerConnector connector(address_);
-    QSignalSpy serverConnected_1(&connector, &strata::strataRPC::ServerConnector::serverConnected);
+    QSignalSpy serverConnected_1(&connector, &strata::strataRPC::ServerConnector::serverInitialized);
     QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccred);
     QCOMPARE_(connector.initilizeConnector(), true);
     QCOMPARE_(serverConnected_1.isEmpty(), false);
@@ -26,7 +26,7 @@ void ConnectorsTest::testOpenServerConnectorFaild()
 
     strata::strataRPC::ServerConnector connectorDublicate(address_);
     QSignalSpy serverConnected_2(&connectorDublicate,
-                                 &strata::strataRPC::ServerConnector::serverConnected);
+                                 &strata::strataRPC::ServerConnector::serverInitialized);
     QSignalSpy errorOccured_2(&connectorDublicate,
                               &strata::strataRPC::ServerConnector::errorOccred);
     QCOMPARE_(connectorDublicate.initilizeConnector(), false);

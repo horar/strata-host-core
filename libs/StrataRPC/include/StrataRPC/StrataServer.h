@@ -48,7 +48,8 @@ public:
 
     /**
      * Initialize and start up the server
-     * @return true if the server initialization is successful. False otherwise.
+     * @note If the server is initialized successfully StrataServer will emit serverInitialized
+     * signal. Otherwise it will emit errorOccurred.
      */
     void initializeServer();
 
@@ -115,6 +116,11 @@ private slots:
      */
     void dispatchHandler(const Message &clientMessage);
 
+    /**
+     * Slot to handle errors from the ServerConnector.
+     * @param [in] errorType enum of the the error.
+     * @param [in] errorMessage description of the error.
+     */
     void connectorErrorHandler(ServerConnectorError errorType, const QString &errorMessage);
 
 signals:
@@ -131,7 +137,21 @@ signals:
      */
     void errorOccurred(StrataServer::ServerError errorType, const QString &errorMessage);
 
-    void connectServer();
+    /**
+     * Signal to initialize the server.
+     */
+    void initializeServer();
+
+    /**
+     * Emitted when the server is initialize successfully.
+     */
+    void serverInitialized();
+
+    /**
+     * Signal to send a message to a client.
+     * @param [in] clientId QByteArray of the client id.
+     * @param [in] message QByteArray of the message.
+     */
     void sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 private:

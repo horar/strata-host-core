@@ -61,13 +61,15 @@ public:
 
     /**
      * Function to establish the server connection
-     * @return True if the connection is established successfully, False otherwise.
+     * @note If the client connected successfully StrataClient will emit clientConnected signal,
+     * Otherwise it will emit errorOccurred signal.
      */
     void connectServer();
 
     /**
      * Function to close the connection to the server.
-     * @return True if the connection was disconnected successfully, False otherwise.
+     * @note If the connection was disconnected successfully, StrataClient will emit
+     * clientDisconnected signal.
      */
     void disconnectServer();
 
@@ -121,17 +123,37 @@ signals:
     void clientConnected();
 
     /**
+     * Emitted when the client is disconnected from the server.
+     */
+    void clientDisconnected();
+
+    /**
      * Emitted when an error has occurred.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
     void errorOccurred(StrataClient::ClientError errorType, const QString &errorMessage);
 
+    /**
+     * Signal to initialize the ClientConnector.
+     */
     void initializeConnector();
+
+    /**
+     * Signal to connect to the server.
+     */
     void connectClient();
+
+    /**
+     * signal to disconnect the server.
+     */
     void disconnectClient();
+
+    /**
+     * Signal to send a message to the server.
+     * @param [in] message QByteArray of the message.
+     */
     void sendMessage(const QByteArray &message);
-    void clientDisconnected();
 
 private slots:
     /**
@@ -150,10 +172,14 @@ private slots:
      * Slot to handle dispatching server notification handlers.
      * @note This will emit errorOccurred signal if the handler is not registered.
      * @param [in] serverMessage parsed server message.
-     * NOTE: This will emit errorOccurred signal if the handler is not registered.
      */
     void dispatchHandler(const Message &serverMessage);
 
+    /**
+     * Slot to handle errors from the ClientConnector.
+     * @param [in] errorType enum of the the error.
+     * @param [in] errorMessage description of the error.
+     */
     void connectorErrorHandler(ClientConnectorError errorType, const QString &errorMessage);
 
 private:
@@ -167,6 +193,9 @@ private:
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
                             DeferredRequest **deferredRequest);
 
+    /**
+     * Helper function to connect signal and slots with the ClientConnector
+     */
     void connectorSetup();
 
     std::unique_ptr<Dispatcher<const QJsonObject &>> dispatcher_;
