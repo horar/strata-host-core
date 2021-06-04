@@ -524,15 +524,10 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
     QFile firmware(firmwarePath);
 
     if (firmware.open(QIODevice::ReadOnly)) {
-        QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
-        hash.addData(&firmware);
-
-        expectedMd5_ = hash.result().toHex();
-
         expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + mock_firmware_constants::CHUNK_SIZE) / mock_firmware_constants::CHUNK_SIZE); //Get expected chunks count
 
         firmware.seek(0);
-        while (!firmware.atEnd()) {
+        while (firmware.atEnd() == false) {
             int chunkSize = mock_firmware_constants::CHUNK_SIZE;
             qint64 remainingFileSize = firmware.size() - firmware.pos();
 
@@ -551,7 +546,7 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
 
             expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead)))); //Get expected chunk crc
 
-            if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
+            if (firmwareBase64.isNull() == false || firmwareBase64.isEmpty() == false) {
                 expectedChunkData_.append(firmwareBase64);
             }
         }

@@ -57,7 +57,6 @@ private:
     QTemporaryFile mockFirmware_;
     int actualChunk_ = -1;
     int expectedChunksCount_ = 0;
-    QString expectedMd5_;
     QVector<quint64> expectedChunkSize_;
     QVector<QByteArray> expectedChunkData_;
     QVector<quint16> expectedChunkCrc_;
