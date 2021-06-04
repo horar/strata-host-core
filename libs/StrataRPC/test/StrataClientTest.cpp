@@ -54,14 +54,14 @@ void StrataClientTest::testConnectDisconnectToTheServer()
             [&clientReceivedMessage] { clientReceivedMessage = true; });
 
     serverRevicedMessage = false;
-    QVERIFY_(client.connectServer());
+    client.connectServer();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
     QTRY_COMPARE_WITH_TIMEOUT(signalSpy.count(), 1, 100);
     signalSpy.clear();
 
     serverRevicedMessage = false;
     clientReceivedMessage = false;
-    QVERIFY_(client.disconnectServer());
+    client.disconnectServer();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
     QTRY_VERIFY_WITH_TIMEOUT(false == clientReceivedMessage, 100);
 
@@ -73,7 +73,7 @@ void StrataClientTest::testConnectDisconnectToTheServer()
 
     serverRevicedMessage = false;
     clientReceivedMessage = false;
-    QVERIFY_(client.connectServer());
+    client.connectServer();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
     QTRY_COMPARE_WITH_TIMEOUT(signalSpy.count(), 1, 100);
     signalSpy.clear();

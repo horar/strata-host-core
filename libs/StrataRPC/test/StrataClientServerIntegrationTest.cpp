@@ -282,7 +282,7 @@ void StrataClientServerIntegrationTest::testCallbacks()
 
     QVERIFY_(server.initializeServer());
     waitForZmqMessages(waitZmqDelay);
-    QVERIFY_(client.connectServer());
+    client.connectServer();
     waitForZmqMessages(waitZmqDelay);
 
     {

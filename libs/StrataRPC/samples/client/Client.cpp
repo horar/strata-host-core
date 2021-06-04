@@ -22,6 +22,11 @@ Client::Client(QString clientId, QObject *parent)
         emit connectionStatusUpdated();
     });
 
+    connect(strataClient_.get(), &StrataClient::clientDisconnected, this, [this]() {
+        connectionStatus_ = false;
+        emit connectionStatusUpdated();
+    });
+
     connect(strataClient_.get(), &StrataClient::errorOccurred, this,
             &Client::strataClientErrorHandler);
 
@@ -64,10 +69,7 @@ void Client::connectToServer()
 void Client::disconnectServer()
 {
     qCDebug(logCategoryStrataClientSample) << "Disconnecting from the server.";
-    if (true == strataClient_->disconnectServer()) {
-        connectionStatus_ = false;
-        emit connectionStatusUpdated();
-    }
+    strataClient_->disconnectServer();
 }
 
 void Client::closeServer()

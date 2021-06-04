@@ -80,21 +80,21 @@ void StrataClient::connectorSetup()
         }
     });
 
+    connect(connector_.get(), &ClientConnector::clientDisconnected, this,
+            [this]() { emit clientDisconnected(); });
+
     connectorThread_->start();
 }
 
-bool StrataClient::connectServer()
+void StrataClient::connectServer()
 {
     emit initializeConnector();
-    return true;
 }
 
-bool StrataClient::disconnectServer()
+void StrataClient::disconnectServer()
 {
     sendRequest("unregister", {});
     emit disconnectClient();
-
-    return true;
 }
 
 void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)

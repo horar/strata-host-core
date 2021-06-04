@@ -63,13 +63,13 @@ public:
      * Function to establish the server connection
      * @return True if the connection is established successfully, False otherwise.
      */
-    bool connectServer();
+    void connectServer();
 
     /**
      * Function to close the connection to the server.
      * @return True if the connection was disconnected successfully, False otherwise.
      */
-    bool disconnectServer();
+    void disconnectServer();
 
     /**
      * Register a command handler in the client's dispatcher.
@@ -131,6 +131,7 @@ signals:
     void connectClient();
     void disconnectClient();
     void sendMessage(const QByteArray &message);
+    void clientDisconnected();
 
 private slots:
     /**
