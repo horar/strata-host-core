@@ -34,5 +34,6 @@
 	<true/>
 	<key>LSMinimumSystemVersion</key>
 	<string>@PROJECT_DEPLOYMENT_TARGET@</string>
+	@PROJECT_BUNDLE_ADDON@
 </dict>
 </plist>

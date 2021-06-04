@@ -6,6 +6,10 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
+string(CONCAT PROJECT_BUNDLE_ADDON
+    "<key>NSBluetoothAlwaysUsageDescription</key>"
+    "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
+)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 
 
