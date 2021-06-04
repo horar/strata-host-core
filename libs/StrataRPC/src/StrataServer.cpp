@@ -50,7 +50,7 @@ StrataServer::~StrataServer()
     connectorThread_->deleteLater();
 }
 
-bool StrataServer::initializeServer()
+void StrataServer::initializeServer()
 {
     connect(
         connector_.get(), &ServerConnector::serverConnected, this,
@@ -63,7 +63,6 @@ bool StrataServer::initializeServer()
         Qt::QueuedConnection);
 
     emit connectServer();
-    return true;
 }
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)

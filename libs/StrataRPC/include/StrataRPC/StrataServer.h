@@ -50,7 +50,7 @@ public:
      * Initialize and start up the server
      * @return true if the server initialization is successful. False otherwise.
      */
-    bool initializeServer();
+    void initializeServer();
 
     /**
      * Register a command handler in the server's dispatcher.
