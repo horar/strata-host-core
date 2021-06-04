@@ -19,7 +19,11 @@ Rectangle {
     id: controlViewCreatorRoot
 
     property bool isConfirmCloseOpen: false
-
+    property bool isConsoleLogOpen: false
+    property bool recompileRequested: false
+    property bool projectInitialization: false
+    property string previousCompiledRccFilePath: ""
+    property string previousCompiledRccFileUniquePrefix: ""
     property var debugPlatform: ({
                                      deviceId: Constants.NULL_DEVICE_ID,
                                      classId: ""
@@ -27,12 +31,7 @@ Rectangle {
 
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
-    property bool isConsoleLogOpen: false
-
-    property bool rccInitialized: false
-    property bool recompileRequested: false
-    property string previousCompiledRccFilePath: ""
-    property string previousCompiledRccFileUniquePrefix: ""
+    property alias editor: editor
 
     onDebugPlatformChanged: {
         recompileControlViewQrc()
@@ -43,96 +42,6 @@ Rectangle {
         if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
             sdsModel.resourceLoader.requestUnregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, cvcLoader, false)
         }
-    }
-
-    SGUserSettings {
-        id: sgUserSettings
-        classId: "controlViewCreator"
-        user: NavigationControl.context.user_id
-    }
-
-    ConfirmClosePopup {
-        id: confirmClosePopup
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        parent: mainWindow.contentItem
-
-        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
-        popupText: "Your changes will be lost if you choose to not save them."
-        acceptButtonText: "Save all"
-
-        property int unsavedFileCount
-
-        onPopupClosed: {
-            if (closeReason === confirmClosePopup.closeFilesReason) {
-                controlViewCreator.openFilesModel.closeAll()
-                if (cvcCloseRequested){
-                    Signals.closeCVC()
-                } else {
-                    mainWindow.close()
-                }
-            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                controlViewCreator.openFilesModel.saveAll(true)
-                if (cvcCloseRequested){
-                    Signals.closeCVC()
-                } else {
-                    mainWindow.close()
-                }
-            }
-            isConfirmCloseOpen = false
-        }
-    }
-
-    SGConfirmationPopup {
-        id: confirmCleanFiles
-        modal: true
-        padding: 0
-        closePolicy: Popup.NoAutoClose
-
-        acceptButtonColor: Theme.palette.green
-        acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
-        acceptButtonText: "Clean"
-        cancelButtonText: "Cancel"
-        titleText: "Remove missing files"
-        popupText: {
-            let text = "Are you sure you want to remove the following files from this project's QRC?<br><ul type=\"bullet\">";
-            for (let i = 0; i < missingFiles.length; i++) {
-                text += "<li>" + missingFiles[i] + "</li>"
-            }
-            text += "</ul>"
-            return text
-        }
-
-        property var missingFiles: []
-
-        onOpened: {
-            missingFiles = editor.fileTreeModel.getMissingFiles()
-        }
-
-        onPopupClosed: {
-            if (closeReason === acceptCloseReason) {
-                editor.fileTreeModel.removeDeletedFilesFromQrc()
-            }
-        }
-    }
-
-    SGConfirmationPopup {
-        id: missingControlQml
-        modal: true
-        padding: 0
-        closePolicy: Popup.NoAutoClose
-
-        buttons: [okButtonObject]
-
-        property var okButtonObject: ({
-                                          buttonText: "Ok",
-                                          buttonColor: acceptButtonColor,
-                                          buttonHoverColor: acceptButtonHoverColor,
-                                          closeReason: acceptCloseReason
-                                      });
-
-        titleText: "Missing Control.qml"
-        popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
     }
 
     RowLayout {
@@ -270,6 +179,95 @@ Rectangle {
         }
     }
 
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        parent: mainWindow.contentItem
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                controlViewCreator.openFilesModel.closeAll()
+                if (cvcCloseRequested){
+                    Signals.closeCVC()
+                } else {
+                    mainWindow.close()
+                }
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                controlViewCreator.openFilesModel.saveAll(true)
+                if (cvcCloseRequested){
+                    Signals.closeCVC()
+                } else {
+                    mainWindow.close()
+                }
+            }
+            isConfirmCloseOpen = false
+        }
+    }
+
+    SGConfirmationPopup {
+        id: confirmCleanFiles
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        acceptButtonColor: Theme.palette.green
+        acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
+        acceptButtonText: "Clean"
+        cancelButtonText: "Cancel"
+        titleText: "Remove missing files"
+        popupText: {
+            let text = "Are you sure you want to remove the following files from this project's QRC?<br><ul type=\"bullet\">";
+            for (let i = 0; i < missingFiles.length; i++) {
+                text += "<li>" + missingFiles[i] + "</li>"
+            }
+            text += "</ul>"
+            return text
+        }
+
+        property var missingFiles: []
+
+        onOpened: {
+            missingFiles = editor.fileTreeModel.getMissingFiles()
+        }
+
+        onPopupClosed: {
+            if (closeReason === acceptCloseReason) {
+                editor.fileTreeModel.removeDeletedFilesFromQrc()
+            }
+        }
+    }
+
+    SGConfirmationPopup {
+        id: missingControlQml
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        buttons: [okButtonObject]
+
+        property var okButtonObject: ({
+                                          buttonText: "Ok",
+                                          buttonColor: acceptButtonColor,
+                                          buttonHoverColor: acceptButtonHoverColor,
+                                          closeReason: acceptCloseReason
+                                      });
+
+        titleText: "Missing Control.qml"
+        popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
+    }
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: "controlViewCreator"
+        user: NavigationControl.context.user_id
+    }
+
     function recompileControlViewQrc() {
         if (editor.fileTreeModel.url.toString() !== '') {
             if (editor.openFilesModel.getUnsavedCount() > 0) {
@@ -322,5 +320,28 @@ Rectangle {
             return true
         }
         return false
+    }
+
+    Connections {
+        target: sdsModel.resourceLoader
+
+        onFinishedRecompiling: {
+            if (recompileRequested) { // enforce that CVC requested this recompile
+                if (filepath === '') {
+                    let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                    controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
+                                                { "error_message": error_str });
+                    recompileRequested = false
+                    return
+                }
+
+                registerAndSetRecompiledRccFile(filepath)
+
+                if (projectInitialization) {
+                    projectInitialization = false
+                    controlViewCreatorRoot.editor.sideBar.openControlQML()
+                }
+            }
+        }
     }
 }

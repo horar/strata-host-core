@@ -189,4 +189,29 @@ Rectangle {
             }
         }
     }
+
+    ConfirmClosePopup {
+        id: startConfirmClosePopup
+        parent: controlViewCreatorRoot
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+        property var callback
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll(true)
+            }
+            controlViewCreatorRoot.isConfirmCloseOpen = false
+            if (closeReason !== confirmClosePopup.cancelCloseReason) {
+                callback()
+            }
+        }
+    }
 }
