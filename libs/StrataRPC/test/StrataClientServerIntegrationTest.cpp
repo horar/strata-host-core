@@ -250,25 +250,26 @@ void StrataClientServerIntegrationTest::testMultipleClients()
                              });
 
     QVERIFY_(server.initializeServer());
+    waitForZmqMessages(50);
+
     client_1.connectServer();
     client_2.connectServer();
     waitForZmqMessages();
 
-    QVERIFY_(serverRecievedClient1Register);
-    QVERIFY_(serverRecievedClient2Register);
+    QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient1Register, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient2Register, 100);
     QCOMPARE_(clientConnectedSignalSpy_1.count(), 1);
     QCOMPARE_(clientConnectedSignalSpy_2.count(), 1);
 
     server.notifyAllClients("broadcasted_message", {{"message", "message to all clients."}});
-    waitForZmqMessages();
 
-    QVERIFY_(client1ReceivedServerBroadcast);
-    QVERIFY_(client2ReceivedServerBroadcast);
+    QTRY_VERIFY_WITH_TIMEOUT(client1ReceivedServerBroadcast, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(client2ReceivedServerBroadcast, 100);
 }
 
 void StrataClientServerIntegrationTest::testCallbacks()
 {
-    int waitZmqDelay = 50;
+    int waitZmqDelay = 100;
     bool gotErrorCallback = false;
     bool gotResultCallback = false;
 
@@ -285,6 +286,7 @@ void StrataClientServerIntegrationTest::testCallbacks()
 
     QVERIFY_(server.initializeServer());
     QVERIFY_(client.connectServer());
+    waitForZmqMessages(waitZmqDelay);
 
     {
         auto deferredRequest = client.sendRequest("test_error_callback", QJsonObject{});

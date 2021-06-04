@@ -187,12 +187,11 @@ void StrataServerTest::testServerFunctionality()
                 clientGotResponse_2 = true;
             });
     client_2.initializeConnector();
+    waitForZmqMessages(50);
     client_2.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
-    waitForZmqMessages();
-
-    QVERIFY_(clientGotResponse);
-    QVERIFY_(clientGotResponse_2);
+    QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse_2, 100);
 }
 
 void StrataServerTest::testBuildNotificationApiV2()
