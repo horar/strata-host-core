@@ -371,8 +371,6 @@ ColumnLayout {
                 }
             }
 
-            url: "qrc:///tech/strata/monaco/minified/editor.html"
-
             Rectangle {
                 id: barContainer
                 color: "white"
