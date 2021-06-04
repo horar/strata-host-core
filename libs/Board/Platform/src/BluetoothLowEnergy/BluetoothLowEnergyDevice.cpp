@@ -117,34 +117,34 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
         return false;
     }
 
-    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttributes attributes;
-    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attributes) == false) {
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
         return false;
     }
 
-    QLowEnergyService * service = getService(attributes.service);
+    QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
         return false;
     }
 
-    QLowEnergyCharacteristic characteristic = service->characteristic(attributes.characteristic);
+    QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
         return false;
     }
-    if (attributes.descriptor.isNull()) {
-        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attributes.data.toHex();
-        service->writeCharacteristic(characteristic, attributes.data);
+    if (attribute.descriptor.isNull()) {
+        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
+        service->writeCharacteristic(characteristic, attribute.data);
         return true;
     } else
     {
-        QLowEnergyDescriptor descriptor = characteristic.descriptor(attributes.descriptor);
+        QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
         if (descriptor.isValid() == false) {
             qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
             return false;
         }
-        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attributes.data.toHex();
-        service->writeDescriptor(descriptor, attributes.data);
+        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
+        service->writeDescriptor(descriptor, attribute.data);
         return true;
     }
 }
@@ -155,29 +155,29 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
         return false;
     }
 
-    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttributes addresses;
-    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, addresses) == false) {
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
         return false;
     }
 
-    QLowEnergyService * service = getService(addresses.service);
+    QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
         return false;
     }
 
-    QLowEnergyCharacteristic characteristic = service->characteristic(addresses.characteristic);
+    QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
         return false;
     }
-    if (addresses.descriptor.isNull()) {
+    if (attribute.descriptor.isNull()) {
         qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
         service->readCharacteristic(characteristic);
         return true;
     } else
     {
         return false; // service->readDescriptor doesn't work... Disabling reading of descriptors. TODO investigate
-        QLowEnergyDescriptor descriptor = characteristic.descriptor(addresses.descriptor);
+        QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
         if (descriptor.isValid() == false) {
             qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
             return false;

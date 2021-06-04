@@ -12,7 +12,7 @@ const QByteArray BASE_UUID_SUFFIX_BYTES = BASE_UUID_SUFFIX.toUtf8();
 class BluetoothLowEnergyJsonEncoder
 {
 public:
-    struct BluetoothLowEnergyAttributes {
+    struct BluetoothLowEnergyAttribute {
         QBluetoothUuid service;
         QBluetoothUuid characteristic;
         QBluetoothUuid descriptor;
@@ -26,11 +26,12 @@ public:
     /**
      * Parses GATT related data out of JSON request.
      * @param requestDocument Document to be parsed.
-     * @param[out] addresses After successful call, will contained parsed data.
+     * @param[out] addresses After successful call, will contained parsed data
+     * about the attribute to be read/written.
      * @return true iff document was parsed successfully.
      */
     [[nodiscard]] static bool parseRequest(const rapidjson::Document &requestDocument,
-                                           BluetoothLowEnergyAttributes &addresses);
+                                           BluetoothLowEnergyAttribute &attribute);
 
     /**
      * Creates QBluetoothUuid from string. Accepts 2B, 4B and 32B UUIDs.
