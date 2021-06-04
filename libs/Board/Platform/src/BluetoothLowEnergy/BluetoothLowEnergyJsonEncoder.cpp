@@ -77,7 +77,7 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
     return true;
 }
 
-QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(std::string uuid)
+QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(const std::string &uuid)
 {
     QString tmpUuid = QString::fromStdString(uuid);
     tmpUuid = tmpUuid.remove('-').toLower();

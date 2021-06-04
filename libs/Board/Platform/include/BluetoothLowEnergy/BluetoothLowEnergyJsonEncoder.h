@@ -39,7 +39,7 @@ public:
      * @param uuid UUID string to be processed.
      * @return QBluetoothUuid based on the UUID string.
      */
-    static QBluetoothUuid normalizeBleUuid(std::string uuid);
+    static QBluetoothUuid normalizeBleUuid(const std::string &uuid);
 
     /**
      * If the UUID can be shortened to 32bit or 16bit, it will be shortened.
