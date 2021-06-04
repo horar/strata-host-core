@@ -91,10 +91,11 @@ function init(status_bar_container, stack_container, resource_loader, main_qml_o
 /*
     Retrieve the qml file in the RCC templated file structure
 */
-function getQMLFile(filename, class_id, version = "") {
+function getQMLFile(filename, class_id, version = "")
+{
     // Build the file name - ./<class_id>/<version>/filename.qml
 
-    if (filename.search(".qml") < 0){
+    if (filename.search(".qml") < 0) {
         filename = filename + ".qml"
     }
     let prefix = "qrc:/" + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/")
@@ -131,60 +132,59 @@ function removeView(parent)
 function globalEventHandler(event,data)
 {
 
-    switch(event)
-    {
-    case events.PROMPT_SPLASH_SCREEN_EVENT:
-        navigation_state_ = states.NOT_CONNECTED_STATE
-        createView(screens.SPLASH_SCREEN, main_container_)
+    switch(event) {
+        case events.PROMPT_SPLASH_SCREEN_EVENT:
+            navigation_state_ = states.NOT_CONNECTED_STATE
+            createView(screens.SPLASH_SCREEN, main_container_)
 
-        // Remove StatusBar
-        removeView(status_bar_container_)
+            // Remove StatusBar
+            removeView(status_bar_container_)
+            break;
 
-        break;
-    case events.PROMPT_LOGIN_EVENT:
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
-        navigation_state_ = states.LOGIN_STATE
+        case events.PROMPT_LOGIN_EVENT:
+            //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
+            navigation_state_ = states.LOGIN_STATE
 
-        // Show login, reset stack
-        createView(screens.LOGIN_SCREEN, main_container_)
+            // Show login, reset stack
+            createView(screens.LOGIN_SCREEN, main_container_)
 
-        // Remove StatusBar at Login
-        removeView(status_bar_container_)
-        break;
+            // Remove StatusBar at Login
+            removeView(status_bar_container_)
+            break;
 
-    case events.LOGOUT_EVENT:
-        context.user_id = ""
-        context.first_name = ""
-        context.last_name = ""
+        case events.LOGOUT_EVENT:
+            context.user_id = ""
+            context.first_name = ""
+            context.last_name = ""
 
-        // Reset stack, remove all platform views
-        stack_container_.currentIndex = 0
-        while (platform_view_model_.count > 0) {
-            platform_view_model_.remove(0)
-        }
+            // Reset stack, remove all platform views
+            stack_container_.currentIndex = 0
+            while (platform_view_model_.count > 0) {
+                platform_view_model_.remove(0)
+            }
 
-        // Unregister all control views
-        resource_loader_.unregisterAllViews(main_qml_object_);
+            // Unregister all control views
+            resource_loader_.unregisterAllViews(main_qml_object_);
 
-        // Show Login Screen
-        navigation_state_ = states.LOGIN_STATE
+            // Show Login Screen
+            navigation_state_ = states.LOGIN_STATE
 
-        updateState(events.PROMPT_LOGIN_EVENT)
-        break;
+            updateState(events.PROMPT_LOGIN_EVENT)
+            break;
 
-    case events.CONNECTION_LOST_EVENT:
-        // Reset stack, remove all platform views
-        stack_container_.currentIndex = 0
-        while (platform_view_model_.count > 0) {
-            platform_view_model_.remove(0)
-        }
+        case events.CONNECTION_LOST_EVENT:
+            // Reset stack, remove all platform views
+            stack_container_.currentIndex = 0
+            while (platform_view_model_.count > 0) {
+                platform_view_model_.remove(0)
+            }
 
-        updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
-        break;
+            updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
+            break;
 
-    default:
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
-        break;
+        default:
+            console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
+            break;
     }
 }
 
@@ -207,114 +207,110 @@ function updateState(event)
 */
 function updateState(event, data)
 {
-    switch(navigation_state_){
+    switch(navigation_state_) {
         case states.UNINITIALIZED:
-            switch(event)
-            {
-
-            default:
-                globalEventHandler(event,data)
-            break;
+            switch(event) {
+                default:
+                    globalEventHandler(event, data)
+                    break;
             }
-
-        break;
+            break;
 
         case states.NOT_CONNECTED_STATE:
             switch(event) {
-            case events.CONNECTION_ESTABLISHED_EVENT:
-                updateState(events.PROMPT_LOGIN_EVENT)
-                break;
-            default:
-                globalEventHandler(event,data)
-            break;
-            }
+                case events.CONNECTION_ESTABLISHED_EVENT:
+                    updateState(events.PROMPT_LOGIN_EVENT)
+                    break;
 
+                default:
+                    globalEventHandler(event, data)
+                    break;
+            }
             break;
+
         case states.LOGIN_STATE:
-            switch(event)
-            {
-            case events.LOGIN_SUCCESSFUL_EVENT:
-                context.user_id = data.user_id
-                context.first_name = data.first_name
-                context.last_name = data.last_name
+            switch(event) {
+                case events.LOGIN_SUCCESSFUL_EVENT:
+                    context.user_id = data.user_id
+                    context.first_name = data.first_name
+                    context.last_name = data.last_name
 
-                // Update StatusBar
-                createView(screens.STATUS_BAR, status_bar_container_)
-                platform_tab_list_view_ = status_bar_container_.item.platformTabListView
+                    // Update StatusBar
+                    createView(screens.STATUS_BAR, status_bar_container_)
+                    platform_tab_list_view_ = status_bar_container_.item.platformTabListView
 
-                createView(screens.PLATFORM_SELECTOR, main_container_)
+                    createView(screens.PLATFORM_SELECTOR, main_container_)
 
-                // Progress to next state
-                navigation_state_ = states.CONTROL_STATE
+                    // Progress to next state
+                    navigation_state_ = states.CONTROL_STATE
 
-                // Populate platforms only after all UI components are complete
-                status_bar_container_.item.loginSuccessful()
-            break;
+                    // Populate platforms only after all UI components are complete
+                    status_bar_container_.item.loginSuccessful()
+                    break;
 
-            default:
-                globalEventHandler(event,data)
-            break;
+                default:
+                    globalEventHandler(event, data)
+                    break;
 
             }
-        break;
+            break;
+
         case states.CONTROL_STATE:
-            switch(event)
-            {
-            case events.OPEN_PLATFORM_VIEW_EVENT:
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
+            switch(event) {
+                case events.OPEN_PLATFORM_VIEW_EVENT:
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
 
-                // If matching view exists, bring it back into focus
-                for (let i = 0; i < platform_view_model_.count; i++) {
-                    let open_view = platform_view_model_.get(i)
-                    if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
-                        updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
-                        open_view.view = data.view
-                        return
-                    }
-                }
-
-                platform_view_model_.append(data)
-
-                updateState(events.SWITCH_VIEW_EVENT, {"index": platform_view_model_.count}) // focus on new view in stack_container_
-                break;
-
-            case events.PLATFORM_CONNECTED_EVENT:
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
-
-                let view_index = -1
-                let connected_view
-
-                // Find view bound to this device, set connected
-                // OR if none found, find view matching class_id, bind to it, set connected
-                for (let j = 0; j < platform_view_model_.count; j++) {
-                    connected_view = platform_view_model_.get(j)
-                    if (connected_view.class_id === data.class_id){
-                        if (connected_view.device_id === data.device_id) {
-                            view_index = j
-                            break
-                        } else if (connected_view.device_id === Constants.NULL_DEVICE_ID){
-                            view_index = j
+                    // If matching view exists, bring it back into focus
+                    for (let i = 0; i < platform_view_model_.count; i++) {
+                        let open_view = platform_view_model_.get(i)
+                        if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
+                            updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
+                            open_view.view = data.view
+                            return
                         }
                     }
-                }
 
-                if (view_index !== -1) {
-                    connected_view = platform_view_model_.get(view_index)
-                    connected_view.device_id = data.device_id
-                    connected_view.connected = true
-                    connected_view.is_assisted = data.is_assisted
-                    if (data.controller_class_id !== undefined) {
-                        connected_view.controller_class_id = data.controller_class_id
+                    platform_view_model_.append(data)
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": platform_view_model_.count}) // focus on new view in stack_container_
+                    break;
+
+                case events.PLATFORM_CONNECTED_EVENT:
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
+
+                    let view_index = -1
+                    let connected_view
+
+                    // Find view bound to this device, set connected
+                    // OR if none found, find view matching class_id, bind to it, set connected
+                    for (let j = 0; j < platform_view_model_.count; j++) {
+                        connected_view = platform_view_model_.get(j)
+                        if (connected_view.class_id === data.class_id) {
+                            if (connected_view.device_id === data.device_id) {
+                                view_index = j
+                                break
+                            } else if (connected_view.device_id === Constants.NULL_DEVICE_ID) {
+                                view_index = j
+                            }
+                        }
                     }
-                    connected_view.firmware_version = data.firmware_version
-                    //IMPORTANT: firmware_version must be last - it triggers firmware list update, other data must already be set
 
-                    if (userSettings.autoOpenView) {
-                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
+                    if (view_index !== -1) {
+                        connected_view = platform_view_model_.get(view_index)
+                        connected_view.device_id = data.device_id
+                        connected_view.connected = true
+                        connected_view.is_assisted = data.is_assisted
+                        if (data.controller_class_id !== undefined) {
+                            connected_view.controller_class_id = data.controller_class_id
+                        }
+                        connected_view.firmware_version = data.firmware_version
+                        //IMPORTANT: firmware_version must be last - it triggers firmware list update, other data must already be set
+
+                        if (userSettings.autoOpenView) {
+                            updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
+                        }
                     }
-                }
 
-                break;
+                    break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
@@ -335,44 +331,44 @@ function updateState(event, data)
                 }
                 break;
 
-            case events.CLOSE_PLATFORM_VIEW_EVENT:
-                let l
-                for (l = 0; l < platform_view_model_.count; l++) {
-                    let closed_view = platform_view_model_.get(l)
-                    if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
-                        platform_view_model_.remove(l)
-                        break
+                case events.CLOSE_PLATFORM_VIEW_EVENT:
+                    let l
+                    for (l = 0; l < platform_view_model_.count; l++) {
+                        let closed_view = platform_view_model_.get(l)
+                        if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
+                            platform_view_model_.remove(l)
+                            break
+                        }
                     }
-                }
 
-                // in-view tab > closed tab: decrement currentIndex to stay on same tab
-                // in-view tab === closed tab: decrement currentIndex to focus on new tab to left
-                // in-view tab < closed tab: do nothing to stay in place
-                if (stack_container_.currentIndex >= l + 1) { // +1 as platform selector is index 0 in stack_container_ & not in platform_view_model_
-                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1 })
-                }
-                break;
+                    // in-view tab > closed tab: decrement currentIndex to stay on same tab
+                    // in-view tab === closed tab: decrement currentIndex to focus on new tab to left
+                    // in-view tab < closed tab: do nothing to stay in place
+                    if (stack_container_.currentIndex >= l + 1) { // +1 as platform selector is index 0 in stack_container_ & not in platform_view_model_
+                        updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1 })
+                    }
+                    break;
 
-            case events.SWITCH_VIEW_EVENT:
-                // Change index of main view stack - switch between views or between view and platform selection
-                if (stack_container_.currentIndex !== data.index) {
-                    stack_container_.currentIndex = data.index
-                }
+                case events.SWITCH_VIEW_EVENT:
+                    // Change index of main view stack - switch between views or between view and platform selection
+                    if (stack_container_.currentIndex !== data.index) {
+                        stack_container_.currentIndex = data.index
+                    }
 
-                if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
-                    (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
-                    platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
-                } else {
-                     platform_tab_list_view_.currentIndex =  -1
-                }
+                    if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
+                        (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
+                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                    } else {
+                        platform_tab_list_view_.currentIndex =  -1
+                    }
 
-                break;
+                    break;
 
-            default:
-                globalEventHandler(event,data)
-            break;
+                default:
+                    globalEventHandler(event,data)
+                    break;
             }
-        break;
+            break;
 
         default:
             globalEventHandler(event,data)
