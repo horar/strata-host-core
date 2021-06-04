@@ -35,7 +35,7 @@ void StrataClientTest::testConnectDisconnectToTheServer()
 
     // serverConnector set up
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
         [&server, &serverRevicedMessage](const QByteArray &clientId, const QByteArray &message) {
@@ -87,7 +87,7 @@ void StrataClientTest::testBuildRequest()
     int expectedId = 0;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &,
                                                                   const QByteArray &message) {
@@ -143,7 +143,7 @@ void StrataClientTest::testNonDefaultDealerId()
     bool customIdRecieved = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
@@ -171,7 +171,7 @@ void StrataClientTest::testWithNoCallbacks()
     bool noCallbackHandler = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
@@ -238,7 +238,7 @@ void StrataClientTest::testWithAllCallbacks()
     bool allCallbacksResCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
@@ -363,7 +363,7 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     bool resCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
@@ -469,7 +469,7 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     bool errorCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
@@ -574,7 +574,7 @@ void StrataClientTest::testTimedoutRequest()
     int timedOutRequests = 0;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     StrataClient client(address_);
     client.connectServer();
@@ -613,7 +613,7 @@ void StrataClientTest::testNoTimedoutRequest()
                 server.sendMessage(clientId, response);
             });
 
-    server.initilizeConnector();
+    server.initializeConnector();
 
     StrataClient client(address_);
     client.connectServer();
@@ -672,7 +672,7 @@ void StrataClientTest::testErrorOccourredSignal()
     // waitForZmqMessages();
     errorOccurred.clear();
 
-    server.initilizeConnector();
+    server.initializeConnector();
     client.connectServer();
     waitForZmqMessages(50);
     client.connectServer();  // This should fail
@@ -730,7 +730,7 @@ void StrataClientTest::testSendNotification()
     bool serverGotNotification = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initilizeConnector();
+    server.initializeConnector();
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&serverGotNotification](const QByteArray &, const QByteArray &message) {

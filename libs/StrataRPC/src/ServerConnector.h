@@ -38,7 +38,7 @@ public slots:
      * signals.
      * @return True if the initialization is successful, False otherwise.
      */
-    bool initilizeConnector();
+    bool initializeConnector();
 
     /**
      * Sends a message to a client.

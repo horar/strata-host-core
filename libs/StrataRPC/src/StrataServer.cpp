@@ -27,7 +27,7 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
     connector_->moveToThread(connectorThread_);
 
     connect(this, &StrataServer::initializeServerConnector, connector_.get(),
-            &ServerConnector::initilizeConnector, Qt::QueuedConnection);
+            &ServerConnector::initializeConnector, Qt::QueuedConnection);
     connect(this, &StrataServer::sendMessage, connector_.get(), &ServerConnector::sendMessage,
             Qt::QueuedConnection);
     connect(this, &StrataServer::newClientMessageParsed, this, &StrataServer::dispatchHandler);

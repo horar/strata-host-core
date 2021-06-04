@@ -20,7 +20,7 @@ void ConnectorsTest::testOpenServerConnectorFaild()
     strata::strataRPC::ServerConnector connector(address_);
     QSignalSpy serverConnected_1(&connector, &strata::strataRPC::ServerConnector::serverInitialized);
     QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccred);
-    QCOMPARE_(connector.initilizeConnector(), true);
+    QCOMPARE_(connector.initializeConnector(), true);
     QCOMPARE_(serverConnected_1.isEmpty(), false);
     QCOMPARE_(errorOccured_1.isEmpty(), true);
 
@@ -29,7 +29,7 @@ void ConnectorsTest::testOpenServerConnectorFaild()
                                  &strata::strataRPC::ServerConnector::serverInitialized);
     QSignalSpy errorOccured_2(&connectorDublicate,
                               &strata::strataRPC::ServerConnector::errorOccred);
-    QCOMPARE_(connectorDublicate.initilizeConnector(), false);
+    QCOMPARE_(connectorDublicate.initializeConnector(), false);
     QCOMPARE_(serverConnected_2.isEmpty(), true);
     QCOMPARE_(errorOccured_2.isEmpty(), false);
     QCOMPARE_(errorOccured_2.count(), 1);
@@ -43,7 +43,7 @@ void ConnectorsTest::testServerAndClient()
     QTimer timer;
     bool testPassed = false;
     strata::strataRPC::ServerConnector server(address_);
-    QCOMPARE_(server.initilizeConnector(), true);
+    QCOMPARE_(server.initializeConnector(), true);
 
     QByteArray client_id = "client_1";
     strata::strataRPC::ClientConnector client(address_, client_id);
@@ -87,7 +87,7 @@ void ConnectorsTest::testServerAndClient()
 void ConnectorsTest::testMultipleClients()
 {
     strata::strataRPC::ServerConnector server(address_);
-    QCOMPARE_(server.initilizeConnector(), true);
+    QCOMPARE_(server.initializeConnector(), true);
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QString &) {
@@ -119,7 +119,7 @@ void ConnectorsTest::testMultipleClients()
 void ConnectorsTest::testFloodTheServer()
 {
     strata::strataRPC::ServerConnector server(address_);
-    QCOMPARE_(server.initilizeConnector(), true);
+    QCOMPARE_(server.initializeConnector(), true);
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
@@ -148,7 +148,7 @@ void ConnectorsTest::testFloodTheClient()
     QTimer timer;
 
     strata::strataRPC::ServerConnector server(address_);
-    QCOMPARE_(server.initilizeConnector(), true);
+    QCOMPARE_(server.initializeConnector(), true);
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server, &timer](const QByteArray &clientId, const QByteArray &message) {
@@ -180,7 +180,7 @@ void ConnectorsTest::testDisconnectClient()
 {
     bool serverReceivedMessage = false;
     strata::strataRPC::ServerConnector server(address_);
-    QCOMPARE_(server.initilizeConnector(), true);
+    QCOMPARE_(server.initializeConnector(), true);
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&serverReceivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
@@ -265,7 +265,7 @@ void ConnectorsTest::testFailedToSendMessageFromServerConnector()
         qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured.takeFirst().at(0));
     QCOMPARE_(errorType, strata::strataRPC::ServerConnectorError::FailedToSend);
 
-    QVERIFY_(server.initilizeConnector());
+    QVERIFY_(server.initializeConnector());
     QVERIFY_(server.sendMessage("RANDOMID", "This should pass."));
 }
 

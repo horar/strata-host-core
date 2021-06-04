@@ -13,7 +13,7 @@ ServerConnector::~ServerConnector()
     }
 }
 
-bool ServerConnector::initilizeConnector()
+bool ServerConnector::initializeConnector()
 {
     using Connector = strata::connector::Connector;
 
