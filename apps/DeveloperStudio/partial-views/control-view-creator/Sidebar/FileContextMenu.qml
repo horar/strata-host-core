@@ -46,7 +46,7 @@ Menu {
     MenuItem {
         text: "Add New File to Qrc"
         onTriggered: {
-            treeModel.insertChild(false, -1, styleData.index.parent)
+            newFilePopup.visible = true
             fileContextMenu.dismiss()
         }
     }

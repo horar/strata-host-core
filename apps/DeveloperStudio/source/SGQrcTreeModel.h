@@ -184,12 +184,24 @@ public:
      * @return Returns a list of filepaths for missing files
      */
     Q_INVOKABLE QList<QString> getMissingFiles();
-    
+
     /**
      * @brief removeEmptyChildren Removes any children that don't have a filename
      * @param parent The QModelIndex of the parent
      */
     Q_INVOKABLE void removeEmptyChildren(const QModelIndex &parent);
+
+    /**
+     * @brief
+     * @param
+     */
+    Q_INVOKABLE bool createQmlFile(const QString &filepath, const bool isVisualEditorEnabled);
+
+    /**
+     * @brief
+     * @param
+     */
+    Q_INVOKABLE bool createEmptyFile(const QString &filepath);
 
     /**
      * @brief renameFile Renames a file or a folder
@@ -257,12 +269,13 @@ signals:
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
 
+    void fileAppeared(const QModelIndex index);
 
     /***
      * SLOTS
      ***/
 public slots:
-    void childrenChanged(const QModelIndex &index, int role);    
+    void childrenChanged(const QModelIndex &index, int role);
 
     /***
      * PRIVATE MEMBERS
@@ -321,4 +334,7 @@ private:
     QModelIndex rootIndex_;
     QUrl debugMenuSource_;
     bool needsCleaning_;
+
+    const QString baseQMLFile_ = "import QtQuick 2.12;\n\nItem {\n\n}\n";
+    const QString veQMLFile_ = "import QtQuick 2.12;\n\nItem {\n    UIBase {\n\n    }\n}\n";
 };

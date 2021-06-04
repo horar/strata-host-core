@@ -10,7 +10,7 @@ Menu {
                 treeView.expand(styleData.index)
             }
 
-            treeModel.insertChild(false, -1, styleData.index)
+            newFilePopup.visible = true
             folderContextMenu.dismiss()
         }
     }
