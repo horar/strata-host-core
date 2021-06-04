@@ -26,7 +26,7 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
     connector_->moveToThread(connectorThread_);
 
-    connect(this, &StrataServer::initializeServer, connector_.get(),
+    connect(this, &StrataServer::initializeServerConnector, connector_.get(),
             &ServerConnector::initilizeConnector, Qt::QueuedConnection);
     connect(this, &StrataServer::sendMessage, connector_.get(), &ServerConnector::sendMessage,
             Qt::QueuedConnection);
@@ -64,7 +64,7 @@ void StrataServer::initializeServer()
         [this]() { emit errorOccurred(ServerError::FailedToInitializeServer, "connector error"); },
         Qt::QueuedConnection);
 
-    emit initializeServer();
+    emit initializeServerConnector();
 }
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)

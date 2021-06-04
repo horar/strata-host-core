@@ -140,7 +140,7 @@ signals:
     /**
      * Signal to initialize the server.
      */
-    void initializeServer();
+    void initializeServerConnector();
 
     /**
      * Emitted when the server is initialize successfully.
