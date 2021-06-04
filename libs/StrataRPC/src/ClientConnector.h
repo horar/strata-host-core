@@ -45,6 +45,8 @@ public:
      */
     ~ClientConnector();
 
+    bool isConnected();
+
 public slots:
     /**
      * initialize the client's zmq connector, then calls ClientConnector::connectClient()

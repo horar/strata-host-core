@@ -10,6 +10,14 @@ ClientConnector::~ClientConnector()
     disconnectClient();
 }
 
+bool ClientConnector::isConnected() 
+{
+    if (connector_) {
+        return connector_->isConnected();
+    }
+    return false;
+}
+
 bool ClientConnector::initializeConnector()
 {
     using Connector = strata::connector::Connector;
