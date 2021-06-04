@@ -21,9 +21,9 @@ var context = {
 var screens = {
     SPLASH_SCREEN: "qrc:/SplashScreen.qml",
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
-    PLATFORM_SELECTOR : "qrc:/SGPlatformSelector.qml",
-    PLATFORM_VIEW : "qrc:/partial-views/platform-view/SGPlatformView.qml",
-    CONTENT_SCREEN : "qrc:/Content.qml",
+    PLATFORM_SELECTOR: "qrc:/SGPlatformSelector.qml",
+    PLATFORM_VIEW: "qrc:/partial-views/platform-view/SGPlatformView.qml",
+    CONTENT_SCREEN: "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml",
     LOAD_ERROR: "qrc:/partial-views/SGLoadError.qml"
 }
@@ -33,7 +33,7 @@ var screens = {
 */
 var states = {
     UNINITIALIZED: 1,       // Init() has not been called
-    NOT_CONNECTED_STATE : 2,// HCS not connected
+    NOT_CONNECTED_STATE: 2, // HCS not connected
     LOGIN_STATE: 3,         // User needs to login
     CONTROL_STATE: 4,       // Platform is connected and we are ready for control
 }
@@ -129,9 +129,8 @@ function removeView(parent)
   A catch-all for events that are required to be handled for default event behaviors
   or handle events that were not caught in the main state machine handler
 */
-function globalEventHandler(event,data)
+function globalEventHandler(event, data)
 {
-
     switch(event) {
         case events.PROMPT_SPLASH_SCREEN_EVENT:
             navigation_state_ = states.NOT_CONNECTED_STATE
@@ -193,7 +192,7 @@ function globalEventHandler(event,data)
 */
 function updateState(event)
 {
-    updateState(event,null)
+    updateState(event, null)
 }
 
 /*
@@ -312,24 +311,24 @@ function updateState(event, data)
 
                     break;
 
-            case events.PLATFORM_DISCONNECTED_EVENT:
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
-                // Disconnect any matching open platform view
-                for (let k = 0; k < platform_view_model_.count; k++) {
-                    let disconnected_view = platform_view_model_.get(k)
-                    if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
-                        disconnected_view.connected = false
-                        disconnected_view.firmware_version = ""
-                        disconnected_view.controller_class_id = ""
-                        //IMPORTANT: If you add deinitialization here, don't forget to add initialization to case events.PLATFORM_CONNECTED_EVENT
+                case events.PLATFORM_DISCONNECTED_EVENT:
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
+                    // Disconnect any matching open platform view
+                    for (let k = 0; k < platform_view_model_.count; k++) {
+                        let disconnected_view = platform_view_model_.get(k)
+                        if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
+                            disconnected_view.connected = false
+                            disconnected_view.firmware_version = ""
+                            disconnected_view.controller_class_id = ""
+                            //IMPORTANT: If you add deinitialization here, don't forget to add initialization to case events.PLATFORM_CONNECTED_EVENT
 
-                        if (userSettings.closeOnDisconnect) {
-                            updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
+                            if (userSettings.closeOnDisconnect) {
+                                updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
+                            }
+                            break
                         }
-                        break
                     }
-                }
-                break;
+                    break;
 
                 case events.CLOSE_PLATFORM_VIEW_EVENT:
                     let l
@@ -357,21 +356,21 @@ function updateState(event, data)
 
                     if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
                         (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
-                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex - 1
                     } else {
-                        platform_tab_list_view_.currentIndex =  -1
+                        platform_tab_list_view_.currentIndex = -1
                     }
 
                     break;
 
                 default:
-                    globalEventHandler(event,data)
+                    globalEventHandler(event, data)
                     break;
             }
             break;
 
         default:
-            globalEventHandler(event,data)
+            globalEventHandler(event, data)
             break;
     }
 }
