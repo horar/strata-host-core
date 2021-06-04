@@ -196,10 +196,7 @@ void FlasherTest::createFiles()
     if (fakeFirmwareBackup_.open() == false) {
         QFAIL("Cannot open fake firmware for backup file");
     } else {
-        QTextStream fakeFirmwareBackupOut(&fakeFirmwareBackup_);
-        fakeFirmwareBackupOut << flasher_test_constants::emptyString;
-        fakeFirmwareBackupOut.flush();
-        fakeFirmwareBackup_.close();
+        fakeFirmwareBackup_.resize(0);
     }
 }
 
