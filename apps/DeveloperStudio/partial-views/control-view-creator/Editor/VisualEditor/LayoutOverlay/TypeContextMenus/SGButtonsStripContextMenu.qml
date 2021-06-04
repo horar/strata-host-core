@@ -11,12 +11,13 @@ ColumnLayout {
     spacing: 1
 
     ContextMenuButton {
-        text: "Set Text"
+        text: "Set Orientation"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
             menuLoader.active = true
-            menuLoader.item.text = layoutOverlayRoot.sourceItem.text
+            menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
+            menuLoader.item.label = "Select the orientation."
             contextMenu.close()
         }
     }
