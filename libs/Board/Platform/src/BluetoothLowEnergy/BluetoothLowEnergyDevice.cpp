@@ -266,7 +266,7 @@ void BluetoothLowEnergyDevice::connectToDevice()
 void BluetoothLowEnergyDevice::deviceConnectedHandler()
 {
     qCDebug(logCategoryDeviceBLE) << this << "Device connected, discovering services...";
-    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_connected"}})")); // TODO remove
+    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_connected"}})")); // TODO remove after open() will be changed to work asynchronously
     lowEnergyController_->discoverServices();
 }
 
@@ -311,7 +311,7 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
         for (const auto &service : discoveredServices_) {
             qCDebug(logCategoryDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
         }
-        emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})")); // TODO remove
+        emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})")); // TODO remove after open() will be changed to work asynchronously
     }
 }
 
@@ -354,7 +354,7 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
 void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
 {
     emit deviceError(ErrorCode::DeviceDisconnected, "");
-    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_disconnected"}})")); // TODO remove
+    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_disconnected"}})")); // TODO remove after open() will be changed to work asynchronously
     deinit();
 }
 
