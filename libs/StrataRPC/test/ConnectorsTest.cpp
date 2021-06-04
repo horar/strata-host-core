@@ -55,6 +55,7 @@ void ConnectorsTest::testServerAndClient()
 
     QCOMPARE_(clientInitialized.count(), 1);
     QCOMPARE_(clientConnected.count(), 1);
+    QCOMPARE_(client.isConnected(), true);
 
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
@@ -272,13 +273,12 @@ void ConnectorsTest::testClientConnectorErrorSignals()
 {
     qRegisterMetaType<strata::strataRPC::ClientConnectorError>("ClientConnectorError");
 
-    // create connector & initialize it
     strata::strataRPC::ClientConnector client(address_);
+    QCOMPARE_(client.isConnected(), false);
     client.initializeConnector();
 
     QSignalSpy errorOccurred(&client, &strata::strataRPC::ClientConnector::errorOccurred);
 
-    // try to re init --> this will cause an error
     {
         QCOMPARE_(client.initializeConnector(), false);
         QCOMPARE_(errorOccurred.count(), 2);
@@ -291,7 +291,6 @@ void ConnectorsTest::testClientConnectorErrorSignals()
         errorOccurred.clear();
     }
 
-    // try to reconnect --> this will cause an error
     {
         QCOMPARE_(client.connectClient(), false);
         QCOMPARE_(errorOccurred.count(), 1);
@@ -301,10 +300,9 @@ void ConnectorsTest::testClientConnectorErrorSignals()
         errorOccurred.clear();
     }
 
-    // disconnect
     client.disconnectClient();
+    QCOMPARE_(client.isConnected(), false);
 
-    // re disconnect --> this will cause error
     {
         QCOMPARE_(client.disconnectClient(), false);
         QCOMPARE_(errorOccurred.count(), 1);
@@ -314,7 +312,6 @@ void ConnectorsTest::testClientConnectorErrorSignals()
         errorOccurred.clear();
     }
 
-    // try to send --> this will cause an error
     {
         QCOMPARE_(client.sendMessage("test"), false);
         QCOMPARE_(errorOccurred.count(), 1);

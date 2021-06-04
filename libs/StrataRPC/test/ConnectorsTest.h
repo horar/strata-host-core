@@ -21,7 +21,6 @@ private slots:
     void testDisconnectClient();
     void testFailedToSendMessageFromClientConnector();
     void testFailedToSendMessageFromServerConnector();
-
     void testClientConnectorErrorSignals();
 
 private:
