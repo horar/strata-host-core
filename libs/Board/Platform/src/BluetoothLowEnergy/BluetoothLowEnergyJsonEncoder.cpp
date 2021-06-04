@@ -46,37 +46,34 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
         }
     }
 
-    QBluetoothUuid serviceUuidObject = normalizeBleUuid(serviceUuid);
-    if (serviceUuidObject.isNull())
+    addresses.service = normalizeBleUuid(serviceUuid);
+    if (addresses.service.isNull())
     {
         qCWarning(logCategoryDeviceBLE) << "Invalid service uuid";
         return false;
     }
-    QBluetoothUuid characteristicUuidObject = normalizeBleUuid(characteristicUuid);
-    if (characteristicUuidObject.isNull())
+    addresses.characteristic = normalizeBleUuid(characteristicUuid);
+    if (addresses.characteristic.isNull())
     {
         qCWarning(logCategoryDeviceBLE) << "Invalid characteristic uuid";
         return false;
     }
-    QBluetoothUuid descriptorUuidObject;
     if (descriptorUuid.empty() == false) {
-        descriptorUuidObject = normalizeBleUuid(descriptorUuid);
-        if (descriptorUuidObject.isNull())
+        addresses.descriptor = normalizeBleUuid(descriptorUuid);
+        if (addresses.descriptor.isNull())
         {
             qCWarning(logCategoryDeviceBLE) << "Invalid descriptor uuid";
             return false;
         }
+    } else {
+        addresses.descriptor = QBluetoothUuid();
     }
     std::string data;
     if (payload.HasMember("data") && payload["data"].IsString()) {
         data = payload["data"].GetString();
     }
-    QByteArray dataObject = QByteArray::fromHex(data.c_str());
+    addresses.data = QByteArray::fromHex(data.c_str());
 
-    addresses.service = serviceUuidObject;
-    addresses.characteristic = characteristicUuidObject;
-    addresses.descriptor = descriptorUuidObject;
-    addresses.data = dataObject;
     return true;
 }
 
