@@ -314,10 +314,6 @@ function updateState(event, data)
                         if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                             disconnected_view.connected = false
                             disconnected_view.firmware_version = ""
-
-                            if (userSettings.closeOnDisconnect) {
-                                updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
-                            }
                             break
                         }
                     }
