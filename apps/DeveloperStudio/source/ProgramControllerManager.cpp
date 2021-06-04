@@ -88,6 +88,11 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
 
     QString deviceId = jobIdHash_.value(jobId);
 
+    if (requestedDeviceIds_.contains(deviceId) == false) {
+        //not our request
+        return;
+    }
+
     if (jobType == "clear_fw_class_id") {
         if (jobStatus == "running") {
             notifyProgressChange(deviceId, ProgressState::ClearDataState, 1);
