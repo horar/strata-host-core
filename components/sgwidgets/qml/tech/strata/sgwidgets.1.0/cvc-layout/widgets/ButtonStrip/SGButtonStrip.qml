@@ -59,18 +59,17 @@ Item {
                     contentItem.color = Qt.binding(() => {return buttonStripContainer.textColor(buttonDelegate)})
                 }
 
-                property bool scaleToFit: false
                 property int powIndex: 1 << index
                 property bool roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
                 property bool roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
                 property bool roundedTop: orientation == Qt.Vertical ? index === 0 : true
                 property bool roundedBottom :  orientation == Qt.Vertical ? index === repeater.count - 1 : true
 
-
                 background:Item {
-                    implicitHeight: scaleToFit ? 0 : 40
-                    implicitWidth: scaleToFit ? 0 : 100
+                    implicitHeight: 40
+                    implicitWidth: 100
                     clip: true
+
                     Rectangle {
                         id:buttonBackground
                         anchors {
