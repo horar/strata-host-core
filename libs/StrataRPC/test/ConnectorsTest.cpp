@@ -18,8 +18,9 @@ void ConnectorsTest::waitForZmqMessages(int delay)
 void ConnectorsTest::testOpenServerConnectorFaild()
 {
     strata::strataRPC::ServerConnector connector(address_);
-    QSignalSpy serverConnected_1(&connector, &strata::strataRPC::ServerConnector::serverInitialized);
-    QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccred);
+    QSignalSpy serverConnected_1(&connector,
+                                 &strata::strataRPC::ServerConnector::serverInitialized);
+    QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccurred);
     QCOMPARE_(connector.initializeConnector(), true);
     QCOMPARE_(serverConnected_1.isEmpty(), false);
     QCOMPARE_(errorOccured_1.isEmpty(), true);
@@ -28,7 +29,7 @@ void ConnectorsTest::testOpenServerConnectorFaild()
     QSignalSpy serverConnected_2(&connectorDublicate,
                                  &strata::strataRPC::ServerConnector::serverInitialized);
     QSignalSpy errorOccured_2(&connectorDublicate,
-                              &strata::strataRPC::ServerConnector::errorOccred);
+                              &strata::strataRPC::ServerConnector::errorOccurred);
     QCOMPARE_(connectorDublicate.initializeConnector(), false);
     QCOMPARE_(serverConnected_2.isEmpty(), true);
     QCOMPARE_(errorOccured_2.isEmpty(), false);
@@ -258,7 +259,7 @@ void ConnectorsTest::testFailedToSendMessageFromServerConnector()
 {
     qRegisterMetaType<strata::strataRPC::ServerConnectorError>("ServerConnectorError");
     strata::strataRPC::ServerConnector server(address_);
-    QSignalSpy errorOccured(&server, &strata::strataRPC::ServerConnector::errorOccred);
+    QSignalSpy errorOccured(&server, &strata::strataRPC::ServerConnector::errorOccurred);
     QVERIFY_(false == server.sendMessage("RANDOMID", "This should fail."));
     QCOMPARE_(errorOccured.isEmpty(), false);
     auto errorType =

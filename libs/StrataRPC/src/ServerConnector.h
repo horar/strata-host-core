@@ -61,7 +61,7 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccred(ServerConnectorError errorType, const QString &errorMessage);
+    void errorOccurred(ServerConnectorError errorType, const QString &errorMessage);
 
     /**
      * Emitted when the client connector was initialized successfully.

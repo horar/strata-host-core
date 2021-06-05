@@ -26,7 +26,7 @@ bool ServerConnector::initializeConnector()
     if (false == connector_->open(serverAddress_.toStdString())) {
         QString errorMessage(QStringLiteral("Failed to open ServerConnector."));
         qCCritical(logCategoryStrataClientConnector) << errorMessage;
-        emit errorOccred(ServerConnectorError::FailedToInitialize, errorMessage);
+        emit errorOccurred(ServerConnectorError::FailedToInitialize, errorMessage);
         return false;
     }
 
@@ -81,14 +81,14 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
             QString errorMessage(QStringLiteral("Failed to send message to client."));
             qCCritical(logCategoryStrataClientConnector)
                 << errorMessage << "Client id:" << clientId;
-            emit errorOccred(ServerConnectorError::FailedToSend, errorMessage);
+            emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
             return false;
         }
     } else {
         QString errorMessage(
             QStringLiteral("Failed to send message. Connector is not initialized."));
         qCCritical(logCategoryStrataClientConnector) << errorMessage;
-        emit errorOccred(ServerConnectorError::FailedToSend, errorMessage);
+        emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
         return false;
     }
     return true;

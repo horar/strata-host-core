@@ -60,7 +60,7 @@ void StrataServer::initializeServer()
         Qt::QueuedConnection);
 
     connect(
-        connector_.get(), &ServerConnector::errorOccred, this,
+        connector_.get(), &ServerConnector::errorOccurred, this,
         [this]() { emit errorOccurred(ServerError::FailedToInitializeServer, "connector error"); },
         Qt::QueuedConnection);
 
