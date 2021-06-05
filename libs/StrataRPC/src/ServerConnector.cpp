@@ -24,9 +24,9 @@ bool ServerConnector::initializeConnector()
     }
 
     if (false == connector_->open(serverAddress_.toStdString())) {
-        qCCritical(logCategoryStrataServerConnector) << "Failed to open ServerConnector.";
-        emit errorOccred(ServerConnectorError::FailedToInitialize,
-                         "Failed to open ServerConnector.");
+        QString errorMessage(QStringLiteral("Failed to open ServerConnector."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccred(ServerConnectorError::FailedToInitialize, errorMessage);
         return false;
     }
 
@@ -78,17 +78,17 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
         // Based on zmq implementation, there is no straight forward way to verify if a client with
         // a specific client id is connected.
         if (false == connector_->send(message.toStdString())) {
-            qCCritical(logCategoryStrataServerConnector)
-                << "Failed to send message to client ID:" << clientId;
-            emit errorOccred(ServerConnectorError::FailedToSend,
-                             "Failed to send message to client");
+            QString errorMessage(QStringLiteral("Failed to send message to client."));
+            qCCritical(logCategoryStrataClientConnector)
+                << errorMessage << "Client id:" << clientId;
+            emit errorOccred(ServerConnectorError::FailedToSend, errorMessage);
             return false;
         }
     } else {
-        qCCritical(logCategoryStrataServerConnector)
-            << "Failed to send message. Connector is not initialized.";
-        emit errorOccred(ServerConnectorError::FailedToSend,
-                         "Failed to send message. Connector is not initialized.");
+        QString errorMessage(
+            QStringLiteral("Failed to send message. Connector is not initialized."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccred(ServerConnectorError::FailedToSend, errorMessage);
         return false;
     }
     return true;

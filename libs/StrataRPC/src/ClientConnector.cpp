@@ -53,29 +53,32 @@ bool ClientConnector::disconnectClient()
         return true;
     }
 
-    qCCritical(logCategoryStrataClientConnector) << "Failed to disconnect client.";
-    emit errorOccurred(ClientConnectorError::FailedToDisconnect, "Failed to disconnect client.");
+    QString errorMessage(QStringLiteral("Failed to disconnect client."));
+    qCCritical(logCategoryStrataClientConnector) << errorMessage;
+    emit errorOccurred(ClientConnectorError::FailedToDisconnect, errorMessage);
     return false;
 }
 
 bool ClientConnector::connectClient()
 {
     if (!connector_) {
-        qCCritical(logCategoryStrataClientConnector) << "Uninitialized connector.";
-        emit errorOccurred(ClientConnectorError::FailedToConnect, "Uninitialized connector.");
+        QString errorMessage(QStringLiteral("Uninitialized connector."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccurred(ClientConnectorError::FailedToConnect, errorMessage);
         return false;
     }
 
     if (true == connector_->isConnected()) {
-        qCCritical(logCategoryStrataClientConnector) << "Client already connected.";
-        emit errorOccurred(ClientConnectorError::FailedToConnect, "Client already connected.");
+        QString errorMessage(QStringLiteral("Client already connected."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccurred(ClientConnectorError::FailedToConnect, errorMessage);
         return false;
     }
 
     if (false == connector_->open(serverAddress_.toStdString())) {
-        qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector.";
-        emit errorOccurred(ClientConnectorError::FailedToConnect,
-                           "Failed to open ClientConnector.");
+        QString errorMessage(QStringLiteral("Failed to open ClientConnector."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccurred(ClientConnectorError::FailedToConnect, errorMessage);
         return false;
     }
 
@@ -112,25 +115,25 @@ bool ClientConnector::sendMessage(const QByteArray &message)
 {
     if (connector_) {
         if (false == connector_->isConnected()) {
-            qCCritical(logCategoryStrataClientConnector)
-                << "Failed to send message. Client is not connected.";
-            emit errorOccurred(ClientConnectorError::FailedToSend,
-                               "Failed to send message. Client is not connected.");
+            QString errorMessage(
+                QStringLiteral("Failed to send message. Client is not connected."));
+            qCCritical(logCategoryStrataClientConnector) << errorMessage;
+            emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
             return false;
         }
 
         if (false == connector_->send(message.toStdString())) {
-            qCCritical(logCategoryStrataClientConnector) << "Failed to send message.";
-            emit errorOccurred(ClientConnectorError::FailedToSend, "Failed to send message.");
+            QString errorMessage(QStringLiteral("Failed to send message."));
+            qCCritical(logCategoryStrataClientConnector) << errorMessage;
+            emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
             return false;
         }
 
     } else {
-        qCCritical(logCategoryStrataClientConnector)
-            << "Failed to send message. Connector is not initialized.";
-        emit errorOccurred(ClientConnectorError::FailedToSend,
-                           "Failed to send message. Connector is not initialized.");
-
+        QString errorMessage(
+            QStringLiteral("Failed to send message. Connector is not initialized."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
         return false;
     }
 
