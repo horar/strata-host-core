@@ -33,8 +33,12 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
     connect(this, &StrataServer::newClientMessageParsed, this, &StrataServer::dispatchHandler);
     connect(connector_.get(), &ServerConnector::newMessageReceived, this,
             &StrataServer::newClientMessage);
-    connect(connector_.get(), &ServerConnector::serverInitialized, this,
-            [this]() { emit serverInitialized(); });
+    connect(connector_.get(), &ServerConnector::errorOccurred, this,
+            &StrataServer::connectorErrorHandler);
+    connect(connector_.get(), &ServerConnector::serverInitialized, this, [this]() {
+        qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
+        emit serverInitialized();
+    });
 
     connectorThread_->start();
 }
@@ -54,16 +58,6 @@ StrataServer::~StrataServer()
 
 void StrataServer::initializeServer()
 {
-    connect(
-        connector_.get(), &ServerConnector::serverInitialized, this,
-        []() { qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully."; },
-        Qt::QueuedConnection);
-
-    connect(
-        connector_.get(), &ServerConnector::errorOccurred, this,
-        [this]() { emit errorOccurred(ServerError::FailedToInitializeServer, "connector error"); },
-        Qt::QueuedConnection);
-
     emit initializeServerConnector();
 }
 

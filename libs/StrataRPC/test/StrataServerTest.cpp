@@ -794,9 +794,10 @@ void StrataServerTest::testErrorOccourredSignal()
     }
 
     server.initializeServer();
+    waitForZmqMessages(50);
     server.initializeServer();
 
-    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 3, 100);
+    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
     errorOccurred.clear();
