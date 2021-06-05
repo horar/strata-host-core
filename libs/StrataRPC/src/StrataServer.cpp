@@ -481,12 +481,9 @@ void StrataServer::connectorErrorHandler(ServerConnectorError errorType,
 {
     switch (errorType) {
         case ServerConnectorError::FailedToInitialize:
-            qCCritical(logCategoryStrataServer) << errorMessage;
             errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
             break;
         case ServerConnectorError::FailedToSend:
-            qCCritical(logCategoryStrataServer) << errorMessage;
-            // error need to be updated
             errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
             break;
     }

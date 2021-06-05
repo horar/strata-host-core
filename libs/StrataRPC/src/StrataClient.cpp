@@ -319,19 +319,12 @@ void StrataClient::connectorErrorHandler(ClientConnectorError errorType,
 {
     switch (errorType) {
         case ClientConnectorError::FailedToConnect:
-            // log and handle the error here!
-            // QString errorMessage(QStringLiteral("Failed to connect to the server."));
-            qCCritical(logCategoryStrataClient) << errorMessage;
             emit errorOccurred(ClientError::FailedToConnect, errorMessage);
             break;
         case ClientConnectorError::FailedToDisconnect:
-            // log and handle the error here!
-            qCCritical(logCategoryStrataClient) << errorMessage;
             emit errorOccurred(ClientError::FailedToDisconnect, errorMessage);
             break;
         case ClientConnectorError::FailedToSend:
-            // log and handle the error here!
-            qCCritical(logCategoryStrataClient) << errorMessage;
             emit errorOccurred(ClientError::FailedToSendRequest, errorMessage);
             break;
     }
