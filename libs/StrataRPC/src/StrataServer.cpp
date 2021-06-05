@@ -280,7 +280,6 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
             break;
     }
 
-    // connector_->sendMessage(clientMessage.clientID, serverMessage);
     emit sendMessage(clientMessage.clientID, serverMessage);
 }
 
