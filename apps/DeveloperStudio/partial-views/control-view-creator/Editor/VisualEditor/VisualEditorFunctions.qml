@@ -52,14 +52,16 @@ QtObject {
     }
 
     function checkFile() {
-        loader.setSource(visualEditor.file)
+        if (visualEditor.file.toLowerCase().endsWith(".qml")){
+            loader.setSource(visualEditor.file)
 
-        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-            visualEditor.fileValid = true
-            unload(false)
-        } else {
-            loadError()
+            if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+                visualEditor.fileValid = true
+                unload(false)
+                return
+            }
         }
+        loadError()
     }
 
     function unload(reload = false) {
@@ -75,7 +77,6 @@ QtObject {
     function load() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")){
             fileContents = readFileContents(visualEditor.file)
-
             loader.setSource(visualEditor.file)
 
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
