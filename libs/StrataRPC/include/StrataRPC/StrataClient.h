@@ -176,6 +176,12 @@ private slots:
     void dispatchHandler(const Message &serverMessage);
 
     /**
+     * Slot to handle clientInitialized signal from ClientConnector by sending register_client
+     * message to the server.
+     */
+    void clientInitializedHandler();
+
+    /**
      * Slot to handle errors from the ClientConnector.
      * @param [in] errorType enum of the the error.
      * @param [in] errorMessage description of the error.
