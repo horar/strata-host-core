@@ -26,6 +26,8 @@ SGWidgets.SGMainWindow {
     id: mainWindow
 
     visible: true
+    x: Screen.width / 2 - mainWindow.width / 2
+    y: Screen.height / 2 - mainWindow.height / 2
     width: 1200
     height: 900
     minimumHeight: 768-40 // -40 for Win10 taskbar height

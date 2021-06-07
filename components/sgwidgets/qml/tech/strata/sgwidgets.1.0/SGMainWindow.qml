@@ -8,7 +8,10 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 ApplicationWindow {
     id: window
 
-    flags: flags | Qt.WindowFullscreenButtonHint
+    width: settings.width
+    height: settings.height
+
+    flags: Qt.Window | Qt.WindowFullscreenButtonHint
 
     onClosing: {
         SGWidgets.SGDialogJS.destroyAllDialogs()
@@ -34,15 +37,12 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-
-        window.x = settings.x
-        window.y = settings.y
-
-        window.width = settings.width
-        window.height = settings.height
-
+        // bug present in following few lines reported here: https://jira.onsemi.com/browse/CS-1914
         var savedScreenLayout = (settings.desktopAvailableWidth === Screen.desktopAvailableWidth)
             && (settings.desktopAvailableHeight === Screen.desktopAvailableHeight)
+
+        window.x = (savedScreenLayout) ? settings.x : Screen.width / 2 - window.width / 2
+        window.y = (savedScreenLayout) ? settings.y : Screen.height / 2 - window.height / 2
 
         if (settings.visibility === Window.Maximized && savedScreenLayout) {
             window.showMaximized()
