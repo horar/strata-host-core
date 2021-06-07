@@ -696,8 +696,8 @@ R"({
     "notification":{
         "value":"[$request.cmd]",
         "payload": {
-            "size":["$response.payload.size"],
-            "chunks":["$response.payload.chunks"]
+            "size":["$firmware.size"],
+            "chunks":["$firmware.chunks"]
         }
     }
 })");
@@ -709,13 +709,13 @@ const QByteArray backup_firmware_request = normalizeMessage(R"({"cmd":"backup_fi
 const QByteArray backup_firmware_response = normalizeMessage(
 R"({
     "notification":{
-        "value":"backup_firmware",
+        "value":"[$request.cmd]",
         "payload":{
             "chunk":{
-                "number":["$response.payload.chunk.number"],
-                "size":["$response.payload.chunk.size"],
-                "crc":["$response.payload.chunk.crc"],
-                "data":"[$response.payload.chunk.data]"
+                "number":["$chunk.number"],
+                "size":["$chunk.size"],
+                "crc":["$chunk.crc"],
+                "data":"[$chunk.data]"
             }
         }
     }
