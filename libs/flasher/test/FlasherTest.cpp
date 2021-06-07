@@ -907,4 +907,13 @@ void FlasherTest::backupFirmwareTest()
 
     QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
+
+    if (fakeFirmware_.open()) {
+        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+        fakeFirmware_.close();
+    } else {
+        QFAIL("Failed to open fake firmware source file.");
+    }
+
+    QFAIL("FAIL ON PURPOSE!");
 }
