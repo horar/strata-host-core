@@ -421,8 +421,6 @@ function disconnectPlatform(platform) {
 
     if (selector_listing.view_open && NavigationControl.userSettings.closeOnDisconnect) {
         closePlatformView(platform)
-
-        // must call last - model entry/delegate begins destruction
         NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)
     }
 }
