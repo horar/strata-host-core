@@ -537,13 +537,6 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
 QString PrtModel::resolveConfigFilePath()
 {
     QDir applicationDir(QCoreApplication::applicationDirPath());
-
-#ifdef Q_OS_MACOS
-    applicationDir.cdUp();
-    applicationDir.cdUp();
-    applicationDir.cdUp();
-#endif
-
     return applicationDir.filePath("prt-config.ini");
 }
 
