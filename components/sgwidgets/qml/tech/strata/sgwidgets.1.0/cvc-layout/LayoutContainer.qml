@@ -9,10 +9,10 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: layoutContainerRoot
-    x: layoutInfo.xColumns * columnSize
-    y: layoutInfo.yRows * rowSize
-    width: layoutInfo.columnsWide * columnSize
-    height: layoutInfo.rowsTall * rowSize
+    x: Math.round(layoutInfo.xColumns * columnSize)
+    y: Math.round(layoutInfo.yRows * rowSize)
+    width: Math.round(layoutInfo.columnsWide * columnSize)
+    height: Math.round(layoutInfo.rowsTall * rowSize)
 
     property LayoutInfo layoutInfo: LayoutInfo { }
     property var contentItem: null
