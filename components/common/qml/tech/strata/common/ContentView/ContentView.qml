@@ -183,18 +183,6 @@ Item {
                             }
                         }
 
-                        onAnimationCompleted: {
-                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
-                                Help.liveResize()
-                            }
-                        }
-
-                        onHeightChanged: {
-                            if (helpIcon.class_id === "help_docs_demo" && Help.current_tour_targets[Help.internal_tour_index]["target"] === pdfAccordion && Help.tour_running) {
-                                Help.liveResize()
-                            }
-                        }
-
                         HistoryStatus {
                             visible: documentsHistory.displayPdfUnseenAlert && !parent.open
                             anchors {
@@ -225,12 +213,6 @@ Item {
                                 datasheetAccordion.closeContent.start();
                             }
                         }
-
-                        onAnimationCompleted: {
-                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
-                                Help.liveResize()
-                            }
-                        }
                     }
 
                     SGAccordionItem {
@@ -248,12 +230,6 @@ Item {
                                 downloadAccordion.openContent.start();
                             } else {
                                 downloadAccordion.closeContent.start();
-                            }
-                        }
-
-                        onAnimationCompleted: {
-                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
-                                Help.liveResize()
                             }
                         }
 

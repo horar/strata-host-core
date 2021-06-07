@@ -551,6 +551,7 @@ FocusScope {
     }
 
     function doFindPlatform(opn) {
+        //opn needs to be sent in uppercase
         var endpoint = "plats/"+opn.toUpperCase()
 
         console.log("endpoint", endpoint)

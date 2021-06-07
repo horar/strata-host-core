@@ -59,9 +59,6 @@ Rectangle {
 
             function onClicked() {
                 if (viewStack.currentIndex !== 2) {
-                    if (rccInitialized === false) {
-                        recompileControlViewQrc();
-                    }
                     viewStack.currentIndex = 2
                 }
             }

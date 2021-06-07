@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "qrc:/partial-views/control-view-creator"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import tech.strata.signals 1.0
+
 Loader {
     id: cvcLoader
     Layout.fillHeight: true
@@ -19,20 +20,20 @@ Loader {
     Connections {
         target: Signals
 
-        onLoadCVC:{
+        onLoadCVC: {
             cvcLoader.active = true
             let data = {"index": NavigationControl.stack_container_.count-1}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
 
-        onRequestCVCClose:{
+        onRequestCVCClose: {
             cvcLoader.cvcCloseRequested = true
             if (cvcLoader.item.blockWindowClose() === false){
                 Signals.closeCVC()
             }
         }
 
-        onCloseCVC:{
+        onCloseCVC: {
             cvcLoader.cvcCloseRequested = false
             cvcLoader.active = false
             let data = {"index": NavigationControl.stack_container_.count-2}
