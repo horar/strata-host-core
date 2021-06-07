@@ -7,9 +7,9 @@ UIBase { // start_uibase
     columnCount: 30
     rowCount: 15
 
-    LayoutContainer { // start_adsfasdf
+    LayoutContainer { // start_x3kdc
         id: warningContainer
-        layoutInfo.uuid: "adsfasdf"
+        layoutInfo.uuid: "x3kdc"
         layoutInfo.columnsWide: 13
         layoutInfo.rowsTall: 3
         layoutInfo.xColumns: 16
@@ -17,7 +17,7 @@ UIBase { // start_uibase
         contentItem: Warning {
             id: warning
         }
-    } // end_adsfasdf
+    } // end_x3kdc
 
     LayoutButton { // start_affdd
         id: button_affdd
