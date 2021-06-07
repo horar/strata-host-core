@@ -95,9 +95,13 @@ Item {
 
                             onClicked: {
                                 let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
-                                controlViewDevDialog.visible = true
-                                controlViewDevDialog.qrcFilePath = path
-                                controlViewDevDialog.compileRCCFromPath()
+                                //                                controlViewDevDialog.visible = true
+                                //                                controlViewDevDialog.qrcFilePath = path
+                                //                                controlViewDevDialog.compileRCCFromPath()
+
+                                console.info("test",path)
+                                Signals.loadCVC()
+
                             }
                         }
                     }
@@ -111,10 +115,10 @@ Item {
                     var errMessage = sdsModel.openLogViewer()
                     if (errMessage !== "") {
                         SGWidgets.SGDialogJS.showMessageDialog(
-                            ApplicationWindow.window,
-                            SGWidgets.SGMessageDialog.Error,
-                            qsTr("Log Viewer can't be opened."),
-                            errMessage)
+                                    ApplicationWindow.window,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    qsTr("Log Viewer can't be opened."),
+                                    errMessage)
                     }
                 }
             }
