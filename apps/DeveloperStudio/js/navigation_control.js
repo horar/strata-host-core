@@ -321,10 +321,6 @@ function updateState(event, data)
                             disconnected_view.firmware_version = ""
                             disconnected_view.controller_class_id = ""
                             //IMPORTANT: If you add deinitialization here, don't forget to add initialization to case events.PLATFORM_CONNECTED_EVENT
-
-                            if (userSettings.closeOnDisconnect) {
-                                updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
-                            }
                             break
                         }
                     }

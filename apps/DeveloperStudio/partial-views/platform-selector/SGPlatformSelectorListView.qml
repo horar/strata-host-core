@@ -21,6 +21,7 @@ Item {
     property alias listview: listview
     property alias model: filteredPlatformSelectorModel
     property alias filterText: filter.text
+    property bool platformLoaded: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
     Component.onCompleted: {
         // Restore previously set filters
@@ -198,6 +199,16 @@ Item {
         }
     }
 
+    Connections {
+        id: helpConnection
+        target: Help.utility
+        property bool tourRunning: false
+
+        onTour_runningChanged: {
+            tourRunning = tour_running
+        }
+    }
+
     ColumnLayout {
         anchors {
             fill: parent
@@ -211,7 +222,7 @@ Item {
                 width: 1
                 color: "#DDD"
             }
-            visible: PlatformSelection.platformSelectorModel.platformListStatus == "loaded"
+            visible: platformLoaded || helpConnection.tourRunning
 
             RowLayout {
                 id: filterRow
@@ -343,7 +354,7 @@ Item {
                         font.bold: true
                         selectByMouse: true
                         clip: true
-                        enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
+                        enabled: platformLoaded
                         persistentSelection: true   // must deselect manually
 
                         property string lowerCaseText: text.toLowerCase()
