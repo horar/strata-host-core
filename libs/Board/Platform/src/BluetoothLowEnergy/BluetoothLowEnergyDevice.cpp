@@ -1,4 +1,5 @@
 #include "BluetoothLowEnergy/BluetoothLowEnergyDevice.h"
+#include "BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -36,11 +37,15 @@ BluetoothLowEnergyDevice::~BluetoothLowEnergyDevice()
 
 void BluetoothLowEnergyDevice::deinit()
 {
+    qCDebug(logCategoryDeviceBLE) << this << "Deinitializing BLE device";
+
     // No need to disconnect here, deleteLater will do it
     // lowEnergyController_->disconnectFromDevice();
+    disconnect(lowEnergyController_, nullptr, this, nullptr);
     lowEnergyController_->deleteLater();
     lowEnergyController_ = nullptr;
     for (auto service : discoveredServices_) {
+        disconnect(service.second, nullptr, this, nullptr);
         service.second->deleteLater();
     }
     discoveredServices_.clear();
@@ -89,13 +94,13 @@ bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
         return false;
     }
 
-    //TODO!!! return real discovered data
+    // TODO!!! return real discovered data
     std::string cmd = cmdObject->GetString();
     if (processHardcodedReplies(cmd)) {
         return true;
     }
 
-    //process messages
+    // process messages
     if (0 == cmd.compare("write")) {
         return processWriteCommand(requestDocument);
     }
@@ -106,115 +111,40 @@ bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
     return false;
 }
 
-bool BluetoothLowEnergyDevice::parseRequest(const rapidjson::Document & requestDocument, BluetoothLowEnergyAttributes & addresses)
-{
-    if (requestDocument.HasMember("payload") == false) {
-        qCWarning(logCategoryDeviceBLE) << "Request missing payload";
-        return false;
-    }
-
-    auto *payloadObject = &requestDocument["payload"];
-    if (payloadObject->IsObject() == false) {
-        qCWarning(logCategoryDeviceBLE) << "Payload is not an object";
-        return false;
-    }
-
-    const rapidjson::GenericObject payload = payloadObject->GetObject();
-
-    std::string serviceUuid;
-    if (payload.HasMember("service") && payload["service"].IsString()) {
-        serviceUuid = payload["service"].GetString();
-    } else {
-        qCWarning(logCategoryDeviceBLE) << "Request missing service";
-        return false;
-    }
-
-    std::string characteristicUuid;
-    if (payload.HasMember("characteristic") && payload["characteristic"].IsString()) {
-        characteristicUuid = payload["characteristic"].GetString();
-    } else {
-        qCWarning(logCategoryDeviceBLE) << "Request missing characteristic";
-        return false;
-    }
-
-    std::string descriptorUuid;
-    if (payload.HasMember("descriptor")) {
-        if (payload["descriptor"].IsString()) {
-            descriptorUuid = payload["descriptor"].GetString();
-        } else {
-            qCWarning(logCategoryDeviceBLE) << "Request missing descriptor";
-            return false;
-        }
-    }
-
-    QBluetoothUuid serviceUuidObject = normalizeBleUuid(serviceUuid);
-    if (serviceUuidObject.isNull())
-    {
-        qCWarning(logCategoryDeviceBLE) << "Invalid service uuid";
-        return false;
-    }
-    QBluetoothUuid characteristicUuidObject = normalizeBleUuid(characteristicUuid);
-    if (characteristicUuidObject.isNull())
-    {
-        qCWarning(logCategoryDeviceBLE) << "Invalid characteristic uuid";
-        return false;
-    }
-    QBluetoothUuid descriptorUuidObject;
-    if (descriptorUuid.empty() == false) {
-        descriptorUuidObject = normalizeBleUuid(descriptorUuid);
-        if (descriptorUuidObject.isNull())
-        {
-            qCWarning(logCategoryDeviceBLE) << "Invalid descriptor uuid";
-            return false;
-        }
-    }
-    std::string data;
-    if (payload.HasMember("data") && payload["data"].IsString()) {
-        data = payload["data"].GetString();
-    }
-    QByteArray dataObject = QByteArray::fromHex(data.c_str());
-
-    addresses.service = serviceUuidObject;
-    addresses.characteristic = characteristicUuidObject;
-    addresses.descriptor = descriptorUuidObject;
-    addresses.data = dataObject;
-    return true;
-}
-
 bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & requestDocument)
 {
     if (isConnected() == false) {
         return false;
     }
 
-    BluetoothLowEnergyAttributes attributes;
-    if (parseRequest(requestDocument, attributes) == false) {
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
         return false;
     }
 
-    QLowEnergyService * service = getService(attributes.service);
+    QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
         return false;
     }
 
-    QLowEnergyCharacteristic characteristic = service->characteristic(attributes.characteristic);
+    QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
-        qWarning(logCategoryDeviceBLE) << "Invalid characteristic";
+        qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
         return false;
     }
-    if (attributes.descriptor.isNull()) {
-        qDebug(logCategoryDeviceBLE).nospace().noquote() << "writing: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "' data '" << attributes.data << "'";
-        service->writeCharacteristic(characteristic, attributes.data);
+    if (attribute.descriptor.isNull()) {
+        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
+        service->writeCharacteristic(characteristic, attribute.data);
         return true;
     } else
     {
-        QLowEnergyDescriptor descriptor = characteristic.descriptor(attributes.descriptor);
+        QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
         if (descriptor.isValid() == false) {
-            qWarning(logCategoryDeviceBLE) << "Invalid descriptor";
+            qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
             return false;
         }
-        qDebug(logCategoryDeviceBLE).nospace().noquote() << "writing: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "' descriptor '" << descriptor.uuid() << "' data '" << attributes.data << "'";
-        service->writeDescriptor(descriptor, attributes.data);
+        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
+        service->writeDescriptor(descriptor, attribute.data);
         return true;
     }
 }
@@ -225,34 +155,34 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
         return false;
     }
 
-    BluetoothLowEnergyAttributes addresses;
-    if (parseRequest(requestDocument, addresses) == false) {
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
         return false;
     }
 
-    QLowEnergyService * service = getService(addresses.service);
+    QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
         return false;
     }
 
-    QLowEnergyCharacteristic characteristic = service->characteristic(addresses.characteristic);
+    QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
-        qWarning(logCategoryDeviceBLE) << "Invalid characteristic";
+        qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
         return false;
     }
-    if (addresses.descriptor.isNull()) {
-        qDebug(logCategoryDeviceBLE).nospace().noquote() << "reading: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "''";
+    if (attribute.descriptor.isNull()) {
+        qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
         service->readCharacteristic(characteristic);
         return true;
     } else
     {
-        return false; //service->readDescriptor doesn't work... Disabling reading of descriptors. TODO investigate
-        QLowEnergyDescriptor descriptor = characteristic.descriptor(addresses.descriptor);
+        return false; // service->readDescriptor doesn't work... Disabling reading of descriptors. TODO investigate
+        QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
         if (descriptor.isValid() == false) {
-            qWarning(logCategoryDeviceBLE) << "Invalid descriptor";
+            qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
             return false;
         }
-        qDebug(logCategoryDeviceBLE).nospace().noquote() << "reading: service '" << service->serviceUuid() << "' characteristic '" << characteristic.uuid() << "' descriptor '" << descriptor.uuid() << "'";
+        qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid();
         service->readDescriptor(descriptor);
         return true;
     }
@@ -309,12 +239,12 @@ bool BluetoothLowEnergyDevice::processHardcodedReplies(const std::string &cmd)
 
 bool BluetoothLowEnergyDevice::isConnected() const
 {
-    return true; //TODO!!! change after open() will be changed to work asynchronously
+    return true; // TODO!!! change after open() will be changed to work asynchronously
     if (lowEnergyController_ == nullptr) {
         return false;
     }
 
-    return lowEnergyController_->state() == QLowEnergyController::DiscoveredState && allDiscovered_;//TODO!!! check that this works
+    return lowEnergyController_->state() == QLowEnergyController::DiscoveredState && allDiscovered_; // TODO!!! check that this works
 }
 
 void BluetoothLowEnergyDevice::connectToDevice()
@@ -329,20 +259,20 @@ void BluetoothLowEnergyDevice::connectToDevice()
         connect(lowEnergyController_, &QLowEnergyController::stateChanged, this, &BluetoothLowEnergyDevice::deviceStateChangeHandler);
     }
 
-    qCDebug(logCategoryDeviceBLE) << "Connecting to BLE device...";
+    qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
     lowEnergyController_->connectToDevice();
 }
 
 void BluetoothLowEnergyDevice::deviceConnectedHandler()
 {
-    qDebug(logCategoryDeviceBLE) << "Device connected, discovering services...";
-    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_connected"}})"));//TODO remove
+    qCDebug(logCategoryDeviceBLE) << this << "Device connected, discovering services...";
+    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_connected"}})")); // TODO remove after open() will be changed to work asynchronously
     lowEnergyController_->discoverServices();
 }
 
 void BluetoothLowEnergyDevice::discoveryFinishedHandler()
 {
-    qDebug(logCategoryDeviceBLE) << "Service discovery finished, discovering service details...";
+    qCDebug(logCategoryDeviceBLE) << this << "Service discovery finished, discovering service details...";
     discoverServiceDetails();
 }
 
@@ -362,7 +292,7 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
             case QLowEnergyService::InvalidService:
                 break;
             case QLowEnergyService::DiscoveryRequired:
-                qDebug(logCategoryDeviceBLE).nospace().noquote() << "Discovering details of service " << service.second->serviceUuid() << " ...";;
+                qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";;
                 service.second->discoverDetails();
                 allDiscovered = false;
                 break;
@@ -377,11 +307,11 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
     }
     if (allDiscovered && allDiscovered_ == false) {
         allDiscovered_ = true;
-        qDebug(logCategoryDeviceBLE) << "Service details discovery finished";
+        qCDebug(logCategoryDeviceBLE) << this << "Service details discovery finished";
         for (const auto &service : discoveredServices_) {
-            qDebug(logCategoryDeviceBLE).nospace().noquote() << "Service " << service.second->serviceUuid() << " state " << service.second->state();
+            qCDebug(logCategoryDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
         }
-        emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})"));//TODO remove
+        emit messageReceived(QByteArray(R"({"notification":{"value":"ble_discovery_finished"}})")); // TODO remove after open() will be changed to work asynchronously
     }
 }
 
@@ -415,48 +345,68 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
             statusString = "remote host closed error";
             break;
     }
-    qDebug(logCategoryDeviceBLE).nospace().noquote() << "Device error: " << error;
-    emit messageReceived(QByteArray(R"({"notification":{"value":"error","payload":{"status":")" + statusString.toUtf8() + R"(","details":")" + errorString.toUtf8() + R"("}}})"));
-    //TODO maybe also notify platform manager to disconnect device? emit deviceError(errorCode, errorString);
+    qCDebug(logCategoryDeviceBLE) << this << "Error: " << error;
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationError(
+        statusString.toUtf8(),
+        errorString.toUtf8()));
 }
 
 void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
 {
     emit deviceError(ErrorCode::DeviceDisconnected, "");
-    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_disconnected"}})"));//TODO remove
+    emit messageReceived(QByteArray(R"({"notification":{"value":"ble_device_disconnected"}})")); // TODO remove after open() will be changed to work asynchronously
     deinit();
 }
 
 void BluetoothLowEnergyDevice::deviceStateChangeHandler(QLowEnergyController::ControllerState state)
 {
-    //TODO!!!
+    qCDebug(logCategoryDeviceBLE) << this << "Device state changed: " << state;
 }
 
 void BluetoothLowEnergyDevice::characteristicWrittenHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + getSignalSenderService() + R"(","characteristic":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckWriteCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::characteristicReadHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid"}})"));//TODO take out the constant
-    emitResponses(std::vector<QByteArray>({R"({"notification":{"value":"read","payload":{"service":")" + getSignalSenderService() + R"(","characteristic":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"}));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckReadCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces)));
+    emitResponses(std::vector<QByteArray>({BluetoothLowEnergyJsonEncoder::encodeNotificationReadCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex())}));
 }
 
 void BluetoothLowEnergyDevice::characteristicChangedHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"notification":{"value":"notify","payload":{"service":")" + getSignalSenderService() + R"(","characteristic":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationCharacteristic(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"write","payload":{"return_value":true,"return_string":"command valid","service":")" + getSignalSenderService() + R"(","descriptor":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckWriteDescriptor(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::descriptorReadHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
 {
-    emit messageReceived(QByteArray(R"({"ack":"read","payload":{"return_value":true,"return_string":"command valid"}})"));//TODO take out the constant
-    emitResponses(std::vector<QByteArray>({R"({"notification":{"value":"read","payload":{"service":")" + getSignalSenderService() + R"(","descriptor":")" + info.uuid().toByteArray(QBluetoothUuid::WithoutBraces) + R"(","data":")" + value.toHex() + R"("}}})"}));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckReadDescriptor(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces)));
+    emitResponses(std::vector<QByteArray>({BluetoothLowEnergyJsonEncoder::encodeNotificationReadDescriptor(
+        getSignalSenderService(),
+        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
+        value.toHex())}));
 }
 
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
@@ -499,26 +449,29 @@ void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceErr
             details = "descriptor read error";
             break;
     }
-    emit messageReceived(QByteArray(R"({"ack":")" + command.toUtf8() + R"(","payload":{"return_value":false,"return_string":")" + details.toUtf8() + R"(","service":")" + getSignalSenderService() + R"("}})"));//TODO take out the constant
+    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNAck(
+        command.toUtf8(),
+        details.toUtf8(),
+        getSignalSenderService()));
 }
 
 void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & serviceUuid)
 {
-    qDebug(logCategoryDeviceBLE).nospace().noquote() << "Creating service for UUID " << serviceUuid << " ...";
+    qCDebug(logCategoryDeviceBLE) << this << "Creating service for UUID " << serviceUuid << " ...";
     if (discoveredServices_.count(serviceUuid) != 0) {
-        //It is allowed to have multiple services with the same UUID, so this is a correct situation.
-        //If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
-        qCInfo(logCategoryDeviceBLE).nospace().noquote() << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
+        // It is allowed to have multiple services with the same UUID, so this is a correct situation.
+        // If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
+        qCInfo(logCategoryDeviceBLE) << this << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
         return;
     }
     QLowEnergyService * service = lowEnergyController_->createServiceObject(serviceUuid);
     if (service == nullptr) {
-        qWarning(logCategoryDeviceBLE) << "Invalid service";
+        qCWarning(logCategoryDeviceBLE) << this << "Invalid service";
         return;
     }
     if (service->serviceUuid() != serviceUuid) {
-        //this should never happen, but we rely on this condition later, so let's better check it
-        qWarning(logCategoryDeviceBLE) << "Invalid service: inconsistent uuid";
+        // this should never happen, but we rely on this condition later, so let's better check it
+        qCWarning(logCategoryDeviceBLE) << this << "Invalid service: inconsistent uuid";
         delete service;
         return;
     }
@@ -562,30 +515,6 @@ QByteArray BluetoothLowEnergyDevice::getSignalSenderService() const
     return serviceUuid;
 }
 
-QBluetoothUuid BluetoothLowEnergyDevice::normalizeBleUuid(std::string uuid)
-{
-    QString tmpUuid = QString::fromStdString(uuid);
-    tmpUuid = tmpUuid.remove('-').toLower();
-    for (const auto &ch : tmpUuid) {
-        if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= "f")) {
-            continue;
-        }
-        return QBluetoothUuid();//error
-    }
-
-    if (tmpUuid.length() == 32) {
-        tmpUuid.insert(8, '-').insert(13, '-').insert(18, '-').insert(23, '-');
-    } else if (tmpUuid.length() == 8) {
-        tmpUuid = tmpUuid + "-0000-1000-8000-00805f9b34fb";
-    } else if (tmpUuid.length() == 4) {
-        tmpUuid = "0000" + tmpUuid + "-0000-1000-8000-00805f9b34fb";
-    } else {
-        return QBluetoothUuid();//error
-    }
-    tmpUuid = '{' + tmpUuid + '}';
-    return QBluetoothUuid(tmpUuid);
-}
-
 QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &info)
 {
     QByteArray idBase;
@@ -594,7 +523,7 @@ QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &
     } else if (info.address().isNull() == false) {
         idBase = info.address().toString().toUtf8();
     } else {
-        qWarning(logCategoryDeviceBLE)  << "No device ID, using random";
+        qCWarning(logCategoryDeviceBLE) << "No device ID, using random";
         QVector<quint32> data;
         data.resize(4);
         QRandomGenerator::system()->fillRange(data.data(), data.size());
