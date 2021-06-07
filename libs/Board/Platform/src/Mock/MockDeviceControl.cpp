@@ -426,8 +426,58 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
         if (targetDocumentNode->IsString()) {
             return targetDocumentNode->GetString();
         }
-        // fallthrough
-    } // add other namespaces as required in the future (e.g. refer to mock variables)
+    }
+
+    if (0 == placeholderNamespace.compare("firmware") && placeholderSplit.length() >= 1) {
+
+        actualChunk_ = 0; //begin of backup_firmware
+        startBackup_ = true;
+        if (placeholder == "firmware.size") {
+            return QString::number(mockFirmware_.size());
+        }
+        if (placeholder == "firmware.chunks") {
+            return QString::number(expectedChunksCount_);
+        }
+    }
+
+    if (0 == placeholderNamespace.compare("chunk") && placeholderSplit.length() >= 1) {
+
+        if (actualChunk_ < expectedChunksCount_ && startBackup_) {
+            if (payloadCount_ == 4) { //once 4 payloads are recieved(number,size,crc,data) the actual chunks' number iterates
+                actualChunk_++;
+                payloadCount_ = 0;
+            }
+            payloadCount_++;
+            if (placeholder == "chunk.number") {
+                return QString::number(actualChunk_);
+            }
+            if (placeholder == "chunk.size") {
+                return QString::number(expectedChunkSize_[actualChunk_]);
+            }
+            if (placeholder == "chunk.crc") {
+                return QString::number(expectedChunkCrc_[actualChunk_]);
+            }
+            if (placeholder == "chunk.data") {
+                return expectedChunkData_[actualChunk_];
+            }
+        } else {
+            startBackup_ = false;
+            if (placeholder == "chunk.number") {
+                return QString::number(0);
+            }
+            if (placeholder == "chunk.size") {
+                return QString::number(0);
+            }
+            if (placeholder == "chunk.crc") {
+                return QString::number(0);
+            }
+            if (placeholder == "chunk.data") {
+                return "";
+            }
+        }
+    }
+    // fallthrough
+    // add other namespaces as required in the future (e.g. refer to mock variables)
     //qWarning() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
     return placeholder;  // fallback, return the value as is
 }
@@ -448,61 +498,8 @@ const std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::
             QRegularExpressionMatch match = rxIterator.next();
             QString matchStr = match.captured(0);
             QString matchSubStr = match.captured(1);
-            QString requestCmd = getPlaceholderValue(matchSubStr,requestDoc);
             //qDebug("%s -> %s", matchSubStr.toStdString().c_str(), getPlaceholderValue(matchSubStr,
             //requestDoc).toStdString().c_str());
-
-            if (requestCmd == "start_backup_firmware") {
-                actualChunk_ = -1; //begin of backup_firmware
-                startBackup_ = true;
-            }
-
-            if (actualChunk_ < expectedChunksCount_ && startBackup_) {
-
-                if (matchSubStr == "response.payload.size") {
-                    replacements.insert({matchStr, QString::number(mockFirmware_.size())});
-                }
-                if (matchSubStr == "response.payload.chunks") {
-                    replacements.insert({matchStr, QString::number(expectedChunksCount_)});
-                }
-                if (matchSubStr == "response.payload.chunk.number") {
-                    replacements.insert({matchStr, QString::number(actualChunk_)});
-                }
-                if (matchSubStr == "response.payload.chunk.size") {
-                    replacements.insert({matchStr, QString::number(expectedChunkSize_.at(actualChunk_))});
-                }
-                if (matchSubStr == "response.payload.chunk.crc") {
-                    replacements.insert({matchStr, QString::number(expectedChunkCrc_.at(actualChunk_))});
-                }
-                if (matchSubStr == "response.payload.chunk.data") {
-                    replacements.insert({matchStr, expectedChunkData_.at(actualChunk_)});
-                }
-
-                if (requestCmd == "backup_firmware") {
-                    actualChunk_++;
-                }
-            } else {
-                startBackup_ = false;
-                if (matchSubStr == "response.payload.size") {
-                    replacements.insert({matchStr, QString::number(0)});
-                }
-                if (matchSubStr == "response.payload.chunks") {
-                    replacements.insert({matchStr, QString::number(0)});
-                }
-                if (matchSubStr == "response.payload.chunk.number") {
-                    replacements.insert({matchStr, QString::number(0)});
-                }
-                if (matchSubStr == "response.payload.chunk.size") {
-                    replacements.insert({matchStr, QString::number(0)});
-                }
-                if (matchSubStr == "response.payload.chunk.crc") {
-                    replacements.insert({matchStr, QString::number(0)});
-                }
-                if (matchSubStr == "response.payload.chunk.data") {
-                    replacements.insert({matchStr, ""});
-                }
-            }
-
             replacements.insert({matchStr, getPlaceholderValue(matchSubStr, requestDoc)});
         }
     }
