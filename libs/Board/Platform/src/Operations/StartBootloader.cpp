@@ -35,7 +35,7 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(platform_, true, MAX_GET_FW_INFO_RETRIES)); // 0
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));      // 1
     commandList_.emplace_back(std::make_unique<CmdStartBootloader>(platform_));        // 2
-    commandList_.emplace_back(std::move(cmdWait));                                   // 3
+    commandList_.emplace_back(std::move(cmdWait));                                     // 3
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(platform_, true));  // 4
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(platform_));      // 5
 
@@ -44,9 +44,9 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     // Before calling 'start_bootloader' command, we need to check if board is already
     // in bootloader mode. If so, we skip rest of commands in command list and set
     // data for 'finished' signal to ALREADY_IN_BOOTLOADER. This is done by modifications
-    // in method skipCommands().
-    beforeStartBootloader_ = commandList_.begin() + 1;
-    postCommandHandler_ = std::bind(&StartBootloader::skipCommands, this, std::placeholders::_1, std::placeholders::_2);
+    // in method postCommandActions().
+    firstReqPlatfIdIter_ = commandList_.begin() + 1;
+    postCommandHandler_ = std::bind(&StartBootloader::postCommandActions, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void StartBootloader::setWaitTime(const std::chrono::milliseconds& waitTime)
@@ -54,9 +54,9 @@ void StartBootloader::setWaitTime(const std::chrono::milliseconds& waitTime)
     cmdWait_->setWaitTime(waitTime);
 }
 
-void StartBootloader::skipCommands(CommandResult& result, int& status)
+void StartBootloader::postCommandActions(CommandResult& result, int& status)
 {
-    if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
+    if ((currentCommand_ == firstReqPlatfIdIter_) && (result == CommandResult::Done)) {
         if (BasePlatformOperation::bootloaderMode() == true) {
             // skip rest of commands - set result to 'FinaliseOperation'
             result = CommandResult::FinaliseOperation;
