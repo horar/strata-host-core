@@ -25,9 +25,11 @@ function feedback_result(response) {
 }
 
 function feedback_error(response) {
-    console.log(LoggerModule.Logger.devStudioFeedbackCategory, "Feedback failed to send")
-    if(response.message === 'No connection'){
+    console.log(LoggerModule.Logger.devStudioFeedbackCategory, "Feedback failed to send: ", JSON.stringify(response))
+    if (response.message === 'No connection') {
         SignalsModule.Signals.feedbackResult("No Connection")
+    } else if ((response.message === 'Response not valid') && (response.status !== undefined)) {
+        SignalsModule.Signals.feedbackResult("Feedback service error: " + response.status)
     } else {
         SignalsModule.Signals.feedbackResult("Feedback service error")
     }

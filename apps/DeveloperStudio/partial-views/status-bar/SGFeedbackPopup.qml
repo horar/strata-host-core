@@ -332,10 +332,10 @@ SGStrataPopup {
                 root.resetForm()
             }else if(result === "No Connection"){
                 alertToast.color = "red"
-                alertToast.text = "No Connection!"
+                alertToast.text = "No connection to feedback server! Please check your internet connection and try again."
             }else{
                 alertToast.color = "red"
-                alertToast.text = "Connection to feedback server failed!"
+                alertToast.text = "Failed to submit feedback! " + result + "! Please try again later."
             }
             alertToast.show()
         }
