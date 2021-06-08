@@ -46,6 +46,7 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     // data for 'finished' signal to ALREADY_IN_BOOTLOADER. This is done by modifications
     // in method postCommandActions().
     firstReqPlatfIdIter_ = commandList_.begin() + 1;
+    waitCmdIter_ = commandList_.begin() + 3;
     postCommandHandler_ = std::bind(&StartBootloader::postCommandActions, this, std::placeholders::_1, std::placeholders::_2);
 }
 
@@ -64,6 +65,13 @@ void StartBootloader::postCommandActions(CommandResult& result, int& status)
             status = ALREADY_IN_BOOTLOADER;
             qCInfo(logCategoryPlatformOperation) << platform_ << "Platform already in bootloader mode.";
         }
+        return;
+    }
+
+    if (currentCommand_ == waitCmdIter_) {
+        // platform could send part of message before rebooting,
+        // so reset receiving to drop possible incomplete message
+        platform_->resetReceiving();
     }
 }
 

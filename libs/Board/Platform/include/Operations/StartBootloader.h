@@ -24,6 +24,7 @@ public:
 private:
     void postCommandActions(command::CommandResult& result, int& status);
     std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator firstReqPlatfIdIter_;
+    std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator waitCmdIter_;
     command::CmdWait* cmdWait_;
 };
 
