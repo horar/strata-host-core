@@ -55,6 +55,11 @@ public:
      */
     virtual bool isConnected() const override;
 
+    /**
+     * Reset receiving messages from device - this method does nothing for mock device.
+     */
+    virtual void resetReceiving() override;
+
     // commands to control mock device behavior
 
     void mockEmitMessage(const QByteArray& msg);
