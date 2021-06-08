@@ -265,29 +265,30 @@ QtObject {
         ** Only works on properties declared above children - see getObjectContents
     */
     function setObjectProperty(uuid, propertyName, value, string = fileContents) {
-        let objectString = getObjectFromString(uuid, string)
+        const objectString = getObjectFromString(uuid, string)
         if (objectString === null) {
             return
         }
 
-        objectString = getObjectContents(objectString)
-        if (objectString === null) {
+        const objectContents = getObjectContents(objectString)
+        if (objectContents === null) {
             return
         }
 
-        let newObjectString
-        let propertyMatch = getPropertyFromString(propertyName, objectString)
+        let newObjectContents
+        let propertyMatch = getPropertyFromString(propertyName, objectContents)
         if (propertyMatch !== null) {
-            // property found in objectString, replace its value
+            // property found in objectContents, replace its value
             let propertyLine = propertyMatch[0]
             let propertyValue = propertyMatch[1]
             let newPropertyLine = propertyLine.replace(propertyValue, value)
-            newObjectString = objectString.replace(propertyLine, newPropertyLine)
+            newObjectContents = objectContents.replace(propertyLine, newPropertyLine)
         } else {
-            // property not currently assigned in objectString, append property to end
-            newObjectString = objectString + getIndentLevel(objectString) + propertyName +": " + value +"\n"
+            // property not currently assigned in objectContents, append property to end
+            newObjectContents = objectContents + getIndentLevel(objectContents) + propertyName +": " + value +"\n"
         }
 
+        let newObjectString = objectString.replace(objectContents, newObjectContents);
         return string.replace(objectString, newObjectString);
     }
 
