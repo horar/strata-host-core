@@ -39,5 +39,7 @@ Loader {
             let data = {"index": NavigationControl.stack_container_.count-2}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
+
+
     }
 }

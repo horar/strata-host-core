@@ -70,4 +70,5 @@ QtObject {
     signal loadCVC()
     signal requestCVCClose()
     signal closeCVC()
+    signal openControlView(string result)
 }

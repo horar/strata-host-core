@@ -92,5 +92,6 @@ Rectangle {
         onCloseCVC: {
             controlViewCreatorContainer.visible = false
         }
+
     }
 }

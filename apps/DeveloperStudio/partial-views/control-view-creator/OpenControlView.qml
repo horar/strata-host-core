@@ -7,6 +7,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
 import "../general"
 import "components/"
@@ -339,6 +340,15 @@ Item {
         Item {
             // space filler
             Layout.fillHeight: true
+        }
+    }
+
+    Connections {
+        target: Signals
+        onOpenControlView: {
+            var resultObject = result
+            console.info(resultObject)
+
         }
     }
 

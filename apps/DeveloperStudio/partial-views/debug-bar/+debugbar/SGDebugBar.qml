@@ -99,8 +99,10 @@ Item {
                                 //                                controlViewDevDialog.qrcFilePath = path
                                 //                                controlViewDevDialog.compileRCCFromPath()
 
-                                console.info("test",path)
+                                console.info("test",model.filePath)
+
                                 Signals.loadCVC()
+                                Signals.openControlView(model.filePath)
 
                             }
                         }
