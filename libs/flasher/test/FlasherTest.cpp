@@ -197,6 +197,7 @@ void FlasherTest::createFiles()
         QFAIL("Cannot open fake firmware for backup file");
     } else {
         fakeFirmwareBackup_.resize(0);
+        fakeFirmwareBackup_.close();
     }
 }
 
