@@ -132,10 +132,20 @@ bool MockDeviceControl::mockSetAsBootloader(bool isBootloader)
     return false;
 }
 
-void MockDeviceControl::mockCreateMockFirmware()
+bool MockDeviceControl::mockCreateMockFirmware(bool createFirmware)
 {
-    createMockFirmware();
-    getExpectedValues(mockFirmware_.fileName());
+    if (createFirmware_ != createFirmware) {
+        createFirmware_ = createFirmware;
+        qCDebug(logCategoryDeviceMock) << "Configured create firmware to" << createFirmware_;
+
+        if (createFirmware_ && mockFirmware_.exists() == false) {
+            createMockFirmware();
+            getExpectedValues(mockFirmware_.fileName());
+        }
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Create firmware already configured to" << createFirmware_;
+    return false;
 }
 
 std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& request)
@@ -430,8 +440,11 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
 
     if (0 == placeholderNamespace.compare("firmware") && placeholderSplit.length() >= 1) {
 
+        if (createFirmware_ == false) {
+            mockCreateMockFirmware(true); //once start_backup_firmware is recieved the mockFirmware is created
+        }
         actualChunk_ = 0; //begin of backup_firmware
-        startBackup_ = true;
+
         if (placeholder == "firmware.size") {
             return QString::number(mockFirmware_.size());
         }
@@ -442,7 +455,7 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
 
     if (0 == placeholderNamespace.compare("chunk") && placeholderSplit.length() >= 1) {
 
-        if (actualChunk_ < expectedChunksCount_ && startBackup_) {
+        if (actualChunk_ < expectedChunksCount_ && createFirmware_) {
             if (payloadCount_ == 4) { //once 4 payloads are recieved(number,size,crc,data) the actual chunks' number iterates
                 actualChunk_++;
                 payloadCount_ = 0;
@@ -461,7 +474,7 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
                 return expectedChunkData_[actualChunk_];
             }
         } else {
-            startBackup_ = false;
+            createFirmware_ = false;
             if (placeholder == "chunk.number") {
                 return QString::number(0);
             }

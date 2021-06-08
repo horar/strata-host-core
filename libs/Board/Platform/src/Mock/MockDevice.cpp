@@ -13,7 +13,6 @@ MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bo
     qCDebug(logCategoryDeviceMock).nospace().noquote()
         << "Created new mock device, ID: " << deviceId_ << ", name: " << deviceName_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
-    control_.mockCreateMockFirmware();
 }
 
 MockDevice::~MockDevice()
@@ -207,6 +206,11 @@ bool MockDevice::mockSetVersion(MockVersion version)
 bool MockDevice::mockSetAsBootloader(bool isBootloader)
 {
     return control_.mockSetAsBootloader(isBootloader);
+}
+
+bool MockDevice::mockCreateMockFirmware(bool createFirmware)
+{
+    return control_.mockCreateMockFirmware(createFirmware);
 }
 
 }  // namespace strata::device

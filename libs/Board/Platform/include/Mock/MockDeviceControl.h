@@ -33,7 +33,7 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
     bool mockSetAsBootloader(bool isBootloader);
-    void mockCreateMockFirmware();
+    bool mockCreateMockFirmware(bool createFirmware);
 
 private:
     const std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
@@ -48,15 +48,15 @@ private:
     bool isOpenEnabled_ = true;
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
     bool isBootloader_ = false;
+    bool createFirmware_ = false;
     MockCommand command_ = MockCommand::Any_command;
     MockResponse response_ = MockResponse::Normal;
     MockVersion version_ = MockVersion::Version_1;
 
     //variables used to store mock firmware's expected values
     int payloadCount_ = 0;
-    bool startBackup_ = false;
     QTemporaryFile mockFirmware_;
-    int actualChunk_ = -1;
+    int actualChunk_ = 0;
     int expectedChunksCount_ = 0;
     QVector<quint64> expectedChunkSize_;
     QVector<QByteArray> expectedChunkData_;
