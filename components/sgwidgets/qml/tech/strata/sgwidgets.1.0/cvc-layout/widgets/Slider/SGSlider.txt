@@ -1,17 +1,16 @@
     LayoutSGSlider { // start_%1
         id: sgSlider_%1
         layoutInfo.uuid: "%1"
-        layoutInfo.columnsWide: 12
+        layoutInfo.columnsWide: 8
         layoutInfo.rowsTall: 2
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        // start_user_content
-        from : 0
-        to : 100
-        live : false
-        onUserSet : {
-            console.log("onUserSet:",value,layoutInfo.uuid)
+        from: 0
+        to: 100
+        live: false
+
+        onUserSet: {
+            console.log("onUserSet:", value)
         }
-        // end_user_content
     } // end_%1

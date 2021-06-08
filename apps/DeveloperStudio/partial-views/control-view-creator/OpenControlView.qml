@@ -35,32 +35,68 @@ Item {
         }
     }
 
-    function openProject(filepath, addToProjectList) {
+    function openProject(filepath, inRecentProjects) {
         const path = filepath.trim();
-        let localFile = path
-        if (localFile.startsWith("file://")) {
-            // type is url
-            localFile = SGUtilsCpp.urlToLocalFile(path);
-        }
 
-        if (!SGUtilsCpp.exists(localFile)) {
-            console.warn("Tried to open non-existent project")
-            if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
-            }
-            alertMessage.text = "Cannot open project. Qrc file does not exist."
-            alertMessage.show()
-            return false;
+        if (projectFileMissing(path, inRecentProjects)) {
+            return
+        }
+        if (unsavedFilesExist(path, inRecentProjects)) {
+            return
         }
 
         openProjectContainer.url = path
-        console.info(openProjectContainer.url);
-        viewStack.currentIndex = 1
-        if (addToProjectList) {
-            addToTheProjectList(openProjectContainer.url.toString())
+        if (inRecentProjects === false) {
+            addToTheProjectList(path)
         }
-        controlViewCreatorRoot.rccInitialized = false
-        return true;
+        viewStack.currentIndex = 1 // switch to edit view
+        controlViewCreatorRoot.projectInitialization = true
+        controlViewCreatorRoot.recompileControlViewQrc();
+
+        fileOutput.text = ""
+    }
+
+    function projectFileMissing(filepath, inRecentProjects) {
+        let localFile
+        if (filepath.startsWith("file://")) {
+            // type is url
+            localFile = SGUtilsCpp.urlToLocalFile(filepath)
+        } else {
+            localFile = filepath
+        }
+
+        if (!SGUtilsCpp.exists(localFile)) {
+            console.warn("Tried to open non-existent Qrc file/project")
+            if (alertMessage.visible) {
+                alertMessage.Layout.preferredHeight = 0
+            }
+            if (inRecentProjects) {
+                alertMessage.text = "Qrc file does not exist anymore. Removed from your recent projects."
+                removeFromProjectList(filepath)
+            } else {
+                alertMessage.text = "Cannot open project. Qrc file does not exist."
+            }
+            alertMessage.show()
+            return true;
+        }
+
+        return false
+    }
+
+    function unsavedFilesExist(path, inRecentProjects){
+        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+        if (unsavedFileCount > 0 && openProjectContainer.url.toString() !== path) {
+            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                controlViewCreatorRoot.isConfirmCloseOpen = true
+                startConfirmClosePopup.callback = function () {
+                    openProject(path, inRecentProjects)
+                }
+                startConfirmClosePopup.unsavedFileCount = unsavedFileCount
+                startConfirmClosePopup.open()
+            }
+            return true
+        }
+        return false
     }
 
     function saveSettings() {
@@ -101,47 +137,6 @@ Item {
                 previousFileURL.projects.splice(i,1)
                 saveSettings()
                 return
-            }
-        }
-    }
-
-    ConfirmClosePopup {
-        id: confirmClosePopup
-        parent: controlViewCreatorRoot
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
-        popupText: "Your changes will be lost if you choose to not save them."
-        acceptButtonText: "Save all"
-
-        property int unsavedFileCount
-        property url newUrl
-        property bool addToProjectList: false
-
-        onPopupClosed: {
-            if (closeReason === confirmClosePopup.closeFilesReason) {
-                editor.openFilesModel.closeAll()
-            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                editor.openFilesModel.saveAll(true)
-            }
-            controlViewCreatorRoot.isConfirmCloseOpen = false
-            if (closeReason !== confirmClosePopup.cancelCloseReason) {
-                if (openProject(addToProjectList ? fileOutput.text : newUrl.toString(), addToProjectList)) {
-                    fileOutput.text = "Select a .QRC file..."
-                }
-            }
-        }
-    }
-
-    FileDialog {
-        id: fileDialog
-        nameFilters: ["*.qrc"]
-        folder: fileDialog.shortcuts.home
-        onAccepted: {
-            if (fileDialog.fileUrl.toString() !== "") {
-                fileOutput.text = fileDialog.fileUrl
             }
         }
     }
@@ -253,26 +248,7 @@ Item {
                         if (mouse.button === Qt.RightButton) {
                             removeProjectMenu.popup()
                         } else {
-                            if (!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
-                                alertMessage.text = "This project does not exist anymore. Removing it from your recent projects..."
-                                alertMessage.show()
-                                removeFromProjectList(model.url)
-                            } else {
-                                let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                                if (unsavedFileCount > 0 && openProjectContainer.url.toString() !== model.url) {
-                                    if (!controlViewCreatorRoot.isConfirmCloseOpen) {
-                                        confirmClosePopup.unsavedFileCount = unsavedFileCount
-                                        confirmClosePopup.newUrl = model.url
-                                        confirmClosePopup.addToProjectList = false
-                                        confirmClosePopup.open()
-                                        controlViewCreatorRoot.isConfirmCloseOpen = true
-                                    }
-                                } else {
-                                    openProjectContainer.url = model.url
-                                    viewStack.currentIndex = 1 // switch to edit view
-                                    controlViewCreatorRoot.rccInitialized = false
-                                }
-                            }
+                            openProject(model.url, true)
                         }
                     }
                 }
@@ -342,20 +318,7 @@ Item {
                 enabled: fileOutput.text !== ""
 
                 onClicked: {
-                    let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-
-                    if (unsavedFileCount > 0 && openProjectContainer.url !== fileDialog.fileUrl) {
-                        if (!controlViewCreatorRoot.isConfirmCloseOpen) {
-                            confirmClosePopup.unsavedFileCount = unsavedFileCount
-                            confirmClosePopup.addToProjectList = true
-                            confirmClosePopup.open()
-                            controlViewCreatorRoot.isConfirmCloseOpen = true
-                        }
-                    } else {
-                        if (openProject(fileOutput.text, true)) {
-                            fileOutput.text = ""
-                        }
-                    }
+                    openProject(fileOutput.text, false)
                 }
             }
 
@@ -376,6 +339,17 @@ Item {
         Item {
             // space filler
             Layout.fillHeight: true
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        nameFilters: ["*.qrc"]
+        folder: fileDialog.shortcuts.home
+        onAccepted: {
+            if (fileDialog.fileUrl.toString() !== "") {
+                fileOutput.text = fileDialog.fileUrl
+            }
         }
     }
 }

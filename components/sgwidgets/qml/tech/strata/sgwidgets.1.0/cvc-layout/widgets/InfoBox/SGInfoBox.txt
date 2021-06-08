@@ -6,11 +6,10 @@
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        // start_user_content
         text: "100"
-        readOnly : true // Set readOnly: false if you like to make SGInfoBox Editable
+        readOnly: true // Set readOnly: false if you like to make SGInfoBox Editable
+
         onAccepted: {
-           console.log("Accepted:",text,layoutInfo.uuid)
+           console.log("Accepted:", text)
         }
-        // end_user_content
     } // end_%1

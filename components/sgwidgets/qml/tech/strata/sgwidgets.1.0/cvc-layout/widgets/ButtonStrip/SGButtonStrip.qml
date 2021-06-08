@@ -46,7 +46,7 @@ Item {
         Repeater {
             id: repeater
 
-            delegate: SGWidgets.SGButton {
+            delegate: Button {
                 id: buttonDelegate
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -54,21 +54,59 @@ Item {
                 text: modelData
                 checkable: true
                 checked: checkedIndices & powIndex
-                roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
-                roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
-                roundedTop: orientation == Qt.Vertical ? index === 0 : true
-                roundedBottom: orientation == Qt.Vertical ? index === repeater.count - 1 : true
+
+                Component.onCompleted: {
+                    contentItem.color = Qt.binding(() => {return buttonStripContainer.textColor(buttonDelegate)})
+                }
 
                 property int powIndex: 1 << index
+                property bool roundedLeft: orientation == Qt.Horizontal ? index === 0 : true
+                property bool roundedRight: orientation == Qt.Horizontal ? index === repeater.count - 1 : true
+                property bool roundedTop: orientation == Qt.Vertical ? index === 0 : true
+                property bool roundedBottom :  orientation == Qt.Vertical ? index === repeater.count - 1 : true
+
+                background:Item {
+                    implicitHeight: 40
+                    implicitWidth: 100
+                    clip: true
+
+                    Rectangle {
+                        id:buttonBackground
+                        anchors {
+                            fill:parent
+                            leftMargin: roundedLeft ? 0 : -radius
+                            rightMargin: roundedRight ? 0 : -radius
+                            topMargin: roundedTop ? 0 : -radius
+                            bottomMargin: roundedBottom ? 0 : -radius
+                        }
+
+                        opacity: enabled ? 1 : 0.5
+                        radius: 4
+
+                        Component.onCompleted: {
+                            color = Qt.binding(() => {return buttonStripContainer.color(buttonDelegate)})
+                        }
+                    }
+                }
 
                 onClicked: {
                     control.clicked(index)
-
                     if (control.exclusive) {
                         checkedIndices = 0
                         checkedIndices = powIndex
                     } else {
                         checkedIndices ^= powIndex
+                    }
+                }
+
+                MouseArea {
+                    id: mouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onPressed:  {
+                        mouse.accepted = false
                     }
                 }
             }

@@ -4,6 +4,7 @@ import tech.strata.sgwidgets 1.0
 import "../../"
 
 LayoutContainer {
+    id: layoutSGCircularGauge
 
     // pass through all properties
     property alias value: circularGaugeObject.value
@@ -21,8 +22,24 @@ LayoutContainer {
     property alias tickmarkStepSize : circularGaugeObject.tickmarkStepSize
     property alias unitText: circularGaugeObject.unitText
 
+    function lerpColor (color1, color2, x){
+        if (Qt.colorEqual(color1, color2)){
+            return color1;
+        } else {
+            return Qt.hsva(
+                color1.hsvHue * (1 - x) + color2.hsvHue * x,
+                color1.hsvSaturation * (1 - x) + color2.hsvSaturation * x,
+                color1.hsvValue * (1 - x) + color2.hsvValue * x, 1
+                );
+        }
+    }
+
     contentItem: SGCircularGauge {
         id: circularGaugeObject
+
+        function lerpColor (color1, color2, x) {
+            return layoutSGCircularGauge.lerpColor(color1, color2, x)
+        }
     }
 }
 
