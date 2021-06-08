@@ -8,11 +8,16 @@ Item {
      anchors.fill: parent
 
      function setTarget(target, fill) {
-         var remappedTarget = target.mapToItem(fill, 0, 0)
-         mockTarget.x = remappedTarget.x
-         mockTarget.y = remappedTarget.y
-         mockTarget.width = target.width
-         mockTarget.height = target.height
+         mockTarget.x = Qt.binding(function() {
+             target.x // dummy to force evaluation
+             return target.mapToItem(root.parent, 0, 0).x
+         })
+         mockTarget.y = Qt.binding(function() {
+             target.y // dummy to force evaluation
+             return target.mapToItem(root.parent, 0, 0).y
+         })
+         mockTarget.width = Qt.binding(function() { return target.width })
+         mockTarget.height = Qt.binding(function() { return target.height })
 
          // apply default alignment settings:
          toolTipPopup.anchors.bottom = undefined
@@ -55,6 +60,16 @@ Item {
 
      Item {
          id: mockTarget
+
+         onVisibleChanged: {
+             if (visible === false) {
+                 // remove bindings if no longer required
+                 x = 0
+                 y = 0
+                 width = 0
+                 height = 0
+             }
+         }
      }
 
      Rectangle {

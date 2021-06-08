@@ -53,7 +53,6 @@ void SerialDevice::initSerialDevice() {
 
     connect(serialPort_.get(), &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
     connect(serialPort_.get(), &QSerialPort::readyRead, this, &SerialDevice::readMessage);
-    connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
 
     qCDebug(logCategoryDeviceSerial).nospace().noquote()
         << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
@@ -132,14 +131,20 @@ void SerialDevice::readMessage() {
     }
 }
 
-bool SerialDevice::sendMessage(const QByteArray& msg) {
-    // * Signal must be emitted because of calling this function from another
-    //   thread as in which this SerialDevice object was created. Slot connected
-    //   to this signal will be executed in correct thread.
-    // * Data cannot be written to serial port from another thread (otherwise error
-    //   "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs).
-    emit writeToPort(msg, QPrivateSignal());
-    return true;
+bool SerialDevice::sendMessage(const QByteArray& data) {
+    // Data cannot be written to serial port from another thread as
+    // in which this SerialDevice object was created. Otherwise error
+    // "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs.
+
+    if (serialPort_->write(data) == data.size()) {
+        emit messageSent(data);
+        return true;
+    } else {
+        QString errMsg(QStringLiteral("Cannot write whole data to device."));
+        qCCritical(logCategoryDeviceSerial) << this << errMsg;
+        emit deviceError(ErrorCode::DeviceError, errMsg);
+        return false;
+    }
 }
 
 bool SerialDevice::isConnected() const
@@ -168,16 +173,6 @@ Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPor
             return ErrorCode::DeviceError;
         default:
             return ErrorCode::DeviceError;
-    }
-}
-
-void SerialDevice::handleWriteToPort(const QByteArray data) {
-    if (serialPort_->write(data) == data.size()) {
-        emit messageSent(data);
-    } else {
-        QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
     }
 }
 
