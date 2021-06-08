@@ -45,7 +45,8 @@ namespace strata::device {
         */
         enum class Type {
             SerialDevice,
-            MockDevice
+            MockDevice,
+            NetworkDevice
         };
         Q_ENUM(Type)
 

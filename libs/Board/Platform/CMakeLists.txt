@@ -4,7 +4,7 @@ project(Platform
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort
+    COMPONENTS Core SerialPort Network
     REQUIRED
 )
 
@@ -17,6 +17,7 @@ add_library(${PROJECT_NAME}
     src/Serial/SerialDevice.cpp
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
+    src/Network/NetworkDevice.cpp
 
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp
@@ -49,6 +50,7 @@ add_library(${PROJECT_NAME}
     include/Mock/MockDevice.h
     include/Mock/MockDeviceControl.h
     include/Mock/MockDeviceConstants.h
+    include/Network/NetworkDevice.h
 
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h
@@ -63,11 +65,13 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Mock
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Operations
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Operations/Commands
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Network
 )
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
+    PUBLIC Qt5::Network
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PRIVATE strata::CommandValidator
