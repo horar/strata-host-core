@@ -338,6 +338,9 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const bool i
         uidMap_.insert(uid, child);
         pathsInTree_.insert(child->filepath());
         endInsertRows();
+
+        QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()));
+        emit fileCreated(index(position, 0, parent), outputFileLocation.fileName(), fileUrl, outputFileLocation.completeSuffix(), uid);
     }
 
     // Recursively add children
@@ -358,7 +361,6 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const bool i
         addToQrc(index(position, 0, parent), false);
     }
 
-    emit fileAppeared(index(position, 0, parent));
     return success;
 }
 

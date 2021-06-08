@@ -269,7 +269,7 @@ signals:
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
 
-    void fileAppeared(const QModelIndex index);
+    void fileCreated(const QModelIndex index, const QString filename, const QUrl filepath, const QString filetype, const QString uid);
 
     /***
      * SLOTS
@@ -335,6 +335,24 @@ private:
     QUrl debugMenuSource_;
     bool needsCleaning_;
 
-    const QString baseQMLFile_ = "import QtQuick 2.12;\n\nItem {\n\n}\n";
-    const QString veQMLFile_ = "import QtQuick 2.12;\n\nItem {\n    UIBase {\n\n    }\n}\n";
+    // String literal for creating a base QML file
+    const QString baseQMLFile_ = R"baseQMLFile(import QtQuick 2.12
+
+Item {
+
+}
+)baseQMLFile";
+
+    // String literal for creating a VE-enabled QML file
+    const QString veQMLFile_ = R"veQMLFile(import QtQuick 2.12
+
+import tech.strata.sgwidgets 1.0
+
+UIBase { // start_uibase
+    columnCount: 20
+    rowCount: 20
+
+} // end_uibase
+)veQMLFile";
+
 };

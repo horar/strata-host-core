@@ -17,11 +17,11 @@ SGStrataPopup {
     height: 280
     anchors.centerIn: Overlay.overlay
 
-    property var viewState: ""
+    property var viewState: "QML"
     property bool fileCreateRequested: false
 
     onClosed: {
-        viewState = ""
+        viewState = "QML"
         qmlFilenameInfobox.text = ""
         otherFileTypeFilenameInfobox.text = ""
     }
@@ -29,16 +29,18 @@ SGStrataPopup {
     Connections {
         target: treeModel
 
-        onFileAppeared: {
+        onFileCreated: {
             if (root.fileCreateRequested) {
                 treeModel.addToQrc(index)
+                openFilesModel.addTab(filename, filepath, filetype, uid)
+                treeView.selectItem(index)
             }
 
             root.fileCreateRequested = false
         }
     }
 
-    contentItem: Item {
+    contentItem: ColumnLayout {
         id: column
         width: parent.width
 
@@ -47,28 +49,34 @@ SGStrataPopup {
         }
 
         RowLayout {
-            y: 20
-            spacing: 5
-
             SGButton {
+                id: qmlViewButton
                 text: "QML"
-                onPressed: {
+                checkable: true
+                checked: root.viewState == "QML"
+
+                onClicked: {
                     root.viewState = "QML"
                 }
             }
 
             SGButton {
+                id: otherFileTypeViewButton
                 text: "Other File Type"
-                onPressed: {
+                checkable: true
+                checked: root.viewState == "otherFileType"
+
+                onClicked: {
                     root.viewState = "otherFileType"
                 }
             }
         }
 
-        Item {
-            y: 70
+        ColumnLayout {
+            id: qmlViewContainer
             visible: root.viewState === "QML"
-            Layout.fillWidth: true
+            implicitWidth: parent.width
+            implicitHeight: 200
 
             RowLayout {
                 spacing: 0
@@ -86,10 +94,6 @@ SGStrataPopup {
                     enabled: true
                     contextMenuEnabled: true
                     placeholderText: "filename"
-
-                    onEditingFinished:{ }
-
-                    onFocusChanged: { }
                 }
 
                 SGText {
@@ -99,66 +103,69 @@ SGStrataPopup {
 
             CheckBox {
                 id: veEnabledFileCheckbox
-                y: 40
                 text: qsTr("Start with Visual Editor Enabled QML file")
                 checked: false
-                onCheckedChanged: { }
                 padding: 0
             }
 
             SGText {
-                y: 75
                 text: veEnabledFileCheckbox.checked ? "A Visual-Editor ready QML file will be created" : "A base QML file will be created"
             }
 
-            SGButton {
-                id: qmlCreateFileButton
-                y: 100
-                text: "Create file"
-                enabled: qmlFilenameInfobox.text !== ""
-                
-                onPressed: {
-                    const filename = qmlFilenameInfobox.text + ".qml"
-                    const url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filename)
-                    const path = SGUtilsCpp.urlToLocalFile(url)
-                    const parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
-                    root.fileCreateRequested = true
-                    const success = treeModel.createQmlFile(path, veEnabledFileCheckbox.checked)
-                    if (!success) {
-                        console.error("Could not create file:", path)
-                    } else {
-                        openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                        root.close()
+            Item {
+                id: qmlCreateFileButtonContainer
+                implicitHeight: qmlCreateFileButton.implicitHeight
+                implicitWidth: qmlCreateFileButton.implicitWidth
+
+                SGButton {
+                    id: qmlCreateFileButton
+                    text: "Create file"
+                    enabled: qmlFilenameInfobox.text !== ""
+
+                    onClicked: {
+                        const filename = qmlFilenameInfobox.text + ".qml"
+                        const url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filename)
+                        const path = SGUtilsCpp.urlToLocalFile(url)
+                        const parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
+                        root.fileCreateRequested = true
+                        const success = treeModel.createQmlFile(path, veEnabledFileCheckbox.checked)
+                        if (!success) {
+                            console.error("Could not create file:", path)
+                        } else {
+                            root.close()
+                        }
                     }
                 }
-            }
 
-            MouseArea {
-                id: qmlCreateFileButtonTooltip
-                anchors.fill: parent
-                hoverEnabled: true
-                enabled: visible
-                // visible: !qmlCreateFileButton.enabled
-                visible: true
+                MouseArea {
+                    id: qmlCreateFileButtonTooltip
+                    anchors.fill: qmlCreateFileButtonContainer
 
-                ToolTip {
-                    visible: true//qmlCreateFileButtonTooltip.containsMouse && !qmlCreateFileButton.enabled
-                    text: {
-                        var result = ""
-                        if (qmlFilenameInfobox.text == "") {
-                            result += (result === "" ? "" : "<br>")
-                            result += "Project name is empty"
+                    hoverEnabled: visible
+                    enabled: visible
+                    visible: qmlCreateFileButton.enabled === false
+
+                    ToolTip {
+                        visible: qmlCreateFileButtonTooltip.containsMouse
+                        z: 1
+                        text: {
+                            var result = ""
+                            if (qmlFilenameInfobox.text == "") {
+                                result += (result === "" ? "" : "<br>")
+                                result += "File name is empty"
+                            }
+                            return result
                         }
-                        return result
                     }
                 }
             }
         }
 
-        Item {
-            y: 70
+        ColumnLayout {
+            id: otherFileTypeViewContainer
             visible: root.viewState === "otherFileType"
-            Layout.fillWidth: true
+            implicitWidth: parent.width
+            implicitHeight: 200
 
             RowLayout {
                 spacing: 0
@@ -176,36 +183,56 @@ SGStrataPopup {
                     enabled: true
                     contextMenuEnabled: true
                     placeholderText: "filename"
-
-                    onEditingFinished:{ }
-
-                    onFocusChanged: { }
                 }
             }
 
             SGText {
-                y: 75
                 text: "An empty file will be created"
             }
 
-            SGButton {
-                id: otherFileTypeCreateFileButton
-                y: 100
-                text: "Create file"
-                enabled: otherFileTypeFilenameInfobox.text !== ""
-                
-                onPressed: {
-                    const filename = otherFileTypeFilenameInfobox.text
-                    const url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filename)
-                    const path = SGUtilsCpp.urlToLocalFile(url)
-                    const parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
-                    root.fileCreateRequested = true
-                    const success = treeModel.createEmptyFile(path, veEnabledFileCheckbox.checked)
-                    if (!success) {
-                        console.error("Could not create file:", path)
-                    } else {
-                        openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                        root.close()
+            Item {
+                id: otherFileTypeCreateFileButtonContainer
+                implicitHeight: otherFileTypeCreateFileButton.implicitHeight
+                implicitWidth: otherFileTypeCreateFileButton.implicitWidth
+
+                SGButton {
+                    id: otherFileTypeCreateFileButton
+                    text: "Create file"
+                    enabled: otherFileTypeFilenameInfobox.text !== ""
+
+                    onClicked: {
+                        const filename = otherFileTypeFilenameInfobox.text
+                        const url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filename)
+                        const path = SGUtilsCpp.urlToLocalFile(url)
+                        const parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
+                        root.fileCreateRequested = true
+                        const success = treeModel.createEmptyFile(path, veEnabledFileCheckbox.checked)
+                        if (!success) {
+                            console.error("Could not create file:", path)
+                        } else {
+                            root.close()
+                        }
+                    }
+                }
+
+                MouseArea {
+                    id: otherFileTypeCreateFileButtonTooltip
+                    anchors.fill: otherFileTypeCreateFileButtonContainer
+                    hoverEnabled: visible
+                    enabled: visible
+                    visible: otherFileTypeCreateFileButton.enabled === false
+
+                    ToolTip {
+                        visible: otherFileTypeCreateFileButtonTooltip.containsMouse
+                        z: 1
+                        text: {
+                            var result = ""
+                            if (otherFileTypeFilenameInfobox.text == "") {
+                                result += (result === "" ? "" : "<br>")
+                                result += "File name is empty"
+                            }
+                            return result
+                        }
                     }
                 }
             }
