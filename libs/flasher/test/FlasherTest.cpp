@@ -915,6 +915,4 @@ void FlasherTest::backupFirmwareTest()
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
-
-    QFAIL("FAIL ON PURPOSE!");
 }
