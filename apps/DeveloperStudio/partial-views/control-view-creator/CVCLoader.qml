@@ -28,12 +28,14 @@ Loader {
 
         onRequestCVCClose: {
             cvcLoader.cvcCloseRequested = true
+            Signals.cvcBlocking = true
             if (cvcLoader.item.blockWindowClose() === false){
                 Signals.closeCVC()
             }
         }
 
         onCloseCVC: {
+            Signals.cvcBlocking = false
             cvcLoader.cvcCloseRequested = false
             cvcLoader.active = false
             let data = {"index": NavigationControl.stack_container_.count-2}

@@ -38,8 +38,8 @@ Item {
             // if not startup, user has logged out
             console.log(LoggerModule.Logger.devStudioLoginCategory, "logged out!")
         }
-        Authenticator.settings.clear()
-        showLogin()
+            Authenticator.settings.clear()
+            showLogin()
     }
 
     function showLogin() {

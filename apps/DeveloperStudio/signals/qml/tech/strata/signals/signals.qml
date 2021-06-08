@@ -70,4 +70,6 @@ QtObject {
     signal loadCVC()
     signal requestCVCClose()
     signal closeCVC()
+
+    property bool cvcBlocking: false
 }

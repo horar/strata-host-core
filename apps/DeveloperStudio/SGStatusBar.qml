@@ -40,6 +40,7 @@ Rectangle {
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
+    property bool hasLoggedOut: false
 
     onHasNotificationsChanged: {
         alertIconContainer.visible = hasNotifications
@@ -600,16 +601,36 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
-
-                        Signals.logout()
-                        PlatformFilters.clearActiveFilters()
-                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                        Authenticator.logout()
-                        PlatformSelection.logout()
-                        sdsModel.coreInterface.unregisterClient()
+                        Signals.requestCVCClose()
+                        hasLoggedOut = true
+                        if(!Signals.cvcBlocking){
+                            Signals.logout()
+                            PlatformFilters.clearActiveFilters()
+                            NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                            Authenticator.logout()
+                            PlatformSelection.logout()
+                            sdsModel.coreInterface.unregisterClient()
+                            hasLoggedOut = false
+                        }
                     }
                     width: profileMenu.width
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: Signals
+
+        onCloseCVC: {
+            if(hasLoggedOut){
+                Signals.logout()
+                PlatformFilters.clearActiveFilters()
+                NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                Authenticator.logout()
+                PlatformSelection.logout()
+                sdsModel.coreInterface.unregisterClient()
+                hasLoggedOut = false
             }
         }
     }
