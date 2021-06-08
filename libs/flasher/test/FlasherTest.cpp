@@ -876,6 +876,7 @@ void FlasherTest::backupFirmwareTest()
 {
     rapidjson::Document actualDoc;
     getExpectedValues(fakeFirmware_.fileName());
+    mockDevice_->mockCreateMockFirmware(true);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
