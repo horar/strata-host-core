@@ -27,10 +27,10 @@ Loader {
         }
 
         onRequestCVCClose: {
-            if(cvcLoader.active){
+            if(cvcLoader.active) {
                 cvcLoader.cvcCloseRequested = true
                 Signals.blockCVC(true)
-                if (cvcLoader.item.blockWindowClose() === false){
+                if (cvcLoader.item.blockWindowClose() === false) {
                     Signals.closeCVC()
                 }
             }
