@@ -41,6 +41,7 @@ Rectangle {
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
     property bool hasLoggedOut: false
+    property bool isCVCBlocking: false
 
     onHasNotificationsChanged: {
         alertIconContainer.visible = hasNotifications
@@ -603,7 +604,7 @@ Rectangle {
                         profileMenu.close()
                         Signals.requestCVCClose()
                         hasLoggedOut = true
-                        if(!Signals.cvcBlocking){
+                        if(!isCVCBlocking){
                             Signals.logout()
                             PlatformFilters.clearActiveFilters()
                             NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
@@ -632,6 +633,10 @@ Rectangle {
                 sdsModel.coreInterface.unregisterClient()
                 hasLoggedOut = false
             }
+        }
+
+        onBlockCVC: {
+            isCVCBlocking = blocking
         }
     }
 

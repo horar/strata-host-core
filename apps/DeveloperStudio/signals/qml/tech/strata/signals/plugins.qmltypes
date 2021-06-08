@@ -27,7 +27,7 @@ Module {
         Signal { name: "loadCVC"}
         Signal { name: "requestCVCClose"}
         Signal { name: "closeCVC"}
-        Property {name: "cvcBlocking"; type: "bool"}
+        Signal { name: "blockCVC"; Parameter {name: "blocking"; type: "bool"}}
     }
 }
 
