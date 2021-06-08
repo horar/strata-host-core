@@ -9,6 +9,5 @@
         unitText: "%"
         minimumValue: 0
         maximumValue: 10
-        tickmarkStepSize: 1
         value: 10
     } // end_%1
