@@ -3,7 +3,6 @@
 #include <Buypass.h>
 #include <CodecBase64.h>
 #include <QDir>
-#include <QCryptographicHash>
 
 #include "logging/LoggingQtCategories.h"
 
