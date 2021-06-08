@@ -205,20 +205,11 @@ function closeTour() {
 function registerWindow(windowTarget, stackContainerTarget) {
     window = windowTarget.contentItem
     stackContainer = stackContainerTarget
-    windowTarget.widthChanged.connect(liveResize)
-    windowTarget.heightChanged.connect(liveResize)
 }
 
 function refreshView (i) {
     // set the target sizing on load
     current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"]);
-}
-
-function liveResize() {
-    // refresh the target sizing on window resize
-    if (tour_running) {
-        refreshView(internal_tour_index)
-    }
 }
 
 function destroyHelp() {

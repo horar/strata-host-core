@@ -38,7 +38,7 @@ Item {
         text: plainText.text
         width: 250
         placeholderText: ""
-        valid: text !== ""
+        valid: text.match(/\S/)
         visible: false
     }
 

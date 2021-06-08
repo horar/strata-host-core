@@ -418,6 +418,11 @@ function disconnectPlatform(platform) {
         "class_id": class_id_string
     }
     NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, data)
+
+    if (selector_listing.view_open && NavigationControl.userSettings.closeOnDisconnect) {
+        closePlatformView(platform)
+        NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)
+    }
 }
 
 /*
