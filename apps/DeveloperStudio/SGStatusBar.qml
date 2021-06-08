@@ -619,7 +619,11 @@ Rectangle {
             }
         }
     }
-
+    /*
+      This Connections is for
+      a) the cvc blocking a logout state due to unsaved changes
+      b) the cvc executing a logout after the unsaved changes are resolved
+    */
     Connections {
         target: Signals
 
