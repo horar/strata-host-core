@@ -314,11 +314,11 @@ Item {
 
                 if(type === 1){
                     warningCount += 1
-
                 }
                 if(type === 2){
                     errorCount += 1
                 }
+                
                 consoleLogErrorCount = errorCount
                 consoleLogWarningCount = warningCount
             }
