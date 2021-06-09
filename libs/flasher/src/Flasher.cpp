@@ -183,7 +183,7 @@ bool Flasher::startActionCheck(const QString& errorString)
         return false;
     }
 
-    // platform could be rebooted (e.x. by j-link) and it
+    // platform could be rebooted (e.g. by j-link) and it
     // could send part of message before rebooting,
     // so reset receiving to drop possible incomplete message
     platform_->resetReceiving();
