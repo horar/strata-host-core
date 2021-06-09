@@ -6,7 +6,6 @@ import QtQml 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
-import tech.strata.theme 1.0
 
 import "ConsoleMessages"
 
