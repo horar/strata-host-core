@@ -78,7 +78,7 @@ public:
 
 protected slots:
     virtual void handlePlatformOpened(QByteArray deviceId) = 0;
-    virtual void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+    virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
 protected:
     bool createSerialDevice();

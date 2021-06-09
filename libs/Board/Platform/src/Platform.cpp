@@ -99,7 +99,7 @@ void Platform::messageSentHandler(QByteArray rawMsg) {
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
-    emit deviceError(device_->deviceId(), errCode, errMsg);
+    emit deviceError(errCode, errMsg);
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
@@ -147,7 +147,7 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceBusy, errMsg);
+        emit deviceError(device::Device::ErrorCode::DeviceBusy, errMsg);
         return false;
     }
 }
@@ -314,7 +314,7 @@ void Platform::openDevice() {
         emit opened(device_->deviceId());
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
-        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
+        emit deviceError(device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
         if (retryInterval_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryInterval_.count());
         }

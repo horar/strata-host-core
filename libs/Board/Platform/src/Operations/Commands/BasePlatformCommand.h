@@ -148,7 +148,7 @@ private slots:
     void handleResponseTimeout();
 
 protected slots:
-    void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
 protected:
     virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;

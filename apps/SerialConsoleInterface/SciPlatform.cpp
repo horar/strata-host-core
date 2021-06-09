@@ -303,9 +303,8 @@ void SciPlatform::messageToDeviceHandler(QByteArray rawMessage)
     scrollbackModel_->append(rawMessage, true);
 }
 
-void SciPlatform::deviceErrorHandler(QByteArray deviceId, strata::device::Device::ErrorCode errorCode, QString errorString)
+void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
 {
-    Q_UNUSED(deviceId)
     Q_UNUSED(errorCode)
     setErrorString(errorString);
 }

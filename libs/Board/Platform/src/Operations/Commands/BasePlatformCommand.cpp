@@ -183,10 +183,8 @@ void BasePlatformCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
-void BasePlatformCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr)
+void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
-    Q_UNUSED(deviceId)
-
     responseTimer_.stop();
     qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;
 

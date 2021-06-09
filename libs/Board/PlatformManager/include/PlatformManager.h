@@ -133,7 +133,7 @@ namespace strata {
         void handlePlatformTerminated(QByteArray deviceId);
         void handlePlatformRecognized(QByteArray deviceId, bool isRecognized);
         void handlePlatformIdChanged(QByteArray deviceId);
-        void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+        void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
     private:
         void startPlatformOperations(const platform::PlatformPtr& platform);

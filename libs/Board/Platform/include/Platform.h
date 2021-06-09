@@ -234,7 +234,7 @@ namespace strata::platform {
          * @param errCode error code
          * @param errMsg error description
          */
-        void deviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errMsg);
+        void deviceError(device::Device::ErrorCode errCode, QString errMsg);
 
         /**
          * Emitted when device communication channel was opened.

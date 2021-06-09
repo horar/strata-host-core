@@ -104,8 +104,7 @@ bool DeviceCommand::createSerialDevice() {
     return true;
 }
 
-void DeviceCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr) {
-    Q_UNUSED(deviceId)
+void DeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
 
     if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {

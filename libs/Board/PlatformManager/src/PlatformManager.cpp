@@ -275,20 +275,27 @@ void PlatformManager::handlePlatformIdChanged(QByteArray deviceId) {
     }
 }
 
-void PlatformManager::handleDeviceError(QByteArray deviceId, Device::ErrorCode errCode, QString errStr) {
+void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        return;
+    }
+
     switch (errCode) {
     case Device::ErrorCode::NoError: {
     } break;
     case Device::ErrorCode::DeviceBusy:
     case Device::ErrorCode::DeviceFailedToOpen: {
         // no need to handle these
-        // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << platform->deviceId() << ", code: " << errCode << ", message: " << errStr;
     } break;
     case Device::ErrorCode::DeviceDisconnected: {
+        const QByteArray deviceId = platform->deviceId();
         qCWarning(logCategoryPlatformManager).nospace() << "Platform was disconnected: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
         disconnectPlatform(deviceId);
     } break;
     case Device::ErrorCode::DeviceError: {
+        const QByteArray deviceId = platform->deviceId();
         qCCritical(logCategoryPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
         disconnectPlatform(deviceId);
     } break;

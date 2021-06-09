@@ -103,7 +103,7 @@ signals:
 private slots:
     void messageFromDeviceHandler(strata::platform::PlatformMessage message);
     void messageToDeviceHandler(QByteArray rawMessage);
-    void deviceErrorHandler(QByteArray deviceId, strata::device::Device::ErrorCode errorCode, QString errorString);
+    void deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString);
     void flasherProgramProgressHandler(int chunk, int total);
     void flasherBackupProgressHandler(int chunk, int total);
     void flasherRestoreProgressHandler(int chunk, int total);
