@@ -249,7 +249,7 @@ namespace strata::platform {
         /**
          * Emitted when device communication channel was closed.
          */
-        void closed(QByteArray deviceId);
+        void closed();
 
         /**
          * Emitted when device is about to be erased from maps and no more operations shall be executed.
