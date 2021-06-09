@@ -21,18 +21,23 @@ public:
     virtual bool sendMessage(const QByteArray &message) override;
     virtual bool isConnected() const override;
 
+signals:
+    void deviceDisconnected();
+
 private slots:
     void readMessages();
     void handleError(QAbstractSocket::SocketError socketError);
-    void handleWriteToDevice(QByteArray data);
-    void handleDeviceConnected();
     void handleDeviceDiconnected();
 
 private:
     socketPtr tcpSocket_;
     QHostAddress deviceAddress_;
     bool isConnected_;
+    std::string readBuffer_;
+
     static constexpr qint64 TCP_PORT{24125};
     static constexpr qint64 TCP_WRITE_TIMEOUT{1000};
+    static constexpr qint64 TCP_CONNECT_TIMEOUT{500};
+    static constexpr unsigned READ_BUFFER_SIZE{4096};
 };
 }  // namespace strata::device
