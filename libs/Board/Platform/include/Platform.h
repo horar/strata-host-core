@@ -225,10 +225,9 @@ namespace strata::platform {
 
         /**
          * Emitted when message was written to device.
-         * @param deviceId device ID
-         * @param msg writen raw message to device
+         * @param rawMsg writen raw message to device
          */
-        void messageSent(QByteArray deviceId, QByteArray msg);
+        void messageSent(QByteArray rawMsg);
 
         /**
          * Emitted when error occured during communication on the serial port.
