@@ -219,10 +219,9 @@ namespace strata::platform {
     signals:
         /**
          * Emitted when there is available new message from device.
-         * @param deviceId device ID
          * @param msg message from device
          */
-        void messageReceived(QByteArray deviceId, PlatformMessage msg);
+        void messageReceived(PlatformMessage msg);
 
         /**
          * Emitted when message was written to device.

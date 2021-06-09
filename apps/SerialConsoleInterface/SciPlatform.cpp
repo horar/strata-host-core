@@ -292,9 +292,8 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
     settings_->setAutoExportPath(verboseName_, autoExportPath);
 }
 
-void SciPlatform::messageFromDeviceHandler(QByteArray deviceId, strata::platform::PlatformMessage message)
+void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage message)
 {
-    Q_UNUSED(deviceId)
     scrollbackModel_->append(message.raw(), false);
     filterSuggestionModel_->add(message.raw());
 }

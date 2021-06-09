@@ -101,10 +101,8 @@ bool BasePlatformCommand::logSendMessage() const {
     return true;
 }
 
-void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const PlatformMessage message)
+void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
 {
-    Q_UNUSED(deviceId)
-
     if (message.isJsonValidObject() == false) {
         logWrongResponse(message);
         return;

@@ -144,7 +144,7 @@ protected:
     virtual bool logSendMessage() const;
 
 private slots:
-    void handleDeviceResponse(QByteArray deviceId, const PlatformMessage message);
+    void handleDeviceResponse(const PlatformMessage message);
     void handleResponseTimeout();
 
 protected slots:

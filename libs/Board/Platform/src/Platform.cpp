@@ -74,7 +74,7 @@ R"(
 );
 
 void Platform::messageReceivedHandler(QByteArray rawMsg) {
-    // re-emit the message first, then validate (for platform_id_changed)
+    // re-emit the message first, then validate for platform_id_changed
 
     PlatformMessage message(rawMsg);
 
@@ -83,7 +83,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
             << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
-    emit messageReceived(device_->deviceId(), message);
+    emit messageReceived(message);
 
     if (message.isJsonValidObject()) {
         if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
