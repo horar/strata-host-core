@@ -7,7 +7,7 @@ Menu {
     MenuItem {
         text: "Add New File to Qrc"
         onTriggered: {
-            createFilePopup.visible = true
+            createFilePopup.open()
             sideBarContextMenu.dismiss()
         }
     }
@@ -15,8 +15,7 @@ Menu {
     MenuItem {
         text: "Add Existing File to Qrc"
         onTriggered: {
-            // existingFileDialog.callerIndex = styleData.index.parent
-            existingFileDialog.open();
+            existingFileDialog.open()
             sideBarContextMenu.dismiss()
         }
     }

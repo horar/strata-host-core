@@ -46,7 +46,8 @@ Menu {
     MenuItem {
         text: "Add New File to Qrc"
         onTriggered: {
-            createFilePopup.visible = true
+            createFilePopup.directoryPath = model.filepath
+            createFilePopup.open()
             fileContextMenu.dismiss()
         }
     }

@@ -18,16 +18,17 @@ SGStrataPopup {
 
     property var viewState: "QML" // "QML" or "otherFileType"
     property bool fileCreateRequested: false
+    property string directoryPath: ""
 
     onClosed: {
         filenameReqsPopup.close()
         viewState = "QML"
+        directoryPath = ""
         filenameInfobox.text = ""
     }
 
     Connections {
         target: treeModel
-
         onFileCreated: {
             if (createFilePopup.fileCreateRequested) {
                 treeModel.addToQrc(index)
@@ -128,7 +129,12 @@ SGStrataPopup {
                     enabled: filenameReqsPopup.filenameValid
 
                     onClicked: {
-                        const url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
+                        let url
+                        if (createFilePopup.directoryPath) {
+                            url = SGUtilsCpp.joinFilePath(createFilePopup.directoryPath, filenameInfobox.text)
+                        } else {
+                            url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
+                        }
                         const path = SGUtilsCpp.urlToLocalFile(url)
                         createFilePopup.fileCreateRequested = true
 

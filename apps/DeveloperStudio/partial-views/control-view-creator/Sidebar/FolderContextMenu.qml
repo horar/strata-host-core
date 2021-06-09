@@ -10,7 +10,8 @@ Menu {
                 treeView.expand(styleData.index)
             }
 
-            createFilePopup.visible = true
+            createFilePopup.directoryPath = model.filepath
+            createFilePopup.open()
             folderContextMenu.dismiss()
         }
     }
