@@ -314,7 +314,6 @@ Item {
 
                 if(type === 1){
                     consoleLogWarningCount += 1
-
                 }
                 if(type === 2){
                     consoleLogErrorCount += 1
