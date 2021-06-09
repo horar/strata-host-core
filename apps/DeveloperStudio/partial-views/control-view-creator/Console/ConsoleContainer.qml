@@ -16,9 +16,6 @@ Rectangle {
 
     signal clicked()
 
-    property int warningCount: 0
-    property int errorCount: 0
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
