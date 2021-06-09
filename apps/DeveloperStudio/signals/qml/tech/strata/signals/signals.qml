@@ -68,7 +68,7 @@ QtObject {
       Misc Signal for CVC
     */
     signal loadCVC()
-    signal requestCVCClose()
-    signal closeCVC()
+    signal requestCVCClose(bool isLoggingOut)
+    signal closeCVC(bool isLoggingOut)
     signal blockCVC(bool blocking)
 }

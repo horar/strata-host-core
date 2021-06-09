@@ -40,7 +40,7 @@ Rectangle {
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
-    property bool hasLoggedOut: false
+    // CVC logging out property flag
     property bool isCVCBlocking: false
 
     onHasNotificationsChanged: {
@@ -602,17 +602,8 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
-                        Signals.requestCVCClose()
-                        hasLoggedOut = true
-                        if(!isCVCBlocking){
-                            Signals.logout()
-                            PlatformFilters.clearActiveFilters()
-                            NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                            Authenticator.logout()
-                            PlatformSelection.logout()
-                            sdsModel.coreInterface.unregisterClient()
-                            hasLoggedOut = false
-                        }
+                        Signals.requestCVCClose(true)
+                        logout()
                     }
                     width: profileMenu.width
                 }
@@ -628,14 +619,8 @@ Rectangle {
         target: Signals
 
         onCloseCVC: {
-            if(hasLoggedOut){
-                Signals.logout()
-                PlatformFilters.clearActiveFilters()
-                NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                Authenticator.logout()
-                PlatformSelection.logout()
-                sdsModel.coreInterface.unregisterClient()
-                hasLoggedOut = false
+            if(isLoggingOut){
+                logout()
             }
         }
 
@@ -713,5 +698,16 @@ Rectangle {
 
     function showAboutWindow(){
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
+    function logout(){
+        if(!isCVCBlocking){
+            Signals.logout()
+            PlatformFilters.clearActiveFilters()
+            NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+            Authenticator.logout()
+            PlatformSelection.logout()
+            sdsModel.coreInterface.unregisterClient()
+        }
     }
 }

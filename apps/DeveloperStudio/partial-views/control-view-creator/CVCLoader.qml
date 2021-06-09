@@ -12,6 +12,7 @@ Loader {
     active: false
 
     property bool cvcCloseRequested: false
+    property bool cvcLoggingOut: false
 
     sourceComponent: ControlViewCreator {
         id: controlViewCreator
@@ -29,9 +30,10 @@ Loader {
         onRequestCVCClose: {
             if(cvcLoader.active) {
                 cvcLoader.cvcCloseRequested = true
+                cvcLoggingOut = isLoggingOut
                 Signals.blockCVC(true)
                 if (cvcLoader.item.blockWindowClose() === false) {
-                    Signals.closeCVC()
+                    Signals.closeCVC(isLoggingOut)
                 }
             }
         }

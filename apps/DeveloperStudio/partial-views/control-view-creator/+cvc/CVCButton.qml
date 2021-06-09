@@ -76,7 +76,7 @@ Rectangle {
                 anchors.fill: parent
 
                 onClicked: {
-                    Signals.requestCVCClose()
+                    Signals.requestCVCClose(false)
                 }
             }
         }
