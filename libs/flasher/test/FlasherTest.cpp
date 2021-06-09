@@ -125,6 +125,23 @@ void FlasherTest::handleFlashingProgressForCancelFlashOperation(int chunk, int t
     }
 }
 
+void FlasherTest::handleBackupProgressForDisconnectWhileBackup(int chunk, int total)
+{
+    qDebug() << "backupFirmware is on" << chunk << "out of" << total;
+    if (chunk >= total/2) {
+        mockDevice_->close(); //Disconnecting device
+    }
+}
+
+void FlasherTest::handleBackupProgressForCancelFlashingOperation(int chunk, int total)
+{
+    qDebug() << "backupFirmware is on" << chunk << "out of" << total;
+    if (chunk >= total/2) {
+        flasher_->cancel(); //Cancel flashing
+    }
+}
+
+
 void FlasherTest::printJsonDoc(rapidjson::Document &doc)
 {
     // print the doc
@@ -160,6 +177,7 @@ void FlasherTest::connectFlasherForDisconnectWhileFlashing(strata::Flasher *flas
 {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForDisconnectWhileFlashing);
+    connect(flasher, &strata::Flasher::backupFirmwareProgress, this, &FlasherTest::handleBackupProgressForDisconnectWhileBackup);
 }
 
 void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flasher) const
@@ -167,6 +185,7 @@ void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flas
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
     connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForCancelFlashOperation);
     connect(flasher, &strata::Flasher::flashBootloaderProgress, this, &FlasherTest::handleFlashingProgressForCancelFlashOperation);
+    connect(flasher, &strata::Flasher::backupFirmwareProgress, this, &FlasherTest::handleBackupProgressForCancelFlashingOperation);
 }
 
 void FlasherTest::createFiles()
@@ -917,4 +936,65 @@ void FlasherTest::backupFirmwareTest()
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
+}
+
+void FlasherTest::disconnectWhileBackupTest()
+{
+    getExpectedValues(fakeFirmware_.fileName());
+    mockDevice_->mockCreateMockFirmware(true);
+
+    flasher_ = QSharedPointer<strata::Flasher>(
+                new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
+    connectFlasherForDisconnectWhileFlashing(flasher_.data());
+
+    flasher_->backupFirmware();
+
+    QTRY_COMPARE_WITH_TIMEOUT(flasherDisconnectedCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Device disconnected during firmware operation.
+
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(),0);
+    QCOMPARE(flasherFinishedCount_,1);
+}
+
+void FlasherTest::backupFirmwareCancelTest()
+{
+    rapidjson::Document actualDoc;
+    getExpectedValues(fakeBootloader_.fileName());
+
+    flasher_ = QSharedPointer<strata::Flasher>(
+                new strata::Flasher(platform_,fakeBootloader_.fileName()), &QObject::deleteLater);
+    connectFlasherForCancelFirmwareOperation(flasher_.data());
+
+    flasher_->backupFirmware();
+
+    QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Flash bootlaoder operation was cancelled.
+
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+//    QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
+//    QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
+//    QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
+//    QCOMPARE(recordedMessages[3],test_commands::get_firmware_info_request);
+//    QCOMPARE(recordedMessages[4],test_commands::request_platform_id_request);
+
+//    actualDoc.Parse(recordedMessages[5].data(), recordedMessages[5].size());
+//    const rapidjson::Value& actualPayload = actualDoc["payload"];
+//    QCOMPARE(actualDoc["cmd"].GetString(),"start_flash_bootloader");
+//    QCOMPARE(actualPayload["size"].GetInt(),fakeBootloader_.size());
+//    QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
+//    QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
+
+//    int messageNumber = 6;
+//    for (int chunkNumber = 0; chunkNumber < expectedChunksCount_/2; chunkNumber++) {
+//        actualDoc.Parse(recordedMessages[messageNumber].data(), recordedMessages[messageNumber].size());
+//        const rapidjson::Value& actualChunk = actualDoc["payload"]["chunk"];
+//        QCOMPARE(actualDoc["cmd"].GetString(),"flash_bootloader");
+//        QCOMPARE(actualChunk["number"].GetInt(), chunkNumber);
+//        QCOMPARE(actualChunk["size"].GetInt(),expectedChunkSize_[chunkNumber]);
+//        QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[chunkNumber]);
+//        QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[chunkNumber]);
+//        messageNumber++;
+//    }
+
+    QCOMPARE(recordedMessages.size(),16);
+    QCOMPARE(flasherFinishedCount_,1);
 }

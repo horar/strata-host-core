@@ -46,12 +46,17 @@ private slots:
     void flashFirmwareCancelTest();
     void flashBootloaderCancelTest();
 
+    void disconnectWhileBackupTest();
+    void backupFirmwareCancelTest();
+
     void backupFirmwareTest();
 
 protected slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString);
     void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
     void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
+    void handleBackupProgressForDisconnectWhileBackup(int chunk, int total);
+    void handleBackupProgressForCancelFlashingOperation(int chunk, int total);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
