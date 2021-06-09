@@ -239,7 +239,7 @@ namespace strata::platform {
         /**
          * Emitted when device communication channel was opened.
          */
-        void opened(QByteArray deviceId);
+        void opened();
 
         /**
          * Emitted when device communication channel is about to be closed.

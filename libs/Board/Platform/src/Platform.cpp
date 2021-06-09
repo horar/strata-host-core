@@ -311,7 +311,7 @@ void Platform::setRecognized(bool isRecognized) {
 
 void Platform::openDevice() {
     if (device_->open() == true) {
-        emit opened(device_->deviceId());
+        emit opened();
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
         emit deviceError(device::Device::ErrorCode::DeviceFailedToOpen, errMsg);

@@ -190,7 +190,15 @@ void PlatformManager::handleDeviceLost(QByteArray deviceId) {
     qCWarning(logCategoryPlatformManager).noquote() << "Unable to erase platform from maps, device Id does not exists:" << deviceId;
 }
 
-void PlatformManager::handlePlatformOpened(QByteArray deviceId) {
+void PlatformManager::handlePlatformOpened() {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        qCCritical(logCategoryPlatformManager) << "Platform does not exist";
+        return;
+    }
+
+    const QByteArray deviceId = platform->deviceId();
+
     auto closedIter = closedPlatforms_.find(deviceId);
     if (closedIter != closedPlatforms_.end()) {
         PlatformPtr platformPtr = closedIter.value();
