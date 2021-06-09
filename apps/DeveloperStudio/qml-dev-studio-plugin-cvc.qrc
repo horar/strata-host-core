@@ -40,5 +40,6 @@
         <file alias="PlatformInterfaceGenerator/PayloadObjectPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadObjectPropertyDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/PayloadPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadPropertyDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/TypeSelectorComboBox.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/TypeSelectorComboBox.qml</file>
+        <file alias="components/SGConsoleLogNavigationIcon.qml">partial-views/control-view-creator/components/SGConsoleLogNavigationIcon.qml</file>
     </qresource>
 </RCC>

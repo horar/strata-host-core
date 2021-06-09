@@ -6,6 +6,7 @@ import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
 
 import "../"
+import "../components"
 
 Rectangle {
     id: navigationBar
@@ -89,6 +90,21 @@ Rectangle {
 
             function onClicked() {
                 isConsoleLogOpen = !isConsoleLogOpen
+            }
+
+            Item {
+                anchors.top:parent.top
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.topMargin: 5
+                height: parent.height
+                width: 22
+
+                SGConsoleLogNavigationIcon {
+                    id: errorDisplayCount
+                    count: consoleLogErrorCount + consoleLogWarningCount
+                    type: consoleLogErrorCount > 0 ? "error" : consoleLogWarningCount > 0 ? "warning" : "error"
+                }
             }
         }
 

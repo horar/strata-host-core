@@ -33,6 +33,9 @@ Rectangle {
     property alias confirmClosePopup: confirmClosePopup
     property alias editor: editor
 
+    property int consoleLogWarningCount: 0
+    property int consoleLogErrorCount: 0
+
     onDebugPlatformChanged: {
         recompileControlViewQrc()
     }

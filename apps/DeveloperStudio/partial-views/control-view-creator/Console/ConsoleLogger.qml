@@ -6,6 +6,7 @@ import QtQml 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 import "ConsoleMessages"
 
@@ -313,10 +314,13 @@ Item {
 
                 if(type === 1){
                     warningCount += 1
+
                 }
                 if(type === 2){
                     errorCount += 1
                 }
+                consoleLogErrorCount = errorCount
+                consoleLogWarningCount = warningCount
             }
         }
     }
