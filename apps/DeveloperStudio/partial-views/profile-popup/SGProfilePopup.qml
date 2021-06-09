@@ -624,7 +624,7 @@ SGStrataPopup {
                         sdsModel.coreInterface.unregisterClient()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     } else {
-                        if (result === "No connection") {
+                        if (result === "No Connection") {
                             alertRect.text = "Connection to registration server failed"
                         } else if (result === "Invalid authentication token") {
                             alertRect.text = "Unable to close account. Please try to log out and back in."

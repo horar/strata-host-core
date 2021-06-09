@@ -53,7 +53,7 @@ var xhr = function(method, endpoint, data, callback, errorCallback, headers) {
                 response = JSON.parse(xhr.responseText);
             } catch (error) {
                 console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
-                response = {"message":"Response not valid","data":JSON.stringify(xhr.responseText)}
+                response = {"message":"Response not valid","status":xhr.status,"data":JSON.stringify(xhr.responseText)}
             }
             if(callback.length > 1) {
                 callback(response, data)

@@ -17,6 +17,34 @@ function feedbackInfo(feedback_info){
 
     var data = {"email": feedback_info.email, "name": feedback_info.name, "comment" : feedback_info.comment };
     Rest.xhr("post", "feedbacks", data, feedback_result, feedback_error, headers);
+
+    /*
+      * Possible valid outcomes:
+      *
+      * message: "Data added", error: false
+      *   - feedback sent
+      *
+      * Possible invalid outcomes:
+      *
+      * message: "No connection"
+      *   - no connection to server, user should check internet connection
+      * message: "Response not valid", status:<status code>, data:<response data>
+      *   - non-json response, server is accesible, but authorization not running/broken, user should retry later
+      * message: "Invalid authentication token", success: false
+      *   - unable to authentify user, user should logout and login again
+      * message: "No authentication token provided", success: false
+      *   - unable to authentify user, user should logout and login again
+      * message: "unauthorized request"
+      *   - unable to send feedback, authorization failed, user should logout and login again
+      * message: "Empty fields are not accepted"
+      *   - malformed request sent, user should re-enter values
+      * message: "Something went wrong when saving feedback to the DB"
+      *   - error in database, user should retry later
+      * message: "name, email, comment all are required fields"
+      *   - malformed request sent, user should re-enter values
+      * message: "Bad request"
+      *   - malformed request sent, user should re-enter values
+    */
 }
 
 function feedback_result(response) {
@@ -26,12 +54,16 @@ function feedback_result(response) {
 
 function feedback_error(response) {
     console.log(LoggerModule.Logger.devStudioFeedbackCategory, "Feedback failed to send: ", JSON.stringify(response))
-    if (response.message === 'No connection') {
+    if (response.message === "No connection") {
         SignalsModule.Signals.feedbackResult("No Connection")
-    } else if ((response.message === 'Response not valid') && (response.status !== undefined)) {
-        SignalsModule.Signals.feedbackResult("Feedback service error: " + response.status)
+    } else if (response.message === 'Response not valid') {
+        SignalsModule.Signals.feedbackResult("Server Error");
+    } else if ((response.message === 'Invalid authentication token') ||
+               (response.message === 'No authentication token provided') ||
+               (response.message === 'unauthorized request')) {
+        SignalsModule.Signals.feedbackResult("Invalid Authentication");
     } else {
-        SignalsModule.Signals.feedbackResult("Feedback service error")
+        SignalsModule.Signals.feedbackResult("Bad Request")
     }
 }
 
