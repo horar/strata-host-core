@@ -376,7 +376,7 @@ Item {
 
     function clearLogs() {
         consoleModel.clear();
-        errorCount = 0
-        warningCount = 0
+        consoleLogErrorCount = 0
+        consoleLogWarningCount = 0
     }
 }
