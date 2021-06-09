@@ -1092,3 +1092,9 @@ void SGQrcTreeModel::handleExternalFileDeleted(const QString uid)
     removeRows(node->row(), 1, parent(deletedIndex));
     startSave();
 }
+
+bool SGQrcTreeModel::containsPath(const QUrl url)
+{
+    QUrl localUrl = QUrl::fromLocalFile(url.toString());
+    return pathsInTree_.contains(localUrl);
+}

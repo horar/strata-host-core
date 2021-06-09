@@ -192,14 +192,17 @@ public:
     Q_INVOKABLE void removeEmptyChildren(const QModelIndex &parent);
 
     /**
-     * @brief
-     * @param
+     * @brief createQmlFile creates a QML file
+     * @param filepath full filepath for file
+     * @param isVisualEditorEnabled create a base QML file or a Visual Editor enabled QML file
+     * @return true if successfully created file
      */
     Q_INVOKABLE bool createQmlFile(const QString &filepath, const bool isVisualEditorEnabled);
 
     /**
-     * @brief
-     * @param
+     * @brief createEmptyFile creates an empty file
+     * @param filepath full filepath for file
+     * @return true if successfully created file
      */
     Q_INVOKABLE bool createEmptyFile(const QString &filepath);
 
@@ -250,6 +253,13 @@ public:
      */
     Q_INVOKABLE QUrl parentDirectoryUrl(QUrl url);
 
+    /**
+     * @brief containsPath check if file is in pathsInTree_
+     * @param url The path to the file or directory
+     * @return true if file is in pathsInTree_
+     */
+    Q_INVOKABLE bool containsPath(const QUrl url);
+
     /***
      * SIGNALS
      ***/
@@ -268,7 +278,7 @@ signals:
     void fileDeleted(const QString uid, const QUrl path);
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
-
+    // This signal is emitted when a file is created
     void fileCreated(const QModelIndex index, const QString filename, const QUrl filepath, const QString filetype, const QString uid);
 
     /***

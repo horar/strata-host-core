@@ -12,6 +12,15 @@ import tech.strata.SGFileTabModel 1.0
 Item {
     id: sideBarRoot
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+
+        onClicked: {
+            sideBarContextMenu.item.popup()
+        }
+    }
+
     QtQC1.TreeView {
         id: treeView
 
@@ -142,5 +151,15 @@ Item {
 
         console.error("Project does not have Control.qml at the top level")
         missingControlQml.open();
+    }
+
+    Loader {
+        id: sideBarContextMenu
+        source: "./SideBarContextMenu.qml"
+    }
+
+    CreateFilePopup {
+        id: createFilePopup
+        visible: false
     }
 }

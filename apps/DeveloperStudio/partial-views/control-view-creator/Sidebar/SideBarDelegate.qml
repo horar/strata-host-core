@@ -200,9 +200,4 @@ Item {
             }
         }
     }
-
-    NewFilePopup {
-        id: newFilePopup
-        visible: false
-    }
 }

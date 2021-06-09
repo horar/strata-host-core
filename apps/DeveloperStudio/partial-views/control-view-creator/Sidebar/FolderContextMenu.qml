@@ -10,7 +10,7 @@ Menu {
                 treeView.expand(styleData.index)
             }
 
-            newFilePopup.visible = true
+            createFilePopup.visible = true
             folderContextMenu.dismiss()
         }
     }
