@@ -80,7 +80,8 @@ void PlatformManager::deinit(Device::Type scannerType) {
 bool PlatformManager::disconnectPlatform(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration) {
     auto it = openedPlatforms_.constFind(deviceId);
     if (it != openedPlatforms_.constEnd()) {
-        qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: " << deviceId << ", duration: " << disconnectDuration.count();
+        qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: "
+            << deviceId << ", duration: " << disconnectDuration.count() << " ms";
         it.value()->close(disconnectDuration, DEVICE_CHECK_INTERVAL);
         return true;
     }
@@ -187,7 +188,7 @@ void PlatformManager::handleDeviceLost(QByteArray deviceId) {
         return;
     }
 
-    qCWarning(logCategoryPlatformManager).noquote() << "Unable to erase platform from maps, device Id does not exists:" << deviceId;
+    qCWarning(logCategoryPlatformManager).noquote() << "Unable to erase platform from maps, device Id does not exist:" << deviceId;
 }
 
 void PlatformManager::handlePlatformOpened() {
@@ -212,7 +213,7 @@ void PlatformManager::handlePlatformOpened() {
     } else if (openedPlatforms_.contains(deviceId)) {
         qCDebug(logCategoryPlatformManager).noquote() << "Platform already open, deviceId:" << deviceId;
     } else {
-        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to openedPlatforms_, device Id does not exists:" << deviceId;
+        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to openedPlatforms_, device Id does not exist:" << deviceId;
     }
 }
 
@@ -235,7 +236,7 @@ void PlatformManager::handlePlatformClosed(QByteArray deviceId) {
     } else if (closedPlatforms_.contains(deviceId)) {
         qCDebug(logCategoryPlatformManager).noquote() << "Platform already closed, deviceId:" << deviceId;
     } else {
-        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to closedPlatforms_, device Id does not exists:" << deviceId;
+        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to closedPlatforms_, device Id does not exist:" << deviceId;
     }
 }
 
@@ -256,7 +257,7 @@ void PlatformManager::handlePlatformTerminated(QByteArray deviceId) {
         return;
     }
 
-    qCWarning(logCategoryPlatformManager).noquote() << "Unable to terminate, device Id does not exists:" << deviceId;
+    qCWarning(logCategoryPlatformManager).noquote() << "Unable to terminate, device Id does not exist:" << deviceId;
 }
 
 void PlatformManager::handlePlatformRecognized(QByteArray deviceId, bool isRecognized) {
@@ -279,7 +280,7 @@ void PlatformManager::handlePlatformIdChanged(QByteArray deviceId) {
     } else if (closedPlatforms_.contains(deviceId)) {
         qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify (platform closed), deviceId:" << deviceId;
     } else {
-        qCWarning(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify, device Id does not exists:" << deviceId;
+        qCWarning(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify, device Id does not exist:" << deviceId;
     }
 }
 
