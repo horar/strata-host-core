@@ -128,7 +128,7 @@ namespace strata {
 
         // from Platform
         void handlePlatformOpened();
-        void handlePlatformAboutToClose(QByteArray deviceId);
+        void handlePlatformAboutToClose();
         void handlePlatformClosed(QByteArray deviceId);
         void handlePlatformTerminated(QByteArray deviceId);
         void handlePlatformRecognized(QByteArray deviceId, bool isRecognized);

@@ -217,7 +217,15 @@ void PlatformManager::handlePlatformOpened() {
     }
 }
 
-void PlatformManager::handlePlatformAboutToClose(QByteArray deviceId) {
+void PlatformManager::handlePlatformAboutToClose() {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        qCCritical(logCategoryPlatformManager) << "Platform does not exist";
+        return;
+    }
+
+    const QByteArray deviceId = platform->deviceId();
+
     qCDebug(logCategoryPlatformManager).noquote() << "Platform about to close, deviceId:" << deviceId;
 
     platformOperations_.stopOperation(deviceId);

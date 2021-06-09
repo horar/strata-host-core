@@ -322,7 +322,7 @@ void Platform::openDevice() {
 }
 
 void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
-    emit aboutToClose(device_->deviceId());
+    emit aboutToClose();
     device_->close();   // can take some time depending on the device type
     emit closed(device_->deviceId());
     if (waitInterval != std::chrono::milliseconds::zero()) {
