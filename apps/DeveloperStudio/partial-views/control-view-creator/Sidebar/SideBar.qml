@@ -129,8 +129,15 @@ Item {
 
         onAccepted: {
             if (callerIndex) {
-                treeModel.insertChild(fileUrl, -1, true, callerIndex)
-                callerIndex = null;
+                if (callerIndex === -1) {
+                    createFilePopup.fileAddRequested = true
+                    treeModel.insertChild(fileUrl, -1, true, treeModel.index(callerIndex))
+                    callerIndex = null;
+                } else {
+                    createFilePopup.fileAddRequested = true
+                    treeModel.insertChild(fileUrl, -1, true, callerIndex)
+                    callerIndex = null;
+                }
             }
         }
     }

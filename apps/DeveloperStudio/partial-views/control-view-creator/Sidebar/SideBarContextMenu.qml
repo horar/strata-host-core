@@ -15,6 +15,7 @@ Menu {
     MenuItem {
         text: "Add Existing File to Qrc"
         onTriggered: {
+            existingFileDialog.callerIndex = -1
             existingFileDialog.open()
             sideBarContextMenu.dismiss()
         }

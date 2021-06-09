@@ -142,8 +142,9 @@ Qt::ItemFlags SGQrcTreeModel::flags(const QModelIndex &index) const
 
 int SGQrcTreeModel::rowCount(const QModelIndex &index) const
 {
-    if (index.column() > 0)
+    if (index.column() > 0) {
         return 0;
+    }
 
     SGQrcTreeNode *parent = getNode(index);
     return parent ? parent->childCount() : 0;
@@ -158,8 +159,9 @@ int SGQrcTreeModel::columnCount(const QModelIndex &parent) const
 bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentItem = getNode(parent);
-    if (!parentItem)
+    if (!parentItem) {
         return false;
+    }
 
     if (row < 0 || row + count > parentItem->childCount()) {
         return false;

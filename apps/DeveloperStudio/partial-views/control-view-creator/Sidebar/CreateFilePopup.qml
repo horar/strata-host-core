@@ -17,7 +17,7 @@ SGStrataPopup {
     anchors.centerIn: Overlay.overlay
 
     property var viewState: "QML" // "QML" or "otherFileType"
-    property bool fileCreateRequested: false
+    property bool fileAddRequested: false
     property string directoryPath: ""
 
     onClosed: {
@@ -25,18 +25,19 @@ SGStrataPopup {
         viewState = "QML"
         directoryPath = ""
         filenameInfobox.text = ""
+        veEnabledFileCheckbox.checked = false
     }
 
     Connections {
         target: treeModel
         onFileCreated: {
-            if (createFilePopup.fileCreateRequested) {
+            if (createFilePopup.fileAddRequested) {
                 treeModel.addToQrc(index)
                 openFilesModel.addTab(filename, filepath, filetype, uid)
                 treeView.selectItem(index)
             }
 
-            createFilePopup.fileCreateRequested = false
+            createFilePopup.fileAddRequested = false
         }
     }
 
@@ -136,7 +137,7 @@ SGStrataPopup {
                             url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
                         }
                         const path = SGUtilsCpp.urlToLocalFile(url)
-                        createFilePopup.fileCreateRequested = true
+                        createFilePopup.fileAddRequested = true
 
                         let success
                         if (createFilePopup.viewState === "QML") {
@@ -171,7 +172,12 @@ SGStrataPopup {
         // Required for all file types
         property bool filenameAndExtensionValid: filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/)
         property bool fileDoesNotExist: {
-            const url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
+            let url
+            if (createFilePopup.directoryPath) {
+                url = SGUtilsCpp.joinFilePath(createFilePopup.directoryPath, filenameInfobox.text)
+            } else {
+                url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
+            }
             const path = SGUtilsCpp.urlToLocalFile(url)
             return !treeModel.containsPath(path)
         }
