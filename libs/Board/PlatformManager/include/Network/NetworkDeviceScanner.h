@@ -3,9 +3,8 @@
 #include <DeviceScanner.h>
 #include <Network/NetworkDevice.h>
 
+#include <QTimer>
 #include <QUdpSocket>
-
-// we need to set up udp socket etc...
 
 namespace strata::device::scanner
 {
@@ -27,6 +26,8 @@ private:
     bool addNetworkDevice(QHostAddress deviceAddress);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
+    std::unique_ptr<QTimer> scanTimer_;
     static constexpr qint16 UDP_LISTEN_PORT{5146};
+    static constexpr qint16 SCAN_TIMER{5000};
 };
 }  // namespace strata::device::scanner

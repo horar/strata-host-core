@@ -6,8 +6,11 @@
 namespace strata::device::scanner
 {
 NetworkDeviceScanner::NetworkDeviceScanner()
-    : DeviceScanner(Device::Type::NetworkDevice), udpSocket_(new QUdpSocket(this))
+    : DeviceScanner(Device::Type::NetworkDevice),
+      udpSocket_(new QUdpSocket(this)),
+      scanTimer_(new QTimer(this))
 {
+    scanTimer_->setInterval(SCAN_TIMER);
 }
 
 NetworkDeviceScanner::~NetworkDeviceScanner()
@@ -23,10 +26,14 @@ void NetworkDeviceScanner::init()
     }
     connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
             &NetworkDeviceScanner::processPendingDatagrams);
+    // connect(scanTimer_.get(), &QTimer::timeout, this,
+    //         &NetworkDeviceScanner::processPendingDatagrams);
+    // scanTimer_->start();
 }
 
 void NetworkDeviceScanner::deinit()
 {
+    //scanTimer_->stop();
     udpSocket_->close();
 }
 
@@ -44,7 +51,6 @@ void NetworkDeviceScanner::processPendingDatagrams()
         if (buffer == "strata client") {
             qCDebug(logCategoryDeviceScanner)
                 << "Discovered new platfrom. IP:" << clientAddress.toString();
-            // emit newNetworkPlatformDiscovered(clientAddress);
             addNetworkDevice(clientAddress);
         }
     }
@@ -57,6 +63,14 @@ bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress)
     DevicePtr device = std::make_shared<NetworkDevice>(
         deviceAddress, deviceAddress.toString().toUtf8(), deviceAddress.toString());
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    // re-visit this
+    connect(dynamic_cast<device::NetworkDevice*>(device.get()), &NetworkDevice::deviceDisconnected,
+            this, [this, device]() {
+                qCDebug(logCategoryDeviceScanner) << "device disconnected. removing from the list.";
+                emit deviceLost(device->deviceId());
+            });
+
     emit deviceDetected(platform);
     return true;
 }
