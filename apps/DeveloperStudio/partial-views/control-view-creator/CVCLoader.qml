@@ -28,7 +28,7 @@ Loader {
         }
 
         onRequestCVCClose: {
-            if(cvcLoader.active) {
+            if (cvcLoader.active) {
                 cvcLoader.cvcCloseRequested = true
                 cvcLoggingOut = isLoggingOut
                 Signals.blockCVC(true)
