@@ -39,76 +39,80 @@ Item {
             spacing: 2
 
             // starta view debug button chooser
-            RowLayout {
-                id: comboboxRow
+//            RowLayout {
+//                id: comboboxRow
 
-                Label {
-                    text: qsTr("View:")
-                    leftPadding: 10
-                }
+//                Label {
+//                    text: qsTr("View:")
+//                    leftPadding: 10
+//                }
 
-                ComboBox {
-                    id: viewCombobox
-                    delegate: viewButtonDelegate
-                    model: viewFolderModel
-                    textRole: "fileName"
+//                ComboBox {
+//                    id: viewCombobox
+//                    delegate: viewButtonDelegate
+//                    model: viewFolderModel
+//                    textRole: "fileName"
 
-                    onCurrentIndexChanged: {
-                        // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
-                        let folder = viewFolderModel.get(currentIndex, "fileName");
-                        if (folder !== undefined) {
-                            displayText = folder
-                        }
-                    }
+//                    onCurrentIndexChanged: {
+//                        // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
+//                        let folder = viewFolderModel.get(currentIndex, "fileName");
+//                        if (folder !== undefined) {
+//                            displayText = folder
+//                        }
 
-                    FolderListModel {
-                        id: viewFolderModel
-                        showDirs: true
-                        folder: sdsModel.resourceLoader.getStaticViewsPhysicalPathUrl()
+//                    }
 
-                        onCountChanged: {
-                            viewCombobox.currentIndex = viewFolderModel.count - 1
-                        }
+//                    FolderListModel {
+//                        id: viewFolderModel
+//                        showDirs: true
+//                        folder: sdsModel.resourceLoader.getStaticViewsPhysicalPathUrl()
 
-                        onStatusChanged: {
-                            if (viewFolderModel.status === FolderListModel.Ready) {
-                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
-                                //      - if 'folder' url doesn't exists the it loads app folder content
-                                comboboxRow.visible = true
-                            }
-                        }
-                    }
+//                        onCountChanged: {
+//                            viewCombobox.currentIndex = viewFolderModel.count - 1
+//                        }
 
-                    Component {
-                        id: viewButtonDelegate
+//                        onStatusChanged: {
+//                            if (viewFolderModel.status === FolderListModel.Ready) {
+//                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
+//                                //      - if 'folder' url doesn't exists the it loads app folder content
+//                                comboboxRow.visible = true
+//                            }
+//                        }
+//                    }
 
-                        Button {
-                            id: selectButton
-                            width: viewCombobox.width
-                            height: 20
-                            // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
-                            text: model.fileName
-                            hoverEnabled: true
-                            background: Rectangle {
-                                color: hovered ? "white" : "lightgrey"
-                            }
+////                    Component {
+////                        id: viewButtonDelegate
 
-                            onClicked: {
-                                let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
-                                //                                controlViewDevDialog.visible = true
-                                //                                controlViewDevDialog.qrcFilePath = path
-                                //                                controlViewDevDialog.compileRCCFromPath()
+////                        Button {
+////                            id: selectButton
+////                            width: viewCombobox.width
+////                            height: 20
+////                            // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
+////                            text: model.fileName
+////                            hoverEnabled: true
+////                            background: Rectangle {
+////                                color: hovered ? "white" : "lightgrey"
+////                            }
 
-                                console.info("test",model.filePath)
+////                            onClicked: {
+////                                console.log("modelFilePath", model.filePath)
+////                                var path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
+////                                var path2 = "file:///Users/zbd8dm/strata-root/strata-platform-control-views/views/MDK-Template2/qml-views-MDK-Template2.qrc"
+////                                //                                controlViewDevDialog.visible = true
+////                                //                                controlViewDevDialog.qrcFilePath = path
+////                                //                                controlViewDevDialog.compileRCCFromPath()
 
-                                Signals.loadCVC()
-                                Signals.openControlView(model.filePath)
+////                                //sdsModel.resourceLoader.getStaticViewsPhysicalPathUrl() = file:///Users/zbd8dm/strata-root/build-spyglass-Desktop_Qt_5_12_9_clang_64bit-Debug/bin/views
 
-                            }
-                        }
-                    }
-                }
-            }
+////                                console.log("test", path/*sdsModel.resourceLoader.getStaticViewsPhysicalPathUrl()*/)
+////                                Signals.loadCVC()
+////                                Signals.openControlView(path2)
+
+////                            }
+////                        }
+////                    }
+//                }
+//            }
 
             Button {
                 text: "Log Viewer App"
