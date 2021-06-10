@@ -48,7 +48,7 @@ void FlasherTest::init()
     expectedChunksCount_ = 0;
     QVERIFY(!mockDevice_->mockIsOpened());
 
-    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened(QByteArray)));
+    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
     platform_->open();
     QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
     QVERIFY(mockDevice_->mockIsOpened());
@@ -170,7 +170,7 @@ void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flas
 }
 
 void FlasherTest::createFiles()
-{   
+{
     fakeFirmware_.createNativeFile(QStringLiteral("fakeFirmware"));
     fakeBootloader_.createNativeFile(QStringLiteral("fakeBootloader"));
 
