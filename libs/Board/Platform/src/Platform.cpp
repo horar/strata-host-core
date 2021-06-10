@@ -306,7 +306,7 @@ void Platform::setRecognized(bool isRecognized) {
         QWriteLocker wLock(&propertiesLock_);
         isRecognized_ = isRecognized;
     }
-    emit recognized(device_->deviceId(), isRecognized);
+    emit recognized(isRecognized);
 }
 
 void Platform::openDevice() {

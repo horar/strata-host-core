@@ -258,9 +258,9 @@ namespace strata::platform {
 
         /**
          * Emitted when device was identified using Identify operation.
-         * @param success true if successfully recognized, otherwise false
+         * @param isRecognized true if successfully recognized, otherwise false
          */
-        void recognized(QByteArray deviceId, bool isRecognized);
+        void recognized(bool isRecognized);
 
         /**
          * Emitted when device receives platform Id changed message.
