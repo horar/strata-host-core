@@ -4,13 +4,13 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
 Rectangle {
-     id: errorAndWarningCountDisplay
-     anchors.top:parent.top
-     anchors.left: parent.left
-     width: parent.width
-     height: width
-     radius: 25
-     z: 100
+    id: errorAndWarningCountDisplay
+    anchors.top:parent.top
+    anchors.left: parent.left
+    width: parent.width
+    height: width
+    radius: 25
+    z: 100
 
     property int count: 0
     property string type: ""
