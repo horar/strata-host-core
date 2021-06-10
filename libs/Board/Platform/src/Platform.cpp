@@ -89,7 +89,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
         if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
             qCInfo(logCategoryPlatform) << this << "Received 'platform_id_changed' notification";
 
-            emit platformIdChanged(device_->deviceId());
+            emit platformIdChanged();
         }
     }
 }

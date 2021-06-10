@@ -304,7 +304,15 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized) {
     }
 }
 
-void PlatformManager::handlePlatformIdChanged(QByteArray deviceId) {
+void PlatformManager::handlePlatformIdChanged() {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        qCCritical(logCategoryPlatformManager) << "Platform does not exist";
+        return;
+    }
+
+    const QByteArray deviceId = platform->deviceId();
+
     auto iter = openedPlatforms_.constFind(deviceId);
     if (iter != openedPlatforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, going to Identify, deviceId:" << deviceId;

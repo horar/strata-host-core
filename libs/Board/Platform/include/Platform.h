@@ -265,7 +265,7 @@ namespace strata::platform {
         /**
          * Emitted when device receives platform Id changed message.
          */
-        void platformIdChanged(QByteArray deviceId);
+        void platformIdChanged();
 
     private slots:
         void messageReceivedHandler(QByteArray rawMsg);
