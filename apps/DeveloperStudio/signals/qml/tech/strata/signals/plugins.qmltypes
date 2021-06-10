@@ -27,7 +27,6 @@ Module {
         Signal { name: "loadCVC"}
         Signal { name: "requestCVCClose"}
         Signal { name: "closeCVC"}
-        Signal { name: "openControlView"; Parameter {name: "result"; type: "string"}}}
     }
 }
 
