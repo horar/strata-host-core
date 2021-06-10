@@ -256,7 +256,15 @@ void PlatformManager::handlePlatformClosed() {
     }
 }
 
-void PlatformManager::handlePlatformTerminated(QByteArray deviceId) {
+void PlatformManager::handlePlatformTerminated() {
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        qCCritical(logCategoryPlatformManager) << "Platform does not exist";
+        return;
+    }
+
+    const QByteArray deviceId = platform->deviceId();
+
     auto closedIter = closedPlatforms_.find(deviceId);
     if (closedIter != closedPlatforms_.end()) {
         disconnect(closedIter.value().get(), nullptr, this, nullptr);

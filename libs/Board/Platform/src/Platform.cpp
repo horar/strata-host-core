@@ -120,7 +120,7 @@ void Platform::terminate(bool close) {
     if (close) {
         closeDevice(std::chrono::milliseconds::zero());
     }
-    emit terminated(device_->deviceId());
+    emit terminated();
 }
 
 // public method

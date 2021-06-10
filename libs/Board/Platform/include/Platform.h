@@ -254,7 +254,7 @@ namespace strata::platform {
         /**
          * Emitted when device is about to be erased from maps and no more operations shall be executed.
          */
-        void terminated(QByteArray deviceId);
+        void terminated();
 
         /**
          * Emitted when device was identified using Identify operation.
