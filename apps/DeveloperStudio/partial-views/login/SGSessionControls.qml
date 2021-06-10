@@ -74,11 +74,15 @@ Item {
                 }
                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 return
-            } else if (result === "Invalid authentication token") {
+            } else if (result === "No Connection") {
+                console.info(LoggerModule.Logger.devStudioLoginCategory, "Unable to connect to server to validate token")
+            } else if (result === "Server Error") {
+                console.info(LoggerModule.Logger.devStudioLoginCategory, "Server is unable to validate your token at this time")
+            } else if (result === "Invalid Authentication") {
                 console.info(LoggerModule.Logger.devStudioLoginCategory, "Previous session token not valid")
             } else {
-                // result === "No Connection"
-                console.error(LoggerModule.Logger.devStudioLoginCategory, "Unable to connect to server to validate token")
+                // result === "Error"
+                console.info(LoggerModule.Logger.devStudioLoginCategory, "Error while validating token")
             }
             Authenticator.settings.clear()
             root.showLogin()
