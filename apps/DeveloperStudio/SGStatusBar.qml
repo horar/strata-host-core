@@ -619,7 +619,7 @@ Rectangle {
         target: Signals
 
         onCloseCVC: {
-            if(isLoggingOut) {
+            if (isLoggingOut) {
                 logout()
             }
         }
@@ -701,7 +701,7 @@ Rectangle {
     }
 
     function logout() {
-        if(!isCVCBlocking) {
+        if (!isCVCBlocking) {
             Signals.logout()
             PlatformFilters.clearActiveFilters()
             NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
