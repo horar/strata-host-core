@@ -619,7 +619,7 @@ Rectangle {
         target: Signals
 
         onCloseCVC: {
-            if(isLoggingOut){
+            if(isLoggingOut) {
                 logout()
             }
         }
@@ -696,12 +696,12 @@ Rectangle {
         }
     }
 
-    function showAboutWindow(){
+    function showAboutWindow() {
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
-    function logout(){
-        if(!isCVCBlocking){
+    function logout() {
+        if(!isCVCBlocking) {
             Signals.logout()
             PlatformFilters.clearActiveFilters()
             NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
