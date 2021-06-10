@@ -101,11 +101,22 @@ LayoutContainer {
             height: parent.height
         }
 
+        Rectangle {
+            id: border
+            color: "transparent"
+            border.width: 2
+            border.color: "#00A6CC"
+            visible: dragMouseArea.containsMouse && (dragMouseArea.drag.active || resizeMouseArea.drag.active) === false
+            width: parent.width
+            height: parent.height
+        }
+
         Item {
             anchors {
                 fill: parent
             }
             clip: dragMouseArea.containsMouse === false
+            visible: border.visible
 
             Rectangle {
                 opacity: .85
