@@ -36,7 +36,7 @@ Item {
 
         SGNotificationToast {
             id: alertRect
-            Layout.preferredWidth: fieldGrid.width * 0.75
+            Layout.preferredWidth: fieldGrid.width
         }
 
         RowLayout {
