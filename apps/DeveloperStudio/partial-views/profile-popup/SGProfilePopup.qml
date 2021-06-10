@@ -306,7 +306,7 @@ SGStrataPopup {
             ProfileControlContainer {
                 id: passwordControls
 
-                errorAlertText: "Please make sure that your password meets our requirements."
+                errorAlertText: "Please make sure that your new password meets our requirements."
                 animationTargets: guestUser === true ? [] : [currentPasswordRow,newPasswordRow]
                 expandHeight: passwordField.height
 
@@ -328,6 +328,9 @@ SGStrataPopup {
                     currentPasswordRow.editable = false
                     newPasswordRow.editable = false
                     spinnerDialog.open()
+                }
+                onFailed: {
+                    passwordField.forceActiveFocus()
                 }
                 onCanceled: {
                     passwordField.text = ""
@@ -546,7 +549,7 @@ SGStrataPopup {
                         if (resultObject.response === "No Connection") {
                             alertRect.text = "Connection to authentication server failed";
                         } else {
-                            alertRect.text = "Password is incorrect. Please try again."
+                            alertRect.text = "Current password is incorrect. Please try again."
                         }
                         spinnerDialog.close()
                         alertRect.show()
