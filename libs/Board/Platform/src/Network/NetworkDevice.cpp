@@ -4,9 +4,8 @@
 
 namespace strata::device
 {
-NetworkDevice::NetworkDevice(QHostAddress deviceAddress, const QByteArray &deviceId,
-                             const QString &name)
-    : Device(deviceId, name, Type::NetworkDevice),
+NetworkDevice::NetworkDevice(QHostAddress deviceAddress)
+    : Device(createDeviceId(deviceAddress), deviceAddress.toString(), Type::NetworkDevice),
       tcpSocket_(new QTcpSocket(this)),
       deviceAddress_(deviceAddress),
       isConnected_(false)
@@ -121,5 +120,10 @@ void NetworkDevice::handleDeviceDiconnected()
         << "Disconnected from network device address" << deviceAddress_.toString();
     emit deviceDisconnected();
     // emit deviceError(ErrorCode::DeviceDisconnected, "Network device disconnected.");
+}
+
+QByteArray NetworkDevice::createDeviceId(QHostAddress hostAddress)
+{
+    return QByteArray('n' + QByteArray::number(qHash(hostAddress.toString()), 16));
 }
 }  // namespace strata::device

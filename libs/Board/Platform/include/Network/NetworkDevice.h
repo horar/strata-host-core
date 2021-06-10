@@ -13,13 +13,14 @@ class NetworkDevice : public Device
 
 public:
     typedef std::unique_ptr<QTcpSocket> socketPtr;
-    NetworkDevice(QHostAddress deviceAddress, const QByteArray &deviceId, const QString &name);
+    NetworkDevice(QHostAddress deviceAddress);
     ~NetworkDevice() override;
 
     virtual bool open() override;
     virtual void close() override;
     virtual bool sendMessage(const QByteArray &message) override;
     virtual bool isConnected() const override;
+    static QByteArray createDeviceId(QHostAddress hostAddress);
 
 signals:
     void deviceDisconnected();

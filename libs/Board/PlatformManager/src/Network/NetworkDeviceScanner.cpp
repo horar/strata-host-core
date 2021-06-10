@@ -60,8 +60,7 @@ bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress)
 {
     // TODO: create a list of online devices.
 
-    DevicePtr device = std::make_shared<NetworkDevice>(
-        deviceAddress, deviceAddress.toString().toUtf8(), deviceAddress.toString());
+    DevicePtr device = std::make_shared<NetworkDevice>(deviceAddress);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     // re-visit this
