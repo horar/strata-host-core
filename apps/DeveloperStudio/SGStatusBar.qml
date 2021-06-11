@@ -603,7 +603,6 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
                         Signals.requestCVCClose(true)
-                        logout()
                     }
                     width: profileMenu.width
                 }

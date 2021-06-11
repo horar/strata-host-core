@@ -35,6 +35,8 @@ Loader {
                 if (cvcLoader.item.blockWindowClose() === false) {
                     Signals.closeCVC(isLoggingOut)
                 }
+            } else {
+               Signals.closeCVC(isLoggingOut)
             }
         }
 
