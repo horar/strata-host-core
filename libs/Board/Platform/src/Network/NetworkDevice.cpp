@@ -21,8 +21,8 @@ NetworkDevice::~NetworkDevice()
 bool NetworkDevice::open()
 {
     qDebug(logCategoryDeviceNetwork).nospace()
-        << this << "Connecting to network device 0x" << hex << deviceId()
-        << ", IP: " << deviceAddress_ << " Port: " << dec << TCP_PORT;
+        << this << "Connecting network device:" << deviceId_ << ", IP:" << deviceAddress_.toString()
+        << " Port:" << TCP_PORT;
 
     if (tcpSocket_->isOpen()) {
         qCDebug(logCategoryDeviceNetwork) << this << "TCP socket already open.";
@@ -30,8 +30,6 @@ bool NetworkDevice::open()
     }
 
     tcpSocket_->connectToHost(deviceAddress_, TCP_PORT);
-    qDebug(logCategoryDeviceNetwork).nospace()
-        << this << "Connecting to network device 0x" << hex << deviceId() << ", Requested.";
 
     if (false == tcpSocket_->waitForConnected(TCP_CONNECT_TIMEOUT)) {
         QString errorString(QStringLiteral("Connecting to platfrom timed-out."));
@@ -52,8 +50,8 @@ bool NetworkDevice::open()
 void NetworkDevice::close()
 {
     qCDebug(logCategoryDeviceNetwork)
-        << this << "Disconnecting from network device 0x" << hex << deviceId()
-        << ", IP: " << deviceAddress_.toString() << " Port: " << dec << TCP_PORT;
+        << this << "Disconnecting from network device:" << deviceId_
+        << ", IP:" << deviceAddress_.toString() << " Port:" << TCP_PORT;
 
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {

@@ -43,8 +43,6 @@ void NetworkDeviceScanner::processPendingDatagrams()
         buffer.resize(int(udpSocket_->pendingDatagramSize()));
         udpSocket_->readDatagram(buffer.data(), buffer.size(), &clientAddress);
 
-        qCDebug(logCategoryDeviceScanner)
-            << "Datagram contents:" << buffer << "host" << clientAddress;
         if (buffer == "strata client") {
             if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
                           NetworkDevice::createDeviceId(clientAddress)) !=
