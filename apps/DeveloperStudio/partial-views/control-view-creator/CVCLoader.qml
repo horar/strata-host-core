@@ -27,20 +27,7 @@ Loader {
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
 
-        onRequestClose: {
-            if (cvcLoader.active) {
-                cvcLoader.cvcCloseRequested = true
-                cvcLoggingOut = isLoggingOut
-                Signals.blockingFromCVC(true)
-                if (cvcLoader.item.blockWindowClose() === false) {
-                    Signals.closeCVC(isLoggingOut)
-                }
-            } else {
-               Signals.closeCVC(isLoggingOut)
-            }
-        }
-
-        onCloseCVC: {
+        onCloseFinished: {
             Signals.blockingFromCVC(false)
             cvcLoader.cvcCloseRequested = false
             cvcLoader.active = false

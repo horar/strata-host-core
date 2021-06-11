@@ -194,14 +194,14 @@ Rectangle {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 controlViewCreator.openFilesModel.closeAll()
                 if (cvcCloseRequested) {
-                    Signals.closeCVC(cvcLoggingOut)
+                    Signals.closeFinished(cvcLoggingOut)
                 } else {
                     mainWindow.close()
                 }
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
                 if (cvcCloseRequested) {
-                    Signals.closeCVC(cvcLoggingOut)
+                    Signals.closeFinished(cvcLoggingOut)
                 } else {
                     mainWindow.close()
                 }

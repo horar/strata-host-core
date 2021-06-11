@@ -21,6 +21,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
+import tech.strata.signals 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -229,6 +230,23 @@ SGWidgets.SGMainWindow {
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
+            }
+        }
+    }
+
+    Connections {
+        target: Signals
+
+        onRequestClose: {
+            if (controlViewCreatorLoader.active) {
+                controlViewCreatorLoader.cvcCloseRequested = true
+                controlViewCreatorLoader.cvcLoggingOut = isLoggingOut
+                Signals.blockingFromCVC(true)
+                if (controlViewCreatorLoader.item.blockWindowClose() === false) {
+                    Signals.closeFinished(isLoggingOut)
+                }
+            } else {
+               Signals.closeFinished(isLoggingOut)
             }
         }
     }

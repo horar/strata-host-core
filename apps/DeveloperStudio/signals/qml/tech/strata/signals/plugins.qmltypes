@@ -26,7 +26,7 @@ Module {
         Signal { name: "feedbackResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "loadCVC"}
         Signal { name: "requestClose"; Parameter {name: "isLoggingOut"; type: "bool"}}
-        Signal { name: "closeCVC"; Parameter {name: "isLoggingOut"; type: "bool"}}
+        Signal { name: "closeFinished"; Parameter {name: "isLoggingOut"; type: "bool"}}
         Signal { name: "blockingFromCVC"; Parameter {name: "blocking"; type: "bool"}}
     }
 }

@@ -617,7 +617,7 @@ Rectangle {
     Connections {
         target: Signals
 
-        onCloseCVC: {
+        onCloseFinished: {
             if (isLoggingOut) {
                 logout()
             }

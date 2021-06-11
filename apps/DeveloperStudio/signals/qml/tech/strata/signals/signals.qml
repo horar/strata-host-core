@@ -69,6 +69,6 @@ QtObject {
     */
     signal loadCVC()
     signal requestClose(bool isLoggingOut)
-    signal closeCVC(bool isLoggingOut)
+    signal closeFinished(bool isLoggingOut)
     signal blockingFromCVC(bool blocking)
 }
