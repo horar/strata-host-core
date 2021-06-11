@@ -40,8 +40,6 @@ Rectangle {
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
-    // CVC logging out property flag
-    property bool isCVCBlocking: false
 
     onHasNotificationsChanged: {
         alertIconContainer.visible = hasNotifications
@@ -609,24 +607,6 @@ Rectangle {
             }
         }
     }
-    /*
-      This Connections is for
-      a) the cvc blocking a logout state due to unsaved changes
-      b) the cvc executing a logout after the unsaved changes are resolved
-    */
-    Connections {
-        target: Signals
-
-        onCloseFinished: {
-            if (isLoggingOut) {
-                logout()
-            }
-        }
-
-        onBlockingFromCVC: {
-            isCVCBlocking = blocking
-        }
-    }
 
     Loader {
         id: feedLoader
@@ -697,16 +677,5 @@ Rectangle {
 
     function showAboutWindow() {
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
-    }
-
-    function logout() {
-        if (!isCVCBlocking) {
-            Signals.logout()
-            PlatformFilters.clearActiveFilters()
-            NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-            Authenticator.logout()
-            PlatformSelection.logout()
-            sdsModel.coreInterface.unregisterClient()
-        }
     }
 }
