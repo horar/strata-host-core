@@ -169,7 +169,7 @@ SGStrataPopup {
         property bool filenameAndExtensionValid: {
             if (createFilePopup.viewState === "QML") {
                 return filenameInfobox.text.match(/^[a-zA-Z0-9_]*\.?[a-zA-Z0-9_]*$/) // QML filenames must not contain anything but alphanumeric and underscores
-            } else {
+            } else if (createFilePopup.viewState === "otherFileType") {
                 return filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/)
             }
         }
@@ -214,9 +214,15 @@ SGStrataPopup {
             }
 
             Text {
-                text: createFilePopup.viewState === "QML" ? "Contains only alphanumeric characters or underscores" : "File name and extension are valid"
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
+                text: {
+                    if (createFilePopup.viewState === "QML") {
+                        return "Contains only alphanumeric characters or underscores"
+                    } else if (createFilePopup.viewState === "otherFileType") {
+                        return "File name and extension are valid"
+                    }
+                }
             }
 
             SGIcon {
