@@ -306,7 +306,7 @@ SGStrataPopup {
             ProfileControlContainer {
                 id: passwordControls
 
-                errorAlertText: "Please make sure that your password meets our requirements."
+                errorAlertText: "Please make sure that your new password meets our requirements."
                 animationTargets: guestUser === true ? [] : [currentPasswordRow,newPasswordRow]
                 expandHeight: passwordField.height
 
@@ -329,6 +329,13 @@ SGStrataPopup {
                     newPasswordRow.editable = false
                     spinnerDialog.open()
                 }
+
+                onFailed: {
+                    if ((passwordField.focus == false) && (confirmPasswordField.focus == false)) {
+                        passwordField.forceActiveFocus()
+                    }
+                }
+
                 onCanceled: {
                     passwordField.text = ""
                     confirmPasswordField.text = ""
@@ -544,9 +551,11 @@ SGStrataPopup {
                         passwordControls.editing = true
                         alertRect.color = "red"
                         if (resultObject.response === "No Connection") {
-                            alertRect.text = "Connection to authentication server failed";
+                            alertRect.text = "Connection to authentication server failed. Please check your internet connection and try again.";
+                        } else if (resultObject.response === "Server Error") {
+                            alertRect.text = "Authentication server is unable to process your request at this time. Please try again later."
                         } else {
-                            alertRect.text = "Password is incorrect. Please try again."
+                            alertRect.text = "Current password is incorrect. Please try again."
                         }
                         spinnerDialog.close()
                         alertRect.show()
@@ -560,8 +569,12 @@ SGStrataPopup {
                         resetFields()
                     } else {
                         console.error(result)
-                        if (result === "No connection") {
-                            alertRect.text = "Connection to registration server failed"
+                        if (result === "No Connection") {
+                            alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
+                        } else if (result === "Server Error") {
+                            alertRect.text = "Registration server is unable to process your request at this time. Please try again later."
+                        } else if (result === "Invalid Authentication") {
+                            alertRect.text = "Registration server is unable to authenticate your request. Please try to log out and back in."
                         } else {
                             alertRect.text = "Unable to update password. Please try again."
                         }
@@ -601,7 +614,15 @@ SGStrataPopup {
                         resetFields()
                     } else {
                         console.error("Unable to change profile information")
-                        alertRect.text = "Unable to update profile. Try again later."
+                        if (result === "No Connection") {
+                            alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
+                        } else if (result === "Server Error") {
+                            alertRect.text = "Registration server is unable to process your request at this time. Please try again later."
+                        } else if (result === "Invalid Authentication") {
+                            alertRect.text = "Registration server is unable to authenticate your request. Please try to log out and back in."
+                        } else {
+                            alertRect.text = "Unable to update profile. Please try again."
+                        }
                         alertRect.color = "red"
                     }
                     spinnerDialog.close()
@@ -624,18 +645,20 @@ SGStrataPopup {
                         sdsModel.coreInterface.unregisterClient()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     } else {
-                        if (result === "No connection") {
-                            alertRect.text = "Connection to registration server failed"
-                        } else if (result === "Invalid authentication token") {
-                            alertRect.text = "Unable to close account. Please try to log out and back in."
+                        if (result === "No Connection") {
+                            alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
+                        } else if (result === "Server Error") {
+                            alertRect.text = "Registration server is unable to process your request at this time. Please try again later."
+                        } else if (result === "Invalid Authentication") {
+                            alertRect.text = "Registration server is unable to authenticate your request. Please try to log out and back in."
                         } else {
                             alertRect.text = "Unable to close account. Please try again later."
                         }
 
                         alertRect.color = "red"
+                        alertRect.show()
                     }
                     spinnerDialog.close()
-                    alertRect.show()
                 }
 
                 onGetProfileResult: {
@@ -651,9 +674,21 @@ SGStrataPopup {
 
                         root.company = user.company
                         root.jobTitle = user.title
+                    } else {
+                        if (result === "No Connection") {
+                            alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
+                        } else if (result === "Server Error") {
+                            alertRect.text = "Registration server is unable to process your request at this time. Please try again later."
+                        } else if (result === "Invalid Authentication") {
+                            alertRect.text = "Registration server is unable to authenticate your request. Please try to log out and back in."
+                        } else {
+                            alertRect.text = "Unable to aquire your profile data. Please try again later."
+                        }
+
+                        alertRect.color = "red"
+                        alertRect.show()
                     }
                     spinnerDialog.close()
-
                 }
             }
 

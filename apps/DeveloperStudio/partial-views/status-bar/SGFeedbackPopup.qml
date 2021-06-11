@@ -281,7 +281,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: textEdit.text !== "" && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: textEdit.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -330,12 +330,17 @@ SGStrataPopup {
                 alertToast.color = "#57d445"
                 alertToast.text = "Feedback successfully submitted!"
                 root.resetForm()
-            }else if(result === "No Connection"){
+            } else {
                 alertToast.color = "red"
-                alertToast.text = "No Connection!"
-            }else{
-                alertToast.color = "red"
-                alertToast.text = "Connection to feedback server failed!"
+                if (result === "No Connection") {
+                    alertToast.text = "No connection to feedback server! Please check your internet connection and try again."
+                } else if (result === "Server Error") {
+                    alertToast.text = "Feedback server is unable to process your request at this time! Please try again later."
+                } else if (result === "Invalid Authentication") {
+                    alertToast.text = "Feedback server is unable to authenticate your request! Please try to log out and back in."
+                } else {
+                    alertToast.text = "Failed to submit feedback! Please verify your input and try again."
+                }
             }
             alertToast.show()
         }
