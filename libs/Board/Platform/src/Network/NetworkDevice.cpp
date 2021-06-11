@@ -11,13 +11,6 @@ NetworkDevice::NetworkDevice(QHostAddress deviceAddress)
       isConnected_(false)
 {
     readBuffer_.reserve(READ_BUFFER_SIZE);
-
-    // set up the tcp socket.
-    connect(tcpSocket_.get(), &QTcpSocket::readyRead, this, &NetworkDevice::readMessages);
-    connect(tcpSocket_.get(), &QTcpSocket::disconnected, this,
-            &NetworkDevice::handleDeviceDiconnected);
-    connect(tcpSocket_.get(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
-            this, &NetworkDevice::handleError);
 }
 
 NetworkDevice::~NetworkDevice()
@@ -41,10 +34,18 @@ bool NetworkDevice::open()
         << this << "Connecting to network device 0x" << hex << deviceId() << ", Requested.";
 
     if (false == tcpSocket_->waitForConnected(TCP_CONNECT_TIMEOUT)) {
-        qCDebug(logCategoryDeviceNetwork) << "connecting to platfrom timed-out.";
+        QString errorString(QStringLiteral("Connecting to platfrom timed-out."));
+        qCDebug(logCategoryDeviceNetwork) << errorString;
+        tcpSocket_->close();
+        emit deviceError(ErrorCode::DeviceFailedToOpen, errorString);
         return false;
     }
 
+    connect(tcpSocket_.get(), &QTcpSocket::readyRead, this, &NetworkDevice::readMessages);
+    connect(tcpSocket_.get(), &QTcpSocket::disconnected, this,
+            &NetworkDevice::handleDeviceDiconnected);
+    connect(tcpSocket_.get(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
+            this, &NetworkDevice::handleError);
     return true;
 }
 
@@ -53,6 +54,8 @@ void NetworkDevice::close()
     qCDebug(logCategoryDeviceNetwork)
         << this << "Disconnecting from network device 0x" << hex << deviceId()
         << ", IP: " << deviceAddress_.toString() << " Port: " << dec << TCP_PORT;
+
+    disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {
         tcpSocket_->close();
     }
@@ -110,7 +113,6 @@ void NetworkDevice::readMessages()
 void NetworkDevice::handleError(QAbstractSocket::SocketError socketError)
 {
     Q_UNUSED(socketError);
-
     emit deviceError(ErrorCode::DeviceError, tcpSocket_->errorString());
 }
 
@@ -119,7 +121,6 @@ void NetworkDevice::handleDeviceDiconnected()
     qCDebug(logCategoryDeviceNetwork)
         << "Disconnected from network device address" << deviceAddress_.toString();
     emit deviceDisconnected();
-    // emit deviceError(ErrorCode::DeviceDisconnected, "Network device disconnected.");
 }
 
 QByteArray NetworkDevice::createDeviceId(QHostAddress hostAddress)

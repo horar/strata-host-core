@@ -1,21 +1,16 @@
 #include <Network/NetworkDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
-#include <QHostAddress>
-
 namespace strata::device::scanner
 {
 NetworkDeviceScanner::NetworkDeviceScanner()
-    : DeviceScanner(Device::Type::NetworkDevice),
-      udpSocket_(new QUdpSocket(this)),
-      scanTimer_(new QTimer(this))
+    : DeviceScanner(Device::Type::NetworkDevice), udpSocket_(new QUdpSocket(this))
 {
-    scanTimer_->setInterval(SCAN_TIMER);
 }
 
 NetworkDeviceScanner::~NetworkDeviceScanner()
 {
-    udpSocket_->close();
+    deinit();
 }
 
 void NetworkDeviceScanner::init()
@@ -26,15 +21,17 @@ void NetworkDeviceScanner::init()
     }
     connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
             &NetworkDeviceScanner::processPendingDatagrams);
-    // connect(scanTimer_.get(), &QTimer::timeout, this,
-    //         &NetworkDeviceScanner::processPendingDatagrams);
-    // scanTimer_->start();
 }
 
 void NetworkDeviceScanner::deinit()
 {
-    //scanTimer_->stop();
+    for (const auto &deviceId : discoveredDevices_) {
+        emit deviceLost(deviceId);
+    }
+    discoveredDevices_.clear();
+
     udpSocket_->close();
+    disconnect(udpSocket_.get(), nullptr, this, nullptr);
 }
 
 void NetworkDeviceScanner::processPendingDatagrams()
@@ -49,6 +46,14 @@ void NetworkDeviceScanner::processPendingDatagrams()
         qCDebug(logCategoryDeviceScanner)
             << "Datagram contents:" << buffer << "host" << clientAddress;
         if (buffer == "strata client") {
+            if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
+                          NetworkDevice::createDeviceId(clientAddress)) !=
+                discoveredDevices_.end()) {
+                qCCritical(logCategoryDeviceScanner)
+                    << "Network device" << clientAddress.toString() << "already discovered";
+                return;
+            }
+
             qCDebug(logCategoryDeviceScanner)
                 << "Discovered new platfrom. IP:" << clientAddress.toString();
             addNetworkDevice(clientAddress);
@@ -58,20 +63,34 @@ void NetworkDeviceScanner::processPendingDatagrams()
 
 bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress)
 {
-    // TODO: create a list of online devices.
-
     DevicePtr device = std::make_shared<NetworkDevice>(deviceAddress);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    // re-visit this
-    connect(dynamic_cast<device::NetworkDevice*>(device.get()), &NetworkDevice::deviceDisconnected,
-            this, [this, device]() {
-                qCDebug(logCategoryDeviceScanner) << "device disconnected. removing from the list.";
-                emit deviceLost(device->deviceId());
-            });
+    connect(dynamic_cast<device::NetworkDevice *>(device.get()), &NetworkDevice::deviceDisconnected,
+            this, &NetworkDeviceScanner::handleDeviceDisconnected);
 
+    discoveredDevices_.push_back(device->deviceId());
     emit deviceDetected(platform);
     return true;
 }
 
+void NetworkDeviceScanner::handleDeviceDisconnected()
+{
+    qCDebug(logCategoryDeviceScanner) << "device disconnected. removing from the list.";
+    Device *device = qobject_cast<Device *>(QObject::sender());
+    if (device == nullptr) {
+        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
+        return;
+    }
+    QByteArray deviceId = device->deviceId();
+
+    const auto it =
+        std::find(discoveredDevices_.begin(), discoveredDevices_.end(), device->deviceId());
+    if (it != discoveredDevices_.end()) {
+        discoveredDevices_.erase(it);
+    }
+
+    qCDebug(logCategoryDeviceScanner) << "device lost" << deviceId;
+    emit deviceLost(deviceId);
+}
 }  // namespace strata::device::scanner

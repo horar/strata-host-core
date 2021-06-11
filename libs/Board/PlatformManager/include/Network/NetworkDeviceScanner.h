@@ -3,6 +3,8 @@
 #include <DeviceScanner.h>
 #include <Network/NetworkDevice.h>
 
+#include <QHash>
+#include <QHostAddress>
 #include <QTimer>
 #include <QUdpSocket>
 
@@ -21,12 +23,13 @@ public:
 
 private slots:
     void processPendingDatagrams();
+    void handleDeviceDisconnected();
 
 private:
     bool addNetworkDevice(QHostAddress deviceAddress);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
-    std::unique_ptr<QTimer> scanTimer_;
+    QList<QByteArray> discoveredDevices_;  // make this a list of device ids?
     static constexpr qint16 UDP_LISTEN_PORT{5146};
     static constexpr qint16 SCAN_TIMER{5000};
 };
