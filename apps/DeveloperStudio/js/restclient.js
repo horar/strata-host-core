@@ -49,16 +49,23 @@ var xhr = function(method, endpoint, data, callback, errorCallback, headers) {
         }
         else if (xhr.readyState === 4 && xhr.status >= 200 && xhr.status < 300) {
             //console.log(LoggerModule.Logger.devStudioRestClientCategory, xhr.responseText)
+            var validResponse;
             try {
                 response = JSON.parse(xhr.responseText);
+                validResponse = true
             } catch (error) {
                 console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
                 response = {"message":"Response not valid","status":xhr.status,"data":JSON.stringify(xhr.responseText)}
+                validResponse = false
             }
-            if(callback.length > 1) {
-                callback(response, data)
+            if (validResponse) {
+                if (callback.length > 1) {
+                    callback(response, data)
+                } else {
+                    callback(response);
+                }
             } else {
-                callback(response);
+                errorCallback(response);
             }
             timeOut.destroy()
         }
