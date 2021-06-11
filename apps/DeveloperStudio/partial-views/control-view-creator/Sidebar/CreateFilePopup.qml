@@ -120,38 +120,32 @@ SGStrataPopup {
                 visible: createFilePopup.viewState === "otherFileType"
             }
 
-            Item {
-                id: createFileButtonContainer
-                implicitHeight: createFileButton.implicitHeight
-                implicitWidth: createFileButton.implicitWidth
+            SGButton {
+                id: createFileButton
+                text: "Create file"
+                enabled: filenameReqsPopup.filenameValid
 
-                SGButton {
-                    id: createFileButton
-                    text: "Create file"
-                    enabled: filenameReqsPopup.filenameValid
+                onClicked: {
+                    let url
+                    if (createFilePopup.directoryPath) {
+                        url = SGUtilsCpp.joinFilePath(createFilePopup.directoryPath, filenameInfobox.text)
+                    } else {
+                        url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
+                    }
+                    const path = SGUtilsCpp.urlToLocalFile(url)
+                    createFilePopup.fileAddRequested = true
 
-                    onClicked: {
-                        let url
-                        if (createFilePopup.directoryPath) {
-                            url = SGUtilsCpp.joinFilePath(createFilePopup.directoryPath, filenameInfobox.text)
-                        } else {
-                            url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, filenameInfobox.text)
-                        }
-                        const path = SGUtilsCpp.urlToLocalFile(url)
-                        createFilePopup.fileAddRequested = true
+                    let success
+                    if (createFilePopup.viewState === "QML") {
+                        success = treeModel.createQmlFile(path, veEnabledFileCheckbox.checked)
+                    } else if (createFilePopup.viewState === "otherFileType") {
+                        success = treeModel.createEmptyFile(path)
+                    }
 
-                        let success
-                        if (createFilePopup.viewState === "QML") {
-                            success = treeModel.createQmlFile(path, veEnabledFileCheckbox.checked)
-                        } else if (createFilePopup.viewState === "otherFileType") {
-                            success = treeModel.createEmptyFile(path)
-                        }
-
-                        if (!success) {
-                            console.error("Could not create file:", path)
-                        } else {
-                            createFilePopup.close()
-                        }
+                    if (!success) {
+                        console.error("Could not create file:", path)
+                    } else {
+                        createFilePopup.close()
                     }
                 }
             }
@@ -162,12 +156,14 @@ SGStrataPopup {
         id: filenameReqsPopup
         parent: filenameRow
         width: filenameRow.width
-        height: requirementsGrid.implicitHeight + filenameReqsPopup.padding * 2
         visible: filenameInfobox.focus && !filenameValid && createFilePopup.visible
-        background: backgroundRect
         closePolicy: Popup.NoAutoClose
         y: filenameRow.height - 1
         z: 1
+        background: Rectangle {
+            border.color: "#cccccc"
+            color: "#eee"
+        }
 
         // Required for all file types
         property bool filenameAndExtensionValid: filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/)
@@ -194,12 +190,6 @@ SGStrataPopup {
                 // Other file types name/ext must be valid, not already exist
                 return filenameAndExtensionValid && fileDoesNotExist
             }
-        }
-
-        Rectangle {
-            id: backgroundRect
-            border.color: "#cccccc"
-            color: "#eee"
         }
 
         GridLayout {
