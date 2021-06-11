@@ -27,11 +27,11 @@ Loader {
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
 
-        onRequestCVCClose: {
+        onRequestClose: {
             if (cvcLoader.active) {
                 cvcLoader.cvcCloseRequested = true
                 cvcLoggingOut = isLoggingOut
-                Signals.blockCVC(true)
+                Signals.blockingFromCVC(true)
                 if (cvcLoader.item.blockWindowClose() === false) {
                     Signals.closeCVC(isLoggingOut)
                 }
@@ -41,7 +41,7 @@ Loader {
         }
 
         onCloseCVC: {
-            Signals.blockCVC(false)
+            Signals.blockingFromCVC(false)
             cvcLoader.cvcCloseRequested = false
             cvcLoader.active = false
             let data = {"index": NavigationControl.stack_container_.count-2}

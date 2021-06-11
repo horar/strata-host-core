@@ -602,7 +602,7 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
-                        Signals.requestCVCClose(true)
+                        Signals.requestClose(true)
                     }
                     width: profileMenu.width
                 }
@@ -623,7 +623,7 @@ Rectangle {
             }
         }
 
-        onBlockCVC: {
+        onBlockingFromCVC: {
             isCVCBlocking = blocking
         }
     }

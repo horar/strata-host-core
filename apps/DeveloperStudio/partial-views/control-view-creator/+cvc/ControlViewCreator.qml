@@ -205,7 +205,10 @@ Rectangle {
                 } else {
                     mainWindow.close()
                 }
+            } else {
+                cvcCloseRequested = false
             }
+
             isConfirmCloseOpen = false
         }
     }
