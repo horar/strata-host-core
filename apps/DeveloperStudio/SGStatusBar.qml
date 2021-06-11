@@ -549,6 +549,41 @@ Rectangle {
                         profileMenu.close()
                     }
                 }
+            RowLayout {
+                SGMenuItem {
+                    id: fullScreenLabel
+                    hoverEnabled: false
+                    text: qsTr("Full Screen")
+                    onClicked: {
+                        fullScreenSwitch.toggled()
+                    }
+                }
+
+                SGSwitch {
+                    id: fullScreenSwitch
+                    Layout.preferredWidth: 26
+                    Layout.preferredHeight: 16
+                    checked: mainWindow.visibility === Window.FullScreen
+                    onToggled: {
+                        if (mainWindow.visibility === Window.FullScreen) {
+                            mainWindow.showNormal()
+                        } else {
+                            mainWindow.showFullScreen()
+
+                            Notifications.createNotification(
+                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
+                            Notifications.Info,
+                            "current",
+                            {
+                                "singleton": true,
+                                "timeout": 4000
+                            }
+                            )
+                        }
+                        profileMenu.close()
+                    }
+                }
+            }
 
                 Rectangle {
                     id: menuDivider

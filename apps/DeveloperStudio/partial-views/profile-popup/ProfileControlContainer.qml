@@ -22,6 +22,7 @@ Rectangle {
     property bool guestUser: mainGrid.guestUser
 
     signal saved()
+    signal failed()
     signal canceled()
 
     function resetHeight() {
@@ -89,6 +90,7 @@ Rectangle {
                        root.editing = false
                        alertRect.hide()
                    } else {
+                       root.failed()
                        alertRect.text = errorAlertText
                        alertRect.color = "red"
                        alertRect.show()

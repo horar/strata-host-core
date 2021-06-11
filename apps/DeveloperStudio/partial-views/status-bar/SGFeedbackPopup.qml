@@ -281,7 +281,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: textEdit.text !== "" && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: textEdit.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"

@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 
@@ -23,7 +24,10 @@ import tech.strata.notifications 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
+
     visible: true
+    x: Screen.width / 2 - mainWindow.width / 2
+    y: Screen.height / 2 - mainWindow.height / 2
     width: 1200
     height: 900
     minimumHeight: 768-40 // -40 for Win10 taskbar height
@@ -39,6 +43,38 @@ SGWidgets.SGMainWindow {
     {
         mainWindow.width = 1200
         mainWindow.height = 900
+    }
+
+    Shortcut {
+        id: enterFullScreenMode
+        sequence: StandardKey.FullScreen
+        onActivated: {
+            if (mainWindow.visibility === Window.FullScreen) {
+                mainWindow.showNormal()
+            } else {
+                mainWindow.showFullScreen()
+
+                Notifications.createNotification(
+                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
+                            Notifications.Info,
+                            "current",
+                            {
+                                "singleton": true,
+                                "timeout": 4000
+                            }
+                            )
+            }
+        }
+    }
+
+    Shortcut {
+        id: escapeFullScreenMode
+
+        enabled: mainWindow.visibility === Window.FullScreen
+        sequence: "Escape"
+        onActivated: {
+            mainWindow.showNormal()
+        }
     }
 
     Component.onCompleted: {

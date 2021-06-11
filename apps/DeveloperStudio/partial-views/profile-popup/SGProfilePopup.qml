@@ -306,7 +306,7 @@ SGStrataPopup {
             ProfileControlContainer {
                 id: passwordControls
 
-                errorAlertText: "Please make sure that your password meets our requirements."
+                errorAlertText: "Please make sure that your new password meets our requirements."
                 animationTargets: guestUser === true ? [] : [currentPasswordRow,newPasswordRow]
                 expandHeight: passwordField.height
 
@@ -329,6 +329,13 @@ SGStrataPopup {
                     newPasswordRow.editable = false
                     spinnerDialog.open()
                 }
+
+                onFailed: {
+                    if ((passwordField.focus == false) && (confirmPasswordField.focus == false)) {
+                        passwordField.forceActiveFocus()
+                    }
+                }
+
                 onCanceled: {
                     passwordField.text = ""
                     confirmPasswordField.text = ""
