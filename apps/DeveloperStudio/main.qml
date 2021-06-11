@@ -255,13 +255,13 @@ SGWidgets.SGMainWindow {
         }
 
         onCloseFinished: {
-            if(controlViewCreatorLoader.active){
+            if (controlViewCreatorLoader.active) {
                 controlViewCreatorLoader.cvcCloseRequested = false
                 controlViewCreatorLoader.active = false
                 let data = {"index": NavigationControl.stack_container_.count-2}
                 NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
             }
-            if(isLoggingOut){
+            if (isLoggingOut) {
                 Signals.logout()
                 PlatformFilters.clearActiveFilters()
                 NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
