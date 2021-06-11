@@ -329,11 +329,13 @@ SGStrataPopup {
                     newPasswordRow.editable = false
                     spinnerDialog.open()
                 }
+
                 onFailed: {
                     if ((passwordField.focus == false) && (confirmPasswordField.focus == false)) {
                         passwordField.forceActiveFocus()
                     }
                 }
+
                 onCanceled: {
                     passwordField.text = ""
                     confirmPasswordField.text = ""
