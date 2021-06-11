@@ -166,7 +166,14 @@ SGStrataPopup {
         }
 
         // Required for all file types
-        property bool filenameAndExtensionValid: filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/)
+        property bool filenameAndExtensionValid: {
+            if (createFilePopup.viewState === "QML") {
+                return filenameInfobox.text.match(/^[a-zA-Z0-9_]*\.?[a-zA-Z0-9_]*$/) // QML filenames must not contain anything but alphanumeric and underscores
+            } else {
+                return filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/)
+            }
+        }
+
         property bool fileDoesNotExist: {
             let url
             if (createFilePopup.directoryPath) {
@@ -179,8 +186,8 @@ SGStrataPopup {
         }
 
         // Required for QML files
-        property bool qmlFileBeginWithUppercaseLetter: filenameInfobox.text.match(/\b[A-Z].*?\b/) // begins with A-Z
-        property bool qmlFileEndWithQmlExtension: filenameInfobox.text.match(/^.*\.(qml|QML)$/)   // end in .qml or .QML
+        property bool qmlFileBeginWithUppercaseLetter: filenameInfobox.text.match(/^[A-Z]/)     // begins with A-Z
+        property bool qmlFileEndWithQmlExtension: filenameInfobox.text.match(/^.*\.(qml|QML)$/) // end in .qml or .QML
 
         property bool filenameValid: {
             if (createFilePopup.viewState === "QML") {
@@ -197,6 +204,7 @@ SGStrataPopup {
             columns: 2
             columnSpacing: 10
             rowSpacing: 10
+            width: filenameReqsPopup.width - filenameReqsPopup.padding * 2
 
             SGIcon {
                 source: filenameReqsPopup.filenameAndExtensionValid ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
@@ -206,7 +214,8 @@ SGStrataPopup {
             }
 
             Text {
-                text: "File name and extension are valid"
+                text: createFilePopup.viewState === "QML" ? "Contains only alphanumeric characters or underscores" : "File name and extension are valid"
+                wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
 
