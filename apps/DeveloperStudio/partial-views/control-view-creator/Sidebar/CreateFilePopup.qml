@@ -78,6 +78,7 @@ SGStrataPopup {
             Layout.preferredHeight: 200
 
             RowLayout {
+                id: filenameRow
                 spacing: 0
                 Layout.fillWidth: true
 
@@ -159,14 +160,13 @@ SGStrataPopup {
 
     Popup {
         id: filenameReqsPopup
-        parent: createFileButton
-        width: createFilePopup.width
-        height: 100
+        parent: filenameRow
+        width: filenameRow.width
+        height: requirementsGrid.implicitHeight + filenameReqsPopup.padding * 2
         visible: filenameInfobox.focus && !filenameValid && createFilePopup.visible
         background: backgroundRect
         closePolicy: Popup.NoAutoClose
-        x: 5
-        y: 5
+        y: filenameRow.height - 1
         z: 1
 
         // Required for all file types
@@ -198,15 +198,12 @@ SGStrataPopup {
 
         Rectangle {
             id: backgroundRect
-            height: createFilePopup.viewState === "QML" ? 130 : 70
             border.color: "#cccccc"
             color: "#eee"
         }
 
         GridLayout {
-            id: qmlRequirementsGrid
-            visible: createFilePopup.viewState === "QML"
-            width: 200
+            id: requirementsGrid
             columns: 2
             columnSpacing: 10
             rowSpacing: 10
@@ -224,6 +221,7 @@ SGStrataPopup {
             }
 
             SGIcon {
+                visible: createFilePopup.viewState === "QML"
                 source: filenameReqsPopup.qmlFileBeginWithUppercaseLetter ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
                 iconColor: filenameReqsPopup.qmlFileBeginWithUppercaseLetter ? "#30c235" : "#cccccc"
                 height: 20
@@ -231,11 +229,13 @@ SGStrataPopup {
             }
 
             Text {
-                text: "File name begins with uppercase letter"
+                visible: createFilePopup.viewState === "QML"
+                text: "Begins with uppercase letter"
                 Layout.fillWidth: true
             }
 
             SGIcon {
+                visible: createFilePopup.viewState === "QML"
                 source: filenameReqsPopup.qmlFileEndWithQmlExtension ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
                 iconColor: filenameReqsPopup.qmlFileEndWithQmlExtension ? "#30c235" : "#cccccc"
                 height: 20
@@ -243,40 +243,8 @@ SGStrataPopup {
             }
 
             Text {
+                visible: createFilePopup.viewState === "QML"
                 text: "File has .qml extension"
-                Layout.fillWidth: true
-            }
-
-            SGIcon {
-                source: filenameReqsPopup.fileDoesNotExist ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-                iconColor: filenameReqsPopup.fileDoesNotExist ? "#30c235" : "#cccccc"
-                height: 20
-                width: height
-            }
-
-            Text {
-                text: "File does not already exist"
-                Layout.fillWidth: true
-            }
-        }
-
-        GridLayout {
-            id: otherFileTypeRequirementsGrid
-            visible: createFilePopup.viewState === "otherFileType"
-            width: 200
-            columns: 2
-            columnSpacing: 10
-            rowSpacing: 10
-
-            SGIcon {
-                source: filenameReqsPopup.filenameAndExtensionValid ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-                iconColor: filenameReqsPopup.filenameAndExtensionValid ? "#30c235" : "#cccccc"
-                height: 20
-                width: height
-            }
-
-            Text {
-                text: "File name and extension are valid"
                 Layout.fillWidth: true
             }
 
