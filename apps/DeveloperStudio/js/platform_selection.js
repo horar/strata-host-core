@@ -41,6 +41,7 @@ function initialize (newCoreInterface) {
 
 function disablePlatformNotifications(){
     NavigationControl.userSettings.notifyOnPlatformConnections = false
+    NavigationControl.userSettings.saveSettings()
 }
 
 function getPlatformList () {
