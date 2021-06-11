@@ -165,14 +165,14 @@ public:
      * @param index The node to add to the qrc
      * @param save If the changes should be saved or not. Default is true
      */
-    Q_INVOKABLE bool addToQrc(const QModelIndex &index, bool save = true);
+    Q_INVOKABLE void addToQrc(const QModelIndex &index, bool save = true);
 
     /**
      * @brief removeFromQrc Removes an item from the qrc file
      * @param index The node to remove from the qrc
      * @param save If the changes should be saved or not. Default is true
      */
-    Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
+    Q_INVOKABLE void removeFromQrc(const QModelIndex &index, bool save = true);
 
     /**
      * @brief removeDeletedFilesFromQrc Removes all files in the Qrc that have been deleted from the filesystem
