@@ -1061,3 +1061,37 @@ function registerQmlAsLanguage() {
         }
     })
 }
+
+function setLanguage(extension) {
+    console.log(extension)
+    if(extension === "qml"){
+        registerQmlAsLanguage()
+    } else if(extension === "js"){
+         editor = monaco.editor.create(document.getElementById("container"), {
+             language: "javascript",
+             value: "",
+             formatOnPaste: true,
+             formatOnType: true,
+             formatOnSave: true,
+             autoIndent: 'full',
+             scrollbar: {
+                 useShadows: false,
+                 vertical: 'visible',
+                 horizontal: 'visible',
+                 horizontalScrollbarSize: 15,
+                 verticalScrollbarSize: 15
+             }
+         })
+     } else if(extension === "json") {
+         editor = monaco.editor.create(document.getElementById("container"), {
+             value: "",
+             language: "json"
+         })
+     } else {
+         editor = monaco.editor.create(document.getElementById("container"), {
+             language: "plaintext",
+             wordBasedSuggestions: false,
+             value: ""
+         })
+     }
+ }
