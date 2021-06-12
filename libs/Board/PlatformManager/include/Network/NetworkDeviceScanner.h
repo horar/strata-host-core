@@ -16,21 +16,36 @@ class NetworkDeviceScanner : public DeviceScanner
     Q_DISABLE_COPY(NetworkDeviceScanner);
 
 public:
+    /**
+     * NetworkDeviceScanner constructor
+     */
     NetworkDeviceScanner();
+
+    /**
+     * NetworkDeviceScanner destructor
+     */
     ~NetworkDeviceScanner();
+
+    /**
+     * Start scanning for new devices.
+     */
     virtual void init() override;
+
+    /**
+     * Stop scanning for new devices. Will close all open devices.
+     */
     virtual void deinit() override;
 
 private slots:
     void processPendingDatagrams();
-    void handleDeviceDisconnected();
+    void deviceDisconnectedHandler();
 
 private:
     bool addNetworkDevice(QHostAddress deviceAddress);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
-    QList<QByteArray> discoveredDevices_;  // make this a list of device ids?
+    QList<QByteArray> discoveredDevices_;
+
     static constexpr qint16 UDP_LISTEN_PORT{5146};
-    static constexpr qint16 SCAN_TIMER{5000};
 };
 }  // namespace strata::device::scanner

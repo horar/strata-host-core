@@ -65,14 +65,14 @@ bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress)
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     connect(dynamic_cast<device::NetworkDevice *>(device.get()), &NetworkDevice::deviceDisconnected,
-            this, &NetworkDeviceScanner::handleDeviceDisconnected);
+            this, &NetworkDeviceScanner::deviceDisconnectedHandler);
 
     discoveredDevices_.push_back(device->deviceId());
     emit deviceDetected(platform);
     return true;
 }
 
-void NetworkDeviceScanner::handleDeviceDisconnected()
+void NetworkDeviceScanner::deviceDisconnectedHandler()
 {
     qCDebug(logCategoryDeviceScanner) << "device disconnected. removing from the list.";
     Device *device = qobject_cast<Device *>(QObject::sender());

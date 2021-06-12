@@ -13,13 +13,46 @@ class NetworkDevice : public Device
 
 public:
     typedef std::unique_ptr<QTcpSocket> socketPtr;
+
+    /**
+     * NetworkDevice constructor
+     * @param deviceAddress IP address of the network device.
+     */
     NetworkDevice(QHostAddress deviceAddress);
+
+    /**
+     * NetworkDevice destructor.
+     */
     ~NetworkDevice() override;
 
+    /**
+     * Open TCP socket.
+     * @return true if port was opened, otherwise false
+     */
     virtual bool open() override;
+
+    /**
+     * Close TCP socket.
+     */
     virtual void close() override;
+
+    /**
+     * Send message to network device. Emits deviceError in case of failure.
+     * @param data message to be written to device
+     * @return true if message can be sent, otherwise false
+     */
     virtual bool sendMessage(const QByteArray &message) override;
+
+    /**
+     * return the status of the TCP socket to the network device.
+     * @return true if device is connected, otherwise false
+     */
     virtual bool isConnected() const override;
+
+    /**
+     * Creates device ID based on it's IP address.
+     * @return QByteArray of the generated device ID.
+     */
     static QByteArray createDeviceId(QHostAddress hostAddress);
 
 signals:
@@ -28,7 +61,7 @@ signals:
 private slots:
     void readMessages();
     void handleError(QAbstractSocket::SocketError socketError);
-    void handleDeviceDiconnected();
+    void deviceDiconnectedHandler();
 
 private:
     socketPtr tcpSocket_;
@@ -37,7 +70,7 @@ private:
     std::string readBuffer_;
 
     static constexpr qint64 TCP_PORT{24125};
-    static constexpr qint64 TCP_WRITE_TIMEOUT{1000};
+    static constexpr qint64 TCP_WRITE_TIMEOUT{500};
     static constexpr qint64 TCP_CONNECT_TIMEOUT{500};
     static constexpr unsigned READ_BUFFER_SIZE{4096};
 };

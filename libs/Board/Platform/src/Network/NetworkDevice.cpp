@@ -41,7 +41,7 @@ bool NetworkDevice::open()
 
     connect(tcpSocket_.get(), &QTcpSocket::readyRead, this, &NetworkDevice::readMessages);
     connect(tcpSocket_.get(), &QTcpSocket::disconnected, this,
-            &NetworkDevice::handleDeviceDiconnected);
+            &NetworkDevice::deviceDiconnectedHandler);
     connect(tcpSocket_.get(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
             this, &NetworkDevice::handleError);
     return true;
@@ -114,7 +114,7 @@ void NetworkDevice::handleError(QAbstractSocket::SocketError socketError)
     emit deviceError(ErrorCode::DeviceError, tcpSocket_->errorString());
 }
 
-void NetworkDevice::handleDeviceDiconnected()
+void NetworkDevice::deviceDiconnectedHandler()
 {
     qCDebug(logCategoryDeviceNetwork)
         << "Disconnected from network device address" << deviceAddress_.toString();
