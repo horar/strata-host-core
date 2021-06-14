@@ -1,6 +1,9 @@
 #include <Network/NetworkDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 namespace strata::device::scanner
 {
 NetworkDeviceScanner::NetworkDeviceScanner()
@@ -43,7 +46,7 @@ void NetworkDeviceScanner::processPendingDatagrams()
         buffer.resize(int(udpSocket_->pendingDatagramSize()));
         udpSocket_->readDatagram(buffer.data(), buffer.size(), &clientAddress);
 
-        if (buffer == "strata client") {
+        if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
             if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
                           NetworkDevice::createDeviceId(clientAddress)) !=
                 discoveredDevices_.end()) {
@@ -53,15 +56,16 @@ void NetworkDeviceScanner::processPendingDatagrams()
             }
 
             qCDebug(logCategoryDeviceScanner)
-                << "Discovered new platfrom. IP:" << clientAddress.toString();
-            addNetworkDevice(clientAddress);
+                << "Discovered new platfrom. IP:" << clientAddress.toString()
+                << ", TCP port:" << tcpPort;
+            addNetworkDevice(clientAddress, tcpPort);
         }
     }
 }
 
-bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress)
+bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress, quint16 tcpPort)
 {
-    DevicePtr device = std::make_shared<NetworkDevice>(deviceAddress);
+    DevicePtr device = std::make_shared<NetworkDevice>(deviceAddress, tcpPort);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     connect(dynamic_cast<device::NetworkDevice *>(device.get()), &NetworkDevice::deviceDisconnected,
@@ -90,5 +94,49 @@ void NetworkDeviceScanner::deviceDisconnectedHandler()
 
     qCDebug(logCategoryDeviceScanner) << "device lost" << deviceId;
     emit deviceLost(deviceId);
+}
+
+bool NetworkDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
+{
+    // {
+    //     "notification": {
+    //         "value": "broadcast"
+    //         "payload": {
+    //             "tcp_port": 24125
+    //         }
+    //     }
+    // }
+
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(datagram, &jsonParseError);
+
+    if (jsonParseError.error != QJsonParseError::NoError) {
+        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        return false;
+    }
+
+    QJsonObject jsonObject = jsonDocument.object();
+
+    if (false == jsonObject.contains("notification") ||
+        false == jsonObject.value("notification").isObject()) {
+        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        return false;
+    }
+
+    if (false == jsonObject["notification"].toObject().contains("payload") ||
+        false == jsonObject["notification"].toObject().value("payload").isObject()) {
+        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        return false;
+    }
+
+    QJsonObject datagramPayload = jsonObject["notification"].toObject().value("payload").toObject();
+    if (false == datagramPayload.contains("tcp_port") ||
+        false == datagramPayload["tcp_port"].isDouble()) {
+        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        return false;
+    }
+
+    tcpPort = datagramPayload["tcp_port"].toDouble();
+    return true;
 }
 }  // namespace strata::device::scanner

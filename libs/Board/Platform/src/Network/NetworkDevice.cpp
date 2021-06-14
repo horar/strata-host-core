@@ -4,11 +4,12 @@
 
 namespace strata::device
 {
-NetworkDevice::NetworkDevice(QHostAddress deviceAddress)
+NetworkDevice::NetworkDevice(QHostAddress deviceAddress, quint16 tcpPort)
     : Device(createDeviceId(deviceAddress), deviceAddress.toString(), Type::NetworkDevice),
       tcpSocket_(new QTcpSocket(this)),
       deviceAddress_(deviceAddress),
-      isConnected_(false)
+      isConnected_(false),
+      tcpPort_(tcpPort)
 {
     readBuffer_.reserve(READ_BUFFER_SIZE);
 }
@@ -22,14 +23,14 @@ bool NetworkDevice::open()
 {
     qDebug(logCategoryDeviceNetwork).nospace()
         << this << "Connecting network device:" << deviceId_ << ", IP:" << deviceAddress_.toString()
-        << " Port:" << TCP_PORT;
+        << " Port:" << tcpPort_;
 
     if (tcpSocket_->isOpen()) {
         qCDebug(logCategoryDeviceNetwork) << this << "TCP socket already open.";
         return true;
     }
 
-    tcpSocket_->connectToHost(deviceAddress_, TCP_PORT);
+    tcpSocket_->connectToHost(deviceAddress_, tcpPort_);
 
     if (false == tcpSocket_->waitForConnected(TCP_CONNECT_TIMEOUT)) {
         QString errorString(QStringLiteral("Connecting to platfrom timed-out."));
@@ -51,7 +52,7 @@ void NetworkDevice::close()
 {
     qCDebug(logCategoryDeviceNetwork)
         << this << "Disconnecting from network device:" << deviceId_
-        << ", IP:" << deviceAddress_.toString() << " Port:" << TCP_PORT;
+        << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
 
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {

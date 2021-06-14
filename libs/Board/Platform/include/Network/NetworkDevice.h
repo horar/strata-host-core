@@ -17,8 +17,9 @@ public:
     /**
      * NetworkDevice constructor
      * @param deviceAddress IP address of the network device.
+     * @param tcpPort TCP port of the network device.
      */
-    NetworkDevice(QHostAddress deviceAddress);
+    NetworkDevice(QHostAddress deviceAddress, quint16 tcpPort);
 
     /**
      * NetworkDevice destructor.
@@ -68,6 +69,7 @@ private:
     QHostAddress deviceAddress_;
     bool isConnected_;
     std::string readBuffer_;
+    quint16 tcpPort_;
 
     static constexpr qint64 TCP_PORT{24125};
     static constexpr qint64 TCP_WRITE_TIMEOUT{500};

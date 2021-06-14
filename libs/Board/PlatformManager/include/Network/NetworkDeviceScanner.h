@@ -41,7 +41,8 @@ private slots:
     void deviceDisconnectedHandler();
 
 private:
-    bool addNetworkDevice(QHostAddress deviceAddress);
+    bool addNetworkDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
     QList<QByteArray> discoveredDevices_;
