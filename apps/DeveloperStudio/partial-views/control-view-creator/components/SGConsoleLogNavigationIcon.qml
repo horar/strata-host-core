@@ -16,7 +16,7 @@ Rectangle {
     property string type: ""
 
     color: type === "error" ? Theme.palette.error : Theme.palette.warning
-    visible:!isConsoleLogOpen && count > 0
+    visible: !isConsoleLogOpen && count > 0
 
     SGText {
         anchors.fill: errorAndWarningCountDisplay
