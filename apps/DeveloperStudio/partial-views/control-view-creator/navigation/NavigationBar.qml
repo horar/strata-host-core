@@ -92,19 +92,16 @@ Rectangle {
                 isConsoleLogOpen = !isConsoleLogOpen
             }
 
-            Item {
+            SGConsoleLogNavigationIcon {
+                id: errorDisplayCount
                 anchors.top:parent.top
                 anchors.left: parent.left
                 anchors.leftMargin: 5
                 anchors.topMargin: 5
                 height: parent.height
                 width: 22
-
-                SGConsoleLogNavigationIcon {
-                    id: errorDisplayCount
-                    count: consoleLogErrorCount + consoleLogWarningCount
-                    type: consoleLogErrorCount > 0 ? "error" : consoleLogWarningCount > 0 ? "warning" : "error"
-                }
+                count: consoleLogErrorCount + consoleLogWarningCount
+                type: consoleLogErrorCount > 0 ? "error" : consoleLogWarningCount > 0 ? "warning" : "error"
             }
         }
 

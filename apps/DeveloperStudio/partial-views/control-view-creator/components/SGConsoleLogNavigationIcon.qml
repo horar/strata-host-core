@@ -10,13 +10,11 @@ Rectangle {
     width: parent.width
     height: width
     radius: 25
-    z: 100
+    color: type === "error" ? Theme.palette.error : Theme.palette.warning
+    visible: !isConsoleLogOpen && count > 0
 
     property int count: 0
     property string type: ""
-
-    color: type === "error" ? Theme.palette.error : Theme.palette.warning
-    visible: !isConsoleLogOpen && count > 0
 
     SGText {
         anchors.fill: errorAndWarningCountDisplay
