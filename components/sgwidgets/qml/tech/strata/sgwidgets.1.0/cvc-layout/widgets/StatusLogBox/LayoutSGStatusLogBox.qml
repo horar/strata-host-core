@@ -41,7 +41,7 @@ LayoutContainer {
     }
 
     function clear() {
-       statusLogBoxObject.clear()
+        statusLogBoxObject.clear()
     }
 
     contentItem: SGStatusLogBox {

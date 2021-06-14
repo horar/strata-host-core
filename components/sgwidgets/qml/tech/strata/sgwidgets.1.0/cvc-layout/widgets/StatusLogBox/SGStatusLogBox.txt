@@ -10,8 +10,8 @@
 
         // appends example messages to the box
         Component.onCompleted: {
-            for (let i = 0; i < 10; i++){
-                sgStatusLog_%1.append("Message " + i)
+            for (let i = 0; i < 10; i++) {
+                append("Message " + i)
             }
         }
     } // end_%1
