@@ -231,6 +231,7 @@ SGWidgets.SGDialog {
                                 contextMenuEnabled: true
                                 showSuggestionButton: true
                                 suggestionCloseWithArrowKey: true
+                                suggestionCloseOnMouseSelection: true
                                 suggestionListModel: sortFilterModel
                                 onSuggestionDelegateSelected: {
                                    var sourceIndex = sortFilterModel.mapIndexToSource(index)

@@ -32,6 +32,7 @@ TextField {
     property string suggestionEmptyModelText: "No Suggestion"
     property string suggestionHeaderText
     property bool suggestionCloseWithArrowKey: false
+    property bool suggestionCloseOnMouseSelection: false
     property bool suggestionOpenWithAnyKey: true
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
@@ -239,6 +240,7 @@ TextField {
             emptyModelText: suggestionEmptyModelText
             headerText: suggestionHeaderText
             closeWithArrowKey: suggestionCloseWithArrowKey
+            closeOnMouseSelection: suggestionCloseOnMouseSelection
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable
