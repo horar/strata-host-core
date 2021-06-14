@@ -40,6 +40,8 @@ private:
                                                        const rapidjson::Document &requestDoc);
     QString getPlaceholderValue(const QString placeholder,
                                        const rapidjson::Document &requestDoc);
+    QString getFirmwareValue(const QString placeholder);
+    QString getChunksValue(const QString placeholder);
 
     void createMockFirmware();
     void getExpectedValues(QString firmwarePath);

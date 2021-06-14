@@ -437,59 +437,69 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
         }
     }
 
-    if (0 == placeholderNamespace.compare("firmware") && placeholderSplit.length() >= 1) {
-
-        if (createFirmware_ == false) {
-            mockCreateMockFirmware(true); //once start_backup_firmware is recieved the mockFirmware is created
-        }
-        actualChunk_ = 0; //begin of backup_firmware
-
-        if (placeholder == "firmware.size") {
-            return QString::number(mockFirmware_.size());
-        }
-        if (placeholder == "firmware.chunks") {
-            return QString::number(expectedChunksCount_);
-        }
+    else if (0 == placeholderNamespace.compare("firmware") && placeholderSplit.length() >= 1) {
+        return getFirmwareValue(placeholder);
     }
 
-    if (0 == placeholderNamespace.compare("chunk") && placeholderSplit.length() >= 1) {
-
-        if (actualChunk_ < expectedChunksCount_ && createFirmware_) {
-            if (payloadCount_ == 4) { //once 4 payloads are recieved(number,size,crc,data) the actual chunks' number iterates
-                actualChunk_++;
-                payloadCount_ = 0;
-            }
-            payloadCount_++;
-            if (placeholder == "chunk.number") {
-                return QString::number(actualChunk_);
-            }
-            if (placeholder == "chunk.size") {
-                return QString::number(expectedChunkSize_[actualChunk_]);
-            }
-            if (placeholder == "chunk.crc") {
-                return QString::number(expectedChunkCrc_[actualChunk_]);
-            }
-            if (placeholder == "chunk.data") {
-                return expectedChunkData_[actualChunk_];
-            }
-        } else {
-            createFirmware_ = false;
-            if (placeholder == "chunk.number") {
-                return QString::number(0);
-            }
-            if (placeholder == "chunk.size") {
-                return QString::number(0);
-            }
-            if (placeholder == "chunk.crc") {
-                return QString::number(0);
-            }
-            if (placeholder == "chunk.data") {
-                return "";
-            }
-        }
+    else if (0 == placeholderNamespace.compare("chunk") && placeholderSplit.length() >= 1) {
+        return getChunksValue(placeholder);
     }// fallthrough
     // add other namespaces as required in the future (e.g. refer to mock variables)
     //qWarning() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
+    return placeholder;  // fallback, return the value as is
+}
+
+QString MockDeviceControl::getFirmwareValue(const QString placeholder)
+{
+    if (createFirmware_ == false) {
+        mockCreateMockFirmware(true); //once start_backup_firmware is recieved the mockFirmware is created
+    }
+    actualChunk_ = 0; //begin of backup_firmware
+
+    if (placeholder == "firmware.size") {
+        return QString::number(mockFirmware_.size());
+    }
+    if (placeholder == "firmware.chunks") {
+        return QString::number(expectedChunksCount_);
+    }
+    return placeholder;  // fallback, return the value as is
+}
+
+QString MockDeviceControl::getChunksValue(const QString placeholder)
+{
+    if (actualChunk_ < expectedChunksCount_ && createFirmware_) {
+        if (payloadCount_ == 4) { //once 4 payloads are recieved(number,size,crc,data) the actual chunks' number iterates
+            actualChunk_++;
+            payloadCount_ = 0;
+        }
+        payloadCount_++;
+        if (placeholder == "chunk.number") {
+            return QString::number(actualChunk_);
+        }
+        if (placeholder == "chunk.size") {
+            return QString::number(expectedChunkSize_[actualChunk_]);
+        }
+        if (placeholder == "chunk.crc") {
+            return QString::number(expectedChunkCrc_[actualChunk_]);
+        }
+        if (placeholder == "chunk.data") {
+            return expectedChunkData_[actualChunk_];
+        }
+    } else {
+        createFirmware_ = false;
+        if (placeholder == "chunk.number") {
+            return QString::number(0);
+        }
+        if (placeholder == "chunk.size") {
+            return QString::number(0);
+        }
+        if (placeholder == "chunk.crc") {
+            return QString::number(0);
+        }
+        if (placeholder == "chunk.data") {
+            return "";
+        }
+    }
     return placeholder;  // fallback, return the value as is
 }
 
