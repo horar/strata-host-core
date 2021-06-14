@@ -24,6 +24,7 @@ TextField {
     property bool contextMenuEnabled: false
 
     /* properties for suggestion list */
+    property bool showSuggestionButton: false
     property variant suggestionListModel
     property Component suggestionListDelegate
     property string suggestionModelTextRole
@@ -45,6 +46,7 @@ TextField {
     property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
                                  || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
                                  || (clearButtonLoader !== null && clearButtonLoader.status === Loader.Ready)
+                                 || (showSuggestionLoader !== null && showSuggestionLoader.status === Loader.Ready)
                                  || (rightIconItem !== null && rightIconItem.source)
 
     property bool revealPassword: false
@@ -201,6 +203,12 @@ TextField {
                 sourceComponent: passwordMode ? revealPasswordComponent : undefined
             }
 
+            Loader {
+                id: showSuggestionLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: (showSuggestionButton && (suggestionListModel !== undefined)) ? showSuggestionComponent : undefined
+            }
+
             SGWidgets.SGIcon {
                 id: rightIconItem
                 anchors.verticalCenter: parent.verticalCenter
@@ -221,6 +229,7 @@ TextField {
         id: suggestionListComponent
 
         SGWidgets.SGSuggestionPopup {
+            parent: control
             textEditor: control
             model: suggestionListModel
             delegate: control.suggestionListDelegate ? control.suggestionListDelegate : implicitDelegate
@@ -286,6 +295,27 @@ TextField {
             onClicked: {
                 control.forceActiveFocus()
                 control.clear()
+            }
+        }
+    }
+
+    Component {
+        id: showSuggestionComponent
+
+        SGWidgets.SGIconButton {
+            iconColor: (suggestionPopupLoader.status === Loader.Ready) && (suggestionPopupLoader.item.opened === true) ? "#828282" : "#b2b2b2"
+            backgroundOnlyOnHovered: false
+            highlightImplicitColor: "transparent"
+            iconSize: control.background.height - 20
+            icon.source: "qrc:/sgimages/chevron-down.svg"
+            onClicked: {
+                if (suggestionPopupLoader.status === Loader.Ready) {
+                    if (suggestionPopupLoader.item.opened === false) {
+                        suggestionPopupLoader.item.open()
+                    } else {
+                        suggestionPopupLoader.item.close()
+                    }
+                }
             }
         }
     }
