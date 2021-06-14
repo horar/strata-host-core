@@ -487,8 +487,7 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
                 return "";
             }
         }
-    }
-    // fallthrough
+    }// fallthrough
     // add other namespaces as required in the future (e.g. refer to mock variables)
     //qWarning() << (("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
     return placeholder;  // fallback, return the value as is
