@@ -8,10 +8,10 @@
 
         title : "Status Log"
 
-        // appends message to list and returns id of the message
+        // appends example messages to the box
         Component.onCompleted: {
-           for (let i = 0; i < 10; i++){
+            for (let i = 0; i < 10; i++){
                 sgStatusLog_%1.append("Message " + i)
+            }
         }
-      }
     } // end_%1
