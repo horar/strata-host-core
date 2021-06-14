@@ -97,9 +97,6 @@ void NetworkDevice::readMessages()
     while ((end = data.indexOf('\n', from)) > -1) {
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
         from = end + 1;
-
-        qCDebug(logCategoryDeviceNetwork)
-            << this << ": received message: " << QString::fromStdString(readBuffer_);
         emit messageReceived(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
     }
