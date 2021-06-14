@@ -688,7 +688,7 @@ Rectangle {
         Signals.logout()
         PlatformFilters.clearActiveFilters()
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-        SessionUtils.logout()
+        Authenticator.logout()
         PlatformSelection.logout()
         sdsModel.coreInterface.unregisterClient()
     }

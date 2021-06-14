@@ -76,8 +76,8 @@ Rectangle {
                 anchors.fill: parent
 
                 onClicked: {
-                    if (!controlViewCreatorLoader.active || !controlViewCreatorLoader.item.blockWindowClose(function () { controlViewCreatorContainer.visible = false })) {
-                        controlViewCreatorContainer.visible = false
+                    if (!controlViewCreatorLoader.active || !controlViewCreatorLoader.item.blockWindowClose(closeCVC)) {
+                        closeCVC()
                     }
                 }
             }
@@ -90,5 +90,12 @@ Rectangle {
         onLoadCVC: {
             controlViewCreatorContainer.visible = true
         }
+    }
+
+    function closeCVC() {
+        controlViewCreatorLoader.active = false
+        let data = {"index": NavigationControl.stack_container_.count-2}
+        NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+        controlViewCreatorContainer.visible = false
     }
 }
