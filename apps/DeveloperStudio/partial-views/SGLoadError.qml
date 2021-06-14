@@ -11,6 +11,7 @@ Rectangle {
     color: "#ddd"
 
     property alias error_message: error.text
+    property alias error_descriptor: errorIntro.text
 
     ColumnLayout {   
         

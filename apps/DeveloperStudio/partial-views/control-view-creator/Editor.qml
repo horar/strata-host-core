@@ -362,6 +362,7 @@ Item {
 
                     delegate: Component {
                         Loader {
+                            id: textLoader
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
