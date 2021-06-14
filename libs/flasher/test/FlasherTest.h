@@ -31,9 +31,9 @@ private slots:
     void flashBootloaderStartInBootloaderTest();
     void setFwClassIdTest();
     void setFwClassIdWithoutStartApplicationTest();
-    //TODO: Add Backup Firmware tests standard & faulty/invalid responses
-
     void backupFirmwareTest();
+    void backupFirmwareWithoutStartApplicationTest();
+    void backupFirmwareStartInBootloaderTest();
 
     // tests faulty/invalid responses
     void startFlashFirmwareInvalidCommandTest();
@@ -41,16 +41,14 @@ private slots:
     void flashFirmwareResendChunkTest();
     void flashFirmwareMemoryErrorTest();
     void flashFirmwareInvalidCmdSequenceTest();
-
     void startBackupNoFirmwareTest();
     void backupNoFirmwareTest();
 
     // tests faulty scenarios
-    void disconnectWhileFlashingTest();
+    void disconnectWhileFlashTest();
     void setNoFwClassIdTest();
     void flashFirmwareCancelTest();
     void flashBootloaderCancelTest();
-
     void disconnectWhileBackupTest();
     void backupFirmwareCancelTest();
 
