@@ -76,6 +76,11 @@ Popup {
                 }
 
                 ListElement {
+                    text: "StatusLogBox"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLogBox/SGStatusLogBox.txt"
+                }
+
+                ListElement {
                     text: "Switch"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Switch/SGSwitch.txt"
                 }
@@ -83,11 +88,6 @@ Popup {
                 ListElement {
                     text: "Text"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Text/Text.txt"
-                }
-
-                ListElement {
-                    text: "StatusLogBox"
-                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLogBox/SGStatusLogBox.txt"
                 }
             }
 
