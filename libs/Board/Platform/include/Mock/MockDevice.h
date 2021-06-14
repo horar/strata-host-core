@@ -81,7 +81,8 @@ public:
     bool mockSetResponse(MockResponse response);
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
-    void mockSetAsBootloader(bool isBootloader);
+    bool mockSetAsBootloader(bool isBootloader);
+    bool mockCreateMockFirmware(bool createFirmware);
 
 private:
     bool opened_ = false;
