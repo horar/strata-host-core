@@ -31,7 +31,7 @@ Item {
     }
 
     onVisibleChanged: {
-        if(!visible){
+        if (!visible) {
             consoleLogErrorCount = 0
             consoleLogWarningCount = 0
         }
