@@ -291,7 +291,7 @@ Item {
             bottom: parent.bottom
         }
 
-        onJavaScriptConsoleMessage: console.log(message)
+        onJavaScriptConsoleMessage: console.log(message,lineNumber,sourceID)
 
         onHeightChanged: {
             var htmlHeight = height - 16

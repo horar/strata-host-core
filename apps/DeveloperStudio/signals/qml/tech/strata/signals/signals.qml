@@ -68,6 +68,4 @@ QtObject {
       Misc Signal for CVC
     */
     signal loadCVC()
-    signal requestClose(bool isLoggingOut)
-    signal closeFinished(bool isLoggingOut)
 }

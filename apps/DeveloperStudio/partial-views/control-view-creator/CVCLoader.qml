@@ -11,9 +11,6 @@ Loader {
     Layout.fillWidth: true
     active: false
 
-    property bool cvcCloseRequested: false
-    property bool cvcLoggingOut: false
-
     sourceComponent: ControlViewCreator {
         id: controlViewCreator
     }

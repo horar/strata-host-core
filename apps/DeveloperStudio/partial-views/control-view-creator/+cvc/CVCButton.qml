@@ -76,7 +76,9 @@ Rectangle {
                 anchors.fill: parent
 
                 onClicked: {
-                    Signals.requestClose(false)
+                    if (!controlViewCreatorLoader.active || !controlViewCreatorLoader.item.blockWindowClose(function () { controlViewCreatorContainer.visible = false })) {
+                        controlViewCreatorContainer.visible = false
+                    }
                 }
             }
         }
@@ -87,10 +89,6 @@ Rectangle {
 
         onLoadCVC: {
             controlViewCreatorContainer.visible = true
-        }
-
-        onCloseFinished: {
-            controlViewCreatorContainer.visible = false
         }
     }
 }

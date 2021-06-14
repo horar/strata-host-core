@@ -21,7 +21,6 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
-import tech.strata.signals 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -89,7 +88,7 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
-        if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose()) {
+        if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose(function (){mainWindow.close()})) {
             close.accepted = false
             return
         } else {
@@ -230,44 +229,6 @@ SGWidgets.SGMainWindow {
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
-            }
-        }
-    }
-
-    /*
-      This Connections is for
-      a) the cvc blocking a logout state due to unsaved changes
-      b) the cvc executing a logout after the unsaved changes are resolved
-    */
-    Connections {
-        target: Signals
-
-        onRequestClose: {
-            if (controlViewCreatorLoader.active) {
-                controlViewCreatorLoader.cvcCloseRequested = true
-                controlViewCreatorLoader.cvcLoggingOut = isLoggingOut
-                if (controlViewCreatorLoader.item.blockWindowClose() === false) {
-                    Signals.closeFinished(isLoggingOut)
-                }
-            } else {
-               Signals.closeFinished(isLoggingOut)
-            }
-        }
-
-        onCloseFinished: {
-            if (controlViewCreatorLoader.active) {
-                controlViewCreatorLoader.cvcCloseRequested = false
-                controlViewCreatorLoader.active = false
-                let data = {"index": NavigationControl.stack_container_.count-2}
-                NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
-            }
-            if (isLoggingOut) {
-                Signals.logout()
-                PlatformFilters.clearActiveFilters()
-                NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                SessionUtils.logout()
-                PlatformSelection.logout()
-                sdsModel.coreInterface.unregisterClient()
             }
         }
     }
