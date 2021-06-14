@@ -54,6 +54,7 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRectangleContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRectangleContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRadioButtonsContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGRadioButtonsContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonsStripContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGButtonsStripContextMenu.qml</file>
+	<file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGStatusLogBoxContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/SGStatusLogBoxContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml</file>

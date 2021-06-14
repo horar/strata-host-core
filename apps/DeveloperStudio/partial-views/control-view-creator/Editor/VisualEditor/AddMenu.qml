@@ -84,6 +84,10 @@ Popup {
                     text: "Text"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Text/Text.txt"
                 }
+                ListElement {
+                    text: "StatusLogBox"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLogBox/SGStatusLogBox.txt"
+                }
             }
 
             delegate: Button {
