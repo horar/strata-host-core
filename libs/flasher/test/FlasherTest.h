@@ -46,6 +46,8 @@ private slots:
     void flashFirmwareCancelTest();
     void flashBootloaderCancelTest();
 
+    void backupFirmwareTest();
+
 protected slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString);
     void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
@@ -78,6 +80,7 @@ private:
 
     QTemporaryFile fakeFirmware_;
     QTemporaryFile fakeBootloader_;
+    QTemporaryFile fakeFirmwareBackup_;
 
     QString expectedMd5_;
     int expectedChunksCount_ = 0;
