@@ -30,6 +30,13 @@ Item {
         consoleLogs.deselectAll()
     }
 
+    onVisibleChanged: {
+        if(!visible){
+            consoleLogErrorCount = 0
+            consoleLogWarningCount = 0
+        }
+    }
+
     ListView {
         id: consoleLogs
         anchors.fill: parent
