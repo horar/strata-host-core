@@ -1,8 +1,10 @@
 import QtQml 2.12
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.commoncpp 1.0 as CommonCpp
 
 SGWidgets.SGMainWindow {
     id: root

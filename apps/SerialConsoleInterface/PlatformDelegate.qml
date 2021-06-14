@@ -130,6 +130,7 @@ FocusScope {
                 automaticScroll: platformDelegate.automaticScroll
                 disableAllFiltering: platformDelegate.disableAllFiltering
                 filterList: platformDelegate.filterList
+                filterText: messageEditor.text
 
                 onResendMessageRequested: {
                     messageEditor.text = message;
