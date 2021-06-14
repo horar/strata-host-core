@@ -93,7 +93,11 @@ enum class MockResponse {
 
     Start_flash_firmware_invalid,
     Start_flash_firmware_invalid_command,
-    Start_flash_firmware_too_large
+    Start_flash_firmware_too_large,
+
+    Start_backup_firmware_no_fw,
+
+    Backup_firmware_no_fw
 };
 Q_ENUM_NS(MockResponse)
 
@@ -720,6 +724,7 @@ R"({
         }
     }
 })");
+
 
 } // namespace strata::device::test_commands
 }

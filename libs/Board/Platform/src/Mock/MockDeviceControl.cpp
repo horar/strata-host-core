@@ -451,7 +451,9 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
 
 QString MockDeviceControl::getFirmwareValue(const QString placeholder)
 {
-    if (createFirmware_ == false) {
+    if (createFirmware_ == false
+            && response_ != MockResponse::Backup_firmware_no_fw
+            && response_ != MockResponse::Start_backup_firmware_no_fw) { //in case response is set to no_firmware no firmware is provided
         mockCreateMockFirmware(true); //once start_backup_firmware is recieved the mockFirmware is created
     }
     actualChunk_ = 0; //begin of backup_firmware

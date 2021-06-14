@@ -33,12 +33,17 @@ private slots:
     void setFwClassIdWithoutStartApplicationTest();
     //TODO: Add Backup Firmware tests standard & faulty/invalid responses
 
+    void backupFirmwareTest();
+
     // tests faulty/invalid responses
     void startFlashFirmwareInvalidCommandTest();
     void startFlashFirmwareFirmwareTooLargeTest();
     void flashFirmwareResendChunkTest();
     void flashFirmwareMemoryErrorTest();
     void flashFirmwareInvalidCmdSequenceTest();
+
+    void startBackupNoFirmwareTest();
+    void backupNoFirmwareTest();
 
     // tests faulty scenarios
     void disconnectWhileFlashingTest();
@@ -48,8 +53,6 @@ private slots:
 
     void disconnectWhileBackupTest();
     void backupFirmwareCancelTest();
-
-    void backupFirmwareTest();
 
 protected slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString);
