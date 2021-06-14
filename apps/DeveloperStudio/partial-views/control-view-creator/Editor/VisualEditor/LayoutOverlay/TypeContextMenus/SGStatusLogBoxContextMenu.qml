@@ -21,5 +21,4 @@ ColumnLayout {
             contextMenu.close()
         }
     }
-
 }
