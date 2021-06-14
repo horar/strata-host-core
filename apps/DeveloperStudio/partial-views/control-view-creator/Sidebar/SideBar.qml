@@ -12,6 +12,15 @@ import tech.strata.SGFileTabModel 1.0
 Item {
     id: sideBarRoot
 
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+
+        onClicked: {
+            sideBarContextMenu.item.popup()
+        }
+    }
+
     QtQC1.TreeView {
         id: treeView
 
@@ -120,8 +129,15 @@ Item {
 
         onAccepted: {
             if (callerIndex) {
-                treeModel.insertChild(fileUrl, -1, true, callerIndex)
-                callerIndex = null;
+                if (callerIndex === -1) {
+                    createFilePopup.fileAddRequested = true
+                    treeModel.insertChild(fileUrl, -1, true, treeModel.index(callerIndex))
+                    callerIndex = null;
+                } else {
+                    createFilePopup.fileAddRequested = true
+                    treeModel.insertChild(fileUrl, -1, true, callerIndex)
+                    callerIndex = null;
+                }
             }
         }
     }
@@ -142,5 +158,15 @@ Item {
 
         console.error("Project does not have Control.qml at the top level")
         missingControlQml.open();
+    }
+
+    Loader {
+        id: sideBarContextMenu
+        source: "./SideBarContextMenu.qml"
+    }
+
+    CreateFilePopup {
+        id: createFilePopup
+        visible: false
     }
 }
