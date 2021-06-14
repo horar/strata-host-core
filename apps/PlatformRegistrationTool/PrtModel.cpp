@@ -537,7 +537,7 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
 QString PrtModel::resolveConfigFilePath()
 {
     QDir applicationDir(QCoreApplication::applicationDirPath());
-    return applicationDir.filePath("prt-config.ini");
+    return applicationDir.filePath("prt.ini");
 }
 
 void PrtModel::readConfigFile()
