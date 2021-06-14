@@ -3,9 +3,7 @@
 #include <DeviceScanner.h>
 #include <Network/NetworkDevice.h>
 
-#include <QHash>
 #include <QHostAddress>
-#include <QTimer>
 #include <QUdpSocket>
 
 namespace strata::device::scanner

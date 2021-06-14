@@ -1,8 +1,9 @@
 #pragma once
 
-#include <Device.h>
 #include <QHostAddress>
 #include <QTcpSocket>
+
+#include <Device.h>
 
 namespace strata::device
 {
