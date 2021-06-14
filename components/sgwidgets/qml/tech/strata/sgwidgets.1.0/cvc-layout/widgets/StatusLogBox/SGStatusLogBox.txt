@@ -6,9 +6,9 @@
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        showMessageIds: true
         title : "Status Log"
 
+         // appends message to list and returns id of message
         Component.onCompleted: {
            for (let i = 0; i < 10; i++){
                 sgStatusLog_%1.append("Message " + i)
