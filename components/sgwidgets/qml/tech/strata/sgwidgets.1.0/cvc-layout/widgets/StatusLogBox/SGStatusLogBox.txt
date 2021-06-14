@@ -8,7 +8,7 @@
 
         title : "Status Log"
 
-         // appends message to list and returns id of message
+        // appends message to list and returns id of the message
         Component.onCompleted: {
            for (let i = 0; i < 10; i++){
                 sgStatusLog_%1.append("Message " + i)
