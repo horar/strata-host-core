@@ -104,8 +104,9 @@ void NetworkDevice::readMessages()
     int from = 0;
     int end;
     while ((end = data.indexOf('\n', from)) > -1) {
+        ++end;
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
-        from = end + 1;
+        from = end;
         emit messageReceived(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
     }
