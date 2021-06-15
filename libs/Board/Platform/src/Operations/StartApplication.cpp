@@ -36,7 +36,7 @@ void StartApplication::postCommandActions(CommandResult& result, int& status)
     if (currentCommand_ == reqPlatfIdCmdIter_) {
         if (BasePlatformOperation::bootloaderMode() == true) {
             // set status for 'finished' signal
-            status = FIRMWARE_UNABLE_START;
+            status = FIRMWARE_UNABLE_TO_START;
         }
     }
 }

@@ -410,7 +410,7 @@ void Flasher::startApplicationFinished(int status)
         return;
     }
 
-    if (status == operation::FIRMWARE_UNABLE_START) {
+    if (status == operation::FIRMWARE_UNABLE_TO_START) {
         QString errStr(QStringLiteral("Platform firmware is unable to start."));
         qCCritical(logCategoryFlasher) << platform_ << errStr << " Platform remains in bootloader mode.";
         finish(Result::Error, errStr);
