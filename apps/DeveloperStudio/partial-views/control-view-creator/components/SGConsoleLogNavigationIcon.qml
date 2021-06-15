@@ -7,6 +7,8 @@ Rectangle {
     id: errorAndWarningCountDisplay
     anchors.top:parent.top
     anchors.left: parent.left
+    anchors.leftMargin: 5
+    anchors.topMargin: 5
     width: parent.width
     height: width
     radius: 25
