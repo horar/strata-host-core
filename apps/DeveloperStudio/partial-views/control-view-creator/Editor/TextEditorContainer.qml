@@ -293,6 +293,18 @@ Item {
         }
 
         onJavaScriptConsoleMessage: {
+            switch (level) {
+                case WebEngineView.InfoMessageLevel:
+                    console.log(message)
+                    break
+                case WebEngineView.WarningMessageLevel:
+                    console.warn('In ${sourceID} on ${lineNumber}: ${message}')
+                    break
+                case WebEngineView.ErrorMessageLevel:
+                    console.error('In ${sourceID} on ${lineNumber}: ${message}')
+                    break
+            }
+        }
             switch(level){
                 case WebEngineView.InfoMessageLevel:  console.log(message)
                 break;
