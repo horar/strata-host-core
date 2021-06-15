@@ -332,7 +332,10 @@ Item {
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
                 textLoader.setSource(NavigationControl.screens.LOAD_ERROR,
-                            { "error_message": "Failed to load the Monaco Editor: " + webEngine.url, "error_descriptor": "Error while loading editor content: " }
+                    { 
+                    	"error_message": "Failed to load the Monaco Editor: " + webEngine.url, 
+                        "error_descriptor": "Error while loading editor content: " 
+                    }
                 );
             }
         }
