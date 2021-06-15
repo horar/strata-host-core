@@ -167,13 +167,6 @@ namespace strata::platform {
         ControllerType controllerType();
 
         /**
-         * Get bootloader mode property.
-         * @note Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
-         * @return bootloader mode (device property)
-         */
-        bool bootloaderMode();
-
-        /**
          * Check if controller is connected to platform (dongle is connected to board).
          * This method must be called after Identify operation finishes.
          * @return true if controller is connected to platform, false otherwise
@@ -309,6 +302,13 @@ namespace strata::platform {
          * @param inBootloaderMode true if bootloader mode is active, otherwise false
          */
         void setBootloaderMode(bool inBootloaderMode);
+
+        /**
+         * Get bootloader mode property.
+         * @note Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
+         * @return bootloader mode (device property)
+         */
+        bool bootloaderMode();
 
         /**
          * Sets API version property.
