@@ -13,7 +13,7 @@ NetworkDeviceScanner::NetworkDeviceScanner()
 
 NetworkDeviceScanner::~NetworkDeviceScanner()
 {
-    deinit();
+    NetworkDeviceScanner::deinit();
 }
 
 void NetworkDeviceScanner::init()

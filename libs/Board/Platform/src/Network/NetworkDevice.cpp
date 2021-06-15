@@ -16,7 +16,7 @@ NetworkDevice::NetworkDevice(QHostAddress deviceAddress, quint16 tcpPort)
 
 NetworkDevice::~NetworkDevice()
 {
-    close();
+    NetworkDevice::close();
 }
 
 bool NetworkDevice::open()
