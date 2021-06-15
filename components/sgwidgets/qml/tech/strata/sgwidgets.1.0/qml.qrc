@@ -88,5 +88,7 @@
         <file>cvc-layout/widgets/RadioButtons/LayoutRadioButtons.qml</file>
         <file>cvc-layout/widgets/RadioButtons/SGRadioButtons.qml</file>
         <file>cvc-layout/widgets/RadioButtons/SGRadioButtons.txt</file>
+        <file>cvc-layout/widgets/StatusLogBox/LayoutSGStatusLogBox.qml</file>
+        <file>cvc-layout/widgets/StatusLogBox/SGStatusLogBox.txt</file>
     </qresource>
 </RCC>
