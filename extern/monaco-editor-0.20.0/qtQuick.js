@@ -34,6 +34,7 @@ var ids = []
 */
 function registerQmlProvider() {
 
+
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
@@ -97,15 +98,20 @@ function registerQmlProvider() {
 
     runQmlProvider()
 
-    // Component did update
+    // Component did mount and update
     editor.getModel().onDidChangeContent((event) => {
         const model = editor.getModel()
-        fullRange = model.getFullModelRange()
-        topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-        bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
-        // This is where the speed goes down
-        //createMatchingPairs(model)
-        //initializeQtQuick(model)
+        // Mount only
+        if (!isInitialized) {
+            console.log("Mount")
+            fullRange = model.getFullModelRange()
+            topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
+            bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
+            // This is where the speed
+            createMatchingPairs(model) // O(n^3)
+            initializeQtQuick(model) // O(n^3)
+            isInitialized = true
+        }
 
         var getLine = model.getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
@@ -114,10 +120,10 @@ function registerQmlProvider() {
             if (word.includes("//")) {
                 word = word.split("//")[0]
             }
-            var getIdType = model.findPreviousMatch("{", position, false, false)
+            var getIdType = model.findPreviousMatch("{", position, false, false) // O(n)
             var content = model.getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            addCustomIdAndTypes(word, position, type)
+            addCustomIdAndTypes(word, position, type) // O(n)
         } else if (getLine.includes("property") && !getLine.includes("import")) {
             if (getLine.replace("\t", "").split(" ")[1] !== "" && getLine.replace("\t", "").split(" ")[1] !== undefined) {
                 if (getLine.replace("\t", "").split(" ")[2] !== "" && getLine.replace("\t", "").split(" ")[2] !== undefined) {
@@ -130,7 +136,7 @@ function registerQmlProvider() {
                             var getPropertyType = model.findPreviousMatch("{", position, false, false)
                             var content = model.getLineContent(getPropertyType.range.startLineNumber)
                             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-                            addCustomProperties(event.changes[0].range.startLineNumber, type, word)
+                            addCustomProperties(event.changes[0].range.startLineNumber, type, word) // O(n)
                         }
                     }
                 }
@@ -144,7 +150,7 @@ function registerQmlProvider() {
     })
 }
 
-// Component will mount
+// Initialize
 function initEditor() {
     monaco.editor.defineTheme('qmlTheme', {
         base: 'vs',
@@ -168,7 +174,7 @@ function initEditor() {
 
     editor = monaco.editor.create(document.getElementById('container'), {
         value: "",
-        language: 'qml',
+        language: "qml",
         theme: 'qmlTheme',
         formatOnPaste: true,
         formatOnType: true,
@@ -194,8 +200,6 @@ function initEditor() {
     })
 
     registerQmlProvider()
-
-    isInitialized = true
 }
 
 function printCircularJSON(json) {
