@@ -59,7 +59,7 @@ void SerialDevice::initSerialDevice() {
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-bool SerialDevice::open() {
+void SerialDevice::open() {
     bool opened = false;
 
     if (serialPort_->isOpen()) {
@@ -79,7 +79,12 @@ bool SerialDevice::open() {
     }
     connected_ = opened;
 
-    return opened;
+    if (opened) {
+        emit Device::opened();
+    } else
+    {
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open serial port.");
+    }
 }
 
 void SerialDevice::close() {
