@@ -152,6 +152,14 @@ bool SerialDevice::isConnected() const
     return connected_;
 }
 
+void SerialDevice::resetReceiving()
+{
+    if (readBuffer_.empty() == false) {
+        readBuffer_.clear();
+        qCDebug(logCategoryDeviceSerial) << this << "Cleared internal buffer for reading of received messages.";
+    }
+}
+
 Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
     switch (error) {
         case QSerialPort::SerialPortError::NoError :
