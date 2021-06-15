@@ -217,3 +217,4 @@ function printCircularJSON(json) {
     cache = null; // Enable garbage collection
     return retVal;
 }
+

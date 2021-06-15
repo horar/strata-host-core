@@ -47,10 +47,10 @@
         <file>minified/monaco.d.ts</file>
         <file>minified/qtQuick.js</file>
         <file>minified/qtQuickTypes.js</file>
-        <file>minified/components/helper.js</file>
-        <file>minified/components/ids.js</file>
-        <file>minified/components/properties.js</file>
-        <file>minified/components/search.js</file>
+        <file>minified/utils/helper.js</file>
+        <file>minified/utils/ids.js</file>
+        <file>minified/utils/properties.js</file>
+        <file>minified/utils/search.js</file>
         <file>qml.qrc</file>
     </qresource>
 </RCC>
