@@ -224,55 +224,53 @@ namespace strata::platform {
     signals:
         /**
          * Emitted when there is available new message from device.
-         * @param deviceId device ID
          * @param msg message from device
          */
-        void messageReceived(QByteArray deviceId, PlatformMessage msg);
+        void messageReceived(PlatformMessage msg);
 
         /**
          * Emitted when message was written to device.
-         * @param deviceId device ID
-         * @param msg writen raw message to device
+         * @param rawMsg writen raw message to device
          */
-        void messageSent(QByteArray deviceId, QByteArray msg);
+        void messageSent(QByteArray rawMsg);
 
         /**
          * Emitted when error occured during communication on the serial port.
          * @param errCode error code
          * @param errMsg error description
          */
-        void deviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errMsg);
+        void deviceError(device::Device::ErrorCode errCode, QString errMsg);
 
         /**
          * Emitted when device communication channel was opened.
          */
-        void opened(QByteArray deviceId);
+        void opened();
 
         /**
          * Emitted when device communication channel is about to be closed.
          */
-        void aboutToClose(QByteArray deviceId);
+        void aboutToClose();
 
         /**
          * Emitted when device communication channel was closed.
          */
-        void closed(QByteArray deviceId);
+        void closed();
 
         /**
          * Emitted when device is about to be erased from maps and no more operations shall be executed.
          */
-        void terminated(QByteArray deviceId);
+        void terminated();
 
         /**
          * Emitted when device was identified using Identify operation.
-         * @param success true if successfully recognized, otherwise false
+         * @param isRecognized true if successfully recognized, otherwise false
          */
-        void recognized(QByteArray deviceId, bool isRecognized);
+        void recognized(bool isRecognized);
 
         /**
          * Emitted when device receives platform Id changed message.
          */
-        void platformIdChanged(QByteArray deviceId);
+        void platformIdChanged();
 
     private slots:
         void messageReceivedHandler(QByteArray rawMsg);

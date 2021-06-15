@@ -74,7 +74,7 @@ R"(
 );
 
 void Platform::messageReceivedHandler(QByteArray rawMsg) {
-    // re-emit the message first, then validate (for platform_id_changed)
+    // re-emit the message first, then validate for platform_id_changed
 
     PlatformMessage message(rawMsg);
 
@@ -83,23 +83,23 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
             << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
-    emit messageReceived(device_->deviceId(), message);
+    emit messageReceived(message);
 
     if (message.isJsonValidObject()) {
         if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
             qCInfo(logCategoryPlatform) << this << "Received 'platform_id_changed' notification";
 
-            emit platformIdChanged(device_->deviceId());
+            emit platformIdChanged();
         }
     }
 }
 
 void Platform::messageSentHandler(QByteArray rawMsg) {
-    emit messageSent(device_->deviceId(), rawMsg);
+    emit messageSent(rawMsg);
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
-    emit deviceError(device_->deviceId(), errCode, errMsg);
+    emit deviceError(errCode, errMsg);
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
@@ -120,7 +120,7 @@ void Platform::terminate(bool close) {
     if (close) {
         closeDevice(std::chrono::milliseconds::zero());
     }
-    emit terminated(device_->deviceId());
+    emit terminated();
 }
 
 // public method
@@ -147,7 +147,7 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceBusy, errMsg);
+        emit deviceError(device::Device::ErrorCode::DeviceBusy, errMsg);
         return false;
     }
 }
@@ -311,15 +311,15 @@ void Platform::setRecognized(bool isRecognized) {
         QWriteLocker wLock(&propertiesLock_);
         isRecognized_ = isRecognized;
     }
-    emit recognized(device_->deviceId(), isRecognized);
+    emit recognized(isRecognized);
 }
 
 void Platform::openDevice() {
     if (device_->open() == true) {
-        emit opened(device_->deviceId());
+        emit opened();
     } else {
         QString errMsg(QStringLiteral("Unable to open device."));
-        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
+        emit deviceError(device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
         if (retryInterval_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryInterval_.count());
         }
@@ -327,9 +327,9 @@ void Platform::openDevice() {
 }
 
 void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
-    emit aboutToClose(device_->deviceId());
+    emit aboutToClose();
     device_->close();   // can take some time depending on the device type
-    emit closed(device_->deviceId());
+    emit closed();
     if (waitInterval != std::chrono::milliseconds::zero()) {
         reconnectTimer_.start(waitInterval.count());
     }
