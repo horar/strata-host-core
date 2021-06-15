@@ -336,6 +336,8 @@ Item {
                 for (var i = 0; i < consoleModel.count; i++) {
                     consoleModel.get(i).current = false
                 }
+                consoleLogErrorCount = 0
+                consoleLogWarningCount = 0
             }
         }
     }
