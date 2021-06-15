@@ -270,6 +270,7 @@ namespace strata::platform {
         void platformIdChanged(QByteArray deviceId);
 
     private slots:
+        void openedHandler();
         void messageReceivedHandler(QByteArray rawMsg);
         void messageSentHandler(QByteArray rawMsg);
         void deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg);

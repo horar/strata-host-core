@@ -33,6 +33,7 @@ Platform::Platform(const device::DevicePtr& device) :
         throw std::invalid_argument("Missing mandatory device pointer in platform");
     }
 
+    connect(device_.get(), &device::Device::opened, this, &Platform::openedHandler);
     connect(device_.get(), &device::Device::messageReceived, this, &Platform::messageReceivedHandler);
     connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler);
     connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
@@ -99,6 +100,14 @@ void Platform::messageSentHandler(QByteArray rawMsg) {
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+        if (errMsg.isNull() || errMsg.isEmpty()) {
+            errMsg = "Unable to open device.";
+        }
+        if (retryInterval_ != std::chrono::milliseconds::zero()) {
+            reconnectTimer_.start(retryInterval_.count());
+        }
+    }
     emit deviceError(device_->deviceId(), errCode, errMsg);
 }
 
@@ -310,15 +319,11 @@ void Platform::setRecognized(bool isRecognized) {
 }
 
 void Platform::openDevice() {
-    if (device_->open() == true) {
-        emit opened(device_->deviceId());
-    } else {
-        QString errMsg(QStringLiteral("Unable to open device."));
-        emit deviceError(device_->deviceId(), device::Device::ErrorCode::DeviceFailedToOpen, errMsg);
-        if (retryInterval_ != std::chrono::milliseconds::zero()) {
-            reconnectTimer_.start(retryInterval_.count());
-        }
-    }
+    device_->open();
+}
+
+void Platform::openedHandler() {
+    emit opened(device_->deviceId());
 }
 
 void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
