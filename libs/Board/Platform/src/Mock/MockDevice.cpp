@@ -75,6 +75,12 @@ bool MockDevice::isConnected() const
     return opened_;
 }
 
+void MockDevice::resetReceiving()
+{
+    // nothing to do for mock device
+    return;
+}
+
 void MockDevice::mockEmitMessage(const QByteArray& msg)
 {
     emit messageReceived(msg);

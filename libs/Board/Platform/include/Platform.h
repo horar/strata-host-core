@@ -213,6 +213,11 @@ namespace strata::platform {
          */
         bool deviceConnected() const;
 
+        /**
+         * Reset receiving messages from device (clear internel buffers, etc.).
+         */
+        void resetReceiving();
+
         friend QDebug operator<<(QDebug dbg, const Platform* d);
         friend QDebug operator<<(QDebug dbg, const PlatformPtr& d);
 

@@ -232,6 +232,11 @@ bool Platform::deviceConnected() const {
     return device_->isConnected();
 }
 
+void Platform::resetReceiving() {
+    device_->resetReceiving();
+}
+
+
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {
     // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&propertiesLock_);
