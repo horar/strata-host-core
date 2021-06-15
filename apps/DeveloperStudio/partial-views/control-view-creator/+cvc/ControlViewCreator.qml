@@ -189,15 +189,15 @@ Rectangle {
         acceptButtonText: "Save all"
 
         property int unsavedFileCount
-        property var closeCVC
+        property var callbackFunc
 
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 controlViewCreator.openFilesModel.closeAll()
-                closeCVC()
+                callbackFunc()
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
-                closeCVC()
+                callbackFunc()
             }
 
             isConfirmCloseOpen = false
@@ -310,7 +310,7 @@ Rectangle {
         if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
             confirmClosePopup.unsavedFileCount = unsavedCount;
             confirmClosePopup.open();
-            confirmClosePopup.closeCVC = callback
+            confirmClosePopup.callbackFunc = callback
             controlViewCreatorRoot.isConfirmCloseOpen = true;
             return true
         }
