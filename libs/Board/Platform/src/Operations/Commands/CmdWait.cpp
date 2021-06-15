@@ -54,11 +54,11 @@ void CmdWait::setWaitTime(std::chrono::milliseconds waitTime)
     waitTime_ = waitTime;
 }
 
-void CmdWait::deviceErrorOccured(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr)
+void CmdWait::deviceErrorOccured(device::Device::ErrorCode errCode, QString errStr)
 {
     disconnect(platform_.get(), &Platform::deviceError, this, &CmdWait::deviceErrorOccured);
     // responseTimer_ is stopped in BasePlatformCommand::handleDeviceError()
-    BasePlatformCommand::handleDeviceError(deviceId, errCode, errStr);
+    BasePlatformCommand::handleDeviceError(errCode, errStr);
 }
 
 }  // namespace

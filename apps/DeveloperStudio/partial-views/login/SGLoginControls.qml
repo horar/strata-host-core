@@ -299,9 +299,11 @@ Item {
                 connectionStatus.text = ""
                 loginErrorRect.color = "red"
                 if (resultObject.response === "No Connection") {
-                    loginErrorRect.text = "Connection to authentication server failed"
+                    loginErrorRect.text = "Connection to authentication server failed. Please check your internet connection and try again."
+                } else if (resultObject.response === "Server Error") {
+                    loginErrorRect.text = "Authentication server is unable to process your request at this time. Please try again later."
                 } else {
-                    loginErrorRect.text = "Username and/or password is incorrect"
+                    loginErrorRect.text = "Username and/or password is incorrect. Please try again."
                 }
                 loginErrorRect.show()
             }

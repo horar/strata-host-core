@@ -104,8 +104,7 @@ bool DeviceCommand::createSerialDevice() {
     return true;
 }
 
-void DeviceCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr) {
-    Q_UNUSED(deviceId)
+void DeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
 
     if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
@@ -144,9 +143,7 @@ void FlasherCommand::process() {
     platform_->open(DEVICE_CHECK_INTERVAL);
 }
 
-void FlasherCommand::handlePlatformOpened(QByteArray deviceId) {
-    Q_UNUSED(deviceId)
-
+void FlasherCommand::handlePlatformOpened() {
     flasher_ = std::make_unique<Flasher>(platform_, fileName_);
 
     connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result, QString){
@@ -183,9 +180,7 @@ void InfoCommand::process() {
     platform_->open(DEVICE_CHECK_INTERVAL);
 }
 
-void InfoCommand::handlePlatformOpened(QByteArray deviceId) {
-    Q_UNUSED(deviceId)
-
+void InfoCommand::handlePlatformOpened() {
     identifyOperation_ = std::make_unique<platform::operation::Identify>(platform_, false);
 
     connect(identifyOperation_.get(), &platform::operation::BasePlatformOperation::finished,

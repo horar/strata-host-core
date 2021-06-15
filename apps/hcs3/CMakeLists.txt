@@ -160,10 +160,10 @@ if(WIN32)
 endif()
 
 if(NOT APPS_CORESW_HCS_CONFIG)
-    if("hcs_qa.config" IN_LIST APPS_CORESW_HCS_CONFIG_CHOICES)
-        set(APPS_CORESW_HCS_CONFIG "hcs_qa.config" CACHE STRING "Desired HCS configuration file." FORCE)
+    if("qa.config" IN_LIST APPS_CORESW_HCS_CONFIG_CHOICES)
+        set(APPS_CORESW_HCS_CONFIG "qa.config" CACHE STRING "Desired HCS configuration file." FORCE)
     else()
-        set(APPS_CORESW_HCS_CONFIG "hcs_template.config" CACHE STRING "Desired HCS configuration file." FORCE)
+        set(APPS_CORESW_HCS_CONFIG "template.config" CACHE STRING "Desired HCS configuration file." FORCE)
     endif()
 endif()
 

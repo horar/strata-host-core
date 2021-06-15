@@ -101,10 +101,8 @@ bool BasePlatformCommand::logSendMessage() const {
     return true;
 }
 
-void BasePlatformCommand::handleDeviceResponse(QByteArray deviceId, const PlatformMessage message)
+void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
 {
-    Q_UNUSED(deviceId)
-
     if (message.isJsonValidObject() == false) {
         logWrongResponse(message);
         return;
@@ -185,10 +183,8 @@ void BasePlatformCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
-void BasePlatformCommand::handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr)
+void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
-    Q_UNUSED(deviceId)
-
     responseTimer_.stop();
     qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;
 
