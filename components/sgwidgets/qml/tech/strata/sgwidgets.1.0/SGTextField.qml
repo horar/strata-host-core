@@ -305,7 +305,8 @@ TextField {
         id: showSuggestionComponent
 
         SGWidgets.SGIconButton {
-            iconColor: (suggestionPopupLoader.status === Loader.Ready) && (suggestionPopupLoader.item.opened === true) ? "#828282" : "#b2b2b2"
+            rotation: (suggestionPopupLoader.status === Loader.Ready) && (suggestionPopupLoader.item.opened === true) ? 180 : 0
+            iconColor: pressed ? "lightgray" : "darkgray"
             backgroundOnlyOnHovered: false
             highlightImplicitColor: "transparent"
             iconSize: control.background.height - 20
