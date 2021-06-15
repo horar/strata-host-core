@@ -304,7 +304,7 @@ Item {
         id: srcConnection
         target: sdsModel.qtLogger
         onLogMsg: {
-            if(controlViewCreatorRoot.visible && msg){
+            if(controlViewCreatorRoot.visible && editor.visible && msg){
                 consoleModel.append({
                                         time: timestamp(),
                                         type: getMsgType(type),
