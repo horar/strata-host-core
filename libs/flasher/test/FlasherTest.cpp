@@ -891,7 +891,6 @@ void FlasherTest::flashBootloaderCancelTest()
 
 void FlasherTest::backupFirmwareTest()
 {
-    rapidjson::Document actualDoc;
     getExpectedValues(fakeFirmware_.fileName());
     mockDevice_->mockCreateMockFirmware(true);
 
@@ -937,7 +936,6 @@ void FlasherTest::backupFirmwareTest()
 
 void FlasherTest::backupFirmwareWithoutStartApplicationTest()
 {
-    rapidjson::Document actualDoc;
     getExpectedValues(fakeFirmware_.fileName());
     mockDevice_->mockCreateMockFirmware(true);
 
@@ -1040,7 +1038,6 @@ void FlasherTest::disconnectWhileBackupTest()
 
 void FlasherTest::backupFirmwareCancelTest()
 {
-    rapidjson::Document actualDoc;
     getExpectedValues(fakeBootloader_.fileName());
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1073,7 +1070,6 @@ void FlasherTest::backupFirmwareCancelTest()
 
 void FlasherTest::startBackupNoFirmwareTest()
 {
-    rapidjson::Document actualDoc;
     mockDevice_->mockCreateMockFirmware(false);
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1099,7 +1095,6 @@ void FlasherTest::startBackupNoFirmwareTest()
 
 void FlasherTest::backupNoFirmwareTest()
 {
-    rapidjson::Document actualDoc;
     mockDevice_->mockCreateMockFirmware(false);
 
     flasher_ = QSharedPointer<strata::Flasher>(
