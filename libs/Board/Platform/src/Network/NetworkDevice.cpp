@@ -84,6 +84,15 @@ bool NetworkDevice::isConnected() const
     return tcpSocket_->state() == QTcpSocket::ConnectedState;
 }
 
+void NetworkDevice::resetReceiving()
+{
+    if (readBuffer_.empty() == false) {
+        readBuffer_.clear();
+        qCDebug(logCategoryDeviceSerial)
+            << this << "Cleared internal buffer for reading of received messages.";
+    }
+}
+
 void NetworkDevice::readMessages()
 {
     // QTcpSocket::readyRead signal is emitted when there is data ready to read and not when a

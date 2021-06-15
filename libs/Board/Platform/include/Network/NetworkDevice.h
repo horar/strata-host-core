@@ -52,6 +52,11 @@ public:
     virtual bool isConnected() const override;
 
     /**
+     * Reset receiving messages from device (clear internal buffers, etc.).
+     */
+    virtual void resetReceiving() override;
+
+    /**
      * Creates device ID based on it's IP address.
      * @return QByteArray of the generated device ID.
      */
