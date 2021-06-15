@@ -10,7 +10,8 @@ Menu {
                 treeView.expand(styleData.index)
             }
 
-            treeModel.insertChild(false, -1, styleData.index)
+            createFilePopup.directoryPath = model.filepath
+            createFilePopup.open()
             folderContextMenu.dismiss()
         }
     }
