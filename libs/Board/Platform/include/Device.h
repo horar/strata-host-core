@@ -63,10 +63,10 @@ namespace strata::device {
         virtual ~Device();
 
         /**
-         * Open device communication channel.
-         * @return true if device was opened, otherwise false
+         * Open device communication channel. Non-blocking.
+         * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
          */
-        virtual bool open() = 0;
+        virtual void open() = 0;
 
         /**
          * Close device communication channel.
@@ -115,6 +115,11 @@ namespace strata::device {
 
     signals:
         /**
+         * Emitted when device communication channel was opened.
+         */
+        void opened();
+
+        /**
          * Emitted when there is available new message from device.
          * @param msg message from device
          */
@@ -127,7 +132,7 @@ namespace strata::device {
         void messageSent(QByteArray msg);
 
         /**
-         * Emitted when error occured during communication on the serial port.
+         * Emitted when error occured during communication or connection.
          * @param errCode error code
          * @param msg error description
          */
