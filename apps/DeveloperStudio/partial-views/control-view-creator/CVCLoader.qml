@@ -11,8 +11,6 @@ Loader {
     Layout.fillWidth: true
     active: false
 
-    property bool cvcCloseRequested: false
-
     sourceComponent: ControlViewCreator {
         id: controlViewCreator
     }
@@ -23,20 +21,6 @@ Loader {
         onLoadCVC: {
             cvcLoader.active = true
             let data = {"index": NavigationControl.stack_container_.count-1}
-            NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
-        }
-
-        onRequestCVCClose: {
-            cvcLoader.cvcCloseRequested = true
-            if (cvcLoader.item.blockWindowClose() === false){
-                Signals.closeCVC()
-            }
-        }
-
-        onCloseCVC: {
-            cvcLoader.cvcCloseRequested = false
-            cvcLoader.active = false
-            let data = {"index": NavigationControl.stack_container_.count-2}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
     }
