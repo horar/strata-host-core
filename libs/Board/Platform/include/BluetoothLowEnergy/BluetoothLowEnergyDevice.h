@@ -27,10 +27,10 @@ public:
     ~BluetoothLowEnergyDevice() override;
 
     /**
-     * Open device communication channel.
-     * @return true if device was opened, otherwise false
+     * Open device communication channel and discovers services.
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close device communication channel.
