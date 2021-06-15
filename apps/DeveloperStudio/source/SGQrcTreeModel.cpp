@@ -429,15 +429,21 @@ QUrl SGQrcTreeModel::projectDirectory() const
     return projectDir_;
 }
 
-bool SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
+void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        return false;
+        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        return;
     }
 
     SGQrcTreeNode *node = getNode(index);
-    if (!node || qrcItems_.contains(SGUtilsCpp::urlToLocalFile(node->filepath()))) {
-        return false;
+    if (node == nullptr) {
+        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        return;
+    }
+
+    if (qrcItems_.contains(node->filepath().toLocalFile())) {
+        return;
     }
 
     QString relativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(node->filepath()));
@@ -446,25 +452,31 @@ bool SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
     QDomText text = qrcDoc_.createTextNode(relativePath);
     newItem.appendChild(text);
     qresource.appendChild(newItem);
-    qrcItems_.insert(SGUtilsCpp::urlToLocalFile(node->filepath()));
+    qrcItems_.insert(node->filepath().toLocalFile());
     setData(index, true, InQrcRole);
 
     if (save) {
         startSave();
     }
 
-    return true;
+    return;
 }
 
-bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
+void SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        return false;
+        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        return;
     }
 
     SGQrcTreeNode *node = getNode(index);
-    if (!node || !qrcItems_.contains(SGUtilsCpp::urlToLocalFile(node->filepath()))) {
-        return false;
+    if (node == nullptr) {
+        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        return;
+    }
+
+    if (!qrcItems_.contains(node->filepath().toLocalFile())) {
+        return;
     }
 
     QString relativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(node->filepath()));
@@ -473,7 +485,7 @@ bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     for (int i = 0; i < files.count(); i++) {
         if (files.at(i).toElement().text() == relativePath) {
             files.at(i).parentNode().removeChild(files.at(i));
-            qrcItems_.remove(SGUtilsCpp::urlToLocalFile(node->filepath()));
+            qrcItems_.remove(node->filepath().toLocalFile());
             setData(index, false, InQrcRole);
             break;
         }
@@ -482,8 +494,6 @@ bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     if (save) {
         startSave();
     }
-
-    return true;
 }
 
 void SGQrcTreeModel::removeDeletedFilesFromQrc()

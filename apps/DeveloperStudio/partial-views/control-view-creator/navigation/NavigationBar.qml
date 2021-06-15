@@ -94,7 +94,6 @@ Rectangle {
 
             SGConsoleLogNavigationIcon {
                 id: errorDisplayCount
-                height: width
                 width: 22
                 count: consoleLogErrorCount + consoleLogWarningCount
                 type: consoleLogErrorCount > 0 ? "error" : consoleLogWarningCount > 0 ? "warning" : "error"
