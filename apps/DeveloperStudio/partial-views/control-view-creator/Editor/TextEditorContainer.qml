@@ -298,22 +298,14 @@ Item {
                     console.log(message)
                     break
                 case WebEngineView.WarningMessageLevel:
-                    console.warn('In ${sourceID} on ${lineNumber}: ${message}')
+                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
                     break
                 case WebEngineView.ErrorMessageLevel:
-                    console.error('In ${sourceID} on ${lineNumber}: ${message}')
+                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
                     break
             }
         }
-            switch(level){
-                case WebEngineView.InfoMessageLevel:  console.log(message)
-                break;
-                case WebEngineView.WarningMessageLevel: console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                break;
-                case WebEngineView.ErrorMessageLevel: console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                break;
-            }
-        }
+            
 
         onHeightChanged: {
             var htmlHeight = height - 16
