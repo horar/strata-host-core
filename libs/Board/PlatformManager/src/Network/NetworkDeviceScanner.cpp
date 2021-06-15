@@ -136,6 +136,12 @@ bool NetworkDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tc
         return false;
     }
 
+    if (datagramPayload["tcp_port"].toDouble() < 1 ||
+        datagramPayload["tcp_port"].toDouble() > std::numeric_limits<quint16>::max()) {
+        qCDebug(logCategoryDeviceScanner) << "Invalid port range.";
+        return false;
+    }
+
     tcpPort = datagramPayload["tcp_port"].toDouble();
     return true;
 }
