@@ -101,6 +101,13 @@ enum class MockResponse {
 };
 Q_ENUM_NS(MockResponse)
 
+enum class MockFirmware {
+    Default,
+    Enabled,
+    Disabled
+};
+Q_ENUM_NS(MockFirmware)
+
 enum class MockVersion {
     Version_1,
     Version_2

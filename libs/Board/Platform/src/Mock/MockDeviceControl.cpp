@@ -47,6 +47,11 @@ MockVersion MockDeviceControl::mockGetVersion() const
     return version_;
 }
 
+MockFirmware MockDeviceControl::mockGetFirmwareState() const
+{
+    return state_;
+}
+
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
 {
     if (isOpenEnabled_ != enabled) {
@@ -131,19 +136,14 @@ bool MockDeviceControl::mockSetAsBootloader(bool isBootloader)
     return false;
 }
 
-bool MockDeviceControl::mockCreateMockFirmware(bool createFirmware)
+bool MockDeviceControl::mockConfigureMockFirmware(MockFirmware mockFirmwareState)
 {
-    if (createFirmware_ != createFirmware) {
-        createFirmware_ = createFirmware;
-        qCDebug(logCategoryDeviceMock) << "Configured create firmware to" << createFirmware_;
-
-        if (createFirmware_ && mockFirmware_.exists() == false) {
-            createMockFirmware();
-            getExpectedValues(mockFirmware_.fileName());
-        }
+    if (state_ != mockFirmwareState) {
+        state_ = mockFirmwareState;
+        qCDebug(logCategoryDeviceMock) << "Configured mock firmware to" << state_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Create firmware already configured to" << createFirmware_;
+    qCDebug(logCategoryDeviceMock) << "Mock firmware already configured to" << state_;
     return false;
 }
 
@@ -449,27 +449,53 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
     return placeholder;  // fallback, return the value as is
 }
 
+
 QString MockDeviceControl::getFirmwareValue(const QString placeholder)
 {
-    if (createFirmware_ == false
-            && response_ != MockResponse::Backup_firmware_no_fw
-            && response_ != MockResponse::Start_backup_firmware_no_fw) { //in case response is set to no_firmware no firmware is provided
-        mockCreateMockFirmware(true); //once start_backup_firmware is recieved the mockFirmware is created
+    switch (state_) {
+    case MockFirmware::Enabled: {
+        if (mockFirmware_.exists() == false) {
+            createMockFirmware();
+            getExpectedValues(mockFirmware_.fileName());
+        }
+        break;
     }
-    actualChunk_ = 0; //begin of backup_firmware
+    case MockFirmware::Disabled: {
+        removeMockFirmware();
+        break;
+    }
+    default: {
+        if (mockFirmware_.exists() == false) {
+            createMockFirmware();
+            getExpectedValues(mockFirmware_.fileName());
+        }
+        break;
+    }
+    }
 
-    if (placeholder == "firmware.size") {
-        return QString::number(mockFirmware_.size());
-    }
-    if (placeholder == "firmware.chunks") {
-        return QString::number(expectedChunksCount_);
+    if (mockFirmware_.exists()) {
+        actualChunk_ = 0; //begin of backup_firmware
+
+        if (placeholder == "firmware.size") {
+            return QString::number(mockFirmware_.size());
+        }
+        if (placeholder == "firmware.chunks") {
+            return QString::number(expectedChunksCount_);
+        }
+    } else {
+        if (placeholder == "firmware.size") {
+            return QString::number(0);
+        }
+        if (placeholder == "firmware.chunks") {
+            return QString::number(0);
+        }
     }
     return placeholder;  // fallback, return the value as is
 }
 
 QString MockDeviceControl::getChunksValue(const QString placeholder)
 {
-    if (actualChunk_ < expectedChunksCount_ && createFirmware_) {
+    if (actualChunk_ < expectedChunksCount_ && mockFirmware_.exists()) {
         if (payloadCount_ == 4) { //once 4 payloads are recieved(number,size,crc,data) the actual chunks' number iterates
             actualChunk_++;
             payloadCount_ = 0;
@@ -488,7 +514,6 @@ QString MockDeviceControl::getChunksValue(const QString placeholder)
             return expectedChunkData_[actualChunk_];
         }
     } else {
-        createFirmware_ = false;
         if (placeholder == "chunk.number") {
             return QString::number(0);
         }
@@ -589,6 +614,18 @@ void MockDeviceControl::createMockFirmware()
         mockFirmwareOut.flush();
         mockFirmware_.close();
         qCDebug(logCategoryDeviceMock) << "Mock firmware file prepared with the size of" << mockFirmware_.size() << "bytes";
+    }
+}
+
+void MockDeviceControl::removeMockFirmware()
+{
+    if (mockFirmware_.open() == false) {
+        qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware for deletion";
+    } else {
+        mockFirmware_.open();
+        mockFirmware_.resize(0);
+        mockFirmware_.close();
+        qCDebug(logCategoryDeviceMock) << "Mock firmware file removed";
     }
 }
 
