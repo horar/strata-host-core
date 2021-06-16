@@ -293,15 +293,19 @@ Item {
         }
 
         onJavaScriptConsoleMessage: {
-            switch(level){
-                case WebEngineView.InfoMessageLevel:  console.log(message)
-                break;
-                case WebEngineView.WarningMessageLevel: console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                break;
-                case WebEngineView.ErrorMessageLevel: console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                break;
+            switch (level) {
+                case WebEngineView.InfoMessageLevel:
+                    console.log(message)
+                    break
+                case WebEngineView.WarningMessageLevel:
+                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
+                case WebEngineView.ErrorMessageLevel:
+                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
             }
         }
+            
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -331,8 +335,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-                textLoader.setSource(NavigationControl.screens.LOAD_ERROR,
-                            { "error_message": "Failed to load the Monaco Editor: " + webEngine.url, "error_descriptor": "Error while loading editor content: " }
+                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR,
+                    { 
+                    	"error_message": "Monaco Editor component failed to load due to issues in this file: " + webEngine.url, 
+                    }
                 );
             }
         }
