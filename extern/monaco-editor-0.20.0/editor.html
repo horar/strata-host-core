@@ -26,7 +26,6 @@
     <script src="./qtQuickTypes.js" type="text/javascript"></script>
     <script src="./qtQuick.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var fileExtension = "qml"
         new QWebChannel(qt.webChannelTransport, function (channel) {
             // all published objects are available in channel.objects under
             // the identifier set in their attached WebChannel.id property
@@ -72,7 +71,7 @@
         });
 
         if(!isInitialized){
-            setLanguage(fileExtension)
+            registerQmlAsLanguage()
         } else {
             editor.dispose()
         } 

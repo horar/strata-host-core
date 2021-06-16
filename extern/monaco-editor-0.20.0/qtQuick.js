@@ -1064,9 +1064,3 @@ function registerQmlAsLanguage() {
         }
     })
 }
-
-function setLanguage(extension) {
-    if (extension === "qml") {
-        registerQmlAsLanguage()
-    }
-}

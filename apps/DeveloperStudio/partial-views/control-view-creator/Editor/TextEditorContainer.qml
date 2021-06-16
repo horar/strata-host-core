@@ -240,7 +240,6 @@ Item {
         signal setContainerHeight(string height);
         signal setContainerWidth(string width);
         signal resetContainer(string height, string width)
-        signal setLanguage(string extension)
         signal undo();
         signal redo();
 
@@ -311,7 +310,6 @@ Item {
             onVisibilityChanged: {
                 var htmlHeight = webEngine.height - 16
                 var htmlWidth = webEngine.width - 16
-                channelObject.setLanguage(file.substring(file.indexOf(".")+1,file.length).trim())
                 channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
             }
         }
