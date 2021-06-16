@@ -33,8 +33,7 @@ void MockDevice::open()
 
     if (opened_) {
         emit Device::opened();
-    } else
-    {
+    } else {
         emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device.");
     }
 }
