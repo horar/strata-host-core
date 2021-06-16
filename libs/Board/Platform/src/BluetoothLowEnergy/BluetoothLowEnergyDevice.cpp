@@ -140,8 +140,7 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
         qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
         service->writeCharacteristic(characteristic, attribute.data);
         return true;
-    } else
-    {
+    } else {
         QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
         if (descriptor.isValid() == false) {
             qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
@@ -178,8 +177,7 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
         qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
         service->readCharacteristic(characteristic);
         return true;
-    } else
-    {
+    } else {
         return false; // service->readDescriptor doesn't work... Disabling reading of descriptors. TODO investigate
         QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
         if (descriptor.isValid() == false) {

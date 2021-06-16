@@ -82,8 +82,7 @@ void SerialDevice::open() {
 
     if (opened) {
         emit Device::opened();
-    } else
-    {
+    } else {
         emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open serial port.");
     }
 }
@@ -194,8 +193,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
             // board was unconnected from computer (cable was unplugged)
             qCWarning(logCategoryDeviceSerial) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
             connected_ = false;
-        }
-        else {
+        } else {
             qCCritical(logCategoryDeviceSerial) << this << errMsg;
         }
         emit deviceError(translateQSerialPortError(error), serialPort_->errorString());

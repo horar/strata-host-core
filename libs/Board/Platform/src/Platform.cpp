@@ -101,7 +101,7 @@ void Platform::messageSentHandler(QByteArray rawMsg) {
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
     if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
-        if (errMsg.isNull() || errMsg.isEmpty()) {
+        if (errMsg.isEmpty()) {
             errMsg = "Unable to open device.";
         }
         if (retryInterval_ != std::chrono::milliseconds::zero()) {
