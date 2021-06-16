@@ -1,11 +1,11 @@
-#include <Network/NetworkDevice.h>
+#include <Tcp/TcpDevice.h>
 
 #include "logging/LoggingQtCategories.h"
 
 namespace strata::device
 {
-NetworkDevice::NetworkDevice(QHostAddress deviceAddress, quint16 tcpPort)
-    : Device(createDeviceId(deviceAddress), deviceAddress.toString(), Type::NetworkDevice),
+TcpDevice::TcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
+    : Device(createDeviceId(deviceAddress), deviceAddress.toString(), Type::TcpDevice),
       tcpSocket_(new QTcpSocket(this)),
       deviceAddress_(deviceAddress),
       isConnected_(false),
@@ -14,19 +14,19 @@ NetworkDevice::NetworkDevice(QHostAddress deviceAddress, quint16 tcpPort)
     readBuffer_.reserve(READ_BUFFER_SIZE);
 }
 
-NetworkDevice::~NetworkDevice()
+TcpDevice::~TcpDevice()
 {
-    NetworkDevice::close();
+    TcpDevice::close();
 }
 
-bool NetworkDevice::open()
+bool TcpDevice::open()
 {
-    qDebug(logCategoryDeviceNetwork).nospace()
-        << this << "Connecting network device:" << deviceId_ << ", IP:" << deviceAddress_.toString()
+    qDebug(logCategoryDeviceTcp).nospace()
+        << this << "Connecting TCP device:" << deviceId_ << ", IP:" << deviceAddress_.toString()
         << " Port:" << tcpPort_;
 
     if (tcpSocket_->isOpen()) {
-        qCDebug(logCategoryDeviceNetwork) << this << "TCP socket already open.";
+        qCDebug(logCategoryDeviceTcp) << this << "TCP socket already open.";
         return true;
     }
 
@@ -34,24 +34,24 @@ bool NetworkDevice::open()
 
     if (false == tcpSocket_->waitForConnected(TCP_CONNECT_TIMEOUT)) {
         QString errorString(QStringLiteral("Connecting to platfrom timed-out."));
-        qCDebug(logCategoryDeviceNetwork) << errorString;
+        qCDebug(logCategoryDeviceTcp) << errorString;
         tcpSocket_->close();
         emit deviceError(ErrorCode::DeviceFailedToOpen, errorString);
         return false;
     }
 
-    connect(tcpSocket_.get(), &QTcpSocket::readyRead, this, &NetworkDevice::readMessages);
+    connect(tcpSocket_.get(), &QTcpSocket::readyRead, this, &TcpDevice::readMessages);
     connect(tcpSocket_.get(), &QTcpSocket::disconnected, this,
-            &NetworkDevice::deviceDiconnectedHandler);
+            &TcpDevice::deviceDiconnectedHandler);
     connect(tcpSocket_.get(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
-            this, &NetworkDevice::handleError);
+            this, &TcpDevice::handleError);
     return true;
 }
 
-void NetworkDevice::close()
+void TcpDevice::close()
 {
-    qCDebug(logCategoryDeviceNetwork)
-        << this << "Disconnecting from network device:" << deviceId_
+    qCDebug(logCategoryDeviceTcp)
+        << this << "Disconnecting from tcp device:" << deviceId_
         << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
 
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
@@ -60,7 +60,7 @@ void NetworkDevice::close()
     }
 }
 
-bool NetworkDevice::sendMessage(const QByteArray &message)
+bool TcpDevice::sendMessage(const QByteArray &message)
 {
     if (false == message.endsWith('\n')) {
         tcpSocket_->write(message + '\n');
@@ -70,7 +70,7 @@ bool NetworkDevice::sendMessage(const QByteArray &message)
 
     if (false == tcpSocket_->flush()) {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceNetwork) << this << errMsg;
+        qCCritical(logCategoryDeviceTcp) << this << errMsg;
         emit deviceError(ErrorCode::DeviceError, errMsg);
         return false;
     }
@@ -79,12 +79,12 @@ bool NetworkDevice::sendMessage(const QByteArray &message)
     return true;
 }
 
-bool NetworkDevice::isConnected() const
+bool TcpDevice::isConnected() const
 {
     return tcpSocket_->state() == QTcpSocket::ConnectedState;
 }
 
-void NetworkDevice::resetReceiving()
+void TcpDevice::resetReceiving()
 {
     if (readBuffer_.empty() == false) {
         readBuffer_.clear();
@@ -93,7 +93,7 @@ void NetworkDevice::resetReceiving()
     }
 }
 
-void NetworkDevice::readMessages()
+void TcpDevice::readMessages()
 {
     // QTcpSocket::readyRead signal is emitted when there is data ready to read and not when a
     // complete message is received. As a result we need a buffer to hold the data until the
@@ -116,20 +116,20 @@ void NetworkDevice::readMessages()
     }
 }
 
-void NetworkDevice::handleError(QAbstractSocket::SocketError socketError)
+void TcpDevice::handleError(QAbstractSocket::SocketError socketError)
 {
     Q_UNUSED(socketError);
     emit deviceError(ErrorCode::DeviceError, tcpSocket_->errorString());
 }
 
-void NetworkDevice::deviceDiconnectedHandler()
+void TcpDevice::deviceDiconnectedHandler()
 {
-    qCDebug(logCategoryDeviceNetwork)
-        << "Disconnected from network device address" << deviceAddress_.toString();
+    qCDebug(logCategoryDeviceTcp)
+        << "Disconnected from tcp device address" << deviceAddress_.toString();
     emit deviceDisconnected();
 }
 
-QByteArray NetworkDevice::createDeviceId(QHostAddress hostAddress)
+QByteArray TcpDevice::createDeviceId(QHostAddress hostAddress)
 {
     return QByteArray('n' + QByteArray::number(qHash(hostAddress.toString()), 16));
 }

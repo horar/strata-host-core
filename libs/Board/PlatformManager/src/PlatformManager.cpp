@@ -4,7 +4,7 @@
 
 #include <Serial/SerialDeviceScanner.h>
 #include <Mock/MockDeviceScanner.h>
-#include <Network/NetworkDeviceScanner.h>
+#include <Tcp/TcpDeviceScanner.h>
 
 namespace strata {
 
@@ -15,7 +15,7 @@ using device::scanner::DeviceScanner;
 using device::scanner::DeviceScannerPtr;
 using device::scanner::MockDeviceScanner;
 using device::scanner::SerialDeviceScanner;
-using device::scanner::NetworkDeviceScanner;
+using device::scanner::TcpDeviceScanner;
 
 namespace operation = platform::operation;
 
@@ -50,8 +50,8 @@ void PlatformManager::init(Device::Type scannerType) {
     case Device::Type::MockDevice: {
         scanner = std::make_shared<MockDeviceScanner>();
     } break;
-    case Device::Type::NetworkDevice: {
-        scanner = std::make_shared<NetworkDeviceScanner>();
+    case Device::Type::TcpDevice: {
+        scanner = std::make_shared<TcpDeviceScanner>();
     } break;
     default: {
         qCCritical(logCategoryPlatformManager) << "Invalid DeviceScanner type:" << scannerType;

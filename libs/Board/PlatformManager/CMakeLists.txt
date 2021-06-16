@@ -14,14 +14,14 @@ add_library(${PROJECT_NAME}
     src/logging/LoggingQtCategories.cpp
     src/Serial/SerialDeviceScanner.cpp
     src/Mock/MockDeviceScanner.cpp
-    src/Network/NetworkDeviceScanner.cpp
+    src/Tcp/TcpDeviceScanner.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/PlatformManager.h
     include/DeviceScanner.h
     include/Serial/SerialDeviceScanner.h
     include/Mock/MockDeviceScanner.h
-    include/Network/NetworkDeviceScanner.h
+    include/Tcp/TcpDeviceScanner.h
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -30,7 +30,7 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Serial
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Mock
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Network
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Tcp
 )
 
 target_link_libraries(${PROJECT_NAME}

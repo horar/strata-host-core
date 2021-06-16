@@ -1,28 +1,28 @@
 #pragma once
 
 #include <DeviceScanner.h>
-#include <Network/NetworkDevice.h>
+#include <Tcp/TcpDevice.h>
 
 #include <QHostAddress>
 #include <QUdpSocket>
 
 namespace strata::device::scanner
 {
-class NetworkDeviceScanner : public DeviceScanner
+class TcpDeviceScanner : public DeviceScanner
 {
     Q_OBJECT;
-    Q_DISABLE_COPY(NetworkDeviceScanner);
+    Q_DISABLE_COPY(TcpDeviceScanner);
 
 public:
     /**
-     * NetworkDeviceScanner constructor
+     * TcpDeviceScanner constructor
      */
-    NetworkDeviceScanner();
+    TcpDeviceScanner();
 
     /**
-     * NetworkDeviceScanner destructor
+     * TcpDeviceScanner destructor
      */
-    ~NetworkDeviceScanner();
+    ~TcpDeviceScanner();
 
     /**
      * Start scanning for new devices.
@@ -39,7 +39,7 @@ private slots:
     void deviceDisconnectedHandler();
 
 private:
-    bool addNetworkDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    bool addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;

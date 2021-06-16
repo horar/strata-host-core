@@ -1,4 +1,4 @@
-#include <Network/NetworkDeviceScanner.h>
+#include <Tcp/TcpDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
@@ -6,27 +6,27 @@
 
 namespace strata::device::scanner
 {
-NetworkDeviceScanner::NetworkDeviceScanner()
-    : DeviceScanner(Device::Type::NetworkDevice), udpSocket_(new QUdpSocket(this))
+TcpDeviceScanner::TcpDeviceScanner()
+    : DeviceScanner(Device::Type::TcpDevice), udpSocket_(new QUdpSocket(this))
 {
 }
 
-NetworkDeviceScanner::~NetworkDeviceScanner()
+TcpDeviceScanner::~TcpDeviceScanner()
 {
-    NetworkDeviceScanner::deinit();
+    TcpDeviceScanner::deinit();
 }
 
-void NetworkDeviceScanner::init()
+void TcpDeviceScanner::init()
 {
     if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
         qCCritical(logCategoryDeviceScanner) << "Failed to bind UDP socket to" << UDP_LISTEN_PORT;
         return;
     }
     connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
-            &NetworkDeviceScanner::processPendingDatagrams);
+            &TcpDeviceScanner::processPendingDatagrams);
 }
 
-void NetworkDeviceScanner::deinit()
+void TcpDeviceScanner::deinit()
 {
     for (const auto &deviceId : discoveredDevices_) {
         emit deviceLost(deviceId);
@@ -37,7 +37,7 @@ void NetworkDeviceScanner::deinit()
     disconnect(udpSocket_.get(), nullptr, this, nullptr);
 }
 
-void NetworkDeviceScanner::processPendingDatagrams()
+void TcpDeviceScanner::processPendingDatagrams()
 {
     QByteArray buffer;
     QHostAddress clientAddress;
@@ -48,35 +48,35 @@ void NetworkDeviceScanner::processPendingDatagrams()
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
             if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
-                          NetworkDevice::createDeviceId(clientAddress)) !=
+                          TcpDevice::createDeviceId(clientAddress)) !=
                 discoveredDevices_.end()) {
                 qCCritical(logCategoryDeviceScanner)
-                    << "Network device" << clientAddress.toString() << "already discovered";
+                    << "Tcp device" << clientAddress.toString() << "already discovered";
                 return;
             }
 
             qCDebug(logCategoryDeviceScanner)
                 << "Discovered new platfrom. IP:" << clientAddress.toString()
                 << ", TCP port:" << tcpPort;
-            addNetworkDevice(clientAddress, tcpPort);
+            addTcpDevice(clientAddress, tcpPort);
         }
     }
 }
 
-bool NetworkDeviceScanner::addNetworkDevice(QHostAddress deviceAddress, quint16 tcpPort)
+bool TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
 {
-    DevicePtr device = std::make_shared<NetworkDevice>(deviceAddress, tcpPort);
+    DevicePtr device = std::make_shared<TcpDevice>(deviceAddress, tcpPort);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    connect(dynamic_cast<device::NetworkDevice *>(device.get()), &NetworkDevice::deviceDisconnected,
-            this, &NetworkDeviceScanner::deviceDisconnectedHandler);
+    connect(dynamic_cast<device::TcpDevice *>(device.get()), &TcpDevice::deviceDisconnected,
+            this, &TcpDeviceScanner::deviceDisconnectedHandler);
 
     discoveredDevices_.push_back(device->deviceId());
     emit deviceDetected(platform);
     return true;
 }
 
-void NetworkDeviceScanner::deviceDisconnectedHandler()
+void TcpDeviceScanner::deviceDisconnectedHandler()
 {
     qCDebug(logCategoryDeviceScanner) << "device disconnected. removing from the list.";
     Device *device = qobject_cast<Device *>(QObject::sender());
@@ -96,7 +96,7 @@ void NetworkDeviceScanner::deviceDisconnectedHandler()
     emit deviceLost(deviceId);
 }
 
-bool NetworkDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
+bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
 {
     // {
     //     "notification": {

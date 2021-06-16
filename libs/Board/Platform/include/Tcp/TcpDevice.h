@@ -7,25 +7,25 @@
 
 namespace strata::device
 {
-class NetworkDevice : public Device
+class TcpDevice : public Device
 {
     Q_OBJECT
-    Q_DISABLE_COPY(NetworkDevice)
+    Q_DISABLE_COPY(TcpDevice)
 
 public:
     typedef std::unique_ptr<QTcpSocket> socketPtr;
 
     /**
-     * NetworkDevice constructor
-     * @param deviceAddress IP address of the network device.
-     * @param tcpPort TCP port of the network device.
+     * TcpDevice constructor
+     * @param deviceAddress IP address of the tcp device.
+     * @param tcpPort Open tcp port of the device.
      */
-    NetworkDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    TcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
 
     /**
-     * NetworkDevice destructor.
+     * TcpDevice destructor.
      */
-    ~NetworkDevice() override;
+    ~TcpDevice() override;
 
     /**
      * Open TCP socket.
@@ -39,14 +39,14 @@ public:
     virtual void close() override;
 
     /**
-     * Send message to network device. Emits deviceError in case of failure.
+     * Send message asynchronously to tcp device. Emits deviceError in case of failure.
      * @param data message to be written to device
      * @return true if message can be sent, otherwise false
      */
     virtual bool sendMessage(const QByteArray &message) override;
 
     /**
-     * return the status of the TCP socket to the network device.
+     * return the status of the tcp device.
      * @return true if device is connected, otherwise false
      */
     virtual bool isConnected() const override;
