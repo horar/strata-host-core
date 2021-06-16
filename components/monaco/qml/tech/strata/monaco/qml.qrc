@@ -51,6 +51,7 @@
         <file>minified/utils/ids.js</file>
         <file>minified/utils/properties.js</file>
         <file>minified/utils/search.js</file>
+        <file>minified/utils/suggestions.js</file>
         <file>qml.qrc</file>
     </qresource>
 </RCC>
