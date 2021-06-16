@@ -59,17 +59,14 @@
                 editor.trigger('redoClicked', 'redo');
             });
 
-            link.setLanguage.connect(function (extension) {
-                fileExtension = extension
-            })
-
             editor.getModel().onDidChangeContent((event) => {
                 link.fileText = editor.getValue();
                 link.setVersionId(editor.getModel().getAlternativeVersionId());
                 
             });
         });
-
+    </script>
+    <script>
         if(!isInitialized){
             registerQmlAsLanguage()
         } else {
