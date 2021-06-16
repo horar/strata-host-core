@@ -50,9 +50,8 @@ bool TcpDevice::open()
 
 void TcpDevice::close()
 {
-    qCDebug(logCategoryDeviceTcp)
-        << this << "Disconnecting from tcp device:" << deviceId_
-        << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
+    qCDebug(logCategoryDeviceTcp) << this << "Disconnecting from tcp device:" << deviceId_
+                                  << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
 
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {
@@ -62,13 +61,7 @@ void TcpDevice::close()
 
 bool TcpDevice::sendMessage(const QByteArray &message)
 {
-    if (false == message.endsWith('\n')) {
-        tcpSocket_->write(message + '\n');
-    } else {
-        tcpSocket_->write(message);
-    }
-
-    if (false == tcpSocket_->flush()) {
+    if (tcpSocket_->write(message) != message.size() || false == tcpSocket_->flush()) {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceTcp) << this << errMsg;
         emit deviceError(ErrorCode::DeviceError, errMsg);
@@ -124,8 +117,8 @@ void TcpDevice::handleError(QAbstractSocket::SocketError socketError)
 
 void TcpDevice::deviceDiconnectedHandler()
 {
-    qCDebug(logCategoryDeviceTcp)
-        << "Disconnected from tcp device address" << deviceAddress_.toString();
+    qCDebug(logCategoryDeviceTcp) << "Disconnected from tcp device address"
+                                  << deviceAddress_.toString();
     emit deviceDisconnected();
 }
 
