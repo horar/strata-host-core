@@ -39,7 +39,7 @@ public:
     virtual void close() override;
 
     /**
-     * Send message asynchronously to tcp device. Emits deviceError in case of failure.
+     * Send message asynchronously to tcp device. Emits messageSent.
      * @param data message to be written to device
      * @return true if message can be sent, otherwise false
      */

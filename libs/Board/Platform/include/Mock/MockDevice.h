@@ -42,7 +42,7 @@ public:
     static QByteArray createDeviceId(const QString& mockName);
 
     /**
-     * Send message to mock device.
+     * Send message to mock device. Emits messageSent.
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false
      */

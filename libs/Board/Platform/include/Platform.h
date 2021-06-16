@@ -92,7 +92,7 @@ namespace strata::platform {
 
         /**
          * Send message to device (public).
-         * Emits deviceError() signal in case of failure.
+         * Emits messageSent() signal.
          * @param message message to be written to device
          * @return true if message can be sent, false otherwise
          */
@@ -222,17 +222,18 @@ namespace strata::platform {
         void messageReceived(PlatformMessage msg);
 
         /**
-         * Emitted when message was written to device.
+         * Emitted when message was written to device or some problem occured and message cannot be written.
          * @param rawMsg writen raw message to device
+         * @param errStr error string if message cannot be sent, empty (null) when everything is OK
          */
-        void messageSent(QByteArray rawMsg);
+        void messageSent(QByteArray rawMsg, QString errStr);
 
         /**
          * Emitted when error occured during communication on the serial port.
          * @param errCode error code
-         * @param errMsg error description
+         * @param errStr error description
          */
-        void deviceError(device::Device::ErrorCode errCode, QString errMsg);
+        void deviceError(device::Device::ErrorCode errCode, QString errStr);
 
         /**
          * Emitted when device communication channel was opened.
@@ -268,8 +269,8 @@ namespace strata::platform {
     private slots:
         void openedHandler();
         void messageReceivedHandler(QByteArray rawMsg);
-        void messageSentHandler(QByteArray rawMsg);
-        void deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg);
+        void messageSentHandler(QByteArray rawMsg, QString errStr);
+        void deviceErrorHandler(device::Device::ErrorCode errCode, QString errStr);
 
     private:
       // *** functions used by friend classes BasePlatformOperation and BasePlatformCommand:

@@ -298,9 +298,16 @@ void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage mes
     filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray rawMessage)
+void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, QString errorString)
 {
-    scrollbackModel_->append(rawMessage, true);
+    if (errorString.isEmpty()) {
+        scrollbackModel_->append(rawMessage, true);
+    } else {
+        // TODO: handle this situation, task for it is CS-2028
+
+        qCWarning(logCategorySci) << platform_ << "Error '" << errorString
+            << "' occured while sending message '" << rawMessage << '\'';
+    }
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)

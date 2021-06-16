@@ -95,20 +95,20 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
     }
 }
 
-void Platform::messageSentHandler(QByteArray rawMsg) {
-    emit messageSent(rawMsg);
+void Platform::messageSentHandler(QByteArray rawMsg, QString errStr) {
+    emit messageSent(rawMsg, errStr);
 }
 
-void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
+void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errStr) {
     if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
-        if (errMsg.isEmpty()) {
-            errMsg = "Unable to open device.";
+        if (errStr.isEmpty()) {
+            errStr = "Unable to open device.";
         }
         if (retryInterval_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryInterval_.count());
         }
     }
-    emit deviceError(errCode, errMsg);
+    emit deviceError(errCode, errStr);
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
@@ -139,7 +139,12 @@ bool Platform::sendMessage(const QByteArray& message) {
 
 // private method
 bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+    // Strata commands must end with new line character ('\n')
     QByteArray msgToWrite(message);
+    if (msgToWrite.endsWith('\n') == false) {
+        msgToWrite.append('\n');
+    }
+
     bool canWrite = false;
     {
         QMutexLocker lock(&operationMutex_);
@@ -148,15 +153,11 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
         }
     }
     if (canWrite) {
-        // Strata commands must end with new line character ('\n')
-        if (msgToWrite.endsWith('\n') == false) {
-            msgToWrite.append('\n');
-        }
         return device_->sendMessage(msgToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device::Device::ErrorCode::DeviceBusy, errMsg);
+        emit device_->messageSent(msgToWrite, errMsg);
         return false;
     }
 }

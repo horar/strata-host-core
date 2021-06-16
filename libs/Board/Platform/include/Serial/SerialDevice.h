@@ -64,7 +64,7 @@ public:
     static QByteArray createDeviceId(const QString& portName);
 
     /**
-     * Send message to serial device. Emits deviceError in case of failure.
+     * Send message to serial device. Emits messageSent.
      * @param data message to be written to device
      * @return true if message can be sent, otherwise false
      */

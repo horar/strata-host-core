@@ -127,10 +127,11 @@ namespace strata::device {
         void messageReceived(QByteArray msg);
 
         /**
-         * Emitted when message was written to device.
+         * Emitted when message was written to device or some problem occured and message cannot be written.
          * @param msg writen message to device
+         * @param errStr error string if message cannot be sent, empty (null) when everything is OK
          */
-        void messageSent(QByteArray msg);
+        void messageSent(QByteArray msg, QString errStr);
 
         /**
          * Emitted when error occured during communication or connection.

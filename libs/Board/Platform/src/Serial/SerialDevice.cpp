@@ -141,12 +141,12 @@ bool SerialDevice::sendMessage(const QByteArray& data) {
     // "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs.
 
     if (serialPort_->write(data) == data.size()) {
-        emit messageSent(data);
+        emit messageSent(data, QString());
         return true;
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
+        emit messageSent(data, errMsg);
         return false;
     }
 }
