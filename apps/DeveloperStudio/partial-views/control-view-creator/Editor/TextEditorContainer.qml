@@ -335,7 +335,7 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-                textLoader.setSource(NavigationControl.screens.LOAD_ERROR,
+                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR,
                     { 
                     	"error_message": "Monaco Editor component failed to load due to issues in this file: " + webEngine.url, 
                     }
