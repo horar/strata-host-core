@@ -28,9 +28,6 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
-
-    configs/prt-config-prod.ini
-    configs/prt-config-qa.ini
 )
 
 generate_app_version(GITTAG_PREFIX "prt_" MACBUNDLE ON)
@@ -106,31 +103,29 @@ if(WIN32)
     endif()
 endif()
 
-# deploy desired config file into side-by-side to compiled binary/bundle
-set(PRT_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/configs)
+set(PRT_CONFIG_PATHS_LIST)
+
+if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/prt")
+    list(APPEND PRT_CONFIG_PATHS_LIST ${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/prt)
+endif()
+list(APPEND PRT_CONFIG_PATHS_LIST ${CMAKE_HOME_DIRECTORY}/assets/config/prt)
+
+find_all_config_files("${PRT_CONFIG_PATHS_LIST}" "*.ini" APPS_TOOLBOX_PRT_CONFIG_CHOICES)
 
 if(NOT APPS_TOOLBOX_PRT_CONFIG)
-    set(APPS_TOOLBOX_PRT_CONFIG prt-config-qa.ini CACHE STRING "Desired PRT configuration file." FORCE)
-    message(STATUS "Defaulting 'APPS_TOOLBOX_PRT_CONFIG' to ${APPS_TOOLBOX_PRT_CONFIG}.")
+    if("qa.ini" IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
+        set(APPS_TOOLBOX_PRT_CONFIG "qa.ini" CACHE STRING "Desired PRT configuration file." FORCE)
+    else()
+        set(APPS_TOOLBOX_PRT_CONFIG "template.ini" CACHE STRING "Desired PRT configuration file." FORCE)
+    endif()
 endif()
-file(GLOB APPS_TOOLBOX_PRT_CONFIG_CHOICES
-    RELATIVE ${PRT_CONFIG_LOCATION}
-    ${PRT_CONFIG_LOCATION}/prt-*.ini
-)
+
 set_property(CACHE APPS_TOOLBOX_PRT_CONFIG PROPERTY STRINGS ${APPS_TOOLBOX_PRT_CONFIG_CHOICES})
 if(NOT APPS_TOOLBOX_PRT_CONFIG IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
-    message(FATAL_ERROR "Specify 'APPS_TOOLBOX_PRT_CONFIG_CHOICES'. Must be one of ${APPS_TOOLBOX_PRT_CONFIG_CHOICES}")
+    message(FATAL_ERROR "Specify 'APPS_TOOLBOX_PRT_CONFIG'. Must be one of ${APPS_TOOLBOX_PRT_CONFIG_CHOICES}")
 endif()
-add_custom_command(
-    TARGET ${PROJECT_NAME}
-    POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-        ${PRT_CONFIG_LOCATION}/${APPS_TOOLBOX_PRT_CONFIG}
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/prt-config.ini
-    COMMENT "Deploying config file ${APPS_TOOLBOX_PRT_CONFIG} as 'prt-config.ini'"
-    VERBATIM
-)
+
+deploy_config_file("${PRT_CONFIG_PATHS_LIST}" ${APPS_TOOLBOX_PRT_CONFIG} "prt.ini")
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS

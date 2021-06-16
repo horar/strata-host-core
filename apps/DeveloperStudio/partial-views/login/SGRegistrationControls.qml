@@ -36,7 +36,7 @@ Item {
 
         SGNotificationToast {
             id: alertRect
-            Layout.preferredWidth: fieldGrid.width * 0.75
+            Layout.preferredWidth: fieldGrid.width
         }
 
         RowLayout {
@@ -45,14 +45,14 @@ Item {
             ValidationField {
                 id: firstNameField
                 placeholderText: "First Name"
-                valid: text !== ""
+                valid: text.match(/\S/)
                 Layout.preferredWidth: 50
             }
 
             ValidationField {
                 id: lastNameField
                 placeholderText: "Last Name"
-                valid: text !== ""
+                valid: text.match(/\S/)
                 Layout.preferredWidth: 50
             }
         }
@@ -61,7 +61,7 @@ Item {
             id: companyField
             placeholderText: "Company"
             Layout.fillWidth: true
-            valid: text !== ""
+            valid: text.match(/\S/)
         }
 
         ValidationField {
@@ -337,11 +337,13 @@ Item {
             } else {
                 alertRect.color = "red"
                 if (result === "No Connection") {
-                    alertRect.text = "Connection to registration server failed"
+                    alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
+                } else if (result === "Server Error") {
+                    alertRect.text = "Registration server is unable to process your request at this time. Please try again later."
                 } else if (result === "Account already exists for this email address") {
-                    alertRect.text = "Account already exists for this email address"
+                    alertRect.text = "Account already exists for this email address."
                 } else {
-                    alertRect.text = "Registration server did not create user account"
+                    alertRect.text = "Registration server was not able to create user account. Please verify your input and try again."
                 }
             }
             alertRect.show()

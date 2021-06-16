@@ -21,7 +21,7 @@ function(deploy_config_file PATHS_LIST CONFIG_FILE_NAME TARGET_CONFIG_NAME)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CONFIG_ABSOLUTE_PATH}
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_CONFIG_NAME}
-        COMMENT "Deploying '${TARGET_CONFIG_NAME}'..."
+        COMMENT "Deploying '${CONFIG_FILE_NAME}' as '${TARGET_CONFIG_NAME}'..."
         VERBATIM
     )
     unset(CONFIG_ABSOLUTE_PATH CACHE)

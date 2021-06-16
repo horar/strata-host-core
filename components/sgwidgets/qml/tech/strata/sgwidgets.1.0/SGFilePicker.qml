@@ -67,8 +67,9 @@ FocusScope {
         focus: true
         textFieldSuggestionDelegateRemovable: true
         textFieldSuggestionCloseWithArrowKey: true
+        textFieldSuggestionCloseOnMouseSelection: true
         textFieldSuggestionMaxHeight: 200
-        textFieldRightIconSource: suggestionListModel ? "qrc:/sgimages/chevron-down.svg" : ""
+        textFieldShowSuggestionButton: suggestionListModel ? true : false
 
         onTextFieldSuggestionDelegateSelected: {
             text = filePicker.textRoleValue(index)

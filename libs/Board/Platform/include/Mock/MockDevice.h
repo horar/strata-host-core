@@ -55,6 +55,11 @@ public:
      */
     virtual bool isConnected() const override;
 
+    /**
+     * Reset receiving messages from device - this method does nothing for mock device.
+     */
+    virtual void resetReceiving() override;
+
     // commands to control mock device behavior
 
     void mockEmitMessage(const QByteArray& msg);
@@ -81,7 +86,8 @@ public:
     bool mockSetResponse(MockResponse response);
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
-    void mockSetAsBootloader(bool isBootloader);
+    bool mockSetAsBootloader(bool isBootloader);
+    bool mockCreateMockFirmware(bool createFirmware);
 
 private:
     bool opened_ = false;
