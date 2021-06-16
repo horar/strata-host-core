@@ -24,6 +24,7 @@ TextField {
     property bool contextMenuEnabled: false
 
     /* properties for suggestion list */
+    property bool showSuggestionButton: false
     property variant suggestionListModel
     property Component suggestionListDelegate
     property string suggestionModelTextRole
@@ -31,6 +32,7 @@ TextField {
     property string suggestionEmptyModelText: "No Suggestion"
     property string suggestionHeaderText
     property bool suggestionCloseWithArrowKey: false
+    property bool suggestionCloseOnMouseSelection: false
     property bool suggestionOpenWithAnyKey: true
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
@@ -45,6 +47,7 @@ TextField {
     property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
                                  || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
                                  || (clearButtonLoader !== null && clearButtonLoader.status === Loader.Ready)
+                                 || (showSuggestionLoader !== null && showSuggestionLoader.status === Loader.Ready)
                                  || (rightIconItem !== null && rightIconItem.source)
 
     property bool revealPassword: false
@@ -201,6 +204,12 @@ TextField {
                 sourceComponent: passwordMode ? revealPasswordComponent : undefined
             }
 
+            Loader {
+                id: showSuggestionLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: (showSuggestionButton && (suggestionListModel !== undefined)) ? showSuggestionComponent : undefined
+            }
+
             SGWidgets.SGIcon {
                 id: rightIconItem
                 anchors.verticalCenter: parent.verticalCenter
@@ -221,6 +230,7 @@ TextField {
         id: suggestionListComponent
 
         SGWidgets.SGSuggestionPopup {
+            parent: control
             textEditor: control
             model: suggestionListModel
             delegate: control.suggestionListDelegate ? control.suggestionListDelegate : implicitDelegate
@@ -230,6 +240,7 @@ TextField {
             emptyModelText: suggestionEmptyModelText
             headerText: suggestionHeaderText
             closeWithArrowKey: suggestionCloseWithArrowKey
+            closeOnMouseSelection: suggestionCloseOnMouseSelection
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable
@@ -286,6 +297,28 @@ TextField {
             onClicked: {
                 control.forceActiveFocus()
                 control.clear()
+            }
+        }
+    }
+
+    Component {
+        id: showSuggestionComponent
+
+        SGWidgets.SGIconButton {
+            rotation: (suggestionPopupLoader.status === Loader.Ready) && (suggestionPopupLoader.item.opened === true) ? 180 : 0
+            iconColor: pressed ? "lightgray" : "darkgray"
+            backgroundOnlyOnHovered: false
+            highlightImplicitColor: "transparent"
+            iconSize: control.background.height - 20
+            icon.source: "qrc:/sgimages/chevron-down.svg"
+            onClicked: {
+                if (suggestionPopupLoader.status === Loader.Ready) {
+                    if (suggestionPopupLoader.item.opened === false) {
+                        suggestionPopupLoader.item.open()
+                    } else {
+                        suggestionPopupLoader.item.close()
+                    }
+                }
             }
         }
     }
