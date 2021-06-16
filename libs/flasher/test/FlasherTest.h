@@ -45,27 +45,27 @@ private slots:
     void backupNoFirmwareTest();
 
     // tests faulty scenarios
-    void disconnectWhileFlashTest();
+    void disconnectDuringFlashTest();
     void setNoFwClassIdTest();
     void flashFirmwareCancelTest();
     void flashBootloaderCancelTest();
-    void disconnectWhileBackupTest();
+    void disconnectDuringBackupTest();
     void backupFirmwareCancelTest();
 
 protected slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString);
-    void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
-    void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
-    void handleBackupProgressForDisconnectWhileBackup(int chunk, int total);
-    void handleBackupProgressForCancelFlashingOperation(int chunk, int total);
+    void handleFlashingProgressForDisconnectDuringFlashOperation(int chunk, int total);
+    void handleFlashingProgressForCancelDuringFlashOperation(int chunk, int total);
+    void handleBackupProgressForDisconnectDuringBackupOperation(int chunk, int total);
+    void handleBackupProgressForCancelDuringBackupOperation(int chunk, int total);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectFlasherHandlers(strata::Flasher* flasher) const;
-    void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher) const;
-    void connectFlasherForCancelFirmwareOperation(strata::Flasher* flasher) const;
+    void connectFlasherForDisconnectDuringFlashOperation(strata::Flasher* flasher) const;
+    void connectFlasherForCancelFlashOperation(strata::Flasher* flasher) const;
 
     void createFiles();
     void getExpectedValues(QString firmwarePath);

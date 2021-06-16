@@ -111,28 +111,28 @@ void FlasherTest::handleFlasherFinished(strata::Flasher::Result result, QString)
     }
 }
 
-void FlasherTest::handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total)
+void FlasherTest::handleFlashingProgressForDisconnectDuringFlashOperation(int chunk, int total)
 {
     if (chunk >= total/2) {
         mockDevice_->close(); //Disconnecting device
     }
 }
 
-void FlasherTest::handleFlashingProgressForCancelFlashOperation(int chunk, int total)
+void FlasherTest::handleFlashingProgressForCancelDuringFlashOperation(int chunk, int total)
 {
     if (chunk >= total/2) {
         flasher_->cancel(); //Cancel flashing
     }
 }
 
-void FlasherTest::handleBackupProgressForDisconnectWhileBackup(int chunk, int total)
+void FlasherTest::handleBackupProgressForDisconnectDuringBackupOperation(int chunk, int total)
 {
     if (chunk >= total/2) {
         mockDevice_->close();
     }
 }
 
-void FlasherTest::handleBackupProgressForCancelFlashingOperation(int chunk, int total)
+void FlasherTest::handleBackupProgressForCancelDuringBackupOperation(int chunk, int total)
 {
     if (chunk >= total/2) {
         flasher_->cancel();
@@ -170,19 +170,19 @@ void FlasherTest::connectFlasherHandlers(strata::Flasher *flasher) const
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
 }
 
-void FlasherTest::connectFlasherForDisconnectWhileFlashing(strata::Flasher *flasher) const
+void FlasherTest::connectFlasherForDisconnectDuringFlashOperation(strata::Flasher *flasher) const
 {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
-    connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForDisconnectWhileFlashing);
-    connect(flasher, &strata::Flasher::backupFirmwareProgress, this, &FlasherTest::handleBackupProgressForDisconnectWhileBackup);
+    connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForDisconnectDuringFlashOperation);
+    connect(flasher, &strata::Flasher::backupFirmwareProgress, this, &FlasherTest::handleBackupProgressForDisconnectDuringBackupOperation);
 }
 
-void FlasherTest::connectFlasherForCancelFirmwareOperation(strata::Flasher *flasher) const
+void FlasherTest::connectFlasherForCancelFlashOperation(strata::Flasher *flasher) const
 {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
-    connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForCancelFlashOperation);
-    connect(flasher, &strata::Flasher::flashBootloaderProgress, this, &FlasherTest::handleFlashingProgressForCancelFlashOperation);
-    connect(flasher, &strata::Flasher::backupFirmwareProgress, this, &FlasherTest::handleBackupProgressForCancelFlashingOperation);
+    connect(flasher, &strata::Flasher::flashFirmwareProgress, this, &FlasherTest::handleFlashingProgressForCancelDuringFlashOperation);
+    connect(flasher, &strata::Flasher::flashBootloaderProgress, this, &FlasherTest::handleFlashingProgressForCancelDuringFlashOperation);
+    connect(flasher, &strata::Flasher::backupFirmwareProgress, this, &FlasherTest::handleBackupProgressForCancelDuringBackupOperation);
 }
 
 void FlasherTest::createFiles()
@@ -770,11 +770,11 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
     QCOMPARE(flasherFinishedCount_,1);
 }
 
-void FlasherTest::disconnectWhileFlashTest()
+void FlasherTest::disconnectDuringFlashTest()
 {
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
-    connectFlasherForDisconnectWhileFlashing(flasher_.data());
+    connectFlasherForDisconnectDuringFlashOperation(flasher_.data());
 
     flasher_->flashFirmware();
 
@@ -810,7 +810,7 @@ void FlasherTest::flashFirmwareCancelTest()
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
-    connectFlasherForCancelFirmwareOperation(flasher_.data());
+    connectFlasherForCancelFlashOperation(flasher_.data());
 
     flasher_->flashFirmware();
 
@@ -853,7 +853,7 @@ void FlasherTest::flashBootloaderCancelTest()
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeBootloader_.fileName()), &QObject::deleteLater);
-    connectFlasherForCancelFirmwareOperation(flasher_.data());
+    connectFlasherForCancelFlashOperation(flasher_.data());
 
     flasher_->flashBootloader();
 
@@ -1018,14 +1018,14 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
     }
 }
 
-void FlasherTest::disconnectWhileBackupTest()
+void FlasherTest::disconnectDuringBackupTest()
 {
     getExpectedValues(fakeFirmware_.fileName());
     mockDevice_->mockCreateMockFirmware(true);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
-    connectFlasherForDisconnectWhileFlashing(flasher_.data());
+    connectFlasherForDisconnectDuringFlashOperation(flasher_.data());
 
     flasher_->backupFirmware();
 
@@ -1042,7 +1042,7 @@ void FlasherTest::backupFirmwareCancelTest()
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeBootloader_.fileName()), &QObject::deleteLater);
-    connectFlasherForCancelFirmwareOperation(flasher_.data());
+    connectFlasherForCancelFlashOperation(flasher_.data());
 
     flasher_->backupFirmware();
 
