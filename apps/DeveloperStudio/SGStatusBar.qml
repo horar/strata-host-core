@@ -624,13 +624,9 @@ Rectangle {
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
-
-                        Signals.logout()
-                        PlatformFilters.clearActiveFilters()
-                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-                        Authenticator.logout()
-                        PlatformSelection.logout()
-                        sdsModel.coreInterface.unregisterClient()
+                        if (!controlViewCreatorLoader.active || !controlViewCreatorLoader.item.blockWindowClose(logout)) {
+                            logout()
+                        }
                     }
                     width: profileMenu.width
                 }
@@ -705,7 +701,17 @@ Rectangle {
         }
     }
 
-    function showAboutWindow(){
+    function showAboutWindow() {
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
+    function logout() {
+        controlViewCreatorLoader.active = false
+        Signals.logout()
+        PlatformFilters.clearActiveFilters()
+        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+        Authenticator.logout()
+        PlatformSelection.logout()
+        sdsModel.coreInterface.unregisterClient()
     }
 }
