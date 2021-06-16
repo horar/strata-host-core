@@ -1031,8 +1031,10 @@ function registerQmlAsLanguage() {
         fullRange = model.getFullModelRange()
         topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
         bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
-        createMatchingPairs(model)
-        initializeQtQuick(model)
+      	if (topOfFile !== null && bottomOfFile !== null) {
+        	createMatchingPairs(model)
+        	initializeQtQuick(model)
+        }
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getLine.includes("id:")) {
