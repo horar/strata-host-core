@@ -307,12 +307,6 @@ Popup {
                         popup.close()
                     }
                 }
-
-                onDoubleClicked: {
-                    if (closeOnSelection) {
-                        popup.close()
-                    }
-                }
             }
 
             SGWidgets.SGIconButton {
