@@ -48,8 +48,7 @@ void TcpDeviceScanner::processPendingDatagrams()
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
             if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
-                          TcpDevice::createDeviceId(clientAddress)) !=
-                discoveredDevices_.end()) {
+                          TcpDevice::createDeviceId(clientAddress)) != discoveredDevices_.end()) {
                 qCCritical(logCategoryDeviceScanner)
                     << "Tcp device" << clientAddress.toString() << "already discovered";
                 return;
@@ -68,8 +67,8 @@ bool TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
     DevicePtr device = std::make_shared<TcpDevice>(deviceAddress, tcpPort);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    connect(dynamic_cast<device::TcpDevice *>(device.get()), &TcpDevice::deviceDisconnected,
-            this, &TcpDeviceScanner::deviceDisconnectedHandler);
+    connect(dynamic_cast<device::TcpDevice *>(device.get()), &TcpDevice::deviceDisconnected, this,
+            &TcpDeviceScanner::deviceDisconnectedHandler);
 
     discoveredDevices_.push_back(device->deviceId());
     emit deviceDetected(platform);
@@ -136,13 +135,13 @@ bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPor
         return false;
     }
 
-    if (datagramPayload["tcp_port"].toDouble() < 1 ||
-        datagramPayload["tcp_port"].toDouble() > std::numeric_limits<quint16>::max()) {
+    long port = datagramPayload["tcp_port"].toDouble();
+    if (port < 1 || port > std::numeric_limits<quint16>::max()) {
         qCDebug(logCategoryDeviceScanner) << "Invalid port range.";
         return false;
     }
 
-    tcpPort = datagramPayload["tcp_port"].toDouble();
+    tcpPort = port;
     return true;
 }
 }  // namespace strata::device::scanner
