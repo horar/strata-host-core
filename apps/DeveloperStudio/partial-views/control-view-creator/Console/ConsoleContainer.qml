@@ -16,9 +16,6 @@ Rectangle {
 
     signal clicked()
 
-    property int warningCount: 0
-    property int errorCount: 0
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -55,7 +52,7 @@ Rectangle {
                             iconColor: Theme.palette.warning
                             height: 25
                             width: height
-                            enabled: warningCount > 0
+                            enabled: consoleLogWarningCount > 0
 
                             Rectangle {
                                 anchors.centerIn: parent
@@ -68,7 +65,7 @@ Rectangle {
                     }
 
                     SGText {
-                        text: warningCount
+                        text: consoleLogWarningCount
                         Layout.alignment: Qt.AlignVCenter
                         height: 30
                         color: "white"
@@ -85,7 +82,7 @@ Rectangle {
                             iconColor: Theme.palette.error
                             height: 25
                             width: height
-                            enabled: errorCount > 0
+                            enabled: consoleLogErrorCount > 0
 
                             Rectangle {
                                 anchors.centerIn: parent
@@ -98,7 +95,7 @@ Rectangle {
                     }
 
                     SGText {
-                        text: errorCount
+                        text: consoleLogErrorCount
                         Layout.alignment: Qt.AlignVCenter
                         color: "white"
                         height: 30

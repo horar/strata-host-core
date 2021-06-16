@@ -77,6 +77,12 @@ public:
      */
     virtual bool isConnected() const override;
 
+    /**
+     * Reset receiving messages from device - clear internal buffer
+     * for receiving from serial port (drop any data (parts of message) in it).
+     */
+    virtual void resetReceiving() override;
+
 private slots:
     void readMessage();
     void handleError(QSerialPort::SerialPortError error);

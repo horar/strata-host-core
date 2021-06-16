@@ -22,8 +22,9 @@ public:
     void setWaitTime(const std::chrono::milliseconds& waitTime);
 
 private:
-    void skipCommands(command::CommandResult& result, int& status);
-    std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator beforeStartBootloader_;
+    void postCommandActions(command::CommandResult& result, int& status);
+    std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator firstReqPlatfIdIter_;
+    std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator waitCmdIter_;
     command::CmdWait* cmdWait_;
 };
 
