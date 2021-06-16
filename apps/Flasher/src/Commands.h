@@ -77,8 +77,8 @@ public:
     virtual ~DeviceCommand() override;
 
 protected slots:
-    virtual void handlePlatformOpened(QByteArray deviceId) = 0;
-    virtual void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+    virtual void handlePlatformOpened() = 0;
+    virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
 protected:
     bool createSerialDevice();
@@ -105,7 +105,7 @@ public:
     void process() override;
 
 private slots:
-    virtual void handlePlatformOpened(QByteArray deviceId) override;
+    virtual void handlePlatformOpened() override;
 
 private:
     std::unique_ptr<Flasher> flasher_;
@@ -123,7 +123,7 @@ public:
     void process() override;
 
 private slots:
-    virtual void handlePlatformOpened(QByteArray deviceId) override;
+    virtual void handlePlatformOpened() override;
     virtual void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
 
 private:

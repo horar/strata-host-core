@@ -14,7 +14,6 @@ Item {
         text: styleData.value
         width: inQrcIcon.x - x - 10
         height: 15
-        visible: !itemFilenameEdit.visible
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter
         font.pointSize: 10
@@ -59,12 +58,6 @@ Item {
                 text = Qt.binding(() => styleData.value)
             }
 
-            // If a new file was created, and its filename is still empty
-            if (text === "" && model.filename === "") {
-                treeModel.removeRows(model.row, 1, styleData.index.parent);
-                return;
-            }
-
             let url;
             // Below handles the case where the parentNode is the .qrc file
             if (model.parentNode && !model.parentNode.isDir) {
@@ -76,45 +69,23 @@ Item {
             let parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
 
             treeModel.stopWatchingPath(parentDir);
-            // If we are creating a new file
-            if (styleData.value === "") {
-                const success = SGUtilsCpp.createFile(path);
-                if (!success) {
-                    //handle error
-                    console.error("Could not create file:", path)
-                } else {
-                    model.editing = false
-                    model.filename = text
-                    model.filepath = url;
-                    if (!model.isDir) {
-                        model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
-                        if (!model.inQrc) {
-                            treeModel.addToQrc(styleData.index);
-                        }
-                    }
-                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                    treeModel.addPathToTree(model.filepath)
-                }
-            } else {
-                // Else we are just renaming an already existing file
-                if (text.length > 0 && styleData.value !== text) {
-                    // Don't attempt to rename the file if the text is the same as the original filename
-                    const success = treeModel.renameFile(styleData.index, text)
-                    if (success) {
-                        if (openFilesModel.hasTab(model.uid)) {
-                            openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
-                        } else if (model.isDir) {
-                            handleRenameForOpenFiles(treeModel.getNode(styleData.index))
-                        }
-                    } else {
-                        text = Qt.binding(() => styleData.value)
+            if (text.length > 0 && styleData.value !== text) {
+                // Don't attempt to rename the file if the text is the same as the original filename
+                const success = treeModel.renameFile(styleData.index, text)
+                if (success) {
+                    if (openFilesModel.hasTab(model.uid)) {
+                        openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
+                    } else if (model.isDir) {
+                        handleRenameForOpenFiles(treeModel.getNode(styleData.index))
                     }
                 } else {
                     text = Qt.binding(() => styleData.value)
                 }
-
-                model.editing = false
+            } else {
+                text = Qt.binding(() => styleData.value)
             }
+
+            model.editing = false
             treeModel.startWatchingPath(parentDir);
         }
 

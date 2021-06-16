@@ -17,6 +17,7 @@ Popup {
     property int listSpacing: 0
     property bool controlWithSpace: false
     property bool closeOnSelection: true
+    property bool closeOnMouseSelection: false
     property bool closeWithArrowKey: false
     property bool openOnActiveFocus: false
     property int maxHeight: 120
@@ -298,9 +299,13 @@ Popup {
                 id: delegateMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
+
                 onClicked: {
                     view.currentIndex = index
                     delegateSelected(index)
+                    if (closeOnMouseSelection) {
+                        popup.close()
+                    }
                 }
             }
 

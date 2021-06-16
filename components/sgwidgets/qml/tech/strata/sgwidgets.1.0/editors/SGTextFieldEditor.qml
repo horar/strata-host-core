@@ -15,9 +15,11 @@ SGWidgets.SGBaseEditor {
     property bool passwordMode: false
     property string textFieldLeftIconSource
     property string textFieldRightIconSource
+    property bool textFieldShowSuggestionButton: false
     property bool textFieldBusyIndicatorRunning: false
     property bool textFieldSuggestionDelegateRemovable: false
     property bool textFieldSuggestionCloseWithArrowKey: false
+    property bool textFieldSuggestionCloseOnMouseSelection: false
     property int textFieldSuggestionMaxHeight: 120
     property bool contextMenuEnabled: false
     property bool activeEditing: false
@@ -42,8 +44,10 @@ SGWidgets.SGBaseEditor {
         leftIconSource: root.textFieldLeftIconSource
         rightIconSource: root.textFieldRightIconSource
         busyIndicatorRunning: root.textFieldBusyIndicatorRunning
+        showSuggestionButton: root.textFieldShowSuggestionButton
         suggestionDelegateRemovable: root.textFieldSuggestionDelegateRemovable
         suggestionCloseWithArrowKey: root.textFieldSuggestionCloseWithArrowKey
+        suggestionCloseOnMouseSelection: root.textFieldSuggestionCloseOnMouseSelection
         suggestionMaxHeight: root.textFieldSuggestionMaxHeight
         activeEditingEnabled: root.textFieldActiveEditingEnabled
 
