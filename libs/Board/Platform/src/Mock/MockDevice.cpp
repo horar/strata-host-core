@@ -214,9 +214,9 @@ bool MockDevice::mockSetAsBootloader(bool isBootloader)
     return control_.mockSetAsBootloader(isBootloader);
 }
 
-bool MockDevice::mockConfigureMockFirmware(MockFirmware state)
+bool MockDevice::mockSetFirmwareEnabled(bool enabled)
 {
-    return control_.mockConfigureMockFirmware(state);
+    return control_.mockSetFirmwareEnabled(enabled);
 }
 
 }  // namespace strata::device

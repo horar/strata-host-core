@@ -32,6 +32,11 @@ bool MockDeviceControl::mockIsBootloader() const
     return isBootloader_;
 }
 
+bool MockDeviceControl::mockIsFirmwareEnabled() const
+{
+    return isFirmwareEnabled;
+}
+
 MockCommand MockDeviceControl::mockGetCommand() const
 {
     return command_;
@@ -45,11 +50,6 @@ MockResponse MockDeviceControl::mockGetResponse() const
 MockVersion MockDeviceControl::mockGetVersion() const
 {
     return version_;
-}
-
-MockFirmware MockDeviceControl::mockGetFirmwareState() const
-{
-    return state_;
 }
 
 bool MockDeviceControl::mockSetOpenEnabled(bool enabled)
@@ -136,14 +136,14 @@ bool MockDeviceControl::mockSetAsBootloader(bool isBootloader)
     return false;
 }
 
-bool MockDeviceControl::mockConfigureMockFirmware(MockFirmware mockFirmwareState)
+bool MockDeviceControl::mockSetFirmwareEnabled(bool enabled)
 {
-    if (state_ != mockFirmwareState) {
-        state_ = mockFirmwareState;
-        qCDebug(logCategoryDeviceMock) << "Configured mock firmware to" << state_;
+    if (isFirmwareEnabled != enabled) {
+        isFirmwareEnabled = enabled;
+        qCDebug(logCategoryDeviceMock) << "Configured mock firmware to" << isFirmwareEnabled;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Mock firmware already configured to" << state_;
+    qCDebug(logCategoryDeviceMock) << "Mock firmware already configured to" << isFirmwareEnabled;
     return false;
 }
 
@@ -452,25 +452,15 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
 
 QString MockDeviceControl::getFirmwareValue(const QString placeholder)
 {
-    switch (state_) {
-    case MockFirmware::Enabled: {
+    if (isFirmwareEnabled) {
         if (mockFirmware_.exists() == false) {
             createMockFirmware();
             getExpectedValues(mockFirmware_.fileName());
         }
-        break;
-    }
-    case MockFirmware::Disabled: {
-        removeMockFirmware();
-        break;
-    }
-    default: {
-        if (mockFirmware_.exists() == false) {
-            createMockFirmware();
-            getExpectedValues(mockFirmware_.fileName());
+    } else {
+        if (mockFirmware_.exists() == true) {
+            removeMockFirmware();
         }
-        break;
-    }
     }
 
     if (mockFirmware_.exists()) {
@@ -619,12 +609,10 @@ void MockDeviceControl::createMockFirmware()
 
 void MockDeviceControl::removeMockFirmware()
 {
-    if (mockFirmware_.open() == false) {
-        qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware for deletion";
+    if (mockFirmware_.exists() == false) {
+        qCCritical(logCategoryDeviceMock) << "No mock firmware for removal";
     } else {
-        mockFirmware_.open();
-        mockFirmware_.resize(0);
-        mockFirmware_.close();
+        mockFirmware_.remove();
         qCDebug(logCategoryDeviceMock) << "Mock firmware file removed";
     }
 }

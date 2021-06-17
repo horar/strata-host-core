@@ -15,7 +15,6 @@ using strata::platform::operation::BasePlatformOperation;
 using strata::device::MockCommand;
 using strata::device::MockResponse;
 using strata::device::MockVersion;
-using strata::device::MockFirmware;
 
 namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
@@ -893,7 +892,7 @@ void FlasherTest::flashBootloaderCancelTest()
 void FlasherTest::backupFirmwareTest()
 {
     getExpectedValues(fakeFirmware_.fileName());
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Enabled);
+    mockDevice_->mockSetFirmwareEnabled(true);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
@@ -938,7 +937,7 @@ void FlasherTest::backupFirmwareTest()
 void FlasherTest::backupFirmwareWithoutStartApplicationTest()
 {
     getExpectedValues(fakeFirmware_.fileName());
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Enabled);
+    mockDevice_->mockSetFirmwareEnabled(true);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
@@ -979,7 +978,7 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
 void FlasherTest::backupFirmwareStartInBootloaderTest()
 {
     getExpectedValues(fakeFirmware_.fileName());
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Enabled);
+    mockDevice_->mockSetFirmwareEnabled(true);
     mockDevice_->mockSetAsBootloader(true); // MockDevice starts in Bootloader mode
 
     flasher_ = QSharedPointer<strata::Flasher>(
@@ -1022,7 +1021,7 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
 void FlasherTest::disconnectDuringBackupTest()
 {
     getExpectedValues(fakeFirmware_.fileName());
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Enabled);
+    mockDevice_->mockSetFirmwareEnabled(true);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
@@ -1040,7 +1039,7 @@ void FlasherTest::disconnectDuringBackupTest()
 void FlasherTest::backupFirmwareCancelTest()
 {
     getExpectedValues(fakeBootloader_.fileName());
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Enabled);
+    mockDevice_->mockSetFirmwareEnabled(true);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeBootloader_.fileName()), &QObject::deleteLater);
@@ -1072,7 +1071,7 @@ void FlasherTest::backupFirmwareCancelTest()
 
 void FlasherTest::startBackupNoFirmwareTest()
 {
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Disabled);
+    mockDevice_->mockSetFirmwareEnabled(false);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName()), &QObject::deleteLater);
@@ -1097,7 +1096,7 @@ void FlasherTest::startBackupNoFirmwareTest()
 
 void FlasherTest::backupNoFirmwareTest()
 {
-    mockDevice_->mockConfigureMockFirmware(MockFirmware::Disabled);
+    mockDevice_->mockSetFirmwareEnabled(false);
 
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName()), &QObject::deleteLater);
