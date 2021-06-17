@@ -54,8 +54,6 @@ public:
     static QByteArray encodeNotificationReadCharacteristic(const QByteArray &serviceUuid, const QByteArray &characteristicUuid, const QByteArray &data);
 
     static QByteArray encodeAckWriteDescriptor(const QByteArray &serviceUuid, const QByteArray &descriptorUuid, const QByteArray &data);
-    static QByteArray encodeAckReadDescriptor(const QByteArray &serviceUuid, const QByteArray &descriptorUuid);
-    static QByteArray encodeNotificationReadDescriptor(const QByteArray &serviceUuid, const QByteArray &descriptorUuid, const QByteArray &data);
 
     static QByteArray encodeNAck(const QByteArray &command, const QByteArray &details, const QByteArray &serviceUuid);
     static QByteArray encodeNotificationError(const QByteArray &status, const QByteArray &details);

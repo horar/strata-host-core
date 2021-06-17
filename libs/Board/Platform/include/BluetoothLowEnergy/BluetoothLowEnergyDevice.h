@@ -61,7 +61,6 @@ private slots:
                                       const QByteArray &value);
     void descriptorWrittenHandler(const QLowEnergyDescriptor &info, const QByteArray &value);
     void characteristicReadHandler(const QLowEnergyCharacteristic &info, const QByteArray &value);
-    void descriptorReadHandler(const QLowEnergyDescriptor &info, const QByteArray &value);
     void characteristicChangedHandler(const QLowEnergyCharacteristic &info,
                                       const QByteArray &value);
     void serviceStateChangedHandler(QLowEnergyService::ServiceState newState);
@@ -114,6 +113,12 @@ private:
      * @return true iff message was correct and processed.
      */
     [[nodiscard]] bool processWriteCommand(const rapidjson::Document &requestDocument);
+    /**
+     * Forwards write descriptor command to BLE device.
+     * @param requestDocument request with the command.
+     * @return true iff message was correct and processed.
+     */
+    [[nodiscard]] bool processWriteDescriptorCommand(const rapidjson::Document &requestDocument);
     /**
      * Forwards read command to BLE device.
      * @param requestDocument request with the command.
