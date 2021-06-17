@@ -335,11 +335,11 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR,
-                    { 
-                    	"error_message": "Monaco text editor component failed to load or was not found", 
-                    }
-                );
+            	let errorProperties = {
+                	"error_message": "Monaco text editor component failed to load or was not found"
+                }
+                
+                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
             }
         }
 
