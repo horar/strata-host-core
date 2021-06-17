@@ -106,10 +106,8 @@ QByteArray BluetoothLowEnergyJsonEncoder::shortenBleUuid(const QByteArray &uuid)
     if (uuid.endsWith(BASE_UUID_SUFFIX_BYTES)) {
         if (uuid.startsWith("0000")) {
             return QByteArray(uuid).remove(8, BASE_UUID_SUFFIX_BYTES.length()).remove(0, 4);
-        } else
-        {
-            return QByteArray(uuid).remove(8, BASE_UUID_SUFFIX_BYTES.length());
         }
+        return QByteArray(uuid).remove(8, BASE_UUID_SUFFIX_BYTES.length());
     }
     return uuid;
 }

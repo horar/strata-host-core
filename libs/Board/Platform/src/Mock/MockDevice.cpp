@@ -23,16 +23,19 @@ MockDevice::~MockDevice()
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-bool MockDevice::open()
+void MockDevice::open()
 {
     if (opened_ == true) {
         qCWarning(logCategoryDeviceMock) << this << "Attempt to open already opened mock port";
-        return true;
+    } else {
+        opened_ = mockIsOpenEnabled();
     }
 
-    opened_ = mockIsOpenEnabled();
-
-    return opened_;
+    if (opened_) {
+        emit Device::opened();
+    } else {
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device.");
+    }
 }
 
 void MockDevice::close()
