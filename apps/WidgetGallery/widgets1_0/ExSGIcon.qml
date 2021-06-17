@@ -64,9 +64,16 @@ Item {
                 text: "Randomize Colors"
 
                 onClicked: {
-                    for(let i = 0; i < iconModel.count; i++){
+                    for (let i = 0; i < iconModel.count; i++) {
                         const icon = iconModel.get(i)
-                        iconModel.set(i,{"name":icon.name,"source": icon.source, "color": randomColor()})
+                        iconModel.set(i,
+                            {
+                                "name": icon.name,
+                                "source": icon.source,
+                                "color": randomColor(),
+                                "visibility": true,
+                            }
+                        )
                     }
                 }
             }
@@ -78,9 +85,16 @@ Item {
                 checked: true
 
                 onCheckedChanged: {
-                    for(let i = 0; i < iconModel.count; i++){
+                    for (let i = 0; i < iconModel.count; i++) {
                         const icon = iconModel.get(i)
-                        iconModel.set(i,{"name":icon.name,"source": icon.source, "color": "black","visibility": checked})
+                        iconModel.set(i,
+                            {
+                                "name": icon.name,
+                                "source": icon.source,
+                                "color": "black",
+                                "visibility": checked
+                            }
+                        )
                     }
                 }
             }
@@ -91,16 +105,27 @@ Item {
         id: iconModel
 
         Component.onCompleted: {
-            let arr = ["arrow-list-bottom","asterisk","ban","bars","bookmark-blank","bookmark","broom",
-                       "check-circle","chevron-down","chevron-left","chevron-right","chevron-up","chip-flash",
-                       "clock","cog","connected","disconnected","download","drop-file","edit","exclamation-circle",
-                       "exclamation-triangle","exclamation","eye-slash","eye","file-add","file-blank","file-export",
-                       "file-import","folder-open-solid","folder-open","folder-plus","funnel","info-circle","list",
-                       "minus","plug","plus","question-circle","redo","save","sign-in","sign-out",
-                       "sliders-h","sliders-v","status-light-off","status-light-transparent","times-circle",
-                       "times","tools","undo","user","zoom"]
+            // list of svg icons that are located in SGWidgets
+            let arr = [
+                    "arrow-list-bottom","asterisk","ban","bars","bookmark-blank","bookmark","broom",
+                    "check-circle","chevron-down","chevron-left","chevron-right","chevron-up","chip-flash",
+                    "clock","cog","connected","disconnected","download","drop-file","edit","exclamation-circle",
+                    "exclamation-triangle","exclamation","eye-slash","eye","file-add","file-blank","file-export",
+                    "file-import","folder-open-solid","folder-open","folder-plus","funnel","info-circle","list",
+                    "minus","plug","plus","question-circle","redo","save","sign-in","sign-out",
+                    "sliders-h","sliders-v","status-light-off","status-light-transparent","times-circle",
+                    "times","tools","undo","user","zoom"
+                ]
+
             for (let i = 0; i < arr.length; i++) {
-                append({"name": arr[i], "source":`qrc:/sgimages/${arr[i]}.svg`,"color": "black","visibility": true})
+                append(
+                    {
+                        "name": arr[i],
+                        "source": `qrc:/sgimages/${arr[i]}.svg`,
+                        "color": "black",
+                        "visibility": true
+                    }
+                )
             }
         }
     }
@@ -111,7 +136,7 @@ Item {
         font.pixelSize: 13 * 1.1
     }
 
-    function randomColor(){
+    function randomColor() {
         return Qt.rgba(Math.random(),Math.random(),Math.random(),1).toString()
     }
 
