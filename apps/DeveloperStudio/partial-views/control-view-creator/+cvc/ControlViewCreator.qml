@@ -32,6 +32,7 @@ Rectangle {
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
     property alias editor: editor
+    property var userSettings: null
     property int consoleLogWarningCount: 0
     property int consoleLogErrorCount: 0
 
@@ -44,6 +45,10 @@ Rectangle {
         if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
             sdsModel.resourceLoader.requestUnregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, cvcLoader, false)
         }
+    }
+
+    Component.onCompleted: {
+        cvcUserSettings.loadSettings()
     }
 
     RowLayout {
@@ -341,4 +346,30 @@ Rectangle {
             }
         }
     }
+
+    SGUserSettings {
+        id: cvcUserSettings
+        classId: "cvc-settings"
+        user: NavigationControl.context.user_id
+
+        property bool openViewOnBuild: false
+
+        function loadSettings() {
+            const settings = readFile("cvc-settings.json")
+
+            if (settings.hasOwnProperty("openViewOnBuild")) {
+                openViewOnBuild = settings.openViewOnBuild
+            }
+        }
+
+        function saveSettings() {
+            const settings = {
+                openViewOnBuild: openViewOnBuild
+            }
+
+            writeFile("cvc-settings.json",settings)
+        }
+
+    }
+
 }

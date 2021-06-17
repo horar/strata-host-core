@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.theme 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "../components"
 
 Item {
     implicitHeight: divider.height + recompileNavButton.height + cleanupProjectNecessary.height
@@ -24,8 +25,21 @@ Item {
         visible: editor.fileTreeModel.needsCleaning
         color: "transparent"
 
-        function onClicked () {
+        onClicked: {
             confirmCleanFiles.open()
+        }
+    }
+    SGSideNavItem {
+        id: settingForProject
+        width: parent.width
+        height: 70
+        enabled: true
+
+        iconText: "Settings"
+        iconSource: "qrc:/sgimages/cog.svg"
+
+        onClicked: {
+            cvcSettingsLoader.active = true
         }
     }
 
@@ -110,8 +124,18 @@ Item {
         color: "transparent"
         tooltipDescription: "Recompile your control view project."
 
-        function onClicked() {
+        onClicked: {
             recompileControlViewQrc();
+
+            if (cvcUserSettings.openViewOnBuild) {
+               viewStack.currentIndex = 2
+            }
         }
+    }
+
+    Loader {
+        id: cvcSettingsLoader
+        sourceComponent: SGControlViewCreatorSettingsPopup {}
+        active: false
     }
 }
