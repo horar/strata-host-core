@@ -7,6 +7,7 @@ Item {
     id: exSgIcon
     width: contentColumn.width
     height: contentColumn.height
+    
     ColumnLayout {
         id: contentColumn
 
@@ -58,6 +59,7 @@ Item {
             id: toolRow
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
+            
             SGButton {
                 id: colorButton
                 Layout.alignment: Qt.AlignHCenter
