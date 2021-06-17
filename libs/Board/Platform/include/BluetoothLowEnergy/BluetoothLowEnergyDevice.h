@@ -19,7 +19,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    BluetoothLowEnergyDevice(const QBluetoothDeviceInfo &info);
+    BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info);
 
     /**
      * BluetoothLowEnergyDevice destructor
@@ -49,6 +49,13 @@ public:
      * @return true if device is connected, otherwise false
      */
     virtual bool isConnected() const override;
+
+    /**
+     * Creates device ID string, based on discovered data.
+     * @param info Info about discovered BLE device.
+     * @return device ID.
+     */
+    static QByteArray createDeviceId(const QBluetoothDeviceInfo &info);
 
 private slots:
     void deviceConnectedHandler();
@@ -139,12 +146,6 @@ private:
      * @return sender service of signal
      */
     QByteArray getSignalSenderService() const;
-    /**
-     * Creates device ID string, based on discovered data.
-     * @param info Info about discovered BLE device.
-     * @return device ID.
-     */
-    static QByteArray createDeviceId(const QBluetoothDeviceInfo &info);
 
     QBluetoothDeviceInfo bluetoothDeviceInfo_;
     QLowEnergyController *lowEnergyController_{nullptr};

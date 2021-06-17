@@ -11,9 +11,9 @@
 
 namespace strata::device {
 
-BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QBluetoothDeviceInfo &info)
+BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info)
     : Device(
-          createDeviceId(info),
+          deviceId,
           info.name(),
           Type::BLEDevice),
       bluetoothDeviceInfo_(info),

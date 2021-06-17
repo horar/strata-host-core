@@ -54,8 +54,10 @@ void BluetoothLowEnergyScanner::startDiscovery()
             << "device discovery is about to start"
             << "(duration" << discoveryAgent_->lowEnergyDiscoveryTimeout() << "ms)";
 
-    discoveryAgent_->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
     discoveredDevices_.clear();
+    discoveredDevicesMap_.clear();
+
+    discoveryAgent_->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 }
 
 void BluetoothLowEnergyScanner::stopDiscovery()
@@ -73,30 +75,31 @@ const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredDevices
     return discoveredDevices_;
 }
 
-void BluetoothLowEnergyScanner::tryConnectDevice(const QString &address)
+bool BluetoothLowEnergyScanner::tryConnectDevice(const QByteArray& deviceId)
 {
-    //TODO if we are in the middle of scannig, we should wait until it finishes
+    qCDebug(logCategoryDeviceScanner()) << deviceId;
 
     if (discoveryAgent_ == nullptr) {
-        return;
+        qCWarning(logCategoryDeviceScanner()) << "discovery agent not initialized";
+        return false;
     }
 
-    qCDebug(logCategoryDeviceScanner()) << address;
-
-    const QList<QBluetoothDeviceInfo> infoList = discoveryAgent_->discoveredDevices();
-    for (const auto &info : infoList) {
-        QString infoAddress = getDeviceAddress(info);
-        if (infoAddress == address) {
-            DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(info);
-
-            connect(device.get(), &Device::deviceError,
-                    this, &BluetoothLowEnergyScanner::deviceErrorHandler);
-
-            platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
-
-            emit deviceDetected(platform);
-        }
+    auto deviceInfoIterator = discoveredDevicesMap_.find(deviceId);
+    if (deviceInfoIterator == discoveredDevicesMap_.end()) {
+        qCWarning(logCategoryDeviceScanner()) << "no device with deviceId" << deviceId;
+        return false;
     }
+    const QBluetoothDeviceInfo & deviceInfo = *deviceInfoIterator;
+
+    DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(deviceId, deviceInfo);
+
+    connect(device.get(), &Device::deviceError,
+            this, &BluetoothLowEnergyScanner::deviceErrorHandler);
+
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    emit deviceDetected(platform);
+    return true;
 }
 
 void BluetoothLowEnergyScanner::discoveryFinishedHandler()
@@ -115,12 +118,14 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
             qCDebug(logCategoryDeviceScanner) << "";
 
             BlootoothLowEnergyInfo infoItem;
+            infoItem.deviceId = BluetoothLowEnergyDevice::createDeviceId(info);
             infoItem.name = info.name();
 
             infoItem.address = getDeviceAddress(info);
             infoItem.manufacturerIds = info.manufacturerIds();
 
             discoveredDevices_.append(infoItem);
+            discoveredDevicesMap_.insert(infoItem.deviceId, info);
         }
     }
 
