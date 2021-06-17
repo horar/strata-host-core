@@ -63,24 +63,24 @@ QVariant SGQrcTreeModel::data(const QModelIndex &index, int role) const
     SGQrcTreeNode *node = getNode(index);
 
     switch (role) {
-    case FilenameRole:
-        return QVariant(node->filename());
-    case FilepathRole:
-        return QVariant(node->filepath());
-    case FileTypeRole:
-        return QVariant(node->filetype());
-    case InQrcRole:
-        return QVariant(node->inQrc());
-    case IsDirRole:
-        return QVariant(node->isDir());
-    case ParentRole:
-        return QVariant::fromValue(node->parentNode());
-    case UniqueIdRole:
-        return QVariant(node->uid());
-    case RowRole:
-        return QVariant(node->row());
-    case EditingRole:
-        return QVariant(node->editing());
+        case FilenameRole:
+            return QVariant(node->filename());
+        case FilepathRole:
+            return QVariant(node->filepath());
+        case FileTypeRole:
+            return QVariant(node->filetype());
+        case InQrcRole:
+            return QVariant(node->inQrc());
+        case IsDirRole:
+            return QVariant(node->isDir());
+        case ParentRole:
+            return QVariant::fromValue(node->parentNode());
+        case UniqueIdRole:
+            return QVariant(node->uid());
+        case RowRole:
+            return QVariant(node->row());
+        case EditingRole:
+            return QVariant(node->editing());
     }
 
     if (role == ChildrenRole) {
@@ -104,26 +104,26 @@ bool SGQrcTreeModel::setData(const QModelIndex &index, const QVariant &value, in
     bool changed;
 
     switch (role) {
-    case FilenameRole:
-        changed = node->setFilename(value.toString());
-        break;
-    case FilepathRole:
-        changed = node->setFilepath(value.toUrl());
-        break;
-    case FileTypeRole:
-        changed = node->setFiletype(value.toString());
-        break;
-    case InQrcRole:
-        changed = node->setInQrc(value.toBool());
-        break;
-    case IsDirRole:
-        changed = node->setIsDir(value.toBool());
-        break;
-    case EditingRole:
-        changed = node->setEditing(value.toBool());
-        break;
-    default:
-        return false;
+        case FilenameRole:
+            changed = node->setFilename(value.toString());
+            break;
+        case FilepathRole:
+            changed = node->setFilepath(value.toUrl());
+            break;
+        case FileTypeRole:
+            changed = node->setFiletype(value.toString());
+            break;
+        case InQrcRole:
+            changed = node->setInQrc(value.toBool());
+            break;
+        case IsDirRole:
+            changed = node->setIsDir(value.toBool());
+            break;
+        case EditingRole:
+            changed = node->setEditing(value.toBool());
+            break;
+        default:
+            return false;
     }
 
     if (changed) {
@@ -142,8 +142,9 @@ Qt::ItemFlags SGQrcTreeModel::flags(const QModelIndex &index) const
 
 int SGQrcTreeModel::rowCount(const QModelIndex &index) const
 {
-    if (index.column() > 0)
+    if (index.column() > 0) {
         return 0;
+    }
 
     SGQrcTreeNode *parent = getNode(index);
     return parent ? parent->childCount() : 0;
@@ -158,10 +159,15 @@ int SGQrcTreeModel::columnCount(const QModelIndex &parent) const
 bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentItem = getNode(parent);
-    if (!parentItem)
+    if (!parentItem) {
         return false;
+    }
 
     if (row < 0 || row + count > parentItem->childCount()) {
+        return false;
+    }
+
+    if (rowCount(parent) < 1 || row + count < 1) {
         return false;
     }
 
@@ -288,7 +294,7 @@ SGQrcTreeNode* SGQrcTreeModel::getNodeByUrl(const QUrl &url) const
     return nullptr;
 }
 
-bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool inQrc, const QModelIndex &parent)
+bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const bool inQrc, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentNode = getNode(parent);
 
@@ -305,7 +311,7 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
     QFileInfo fileInfo(filePath);
 
     // If the file is not a child of the parent node, then we want to copy the file to the project's location
-    if (! SGUtilsCpp::fileIsChildOfDir(filePath, parentDir)) {
+    if (!SGUtilsCpp::fileIsChildOfDir(filePath, parentDir)) {
         QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()));
         QString ext = outputFileLocation.completeSuffix();
         QString filenameWithoutExt = outputFileLocation.baseName();
@@ -338,6 +344,9 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
         uidMap_.insert(uid, child);
         pathsInTree_.insert(child->filepath());
         endInsertRows();
+
+        QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()));
+        emit fileCreated(index(position, 0, parent), outputFileLocation.fileName(), fileUrl, outputFileLocation.completeSuffix(), uid);
     }
 
     // Recursively add children
@@ -424,15 +433,21 @@ QUrl SGQrcTreeModel::projectDirectory() const
     return projectDir_;
 }
 
-bool SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
+void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        return false;
+        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        return;
     }
 
     SGQrcTreeNode *node = getNode(index);
-    if (!node || qrcItems_.contains(SGUtilsCpp::urlToLocalFile(node->filepath()))) {
-        return false;
+    if (node == nullptr) {
+        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        return;
+    }
+
+    if (qrcItems_.contains(node->filepath().toLocalFile())) {
+        return;
     }
 
     QString relativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(node->filepath()));
@@ -441,25 +456,31 @@ bool SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
     QDomText text = qrcDoc_.createTextNode(relativePath);
     newItem.appendChild(text);
     qresource.appendChild(newItem);
-    qrcItems_.insert(SGUtilsCpp::urlToLocalFile(node->filepath()));
+    qrcItems_.insert(node->filepath().toLocalFile());
     setData(index, true, InQrcRole);
 
     if (save) {
         startSave();
     }
 
-    return true;
+    return;
 }
 
-bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
+void SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        return false;
+        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        return;
     }
 
     SGQrcTreeNode *node = getNode(index);
-    if (!node || !qrcItems_.contains(SGUtilsCpp::urlToLocalFile(node->filepath()))) {
-        return false;
+    if (node == nullptr) {
+        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        return;
+    }
+
+    if (!qrcItems_.contains(node->filepath().toLocalFile())) {
+        return;
     }
 
     QString relativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(node->filepath()));
@@ -468,7 +489,7 @@ bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     for (int i = 0; i < files.count(); i++) {
         if (files.at(i).toElement().text() == relativePath) {
             files.at(i).parentNode().removeChild(files.at(i));
-            qrcItems_.remove(SGUtilsCpp::urlToLocalFile(node->filepath()));
+            qrcItems_.remove(node->filepath().toLocalFile());
             setData(index, false, InQrcRole);
             break;
         }
@@ -477,8 +498,6 @@ bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     if (save) {
         startSave();
     }
-
-    return true;
 }
 
 void SGQrcTreeModel::removeDeletedFilesFromQrc()
@@ -524,6 +543,37 @@ void SGQrcTreeModel::removeEmptyChildren(const QModelIndex &parent)
             removeRows(i, 1, parent);
         }
     }
+}
+
+bool SGQrcTreeModel::createQmlFile(const QString &filepath, const bool isFileVEEnabled)
+{
+    QFile file(filepath);
+    if (file.exists()) {
+        file.close();
+        return false;
+    }
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
+        stream << (isFileVEEnabled ? veQMLFile_ : baseQMLFile_);
+        file.close();
+        return true;
+    }
+
+    return false;
+}
+
+bool SGQrcTreeModel::createEmptyFile(const QString &filepath)
+{
+    QFile file(filepath);
+    if (file.exists()) {
+        file.close();
+        return false;
+    }
+
+    bool success = file.open(QIODevice::WriteOnly | QIODevice::Text);
+    file.close();
+    return success;
 }
 
 bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFilename)
@@ -1059,4 +1109,8 @@ void SGQrcTreeModel::handleExternalFileDeleted(const QString uid)
     startSave();
 }
 
-
+bool SGQrcTreeModel::containsPath(const QUrl url)
+{
+    QUrl localUrl = QUrl::fromLocalFile(url.toString());
+    return pathsInTree_.contains(localUrl);
+}

@@ -32,6 +32,8 @@ Rectangle {
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
     property alias editor: editor
+    property int consoleLogWarningCount: 0
+    property int consoleLogErrorCount: 0
 
     onDebugPlatformChanged: {
         recompileControlViewQrc()
@@ -189,23 +191,17 @@ Rectangle {
         acceptButtonText: "Save all"
 
         property int unsavedFileCount
+        property var callbackFunc
 
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 controlViewCreator.openFilesModel.closeAll()
-                if (cvcCloseRequested){
-                    Signals.closeCVC()
-                } else {
-                    mainWindow.close()
-                }
+                callbackFunc()
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
-                if (cvcCloseRequested){
-                    Signals.closeCVC()
-                } else {
-                    mainWindow.close()
-                }
+                callbackFunc()
             }
+
             isConfirmCloseOpen = false
         }
     }
@@ -311,11 +307,12 @@ Rectangle {
         controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
     }
 
-    function blockWindowClose() {
+    function blockWindowClose(callback) {
         let unsavedCount = editor.openFilesModel.getUnsavedCount();
         if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
             confirmClosePopup.unsavedFileCount = unsavedCount;
             confirmClosePopup.open();
+            confirmClosePopup.callbackFunc = callback
             controlViewCreatorRoot.isConfirmCloseOpen = true;
             return true
         }

@@ -18,8 +18,10 @@
         <file alias="navigation/SideNavFooter.qml">partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
         <file alias="navigation/NavigationBar.qml">partial-views/control-view-creator/navigation/NavigationBar.qml</file>
         <file alias="Sidebar/SideBarDelegate.qml">partial-views/control-view-creator/Sidebar/SideBarDelegate.qml</file>
+        <file alias="Sidebar/SideBarContextMenu.qml">partial-views/control-view-creator/Sidebar/SideBarContextMenu.qml</file>
         <file alias="Sidebar/FileContextMenu.qml">partial-views/control-view-creator/Sidebar/FileContextMenu.qml</file>
         <file alias="Sidebar/FolderContextMenu.qml">partial-views/control-view-creator/Sidebar/FolderContextMenu.qml</file>
+        <file alias="Sidebar/CreateFilePopup.qml">partial-views/control-view-creator/Sidebar/CreateFilePopup.qml</file>
         <file alias="ConfirmClosePopup.qml">partial-views/control-view-creator/ConfirmClosePopup.qml</file>
         <file alias="utils/template_selection.js">partial-views/control-view-creator/utils/template_selection.js</file>
         <file alias="Console/ConsoleLogger.qml">partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
@@ -68,5 +70,6 @@
         <file alias="PlatformInterfaceGenerator/PayloadPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadPropertyDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/TypeSelectorComboBox.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/TypeSelectorComboBox.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml</file>
+        <file alias="components/SGConsoleLogNavigationIcon.qml">partial-views/control-view-creator/components/SGConsoleLogNavigationIcon.qml</file>
     </qresource>
 </RCC>
