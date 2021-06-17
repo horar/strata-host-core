@@ -337,7 +337,7 @@ Item {
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
                 fileLoader.setSource(NavigationControl.screens.LOAD_ERROR,
                     { 
-                    	"error_message": "Monaco Editor component failed to load due to issues in this file: " + webEngine.url, 
+                    	"error_message": "Monaco text editor component failed to load or was not found", 
                     }
                 );
             }
