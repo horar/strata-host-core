@@ -169,4 +169,9 @@ Item {
         id: createFilePopup
         visible: false
     }
+
+    RenameFilePopup {
+        id: renameFilePopup
+        visible: false
+    }
 }

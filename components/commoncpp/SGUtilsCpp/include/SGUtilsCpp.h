@@ -16,6 +16,7 @@ public:
     Q_INVOKABLE static bool removeFile(const QString &filepath);
     Q_INVOKABLE static bool copyFile(const QString &fromPath, const QString &toPath);
     Q_INVOKABLE static QString fileSuffix(const QString &filename);
+    Q_INVOKABLE static QString fileBaseName(const QString &filename);
     Q_INVOKABLE static QString parentDirectoryPath(const QString &filepath);
     Q_INVOKABLE static bool exists(const QString &filepath);
     Q_INVOKABLE static bool fileIsChildOfDir(const QString &filePath, QString dirPath);

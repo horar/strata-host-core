@@ -70,13 +70,15 @@ QString SGUtilsCpp::fileSuffix(const QString &filename)
     return QFileInfo(filename).suffix();
 }
 
+QString SGUtilsCpp::fileBaseName(const QString &filename)
+{
+    return QFileInfo(filename).baseName();
+}
+
 bool SGUtilsCpp::isValidImage(const QString &file)
 {
     QImageReader reader(file);
-    if(reader.canRead()){
-        return true;
-    }
-    return false;
+    return reader.canRead();
 }
 
 bool SGUtilsCpp::isExecutable(const QString &file)
@@ -141,11 +143,7 @@ bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, QString dirPath)
         dirPath.append(QDir::separator());
     }
 
-    if (filePath.startsWith(dirPath)) {
-        return true;
-    } else {
-        return false;
-    }
+    return filePath.startsWith(dirPath);
 }
 
 QString SGUtilsCpp::readTextFileContent(const QString &path)
