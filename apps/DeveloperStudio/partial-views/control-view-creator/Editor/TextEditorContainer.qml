@@ -12,6 +12,7 @@ import tech.strata.commoncpp 1.0
 
 import "../../general"
 import "../"
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
     id: fileContainerRoot
@@ -291,7 +292,20 @@ Item {
             bottom: parent.bottom
         }
 
-        onJavaScriptConsoleMessage: console.log(message)
+        onJavaScriptConsoleMessage: {
+            switch (level) {
+                case WebEngineView.InfoMessageLevel:
+                    console.log(message)
+                    break
+                case WebEngineView.WarningMessageLevel:
+                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
+                case WebEngineView.ErrorMessageLevel:
+                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
+            }
+        }
+            
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -320,6 +334,12 @@ Item {
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
+            } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
+            	let errorProperties = {
+                	"error_message": "Monaco text editor component failed to load or was not found"
+                }
+                
+                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
             }
         }
 

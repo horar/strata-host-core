@@ -167,6 +167,10 @@ bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
         return false;
     }
 
+    if (rowCount(parent) < 1 || row + count < 1) {
+        return false;
+    }
+
     // Remove children first
     for (int i = 0; i < count; ++i) {
         if (parentItem->childNode(row + i)->isDir()) {
