@@ -12,7 +12,7 @@ Item {
 
         SGAlignedLabel {
             target: basicIconGrid
-            text: "SGWidgets Icons"
+            text: "SGIcons"
             fontSizeMultiplier: 1.3
 
             GridLayout {
@@ -38,7 +38,7 @@ Item {
                             id: icon
                             source: model.source
                             width: basicDelegate.width
-                            height: 22
+                            height: 21
                             iconColor: model.color
                             Layout.alignment: Qt.AlignHCenter
                         }
@@ -58,6 +58,7 @@ Item {
             id: toolRow
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
+
             SGButton {
                 id: colorButton
                 Layout.alignment: Qt.AlignHCenter
@@ -98,6 +99,11 @@ Item {
                     }
                 }
             }
+        }
+
+        Item {
+            Layout.preferredHeight: 10
+            Layout.fillWidth: true
         }
     }
 
