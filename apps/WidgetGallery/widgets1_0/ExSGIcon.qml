@@ -68,14 +68,14 @@ Item {
                 onClicked: {
                     for (let i = 0; i < iconModel.count; i++) {
                         const icon = iconModel.get(i)
-                        iconModel.set(i,
-                            {
+                        const iconObj = {
                                 "name": icon.name,
                                 "source": icon.source,
                                 "color": randomColor(),
                                 "visibility": true,
-                            }
-                        )
+                              }
+                        
+                        iconModel.set(i, iconObj)
                     }
                 }
             }
@@ -88,15 +88,15 @@ Item {
 
                 onCheckedChanged: {
                     for (let i = 0; i < iconModel.count; i++) {
-                        const icon = iconModel.get(i)
-                        iconModel.set(i,
-                            {
-                                "name": icon.name,
+                    	const icon = iconModel.get(i)
+                      	const iconObj = {
+                              	"name": icon.name,
                                 "source": icon.source,
                                 "color": "black",
                                 "visibility": checked
-                            }
-                        )
+                              }
+                              
+                      	iconModel.set(i, iconObj)
                     }
                 }
             }
@@ -125,14 +125,14 @@ Item {
                 ]
 
             for (let i = 0; i < arr.length; i++) {
-                append(
-                    {
-                        "name": arr[i],
+            	const iconObj = {
+                		"name": arr[i],
                         "source": `qrc:/sgimages/${arr[i]}.svg`,
                         "color": "black",
                         "visibility": true
-                    }
-                )
+                      }
+
+                append(iconObj)
             }
         }
     }
