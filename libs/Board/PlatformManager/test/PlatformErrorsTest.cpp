@@ -1,9 +1,11 @@
 #include <chrono>
+#include <Operations/Identify.h>
 #include "PlatformErrorsTest.h"
 
 using strata::device::Device;
 using strata::device::MockDevice;
 using strata::platform::operation::OperationSharedPtr;
+using strata::platform::operation::Identify;
 
 PlatformErrorsTest::PlatformErrorsTest() : platformOperations_(false, false) {
     qRegisterMetaType<strata::device::Device::ErrorCode>("device::Device::ErrorCode");
@@ -85,7 +87,9 @@ void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
 void PlatformErrorsTest::deviceLostWithDisconnectTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
 
@@ -105,7 +109,9 @@ void PlatformErrorsTest::deviceLostWithDisconnectTest()
 void PlatformErrorsTest::deviceLostWithoutDisconnectTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
 
@@ -117,7 +123,9 @@ void PlatformErrorsTest::deviceLostWithoutDisconnectTest()
 void PlatformErrorsTest::singleErrorTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
@@ -136,7 +144,9 @@ void PlatformErrorsTest::singleErrorTest()
 void PlatformErrorsTest::errorBeforeOperationTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
@@ -160,7 +170,9 @@ void PlatformErrorsTest::errorBeforeOperationTest()
 void PlatformErrorsTest::errorDuringOperationTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     mockDevice_->mockSetEmitErrorOnMessageSent(2);
 
@@ -179,7 +191,9 @@ void PlatformErrorsTest::errorDuringOperationTest()
 void PlatformErrorsTest::errorAfterOperationTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
@@ -204,15 +218,19 @@ void PlatformErrorsTest::errorAfterOperationTest()
 void PlatformErrorsTest::unableToOpenTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
 
     mockDevice_->mockSetOpenEnabled(false);
 
     platformManager_->disconnectPlatform(deviceId_, std::chrono::milliseconds(10));
 
     QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
+    QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(250) == true));
 
     QList<QVariant> arguments = platformErrorSignal.takeFirst();
     QVERIFY(arguments.at(0).type() == QVariant::UserType);
@@ -225,7 +243,9 @@ void PlatformErrorsTest::unableToOpenTest()
 void PlatformErrorsTest::unableToCloseTest()
 {
     addMockDevice();
-    QVERIFY(QTest::currentTestFailed() == false);
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
 
@@ -233,7 +253,48 @@ void PlatformErrorsTest::unableToCloseTest()
 
     removeMockDevice(false);
 
-    QVERIFY(platformErrorSignal.count() == 1);
+    // will emit 2 error signals, due to 2 close calls
+    QVERIFY((platformErrorSignal.count() == 2) || (platformErrorSignal.wait(250) == true));
 
-    QVERIFY(platform_->deviceConnected());  // will remain as connected due to error above, even though it was requested to be closed
+    // will remain as connected due to error on close (even though it was requested to be closed)
+    QVERIFY(platform_->deviceConnected());
+}
+
+void PlatformErrorsTest::multipleOperationsTest()
+{
+    addMockDevice();
+    if (QTest::currentTestFailed() == true) {
+        return;
+    }
+
+    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+
+    std::unique_ptr<Identify> identifyOperation1 = std::make_unique<Identify>(platform_, true, 1, std::chrono::milliseconds(100));
+    std::unique_ptr<Identify> identifyOperation2 = std::make_unique<Identify>(platform_, true);
+
+    identifyOperation1->run();
+    identifyOperation2->run();
+
+    platform_->sendMessage("{}");
+
+    QCOMPARE(identifyOperation1->deviceId(), deviceId_);
+    QCOMPARE(identifyOperation2->deviceId(), deviceId_);
+
+    QCOMPARE(identifyOperation1->hasStarted(), true);
+    QTRY_COMPARE_WITH_TIMEOUT(identifyOperation1->isFinished(), true, 1000);
+    QCOMPARE(identifyOperation1->isSuccessfullyFinished(), true);
+
+    QCOMPARE(identifyOperation2->hasStarted(), false);
+    QTRY_COMPARE_WITH_TIMEOUT(identifyOperation2->isFinished(), true, 1000);
+    QCOMPARE(identifyOperation2->isSuccessfullyFinished(), false);
+
+    QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
+    QList<QVariant> arguments = platformErrorSignal.takeFirst();
+    QVERIFY(arguments.at(0).type() == QVariant::UserType);
+    QVERIFY(arguments.at(1).type() == QVariant::String);
+    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceBusy);
+
+    // DeviceBusy should not terminate the device
+    QVERIFY((platformRemovedSignal.count() == 0) && (platformRemovedSignal.wait(250) == false));
 }

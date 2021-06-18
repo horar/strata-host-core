@@ -32,6 +32,7 @@ private slots:
     void errorAfterOperationTest();
     void unableToOpenTest();
     void unableToCloseTest();
+    void multipleOperationsTest();
 
 private:
     void addMockDevice();
