@@ -276,7 +276,7 @@ void PlatformErrorsTest::multipleOperationsTest()
     identifyOperation1->run();
     identifyOperation2->run();
 
-    platform_->sendMessage("{}");
+    QVERIFY(platform_->sendMessage("{}") == false);
 
     QCOMPARE(identifyOperation1->deviceId(), deviceId_);
     QCOMPARE(identifyOperation2->deviceId(), deviceId_);
