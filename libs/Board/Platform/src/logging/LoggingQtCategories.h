@@ -4,6 +4,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(logCategoryDeviceSerial)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryDeviceMock)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryDeviceTcp)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatform)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatformOperation)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatformCommand)
