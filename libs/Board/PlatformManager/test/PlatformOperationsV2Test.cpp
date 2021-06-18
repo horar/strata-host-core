@@ -44,12 +44,12 @@ void PlatformOperationsV2Test::init()
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     QVERIFY(mockDevice_->mockSetVersion(MockVersion::Version_2));
-    QVERIFY(!mockDevice_->mockIsOpened());
+    QVERIFY(!platform_->deviceConnected());
 
     QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
     platform_->open();
     QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
-    QVERIFY(mockDevice_->mockIsOpened());
+    QVERIFY(platform_->deviceConnected());
 
     connect(&platformOperations_, &PlatformOperations::finished, this, &PlatformOperationsV2Test::handleOperationFinished);
 }

@@ -50,8 +50,8 @@ void PlatformManagerTest::onBoardDisconnected(const QByteArray& deviceId)
     lastOnBoardDisconnectedDeviceId_ = deviceId;
 }
 
-std::shared_ptr<strata::device::MockDevice> PlatformManagerTest::addMockDevice(const QByteArray& deviceId,
-                                                                                  const QString& deviceName)
+strata::platform::PlatformPtr PlatformManagerTest::addMockDevice(const QByteArray& deviceId,
+                                                                 const QString& deviceName)
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
     QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
@@ -61,12 +61,9 @@ std::shared_ptr<strata::device::MockDevice> PlatformManagerTest::addMockDevice(c
     QCOMPARE_(platformManager_->getDeviceIds().count(), ++devicesCount);
     auto platform = platformManager_->getPlatform(deviceId);
     QVERIFY_(platform.get() != nullptr);
-    auto device = platform->getDevice();
-    QVERIFY_(device.get() != nullptr);
-    auto mockDevice = std::dynamic_pointer_cast<strata::device::MockDevice>(device);
-    QVERIFY_(mockDevice.get() != nullptr);
-    QVERIFY_(mockDevice->mockIsOpened());
-    return mockDevice;
+    QVERIFY_(platform->deviceType() == Device::Type::MockDevice);
+    QVERIFY_(platform->deviceConnected());
+    return platform;
 }
 
 void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
@@ -80,10 +77,9 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
         QCOMPARE(platformAboutToCloseSignal.count(), 1);
         QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
         QVERIFY(platform.get() != nullptr);
-        auto mockDevice = std::dynamic_pointer_cast<strata::device::MockDevice>(platform->getDevice());
-        QVERIFY(mockDevice.get() != nullptr);
+        QVERIFY_(platform->deviceType() == Device::Type::MockDevice);
         QCOMPARE(platformManager_->getDeviceIds().count(), --devicesCount);
-        QVERIFY(!mockDevice->mockIsOpened());
+        QVERIFY(!platform->deviceConnected());
     } else {
         QVERIFY(platform.get() == nullptr);
     }
@@ -91,39 +87,39 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
 
 void PlatformManagerTest::connectDisconnectTest()
 {
-    auto mockDevice = addMockDevice("mock1234", "Mock device");
-    QVERIFY(mockDevice.get() != nullptr);
-    QVERIFY(mockDevice->mockIsOpened());
+    auto platform = addMockDevice("mock1234", "Mock device");
+    QVERIFY(platform.get() != nullptr);
+    QVERIFY(platform->deviceConnected());
     removeMockDevice("mock1234");
-    QVERIFY(!mockDevice->mockIsOpened());
+    QVERIFY(!platform->deviceConnected());
 }
 
 void PlatformManagerTest::connectMultipleTest()
 {
     {
-        auto mockDevice = addMockDevice("mock1", "Mock device 1");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock1", "Mock device 1");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     {
-        auto mockDevice = addMockDevice("mock2", "Mock device 2");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock2", "Mock device 2");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     {
-        auto mockDevice = addMockDevice("mock3", "Mock device 3");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock3", "Mock device 3");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     {
-        auto mockDevice = addMockDevice("mock4", "Mock device 4");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock4", "Mock device 4");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     {
-        auto mockDevice = addMockDevice("mock5", "Mock device 5");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock5", "Mock device 5");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     QCOMPARE(platformManager_->getPlatform("mock1")->deviceName(), "Mock device 1");
     QCOMPARE(platformManager_->getPlatform("mock2")->deviceName(), "Mock device 2");
@@ -145,14 +141,14 @@ void PlatformManagerTest::connectMultipleTest()
     QCOMPARE(onBoardDisconnectedCalls_, 3);
     QCOMPARE(lastOnBoardDisconnectedDeviceId_, "mock5");
     {
-        auto mockDevice = addMockDevice("mock1", "Mock device 1");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock1", "Mock device 1");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     {
-        auto mockDevice = addMockDevice("mock6", "Mock device 6");
-        QVERIFY(mockDevice.get() != nullptr);
-        QVERIFY(mockDevice->mockIsOpened());
+        auto platform = addMockDevice("mock6", "Mock device 6");
+        QVERIFY(platform.get() != nullptr);
+        QVERIFY(platform->deviceConnected());
     }
     QCOMPARE(platformManager_->getPlatform("mock1")->deviceName(), "Mock device 1");
     QCOMPARE(platformManager_->getPlatform("mock2")->deviceName(), "Mock device 2");
