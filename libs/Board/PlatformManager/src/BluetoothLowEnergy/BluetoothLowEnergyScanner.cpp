@@ -70,7 +70,7 @@ void BluetoothLowEnergyScanner::stopDiscovery()
     discoveryAgent_->stop();
 }
 
-const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredDevices()
+const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredDevices() const
 {
     return discoveredDevices_;
 }
@@ -109,23 +109,28 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
     qCDebug(logCategoryDeviceScanner()) << "discovered devices:" << infoList.length();
 
     qCDebug(logCategoryDeviceScanner) << "eligible devices:";
+    qCDebug(logCategoryDeviceScanner) << "";
     for (const auto &info : infoList) {
         if (isEligible(info)) {
-            qCDebug(logCategoryDeviceScanner) << "name" << info.name();
-            qCDebug(logCategoryDeviceScanner) << "address" << info.address();
-            qCDebug(logCategoryDeviceScanner) << "deviceUuid" << info.deviceUuid().toString(QBluetoothUuid::WithoutBraces);
-            qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << info.manufacturerIds();
-            qCDebug(logCategoryDeviceScanner) << "";
-
             BlootoothLowEnergyInfo infoItem;
             infoItem.deviceId = BluetoothLowEnergyDevice::createDeviceId(info);
             infoItem.name = info.name();
-
             infoItem.address = getDeviceAddress(info);
+            infoItem.rssi = info.rssi();
             infoItem.manufacturerIds = info.manufacturerIds();
+            infoItem.isStrata = infoItem.manufacturerIds.contains(BluetoothLowEnergyDevice::MANUFACTURER_ID_ON_SEMICONDICTOR); // TODO!!! replace by real detection once the service+detection design is final
 
             discoveredDevices_.append(infoItem);
             discoveredDevicesMap_.insert(infoItem.deviceId, info);
+
+            qCDebug(logCategoryDeviceScanner) << "device ID" << infoItem.deviceId;
+            qCDebug(logCategoryDeviceScanner) << "name" << infoItem.name;
+            qCDebug(logCategoryDeviceScanner) << "address" << info.address();
+            qCDebug(logCategoryDeviceScanner) << "deviceUuid" << info.deviceUuid().toString(QBluetoothUuid::WithoutBraces);
+            qCDebug(logCategoryDeviceScanner) << "rssi" << infoItem.rssi;
+            qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
+            qCDebug(logCategoryDeviceScanner) << "is Strata" << infoItem.isStrata;
+            qCDebug(logCategoryDeviceScanner) << "";
         }
     }
 
@@ -171,15 +176,6 @@ bool BluetoothLowEnergyScanner::isEligible(const QBluetoothDeviceInfo &info) con
     if ((info.coreConfigurations() & QBluetoothDeviceInfo::LowEnergyCoreConfiguration) == false) {
         return false;
     }
-
-//    const QVector<quint16> manufacturerIds = info.manufacturerIds();
-//    for (const auto &id : manufacturerIds) {
-//        if (eligibleIds_.indexOf(id) >= 0) {
-//            return true;
-//        }
-//    }
-
-//    return false;
 
     return true;
 }

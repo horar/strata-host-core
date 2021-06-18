@@ -128,7 +128,9 @@ void SciBleDeviceModel::populateModel()
         item.deviceId = info.deviceId;
         item.name = info.name;
         item.address = info.address;
+        item.rssi = info.rssi;
         item.manufacturerIds = info.manufacturerIds;
+        item.isStrata = info.isStrata;
 
         data_.append(item);
     }

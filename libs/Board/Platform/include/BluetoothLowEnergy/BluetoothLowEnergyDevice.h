@@ -14,6 +14,8 @@ class BluetoothLowEnergyDevice : public Device
     Q_DISABLE_COPY(BluetoothLowEnergyDevice)
 
 public:
+    constexpr static quint16 MANUFACTURER_ID_ON_SEMICONDICTOR = 0x0362;
+
     /**
      * BluetoothLowEnergyDevice constructor
      * @param deviceId device ID

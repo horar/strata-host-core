@@ -127,6 +127,7 @@ private slots:
     void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
     void sendMessageToClients(const QString &platformId, const QString& message);
+    void sendNotification(const QString message);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
@@ -166,6 +167,7 @@ private:
     void processCmdProgramController(const QJsonObject &payload, const QByteArray &clientId);
     void processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId);
     void processCmdCheckForUpdates(const QByteArray &clientId);
+    void processCmdBluetoothScan();
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 

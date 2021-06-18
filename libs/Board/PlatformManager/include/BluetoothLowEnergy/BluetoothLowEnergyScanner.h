@@ -10,11 +10,10 @@ namespace strata::device::scanner {
 struct BlootoothLowEnergyInfo {
     QByteArray deviceId;
     QString name;
-
-     /* contains deviceUuid on macOS, address elsewhere */
-    QString address;
-
+    QString address; // contains deviceUuid on macOS, address elsewhere
+    qint16 rssi;
     QVector<quint16> manufacturerIds;
+    bool isStrata;
 };
 
 
@@ -40,7 +39,7 @@ public:
 
     void startDiscovery();
     void stopDiscovery();
-    const QList<BlootoothLowEnergyInfo> discoveredDevices();
+    const QList<BlootoothLowEnergyInfo> discoveredDevices() const;
 
     /**
      * Initiates connection to discovered BLE device.
@@ -64,7 +63,6 @@ private:
 
     QBluetoothDeviceDiscoveryAgent *discoveryAgent_ = nullptr;
     const std::chrono::milliseconds discoveryTimeout_ = std::chrono::milliseconds(5000);
-    const QVector<quint16> eligibleIds_ = {866};
     QList<BlootoothLowEnergyInfo> discoveredDevices_;
     QHash<QByteArray, QBluetoothDeviceInfo> discoveredDevicesMap_; // map deviceId -> QBluetoothDeviceInfo
 

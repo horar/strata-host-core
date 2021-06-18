@@ -12,6 +12,7 @@ using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
 using strata::platform::PlatformMessage;
+using strata::device::scanner::BluetoothLowEnergyScanner;
 
 PlatformController::PlatformController(): platformManager_(false, false, true) {
     connect(&platformManager_, &PlatformManager::platformRecognized, this, &PlatformController::newConnection);
@@ -20,6 +21,13 @@ PlatformController::PlatformController(): platformManager_(false, false, true) {
 
 void PlatformController::initialize() {
     platformManager_.init(strata::device::Device::Type::SerialDevice);
+    platformManager_.init(strata::device::Device::Type::BLEDevice);
+
+    strata::device::scanner::BluetoothLowEnergyScannerPtr bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+    if (bleDeviceScanner != nullptr) {
+        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::discoveryFinished, this, &PlatformController::bleDiscoveryFinishedHandler);
+    }
 }
 
 bool PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
@@ -101,6 +109,93 @@ void PlatformController::messageFromPlatform(QByteArray deviceId, PlatformMessag
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
     emit platformMessage(platformId, wrapperStrJson);
+}
+
+void PlatformController::startBluetoothScan() {
+    std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+    if (bleDeviceScanner != nullptr) {
+        bleDeviceScanner->startDiscovery();
+    } else {
+        emit notification(createBluetoothScanErrorNotification("BluetoothLowEnergyScanner not initialized."));
+    }
+}
+
+void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString) {
+    QString message;
+    switch (status) {
+        case strata::device::scanner::BluetoothLowEnergyScanner::Finished:
+        {
+            std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+                platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+            if (bleDeviceScanner != nullptr) {
+                message = createBluetoothScanNotification(bleDeviceScanner);
+            } else {
+                message = createBluetoothScanErrorNotification("BluetoothLowEnergyScanner not initialized.");
+            }
+            break;
+        }
+        case strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryError:
+            message = createBluetoothScanErrorNotification(errorString);
+            break;
+        case strata::device::scanner::BluetoothLowEnergyScanner::Cancelled:
+            message = createBluetoothScanErrorNotification("Discovery cancelled.");
+            break;
+        default:
+            message = createBluetoothScanErrorNotification("Unknown discovery status.");
+            qCWarning(logCategoryHcsPlatform).noquote() << "BLE discovery ended with unknown status" << status;
+    }
+    emit notification(message);
+}
+
+QString PlatformController::createBluetoothScanNotification(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner) {
+    QJsonArray payloadList;
+    const auto discoveredDevices = bleDeviceScanner->discoveredDevices();
+    for (const auto &device : discoveredDevices) {
+        QJsonArray manufacturerIdList;
+        for (const auto id : device.manufacturerIds) {
+            manufacturerIdList.append(id);
+        }
+        QJsonObject item {
+            { JSON_BLE_DEVICE_ID, QLatin1String(device.deviceId) },
+            { JSON_BLE_NAME, device.name },
+            { JSON_BLE_ADDRESS, device.address },
+            { JSON_BLE_RSSI, device.rssi },
+            { JSON_BLE_IS_STRATA, device.isStrata },
+            { JSON_BLE_MANUFACTURER_IDS, manufacturerIdList }
+        };
+        payloadList.append(item);
+    }
+
+    QJsonObject payload {
+        { JSON_LIST, payloadList }
+    };
+    QJsonObject notif {
+        { JSON_TYPE, JSON_BLUETOOTH_SCAN },
+        { JSON_PAYLOAD, payload }
+    };
+    QJsonObject msg {
+        { JSON_HCS_NOTIFICATION, notif }
+    };
+    QJsonDocument doc(msg);
+
+    return doc.toJson(QJsonDocument::Compact);
+}
+
+QString PlatformController::createBluetoothScanErrorNotification(QString errorString) {
+    QJsonObject payload {
+        { JSON_ERROR_STRING, errorString }
+    };
+    QJsonObject notif {
+        { JSON_PAYLOAD, payload },
+        { JSON_TYPE, JSON_BLUETOOTH_SCAN }
+    };
+    QJsonObject msg {
+        { JSON_HCS_NOTIFICATION, notif }
+    };
+    QJsonDocument doc(msg);
+
+    return doc.toJson(QJsonDocument::Compact);
 }
 
 QString PlatformController::createPlatformsList() {

@@ -88,6 +88,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
     connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
+    connect(&platformController_, &PlatformController::notification, this, &HostControllerService::sendNotification);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
@@ -398,6 +399,11 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
     }
 }
 
+void HostControllerService::sendNotification(const QString message)
+{
+    broadcastMessage(message);
+}
+
 // clients handler...
 
 void HostControllerService::processCmdRequestHcsStatus(const QByteArray &clientId)
@@ -667,6 +673,11 @@ void HostControllerService::processCmdDownlodView(const QJsonObject &payload, co
     }
 
     storageManager_.requestDownloadControlView(clientId, url, md5, classId);
+}
+
+void HostControllerService::processCmdBluetoothScan()
+{
+    platformController_.startBluetoothScan();
 }
 
 Client* HostControllerService::getClientById(const QByteArray& clientId)
@@ -967,6 +978,8 @@ void HostControllerService::callHandlerForTypeHcsCmd(
         processCmdCheckForUpdates(clientId);
     } else if (cmdName == "program_controller") {
         processCmdProgramController(payload, clientId);
+    } else if (cmdName == "bluetooth_scan") {
+        processCmdBluetoothScan();
     } else {
         qCWarning(logCategoryHcs).nospace().noquote()
                 << "unhandled command from client: 0x" << clientId.toHex()
