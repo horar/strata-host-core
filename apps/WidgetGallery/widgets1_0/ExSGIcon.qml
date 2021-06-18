@@ -7,6 +7,7 @@ Item {
     id: exSgIcon
     width: contentColumn.width
     height: contentColumn.height
+    
     ColumnLayout {
         id: contentColumn
 
