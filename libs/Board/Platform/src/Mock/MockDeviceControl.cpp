@@ -20,6 +20,12 @@ MockDeviceControl::~MockDeviceControl()
 
 int MockDeviceControl::writeMessage(const QByteArray &msg)
 {
+    ++messagesSent_;
+    if ((emitErrorOnMessageSent_ != 0) && (messagesSent_ % emitErrorOnMessageSent_ == 0)) {
+        qCWarning(logCategoryDeviceMock) << this << "Error during write on following message:" << msg;
+        return false;
+    }
+
     if (saveMessages_) {
         if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
             qCWarning(logCategoryDeviceMock) << this << "Maximum number (" << MAX_STORED_MESSAGES
@@ -87,6 +93,16 @@ bool MockDeviceControl::isBootloader() const
 bool MockDeviceControl::isFirmwareEnabled() const
 {
     return isFirmwareEnabled_;
+}
+
+bool MockDeviceControl::isEmitErrorOnCloseSet() const
+{
+    return emitErrorOnClose_;
+}
+
+bool MockDeviceControl::isEmitErrorOnMessageSentSet() const
+{
+    return emitErrorOnMessageSent_;
 }
 
 MockCommand MockDeviceControl::getCommand() const
@@ -218,6 +234,27 @@ bool MockDeviceControl::setFirmwareEnabled(bool enabled)
         return true;
     }
     qCDebug(logCategoryDeviceMock) << "Mock firmware already configured to" << isFirmwareEnabled_;
+    return false;
+}
+
+bool MockDeviceControl::setEmitErrorOnClose(bool emitError) {
+    if (emitErrorOnClose_ != emitError) {
+        emitErrorOnClose_ = emitError;
+        qCDebug(logCategoryDeviceMock) << "Configured emit error on close to" << emitErrorOnClose_;
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Emit error on close already configured to" << emitErrorOnClose_;
+    return false;
+}
+
+bool MockDeviceControl::setEmitErrorOnMessageSent(unsigned emitMessage) {
+    messagesSent_ = 0;
+    if (emitErrorOnMessageSent_ != emitMessage) {
+        emitErrorOnMessageSent_ = emitMessage;
+        qCDebug(logCategoryDeviceMock) << "Configured emit error on message sent to" << emitErrorOnMessageSent_;
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Emit error on message sent already configured to" << emitErrorOnMessageSent_;
     return false;
 }
 

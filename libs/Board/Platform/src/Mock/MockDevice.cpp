@@ -40,6 +40,13 @@ void MockDevice::open()
 
 void MockDevice::close()
 {
+    if (opened_ && mockIsEmitErrorOnCloseSet()) {
+        QString errMsg(QStringLiteral("Error when trying to close the device."));
+        qCCritical(logCategoryDeviceMock) << this << errMsg;
+        emit deviceError(ErrorCode::DeviceError, errMsg);
+        return;
+    }
+
     opened_ = false;
     mockClearRecordedMessages();
 }
@@ -52,6 +59,9 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
 bool MockDevice::sendMessage(const QByteArray& msg)
 {
     if (opened_ == false) {
+        QString errMsg(QStringLiteral("Cannot write data to device, device is not open."));
+        qCCritical(logCategoryDeviceMock) << this << errMsg;
+        emit deviceError(ErrorCode::DeviceError, errMsg);
         return false;
     }
 
@@ -98,6 +108,11 @@ void MockDevice::mockEmitResponses(const QByteArray& msg)
     control_.emitResponses(msg);
 }
 
+void MockDevice::mockEmitError(const ErrorCode& errCode, const QString& msg)
+{
+    emit deviceError(errCode, msg);
+}
+
 std::vector<QByteArray> MockDevice::mockGetRecordedMessages() const
 {
     return control_.getRecordedMessages();
@@ -123,14 +138,29 @@ bool MockDevice::mockIsLegacy() const
     return control_.isLegacy();
 }
 
+bool MockDevice::mockIsAutoResponse() const
+{
+    return control_.isAutoResponse();
+}
+
 bool MockDevice::mockIsBootloader() const
 {
     return control_.isBootloader();
 }
 
-bool MockDevice::mockIsAutoResponse() const
+bool MockDevice::mockIsFirmwareEnabled() const
 {
-    return control_.isAutoResponse();
+    return control_.isFirmwareEnabled();
+}
+
+bool MockDevice::mockIsEmitErrorOnCloseSet() const
+{
+    return control_.isEmitErrorOnCloseSet();
+}
+
+bool MockDevice::mockIsEmitErrorOnMessageSentSet() const
+{
+    return control_.isEmitErrorOnMessageSentSet();
 }
 
 MockCommand MockDevice::mockGetCommand() const
@@ -196,6 +226,14 @@ bool MockDevice::mockSetAsBootloader(bool isBootloader)
 bool MockDevice::mockSetFirmwareEnabled(bool enabled)
 {
     return control_.setFirmwareEnabled(enabled);
+}
+
+bool MockDevice::mockSetEmitErrorOnClose(bool emitError) {
+    return control_.setEmitErrorOnClose(emitError);
+}
+
+bool MockDevice::mockSetEmitErrorOnMessageSent(unsigned emitMessage) {
+    return control_.setEmitErrorOnMessageSent(emitMessage);
 }
 
 }  // namespace strata::device

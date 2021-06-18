@@ -31,6 +31,8 @@ public:
     bool isAutoResponse() const;
     bool isBootloader() const;
     bool isFirmwareEnabled() const;
+    bool isEmitErrorOnCloseSet() const;
+    bool isEmitErrorOnMessageSentSet() const;
     MockCommand getCommand() const;
     MockResponse getResponse() const;
     MockVersion getVersion() const;
@@ -45,6 +47,8 @@ public:
     bool setVersion(MockVersion version);
     bool setAsBootloader(bool isBootloader);
     bool setFirmwareEnabled(bool enabled);
+    bool setEmitErrorOnClose(bool emitError);
+    bool setEmitErrorOnMessageSent(unsigned emitMessage);
 
 signals:
     /**
@@ -81,6 +85,8 @@ private:
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
     bool isBootloader_ = false;
     bool isFirmwareEnabled_ = true;
+    bool emitErrorOnClose_ = false;
+    unsigned emitErrorOnMessageSent_ = 0;
     MockCommand command_ = MockCommand::Any_command;
     MockResponse response_ = MockResponse::Normal;
     MockVersion version_ = MockVersion::Version_1;
@@ -96,6 +102,7 @@ private:
 
     // variables used to store incoming messages and data processed from them
     std::list<QByteArray> recordedMessages_;
+    unsigned messagesSent_ = 0;
 };
 
 } // namespace strata::device

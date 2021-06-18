@@ -62,6 +62,7 @@ public:
     // commands to control mock device behavior
 
     void mockEmitResponses(const QByteArray& msg);
+    void mockEmitError(const ErrorCode& errCode, const QString& msg);
 
     std::vector<QByteArray> mockGetRecordedMessages() const;
     std::vector<QByteArray>::size_type mockGetRecordedMessagesCount() const;
@@ -69,8 +70,11 @@ public:
 
     bool mockIsOpenEnabled() const;
     bool mockIsLegacy() const;
-    bool mockIsBootloader() const;
     bool mockIsAutoResponse() const;
+    bool mockIsBootloader() const;
+    bool mockIsFirmwareEnabled() const;
+    bool mockIsEmitErrorOnCloseSet() const;
+    bool mockIsEmitErrorOnMessageSentSet() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
     MockVersion mockGetVersion() const;
@@ -85,6 +89,8 @@ public:
     bool mockSetVersion(MockVersion version);
     bool mockSetAsBootloader(bool isBootloader);
     bool mockSetFirmwareEnabled(bool enabled);
+    bool mockSetEmitErrorOnClose(bool emitError);
+    bool mockSetEmitErrorOnMessageSent(unsigned emitMessage);
 
 private slots:
     void readMessage(QByteArray msg);
