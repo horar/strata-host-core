@@ -97,14 +97,8 @@ void TcpDeviceScanner::deviceDisconnectedHandler()
 
 bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
 {
-    // {
-    //     "notification": {
-    //         "value": "broadcast"
-    //         "payload": {
-    //             "tcp_port": 24125
-    //         }
-    //     }
-    // }
+    // Refer to this page for the proposed messaging structure
+    // https://confluence.onsemi.com/display/SPYG/Messaging+Structure+-+Proposal
 
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(datagram, &jsonParseError);
