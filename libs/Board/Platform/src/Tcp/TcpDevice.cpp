@@ -94,18 +94,18 @@ void TcpDevice::readMessages()
     // newline character is used as the end of message indicator.
 
     const QByteArray data = tcpSocket_->readAll();
-    int from = 0;
+    int begin = 0;
     int end;
-    while ((end = data.indexOf('\n', from)) > -1) {
+    while ((end = data.indexOf('\n', begin)) > -1) {
         ++end;
-        readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
-        from = end;
+        readBuffer_.append(data.data() + begin, static_cast<size_t>(end - begin));
+        begin = end;
         emit messageReceived(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
     }
 
-    if (from < data.size()) {  // message contains some data after '\n' (or has no '\n')
-        readBuffer_.append(data.data() + from, static_cast<size_t>(data.size() - from));
+    if (begin < data.size()) {  // message contains some data after '\n' (or has no '\n')
+        readBuffer_.append(data.data() + begin, static_cast<size_t>(data.size() - begin));
     }
 }
 
