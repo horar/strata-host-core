@@ -22,6 +22,7 @@ public:
     bool mockIsOpenEnabled() const;
     bool mockIsLegacy() const;
     bool mockIsBootloader() const;
+    bool mockIsFirmwareEnabled() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
     MockVersion mockGetVersion() const;
@@ -33,7 +34,7 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
     bool mockSetAsBootloader(bool isBootloader);
-    bool mockCreateMockFirmware(bool createFirmware);
+    bool mockSetFirmwareEnabled(bool enabled);
 
 private:
     const std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
@@ -44,13 +45,14 @@ private:
     QString getChunksValue(const QString placeholder);
 
     void createMockFirmware();
+    void removeMockFirmware();
     void getExpectedValues(QString firmwarePath);
 
 private:
     bool isOpenEnabled_ = true;
     bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
     bool isBootloader_ = false;
-    bool createFirmware_ = false;
+    bool isFirmwareEnabled = true;
     MockCommand command_ = MockCommand::Any_command;
     MockResponse response_ = MockResponse::Normal;
     MockVersion version_ = MockVersion::Version_1;
