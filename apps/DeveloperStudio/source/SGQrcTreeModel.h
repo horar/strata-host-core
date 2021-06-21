@@ -165,14 +165,14 @@ public:
      * @param index The node to add to the qrc
      * @param save If the changes should be saved or not. Default is true
      */
-    Q_INVOKABLE bool addToQrc(const QModelIndex &index, bool save = true);
+    Q_INVOKABLE void addToQrc(const QModelIndex &index, bool save = true);
 
     /**
      * @brief removeFromQrc Removes an item from the qrc file
      * @param index The node to remove from the qrc
      * @param save If the changes should be saved or not. Default is true
      */
-    Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
+    Q_INVOKABLE void removeFromQrc(const QModelIndex &index, bool save = true);
 
     /**
      * @brief removeDeletedFilesFromQrc Removes all files in the Qrc that have been deleted from the filesystem
@@ -184,12 +184,27 @@ public:
      * @return Returns a list of filepaths for missing files
      */
     Q_INVOKABLE QList<QString> getMissingFiles();
-    
+
     /**
      * @brief removeEmptyChildren Removes any children that don't have a filename
      * @param parent The QModelIndex of the parent
      */
     Q_INVOKABLE void removeEmptyChildren(const QModelIndex &parent);
+
+    /**
+     * @brief createQmlFile creates a QML file
+     * @param filepath full filepath for file
+     * @param isVisualEditorEnabled create a base QML file or a Visual Editor enabled QML file
+     * @return true if successfully created file
+     */
+    Q_INVOKABLE bool createQmlFile(const QString &filepath, const bool isVisualEditorEnabled);
+
+    /**
+     * @brief createEmptyFile creates an empty file
+     * @param filepath full filepath for file
+     * @return true if successfully created file
+     */
+    Q_INVOKABLE bool createEmptyFile(const QString &filepath);
 
     /**
      * @brief renameFile Renames a file or a folder
@@ -238,6 +253,13 @@ public:
      */
     Q_INVOKABLE QUrl parentDirectoryUrl(QUrl url);
 
+    /**
+     * @brief containsPath check if file is in pathsInTree_
+     * @param url The path to the file or directory
+     * @return true if file is in pathsInTree_
+     */
+    Q_INVOKABLE bool containsPath(const QUrl url);
+
     /***
      * SIGNALS
      ***/
@@ -256,13 +278,14 @@ signals:
     void fileDeleted(const QString uid, const QUrl path);
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
-
+    // This signal is emitted when a file is created
+    void fileCreated(const QModelIndex index, const QString filename, const QUrl filepath, const QString filetype, const QString uid);
 
     /***
      * SLOTS
      ***/
 public slots:
-    void childrenChanged(const QModelIndex &index, int role);    
+    void childrenChanged(const QModelIndex &index, int role);
 
     /***
      * PRIVATE MEMBERS
@@ -321,4 +344,25 @@ private:
     QModelIndex rootIndex_;
     QUrl debugMenuSource_;
     bool needsCleaning_;
+
+    // String literal for creating a base QML file
+    const QString baseQMLFile_ = R"baseQMLFile(import QtQuick 2.12
+
+Item {
+
+}
+)baseQMLFile";
+
+    // String literal for creating a VE-enabled QML file
+    const QString veQMLFile_ = R"veQMLFile(import QtQuick 2.12
+
+import tech.strata.sgwidgets 1.0
+
+UIBase { // start_uibase
+    columnCount: 20
+    rowCount: 20
+
+} // end_uibase
+)veQMLFile";
+
 };

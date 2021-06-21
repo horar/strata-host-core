@@ -31,7 +31,9 @@ private slots:
     void flashBootloaderStartInBootloaderTest();
     void setFwClassIdTest();
     void setFwClassIdWithoutStartApplicationTest();
-    //TODO: Add Backup Firmware tests standard & faulty/invalid responses
+    void backupFirmwareTest();
+    void backupFirmwareWithoutStartApplicationTest();
+    void backupFirmwareStartInBootloaderTest();
 
     // tests faulty/invalid responses
     void startFlashFirmwareInvalidCommandTest();
@@ -39,25 +41,31 @@ private slots:
     void flashFirmwareResendChunkTest();
     void flashFirmwareMemoryErrorTest();
     void flashFirmwareInvalidCmdSequenceTest();
+    void startBackupNoFirmwareTest();
+    void backupNoFirmwareTest();
 
     // tests faulty scenarios
-    void disconnectWhileFlashingTest();
+    void disconnectDuringFlashTest();
     void setNoFwClassIdTest();
     void flashFirmwareCancelTest();
     void flashBootloaderCancelTest();
+    void disconnectDuringBackupTest();
+    void backupFirmwareCancelTest();
 
 protected slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString);
-    void handleFlashingProgressForDisconnectWhileFlashing(int chunk, int total);
-    void handleFlashingProgressForCancelFlashOperation(int chunk, int total);
+    void handleFlashingProgressForDisconnectDuringFlashOperation(int chunk, int total);
+    void handleFlashingProgressForCancelDuringFlashOperation(int chunk, int total);
+    void handleBackupProgressForDisconnectDuringBackupOperation(int chunk, int total);
+    void handleBackupProgressForCancelDuringBackupOperation(int chunk, int total);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectFlasherHandlers(strata::Flasher* flasher) const;
-    void connectFlasherForDisconnectWhileFlashing(strata::Flasher* flasher) const;
-    void connectFlasherForCancelFirmwareOperation(strata::Flasher* flasher) const;
+    void connectFlasherForDisconnectDuringFlashOperation(strata::Flasher* flasher) const;
+    void connectFlasherForCancelFlashOperation(strata::Flasher* flasher) const;
 
     void createFiles();
     void getExpectedValues(QString firmwarePath);
@@ -78,6 +86,7 @@ private:
 
     QTemporaryFile fakeFirmware_;
     QTemporaryFile fakeBootloader_;
+    QTemporaryFile fakeFirmwareBackup_;
 
     QString expectedMd5_;
     int expectedChunksCount_ = 0;

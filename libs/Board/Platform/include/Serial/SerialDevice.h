@@ -40,9 +40,9 @@ public:
 
     /**
      * Open serial port.
-     * @return true if port was opened, otherwise false
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close serial port.
@@ -76,6 +76,12 @@ public:
      * @return true if device is connected, otherwise false
      */
     virtual bool isConnected() const override;
+
+    /**
+     * Reset receiving messages from device - clear internal buffer
+     * for receiving from serial port (drop any data (parts of message) in it).
+     */
+    virtual void resetReceiving() override;
 
 private slots:
     void readMessage();

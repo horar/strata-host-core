@@ -45,7 +45,8 @@ namespace strata::device {
         */
         enum class Type {
             SerialDevice,
-            MockDevice
+            MockDevice,
+            TcpDevice
         };
         Q_ENUM(Type)
 
@@ -63,10 +64,10 @@ namespace strata::device {
         virtual ~Device();
 
         /**
-         * Open device communication channel.
-         * @return true if device was opened, otherwise false
+         * Open device communication channel. Non-blocking.
+         * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
          */
-        virtual bool open() = 0;
+        virtual void open() = 0;
 
         /**
          * Close device communication channel.
@@ -105,10 +106,20 @@ namespace strata::device {
          */
         virtual bool isConnected() const = 0;
 
+        /**
+         * Reset receiving messages from device (clear internel buffers, etc.).
+         */
+        virtual void resetReceiving() = 0;
+
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
 
     signals:
+        /**
+         * Emitted when device communication channel was opened.
+         */
+        void opened();
+
         /**
          * Emitted when there is available new message from device.
          * @param msg message from device
@@ -122,7 +133,7 @@ namespace strata::device {
         void messageSent(QByteArray msg);
 
         /**
-         * Emitted when error occured during communication on the serial port.
+         * Emitted when error occured during communication or connection.
          * @param errCode error code
          * @param msg error description
          */
