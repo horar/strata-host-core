@@ -11,8 +11,8 @@ Item {
     id: layoutContainerRoot
     x: Math.round(layoutInfo.xColumns * columnSize)
     y: Math.round(layoutInfo.yRows * rowSize)
-    width: Math.round(layoutInfo.columnsWide * columnSize)
-    height: Math.round(layoutInfo.rowsTall * rowSize)
+    width: Math.ceil(layoutInfo.columnsWide * columnSize)
+    height: Math.ceil(layoutInfo.rowsTall * rowSize)
 
     property LayoutInfo layoutInfo: LayoutInfo { }
     property var contentItem: null

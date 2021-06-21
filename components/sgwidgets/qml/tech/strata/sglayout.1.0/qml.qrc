@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/tech/strata/sglayout.1.0">
+        <file>qmldir</file>
+        <file>UIBase.qml</file>
+        <file>LayoutInfo.qml</file>
+        <file>LayoutContainer.qml</file>
+        <file>widgets/Button/LayoutButton.qml</file>
+        <file>widgets/Button/Button.txt</file>
+        <file>widgets/Divider/LayoutDivider.qml</file>
+        <file>widgets/Divider/Divider.txt</file>
+        <file>widgets/Text/LayoutText.qml</file>
+        <file>widgets/Text/Text.txt</file>
+        <file>widgets/SGIcon/LayoutSGIcon.qml</file>
+        <file>widgets/SGIcon/SGIcon.txt</file>
+        <file>widgets/Rectangle/LayoutRectangle.qml</file>
+        <file>widgets/Rectangle/Rectangle.txt</file>
+        <file>widgets/Switch/LayoutSGSwitch.qml</file>
+        <file>widgets/Switch/SGSwitch.txt</file>
+        <file>widgets/InfoBox/SGInfoBox.txt</file>
+        <file>widgets/InfoBox/LayoutSGInfoBox.qml</file>
+        <file>widgets/CircularGauge/LayoutSGCircularGauge.qml</file>
+        <file>widgets/CircularGauge/SGCircularGauge.txt</file>
+        <file>widgets/StatusLight/LayoutSGStatusLight.qml</file>
+        <file>widgets/StatusLight/SGStatusLight.txt</file>
+        <file>widgets/ComboBox/LayoutSGComboBox.qml</file>
+        <file>widgets/ComboBox/SGComboBox.txt</file>
+        <file>widgets/Graph/LayoutSGGraph.qml</file>
+        <file>widgets/Graph/SGGraph.txt</file>
+        <file>widgets/Slider/LayoutSGSlider.qml</file>
+        <file>widgets/Slider/SGSlider.txt</file>
+        <file>widgets/ButtonStrip/LayoutSGButtonStrip.qml</file>
+        <file>widgets/ButtonStrip/SGButtonStrip.txt</file>
+        <file>widgets/ButtonStrip/SGButtonStrip.qml</file>
+        <file>widgets/RadioButtons/LayoutRadioButtons.qml</file>
+        <file>widgets/RadioButtons/SGRadioButtons.qml</file>
+        <file>widgets/RadioButtons/SGRadioButtons.txt</file>
+        <file>widgets/StatusLogBox/LayoutSGStatusLogBox.qml</file>
+        <file>widgets/StatusLogBox/SGStatusLogBox.txt</file>
+    </qresource>
+</RCC>
