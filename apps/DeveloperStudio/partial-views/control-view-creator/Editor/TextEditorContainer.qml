@@ -363,6 +363,7 @@ ColumnLayout {
                 var htmlWidth = width - 16
                 channelObject.setContainerWidth(htmlWidth.toString())
             }
+
             // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
             // the visibilty changed is called when the window is resized from signals outside of the app
             Connections {
