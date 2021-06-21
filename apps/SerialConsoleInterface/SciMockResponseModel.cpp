@@ -123,4 +123,8 @@ void SciMockResponseModel::setModelData()
     responses_.push_back({MockResponse::Flash_firmware_invalid_cmd_sequence, "Flash Firmware: Invalid Cmd Sequence"});
     responses_.push_back({MockResponse::Flash_firmware_invalid_value, "Flash Firmware: Invalid Value"});
     responses_.push_back({MockResponse::Start_flash_firmware_invalid, "Start Flash Firmware: Invalid"});
+    responses_.push_back({MockResponse::Start_flash_firmware_too_large, "Start Flash Firmware: Firmware too large"});
+    responses_.push_back({MockResponse::Start_flash_firmware_invalid_command, "Start Flash Firmware: Invalid command"});
+    responses_.push_back({MockResponse::Backup_firmware_no_fw, "Backup Firmware: No firmware"});
+    responses_.push_back({MockResponse::Start_backup_firmware_no_fw, "Start Backup Firmware: No firmware"});
 }

@@ -127,13 +127,13 @@ namespace strata {
         void handleDeviceLost(QByteArray deviceId);
 
         // from Platform
-        void handlePlatformOpened(QByteArray deviceId);
-        void handlePlatformAboutToClose(QByteArray deviceId);
-        void handlePlatformClosed(QByteArray deviceId);
-        void handlePlatformTerminated(QByteArray deviceId);
-        void handlePlatformRecognized(QByteArray deviceId, bool isRecognized);
-        void handlePlatformIdChanged(QByteArray deviceId);
-        void handleDeviceError(QByteArray deviceId, device::Device::ErrorCode errCode, QString errStr);
+        void handlePlatformOpened();
+        void handlePlatformAboutToClose();
+        void handlePlatformClosed();
+        void handlePlatformTerminated();
+        void handlePlatformRecognized(bool isRecognized);
+        void handlePlatformIdChanged();
+        void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
     private:
         void startPlatformOperations(const platform::PlatformPtr& platform);

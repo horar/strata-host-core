@@ -166,7 +166,11 @@ SGStrataPopup {
                 root.resetForm()
             } else {
                 if (result === "No Connection") {
-                    alertRect.text = "Connection to registration server failed"
+                    alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
+                } else if (result === "Server Error") {
+                    alertRect.text = "Registration server is unable to process your request at this time. Please try again later."
+                } else if (result === "Unable to send email") {
+                    alertRect.text = "Registration server is unable to send mail at this time. Please try again later."
                 } else {
                     alertRect.text = "No user found with email " + emailField.text
                 }

@@ -49,26 +49,34 @@ var xhr = function(method, endpoint, data, callback, errorCallback, headers) {
         }
         else if (xhr.readyState === 4 && xhr.status >= 200 && xhr.status < 300) {
             //console.log(LoggerModule.Logger.devStudioRestClientCategory, xhr.responseText)
-            response = xhr.responseText;
+            var validResponse;
             try {
                 response = JSON.parse(xhr.responseText);
+                validResponse = true
             } catch (error) {
                 console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
+                response = {"message":"Response not valid","status":xhr.status,"data":JSON.stringify(xhr.responseText)}
+                validResponse = false
             }
-            if(callback.length > 1) {
-                callback(response, data)
+            if (validResponse) {
+                if (callback.length > 1) {
+                    callback(response, data)
+                } else {
+                    callback(response);
+                }
             } else {
-                callback(response);
+                errorCallback(response);
             }
             timeOut.destroy()
         }
         else if (xhr.readyState === 4 && xhr.status >= 300) {
             if (errorCallback) {
-                response = xhr.responseText;
+                //console.log(LoggerModule.Logger.devStudioRestClientCategory, xhr.responseText)
                 try {
                     response = JSON.parse(xhr.responseText);
                 } catch (error) {
                     console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
+                    response = {"message":"Response not valid","status":xhr.status,"data":JSON.stringify(xhr.responseText)}
                 }
                 errorCallback(response);
                 timeOut.destroy()
@@ -79,15 +87,15 @@ var xhr = function(method, endpoint, data, callback, errorCallback, headers) {
             if (cachedState.status === 409 && cachedState.responseText !== "") {
                 // Workaround for 409 server response: https://bugreports.qt.io/browse/QTBUG-49896
                 // (409 response causes XHR to crash between states 3 and 4, causing false positive "No connection")
-                response = cachedState.responseText;
                 try {
                     response = JSON.parse(cachedState.responseText);
                 } catch (error) {
                     console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
+                    response = {"message":"Response not valid","status":cachedState.status,"data":JSON.stringify(cachedState.responseText)}
                 }
                 errorCallback(response)
             } else {
-                errorCallback({message: "No connection"})
+                errorCallback({"message":"No connection"})
             }
             timeOut.destroy()
         }

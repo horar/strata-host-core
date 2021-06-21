@@ -110,13 +110,13 @@ if(IS_DIRECTORY "${STRATA_HOST_CORE_INTERNAL_PATH}/assets/config/prt")
 endif()
 list(APPEND PRT_CONFIG_PATHS_LIST ${CMAKE_HOME_DIRECTORY}/assets/config/prt)
 
-find_all_config_files("${PRT_CONFIG_PATHS_LIST}" "prt-config-*.ini" APPS_TOOLBOX_PRT_CONFIG_CHOICES)
+find_all_config_files("${PRT_CONFIG_PATHS_LIST}" "*.ini" APPS_TOOLBOX_PRT_CONFIG_CHOICES)
 
 if(NOT APPS_TOOLBOX_PRT_CONFIG)
-    if("prt-config-qa.ini" IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
-        set(APPS_TOOLBOX_PRT_CONFIG "prt-config-qa.ini" CACHE STRING "Desired PRT configuration file." FORCE)
+    if("qa.ini" IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
+        set(APPS_TOOLBOX_PRT_CONFIG "qa.ini" CACHE STRING "Desired PRT configuration file." FORCE)
     else()
-        set(APPS_TOOLBOX_PRT_CONFIG "prt-config-template.ini" CACHE STRING "Desired PRT configuration file." FORCE)
+        set(APPS_TOOLBOX_PRT_CONFIG "template.ini" CACHE STRING "Desired PRT configuration file." FORCE)
     endif()
 endif()
 
@@ -125,7 +125,7 @@ if(NOT APPS_TOOLBOX_PRT_CONFIG IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
     message(FATAL_ERROR "Specify 'APPS_TOOLBOX_PRT_CONFIG'. Must be one of ${APPS_TOOLBOX_PRT_CONFIG_CHOICES}")
 endif()
 
-deploy_config_file("${PRT_CONFIG_PATHS_LIST}" ${APPS_TOOLBOX_PRT_CONFIG} "prt-config.ini")
+deploy_config_file("${PRT_CONFIG_PATHS_LIST}" ${APPS_TOOLBOX_PRT_CONFIG} "prt.ini")
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS

@@ -4,7 +4,7 @@ project(Platform
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort Bluetooth
+    COMPONENTS Core SerialPort Network Bluetooth
     REQUIRED
 )
 
@@ -17,9 +17,9 @@ add_library(${PROJECT_NAME}
     src/Serial/SerialDevice.cpp
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
+    src/Tcp/TcpDevice.cpp
     src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
     src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
-
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp
     src/Operations/Commands/CmdRequestPlatformId.cpp
@@ -51,9 +51,9 @@ add_library(${PROJECT_NAME}
     include/Mock/MockDevice.h
     include/Mock/MockDeviceControl.h
     include/Mock/MockDeviceConstants.h
+    include/Tcp/TcpDevice.h
     include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
     include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
-
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h
     include/Operations/PlatformOperations.h
@@ -67,11 +67,13 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Mock
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Operations
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Operations/Commands
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Tcp
 )
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
+    PUBLIC Qt5::Network
     PUBLIC Qt5::Bluetooth
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger

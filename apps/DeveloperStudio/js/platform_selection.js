@@ -42,6 +42,7 @@ function initialize (newSdsModel) {
 
 function disablePlatformNotifications(){
     NavigationControl.userSettings.notifyOnPlatformConnections = false
+    NavigationControl.userSettings.saveSettings()
 }
 
 function getPlatformList () {
@@ -321,7 +322,16 @@ function addConnectedPlatform(platform) {
                 if (classMap.hasOwnProperty(class_id_string)) {
                     if (platform.firmware_version.length === 0) {
                         //controller with invalid firmware
-                        insertProgramControllerListing(platform)
+
+                        // if there is already listing for this platform, reuse it
+                        let listing = getDeviceListing(class_id_string, platform.device_id)
+                        if (listing) {
+                            listing.program_controller = true
+                            connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                        } else {
+                            insertProgramControllerListing(platform)
+                        }
+
                         sdsModel.programControllerManager.programAssisted(platform.device_id)
                     } else {
                         connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
@@ -356,7 +366,16 @@ function addConnectedPlatform(platform) {
             if (classMap.hasOwnProperty(class_id_string)) {
                 if (platform.firmware_version.length === 0) {
                     //device without firmware
-                    insertMissingFirmwareListing(platform)
+
+                    // if there is already listing for this platform, reuse it
+                    let listing = getDeviceListing(class_id_string, platform.device_id)
+                    if (listing) {
+                        listing.program_controller = true
+                        connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
+                    } else {
+                        insertMissingFirmwareListing(platform)
+                    }
+
                     sdsModel.programControllerManager.programEmbedded(platform.device_id)
                 } else {
                     connectListing(class_id_string, platform.device_id, platform.firmware_version, null)

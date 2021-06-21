@@ -65,10 +65,10 @@ public:
 
     /**
      * Send message to serial device. Emits deviceError in case of failure.
-     * @param msg message to be written to device
+     * @param data message to be written to device
      * @return true if message can be sent, otherwise false
      */
-    virtual bool sendMessage(const QByteArray& msg) override;
+    virtual bool sendMessage(const QByteArray& data) override;
 
     /**
      * Check if serial device is connected (communication with it is possible - device
@@ -77,15 +77,15 @@ public:
      */
     virtual bool isConnected() const override;
 
-signals:
-    // signals only for internal use:
-    // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
-    void writeToPort(const QByteArray data, QPrivateSignal);
+    /**
+     * Reset receiving messages from device - clear internal buffer
+     * for receiving from serial port (drop any data (parts of message) in it).
+     */
+    virtual void resetReceiving() override;
 
 private slots:
     void readMessage();
     void handleError(QSerialPort::SerialPortError error);
-    void handleWriteToPort(const QByteArray data);
 
 private:
     void initSerialDevice();
