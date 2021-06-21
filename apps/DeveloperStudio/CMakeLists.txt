@@ -146,10 +146,10 @@ list(APPEND SDS_CONFIG_PATHS_LIST ${CMAKE_HOME_DIRECTORY}/assets/config/sds)
 find_all_config_files("${SDS_CONFIG_PATHS_LIST}" "*.config" APPS_CORESW_SDS_CONFIG_CHOICES)
 
 if(NOT APPS_CORESW_SDS_CONFIG)
-    if("sds_qa.config" IN_LIST APPS_CORESW_SDS_CONFIG_CHOICES)
-        set(APPS_CORESW_SDS_CONFIG "sds_qa.config" CACHE STRING "Desired SDS configuration file." FORCE)
+    if("qa.config" IN_LIST APPS_CORESW_SDS_CONFIG_CHOICES)
+        set(APPS_CORESW_SDS_CONFIG "qa.config" CACHE STRING "Desired SDS configuration file." FORCE)
     else()
-        set(APPS_CORESW_SDS_CONFIG "sds_template.config" CACHE STRING "Desired SDS configuration file." FORCE)
+        set(APPS_CORESW_SDS_CONFIG "template.config" CACHE STRING "Desired SDS configuration file." FORCE)
     endif()
 endif()
 

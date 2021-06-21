@@ -108,6 +108,9 @@ bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
     if (0 == cmd.compare("write")) {
         return processWriteCommand(requestDocument);
     }
+    if (0 == cmd.compare("write_descriptor")) {
+        return processWriteDescriptorCommand(requestDocument);
+    }
     if (0 == cmd.compare("read")) {
         return processReadCommand(requestDocument);
     }
@@ -136,20 +139,42 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
         return false;
     }
-    if (attribute.descriptor.isNull()) {
-        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
-        service->writeCharacteristic(characteristic, attribute.data);
-        return true;
-    } else {
-        QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
-        if (descriptor.isValid() == false) {
-            qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
-            return false;
-        }
-        qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
-        service->writeDescriptor(descriptor, attribute.data);
-        return true;
+
+    qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
+    service->writeCharacteristic(characteristic, attribute.data);
+    return true;
+}
+
+bool BluetoothLowEnergyDevice::processWriteDescriptorCommand(const rapidjson::Document & requestDocument)
+{
+    if (isConnected() == false) {
+        return false;
     }
+
+    BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
+    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
+        return false;
+    }
+
+    QLowEnergyService * service = getService(attribute.service);
+    if (service == nullptr) {
+        return false;
+    }
+
+    QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
+    if (characteristic.isValid() == false) {
+        qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
+        return false;
+    }
+
+    QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
+    if (descriptor.isValid() == false) {
+        qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
+        return false;
+    }
+    qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
+    service->writeDescriptor(descriptor, attribute.data);
+    return true;
 }
 
 bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & requestDocument)
@@ -173,21 +198,10 @@ bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & re
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
         return false;
     }
-    if (attribute.descriptor.isNull()) {
-        qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
-        service->readCharacteristic(characteristic);
-        return true;
-    } else {
-        return false; // service->readDescriptor doesn't work... Disabling reading of descriptors. TODO investigate
-        QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
-        if (descriptor.isValid() == false) {
-            qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
-            return false;
-        }
-        qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid();
-        service->readDescriptor(descriptor);
-        return true;
-    }
+
+    qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
+    service->readCharacteristic(characteristic);
+    return true;
 }
 
 bool BluetoothLowEnergyDevice::processHardcodedReplies(const std::string &cmd)
@@ -246,6 +260,12 @@ bool BluetoothLowEnergyDevice::isConnected() const
     }
 
     return lowEnergyController_->state() == QLowEnergyController::DiscoveredState && allDiscovered_;
+}
+
+void BluetoothLowEnergyDevice::resetReceiving()
+{
+    //do nothing for ble device
+    return;
 }
 
 void BluetoothLowEnergyDevice::connectToDevice()
@@ -406,17 +426,6 @@ void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescript
         value.toHex()));
 }
 
-void BluetoothLowEnergyDevice::descriptorReadHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
-{
-    emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckReadDescriptor(
-        getSignalSenderService(),
-        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces)));
-    emitResponses(std::vector<QByteArray>({BluetoothLowEnergyJsonEncoder::encodeNotificationReadDescriptor(
-        getSignalSenderService(),
-        info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
-        value.toHex())}));
-}
-
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
 {
     Q_UNUSED(newState);
@@ -488,7 +497,6 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
     connect(service, &QLowEnergyService::characteristicWritten, this, &BluetoothLowEnergyDevice::characteristicWrittenHandler);
     connect(service, &QLowEnergyService::descriptorWritten, this, &BluetoothLowEnergyDevice::descriptorWrittenHandler);
     connect(service, &QLowEnergyService::characteristicRead, this, &BluetoothLowEnergyDevice::characteristicReadHandler);
-    connect(service, &QLowEnergyService::descriptorRead, this, &BluetoothLowEnergyDevice::descriptorReadHandler);
     connect(service, &QLowEnergyService::characteristicChanged, this, &BluetoothLowEnergyDevice::characteristicChangedHandler);
     connect(service, (void (QLowEnergyService::*)(QLowEnergyService::ServiceError)) &QLowEnergyService::error, this, &BluetoothLowEnergyDevice::serviceErrorHandler);
     connect(service, &QLowEnergyService::stateChanged, this, &BluetoothLowEnergyDevice::serviceStateChangedHandler);

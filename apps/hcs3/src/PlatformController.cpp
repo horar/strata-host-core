@@ -86,12 +86,14 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     emit platformDisconnected(deviceId);
 }
 
-void PlatformController::messageFromPlatform(QByteArray deviceId, PlatformMessage message)
+void PlatformController::messageFromPlatform(PlatformMessage message)
 {
-    PlatformPtr platform = platformManager_.getPlatform(deviceId);
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
     if (platform == nullptr) {
         return;
     }
+
+    const QByteArray deviceId = platform->deviceId();
 
     QJsonObject wrapper {
         { JSON_MESSAGE, QString(message.raw()) },
@@ -104,11 +106,9 @@ void PlatformController::messageFromPlatform(QByteArray deviceId, PlatformMessag
     QJsonDocument wrapperDoc(notification);
     QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
 
-    QString platformId = platform->platformId();
-
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
-    emit platformMessage(platformId, wrapperStrJson);
+    emit platformMessage(platform->platformId(), wrapperStrJson);
 }
 
 void PlatformController::startBluetoothScan() {

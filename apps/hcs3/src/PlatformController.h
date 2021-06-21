@@ -72,7 +72,7 @@ signals:
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
     void closeConnection(const QByteArray& deviceId);
-    void messageFromPlatform(QByteArray deviceId, strata::platform::PlatformMessage message);
+    void messageFromPlatform(strata::platform::PlatformMessage message);
     void bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
 
 private:

@@ -44,12 +44,12 @@ void PlatformOperationsV2Test::init()
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     QVERIFY(mockDevice_->mockSetVersion(MockVersion::Version_2));
-    QVERIFY(!mockDevice_->mockIsOpened());
+    QVERIFY(platform_->deviceConnected() == false);
 
-    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened(QByteArray)));
+    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
     platform_->open();
     QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
-    QVERIFY(mockDevice_->mockIsOpened());
+    QVERIFY(platform_->deviceConnected());
 
     connect(&platformOperations_, &PlatformOperations::finished, this, &PlatformOperationsV2Test::handleOperationFinished);
 }
@@ -113,7 +113,7 @@ void PlatformOperationsV2Test::verifyMessage(const QByteArray &msg, const QByteA
     rapidjson::ParseResult parseResult;
 
     parseResult = doc.Parse(msg.data(), msg.size());
-    QVERIFY(!parseResult.IsError());
+    QVERIFY(parseResult.IsError() == false);
     QVERIFY(doc.IsObject());
     expectedDoc.Parse(expectedJson.data(), expectedJson.size());
     if (doc != expectedDoc) {
@@ -263,7 +263,7 @@ void PlatformOperationsV2Test::identifyEmbeddedBootloaderTest()
         QVERIFY(platform_->controllerType() == strata::platform::Platform::ControllerType::Embedded);
         QVERIFY(platform_->controllerPlatformId().isEmpty());
         QVERIFY(platform_->controllerClassId().isEmpty());
-        QVERIFY(!platform_->isControllerConnectedToPlatform());
+        QVERIFY(platform_->isControllerConnectedToPlatform() == false);
     }
     {
         expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
@@ -395,7 +395,7 @@ void PlatformOperationsV2Test::identifyAssistedNoBoardTest()
         QVERIFY(platform_->controllerType() == strata::platform::Platform::ControllerType::Assisted);
         QCOMPARE(platform_->controllerPlatformId(), expectedPayload["controller_platform_id"].GetString());
         QCOMPARE(platform_->controllerClassId(), expectedPayload["controller_class_id"].GetString());
-        QVERIFY(!platform_->isControllerConnectedToPlatform());
+        QVERIFY(platform_->isControllerConnectedToPlatform() == false);
     }
     {
         expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
@@ -435,7 +435,7 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
         QVERIFY(platform_->controllerType() == strata::platform::Platform::ControllerType::Embedded);
         QVERIFY(platform_->controllerPlatformId().isEmpty());
         QVERIFY(platform_->controllerClassId().isEmpty());
-        QVERIFY(!platform_->isControllerConnectedToPlatform());
+        QVERIFY(platform_->isControllerConnectedToPlatform() == false);
     }
     {
         expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
@@ -452,7 +452,7 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 
         QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
-        QVERIFY(!mockDevice_->mockIsBootloader());
+        QVERIFY(mockDevice_->mockIsBootloader() == false);
     }
     {
         expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
@@ -528,7 +528,7 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
-    QVERIFY(!mockDevice_->mockIsBootloader());
+    QVERIFY(mockDevice_->mockIsBootloader() == false);
     {
         expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
                           test_commands::get_firmware_info_response_ver2_application.size());

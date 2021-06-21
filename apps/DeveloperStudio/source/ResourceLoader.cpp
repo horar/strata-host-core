@@ -196,9 +196,6 @@ void ResourceLoader::loadCoreResources()
     }
 }
 
-QUrl ResourceLoader::getStaticViewsPhysicalPathUrl() {
-    return QUrl::fromLocalFile(ResourcePath::viewsPhysicalPath());
-}
 
 void ResourceLoader::loadPluginResources()
 {
@@ -220,22 +217,6 @@ void ResourceLoader::loadPluginResources()
         qCDebug(logCategoryStrataDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
                 QResource::registerResource(resourceFile));
     }
-}
-
-QString ResourceLoader::returnQrcPath(const QString &filePath){
-
-    QDirIterator dir(filePath);
-    QString str = "";
-
-    while(dir.hasNext()){
-        QFileInfo fi(dir.next());
-        if(fi.suffix() == "qrc"){
-            str = fi.absoluteFilePath();
-            break;
-        }
-    }
-
-    return str;
 }
 
 void ResourceLoader::unregisterAllViews(QObject *parent)

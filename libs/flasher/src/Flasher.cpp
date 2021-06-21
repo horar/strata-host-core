@@ -182,6 +182,12 @@ bool Flasher::startActionCheck(const QString& errorString)
         finish(Result::Error, errorMessage);
         return false;
     }
+
+    // platform could be rebooted (e.g. by j-link) and it
+    // could send part of message before rebooting,
+    // so reset receiving to drop possible incomplete message
+    platform_->resetReceiving();
+
     return true;
 }
 
@@ -209,7 +215,8 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
             chunkCount_ = static_cast<int>((binaryFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
             const char* binaryType = (flashingFirmware) ? "firmware" : "bootloader";
-            qCInfo(logCategoryFlasher) << platform_ << "Preparing for flashing " << chunkCount_ << " chunks of " << binaryType << '.';
+            qCInfo(logCategoryFlasher) << platform_ << "Preparing for flashing " << chunkCount_ << " chunks ("
+                << CHUNK_SIZE << " bytes) of " << binaryType << " with size " << binaryFile_.size() << " bytes.";
         } else {
             QString errStr = QStringLiteral("File '") + binaryFile_.fileName() + QStringLiteral("' is empty.");
             qCCritical(logCategoryFlasher) << platform_ << errStr;
@@ -399,11 +406,19 @@ void Flasher::backupFinished(int status)
 void Flasher::startApplicationFinished(int status)
 {
     if (status == operation::NO_FIRMWARE) {
+        qCCritical(logCategoryFlasher) << platform_ << "Platform has no firmware.";
         finish(Result::NoFirmware);
         return;
     }
 
-    qCInfo(logCategoryFlasher) << platform_ << "Launching platform software. Name: '" << platform_->name()
+    if (status == operation::FIRMWARE_UNABLE_TO_START) {
+        QString errStr(QStringLiteral("Platform firmware is unable to start."));
+        qCCritical(logCategoryFlasher) << platform_ << errStr << " Platform remains in bootloader mode.";
+        finish(Result::Error, errStr);
+        return;
+    }
+
+    qCInfo(logCategoryFlasher) << platform_ << "Launching platform firmware. Name: '" << platform_->name()
                                << "', version: '" << platform_->applicationVer() << "'.";
     emit devicePropertiesChanged();
 

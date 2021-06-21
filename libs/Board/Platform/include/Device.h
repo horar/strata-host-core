@@ -46,6 +46,7 @@ namespace strata::device {
         enum class Type {
             SerialDevice,
             MockDevice,
+            TcpDevice,
             BLEDevice
         };
         Q_ENUM(Type)
@@ -105,6 +106,11 @@ namespace strata::device {
          * @return true if device is connected, otherwise false
          */
         virtual bool isConnected() const = 0;
+
+        /**
+         * Reset receiving messages from device (clear internel buffers, etc.).
+         */
+        virtual void resetReceiving() = 0;
 
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);

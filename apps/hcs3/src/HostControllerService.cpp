@@ -422,6 +422,8 @@ void HostControllerService::processCmdRequestHcsStatus(const QByteArray &clientI
 void HostControllerService::processCmdDynamicPlatformList(const QByteArray &clientId)
 {
     storageManager_.requestPlatformList(clientId);
+
+    clients_.sendMessage(clientId, platformController_.createPlatformsList());
 }
 
 void HostControllerService::processCmdClientUnregister(const QByteArray &clientId)

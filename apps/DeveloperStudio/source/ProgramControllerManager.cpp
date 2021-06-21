@@ -58,7 +58,7 @@ void ProgramControllerManager::programEmbedded(QString deviceId)
 void ProgramControllerManager::replyHandler(QJsonObject payload)
 {
     if (payload.contains("device_id") == false) {
-        qCCritical(logCategoryStrataDevStudio) << "badly formatter json, device_id is missing";
+        qCCritical(logCategoryStrataDevStudio) << "badly formatted json, device_id is missing";
         return;
     }
 
@@ -73,9 +73,8 @@ void ProgramControllerManager::replyHandler(QJsonObject payload)
         jobIdHash_.insert(jobId, deviceId);
     } else {
         notifyFailure(deviceId, payload);
+        requestedDeviceIds_.removeAll(deviceId);
     }
-
-    requestedDeviceIds_.removeAll(deviceId);
 
     emit jobStatusChanged(deviceId, "running", "");
 }
@@ -167,6 +166,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
         }
 
         jobIdHash_.remove(jobId);
+        requestedDeviceIds_.removeAll(deviceId);
 
     } else {
         qCWarning(logCategoryStrataDevStudio) << "unknown job_type" << jobType;
