@@ -127,13 +127,13 @@ private slots:
     void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
     void sendMessageToClients(const QString &platformId, const QString& message);
-    void sendNotification(const QString message);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
     void platformConnected(const QByteArray& deviceId);
     void platformDisconnected(const QByteArray& deviceId);
 
+    void bluetoothScanFinished(const QJsonObject payload);
 private:
     void handleMessage(const DispatcherMessage& msg);
 
@@ -152,7 +152,8 @@ private:
         updateFirmware,
         updateFirmwareJob,
         programController,
-        programControllerJob
+        programControllerJob,
+        bluetoothScan
     };
     const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
     QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);

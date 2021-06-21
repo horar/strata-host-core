@@ -88,7 +88,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
     connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
-    connect(&platformController_, &PlatformController::notification, this, &HostControllerService::sendNotification);
+    connect(&platformController_, &PlatformController::bluetoothScanFinished, this, &HostControllerService::bluetoothScanFinished);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
@@ -399,8 +399,9 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
     }
 }
 
-void HostControllerService::sendNotification(const QString message)
+void HostControllerService::bluetoothScanFinished(const QJsonObject payload)
 {
+    QByteArray message = createHcsNotification(hcsNotificationType::bluetoothScan, payload, true);
     broadcastMessage(message);
 }
 
@@ -891,6 +892,9 @@ const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationTy
         break;
     case hcsNotificationType::programControllerJob:
         type = "program_controller_job";
+        break;
+    case hcsNotificationType::bluetoothScan:
+        type = "bluetooth_scan";
         break;
     }
 

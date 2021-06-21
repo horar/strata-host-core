@@ -67,7 +67,7 @@ signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
     void platformMessage(QString platformId, QString message);
-    void notification(const QString message);
+    void bluetoothScanFinished(const QJsonObject payload);
 
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
@@ -77,17 +77,17 @@ private slots:  // slots for signals from PlatformManager
 
 private:
     /**
-     * Creates bluetooth_scan notification, with list of found BLE devices
+     * Creates bluetooth_scan notification payload, with list of found BLE devices
      * @param reference to the bluetooth scanner, used as data source
-     * @return bluetooth_scan notification
+     * @return bluetooth_scan notification payload
      */
-    static QString createBluetoothScanNotification(const std::shared_ptr<const strata::device::scanner::BluetoothLowEnergyScanner> bleDeviceScanner);
+    static QJsonObject createBluetoothScanPayload(const std::shared_ptr<const strata::device::scanner::BluetoothLowEnergyScanner> bleDeviceScanner);
 
     /**
-     * Creates bluetooth_scan error notification
-     * @return bluetooth_scan error notification
+     * Creates bluetooth_scan error notification payload
+     * @return bluetooth_scan error notification payload
      */
-    static  QString createBluetoothScanErrorNotification(QString errorString);
+    static  QJsonObject createBluetoothScanErrorPayload(QString errorString);
 
 
     strata::PlatformManager platformManager_;

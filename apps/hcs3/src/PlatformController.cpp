@@ -117,38 +117,38 @@ void PlatformController::startBluetoothScan() {
     if (bleDeviceScanner != nullptr) {
         bleDeviceScanner->startDiscovery();
     } else {
-        emit notification(createBluetoothScanErrorNotification("BluetoothLowEnergyScanner not initialized."));
+        emit bluetoothScanFinished(createBluetoothScanErrorPayload("BluetoothLowEnergyScanner not initialized."));
     }
 }
 
 void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString) {
-    QString message;
+    QJsonObject payload;
     switch (status) {
         case strata::device::scanner::BluetoothLowEnergyScanner::Finished:
         {
             std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
                 platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
             if (bleDeviceScanner != nullptr) {
-                message = createBluetoothScanNotification(bleDeviceScanner);
+                payload = createBluetoothScanPayload(bleDeviceScanner);
             } else {
-                message = createBluetoothScanErrorNotification("BluetoothLowEnergyScanner not initialized.");
+                payload = createBluetoothScanErrorPayload("BluetoothLowEnergyScanner not initialized.");
             }
             break;
         }
         case strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryError:
-            message = createBluetoothScanErrorNotification(errorString);
+            payload = createBluetoothScanErrorPayload(errorString);
             break;
         case strata::device::scanner::BluetoothLowEnergyScanner::Cancelled:
-            message = createBluetoothScanErrorNotification("Discovery cancelled.");
+            payload = createBluetoothScanErrorPayload("Discovery cancelled.");
             break;
         default:
-            message = createBluetoothScanErrorNotification("Unknown discovery status.");
+            payload = createBluetoothScanErrorPayload("Unknown discovery status.");
             qCWarning(logCategoryHcsPlatform).noquote() << "BLE discovery ended with unknown status" << status;
     }
-    emit notification(message);
+    emit bluetoothScanFinished(payload);
 }
 
-QString PlatformController::createBluetoothScanNotification(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner) {
+QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner) {
     QJsonArray payloadList;
     const auto discoveredDevices = bleDeviceScanner->discoveredDevices();
     for (const auto &device : discoveredDevices) {
@@ -170,32 +170,16 @@ QString PlatformController::createBluetoothScanNotification(const std::shared_pt
     QJsonObject payload {
         { JSON_LIST, payloadList }
     };
-    QJsonObject notif {
-        { JSON_TYPE, JSON_BLUETOOTH_SCAN },
-        { JSON_PAYLOAD, payload }
-    };
-    QJsonObject msg {
-        { JSON_HCS_NOTIFICATION, notif }
-    };
-    QJsonDocument doc(msg);
 
-    return doc.toJson(QJsonDocument::Compact);
+    return payload;
 }
 
-QString PlatformController::createBluetoothScanErrorNotification(QString errorString) {
+QJsonObject PlatformController::createBluetoothScanErrorPayload(QString errorString) {
     QJsonObject payload {
         { JSON_ERROR_STRING, errorString }
     };
-    QJsonObject notif {
-        { JSON_PAYLOAD, payload },
-        { JSON_TYPE, JSON_BLUETOOTH_SCAN }
-    };
-    QJsonObject msg {
-        { JSON_HCS_NOTIFICATION, notif }
-    };
-    QJsonDocument doc(msg);
 
-    return doc.toJson(QJsonDocument::Compact);
+    return payload;
 }
 
 QString PlatformController::createPlatformsList() {
