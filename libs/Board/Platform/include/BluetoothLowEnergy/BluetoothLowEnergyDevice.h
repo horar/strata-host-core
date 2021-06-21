@@ -50,6 +50,8 @@ public:
      */
     virtual bool isConnected() const override;
 
+    virtual void resetReceiving() override;
+
 private slots:
     void deviceConnectedHandler();
     void discoveryFinishedHandler();

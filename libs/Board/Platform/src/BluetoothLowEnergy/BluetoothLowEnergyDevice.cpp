@@ -262,6 +262,12 @@ bool BluetoothLowEnergyDevice::isConnected() const
     return lowEnergyController_->state() == QLowEnergyController::DiscoveredState && allDiscovered_;
 }
 
+void BluetoothLowEnergyDevice::resetReceiving()
+{
+    //do nothing for ble device
+    return;
+}
+
 void BluetoothLowEnergyDevice::connectToDevice()
 {
     if (lowEnergyController_ == nullptr) {
