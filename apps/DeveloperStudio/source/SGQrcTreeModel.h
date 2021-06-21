@@ -356,7 +356,7 @@ Item {
     // String literal for creating a VE-enabled QML file
     const QString veQMLFile_ = R"veQMLFile(import QtQuick 2.12
 
-import tech.strata.sgwidgets 1.0
+import tech.strata.sglayout 1.0
 
 UIBase { // start_uibase
     columnCount: 20
