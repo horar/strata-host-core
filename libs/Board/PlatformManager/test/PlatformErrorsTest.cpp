@@ -253,11 +253,9 @@ void PlatformErrorsTest::unableToCloseTest()
 
     removeMockDevice(false);
 
-    // will emit 2 error signals, due to 2 close calls
-    QVERIFY((platformErrorSignal.count() == 2) || (platformErrorSignal.wait(250) == true));
+    QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
 
-    // will remain as connected due to error on close (even though it was requested to be closed)
-    QVERIFY(platform_->deviceConnected());
+    QVERIFY(platform_->deviceConnected() == false);
 }
 
 void PlatformErrorsTest::multipleOperationsTest()

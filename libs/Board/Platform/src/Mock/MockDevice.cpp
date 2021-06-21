@@ -40,15 +40,16 @@ void MockDevice::open()
 
 void MockDevice::close()
 {
-    if (opened_ && mockIsEmitErrorOnCloseSet()) {
-        QString errMsg(QStringLiteral("Error when trying to close the device."));
-        qCCritical(logCategoryDeviceMock) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
-        return;
-    }
+    if (opened_) {
+        opened_ = false;
+        mockClearRecordedMessages();
 
-    opened_ = false;
-    mockClearRecordedMessages();
+        if (mockIsEmitErrorOnCloseSet()) {
+            QString errMsg(QStringLiteral("Error when trying to close the device."));
+            qCCritical(logCategoryDeviceMock) << this << errMsg;
+            emit deviceError(ErrorCode::DeviceError, errMsg);
+        }
+    }
 }
 
 QByteArray MockDevice::createDeviceId(const QString& mockName)
