@@ -304,6 +304,7 @@ Rectangle {
     Shortcut {
         id: findShortcut
         sequence: StandardKey.Find
+        enabled: visible
         onActivated: {
             if ( filterContainer.height === 0 ){
                 openFilter.start()
@@ -314,7 +315,7 @@ Rectangle {
 
     Shortcut {
         sequence: StandardKey.Cancel
-        enabled: filterEnabled
+        enabled: filterEnabled && visible
         onActivated: {
             if ( filterContainer.height === filterContainer.openHeight ){
                 closeFilter.start()
@@ -327,6 +328,7 @@ Rectangle {
     Shortcut {
         id: copyShortcut
         sequence: StandardKey.Copy
+        enabled: visible
         onActivated: {
             var stringToCopy = ""
             for (var i = 0; i<listView.model.count; i++) {
