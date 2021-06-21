@@ -79,7 +79,7 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
         QVERIFY(platform.get() != nullptr);
         QVERIFY_(platform->deviceType() == Device::Type::MockDevice);
         QCOMPARE(platformManager_->getDeviceIds().count(), --devicesCount);
-        QVERIFY(!platform->deviceConnected());
+        QVERIFY(platform->deviceConnected() == false);
     } else {
         QVERIFY(platform.get() == nullptr);
     }
@@ -91,7 +91,7 @@ void PlatformManagerTest::connectDisconnectTest()
     QVERIFY(platform.get() != nullptr);
     QVERIFY(platform->deviceConnected());
     removeMockDevice("mock1234");
-    QVERIFY(!platform->deviceConnected());
+    QVERIFY(platform->deviceConnected() == false);
 }
 
 void PlatformManagerTest::connectMultipleTest()

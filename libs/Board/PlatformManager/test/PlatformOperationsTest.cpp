@@ -39,7 +39,7 @@ void PlatformOperationsTest::init()
     operationTimeoutCount_ = 0;
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
-    QVERIFY(!platform_->deviceConnected());
+    QVERIFY(platform_->deviceConnected() == false);
 
     QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
     platform_->open();
@@ -105,7 +105,7 @@ void PlatformOperationsTest::verifyMessage(const QByteArray &msg, const QByteArr
     rapidjson::ParseResult parseResult;
 
     parseResult = doc.Parse(msg.data(), msg.size());
-    QVERIFY(!parseResult.IsError());
+    QVERIFY(parseResult.IsError() == false);
     QVERIFY(doc.IsObject());
     expectedDoc.Parse(expectedJson.data(), expectedJson.size());
     if (doc != expectedDoc) {
@@ -236,7 +236,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
-    QVERIFY(!mockDevice_->mockIsBootloader());
+    QVERIFY(mockDevice_->mockIsBootloader() == false);
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
     QCOMPARE(platform_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
@@ -346,7 +346,7 @@ void PlatformOperationsTest::invalidValueTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
-    QVERIFY(!mockDevice_->mockIsBootloader());
+    QVERIFY(mockDevice_->mockIsBootloader() == false);
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
     QCOMPARE(platform_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
@@ -421,7 +421,7 @@ void PlatformOperationsTest::switchToBootloaderAndBackTest()
     platformOperation->run();
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
-    QVERIFY(!mockDevice_->mockIsBootloader());
+    QVERIFY(mockDevice_->mockIsBootloader() == false);
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
     QCOMPARE(platform_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
@@ -512,7 +512,7 @@ void PlatformOperationsTest::retryGetFirmwareInfoTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
-    QVERIFY(!mockDevice_->mockIsBootloader());
+    QVERIFY(mockDevice_->mockIsBootloader() == false);
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
     QCOMPARE(platform_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());

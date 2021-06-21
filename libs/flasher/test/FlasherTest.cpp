@@ -46,7 +46,7 @@ void FlasherTest::init()
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
     expectedChunksCount_ = 0;
-    QVERIFY(!platform_->deviceConnected());
+    QVERIFY(platform_->deviceConnected() == false);
 
     QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
     platform_->open();
@@ -155,7 +155,7 @@ void FlasherTest::verifyMessage(const QByteArray &msg, const QByteArray &expecte
     rapidjson::ParseResult parseResult;
 
     parseResult = doc.Parse(msg.data(), msg.size());
-    QVERIFY(!parseResult.IsError());
+    QVERIFY(parseResult.IsError() == false);
     QVERIFY(doc.IsObject());
     expectedDoc.Parse(expectedJson.data(), expectedJson.size());
     if (doc != expectedDoc) {
@@ -230,7 +230,7 @@ void FlasherTest::getExpectedValues(QString firmwarePath)
         expectedChunksCount_ = static_cast<int>((firmware.size() - 1 + strata::CHUNK_SIZE) / strata::CHUNK_SIZE); //Get expected chunks count
 
         firmware.seek(0);
-        while (!firmware.atEnd()) {
+        while (firmware.atEnd() == false) {
             int chunkSize = strata::CHUNK_SIZE;
             qint64 remainingFileSize = firmware.size() - firmware.pos();
 
@@ -249,7 +249,7 @@ void FlasherTest::getExpectedValues(QString firmwarePath)
 
             expectedChunkCrc_.append((crc16::buypass(chunk.data(), static_cast<uint32_t>(bytesRead)))); //Get expected chunk crc
 
-            if (!firmwareBase64.isNull() || !firmwareBase64.isEmpty()) {
+            if (firmwareBase64.isEmpty() == false) {
                 expectedChunkData_.append(firmwareBase64);
             }
         }
