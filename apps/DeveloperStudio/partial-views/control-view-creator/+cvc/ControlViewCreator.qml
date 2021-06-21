@@ -46,6 +46,8 @@ Rectangle {
         }
     }
 
+
+
     RowLayout {
         anchors {
             fill: parent
@@ -145,7 +147,7 @@ Rectangle {
 
     ConsoleContainer {
         id:consoleContainer
-        parent: (viewStack.currentIndex === 1) ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
+        parent: viewStack.currentIndex === 1 ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
         onClicked: {
             isConsoleLogOpen = false
         }
@@ -157,6 +159,11 @@ Rectangle {
         implicitHeight: parent.height
         visible: viewStack.currentIndex === 2 &&  isConsoleLogOpen === true
     }
+
+    Loader {
+        id: newWindowLoader
+    }
+
 
     ConfirmClosePopup {
         id: confirmBuildClean

@@ -6,6 +6,7 @@ import QtQuick.Window 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
+
 import "../components"
 
 Rectangle {
@@ -15,6 +16,8 @@ Rectangle {
     z: 3
 
     signal clicked()
+    property var window
+    property bool newWindowOpened: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -144,6 +147,17 @@ Rectangle {
 
                     onClicked:  {
                         consoleLogger.clearLogs()
+                    }
+                }
+
+                SGControlViewIconButton {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    source: "qrc:/sgimages/list.svg"
+
+                    onClicked:  {
+                        newWindowLoader.source = "Child.qml"
+                        root.parent = newWindowLoader
                     }
                 }
 
