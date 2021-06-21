@@ -11,6 +11,7 @@ SciModel::SciModel(QObject *parent)
 {
     platformManager_.init(strata::device::Device::Type::SerialDevice);
     platformManager_.init(strata::device::Device::Type::MockDevice);
+    platformManager_.init(strata::device::Device::Type::TcpDevice);
     platformManager_.init(strata::device::Device::Type::BLEDevice);
 
     mockDeviceModel_.init();

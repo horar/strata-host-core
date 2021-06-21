@@ -30,6 +30,13 @@ Item {
         consoleLogs.deselectAll()
     }
 
+    onVisibleChanged: {
+        if (!visible) {
+            consoleLogErrorCount = 0
+            consoleLogWarningCount = 0
+        }
+    }
+
     ListView {
         id: consoleLogs
         anchors.fill: parent
@@ -297,7 +304,7 @@ Item {
         id: srcConnection
         target: sdsModel.qtLogger
         onLogMsg: {
-            if(controlViewCreatorRoot.visible && msg){
+            if(controlViewCreatorRoot.visible && editor.fileTreeModel.url.toString() !== "" && msg){
                 consoleModel.append({
                                         time: timestamp(),
                                         type: getMsgType(type),
@@ -311,11 +318,11 @@ Item {
 
                 consoleLogs.logAdded()
 
-                if(type === 1){
-                    warningCount += 1
+                if (type === 1) {
+                    consoleLogWarningCount += 1
                 }
-                if(type === 2){
-                    errorCount += 1
+                if (type === 2) {
+                    consoleLogErrorCount += 1
                 }
             }
         }
@@ -325,44 +332,46 @@ Item {
         target: sdsModel.resourceLoader
 
         onFinishedRecompiling: {
-            if(consoleModel.count > 0 && recompileRequested){
-                for (var i = 0; i < consoleModel.count; i++){
+            if (consoleModel.count > 0 && recompileRequested) {
+                for (var i = 0; i < consoleModel.count; i++) {
                     consoleModel.get(i).current = false
                 }
+                consoleLogErrorCount = 0
+                consoleLogWarningCount = 0
             }
         }
     }
 
-    function getMsgType(type){
-        switch(type){
-        case 0: return "debug"
-        case 1: return "warning"
-        case 2: return "error"
-        case 4: return "info"
+    function getMsgType(type) {
+        switch (type) {
+        	case 0: return "debug"
+        	case 1: return "warning"
+        	case 2: return "error"
+        	case 4: return "info"
         }
     }
 
-    function timestamp(){
+    function timestamp() {
         var date = new Date(Date.now())
         let hours = date.getHours()
         let minutes = date.getMinutes()
         let seconds = date.getSeconds()
         let millisecs = date.getMilliseconds()
 
-        if(hours < 10){
+        if (hours < 10) {
             hours = `0${hours}`
         }
 
-        if(minutes < 10){
+        if (minutes < 10) {
             minutes = `0${minutes}`
         }
 
-        if(seconds < 10){
+        if (seconds < 10) {
             seconds = `0${seconds}`
         }
 
-        if(millisecs < 100){
-            if(millisecs < 10){
+        if (millisecs < 100) {
+            if (millisecs < 10) {
                 millisecs =`00${millisecs}`
             } else {
                 millisecs = `0${millisecs}`
@@ -374,7 +383,7 @@ Item {
 
     function clearLogs() {
         consoleModel.clear();
-        errorCount = 0
-        warningCount = 0
+        consoleLogErrorCount = 0
+        consoleLogWarningCount = 0
     }
 }

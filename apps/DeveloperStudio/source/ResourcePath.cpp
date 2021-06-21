@@ -6,7 +6,6 @@
 #include <QDir>
 
 QString ResourcePath::coreResourcePath_ = QString();
-QString ResourcePath::viewsResourcePath_ = QString();
 
 QString &ResourcePath::coreResourcePath()
 {
@@ -28,13 +27,3 @@ QString &ResourcePath::coreResourcePath()
     return coreResourcePath_;
 }
 
-QString &ResourcePath::viewsPhysicalPath()
-{
-    if (viewsResourcePath_.isEmpty()) {
-        viewsResourcePath_ = QStringLiteral("%1/views").arg(coreResourcePath());
-        qCDebug(logCategoryStrataDevStudio(), "app views resources path: '%s'",
-                qUtf8Printable(viewsResourcePath_));
-    }
-
-    return viewsResourcePath_;
-}
