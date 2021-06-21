@@ -25,9 +25,9 @@ public:
 
     /**
      * Open mock device
-     * @return true if port was opened, otherwise false
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close mock device

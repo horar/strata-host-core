@@ -40,9 +40,9 @@ public:
 
     /**
      * Open serial port.
-     * @return true if port was opened, otherwise false
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close serial port.
