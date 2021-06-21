@@ -10,9 +10,10 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 import "../../general"
 import "../"
-import "qrc:/js/navigation_control.js" as NavigationControl
 import "../components"
 
 ColumnLayout {
@@ -320,29 +321,21 @@ ColumnLayout {
 
 
         WebEngineView {
-            id : webEngine
-            webChannel : channel
-            url : "qrc:///tech/strata/monaco/minified/editor.html"
+            id: webEngine
+            webChannel: channel
+            url: "qrc:///tech/strata/monaco/minified/editor.html"
+            
+            settings.localContentCanAccessRemoteUrls: false
+            settings.localContentCanAccessFileUrls: true
+            settings.localStorageEnabled: true
+            settings.errorPageEnabled: false
+            settings.javascriptCanOpenWindows: false
+            settings.javascriptEnabled: true
+            settings.javascriptCanAccessClipboard: true
+            settings.pluginsEnabled: true
+            settings.showScrollBars: false
 
-            settings.localContentCanAccessRemoteUrls : false
-            settings.localContentCanAccessFileUrls : true
-            settings.localStorageEnabled : true
-
-            settings.errorPageEnabled : false
-            settings.javascriptCanOpenWindows : false
-            settings.javascriptEnabled : true
-            settings.javascriptCanAccessClipboard : true
-            settings.pluginsEnabled : true
-            settings.showScrollBars : false
-
-            anchors {
-                top : alertRow.bottom
-                left : parent.left
-                right : parent.right
-                bottom : parent.bottom
-            }
-
-            onJavaScriptConsoleMessage : {
+            onJavaScriptConsoleMessage: {
                 switch (level) {
                     case WebEngineView.InfoMessageLevel:
                         console.log(message)
@@ -354,6 +347,11 @@ ColumnLayout {
                         console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
                         break
                 }
+            }   
+
+            onHeightChanged: {
+                var htmlHeight = height - 16
+                channelObject.setContainerHeight(htmlHeight.toString())
             }
 
 
@@ -382,9 +380,10 @@ ColumnLayout {
                     channelObject.fileText = fileText
                 } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
                     let errorProperties = {
+                        "error_intro": "Control View Creator Error:",
                         "error_message": "Monaco text editor component failed to load or was not found"
                     }
-
+                    
                     fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
                 }
             }
@@ -481,7 +480,7 @@ ColumnLayout {
     }
 
     Connections {
-        target : visualEditor.functions
+        target: visualEditor.functions
 
         onPassUUID : {
             viewStack.currentIndex = 0 channelObject.goToUUID(uuid)
