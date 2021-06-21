@@ -30,7 +30,6 @@ namespace strata::device {
 
             // [WARNING] - device does not have to be disconnected
 
-            DeviceBusy,         // device is currently locked by another operation (possible cause: more than 1 operation ongoing)
             DeviceFailedToOpen, // device failed to open (possible cause: port open in another application)
 
             // [ERROR] - device should be disconnected
