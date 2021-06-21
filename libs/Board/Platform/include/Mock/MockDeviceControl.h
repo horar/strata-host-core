@@ -85,7 +85,7 @@ private:
     MockResponse response_ = MockResponse::Normal;
     MockVersion version_ = MockVersion::Version_1;
 
-    //variables used to store mock firmware's expected values
+    // variables used to store mock firmware's expected values
     int payloadCount_ = 0;
     QTemporaryFile mockFirmware_;
     int actualChunk_ = 0;
@@ -93,6 +93,8 @@ private:
     QVector<quint64> expectedChunkSize_;
     QVector<QByteArray> expectedChunkData_;
     QVector<quint16> expectedChunkCrc_;
+
+    // variables used to store incoming messages and data processed from them
     std::list<QByteArray> recordedMessages_;
 };
 
