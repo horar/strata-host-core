@@ -455,8 +455,8 @@ ColumnLayout {
         }
 
         function checkForErrors(flag,log) {
-            if(flag){
-                console.error(log)
+            if (flag) {
+            	console.error(log)
             }
         }
 
