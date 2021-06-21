@@ -44,7 +44,8 @@ ColumnLayout {
             alertToast.hide()
         }
 
-        if (! forceOverwrite) { // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
+        if (!forceOverwrite) {
+            // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
             if (!model.exists) {
                 controlViewCreatorRoot.isConfirmCloseOpen = true
                 deletedFileSavedConfirmation.open()
@@ -96,7 +97,7 @@ ColumnLayout {
         onFileAdded: {
             // Here we handle the situation where a file that was previously deleted is now recreated.
             // We want to check to see if the files have different contents
-            if(model.filepath === path) {
+            if (model.filepath === path) {
                 let newFileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
                 if (newFileText !== channelObject.fileText) {
                     externalChanges = true;
@@ -190,11 +191,13 @@ ColumnLayout {
 
         onPopupClosed: {
             controlViewCreatorRoot.isConfirmCloseOpen = false
-            if (closeReason === acceptCloseReason) { // User chose to overwrite the external changes
+            if (closeReason === acceptCloseReason) {
+                // User chose to overwrite the external changes
                 externalChanges = false
                 model.unsavedChanges = true
                 saveFile(closeOnSave);
-            } else if (closeReason === closeFilesReason) { // User chose to abandon their changes
+            } else if (closeReason === closeFilesReason) {
+                // User chose to abandon their changes
                 channelObject.refreshEditorWithExternalChanges()
                 if (closeOnSave) {
                     openFilesModel.closeTabAt(modelIndex)
@@ -275,7 +278,8 @@ ColumnLayout {
             }
         }
 
-        Rectangle { // divider
+        Rectangle {
+            // divider
             Layout.preferredHeight: menuRow.height - 6
             Layout.preferredWidth: 1
             color: "grey"
@@ -291,18 +295,19 @@ ColumnLayout {
 
             source: {
                 switch (viewStack.currentIndex) {
-                case 0:
-                    menuLoaded = false
-                    return ""
-                case 1:
-                    menuLoaded = true
-                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
+                    case 0:
+                        menuLoaded = false
+                        return ""
+                    case 1:
+                        menuLoaded = true
+                        return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
                 }
             }
         }
     }
 
-    Rectangle { // divider
+    Rectangle {
+        // divider
         Layout.fillWidth: true
         implicitHeight: 1
         color: "gray"
@@ -319,7 +324,6 @@ ColumnLayout {
                 saveFile()
             }
         }
-
 
         WebEngineView {
             id: webEngine
@@ -338,23 +342,17 @@ ColumnLayout {
 
             onJavaScriptConsoleMessage: {
                 switch (level) {
-                case WebEngineView.InfoMessageLevel:
-                    console.log(message)
-                    break
-                case WebEngineView.WarningMessageLevel:
-                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
-                case WebEngineView.ErrorMessageLevel:
-                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
+                    case WebEngineView.InfoMessageLevel:
+                        console.log(message)
+                        break
+                    case WebEngineView.WarningMessageLevel:
+                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                    case WebEngineView.ErrorMessageLevel:
+                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
                 }
             }
-
-            onHeightChanged: {
-                var htmlHeight = height - 16
-                channelObject.setContainerHeight(htmlHeight.toString())
-            }
-
 
             onHeightChanged: {
                 var htmlHeight = height - 16
@@ -399,7 +397,6 @@ ColumnLayout {
                 anchors {
                     fill: webEngine
                 }
-
                 visible: progressBar.value !== 100
 
                 ProgressBar {
@@ -409,7 +406,7 @@ ColumnLayout {
                         verticalCenterOffset: 10
                     }
                     height: 10
-                    width: webEngine.width / 2
+                    width: webEngine.width/2
                     from: 0
                     to: 100
                     value: webEngine.loadProgress
@@ -457,8 +454,8 @@ ColumnLayout {
             setValue(value)
         }
 
-        function checkForErrors(flag, log) {
-            if (flag) {
+        function checkForErrors(flag,log) {
+            if(flag){
                 console.error(log)
             }
         }
@@ -470,13 +467,13 @@ ColumnLayout {
             externalChanges = false
         }
 
-        function setVersionId(version) { // If this is the first change, then we have just initialized the editor
+        function setVersionId(version) {
+            // If this is the first change, then we have just initialized the editor
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
                 if (reset)
                     reset = false
-                
             }
 
             currentVersionId = version
