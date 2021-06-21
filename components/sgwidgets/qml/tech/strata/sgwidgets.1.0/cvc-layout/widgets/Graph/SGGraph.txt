@@ -1,0 +1,19 @@
+    LayoutSGGraph { // start_%1
+        id: sgGraph_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 5
+        layoutInfo.rowsTall: 5
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        title: "SGGraph"
+        xMin: 0
+        xMax: 1
+        yMin: 0
+        yMax: 1
+        xTitle: "X Axis"
+        yTitle: "Y Axis"
+        xGrid: true
+        yGrid: true
+        gridColor: "black"
+    } // end_%1

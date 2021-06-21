@@ -9,6 +9,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "#666"
+
         SGText {
             id: errorIntro
 

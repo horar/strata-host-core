@@ -1,0 +1,17 @@
+    LayoutRadioButtons { // start_%1
+        id: radioButtons_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 3
+        layoutInfo.rowsTall: 3
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        model: ["One","Two","Three"]
+        orientation: Qt.Vertical // For horizontal radio button set Qt.Horizontal
+        checkedIndex: 1            // 1 = first button checked, 2 = second button checked,
+                                   // 4 = third button checked, 8 = fourth button checked
+
+        onClicked: {
+               console.info("Clicked Index:", index)
+        }
+    } // end_%1

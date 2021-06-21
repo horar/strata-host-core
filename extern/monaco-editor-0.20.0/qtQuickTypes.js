@@ -14,7 +14,8 @@
         "signals": [],
         "inherits": "",
         "source" : "",
-        "nonInstantiable": false
+        "nonInstantiable": false,
+        "isVisualWidget": false,
     },
 */
 
@@ -95,6 +96,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "Action": {
             "properties": {
@@ -135,6 +137,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ApplicationWindow": {
             "properties": {
@@ -177,6 +180,7 @@ const qtTypeJson = {
             "inherits": "Window",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Behavior": {
             "properties": {
@@ -192,6 +196,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Binding": {
             "properties": {
@@ -214,7 +219,9 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "QtQml"
+            "source": "QtQml",
+            "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "BusyIndicator": {
             "properties": {
@@ -227,6 +234,8 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
+
         },
         "Button": {
             "properties": {
@@ -242,6 +251,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Canvas": {
             "properties": {
@@ -286,6 +296,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "CheckBox": {
             "properties": {
@@ -304,6 +315,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "CircularGauge": {
             "properties": {
@@ -328,6 +340,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Extra",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Column": {
             "properties": {
@@ -368,6 +381,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ColumnLayout": {
             "properties": {
@@ -383,6 +397,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ComboBox": {
             "properties": {
@@ -456,6 +471,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Component": {
             "properties": {
@@ -487,6 +503,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Connections": {
             "properties": {
@@ -505,6 +522,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "QtQml",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Control": {
             "properties": {
@@ -604,6 +622,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Dialog": {
             "properties": {
@@ -652,6 +671,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "FileDialog": {
             "properties": {
@@ -703,6 +723,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Dialogs",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Flickable": {
             "properties": {
@@ -844,6 +865,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Flow": {
             "properties": {
@@ -893,6 +915,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Grid": {
             "properties": {
@@ -963,6 +986,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "GridLayout": {
             "properties": {
@@ -990,6 +1014,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Image": {
             "properties": {
@@ -1044,6 +1069,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Item": {
             "properties": {
@@ -1212,6 +1238,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Keys": {
             "properties": {
@@ -1272,6 +1299,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "Label": {
             "properties": {
@@ -1305,6 +1333,7 @@ const qtTypeJson = {
             "inherits": "Text",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Layout": {
             "properties": {
@@ -1368,6 +1397,651 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Layouts",
             "nonInstantiable": true,
+            "isVisualWidget": false,
+        },
+        "LayoutButton": {
+            "properties": {
+                "text": {
+                    "meta_properties": []
+                },
+                "checkable": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "color": {
+                    "meta_properties": []
+                },
+                "checked": {
+                    "meta_properties": []
+                },
+                "hovered": {
+                    "meta_properties": []
+                },
+                "pressed": {
+                    "meta_properties": []
+                },
+                "down": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [
+                "clicked()"
+            ],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutContainer": {
+            "properties": {
+                "layoutInfo": {
+                    "meta_properties": [
+                        "columnsWide: ",
+                        "rowsTall: ",
+                        "xColumns: ",
+                        "yRows: ",
+                        "uuid: ",
+                    ]
+                },
+                "contentItem": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "Item",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": false,
+        },
+        "LayoutDivider": {
+            "properties": {
+                "orientation": {
+                    "meta_properties": []
+                },
+                "color": {
+                    "meta_properties": []
+                },
+                "thickness": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutRadioButtons": {
+            "properties": {
+                "model": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "radioColor": {
+                    "meta_properties": []
+                },
+                "orientation": {
+                    "meta_properties": []
+                },
+                "fontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "pixelSize": {
+                    "meta_properties": []
+                },
+                "radioSize": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutRectangle": {
+            "properties": {
+                "color": {
+                    "meta_properties": []
+                },
+                "border": {
+                    "meta_properties": [
+                        "width: ",
+                        "color: ",
+                    ]
+                },
+                "gradient": {
+                    "meta_properties": []
+                },
+                "radius": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGButtonStrip": {
+            "properties": {
+                "model": {
+                    "meta_properties": []
+                },
+                "count": {
+                    "meta_properties": []
+                },
+                "exclusive": {
+                    "meta_properties": []
+                },
+                "orientation": {
+                    "meta_properties": []
+                },
+                "checkedIndices": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGCircularGauge": {
+            "properties": {
+                "value": {
+                    "meta_properties": []
+                },
+                "gaugeFillColor1": {
+                    "meta_properties": []
+                },
+                "gaugeFillColor2": {
+                    "meta_properties": []
+                },
+                "gaugeBackgroundColor": {
+                    "meta_properties": []
+                },
+                "centerTextColor": {
+                    "meta_properties": []
+                },
+                "outerTextColor": {
+                    "meta_properties": []
+                },
+                "unitTextFontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "outerTextFontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "valueDecimalPlaces": {
+                    "meta_properties": []
+                },
+                "tickmarkDecimalPlaces": {
+                    "meta_properties": []
+                },
+                "minimumValue": {
+                    "meta_properties": []
+                },
+                "maximumValue": {
+                    "meta_properties": []
+                },
+                "tickmarkStepSize": {
+                    "meta_properties": []
+                },
+                "unitText": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGComboBox": {
+            "properties": {
+                "textColor": {
+                    "meta_properties": []
+                },
+                "indicatorColor": {
+                    "meta_properties": []
+                },
+                "borderColor": {
+                    "meta_properties": []
+                },
+                "borderColorFocused": {
+                    "meta_properties": []
+                },
+                "boxColor": {
+                    "meta_properties": []
+                },
+                "dividers": {
+                    "meta_properties": []
+                },
+                "model": {
+                    "meta_properties": []
+                },
+                "currentIndex": {
+                    "meta_properties": []
+                },
+                "currentText": {
+                    "meta_properties": []
+                },
+                "iconImage": {
+                    "meta_properties": []
+                },
+                "textField": {
+                    "meta_properties": []
+                },
+                "textFieldBackground": {
+                    "meta_properties": []
+                },
+                "backgroundItem": {
+                    "meta_properties": []
+                },
+                "popupItem": {
+                    "meta_properties": []
+                },
+                "popupBackground": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": ["activated()"],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGGraph": {
+            "properties": {
+                "panXEnabled": {
+                    "meta_properties": []
+                },
+                "panYEnabled": {
+                    "meta_properties": []
+                },
+                "zoomXEnabled": {
+                    "meta_properties": []
+                },
+                "zoomYEnabled": {
+                    "meta_properties": []
+                },
+                "mouseArea": {
+                    "meta_properties": []
+                },
+                "xMin": {
+                    "meta_properties": []
+                },
+                "xMax": {
+                    "meta_properties": []
+                },
+                "yMin": {
+                    "meta_properties": []
+                },
+                "yMax": {
+                    "meta_properties": []
+                },
+                "xTitle": {
+                    "meta_properties": []
+                },
+                "yTitle": {
+                    "meta_properties": []
+                },
+                "title": {
+                    "meta_properties": []
+                },
+                "xGrid": {
+                    "meta_properties": []
+                },
+                "yGrid": {
+                    "meta_properties": []
+                },
+                "gridColor": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [
+                "createCurve()",
+                "curve()",
+                "shiftXAxis()",
+                "shiftYAxis()",
+                "removeCurve()",
+                "update()",
+            ],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGIcon": {
+            "properties": {
+                "iconColor": {
+                    "meta_properties": []
+                },
+                "source": {
+                    "meta_properties": []
+                },
+                "mouseInteraction": {
+                    "meta_properties": []
+                },
+                "containsMouse": {
+                    "meta_properties": [] 
+                },
+                "cursorShape": {
+                    "meta_properties": []
+                },
+                "hoverEnabled": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": ["clicked()"],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGInfoBox": {
+            "properties": {
+                "fontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "text": {
+                    "meta_properties": []
+                },
+                "placeholderText": {
+                    "meta_properties": []
+                },
+                "readOnly": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "textPadding": {
+                    "meta_properties": []
+                },
+                "invalidTextColor": {
+                    "meta_properties": []
+                },
+                "boxColor": {
+                    "meta_properties": []
+                },
+                "boxBorderColor": {
+                    "meta_properties": []
+                },
+                "boxBorderWidth": {
+                    "meta_properties": []
+                },
+                "unit": {
+                    "meta_properties": []
+                },
+                "validator": {
+                    "meta_properties": []
+                },
+                "horizontalAlignment": {
+                    "meta_properties": []
+                },
+                "contextMenuEnabled": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": [
+                "accepted()",
+                "editingFinished()"
+            ],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGSlider": {
+            "properties": {
+                "fontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "mirror": {
+                    "meta_properties": []
+                },
+                "handleSize": {
+                    "meta_properties": []
+                },
+                "orientation": {
+                    "meta_properties": []
+                },
+                "value": {
+                    "meta_properties": []
+                },
+                "from": {
+                    "meta_properties": []
+                },
+                "to": {
+                    "meta_properties": []
+                },
+                "horizontal": {
+                    "meta_properties": []
+                },
+                "vertical": {
+                    "meta_properties": []
+                },
+                "showTickmarks": {
+                    "meta_properties": []
+                },
+                "showLabels": {
+                    "meta_properties": []
+                },
+                "showInputBox": {
+                    "meta_properties": []
+                },
+                "showToolTip": {
+                    "meta_properties": []
+                },
+                "stepSize": {
+                    "meta_properties": []
+                },
+                "live": {
+                    "meta_properties": []
+                },
+                "visualPosition": {
+                    "meta_properties": []
+                },
+                "position": {
+                    "meta_properties": []
+                },
+                "snapMode": {
+                    "meta_properties": []
+                },
+                "pressed": {
+                    "meta_properties": []
+                },
+                "grooveColor": {
+                    "meta_properties": []
+                },
+                "fillColor": {
+                    "meta_properties": []
+                },
+                "slider": {
+                    "meta_properties": []
+                },
+                "inputBox": {
+                    "meta_properties": []
+                },
+                "fromText": {
+                    "meta_properties": []
+                },
+                "toText": {
+                    "meta_properties": []
+                },
+                "tickmarkRepeater": {
+                    "meta_properties": []
+                },
+                "inputBoxWidth": {
+                    "meta_properties": []
+                },
+                "toolTip": {
+                    "meta_properties": []
+                },
+                "toolTipText": {
+                    "meta_properties": []
+                },
+                "toolTipBackground": {
+                    "meta_properties": []
+                },
+                "validatorObject": {
+                    "meta_properties": []
+                },
+                "handleObject": {
+                    "meta_properties": []
+                },
+                "contextMenuEnabled": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [
+                "userSet()",
+                "moved()"
+            ],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGStatusLight": {
+            "properties": {
+                "status": {
+                    "meta_properties": []
+                },
+                "customColor": {
+                    "meta_properties": []
+                },
+                "flatStyle": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGSwitch": {
+            "properties": {
+                "fontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "handleColor": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "labelsInside": {
+                    "meta_properties": []
+                },
+                "pressed": {
+                    "meta_properties": []
+                },
+                "down": {
+                    "meta_properties": []
+                },
+                "checked": {
+                    "meta_properties": []
+                },
+                "checkedLabel": {
+                    "meta_properties": []
+                },
+                "uncheckedLabel": {
+                    "meta_properties": []
+                },
+                "grooveFillColor": {
+                    "meta_properties": []
+                },
+                "grooveColor": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": [
+                "released()",
+                "canceled()",
+                "clicked()",
+                "toggled()",
+                "press()",
+                "pressAndHold()",
+            ],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutText": {
+            "properties": {
+                "text": {
+                    "meta_properties": []
+                },
+                "color": {
+                    "meta_properties": []
+                },
+                "font": {
+                    "meta_properties": [
+                        "bold: ",
+                        "capitalization: ",
+                        "family: ",
+                        "hintingPreference: ",
+                        "italic: ",
+                        "kerning: ",
+                        "letterSpacing: ",
+                        "pixelSize: ",
+                        "pointSize: ",
+                        "preferShaping: ",
+                        "strikeout: ",
+                        "styleName: ",
+                        "underline: ",
+                        "weight: ",
+                        "wordSpacing: ",
+                    ]
+                },
+                "elide": {
+                    "meta_properties": []
+                },
+                "fontSizeMode": {
+                    "meta_properties": []
+                },
+                "horizontalAlignment": {
+                    "meta_properties": []
+                },
+                "verticalAlignment": {
+                    "meta_properties": []
+                },
+                "maximumLineCount": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "LayoutContainer",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "ListElement": {
             "properties": {
@@ -1379,7 +2053,8 @@ const qtTypeJson = {
             "signals": [],
             "inherits": "",
             "source": "",
-            "nonInstantiable": false
+            "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ListModel": {
             "properties": {
@@ -1405,6 +2080,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ListView": {
             "properties": {
@@ -1575,6 +2251,7 @@ const qtTypeJson = {
             "inherits": "Flickable",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Loader": {
             "properties": {
@@ -1609,6 +2286,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Menu": {
             "properties": {
@@ -1664,6 +2342,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "MenuItem": {
             "properties": {
@@ -1687,6 +2366,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "MenuSeparator": {
             "properties": {
@@ -1699,6 +2379,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "MouseArea": {
             "properties": {
@@ -1774,6 +2455,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Overlay": {
             "properties": {
@@ -1795,6 +2477,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Popup": {
             "properties": {
@@ -1980,6 +2663,7 @@ const qtTypeJson = {
             "inherits": "QtObject",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Qt": {
             "properties": {
@@ -2041,6 +2725,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "QtObject": {
             "properties": {
@@ -2053,6 +2738,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "RadioButton": {
             "properties": {
@@ -2065,6 +2751,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false
         },
         "Rectangle": {
             "properties": {
@@ -2092,6 +2779,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "RegExpValidator": {
             "properties": {
@@ -2104,6 +2792,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Repeater": {
             "properties": {
@@ -2127,6 +2816,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Rotation": {
             "properties": {
@@ -2152,6 +2842,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Row": {
             "properties": {
@@ -2209,6 +2900,7 @@ const qtTypeJson = {
             "inherits": "item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Scale": {
             "properties": {
@@ -2230,6 +2922,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ScrollBar": {
             "properties": {
@@ -2284,6 +2977,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ScrollIndicator": {
             "properties": {
@@ -2335,6 +3029,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ScrollView": {
             "properties": {
@@ -2350,6 +3045,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Settings": {
             "properties": {
@@ -2368,6 +3064,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "labs.settings",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGAccordion": {
             "properties": {
@@ -2410,6 +3107,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 0.9",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGAlignedLabel": {
             "properties": {
@@ -2466,6 +3164,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGButton": {
             "properties": {
@@ -2541,6 +3240,7 @@ const qtTypeJson = {
             "inherits": "Button",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGButtonStrip": {
             "properties": {
@@ -2569,6 +3269,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGCircularGauge": {
             "properties": {
@@ -2620,6 +3321,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGComboBox": {
             "properties": {
@@ -2680,6 +3382,7 @@ const qtTypeJson = {
             "inherits": "ComboBox",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGGraph": {
             "properties": {
@@ -2707,6 +3410,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGHueSlider": {
             "properties": {
@@ -2737,6 +3441,7 @@ const qtTypeJson = {
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGIcon": {
             "properties": {
@@ -2791,6 +3496,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGInfoBox": {
             "properties": {
@@ -2874,6 +3580,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGRadioButton": {
             "properties": {
@@ -2904,6 +3611,7 @@ const qtTypeJson = {
             "inherits": "RadioButton",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGRGBSlider": {
             "properties": {
@@ -2922,6 +3630,7 @@ const qtTypeJson = {
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSlider": {
             "properties": {
@@ -3038,6 +3747,7 @@ const qtTypeJson = {
             "inherits": "GridLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSpinBox": {
             "properties": {
@@ -3050,6 +3760,7 @@ const qtTypeJson = {
             "inherits": "SpinBox",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGStatusLight": {
             "properties": {
@@ -3068,6 +3779,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGStatusLogBox": {
             "properties": {
@@ -3141,6 +3853,7 @@ const qtTypeJson = {
             "inherits": "Rectangle",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSubmitInfoBox": {
             "properties": {
@@ -3217,6 +3930,7 @@ const qtTypeJson = {
             "inherits": "RowLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGSwitch": {
             "properties": {
@@ -3268,6 +3982,7 @@ const qtTypeJson = {
             "inherits": "RowLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGTextField": {
             "properties": {
@@ -3358,6 +4073,7 @@ const qtTypeJson = {
             "inherits": "TextField",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SGUserSettings": {
             "properties": {
@@ -3382,6 +4098,7 @@ const qtTypeJson = {
             "inherits": "QtObject",
             "source": "tech.strata.commoncpp 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Slider": {
             "properties": {
@@ -3445,6 +4162,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SpinBox": {
             "properties": {
@@ -3513,6 +4231,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "SplitView": {
             "properties": {
@@ -3534,6 +4253,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Stack": {
             "properties": {
@@ -3552,6 +4272,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Source",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StackLayout": {
             "properties": {
@@ -3567,6 +4288,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StackView": {
             "properties": {
@@ -3634,6 +4356,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "State": {
             "properties": {
@@ -3655,6 +4378,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StatusBar": {
             "properties": {
@@ -3670,6 +4394,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "StatusIndicator": {
             "properties": {
@@ -3685,6 +4410,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Extras",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Switch": {
             "properties": {
@@ -3700,6 +4426,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Tab": {
             "properties": {
@@ -3712,6 +4439,7 @@ const qtTypeJson = {
             "inherits": "Loader",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TabBar": {
             "properties": {
@@ -3739,6 +4467,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TabButton": {
             "properties": {
@@ -3751,6 +4480,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TabView": {
             "properties": {
@@ -3784,6 +4514,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Text": {
             "properties": {
@@ -3912,6 +4643,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextArea": {
             "properties": {
@@ -3967,6 +4699,7 @@ const qtTypeJson = {
             "inherits": "TextEdit",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextEdit": {
             "properties": {
@@ -4152,6 +4885,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextField": {
             "properties": {
@@ -4204,6 +4938,7 @@ const qtTypeJson = {
             "inherits": "TextInputs",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextInput": {
             "properties": {
@@ -4383,6 +5118,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "TextMetrics": {
             "properties": {
@@ -4422,6 +5158,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Timer": {
             "properties": {
@@ -4449,6 +5186,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToggleButton": {
             "properties": {
@@ -4461,6 +5199,7 @@ const qtTypeJson = {
             "inherits": "Button",
             "source": "Extras",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolBar": {
             "properties": {
@@ -4473,6 +5212,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolButton": {
             "properties": {
@@ -4485,6 +5225,7 @@ const qtTypeJson = {
             "inherits": "Button",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolSeparator": {
             "properties": {
@@ -4503,6 +5244,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ToolTip": {
             "properties": {
@@ -4530,6 +5272,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Transition": {
             "properties": {
@@ -4557,6 +5300,29 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
+        },
+        "UIBase": {
+            "properties": {
+                "columnCount": {
+                    "meta_properties": []
+                },
+                "rowCount": {
+                    "meta_properties": []
+                },
+                "columnSize": {
+                    "meta_properties": []
+                },
+                "rowSize": {
+                    "meta_properties": []
+                }
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "Item",
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
         },
         "Window": {
             "properties": {
@@ -4640,6 +5406,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Window",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
     },
     "custom_properties": {
