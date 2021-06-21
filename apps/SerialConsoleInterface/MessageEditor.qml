@@ -358,18 +358,6 @@ FocusScope {
                 }
             }
 
-            // Loader {
-            //     sourceComponent: highlighterComponent
-            // }
-
-            // Component {
-            //     id: highlighterComponent
-            //     CommonCpp.SGTextHighlighter {
-            //         textDocument: textEdit.textDocument
-            //         filterPattern: text
-            //     }
-            // }
-
             Rectangle {
                 anchors.fill: parent
                 color: {
