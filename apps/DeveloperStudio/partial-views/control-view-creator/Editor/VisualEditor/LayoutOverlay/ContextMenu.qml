@@ -72,6 +72,15 @@ Popup {
             }
         }
 
+        ContextMenuButton {
+            text: "Go to Documentation"
+
+            onClicked: {
+                visualEditor.functions.goToDocumentation(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`,layoutOverlayRoot.type)
+                contextMenu.close()
+            }
+        }
+
         Rectangle {
             // divider
             color: "grey"

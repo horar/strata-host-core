@@ -403,9 +403,35 @@ ColumnLayout {
             }
         }
 
-        VisualEditor {
-            id: visualEditor
-            file: model.filepath
+        SGSplitView {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            VisualEditor {
+                id: visualEditor
+                file: model.filepath
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.minimumWidth: 800
+            }
+
+            Item {
+                visible: sgWebView.isOpen
+                Layout.fillHeight: true
+                onVisibleChanged: {
+                    if (visible) {
+                        Layout.maximumWidth = 800
+                        Layout.minimumWidth = 600
+                    } else {
+                        Layout.maximumWidth = 0
+                        Layout.minimumWidth = 0
+                    }
+                }
+
+                SGWebView {
+                    id: sgWebView
+                }
+            }
         }
     }
 
