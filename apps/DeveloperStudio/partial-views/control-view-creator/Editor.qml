@@ -361,6 +361,7 @@ Item {
 
                     delegate: Component {
                         Loader {
+                            id: fileLoader
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
