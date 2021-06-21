@@ -82,10 +82,15 @@ bool BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
 
 bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
 {
+    if (isConnected() == false) {
+        qCWarning(logCategoryDeviceBLE) << this << "Not connected, refusing message.";
+        return false;
+    }
     rapidjson::Document requestDocument;
     rapidjson::ParseResult parseResult = requestDocument.Parse(message.data(), message.size());
 
     if (parseResult.IsError()) {
+        qCWarning(logCategoryDeviceBLE) << this << "Unable to parse request.";
         return false;
     }
 
@@ -230,6 +235,23 @@ bool BluetoothLowEnergyDevice::processHardcodedReplies(const std::string &cmd)
     }
 
     if (0 == cmd.compare("request_platform_id")) {
+        QString class_id;
+        //custom detect Lighting Kit (temporary workaround)
+        if (
+            0 < discoveredServices_.count(QBluetoothUuid(QString("00000001-0001-0362-b5da-012dd27485f8"))) &&
+            0 < discoveredServices_.count(QBluetoothUuid(QString("00000002-0001-0362-b5da-012dd27485f8"))) &&
+            0 < discoveredServices_.count(QBluetoothUuid(QString("00000003-0001-0362-b5da-012dd27485f8"))) ) {
+
+            class_id = "d5029d50-9f39-4e44-8c35-589686b511cb";
+        }
+        //custom detect Smartshot Demo Cam
+        if (
+            0 < discoveredServices_.count(QBluetoothUuid(QString("00000004-0001-0362-b5da-012dd27485f8"))) &&
+            0 < discoveredServices_.count(QBluetoothUuid(QString("00000005-0001-0362-b5da-012dd27485f8"))) ) {
+
+            class_id = "1f2b499c-90a7-4ba6-96a3-5803ca2924e3";
+        }
+
         responses.push_back(R"({"ack":"request_platform_id","payload":{"return_value":true,"return_string":"command valid"}})");
         responses.push_back((R"({
     "notification":{
@@ -238,7 +260,7 @@ bool BluetoothLowEnergyDevice::processHardcodedReplies(const std::string &cmd)
             "name":")" + bluetoothDeviceInfo_.name() + R"(",
             "controller_type":1,
             "platform_id":")" + bluetoothDeviceInfo_.address().toString() + R"(",
-            "class_id":"",
+            "class_id":")" + class_id + R"(",
             "board_count":1
         }
     }
