@@ -29,9 +29,9 @@ public:
 
     /**
      * Open TCP socket.
-     * @return true if port was opened, otherwise false
+     * Emits opened() on success or deviceError() on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close TCP socket.
@@ -69,6 +69,7 @@ private slots:
     void readMessages();
     void handleError(QAbstractSocket::SocketError socketError);
     void deviceDiconnectedHandler();
+    void deviceOpenedHandler();
 
 private:
     socketPtr tcpSocket_;

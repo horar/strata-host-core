@@ -19,7 +19,7 @@ TcpDevice::~TcpDevice()
     TcpDevice::close();
 }
 
-bool TcpDevice::open()
+void TcpDevice::open()
 {
     qDebug(logCategoryDeviceTcp).nospace()
         << this << "Connecting TCP device:" << deviceId_ << ", IP:" << deviceAddress_.toString()
@@ -27,25 +27,17 @@ bool TcpDevice::open()
 
     if (tcpSocket_->isOpen()) {
         qCDebug(logCategoryDeviceTcp) << this << "TCP socket already open.";
-        return true;
+        return;
     }
 
-    tcpSocket_->connectToHost(deviceAddress_, tcpPort_);
-
-    if (false == tcpSocket_->waitForConnected(TCP_CONNECT_TIMEOUT)) {
-        QString errorString(QStringLiteral("Connecting to platfrom timed-out."));
-        qCDebug(logCategoryDeviceTcp) << errorString;
-        tcpSocket_->close();
-        emit deviceError(ErrorCode::DeviceFailedToOpen, errorString);
-        return false;
-    }
-
+    connect(tcpSocket_.get(), &QTcpSocket::connected, this, &TcpDevice::deviceOpenedHandler);
     connect(tcpSocket_.get(), &QTcpSocket::readyRead, this, &TcpDevice::readMessages);
     connect(tcpSocket_.get(), &QTcpSocket::disconnected, this,
             &TcpDevice::deviceDiconnectedHandler);
     connect(tcpSocket_.get(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
             this, &TcpDevice::handleError);
-    return true;
+
+    tcpSocket_->connectToHost(deviceAddress_, tcpPort_);
 }
 
 void TcpDevice::close()
@@ -120,6 +112,12 @@ void TcpDevice::deviceDiconnectedHandler()
     qCDebug(logCategoryDeviceTcp) << "Disconnected from tcp device address"
                                   << deviceAddress_.toString();
     emit deviceDisconnected();
+}
+
+void TcpDevice::deviceOpenedHandler()
+{
+    qCDebug(logCategoryDeviceTcp) << "Connected to tcp device address" << deviceAddress_.toString();
+    emit Device::opened();
 }
 
 QByteArray TcpDevice::createDeviceId(QHostAddress hostAddress)
