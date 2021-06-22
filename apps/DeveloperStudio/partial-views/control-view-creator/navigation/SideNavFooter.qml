@@ -8,38 +8,39 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "../components"
 
 Item {
-    implicitHeight: divider.height + recompileNavButton.height + cleanupProjectNecessary.height
+    implicitHeight: divider.height + recompileNavButton.height + column.implicitHeight
     implicitWidth: toolBarListView.width
 
-    SGSideNavItem {
-        id: cleanupProjectNecessary
-
+    ColumnLayout {
+        id: column
         width: parent.width
-        height: 70
         anchors.top: parent.top
+        SGSideNavItem {
+            id: cleanupProjectNecessary
+            height: 70
 
-        iconText: "Clean"
-        iconSource: "qrc:/sgimages/exclamation-triangle.svg"
-        iconColor: "#ffc107"
-        tooltipDescription: "The QRC file for this project contains files that no longer exist. Cleaning the project will remove these files from the QRC file."
-        visible: editor.fileTreeModel.needsCleaning
-        color: "transparent"
+            iconText: "Clean"
+            iconSource: "qrc:/sgimages/exclamation-triangle.svg"
+            iconColor: "#ffc107"
+            tooltipDescription: "The QRC file for this project contains files that no longer exist. Cleaning the project will remove these files from the QRC file."
+            visible: editor.fileTreeModel.needsCleaning
+            color: "transparent"
 
-        onClicked: {
-            confirmCleanFiles.open()
+            onClicked: {
+                confirmCleanFiles.open()
+            }
         }
-    }
-    SGSideNavItem {
-        id: settingForProject
-        width: parent.width
-        height: 70
-        enabled: true
+        SGSideNavItem {
+            id: settingForProject
+            height: 70
+            enabled: true
 
-        iconText: "Settings"
-        iconSource: "qrc:/sgimages/cog.svg"
+            iconText: "Settings"
+            iconSource: "qrc:/sgimages/cog.svg"
 
-        onClicked: {
-            cvcSettingsLoader.active = true
+            onClicked: {
+                cvcSettingsLoader.active = true
+            }
         }
     }
 
@@ -49,7 +50,7 @@ Item {
         width: toolBarListView.width
         color: "lightgrey"
         anchors {
-            top: cleanupProjectNecessary.bottom
+            top: column.bottom
             left: parent.left
         }
     }
