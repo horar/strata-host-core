@@ -105,6 +105,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGTag"
+            page: "ExSGTag.qml"
+        }
+
+        ListElement {
             name: "SGTextField"
             page: "ExSGTextField.qml"
         }
