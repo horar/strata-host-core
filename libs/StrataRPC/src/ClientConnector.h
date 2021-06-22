@@ -28,7 +28,7 @@ public:
      * @param [in] serverAddress sets the server address.
      * @param [in] dealerId sets the client id.
      */
-    ClientConnector(QString serverAddress, QByteArray dealerId = "StrataClient",
+    ClientConnector(const QString &serverAddress,const QByteArray &dealerId = "StrataClient",
                     QObject *parent = nullptr)
         : QObject(parent), serverAddress_(serverAddress), dealerId_(dealerId)
     {
@@ -95,7 +95,7 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(ClientConnectorError errorType, const QString &errorMessage);
+    void errorOccurred(const ClientConnectorError &errorType, const QString &errorMessage);
 
     /**
      * Emitted when the client connector was initialized successfully.
