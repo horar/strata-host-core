@@ -21,7 +21,7 @@ MockDeviceControl::~MockDeviceControl()
 int MockDeviceControl::writeMessage(const QByteArray &msg)
 {
     ++messagesSent_;
-    if ((emitErrorOnMessageSent_ != 0) && (messagesSent_ % emitErrorOnMessageSent_ == 0)) {
+    if ((emitErrorOnNthMessage_ != 0) && (messagesSent_ % emitErrorOnNthMessage_ == 0)) {
         qCDebug(logCategoryDeviceMock) << "Write configured to fail on following message:" << msg;
         return false;
     }
@@ -94,14 +94,14 @@ bool MockDeviceControl::isFirmwareEnabled() const
     return isFirmwareEnabled_;
 }
 
-bool MockDeviceControl::isEmitErrorOnCloseSet() const
+bool MockDeviceControl::isErrorOnCloseSet() const
 {
     return emitErrorOnClose_;
 }
 
-bool MockDeviceControl::isEmitErrorOnMessageSentSet() const
+bool MockDeviceControl::isErrorOnNthMessageSet() const
 {
-    return emitErrorOnMessageSent_;
+    return emitErrorOnNthMessage_;
 }
 
 MockCommand MockDeviceControl::getCommand() const
@@ -236,9 +236,9 @@ bool MockDeviceControl::setFirmwareEnabled(bool enabled)
     return false;
 }
 
-bool MockDeviceControl::setEmitErrorOnClose(bool emitError) {
-    if (emitErrorOnClose_ != emitError) {
-        emitErrorOnClose_ = emitError;
+bool MockDeviceControl::setErrorOnClose(bool enabled) {
+    if (emitErrorOnClose_ != enabled) {
+        emitErrorOnClose_ = enabled;
         qCDebug(logCategoryDeviceMock) << "Configured emit error on close to" << emitErrorOnClose_;
         return true;
     }
@@ -246,14 +246,14 @@ bool MockDeviceControl::setEmitErrorOnClose(bool emitError) {
     return false;
 }
 
-bool MockDeviceControl::setEmitErrorOnMessageSent(unsigned emitMessage) {
+bool MockDeviceControl::setErrorOnNthMessage(unsigned messageNumber) {
     messagesSent_ = 0;
-    if (emitErrorOnMessageSent_ != emitMessage) {
-        emitErrorOnMessageSent_ = emitMessage;
-        qCDebug(logCategoryDeviceMock) << "Configured emit error on message sent to" << emitErrorOnMessageSent_;
+    if (emitErrorOnNthMessage_ != messageNumber) {
+        emitErrorOnNthMessage_ = messageNumber;
+        qCDebug(logCategoryDeviceMock) << "Configured emit error on message sent to" << emitErrorOnNthMessage_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Emit error on message sent already configured to" << emitErrorOnMessageSent_;
+    qCDebug(logCategoryDeviceMock) << "Emit error on message sent already configured to" << emitErrorOnNthMessage_;
     return false;
 }
 

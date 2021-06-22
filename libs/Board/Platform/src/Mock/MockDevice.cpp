@@ -44,8 +44,8 @@ void MockDevice::close()
         opened_ = false;
         mockClearRecordedMessages();
 
-        if (mockIsEmitErrorOnCloseSet()) {
-            QString errMsg(QStringLiteral("Unable to properly close mock device (mockSetEmitErrorOnClose set to true)."));
+        if (mockIsErrorOnCloseSet()) {
+            QString errMsg(QStringLiteral("Unable to properly close mock device (mockSetErrorOnClose set to true)."));
             qCWarning(logCategoryDeviceMock) << this << errMsg;
             emit deviceError(ErrorCode::DeviceError, errMsg);
         }
@@ -75,7 +75,7 @@ bool MockDevice::sendMessage(const QByteArray& msg)
         }
         return true;
     } else {
-        QString errMsg(QStringLiteral("Cannot write message to device (mockSetEmitErrorOnMessageSent set to true)."));
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetErrorOnNthMessage set to true)."));
         qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit deviceError(ErrorCode::DeviceError, errMsg);
         return false;
@@ -155,14 +155,14 @@ bool MockDevice::mockIsFirmwareEnabled() const
     return control_.isFirmwareEnabled();
 }
 
-bool MockDevice::mockIsEmitErrorOnCloseSet() const
+bool MockDevice::mockIsErrorOnCloseSet() const
 {
-    return control_.isEmitErrorOnCloseSet();
+    return control_.isErrorOnCloseSet();
 }
 
-bool MockDevice::mockIsEmitErrorOnMessageSentSet() const
+bool MockDevice::mockIsErrorOnNthMessageSet() const
 {
-    return control_.isEmitErrorOnMessageSentSet();
+    return control_.isErrorOnNthMessageSet();
 }
 
 MockCommand MockDevice::mockGetCommand() const
@@ -230,12 +230,12 @@ bool MockDevice::mockSetFirmwareEnabled(bool enabled)
     return control_.setFirmwareEnabled(enabled);
 }
 
-bool MockDevice::mockSetEmitErrorOnClose(bool emitError) {
-    return control_.setEmitErrorOnClose(emitError);
+bool MockDevice::mockSetErrorOnClose(bool enabled) {
+    return control_.setErrorOnClose(enabled);
 }
 
-bool MockDevice::mockSetEmitErrorOnMessageSent(unsigned emitMessage) {
-    return control_.setEmitErrorOnMessageSent(emitMessage);
+bool MockDevice::mockSetErrorOnNthMessage(unsigned messageNumber) {
+    return control_.setErrorOnNthMessage(messageNumber);
 }
 
 }  // namespace strata::device

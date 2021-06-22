@@ -203,7 +203,7 @@ void PlatformErrorsTest::errorDuringOperationTest()
         return;
     }
 
-    mockDevice_->mockSetEmitErrorOnMessageSent(2);
+    mockDevice_->mockSetErrorOnNthMessage(2);
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
@@ -278,7 +278,7 @@ void PlatformErrorsTest::unableToCloseTest()
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
 
-    mockDevice_->mockSetEmitErrorOnClose(true);
+    mockDevice_->mockSetErrorOnClose(true);
 
     removeMockDevice(false);
 

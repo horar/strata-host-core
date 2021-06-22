@@ -31,8 +31,8 @@ public:
     bool isAutoResponse() const;
     bool isBootloader() const;
     bool isFirmwareEnabled() const;
-    bool isEmitErrorOnCloseSet() const;
-    bool isEmitErrorOnMessageSentSet() const;
+    bool isErrorOnCloseSet() const;
+    bool isErrorOnNthMessageSet() const;
     MockCommand getCommand() const;
     MockResponse getResponse() const;
     MockVersion getVersion() const;
@@ -47,8 +47,8 @@ public:
     bool setVersion(MockVersion version);
     bool setAsBootloader(bool isBootloader);
     bool setFirmwareEnabled(bool enabled);
-    bool setEmitErrorOnClose(bool emitError);
-    bool setEmitErrorOnMessageSent(unsigned emitMessage);
+    bool setErrorOnClose(bool enabled);
+    bool setErrorOnNthMessage(unsigned messageNumber);
 
 signals:
     /**
@@ -86,7 +86,7 @@ private:
     bool isBootloader_ = false;
     bool isFirmwareEnabled_ = true;
     bool emitErrorOnClose_ = false;
-    unsigned emitErrorOnMessageSent_ = 0;
+    unsigned emitErrorOnNthMessage_ = 0;
     MockCommand command_ = MockCommand::Any_command;
     MockResponse response_ = MockResponse::Normal;
     MockVersion version_ = MockVersion::Version_1;

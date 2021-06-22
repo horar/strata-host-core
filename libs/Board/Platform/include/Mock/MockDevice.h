@@ -73,8 +73,8 @@ public:
     bool mockIsAutoResponse() const;
     bool mockIsBootloader() const;
     bool mockIsFirmwareEnabled() const;
-    bool mockIsEmitErrorOnCloseSet() const;
-    bool mockIsEmitErrorOnMessageSentSet() const;
+    bool mockIsErrorOnCloseSet() const;
+    bool mockIsErrorOnNthMessageSet() const;
     MockCommand mockGetCommand() const;
     MockResponse mockGetResponse() const;
     MockVersion mockGetVersion() const;
@@ -89,8 +89,8 @@ public:
     bool mockSetVersion(MockVersion version);
     bool mockSetAsBootloader(bool isBootloader);
     bool mockSetFirmwareEnabled(bool enabled);
-    bool mockSetEmitErrorOnClose(bool emitError);
-    bool mockSetEmitErrorOnMessageSent(unsigned emitMessage);
+    bool mockSetErrorOnClose(bool enabled);
+    bool mockSetErrorOnNthMessage(unsigned messageNumber);
 
 private slots:
     void readMessage(QByteArray msg);
