@@ -1,11 +1,14 @@
 #include <chrono>
 #include <Operations/Identify.h>
 #include "PlatformErrorsTest.h"
+#include <rapidjson/writer.h>
 
 using strata::device::Device;
 using strata::device::MockDevice;
 using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::Identify;
+
+namespace test_commands = strata::device::test_commands;
 
 PlatformErrorsTest::PlatformErrorsTest() : platformOperations_(false, false) {
     qRegisterMetaType<strata::device::Device::ErrorCode>("device::Device::ErrorCode");
@@ -50,7 +53,7 @@ void PlatformErrorsTest::addMockDevice()
     devicesCount_ = platformManager_->getDeviceIds().count();
 
     QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
-    QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", false));
+    QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", true));
     QVERIFY((platformAddedSignal.count() == 1) || (platformAddedSignal.wait(100) == true));
 
     QVERIFY(platformManager_->getDeviceIds().contains(deviceId_));
@@ -82,6 +85,32 @@ void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
     QCOMPARE(platformManager_->getDeviceIds().count(), --devicesCount_);
 
     QVERIFY((platformTerminatedSignal.count() == 1) || (platformTerminatedSignal.wait(100) == true));
+}
+
+void PlatformErrorsTest::verifyMessage(const QByteArray &msg, const QByteArray &expectedJson)
+{
+    rapidjson::Document doc;
+    rapidjson::Document expectedDoc;
+    rapidjson::ParseResult parseResult;
+
+    parseResult = doc.Parse(msg.data(), msg.size());
+    QVERIFY(parseResult.IsError() == false);
+    QVERIFY(doc.IsObject());
+    expectedDoc.Parse(expectedJson.data(), expectedJson.size());
+    if (doc != expectedDoc) {
+        printJsonDoc(doc);
+        printJsonDoc(expectedDoc);
+    }
+    QCOMPARE(doc, expectedDoc);
+}
+
+void PlatformErrorsTest::printJsonDoc(rapidjson::Document &doc)
+{
+    // print the doc
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    qDebug("%s", buffer.GetString());
 }
 
 void PlatformErrorsTest::deviceLostWithDisconnectTest()
@@ -286,6 +315,11 @@ void PlatformErrorsTest::multipleOperationsTest()
     QCOMPARE(identifyOperation2->hasStarted(), false);
     QTRY_COMPARE_WITH_TIMEOUT(identifyOperation2->isFinished(), true, 1000);
     QCOMPARE(identifyOperation2->isSuccessfullyFinished(), false);
+
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 2);
+    verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
     QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
     QList<QVariant> arguments = platformErrorSignal.takeFirst();

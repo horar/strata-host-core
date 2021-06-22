@@ -7,6 +7,7 @@
 #include <Mock/MockDevice.h>
 #include <Mock/MockDeviceScanner.h>
 #include <Platform.h>
+#include <rapidjson/document.h>
 
 class PlatformErrorsTest : public QObject
 {
@@ -37,6 +38,8 @@ private slots:
 private:
     void addMockDevice();
     void removeMockDevice(bool alreadyDisconnected);
+    void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
+    void printJsonDoc(rapidjson::Document &doc);
 
     const QByteArray deviceId_ = "mock1234";
     strata::platform::PlatformPtr platform_;
