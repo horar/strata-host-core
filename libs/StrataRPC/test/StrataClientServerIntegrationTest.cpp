@@ -83,7 +83,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
         });
 
     // Client Handlers
-    QSignalSpy ClientConnectedSignalSpy(&client, &StrataClient::clientConnected);
+    QSignalSpy ClientConnectedSignalSpy(&client, &StrataClient::connected);
 
     client.registerHandler("unregister", [&clientRecievedUnregisterClient](const QJsonObject &) {
         // This should not be called.
@@ -118,7 +118,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
 
     server.initializeServer();
     waitForZmqMessages(50);
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(50);
 
     {
@@ -181,7 +181,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
     QTRY_VERIFY_WITH_TIMEOUT(clientReceivedPlatformNotification, 100);
     QTRY_VERIFY_WITH_TIMEOUT(clientReceivedServerNotification, 100);
 
-    client.disconnectServer();
+    client.disconnect();
 
     QTRY_VERIFY_WITH_TIMEOUT(serverRecievedUnregisterClient, 100);
     QTRY_VERIFY_WITH_TIMEOUT(false == clientRecievedUnregisterClient, 100);
@@ -200,8 +200,8 @@ void StrataClientServerIntegrationTest::testMultipleClients()
     StrataClient client_1(address_, "client_1");
     StrataClient client_2(address_, "client_2");
 
-    QSignalSpy clientConnectedSignalSpy_1(&client_1, &StrataClient::clientConnected);
-    QSignalSpy clientConnectedSignalSpy_2(&client_2, &StrataClient::clientConnected);
+    QSignalSpy clientConnectedSignalSpy_1(&client_1, &StrataClient::connected);
+    QSignalSpy clientConnectedSignalSpy_2(&client_2, &StrataClient::connected);
 
     server.registerHandler("register_client",
                            [&server, &serverRecievedClient1Register,
@@ -248,9 +248,9 @@ void StrataClientServerIntegrationTest::testMultipleClients()
     server.initializeServer();
     waitForZmqMessages(50);
 
-    client_1.connectServer();
+    client_1.connect();
     waitForZmqMessages(50);
-    client_2.connectServer();
+    client_2.connect();
 
     QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient1Register, 100);
     QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient2Register, 100);
@@ -282,7 +282,7 @@ void StrataClientServerIntegrationTest::testCallbacks()
 
     server.initializeServer();
     waitForZmqMessages(waitZmqDelay);
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(waitZmqDelay);
 
     {

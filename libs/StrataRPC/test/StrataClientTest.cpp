@@ -48,20 +48,20 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     // StrataClient set up
     StrataClient client(address_);
 
-    QSignalSpy signalSpy(&client, &StrataClient::clientConnected);
+    QSignalSpy signalSpy(&client, &StrataClient::connected);
 
-    connect(&client, &StrataClient::newServerMessageParsed, this,
+    connect(&client, &StrataClient::messageParsed, this,
             [&clientReceivedMessage] { clientReceivedMessage = true; });
 
     serverRevicedMessage = false;
-    client.connectServer();
+    client.connect();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
     QTRY_COMPARE_WITH_TIMEOUT(signalSpy.count(), 1, 100);
     signalSpy.clear();
 
     serverRevicedMessage = false;
     clientReceivedMessage = false;
-    client.disconnectServer();
+    client.disconnect();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
     QTRY_VERIFY_WITH_TIMEOUT(false == clientReceivedMessage, 100);
 
@@ -73,7 +73,7 @@ void StrataClientTest::testConnectDisconnectToTheServer()
 
     serverRevicedMessage = false;
     clientReceivedMessage = false;
-    client.connectServer();
+    client.connect();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
     QTRY_COMPARE_WITH_TIMEOUT(signalSpy.count(), 1, 100);
     signalSpy.clear();
@@ -115,7 +115,7 @@ void StrataClientTest::testBuildRequest()
     expectedMethod = "register_client";
     expectedId = 1;
     serverRevicedMessage = false;
-    client.connectServer();
+    client.connect();
     QTRY_VERIFY_WITH_TIMEOUT(serverRevicedMessage, 100);
 
     expectedMethod = "method_1";
@@ -156,10 +156,10 @@ void StrataClientTest::testNonDefaultDealerId()
         });
 
     StrataClient client_1(address_);
-    client_1.connectServer();
+    client_1.connect();
 
     StrataClient client_2(address_, "customId");
-    client_2.connectServer();
+    client_2.connect();
 
     QTRY_VERIFY_WITH_TIMEOUT(defaultIdRecieved, 100);
     QTRY_VERIFY_WITH_TIMEOUT(customIdRecieved, 100);
@@ -212,7 +212,7 @@ void StrataClientTest::testWithNoCallbacks()
     client.registerHandler("test_no_callbacks",
                            [&noCallbackHandler](const QJsonObject &) { noCallbackHandler = true; });
 
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(zmqWaitTime);
 
     noCallbackHandler = false;
@@ -280,7 +280,7 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksHandler = true;
     });
 
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(zmqWaitTime);
 
     {
@@ -405,7 +405,7 @@ void StrataClientTest::testWithOnlyResultCallbacks()
         resCallbackHandler = true;
     });
 
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(zmqWaitTime);
 
     {
@@ -511,7 +511,7 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
         errorCallbackHander = true;
     });
 
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(zmqWaitTime);
 
     {
@@ -577,7 +577,7 @@ void StrataClientTest::testTimedoutRequest()
     server.initialize();
 
     StrataClient client(address_);
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(50);
 
     for (int i = 0; i < testsNum; i++) {
@@ -616,7 +616,7 @@ void StrataClientTest::testNoTimedoutRequest()
     server.initialize();
 
     StrataClient client(address_);
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(50);
 
     for (int i = 0; i < testsNum; i++) {
@@ -656,7 +656,7 @@ void StrataClientTest::testErrorOccourredSignal()
 
     errorOccurred.clear();
 
-    client.disconnectServer();
+    client.disconnect();
     waitForZmqMessages(50);
     QCOMPARE_(errorOccurred.count(), 2);  // fail to send unregister & fail to disconnect.
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(0).at(0));
@@ -673,9 +673,9 @@ void StrataClientTest::testErrorOccourredSignal()
     errorOccurred.clear();
 
     server.initialize();
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(50);
-    client.connectServer();  // This should fail
+    client.connect();  // This should fail
     // waitForZmqMessages(50);
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
@@ -756,7 +756,7 @@ void StrataClientTest::testSendNotification()
             });
 
     StrataClient client(address_);
-    client.connectServer();
+    client.connect();
     waitForZmqMessages(50);
     client.sendNotification("test_notification", QJsonObject{{"test_key", "test_value"}});
 

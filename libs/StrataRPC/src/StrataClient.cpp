@@ -6,27 +6,40 @@
 #include <StrataRPC/Message.h>
 #include <StrataRPC/StrataClient.h>
 #include <QJsonDocument>
+#include <QThread>
 
 using namespace strata::strataRPC;
 
-StrataClient::StrataClient(QString serverAddress, QObject *parent)
-    : QObject(parent),
-      dispatcher_(new Dispatcher<const QJsonObject &>()),
-      connector_(new ClientConnector(serverAddress)),
-      requestController_(new RequestsController()),
-      connectorThread_(new QThread())
-{
-    connectorSetup();
-}
-
-StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent)
+StrataClient::StrataClient(const QString &serverAddress, const QByteArray &dealerId,
+                           QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const QJsonObject &>()),
       connector_(new ClientConnector(serverAddress, dealerId)),
       requestController_(new RequestsController()),
       connectorThread_(new QThread())
 {
-    connectorSetup();
+    qRegisterMetaType<strataRPC::ClientConnectorError>("ClientConnectorError");
+    connector_->moveToThread(connectorThread_.get());
+
+    QObject::connect(this, &StrataClient::initializeConnector, connector_.get(),
+                     &ClientConnector::initialize);
+    QObject::connect(this, &StrataClient::connectClient, connector_.get(),
+                     &ClientConnector::connect);
+    QObject::connect(this, &StrataClient::disconnectClient, connector_.get(),
+                     &ClientConnector::disconnect);
+    QObject::connect(this, &StrataClient::sendMessage, connector_.get(),
+                     &ClientConnector::sendMessage);
+    QObject::connect(connector_.get(), &ClientConnector::messageReceived, this,
+                     &StrataClient::newServerMessage);
+    QObject::connect(this, &StrataClient::messageParsed, this, &StrataClient::dispatchHandler);
+    QObject::connect(connector_.get(), &ClientConnector::errorOccurred, this,
+                     &StrataClient::connectorErrorHandler);
+    QObject::connect(connector_.get(), &ClientConnector::initialized, this,
+                     &StrataClient::clientInitializedHandler);
+    QObject::connect(connector_.get(), &ClientConnector::disconnected, this,
+                     [this]() { emit disconnected(); });
+
+    connectorThread_->start();
 }
 
 StrataClient::~StrataClient()
@@ -39,38 +52,17 @@ StrataClient::~StrataClient()
         qCCritical(logCategoryStrataClient) << "Terminating connector thread.";
         connectorThread_->terminate();
     }
+
     connectorThread_->deleteLater();
+    connectorThread_.release();
 }
 
-void StrataClient::connectorSetup()
-{
-    qRegisterMetaType<strataRPC::ClientConnectorError>("ClientConnectorError");
-    connector_->moveToThread(connectorThread_);
-
-    connect(this, &StrataClient::initializeConnector, connector_.get(),
-            &ClientConnector::initialize);
-    connect(this, &StrataClient::connectClient, connector_.get(), &ClientConnector::connect);
-    connect(this, &StrataClient::disconnectClient, connector_.get(), &ClientConnector::disconnect);
-    connect(this, &StrataClient::sendMessage, connector_.get(), &ClientConnector::sendMessage);
-    connect(connector_.get(), &ClientConnector::messageReceived, this,
-            &StrataClient::newServerMessage);
-    connect(this, &StrataClient::newServerMessageParsed, this, &StrataClient::dispatchHandler);
-    connect(connector_.get(), &ClientConnector::errorOccurred, this,
-            &StrataClient::connectorErrorHandler);
-    connect(connector_.get(), &ClientConnector::initialized, this,
-            &StrataClient::clientInitializedHandler);
-    connect(connector_.get(), &ClientConnector::disconnected, this,
-            [this]() { emit clientDisconnected(); });
-
-    connectorThread_->start();
-}
-
-void StrataClient::connectServer()
+void StrataClient::connect()
 {
     emit initializeConnector();
 }
 
-void StrataClient::disconnectServer()
+void StrataClient::disconnect()
 {
     sendRequest("unregister", {});
     emit disconnectClient();
@@ -104,7 +96,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     }
 
     qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
-    emit newServerMessageParsed(serverMessage);
+    emit messageParsed(serverMessage);
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, ClientHandler handler)
@@ -151,8 +143,8 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
 
     emit sendMessage(message);
 
-    connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-            &StrataClient::requestTimeoutHandler);
+    QObject::connect(deferredRequest, &DeferredRequest::requestTimedout, this,
+                     &StrataClient::requestTimeoutHandler);
     deferredRequest->startTimer();
 
     return deferredRequest;
@@ -281,7 +273,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     return true;
 }
 
-void StrataClient::requestTimeoutHandler(int requestId)
+void StrataClient::requestTimeoutHandler(const int &requestId)
 {
     QString timeoutErrorMessage("Request timed out. request ID: " + QString::number(requestId));
     qCCritical(logCategoryStrataClient) << timeoutErrorMessage;
@@ -313,7 +305,7 @@ void StrataClient::dispatchHandler(const Message &serverMessage)
     qCDebug(logCategoryStrataClient) << "Handler executed.";
 }
 
-void StrataClient::connectorErrorHandler(ClientConnectorError errorType,
+void StrataClient::connectorErrorHandler(const ClientConnectorError &errorType,
                                          const QString &errorMessage)
 {
     switch (errorType) {
@@ -334,19 +326,20 @@ void StrataClient::clientInitializedHandler()
     auto deferredRequest = sendRequest("register_client", {{"api_version", "2.0"}});
 
     if (deferredRequest != nullptr) {
-        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
-                [this](const QJsonObject &) {
-                    qCInfo(logCategoryStrataClient)
-                        << "Client connected successfully to the server.";
-                    emit clientConnected();
-                });
+        QObject::connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
+                         [this](const QJsonObject &) {
+                             qCInfo(logCategoryStrataClient)
+                                 << "Client connected successfully to the server.";
+                             emit connected();
+                         });
 
-        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
-                [this](const QJsonObject &) {
-                    QString errorMessage(QStringLiteral(
-                        "Failed to connect to the server. register_client message timed out."));
-                    qCCritical(logCategoryStrataClient) << errorMessage;
-                    emit errorOccurred(ClientError::FailedToConnect, errorMessage);
-                });
+        QObject::connect(
+            deferredRequest, &DeferredRequest::finishedWithError, this,
+            [this](const QJsonObject &) {
+                QString errorMessage(QStringLiteral(
+                    "Failed to connect to the server. register_client message timed out."));
+                qCCritical(logCategoryStrataClient) << errorMessage;
+                emit errorOccurred(ClientError::FailedToConnect, errorMessage);
+            });
     }
 }
