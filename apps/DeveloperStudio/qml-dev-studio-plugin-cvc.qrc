@@ -13,7 +13,7 @@
         <file alias="Editor/TextEditorContainer.qml">partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
         <file alias="Editor/NoActiveFile.qml">partial-views/control-view-creator/Editor/NoActiveFile.qml</file>
         <file alias="Editor/ImageContainer.qml">partial-views/control-view-creator/Editor/ImageContainer.qml</file>
-        <file alias="Editor/UnsupportedFileType.qml">partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
+        <file alias="Editor/GenericControlContainer.qml">partial-views/control-view-creator/Editor/GenericControlContainer.qml</file>
         <file alias="navigation/SGSideNavItem.qml">partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
         <file alias="navigation/SideNavFooter.qml">partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
         <file alias="navigation/NavigationBar.qml">partial-views/control-view-creator/navigation/NavigationBar.qml</file>

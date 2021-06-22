@@ -8,25 +8,14 @@ import "./"
 
 Item {
     id: root
-    anchors.fill: parent
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
     property alias url: webView.url
     property bool isOpen: false
 
     ColumnLayout {
         anchors.fill: parent
-        SGControlViewIconButton {
-            Layout.preferredHeight: 25
-            Layout.preferredWidth: Layout.preferredHeight
-            Layout.alignment: Qt.AlignRight
-            source: "qrc:/sgimages/times.svg"
-            color: "red"
-            onClicked: {
-                webView.loadHtml("")
-                isOpen = false
-            }
-        }
-
         WebEngineView {
             id: webView
             Layout.fillHeight: true
@@ -34,23 +23,35 @@ Item {
             settings.localContentCanAccessRemoteUrls: true
             settings.localContentCanAccessFileUrls: false
             settings.localStorageEnabled: false
-            settings.errorPageEnabled: true
+            settings.errorPageEnabled: false
             settings.javascriptCanOpenWindows: false
-            settings.javascriptEnabled: true
+            settings.javascriptEnabled: false
             settings.javascriptCanAccessClipboard: false
             settings.pluginsEnabled: false
-            settings.showScrollBars: false
-            isFullScreen: true
-        }
-    }
+            settings.showScrollBars: true
+            settings.autoLoadIconsForPage: false
+            settings.autoLoadImages: false
+            settings.webGLEnabled: false
+            settings.hyperlinkAuditingEnabled: false
+            property bool opened: false
+            onNavigationRequested: {
+                if(request.navigationType === WebEngineView.BackForwardNavigation){
+                    request.action = WebEngineView.IgnoreRequest;
+                } else if(request.navigationType === WebEngineView.LinkClickedNavigation){
+                    request.action = WebEngineView.IgnoreRequest;
+                }
+            }
 
-    Connections {
-        target: visualEditor.functions
+            onContextMenuRequested: {
+                request.accepted = true
+            }
 
-        onGoToDocumentation: {
-            isOpen = true
-            if (newUrl !== url) {
-                url = newUrl
+            MouseArea {
+                anchors.fill: webView
+                acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+                onClicked: {
+                    mouse.accepted = true
+                }
             }
         }
     }

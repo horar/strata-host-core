@@ -358,9 +358,9 @@ Item {
                 Repeater {
                     id: fileEditorRepeater
                     model: openFilesModel
-
                     delegate: Component {
                         Loader {
+                            id: textLoader
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
@@ -379,7 +379,7 @@ Item {
                                     case "ts":
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
-                                        return "./Editor/UnsupportedFileType.qml"
+                                        return "./Editor/GenericControlContainer.qml"
                                     }
                         }
                     }

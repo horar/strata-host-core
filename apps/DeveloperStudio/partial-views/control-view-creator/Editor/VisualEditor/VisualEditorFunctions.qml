@@ -11,7 +11,7 @@ QtObject {
     id: functions
 
     signal passUUID(string uuid)
-    signal goToDocumentation(url newUrl, string newTitle)
+    signal goToDocumentation(url newUrl, string name)
 
     property Timer destructionTimer: Timer {
         interval: 1

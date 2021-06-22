@@ -9,6 +9,7 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 
 import "../../general"
 import "../"
@@ -403,34 +404,20 @@ ColumnLayout {
             }
         }
 
-        SGSplitView {
+        VisualEditor {
+            id: visualEditor
+            file: model.filepath
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.minimumWidth: 800
+        }
 
-            VisualEditor {
-                id: visualEditor
-                file: model.filepath
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                Layout.minimumWidth: 800
-            }
+        Connections {
+            target: visualEditor.functions
 
-            Item {
-                visible: sgWebView.isOpen
-                Layout.fillHeight: true
-                onVisibleChanged: {
-                    if (visible) {
-                        Layout.maximumWidth = 800
-                        Layout.minimumWidth = 600
-                    } else {
-                        Layout.maximumWidth = 0
-                        Layout.minimumWidth = 0
-                    }
-                }
-
-                SGWebView {
-                    id: sgWebView
-                }
+            onGoToDocumentation: {
+                openFilesModel.addTab(name, "", "", visualEditor.functions.create_UUID())
+                Signals.goToDocumentation(newUrl, name)
             }
         }
     }
