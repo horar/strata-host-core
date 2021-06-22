@@ -13,7 +13,7 @@ ServerConnector::~ServerConnector()
     }
 }
 
-bool ServerConnector::initializeConnector()
+bool ServerConnector::initialize()
 {
     using Connector = strata::connector::Connector;
 
@@ -35,7 +35,7 @@ bool ServerConnector::initializeConnector()
     connect(readSocketNotifier_, &QSocketNotifier::activated, this,
             &ServerConnector::readNewMessages);
 
-    emit serverInitialized();
+    emit initialized();
     return true;
 }
 
@@ -51,7 +51,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
             << "message received. Client ID: 0x"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
             << QByteArray::fromStdString(message) << "'";
-        emit newMessageReceived(QByteArray::fromStdString(connector_->getDealerID()),
+        emit messageReceived(QByteArray::fromStdString(connector_->getDealerID()),
                                 QByteArray::fromStdString(message));
     }
     readSocketNotifier_->setEnabled(true);

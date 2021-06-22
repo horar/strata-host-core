@@ -35,9 +35,9 @@ void StrataClientTest::testConnectDisconnectToTheServer()
 
     // serverConnector set up
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        &server, &strata::strataRPC::ServerConnector::messageReceived, this,
         [&server, &serverRevicedMessage](const QByteArray &clientId, const QByteArray &message) {
             qDebug() << "ServerConnector new message handler. client id:" << clientId << "message"
                      << message;
@@ -87,8 +87,8 @@ void StrataClientTest::testBuildRequest()
     int expectedId = 0;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+    server.initialize();
+    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
             [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &,
                                                                   const QByteArray &message) {
                 QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
@@ -143,10 +143,10 @@ void StrataClientTest::testNonDefaultDealerId()
     bool customIdRecieved = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        &server, &strata::strataRPC::ServerConnector::messageReceived, this,
         [&defaultIdRecieved, &customIdRecieved](const QByteArray &clientId, const QByteArray &) {
             if (clientId == "customId") {
                 customIdRecieved = true;
@@ -171,10 +171,10 @@ void StrataClientTest::testWithNoCallbacks()
     bool noCallbackHandler = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        &server, &strata::strataRPC::ServerConnector::messageReceived, this,
         [&server](const QByteArray &clientId, const QByteArray &jsonMessage) {
             QJsonObject jsonObject(QJsonDocument::fromJson(jsonMessage).object());
             QString handlerName = jsonObject.value("method").toString();
@@ -238,10 +238,10 @@ void StrataClientTest::testWithAllCallbacks()
     bool allCallbacksResCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        &server, &strata::strataRPC::ServerConnector::messageReceived, this,
         [&server](const QByteArray &clientId, const QByteArray &jsonMessage) {
             QJsonObject jsonObject(QJsonDocument::fromJson(jsonMessage).object());
             QString handlerName = jsonObject.value("method").toString();
@@ -363,10 +363,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     bool resCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        &server, &strata::strataRPC::ServerConnector::messageReceived, this,
         [&server](const QByteArray &clientId, const QByteArray &jsonMessage) {
             QJsonObject jsonObject(QJsonDocument::fromJson(jsonMessage).object());
             QString handlerName = jsonObject.value("method").toString();
@@ -469,10 +469,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     bool errorCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        &server, &strata::strataRPC::ServerConnector::messageReceived, this,
         [&server](const QByteArray &clientId, const QByteArray &jsonMessage) {
             QJsonObject jsonObject(QJsonDocument::fromJson(jsonMessage).object());
             QString handlerName = jsonObject.value("method").toString();
@@ -574,7 +574,7 @@ void StrataClientTest::testTimedoutRequest()
     int timedOutRequests = 0;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
     StrataClient client(address_);
     client.connectServer();
@@ -599,7 +599,7 @@ void StrataClientTest::testNoTimedoutRequest()
 
     strata::strataRPC::ServerConnector server(address_);
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
                 QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
                 QString handlerName = jsonObject.value("method").toString();
@@ -613,7 +613,7 @@ void StrataClientTest::testNoTimedoutRequest()
                 server.sendMessage(clientId, response);
             });
 
-    server.initializeConnector();
+    server.initialize();
 
     StrataClient client(address_);
     client.connectServer();
@@ -672,7 +672,7 @@ void StrataClientTest::testErrorOccourredSignal()
     // waitForZmqMessages();
     errorOccurred.clear();
 
-    server.initializeConnector();
+    server.initialize();
     client.connectServer();
     waitForZmqMessages(50);
     client.connectServer();  // This should fail
@@ -730,9 +730,9 @@ void StrataClientTest::testSendNotification()
     bool serverGotNotification = false;
 
     strata::strataRPC::ServerConnector server(address_);
-    server.initializeConnector();
+    server.initialize();
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
             [&serverGotNotification](const QByteArray &, const QByteArray &message) {
                 QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
 

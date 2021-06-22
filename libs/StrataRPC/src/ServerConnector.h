@@ -22,7 +22,7 @@ public:
      * ServerConnector constructor
      * @param [in] serverAddress sets the server address
      */
-    ServerConnector(QString serverAddress, QObject *parent = nullptr)
+    ServerConnector(const QString &serverAddress, QObject *parent = nullptr)
         : QObject(parent), connector_(nullptr), serverAddress_(serverAddress)
     {
     }
@@ -37,14 +37,17 @@ public slots:
      * initialize the client's zmq connector and star it. Also this connects QSocketNotifier
      * signals.
      * @return True if the initialization is successful, False otherwise.
+     * @note On success, connected signal will be emitted.
+     * @note On failure, errorOccurred signal will be emitted.
      */
-    bool initializeConnector();
+    bool initialize();
 
     /**
      * Sends a message to a client.
      * @param [in] clientId client id to send the message to.
      * @param [in] message QByteArray of the message
      * @return True if the message was sent successfully, False otherwise.
+     * @note On failure, errorOccurred signal will be emitted.
      */
     bool sendMessage(const QByteArray &clientId, const QByteArray &message);
 
@@ -54,19 +57,19 @@ signals:
      * @param [in] clientId sender client id.
      * @param [in] message QByteArray of the new message.
      */
-    void newMessageReceived(const QByteArray &clientId, const QByteArray &message);
+    void messageReceived(const QByteArray &clientId, const QByteArray &message);
 
     /**
      * Emitted when an error has occurred.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(ServerConnectorError errorType, const QString &errorMessage);
+    void errorOccurred(const ServerConnectorError &errorType, const QString &errorMessage);
 
     /**
      * Emitted when the client connector was initialized successfully.
      */
-    void serverInitialized();
+    void initialized();
 
 private slots:
     /**
@@ -80,7 +83,7 @@ private slots:
 
 private:
     /**
-     * Empties the receive buffer and emits newMessageReceived signal for each new message.
+     * Empties the receive buffer and emits messageReceived signal for each new message.
      */
     void readMessages();
 

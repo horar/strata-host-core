@@ -27,15 +27,15 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
     connector_->moveToThread(connectorThread_);
 
     connect(this, &StrataServer::initializeServerConnector, connector_.get(),
-            &ServerConnector::initializeConnector, Qt::QueuedConnection);
+            &ServerConnector::initialize, Qt::QueuedConnection);
     connect(this, &StrataServer::sendMessage, connector_.get(), &ServerConnector::sendMessage,
             Qt::QueuedConnection);
     connect(this, &StrataServer::newClientMessageParsed, this, &StrataServer::dispatchHandler);
-    connect(connector_.get(), &ServerConnector::newMessageReceived, this,
+    connect(connector_.get(), &ServerConnector::messageReceived, this,
             &StrataServer::newClientMessage);
     connect(connector_.get(), &ServerConnector::errorOccurred, this,
             &StrataServer::connectorErrorHandler);
-    connect(connector_.get(), &ServerConnector::serverInitialized, this, [this]() {
+    connect(connector_.get(), &ServerConnector::initialized, this, [this]() {
         qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
         emit serverInitialized();
     });
