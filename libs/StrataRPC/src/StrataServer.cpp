@@ -5,10 +5,11 @@
 
 #include <StrataRPC/StrataServer.h>
 #include <QJsonDocument>
+#include <QThread>
 
 using namespace strata::strataRPC;
 
-StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *parent)
+StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const Message &>()),
       clientsController_(new ClientsController(this)),
@@ -24,20 +25,21 @@ StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *pa
     }
 
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
-    connector_->moveToThread(connectorThread_);
+    connector_->moveToThread(connectorThread_.get());
 
-    connect(this, &StrataServer::initializeServerConnector, connector_.get(),
-            &ServerConnector::initialize, Qt::QueuedConnection);
-    connect(this, &StrataServer::sendMessage, connector_.get(), &ServerConnector::sendMessage,
-            Qt::QueuedConnection);
-    connect(this, &StrataServer::newClientMessageParsed, this, &StrataServer::dispatchHandler);
-    connect(connector_.get(), &ServerConnector::messageReceived, this,
-            &StrataServer::newClientMessage);
-    connect(connector_.get(), &ServerConnector::errorOccurred, this,
-            &StrataServer::connectorErrorHandler);
-    connect(connector_.get(), &ServerConnector::initialized, this, [this]() {
+    QObject::connect(this, &StrataServer::initializeConnector, connector_.get(),
+                     &ServerConnector::initialize, Qt::QueuedConnection);
+    QObject::connect(this, &StrataServer::sendMessage, connector_.get(),
+                     &ServerConnector::sendMessage, Qt::QueuedConnection);
+    QObject::connect(this, &StrataServer::newClientMessageParsed, this,
+                     &StrataServer::dispatchHandler);
+    QObject::connect(connector_.get(), &ServerConnector::messageReceived, this,
+                     &StrataServer::newClientMessage);
+    QObject::connect(connector_.get(), &ServerConnector::errorOccurred, this,
+                     &StrataServer::connectorErrorHandler);
+    QObject::connect(connector_.get(), &ServerConnector::initialized, this, [this]() {
         qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
-        emit serverInitialized();
+        emit initialized();
     });
 
     connectorThread_->start();
@@ -54,11 +56,12 @@ StrataServer::~StrataServer()
         connectorThread_->terminate();
     }
     connectorThread_->deleteLater();
+    connectorThread_.release();
 }
 
-void StrataServer::initializeServer()
+void StrataServer::initialize()
 {
-    emit initializeServerConnector();
+    emit initializeConnector();
 }
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)
@@ -253,7 +256,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 }
 
 void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                                ResponseType responseType)
+                                const ResponseType &responseType)
 {
     QByteArray serverMessage;
 
@@ -284,7 +287,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
-                                const QJsonObject &jsonObject, ResponseType responseType)
+                                const QJsonObject &jsonObject, const ResponseType &responseType)
 {
     Message message;
     message.clientID = clientId;
@@ -384,7 +387,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 
 QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 ResponseType responseType)
+                                                 const ResponseType &responseType)
 {
     QJsonObject jsonObject{{"jsonrpc", "2.0"}};
 
@@ -418,7 +421,7 @@ QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
 
 QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 ResponseType responseType)
+                                                 const ResponseType &responseType)
 {
     QJsonObject jsonObject;
     QString notificationType = "";
@@ -469,7 +472,7 @@ void StrataServer::dispatchHandler(const Message &clientMessage)
     qCDebug(logCategoryStrataServer) << "Handler executed.";
 }
 
-void StrataServer::connectorErrorHandler(ServerConnectorError errorType,
+void StrataServer::connectorErrorHandler(const ServerConnectorError &errorType,
                                          const QString &errorMessage)
 {
     switch (errorType) {

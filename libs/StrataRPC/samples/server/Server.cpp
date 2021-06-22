@@ -29,7 +29,7 @@ Server::~Server()
 void Server::init()
 {
     qCDebug(logCategoryStrataServerSample) << "Initializing Strata Server.";
-    strataServer_->initializeServer();
+    strataServer_->initialize();
 }
 
 void Server::start()

@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QObject>
-#include <QThread>
 
 #include "Message.h"
+
+class QThread;
 
 namespace strata::strataRPC
 {
@@ -39,7 +40,7 @@ public:
      * @param [in] useDefaultHandlers boolean to use the built in handlers for register_client and
      * unregister commands. The default value is true.
      */
-    StrataServer(QString address, bool useDefaultHandlers = true, QObject *parent = nullptr);
+    StrataServer(const QString &address, bool useDefaultHandlers = true, QObject *parent = nullptr);
 
     /**
      * StrataServer destructor
@@ -48,10 +49,10 @@ public:
 
     /**
      * Initialize and start up the server
-     * @note If the server is initialized successfully StrataServer will emit serverInitialized
+     * @note If the server is initialized successfully StrataServer will emit initialized
      * signal. Otherwise it will emit errorOccurred.
      */
-    void initializeServer();
+    void initialize();
 
     /**
      * Register a command handler in the server's dispatcher.
@@ -81,7 +82,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                      ResponseType responseType);
+                      const ResponseType &responseType);
 
     /**
      * Slot to send a message to a client. This overload is used to send unsolicited notifications
@@ -92,7 +93,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const QByteArray &clientId, const QString &handlerName,
-                      const QJsonObject &jsonObject, ResponseType responseType);
+                      const QJsonObject &jsonObject, const ResponseType &responseType);
 
     /**
      * Slot to notify all connected clients.
@@ -121,7 +122,7 @@ private slots:
      * @param [in] errorType enum of the the error.
      * @param [in] errorMessage description of the error.
      */
-    void connectorErrorHandler(ServerConnectorError errorType, const QString &errorMessage);
+    void connectorErrorHandler(const ServerConnectorError &errorType, const QString &errorMessage);
 
 signals:
     /**
@@ -135,17 +136,17 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(StrataServer::ServerError errorType, const QString &errorMessage);
 
+    void errorOccurred(const StrataServer::ServerError &errorType, const QString &errorMessage);
     /**
      * Signal to initialize the server.
      */
-    void initializeServerConnector();
+    void initializeConnector();
 
     /**
      * Emitted when the server is initialize successfully.
      */
-    void serverInitialized();
+    void initialized();
 
     /**
      * Signal to send a message to a client.
@@ -182,7 +183,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     ResponseType responseType);
+                                                     const ResponseType &responseType);
 
     /**
      * Build server message to be sent to clients using API v1.
@@ -195,7 +196,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     ResponseType responseType);
+                                                     const ResponseType &responseType);
 
     /**
      * StrataServer handler for client registration.
@@ -212,7 +213,7 @@ private:
     std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
     std::unique_ptr<ClientsController> clientsController_;
     std::unique_ptr<ServerConnector> connector_;
-    QThread *connectorThread_;
+    std::unique_ptr<QThread> connectorThread_;
 };
 
 }  // namespace strata::strataRPC
