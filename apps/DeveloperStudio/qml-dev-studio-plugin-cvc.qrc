@@ -45,6 +45,5 @@
         <file alias="components/SGConsoleLogNavigationIcon.qml">partial-views/control-view-creator/components/SGConsoleLogNavigationIcon.qml</file>
         <file alias="components/SGControlViewCreatorSettingsPopup.qml">partial-views/control-view-creator/components/SGControlViewCreatorSettingsPopup.qml</file>
         <file alias="components/SGControlViewCheckbox.qml">partial-views/control-view-creator/components/SGControlViewCheckbox.qml</file>
-        <file alias="components/SGControlViewCreatorPopup.qml">partial-views/control-view-creator/components/SGControlViewCreatorPopup.qml</file>
     </qresource>
 </RCC>

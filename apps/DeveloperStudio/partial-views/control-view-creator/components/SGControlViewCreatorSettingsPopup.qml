@@ -1,10 +1,12 @@
+// @disable-check M300 // Ignore false positive (M311) QtCreator warning
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
+import "qrc:/partial-views/"
 
-SGControlViewCreatorPopup {
+SGStrataPopup {
     id: root
     modal: true
     visible: true
