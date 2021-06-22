@@ -19,7 +19,7 @@ import "../components"
 ColumnLayout {
     id: fileContainerRoot
     spacing: 0
-    
+
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus()
@@ -352,7 +352,7 @@ ColumnLayout {
                         console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
                         break
                 }
-            }   
+            }
 
             onHeightChanged: {
                 var htmlHeight = height - 16
@@ -364,7 +364,7 @@ ColumnLayout {
                 channelObject.setContainerWidth(htmlWidth.toString())
             }
 
-            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
+            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
             // the visibilty changed is called when the window is resized from signals outside of the app
             Connections {
                 target: mainWindow
@@ -455,9 +455,9 @@ ColumnLayout {
             setValue(value)
         }
 
-         function checkForErrors(flag,log) {
-            if(flag){
-               console.error(log)
+        function checkForErrors(flag,log) {
+            if (flag) {
+            	console.error(log)
             }
         }
 
