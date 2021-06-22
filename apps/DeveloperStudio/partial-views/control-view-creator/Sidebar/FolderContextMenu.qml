@@ -24,7 +24,7 @@ Menu {
             }
 
             existingFileDialog.callerIndex = styleData.index
-            existingFileDialog.open();
+            existingFileDialog.open()
             folderContextMenu.dismiss()
         }
     }
@@ -40,7 +40,13 @@ Menu {
     MenuItem {
         text: "Delete Folder"
         onTriggered: {
-            treeModel.deleteFile(model.row, styleData.index.parent)
+            confirmDeleteFile.deleteType = "Folder"
+            confirmDeleteFile.fileName = model.filename
+            confirmDeleteFile.uid = model.uid
+            confirmDeleteFile.row = model.row
+            confirmDeleteFile.index = styleData.index.parent
+
+            confirmDeleteFile.open()
             folderContextMenu.dismiss()
         }
     }
