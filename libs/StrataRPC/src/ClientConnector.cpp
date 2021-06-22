@@ -7,10 +7,10 @@ using namespace strata::strataRPC;
 
 ClientConnector::~ClientConnector()
 {
-    disconnectClient();
+    disconnect();
 }
 
-bool ClientConnector::isConnected()
+bool ClientConnector::isConnected() const
 {
     if (connector_) {
         return connector_->isConnected();
@@ -18,7 +18,7 @@ bool ClientConnector::isConnected()
     return false;
 }
 
-bool ClientConnector::initializeConnector()
+bool ClientConnector::initialize()
 {
     using Connector = strata::connector::Connector;
 
@@ -29,27 +29,27 @@ bool ClientConnector::initializeConnector()
     }
 
     connector_->setDealerID(dealerId_.toStdString());
-    if (false == connectClient()) {
+    if (false == connect()) {
         qCCritical(logCategoryStrataClientConnector)
             << "Failed to open ClientConnector. Or Client already connected.";
         return false;
     }
 
-    emit clientInitialized();
+    emit initialized();
     return true;
 }
 
-bool ClientConnector::disconnectClient()
+bool ClientConnector::disconnect()
 {
     qCDebug(logCategoryStrataClientConnector) << "Disconnecting client.";
 
     if (connector_ && true == connector_->close()) {
         if (readSocketNotifier_) {
-            disconnect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
-                       &ClientConnector::readNewMessages);
+            QObject::disconnect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
+                                &ClientConnector::readNewMessages);
             readSocketNotifier_.reset();
         }
-        emit clientDisconnected();
+        emit disconnected();
         return true;
     }
 
@@ -59,7 +59,7 @@ bool ClientConnector::disconnectClient()
     return false;
 }
 
-bool ClientConnector::connectClient()
+bool ClientConnector::connect()
 {
     if (!connector_) {
         QString errorMessage(QStringLiteral("Uninitialized connector."));
@@ -84,12 +84,12 @@ bool ClientConnector::connectClient()
 
     readSocketNotifier_ = std::make_unique<QSocketNotifier>(connector_->getFileDescriptor(),
                                                             QSocketNotifier::Type::Read, this);
-    connect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
-            &ClientConnector::readNewMessages);
+    QObject::connect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
+                     &ClientConnector::readNewMessages);
 
     readMessages();
 
-    emit clientConnected();
+    emit connected();
     return true;
 }
 
@@ -107,7 +107,7 @@ void ClientConnector::readMessages()
         if (connector_->read(message) == false) {
             break;
         }
-        emit newMessageReceived(QByteArray::fromStdString(message));
+        emit messageReceived(QByteArray::fromStdString(message));
     }
 }
 

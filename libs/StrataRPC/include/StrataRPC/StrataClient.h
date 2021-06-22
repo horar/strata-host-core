@@ -61,7 +61,7 @@ public:
 
     /**
      * Function to establish the server connection
-     * @note If the client connected successfully StrataClient will emit clientConnected signal,
+     * @note If the client connected successfully StrataClient will emit connected signal,
      * Otherwise it will emit errorOccurred signal.
      */
     void connectServer();
@@ -69,7 +69,7 @@ public:
     /**
      * Function to close the connection to the server.
      * @note If the connection was disconnected successfully, StrataClient will emit
-     * clientDisconnected signal.
+     * disconnected signal.
      */
     void disconnectServer();
 
@@ -176,7 +176,7 @@ private slots:
     void dispatchHandler(const Message &serverMessage);
 
     /**
-     * Slot to handle clientInitialized signal from ClientConnector by sending register_client
+     * Slot to handle initialized signal from ClientConnector by sending register_client
      * message to the server.
      */
     void clientInitializedHandler();

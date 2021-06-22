@@ -43,36 +43,43 @@ public:
      * Function to return the connection status.
      * @return True if the client is connected, false otherwise.
      */
-    bool isConnected();
+    bool isConnected() const;
 
 public slots:
     /**
-     * initialize the client's zmq connector, then calls ClientConnector::connectClient()
+     * initialize the client's zmq connector, then calls ClientConnector::connect()
      * @return True if the initialization is successful and "register_client" request is sent to the
      * server. False otherwise.
+     * @note On success, initialized signal will be emitted.
+     * @note On failure, errorOccurred signal will be emitted.
      */
-    bool initializeConnector();
+    bool initialize();
 
     /**
      * disconnect the client from the server by sending "unregister" command, disconnect QSignals,
      * and close the zmq connector.
      * @return True if the "unregister" command is sent and the zmq connector is closed
      * successfully.
+     * @note On success, disconnected signal will be emitted.
+     * @note On failure, errorOccurred signal will be emitted.
      */
-    bool disconnectClient();
+    bool disconnect();
 
     /**
      * opens zmq connector and send "register_client" command to the server.
      * @return True if the zmq connector is opened and "register_client" command was sent
      * successfully.
      * @return False if failed to open the zmq connector OR the connection is already established.
+     * @note On success, connected signal will be emitted.
+     * @note On failure, errorOccurred signal will be emitted.
      */
-    bool connectClient();
+    bool connect();
 
     /**
      * Sends a message to the server.
      * @param [in] message QByteArray of the message
      * @return True if the message was sent successfully, False otherwise.
+     * @note On failure, errorOccurred signal will be emitted.
      */
     bool sendMessage(const QByteArray &message);
 
@@ -81,7 +88,7 @@ signals:
      * Signal when there are new messages ready to be read
      * @param [in] message QByteArray of the new message.
      */
-    void newMessageReceived(const QByteArray &message);
+    void messageReceived(const QByteArray &message);
 
     /**
      * Emitted when an error has occurred.
@@ -93,17 +100,17 @@ signals:
     /**
      * Emitted when the client connector was initialized successfully.
      */
-    void clientInitialized();
+    void initialized();
 
     /**
      * Emitted when the client connector was connected successfully.
      */
-    void clientConnected();
+    void connected();
 
     /**
      * Emitted when the client connector was disconnected successfully.
      */
-    void clientDisconnected();
+    void disconnected();
 
 private slots:
     /**
@@ -117,7 +124,7 @@ private slots:
 
 private:
     /**
-     * Empties the receive buffer and emits newMessageReceived signal for each new message.
+     * Empties the receive buffer and emits messageReceived signal for each new message.
      */
     void readMessages();
 

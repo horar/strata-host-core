@@ -48,19 +48,18 @@ void StrataClient::connectorSetup()
     connector_->moveToThread(connectorThread_);
 
     connect(this, &StrataClient::initializeConnector, connector_.get(),
-            &ClientConnector::initializeConnector);
-    connect(this, &StrataClient::connectClient, connector_.get(), &ClientConnector::connectClient);
-    connect(this, &StrataClient::disconnectClient, connector_.get(),
-            &ClientConnector::disconnectClient);
+            &ClientConnector::initialize);
+    connect(this, &StrataClient::connectClient, connector_.get(), &ClientConnector::connect);
+    connect(this, &StrataClient::disconnectClient, connector_.get(), &ClientConnector::disconnect);
     connect(this, &StrataClient::sendMessage, connector_.get(), &ClientConnector::sendMessage);
-    connect(connector_.get(), &ClientConnector::newMessageReceived, this,
+    connect(connector_.get(), &ClientConnector::messageReceived, this,
             &StrataClient::newServerMessage);
     connect(this, &StrataClient::newServerMessageParsed, this, &StrataClient::dispatchHandler);
     connect(connector_.get(), &ClientConnector::errorOccurred, this,
             &StrataClient::connectorErrorHandler);
-    connect(connector_.get(), &ClientConnector::clientInitialized, this,
+    connect(connector_.get(), &ClientConnector::initialized, this,
             &StrataClient::clientInitializedHandler);
-    connect(connector_.get(), &ClientConnector::clientDisconnected, this,
+    connect(connector_.get(), &ClientConnector::disconnected, this,
             [this]() { emit clientDisconnected(); });
 
     connectorThread_->start();
