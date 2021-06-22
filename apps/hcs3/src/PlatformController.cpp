@@ -48,6 +48,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         }
 
         connect(platform.get(), &Platform::messageReceived, this, &PlatformController::messageFromPlatform);
+        connect(platform.get(), &Platform::messageSent, this, &PlatformController::messageToPlatform);
         platforms_.insert(deviceId, platform);
 
         qCInfo(logCategoryHcsPlatform).noquote() << "Connected new platform" << deviceId;
@@ -101,6 +102,14 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
     emit platformMessage(platform->platformId(), wrapperStrJson);
+}
+
+void PlatformController::messageToPlatform(QByteArray rawMessage, QString errorString)
+{
+    if (errorString.isEmpty() == false) {
+        qCWarning(logCategoryHcsPlatform).noquote().nospace() << "Cannot send message: '"
+            << rawMessage << "', error: '" << errorString << '\'';
+    }
 }
 
 QString PlatformController::createPlatformsList() {

@@ -146,6 +146,7 @@ protected:
 private slots:
     void handleDeviceResponse(const PlatformMessage message);
     void handleResponseTimeout();
+    void handleMessageSent(QByteArray rawMessage, QString errStr);
 
 protected slots:
     void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);

@@ -37,6 +37,7 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
 
     if (deviceSignalsConnected_ == false) {
         connect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse, Qt::QueuedConnection);
+        connect(platform_.get(), &Platform::messageSent, this, &BasePlatformCommand::handleMessageSent);
         connect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError, Qt::QueuedConnection);
         deviceSignalsConnected_ = true;
     }
@@ -50,13 +51,9 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
 
     ackOk_ = false;  // "ok" ACK for this command
 
-    if (platform_->sendMessage(this->message(), lockId)) {
-        responseTimer_.setInterval(ackTimeout_);
-        responseTimer_.start();
-    } else {
-        qCCritical(logCategoryPlatformCommand) << platform_ << QStringLiteral("Cannot send '") + cmdName_ + QStringLiteral("' command.");
-        finishCommand(CommandResult::Unsent);
-    }
+    responseTimer_.setInterval(ackTimeout_);
+    responseTimer_.start();
+    platform_->sendMessage(this->message(), lockId);
 }
 
 // If method 'sendCommand' is overriden, check if this method is still valid.
@@ -183,6 +180,17 @@ void BasePlatformCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
+void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, QString errStr)
+{
+    Q_UNUSED(rawMessage)
+    if (errStr.isEmpty() == false) {
+        responseTimer_.stop();
+        qCCritical(logCategoryPlatformCommand) << platform_ << QStringLiteral("Cannot send '")
+            << cmdName_ << QStringLiteral("' command. Error: '") << errStr << '\'';
+        finishCommand(CommandResult::Unsent);
+    }
+}
+
 void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
     responseTimer_.stop();
@@ -202,6 +210,7 @@ void BasePlatformCommand::finishCommand(CommandResult result)
     // so there is no need to disconnect slots (little optimization).
     if ((result != CommandResult::RepeatAndWait) && deviceSignalsConnected_) {
         disconnect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse);
+        disconnect(platform_.get(), &Platform::messageSent, this, &BasePlatformCommand::handleMessageSent);
         disconnect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError);
         deviceSignalsConnected_ = false;
     }
