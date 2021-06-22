@@ -20,9 +20,15 @@ MockDeviceControl::~MockDeviceControl()
 
 int MockDeviceControl::writeMessage(const QByteArray &msg)
 {
+    ++messagesSent_;
+    if ((emitErrorOnNthMessage_ != 0) && (messagesSent_ % emitErrorOnNthMessage_ == 0)) {
+        qCDebug(logCategoryDeviceMock) << "Write configured to fail on following message:" << msg;
+        return false;
+    }
+
     if (saveMessages_) {
         if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
-            qCWarning(logCategoryDeviceMock) << this << "Maximum number (" << MAX_STORED_MESSAGES
+            qCWarning(logCategoryDeviceMock) << "Maximum number (" << MAX_STORED_MESSAGES
                                              << ") of stored messages reached";
             recordedMessages_.pop_front();
         }
@@ -39,7 +45,6 @@ void MockDeviceControl::emitResponses(const QByteArray& msg)
     QTimer::singleShot(
                 10, this, [=]() {
         for (const QByteArray& response : responses) { // deferred emit (if emitted in the same loop, may cause trouble)
-            qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
             emit messageDispatched(response);
         }
     });
@@ -87,6 +92,16 @@ bool MockDeviceControl::isBootloader() const
 bool MockDeviceControl::isFirmwareEnabled() const
 {
     return isFirmwareEnabled_;
+}
+
+bool MockDeviceControl::isErrorOnCloseSet() const
+{
+    return emitErrorOnClose_;
+}
+
+bool MockDeviceControl::isErrorOnNthMessageSet() const
+{
+    return emitErrorOnNthMessage_;
 }
 
 MockCommand MockDeviceControl::getCommand() const
@@ -218,6 +233,27 @@ bool MockDeviceControl::setFirmwareEnabled(bool enabled)
         return true;
     }
     qCDebug(logCategoryDeviceMock) << "Mock firmware already configured to" << isFirmwareEnabled_;
+    return false;
+}
+
+bool MockDeviceControl::setErrorOnClose(bool enabled) {
+    if (emitErrorOnClose_ != enabled) {
+        emitErrorOnClose_ = enabled;
+        qCDebug(logCategoryDeviceMock) << "Configured emit error on close to" << emitErrorOnClose_;
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Emit error on close already configured to" << emitErrorOnClose_;
+    return false;
+}
+
+bool MockDeviceControl::setErrorOnNthMessage(unsigned messageNumber) {
+    messagesSent_ = 0;
+    if (emitErrorOnNthMessage_ != messageNumber) {
+        emitErrorOnNthMessage_ = messageNumber;
+        qCDebug(logCategoryDeviceMock) << "Configured emit error on message sent to" << emitErrorOnNthMessage_;
+        return true;
+    }
+    qCDebug(logCategoryDeviceMock) << "Emit error on message sent already configured to" << emitErrorOnNthMessage_;
     return false;
 }
 
