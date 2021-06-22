@@ -205,7 +205,6 @@ void PlatformErrorsTest::errorDuringOperationTest()
 
     mockDevice_->mockSetErrorOnNthMessage(2);
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
 
@@ -213,8 +212,6 @@ void PlatformErrorsTest::errorDuringOperationTest()
     QCOMPARE(platformOperation->hasStarted(), true);
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
     QCOMPARE(platformOperation->isSuccessfullyFinished(), false);
-
-    QVERIFY(platformErrorSignal.count() == 1);
 }
 
 void PlatformErrorsTest::errorAfterOperationTest()
@@ -321,13 +318,11 @@ void PlatformErrorsTest::multipleOperationsTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    // TODO: Rewrite
-//    QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
-//    QList<QVariant> arguments = platformErrorSignal.takeFirst();
-//    QVERIFY(arguments.at(0).type() == QVariant::UserType);
-//    QVERIFY(arguments.at(1).type() == QVariant::String);
-//    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceBusy);
+    // Second operation didn't succeed because device was locked by first operation
+    // and messages from second operation could not be sent.
+    // Failure to send messages should not cause a device error.
+    QVERIFY((platformErrorSignal.count() == 0) || (platformErrorSignal.wait(250) == true));
 
-    // DeviceBusy should not terminate the device
+    // unsuccessful operation should not terminate the device
     QVERIFY((platformRemovedSignal.count() == 0) && (platformRemovedSignal.wait(250) == false));
 }
