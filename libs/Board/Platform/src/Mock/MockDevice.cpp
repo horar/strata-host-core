@@ -34,7 +34,7 @@ void MockDevice::open()
     if (opened_) {
         emit Device::opened();
     } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device.");
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device (mockSetOpenEnabled set to true).");
     }
 }
 
@@ -45,8 +45,8 @@ void MockDevice::close()
         mockClearRecordedMessages();
 
         if (mockIsEmitErrorOnCloseSet()) {
-            QString errMsg(QStringLiteral("Error when trying to close the device."));
-            qCCritical(logCategoryDeviceMock) << this << errMsg;
+            QString errMsg(QStringLiteral("Unable to properly close mock device (mockSetEmitErrorOnClose set to true)."));
+            qCWarning(logCategoryDeviceMock) << this << errMsg;
             emit deviceError(ErrorCode::DeviceError, errMsg);
         }
     }
@@ -75,8 +75,8 @@ bool MockDevice::sendMessage(const QByteArray& msg)
         }
         return true;
     } else {
-        QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceSerial) << this << errMsg;
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetEmitErrorOnMessageSent set to true)."));
+        qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit deviceError(ErrorCode::DeviceError, errMsg);
         return false;
     }
@@ -95,6 +95,7 @@ void MockDevice::resetReceiving()
 
 void MockDevice::readMessage(QByteArray msg)
 {
+    qCDebug(logCategoryDeviceMock) << this << "Returning response:" << msg;
     emit messageReceived(msg);
 }
 

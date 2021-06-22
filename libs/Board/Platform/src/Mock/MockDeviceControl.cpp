@@ -22,13 +22,13 @@ int MockDeviceControl::writeMessage(const QByteArray &msg)
 {
     ++messagesSent_;
     if ((emitErrorOnMessageSent_ != 0) && (messagesSent_ % emitErrorOnMessageSent_ == 0)) {
-        qCWarning(logCategoryDeviceMock) << this << "Error during write on following message:" << msg;
+        qCDebug(logCategoryDeviceMock) << "Write configured to fail on following message:" << msg;
         return false;
     }
 
     if (saveMessages_) {
         if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
-            qCWarning(logCategoryDeviceMock) << this << "Maximum number (" << MAX_STORED_MESSAGES
+            qCWarning(logCategoryDeviceMock) << "Maximum number (" << MAX_STORED_MESSAGES
                                              << ") of stored messages reached";
             recordedMessages_.pop_front();
         }
@@ -45,7 +45,6 @@ void MockDeviceControl::emitResponses(const QByteArray& msg)
     QTimer::singleShot(
                 10, this, [=]() {
         for (const QByteArray& response : responses) { // deferred emit (if emitted in the same loop, may cause trouble)
-            qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
             emit messageDispatched(response);
         }
     });
