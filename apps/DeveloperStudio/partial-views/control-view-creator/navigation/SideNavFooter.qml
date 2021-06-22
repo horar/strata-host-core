@@ -15,6 +15,7 @@ Item {
         id: column
         width: parent.width
         anchors.top: parent.top
+
         SGSideNavItem {
             id: cleanupProjectNecessary
             height: 70
@@ -30,6 +31,7 @@ Item {
                 confirmCleanFiles.open()
             }
         }
+
         SGSideNavItem {
             id: settingForProject
             height: 70
