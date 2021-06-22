@@ -41,9 +41,8 @@ public:
     /**
      * Send message asynchronously to tcp device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
      */
-    virtual bool sendMessage(const QByteArray &message) override;
+    virtual void sendMessage(const QByteArray &message) override;
 
     /**
      * return the status of the tcp device.

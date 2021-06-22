@@ -76,9 +76,8 @@ namespace strata::device {
         /**
          * Send message to device. Emits deviceError() signal in case of failure.
          * @param msg message to be written to device
-         * @return true if message can be sent, otherwise false
          */
-        virtual bool sendMessage(const QByteArray& msg) = 0;
+        virtual void sendMessage(const QByteArray& msg) = 0;
 
         /**
          * Get device ID.

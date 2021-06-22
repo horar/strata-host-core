@@ -57,13 +57,13 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
     return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
 }
 
-bool MockDevice::sendMessage(const QByteArray& msg)
+void MockDevice::sendMessage(const QByteArray& msg)
 {
     if (opened_ == false) {
         QString errMsg(QStringLiteral("Cannot write data to device, device is not open."));
         qCCritical(logCategoryDeviceMock) << this << errMsg;
         emit messageSent(msg, errMsg);
-        return false;
+        return;
     }
 
     qCDebug(logCategoryDeviceMock) << this << "Received request:" << msg;
@@ -73,12 +73,10 @@ bool MockDevice::sendMessage(const QByteArray& msg)
         if (mockIsAutoResponse()) {
             mockEmitResponses(msg);
         }
-        return true;
     } else {
         QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage set to true)."));
         qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit messageSent(msg, errMsg);
-        return false;
     }
 }
 

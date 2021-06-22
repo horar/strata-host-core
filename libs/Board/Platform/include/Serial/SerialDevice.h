@@ -66,9 +66,8 @@ public:
     /**
      * Send message to serial device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
      */
-    virtual bool sendMessage(const QByteArray& data) override;
+    virtual void sendMessage(const QByteArray& data) override;
 
     /**
      * Check if serial device is connected (communication with it is possible - device

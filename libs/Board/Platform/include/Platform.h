@@ -94,9 +94,8 @@ namespace strata::platform {
          * Send message to device (public).
          * Emits messageSent() signal.
          * @param message message to be written to device
-         * @return true if message can be sent, false otherwise
          */
-        bool sendMessage(const QByteArray& message);
+        void sendMessage(const QByteArray& message);
 
         // *** Platform properties (start) ***
 
@@ -333,12 +332,12 @@ namespace strata::platform {
 
         /**
          * Send message to device using the specified lock Id (internal).
-         * Emits deviceError() signal in case of failure.
+         * Emits messageSent() signal.
          * @param message message to be written to device
          * @param lockId lock Id
          * @return true if message can be sent, false otherwise
          */
-        bool sendMessage(const QByteArray& message, quintptr lockId);
+        void sendMessage(const QByteArray& message, quintptr lockId);
 
         /**
          * Sets flag if device was recognized and emits 'recognized()' signal.

@@ -135,19 +135,17 @@ void SerialDevice::readMessage() {
     }
 }
 
-bool SerialDevice::sendMessage(const QByteArray& data) {
+void SerialDevice::sendMessage(const QByteArray& data) {
     // Data cannot be written to serial port from another thread as
     // in which this SerialDevice object was created. Otherwise error
     // "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs.
 
     if (serialPort_->write(data) == data.size()) {
         emit messageSent(data, QString());
-        return true;
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceSerial) << this << errMsg;
         emit messageSent(data, errMsg);
-        return false;
     }
 }
 

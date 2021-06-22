@@ -133,12 +133,12 @@ void Platform::terminate(bool close) {
 }
 
 // public method
-bool Platform::sendMessage(const QByteArray& message) {
-    return sendMessage(message, 0);
+void Platform::sendMessage(const QByteArray& message) {
+    sendMessage(message, 0);
 }
 
 // private method
-bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+void Platform::sendMessage(const QByteArray& message, quintptr lockId) {
     // Strata commands must end with new line character ('\n')
     QByteArray msgToWrite(message);
     if (msgToWrite.endsWith('\n') == false) {
@@ -153,12 +153,11 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
         }
     }
     if (canWrite) {
-        return device_->sendMessage(msgToWrite);
+        device_->sendMessage(msgToWrite);
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategoryPlatform) << this << errMsg;
         emit device_->messageSent(msgToWrite, errMsg);
-        return false;
     }
 }
 

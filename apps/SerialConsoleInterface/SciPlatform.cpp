@@ -237,14 +237,10 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
     //compact format as line break is end of input for serial library
     QString compactMsg = SGJsonFormatter::minifyJson(message);
 
-    bool result = platform_->sendMessage(compactMsg.toUtf8());
-    if (result) {
-        commandHistoryModel_->add(compactMsg, isJsonValid);
-        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-        retStatus["error"] = "no_error";
-    } else {
-        retStatus["error"] = "send_error";
-    }
+    platform_->sendMessage(compactMsg.toUtf8());
+    commandHistoryModel_->add(compactMsg, isJsonValid);
+    settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+    retStatus["error"] = "no_error";
 
     return retStatus;
 }

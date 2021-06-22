@@ -41,9 +41,8 @@ public:
      * Sends message to platform specified by device Id
      * @param deviceId
      * @param message
-     * @return true if massage can be sent
      */
-    bool sendMessage(const QByteArray& deviceId, const QByteArray& message);
+    void sendMessage(const QByteArray& deviceId, const QByteArray& message);
 
     /**
      * Gets platform specified by device ID

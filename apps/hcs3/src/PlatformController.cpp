@@ -22,14 +22,14 @@ void PlatformController::initialize() {
     platformManager_.init(strata::device::Device::Type::SerialDevice);
 }
 
-bool PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
+void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
     auto it = platforms_.constFind(deviceId);
     if (it == platforms_.constEnd()) {
         qCWarning(logCategoryHcsPlatform).noquote() << "Cannot send message, platform" << deviceId << "was not found.";
-        return false;
+        return;
     }
     qCDebug(logCategoryHcsPlatform).noquote() << "Sending message to platform" << deviceId;
-    return it.value()->sendMessage(message);
+    it.value()->sendMessage(message);
 }
 
 PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
