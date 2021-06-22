@@ -36,7 +36,7 @@ SGControlViewCreatorPopup {
 
         SGControlViewCheckbox {
             id: openViewBox
-            text: "Open \"the View\" on build"
+            text: "Switch to \"View\" mode after running build"
             checked: cvcUserSettings.openViewOnBuild
 
             onCheckedChanged: {
