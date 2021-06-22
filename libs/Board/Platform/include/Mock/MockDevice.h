@@ -232,12 +232,12 @@ public:
     bool mockSetErrorOnClose(bool enabled);
 
     /**
-     * Configures if mock device emits error on nth message it receives
+     * Configures if mock device emits write error on nth message it receives
      * After error is emitted, the counter starts from 0 again
      * @param messageNumber the nth message on which the error is to be emitted, (0 : disabled)
      * @return true if parameter was changed, otherwise false
      */
-    bool mockSetErrorOnNthMessage(unsigned messageNumber);
+    bool mockSetWriteErrorOnNthMessage(unsigned messageNumber);
 
 private slots:
     void readMessage(QByteArray msg);

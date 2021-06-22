@@ -203,7 +203,7 @@ void PlatformErrorsTest::errorDuringOperationTest()
         return;
     }
 
-    mockDevice_->mockSetErrorOnNthMessage(2);
+    mockDevice_->mockSetWriteErrorOnNthMessage(2);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();

@@ -75,7 +75,7 @@ bool MockDevice::sendMessage(const QByteArray& msg)
         }
         return true;
     } else {
-        QString errMsg(QStringLiteral("Cannot write message to device (mockSetErrorOnNthMessage set to true)."));
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage set to true)."));
         qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit messageSent(msg, errMsg);
         return false;
@@ -234,8 +234,8 @@ bool MockDevice::mockSetErrorOnClose(bool enabled) {
     return control_.setErrorOnClose(enabled);
 }
 
-bool MockDevice::mockSetErrorOnNthMessage(unsigned messageNumber) {
-    return control_.setErrorOnNthMessage(messageNumber);
+bool MockDevice::mockSetWriteErrorOnNthMessage(unsigned messageNumber) {
+    return control_.setWriteErrorOnNthMessage(messageNumber);
 }
 
 }  // namespace strata::device

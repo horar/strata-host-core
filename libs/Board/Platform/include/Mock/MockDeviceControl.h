@@ -48,7 +48,7 @@ public:
     bool setAsBootloader(bool isBootloader);
     bool setFirmwareEnabled(bool enabled);
     bool setErrorOnClose(bool enabled);
-    bool setErrorOnNthMessage(unsigned messageNumber);
+    bool setWriteErrorOnNthMessage(unsigned messageNumber);
 
 signals:
     /**

@@ -246,7 +246,7 @@ bool MockDeviceControl::setErrorOnClose(bool enabled) {
     return false;
 }
 
-bool MockDeviceControl::setErrorOnNthMessage(unsigned messageNumber) {
+bool MockDeviceControl::setWriteErrorOnNthMessage(unsigned messageNumber) {
     messagesSent_ = 0;
     if (emitErrorOnNthMessage_ != messageNumber) {
         emitErrorOnNthMessage_ = messageNumber;
