@@ -127,7 +127,7 @@ Item {
         ToolTip {
             id: toolTip
             x: inQrcIcon.width + 5
-            y:  (inQrcIcon.height - height) / 2
+            y: (inQrcIcon.height - height) / 2
             visible: toolTipMouse.containsMouse
             delay: 300
             text: "This file is in the project’s QRC resource file"
