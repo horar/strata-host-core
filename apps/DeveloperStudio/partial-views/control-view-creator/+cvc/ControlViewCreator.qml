@@ -369,7 +369,5 @@ Rectangle {
 
             writeFile("cvc-settings.json",settings)
         }
-
     }
-
 }
