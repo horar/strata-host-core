@@ -36,8 +36,8 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
     }
 
     if (deviceSignalsConnected_ == false) {
-        connect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse);
-        connect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError);
+        connect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse, Qt::QueuedConnection);
+        connect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError, Qt::QueuedConnection);
         deviceSignalsConnected_ = true;
     }
 

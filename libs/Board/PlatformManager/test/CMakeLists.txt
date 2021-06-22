@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}-test
     PlatformOperationsTest.cpp
     PlatformOperationsV2Test.cpp
     PlatformMessageTest.cpp
+    PlatformErrorsTest.cpp
     main.cpp
 )
 
