@@ -35,6 +35,7 @@ Item {
             iconText: "Settings"
             iconSource: "qrc:/sgimages/cog.svg"
             tooltipDescription: "Global settings for the Control View Creator"
+            enabled: true // Allows for Settings to be always active regardless editor.treeModel
 
             onClicked: {
                 cvcSettingsLoader.active = true
