@@ -8,6 +8,7 @@
 #include "PlatformInterfaceGenerator.h"
 #include "logging/LoggingQtCategories.h"
 #include "ProgramControllerManager.h"
+#include "BleDeviceModel.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -32,7 +33,8 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       debugMenuGenerator_(new DebugMenuGenerator(this)),
       remoteHcsNode_(new HcsNode(this)),
-      urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this))
+      urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
+      bleDeviceModel_(new BleDeviceModel(coreInterface_, this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
     if (urlConfig_->parseUrl() == false) {
@@ -206,6 +208,11 @@ strata::sds::config::UrlConfig *SDSModel::urls() const
 strata::loggers::QtLogger *SDSModel::qtLogger() const
 {
     return std::addressof(strata::loggers::QtLogger::instance());
+}
+
+BleDeviceModel *SDSModel::bleDeviceModel() const
+{
+    return bleDeviceModel_;
 }
 
 void SDSModel::shutdownService()

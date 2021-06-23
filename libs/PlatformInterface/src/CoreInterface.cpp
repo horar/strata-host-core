@@ -194,6 +194,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
             connected_platform_list_ = strJson_payload;
             emit connectedPlatformListChanged(connected_platform_list_);
         }
+
+        emit connectedPlatformListMessage(payload);
     } else if (type == "all_platforms") {
         if( platform_list_ != strJson_payload ) {
             platform_list_ = strJson_payload;
@@ -223,6 +225,12 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit programControllerReply(innerPayload);
     } else if (type == "program_controller_job") {
         emit programControllerJobUpdate(innerPayload);
+    } else if (type == "bluetooth_scan") {
+        emit bluetoothScan(innerPayload);
+    } else if (type == "connect_device") {
+        emit connectDevice(innerPayload);
+    }else if (type == "disconnect_device") {
+        emit disconnectDevice(innerPayload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }

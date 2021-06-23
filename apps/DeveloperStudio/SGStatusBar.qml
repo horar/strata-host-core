@@ -83,7 +83,7 @@ Rectangle {
         id: tabRow
         anchors {
             left: container.left
-            right: profileIconContainer.left
+            right: bleIconContainer.left
         }
         spacing: 1
 
@@ -383,6 +383,54 @@ Rectangle {
             id: cvcButton
             visible: false
         }
+    }
+
+    Item {
+        id: bleIconContainer
+        width: height
+        anchors {
+            right: profileIconContainer.left
+            rightMargin: 2
+            top: profileIconContainer.top
+            bottom: profileIconContainer.bottom
+        }
+
+      Rectangle {
+          height: bleIconHover.containsMouse ? bleIconContainer.height : bleIconContainer.height - 6
+          width: height
+          anchors.centerIn: bleIconContainer
+
+          radius: height / 2
+          color: Theme.palette.green
+
+          SGIcon {
+              height: bleIconHover.containsMouse ? 26 : 22
+              width: height
+              anchors {
+                  centerIn: parent
+              }
+
+              source: "qrc:/sgimages/bluetooth-b.svg"
+              iconColor: "white"
+          }
+      }
+
+      MouseArea {
+          id: bleIconHover
+          anchors.fill: bleIconContainer
+
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          Accessible.role: Accessible.Button
+          Accessible.name: "User Icon"
+          Accessible.description: "User menu button."
+          Accessible.onPressAction: pressAction()
+          onPressed: pressAction()
+
+          function pressAction() {
+              showConnectBleDeviceDialog()
+          }
+      }
     }
 
     Item {
@@ -703,6 +751,11 @@ Rectangle {
 
     function showAboutWindow() {
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
+    function showConnectBleDeviceDialog() {
+        var dialog = SGDialogJS.createDialog(ApplicationWindow.window, "qrc:/partial-views/BleScanDialog.qml")
+        dialog.open()
     }
 
     function logout() {
