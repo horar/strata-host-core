@@ -45,7 +45,6 @@ Menu {
         onTriggered: {
             openFilesModel.closeTab(model.uid)
             treeModel.deleteFile(model.row, styleData.index.parent)
-            itemFilenameEdit.text = ""
             fileContextMenu.dismiss()
         }
     }
