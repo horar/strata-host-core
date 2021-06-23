@@ -71,7 +71,6 @@ Item {
             Layout.fillHeight: true
             implicitWidth: 200
             Layout.minimumWidth: 25
-            Layout.maximumWidth: parent.width * 0.75
         }
 
         ColumnLayout {
