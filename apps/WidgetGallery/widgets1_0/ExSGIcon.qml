@@ -2,110 +2,99 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
-Item {
+ColumnLayout {
     id: exSgIcon
-    width: contentColumn.width
-    height: contentColumn.height
-    
-    ColumnLayout {
-        id: contentColumn
 
-        SGAlignedLabel {
-            target: basicIconGrid
-            text: "SGIcons"
-            fontSizeMultiplier: 1.3
-
-            GridLayout {
-                id: basicIconGrid
-                width: flickWrapper.width
-                rowSpacing: 1
-                columnSpacing: 1
-                columns: {
-                    let columnCount = width / longestTextWidth.boundingRect.width
-                    return columnCount
-                }
-
-                Repeater {
-                    id: repeater
-                    model: iconModel
-
-                    delegate: ColumnLayout {
-                        id: basicDelegate
-                        width: longestTextWidth.boundingRect.width
-                        visible: model.visibility
-
-                        SGIcon {
-                            id: icon
-                            source: model.source
-                            width: basicDelegate.width
-                            height: 21
-                            iconColor: model.color
-                            Layout.alignment: Qt.AlignHCenter
-                        }
-
-                        SGText {
-                            text: model.name
-                            width: basicDelegate.width
-                            Layout.alignment: Qt.AlignHCenter
-                            fontSizeMultiplier: 1.1
-                        }
-                    }
-                }
-            }
-        }
-
+    SGAlignedLabel {
+        target: toolRow
+        text: "Basic SGIcon example"
+        fontSizeMultiplier: 1.3
         RowLayout {
             id: toolRow
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
+            spacing: 10
+            SGIcon {
+                id: exIcon
+                source: "qrc:/sgimages/exclamation-circle.svg"
+                Layout.preferredWidth: 30
+                Layout.preferredHeight: Layout.preferredWidth
+            }
 
             SGButton {
                 id: colorButton
                 Layout.alignment: Qt.AlignHCenter
-                text: "Randomize Colors"
+                text: "Randomize Color"
 
                 onClicked: {
-                    for (let i = 0; i < iconModel.count; i++) {
-                        const icon = iconModel.get(i)
-                        const iconObj = {
-                                "name": icon.name,
-                                "source": icon.source,
-                                "color": randomColor(),
-                                "visibility": true,
-                              }
-                        
-                        iconModel.set(i, iconObj)
-                    }
+                    exIcon.iconColor = randomColor()
                 }
             }
 
-            SGCheckBox {
-                id: visibileButton
+            SGButton {
+                id: defaultButton
                 Layout.alignment: Qt.AlignHCenter
-                text: "Toggle Visibilty "
-                checked: true
+                text: "DefaultColor"
 
-                onCheckedChanged: {
-                    for (let i = 0; i < iconModel.count; i++) {
-                    	const icon = iconModel.get(i)
-                      	const iconObj = {
-                              	"name": icon.name,
-                                "source": icon.source,
-                                "color": "black",
-                                "visibility": checked
-                              }
-                              
-                      	iconModel.set(i, iconObj)
+                onClicked: {
+                    exIcon.iconColor = "transparent"
+                }
+            }
+        }
+    }
+    /*
+      The SGWidgets library contains a number of SVG icon files that you can use. If you have imported SGWidgets 1.0,
+      which is a pre-cursor for SGIcon use, you can set these icons in your SGIcon like so: source: "qrc:/sgimages/<icon filename here>.svg"
+      - each filename is shown below the icon in the following grid.
+    */
+    SGAlignedLabel {
+        target: basicIconGrid
+        text: "SGIcons"
+        fontSizeMultiplier: 1.3
+
+        GridLayout {
+            id: basicIconGrid
+            width: flickWrapper.width
+            rowSpacing: 1
+            columnSpacing: 1
+            columns: {
+                let columnCount = width / longestTextWidth.boundingRect.width
+                return columnCount
+            }
+
+            Repeater {
+                id: repeater
+                model: iconModel
+
+                delegate: ColumnLayout {
+                    id: basicDelegate
+                    width: longestTextWidth.boundingRect.width
+
+                    SGIcon {
+                        id: icon
+                        source: model.source
+                        width: basicDelegate.width
+                        height: 21
+                        iconColor: model.color
+                        Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    SGText {
+                        text: model.name
+                        width: basicDelegate.width
+                        Layout.alignment: Qt.AlignHCenter
+                        fontSizeMultiplier: 1.1
                     }
                 }
             }
         }
+    }
 
-        Item {
-            Layout.preferredHeight: 10
-            Layout.fillWidth: true
-        }
+    Item {
+        Layout.preferredHeight: 10
+        Layout.fillWidth: true
     }
 
     ListModel {
@@ -113,24 +102,14 @@ Item {
 
         Component.onCompleted: {
             // list of svg icons that are located in SGWidgets
-            let arr = [
-                    "arrow-list-bottom","asterisk","ban","bars","bookmark-blank","bookmark","broom",
-                    "check-circle","chevron-down","chevron-left","chevron-right","chevron-up","chip-flash",
-                    "clock","cog","connected","disconnected","download","drop-file","edit","exclamation-circle",
-                    "exclamation-triangle","exclamation","eye-slash","eye","file-add","file-blank","file-export",
-                    "file-import","folder-open-solid","folder-open","folder-plus","funnel","info-circle","list",
-                    "minus","plug","plus","question-circle","redo","save","sign-in","sign-out",
-                    "sliders-h","sliders-v","status-light-off","status-light-transparent","times-circle",
-                    "times","tools","undo","user","zoom"
-                ]
+            let arr = SGUtilsCpp.getQrcPaths(":sgimages")
 
             for (let i = 0; i < arr.length; i++) {
-            	const iconObj = {
-                		"name": arr[i],
-                        "source": `qrc:/sgimages/${arr[i]}.svg`,
-                        "color": "black",
-                        "visibility": true
-                      }
+                const iconObj = {
+                    "name": arr[i].substring(arr[i].lastIndexOf("/") + 1,arr[i].lastIndexOf(".svg")),
+                    "source": `qrc${arr[i]}`,
+                    "color": "transparent",
+                }
 
                 append(iconObj)
             }
