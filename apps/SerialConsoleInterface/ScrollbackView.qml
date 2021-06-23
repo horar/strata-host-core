@@ -15,7 +15,6 @@ Item {
     property bool automaticScroll
     property var filterList
     readonly property int count: scrollbackFilterModel.count
-    property string filterText
 
     property int selectionStartIndex: -1
     property int selectionEndIndex: -1

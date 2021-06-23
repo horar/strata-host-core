@@ -76,22 +76,21 @@ void SGTextHighlighter::setFilterPattern(const QString &filter)
 
 void SGTextHighlighter::highlightBlock(const QString &text)
 {
-    int pos = 0;
     if (regularExpression_.isEmpty()) {
         return;
     }
 
+    int pos = 0;
     while (pos != -1) {
         int substringStart = regularExpression_.indexIn(text, pos);
         if (substringStart == -1) {
-            pos = -1;
             break;
         }
 
-        if (highlightFormat_.isValid()) {
+        if (highlightFormat_.isEmpty() == false) {
             setFormat(substringStart, regularExpression_.matchedLength(), highlightFormat_);
         }
-        pos = pos + regularExpression_.matchedLength();
+        pos += regularExpression_.matchedLength();
     }
 }
 

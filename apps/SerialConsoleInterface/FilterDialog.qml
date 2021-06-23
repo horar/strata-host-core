@@ -235,7 +235,7 @@ SGWidgets.SGDialog {
 
                                 Keys.onPressed: {
                                     if (event.key === Qt.Key_Down) {
-                                        if (!suggestionPopup.opened && filterStringTextField.activeFocus) {
+                                        if (suggestionPopup.opened === false && filterStringTextField.activeFocus) {
                                             suggestionPopup.open()
                                         }
                                         event.accepted = true
@@ -244,7 +244,9 @@ SGWidgets.SGDialog {
 
                                 onTextChanged: {
                                     filterConditionModel.setProperty(index, "filter_string", text)
-                                    suggestionPopup.open()
+                                    if (suggestionPopup.opened === false && dialog.isVisible) {
+                                        suggestionPopup.open()
+                                    }
                                 }
 
                                 Binding {
@@ -275,16 +277,9 @@ SGWidgets.SGDialog {
                                         width: ListView.view.width
                                         height: textEdit.paintedHeight + 10
 
-                                        Loader {
-                                            sourceComponent: suggestionListHighlighterComponent
-                                        }
-
-                                        Component {
-                                            id: suggestionListHighlighterComponent
-                                            CommonCpp.SGTextHighlighter {
-                                                textDocument: textEdit.textDocument
-                                                filterPattern: filterStringTextField.text
-                                            }
+                                        CommonCpp.SGTextHighlighter {
+                                            textDocument: textEdit.textDocument
+                                            filterPattern: filterStringTextField.text
                                         }
 
                                         Rectangle {
