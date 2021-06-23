@@ -28,7 +28,6 @@ void SciMockDevice::setMockDevice(const strata::device::MockDevicePtr& mockDevic
         emit canReopenMockDeviceChanged();
         if (mockDevice_ != nullptr) {
             emit openEnabledChanged();
-            emit legacyModeChanged();
             emit autoResponseChanged();
             emit mockCommandChanged();
             emit mockResponseChanged();
@@ -130,15 +129,6 @@ bool SciMockDevice::mockIsOpenEnabled() const
     return mockDevice_->mockIsOpenEnabled();
 }
 
-bool SciMockDevice::mockIsLegacy() const
-{
-    if (mockDevice_ == nullptr) {
-        return false;
-    }
-
-    return mockDevice_->mockIsLegacy();
-}
-
 bool SciMockDevice::mockIsAutoResponse() const
 {
     if (mockDevice_ == nullptr) {
@@ -181,15 +171,6 @@ void SciMockDevice::mockSetOpenEnabled(bool enabled)
     if (mockDevice_ != nullptr) {
         if (mockDevice_->mockSetOpenEnabled(enabled) == true) {
             emit openEnabledChanged();
-        }
-    }
-}
-
-void SciMockDevice::mockSetLegacy(bool isLegacy)
-{
-    if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetLegacy(isLegacy) == true) {
-            emit legacyModeChanged();
         }
     }
 }

@@ -77,27 +77,6 @@ FocusScope {
                 }
 
                 SGWidgets.SGCheckBox {
-                    id: legacyModeCheckBox
-                    text: "Legacy Mode"
-                    ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
-                    ToolTip.delay: 1000
-                    enabled: isValid
-                    Layout.columnSpan: 2
-                    Layout.alignment: Qt.AlignLeft
-
-                    onCheckStateChanged: {
-                        mockDevice.legacyMode = checked
-                    }
-
-                    Binding {
-                        target: legacyModeCheckBox
-                        property: "checked"
-                        value: mockDevice.legacyMode
-                    }
-                }
-
-                SGWidgets.SGCheckBox {
                     id: responseDisabledCheckBox
                     text: "Device does not responds"
                     ToolTip.visible: hovered

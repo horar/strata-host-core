@@ -481,7 +481,8 @@ void PlatformOperationsTest::identifyLegacyTest()
 {
     rapidjson::Document expectedDoc;
 
-    mockDevice_->mockSetLegacy(true);
+    // very old board without 'get_firmware_info' command support
+    mockDevice_->mockSetResponseForCommand(MockResponse::Nack, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, false);
     platformOperation->run();

@@ -75,11 +75,6 @@ bool MockDeviceControl::isOpenEnabled() const
     return isOpenEnabled_;
 }
 
-bool MockDeviceControl::isLegacy() const
-{
-    return isLegacy_;
-}
-
 bool MockDeviceControl::isAutoResponse() const
 {
     return autoResponse_;
@@ -129,17 +124,6 @@ bool MockDeviceControl::setOpenEnabled(bool enabled)
         return true;
     }
     qCDebug(logCategoryDeviceMock) << "Open enabled already configured to" << isOpenEnabled_;
-    return false;
-}
-
-bool MockDeviceControl::setLegacy(bool legacy)
-{
-    if (isLegacy_ != legacy) {
-        isLegacy_ = legacy;
-        qCDebug(logCategoryDeviceMock) << "Configured legacy mode to" << isLegacy_;
-        return true;
-    }
-    qCDebug(logCategoryDeviceMock) << "Legacy mode already configured to" << isLegacy_;
     return false;
 }
 
@@ -295,21 +279,16 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
     switch (recievedCommand) {
     case MockCommand::Get_firmware_info: {
         if (version_ == MockVersion::Version_1) {
-            if (isLegacy_) {
-                retVal.pop_back();  // remove ack
-                retVal.push_back(test_commands::nack_command_not_found);
-            } else {
-                switch(response) {
-                case MockResponse::No_payload: {
-                    retVal.push_back(test_commands::get_firmware_info_response_no_payload);
-                } break;
-                case MockResponse::Invalid: {
-                    retVal.push_back(test_commands::get_firmware_info_response_invalid);
-                } break;
-                default: {
-                    retVal.push_back(test_commands::get_firmware_info_response);
-                } break;
-                }
+            switch(response) {
+            case MockResponse::No_payload: {
+                retVal.push_back(test_commands::get_firmware_info_response_no_payload);
+            } break;
+            case MockResponse::Invalid: {
+                retVal.push_back(test_commands::get_firmware_info_response_invalid);
+            } break;
+            default: {
+                retVal.push_back(test_commands::get_firmware_info_response);
+            } break;
             }
         } else if (version_ == MockVersion::Version_2) {
             switch(response) {

@@ -135,11 +135,6 @@ bool MockDevice::mockIsOpenEnabled() const
     return control_.isOpenEnabled();
 }
 
-bool MockDevice::mockIsLegacy() const
-{
-    return control_.isLegacy();
-}
-
 bool MockDevice::mockIsAutoResponse() const
 {
     return control_.isAutoResponse();
@@ -178,11 +173,6 @@ MockVersion MockDevice::mockGetVersion() const
 bool MockDevice::mockSetOpenEnabled(bool enabled)
 {
     return control_.setOpenEnabled(enabled);
-}
-
-bool MockDevice::mockSetLegacy(bool isLegacy)
-{
-    return control_.setLegacy(isLegacy);
 }
 
 bool MockDevice::mockSetAutoResponse(bool autoResponse)

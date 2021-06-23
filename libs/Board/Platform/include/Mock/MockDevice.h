@@ -99,12 +99,6 @@ public:
     bool mockIsOpenEnabled() const;
 
     /**
-     * Check if mock device behaves as very old board without 'get_firmware_info' command support
-     * @return true if behaves as very old board, otherwise false
-     */
-    bool mockIsLegacy() const;
-
-    /**
      * Check if mock device automatically responds to messages it receives
      * @return true if responds automatically, otherwise false
      */
@@ -153,13 +147,6 @@ public:
      * @return true if parameter was changed, otherwise false
      */
     bool mockSetOpenEnabled(bool enabled);
-
-    /**
-     * Configures if mock device behaves as very old board without 'get_firmware_info' command support
-     * @param isLegacy true if behaves as very old board, otherwise false
-     * @return true if parameter was changed, otherwise false
-     */
-    bool mockSetLegacy(bool isLegacy);
 
     /**
      * Configures if mock device automatically responds to messages it receives

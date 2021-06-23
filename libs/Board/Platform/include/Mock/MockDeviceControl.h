@@ -30,7 +30,6 @@ public:
     void clearRecordedMessages();
 
     bool isOpenEnabled() const;
-    bool isLegacy() const;
     bool isAutoResponse() const;
     bool isBootloader() const;
     bool isFirmwareEnabled() const;
@@ -40,7 +39,6 @@ public:
     MockVersion getVersion() const;
 
     bool setOpenEnabled(bool enabled);
-    bool setLegacy(bool legacy);
     bool setAutoResponse(bool autoResponse);
     bool setSaveMessages(bool saveMessages);
     bool setResponseForCommand(MockResponse response, MockCommand command);
@@ -84,7 +82,6 @@ private:
     bool autoResponse_ = true;
     bool saveMessages_ = false;
     bool isOpenEnabled_ = true;
-    bool isLegacy_ = false;     // very old board without 'get_firmware_info' command support
     bool isBootloader_ = false;
     bool isFirmwareEnabled_ = true;
     bool emitErrorOnClose_ = false;
