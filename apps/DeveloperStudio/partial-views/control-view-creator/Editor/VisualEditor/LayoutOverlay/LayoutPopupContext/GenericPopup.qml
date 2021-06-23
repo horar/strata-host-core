@@ -8,7 +8,7 @@ Popup {
     anchors {
         centerIn: Overlay.overlay
     }
-    closePolicy: Popup.NoAutoClose
+    closePolicy: Popup.CloseOnEscape
     modal: true
     background: Rectangle {
         layer.enabled: true
