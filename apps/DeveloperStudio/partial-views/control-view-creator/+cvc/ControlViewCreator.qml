@@ -32,7 +32,6 @@ Rectangle {
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
     property alias editor: editor
-
     property int consoleLogWarningCount: 0
     property int consoleLogErrorCount: 0
 
