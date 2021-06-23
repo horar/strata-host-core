@@ -6,7 +6,7 @@ void StrataServerBenchmark::benchmarkLargeNumberOfHandlers()
 {
     int totalNumberOfHandlers = 10000;
     StrataServer server(address_, false);
-    server.initializeServer();
+    server.initialize();
 
     for (int i = 0; i < totalNumberOfHandlers; i++) {
         server.registerHandler(QString::number(i),
@@ -16,7 +16,7 @@ void StrataServerBenchmark::benchmarkLargeNumberOfHandlers()
     QBENCHMARK
     {
         QMetaObject::invokeMethod(
-            &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "clientId"),
+            &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "clientId"),
             Q_ARG(QByteArray, R"({"jsonrpc": "2.0","method":"100","params": {},"id":1})"));
     }
 }
@@ -28,7 +28,7 @@ void StrataServerBenchmark::benchmarkLargeNUmberOfClients()
 
     for (int i = 0; i < totalNumberOfClients; i++) {
         QMetaObject::invokeMethod(
-            &server, "newClientMessage", Qt::DirectConnection,
+            &server, "messageReceived", Qt::DirectConnection,
             Q_ARG(QByteArray, QByteArray::number(i)),
             Q_ARG(QByteArray, R"({"jsonrpc": "2.0","method":"100","params": {},"id":1})"));
     }
@@ -36,7 +36,7 @@ void StrataServerBenchmark::benchmarkLargeNUmberOfClients()
     QBENCHMARK
     {
         QMetaObject::invokeMethod(
-            &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "99"),
+            &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "99"),
             Q_ARG(QByteArray, R"({"jsonrpc": "2.0","method":"100","params": {},"id":1})"));
     }
 }
@@ -49,7 +49,7 @@ void StrataServerBenchmark::benchmarkRegisteringClients()
     QBENCHMARK
     {
         QMetaObject::invokeMethod(
-            &server, "newClientMessage", Qt::DirectConnection,
+            &server, "messageReceived", Qt::DirectConnection,
             Q_ARG(QByteArray, QByteArray::number(clientsCounter)),
             Q_ARG(QByteArray, R"({"jsonrpc": "2.0","method":"100","params": {},"id":1})"));
         clientsCounter++;
@@ -61,7 +61,7 @@ void StrataServerBenchmark::benchmarkNotifyClientAPIv2()
     StrataServer server(address_, false);
 
     QMetaObject::invokeMethod(
-        &server, "newClientMessage", Qt::DirectConnection, Q_ARG(QByteArray, "clientId"),
+        &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "clientId"),
         Q_ARG(
             QByteArray,
             R"({"id":1,"jsonrpc":"2.0","method":"register_client","params":{"api_version":"2.0"}})"));
@@ -77,7 +77,7 @@ void StrataServerBenchmark::benchmarkNotifyClientAPIv1()
 {
     StrataServer server(address_, false);
 
-    QMetaObject::invokeMethod(&server, "newClientMessage", Qt::DirectConnection,
+    QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "clientId"),
                               Q_ARG(QByteArray, R"({"cmd":"register_client", "payload":{}})"));
 
@@ -95,7 +95,7 @@ void StrataServerBenchmark::benchmarkNotifyClientWithLargeNumberOfClients()
 
     for (int i = 0; i < totalNumberOfClients; i++) {
         QMetaObject::invokeMethod(
-            &server, "newClientMessage", Qt::DirectConnection,
+            &server, "messageReceived", Qt::DirectConnection,
             Q_ARG(QByteArray, QByteArray::number(i)),
             Q_ARG(QByteArray, R"({"jsonrpc": "2.0","method":"100","params": {},"id":1})"));
     }
