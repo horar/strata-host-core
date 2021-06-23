@@ -68,6 +68,8 @@ Item {
 
         SideBar {
             id: sideBar
+            implicitWidth: 200
+            Layout.minimumWidth: 25
             Layout.fillHeight: true
             Layout.minimumWidth: 250
             Layout.maximumWidth: parent.width * 0.75
@@ -76,6 +78,7 @@ Item {
         ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.minimumWidth: parent.width * 0.5
             spacing: 0
 
             Rectangle {
