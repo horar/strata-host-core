@@ -63,7 +63,7 @@ signals:
     void errorOccurred(Device::ErrorCode errCode, QString msg);
 
 private:
-    void initializeResponses();
+    void initializeDefaultResponses();
 
     std::vector<QByteArray> getResponses(const QByteArray& request);
 
@@ -87,7 +87,7 @@ private:
     bool emitErrorOnClose_ = false;
     unsigned emitErrorOnNthMessage_ = 0;
     MockCommandResponseMap responses_;
-    MockVersion version_ = MockVersion::Version_1;
+    MockVersion version_ = MockVersion::Version_2;
 
     // variables used to store mock firmware's expected values
     int payloadCount_ = 0;

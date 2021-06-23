@@ -29,9 +29,15 @@ void SciMockDevice::setMockDevice(const strata::device::MockDevicePtr& mockDevic
         if (mockDevice_ != nullptr) {
             emit openEnabledChanged();
             emit autoResponseChanged();
+            emit mockVersionChanged();
+            QList<MockCommand> commands = strata::device::mockSupportedCommands(mockGetVersion());
+            if ((commands.empty() == false) && (commands.contains(currentCommand_) == false)) {
+                currentCommand_ = commands.first();
+            }
+            mockCommandModel_.updateModelData(mockGetVersion());
+            mockResponseModel_.updateModelData(mockGetVersion(), currentCommand_);
             emit mockCommandChanged();
             emit mockResponseChanged();
-            emit mockVersionChanged();
         }
     }
 }
@@ -184,16 +190,30 @@ void SciMockDevice::mockSetAutoResponse(bool autoResponse)
     }
 }
 
+void SciMockDevice::mockSetVersion(MockVersion version)
+{
+    if (mockDevice_ != nullptr) {
+        if (mockDevice_->mockSetVersion(version) == true) {
+            QList<MockCommand> commands = strata::device::mockSupportedCommands(version);
+            if ((commands.empty() == false) && (commands.contains(currentCommand_) == false)) {
+                currentCommand_ = commands.first();
+            }
+            mockCommandModel_.updateModelData(version);
+            mockResponseModel_.updateModelData(version, currentCommand_);
+            emit mockVersionChanged();
+            emit mockCommandChanged();  // update indexes due to model change
+            emit mockResponseChanged(); // update indexes due to model change
+        }
+    }
+}
+
 void SciMockDevice::mockSetCommand(MockCommand command)
 {
     if (currentCommand_ != command) {
-        MockResponse oldResponse = mockGetResponse();
         currentCommand_ = command;
+        mockResponseModel_.updateModelData(mockDevice_->mockGetVersion(), currentCommand_);
         emit mockCommandChanged();
-        MockResponse newResponse = mockGetResponse();
-        if (oldResponse != newResponse) {
-            emit mockResponseChanged();
-        }
+        emit mockResponseChanged(); // update indexes due to model change
     }
 }
 
@@ -202,15 +222,6 @@ void SciMockDevice::mockSetResponse(MockResponse response)
     if (mockDevice_ != nullptr) {
         if (mockDevice_->mockSetResponseForCommand(response, currentCommand_) == true) {
             emit mockResponseChanged();
-        }
-    }
-}
-
-void SciMockDevice::mockSetVersion(MockVersion version)
-{
-    if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetVersion(version) == true) {
-            emit mockVersionChanged();
         }
     }
 }

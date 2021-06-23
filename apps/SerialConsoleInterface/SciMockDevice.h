@@ -48,9 +48,9 @@ public:
     void mockSetDeviceId(const QByteArray& deviceId);
     void mockSetOpenEnabled(bool enabled);
     void mockSetAutoResponse(bool autoResponse);
+    void mockSetVersion(strata::device::MockVersion version);
     void mockSetCommand(strata::device::MockCommand command);
     void mockSetResponse(strata::device::MockResponse response);
-    void mockSetVersion(strata::device::MockVersion version);
 
 signals:
     void isValidChanged();

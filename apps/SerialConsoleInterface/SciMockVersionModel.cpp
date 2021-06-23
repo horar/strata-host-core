@@ -1,7 +1,7 @@
 #include "SciMockVersionModel.h"
 #include "logging/LoggingQtCategories.h"
 
-using strata::device::MockVersion;
+using namespace strata::device;
 
 SciMockVersionModel::SciMockVersionModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -38,12 +38,12 @@ QVariantMap SciMockVersionModel::get(int row)
     return res;
 }
 
-int SciMockVersionModel::find(const QVariant& type) const
+int SciMockVersionModel::find(const QVariant& version) const
 {
-    MockVersion version = type.value<MockVersion>();
+    MockVersion mockVersion = version.value<MockVersion>();
     int count = 0;
     for (auto iter = versions_.constBegin(); iter != versions_.constEnd(); ++iter) {
-        if (iter->type_ == version) {
+        if (iter->type_ == mockVersion) {
             return count;
         }
         ++count;
@@ -107,6 +107,8 @@ void SciMockVersionModel::setModelRoles()
 void SciMockVersionModel::setModelData()
 {
     versions_.clear();
-    versions_.push_back({MockVersion::Version_1, "Version 1 (non-OTA)"});
-    versions_.push_back({MockVersion::Version_2, "Version 2 (OTA)"});
+    QList<MockVersion> versions = mockSupportedVersions();
+    foreach(auto version, versions) {
+        versions_.push_back({version, mockVersionConvertEnumToString(version)});
+    }
 }

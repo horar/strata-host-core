@@ -43,7 +43,8 @@ void PlatformOperationsV2Test::init()
     flashPartialStatusCount_ = 0;
     mockDevice_ = std::make_shared<strata::device::MockDevice>("mock1234", "Mock device", true);
     platform_ = std::make_shared<strata::platform::Platform>(mockDevice_);
-    QVERIFY(mockDevice_->mockSetVersion(MockVersion::Version_2));
+    mockDevice_->mockSetVersion(MockVersion::Version_2);
+    QVERIFY(mockDevice_->mockGetVersion() == MockVersion::Version_2);
     QVERIFY(platform_->deviceConnected() == false);
 
     QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
