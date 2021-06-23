@@ -16,6 +16,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             spacing: 10
+            
             SGIcon {
                 id: exIcon
                 source: "qrc:/sgimages/exclamation-circle.svg"
@@ -36,7 +37,7 @@ ColumnLayout {
             SGButton {
                 id: defaultButton
                 Layout.alignment: Qt.AlignHCenter
-                text: "DefaultColor"
+                text: "Restore Default Color"
 
                 onClicked: {
                     exIcon.iconColor = "transparent"
