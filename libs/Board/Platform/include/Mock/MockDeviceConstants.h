@@ -24,7 +24,6 @@ constexpr const char* const CMD_SET_PLATFORM_ID          = "set_platform_id";
 Q_NAMESPACE
 
 enum class MockCommand {
-    Any_command,
     Get_firmware_info,
     Request_platform_id,
     Start_bootloader,
@@ -40,33 +39,35 @@ enum class MockCommand {
 };
 Q_ENUM_NS(MockCommand)
 
-inline MockCommand convertCommandToEnum(const std::string& cmd) {
+inline bool convertCommandToEnum(const std::string& cmd, MockCommand& command) {
     if (0 == cmd.compare(CMD_GET_FIRMWARE_INFO)) {
-        return MockCommand::Get_firmware_info;
+        command = MockCommand::Get_firmware_info;
     } else if (0 == cmd.compare(CMD_REQUEST_PLATFORM_ID)) {
-        return MockCommand::Request_platform_id;
+        command = MockCommand::Request_platform_id;
     } else if (0 == cmd.compare(CMD_START_BOOTLOADER)) {
-        return MockCommand::Start_bootloader;
+        command = MockCommand::Start_bootloader;
     } else if (0 == cmd.compare(CMD_START_APPLICATION)) {
-        return MockCommand::Start_application;
+        command = MockCommand::Start_application;
     } else if (0 == cmd.compare(CMD_START_FLASH_FIRMWARE)) {
-        return MockCommand::Start_flash_firmware;
+        command = MockCommand::Start_flash_firmware;
     } else if (0 == cmd.compare(CMD_FLASH_FIRMWARE)) {
-        return MockCommand::Flash_firmware;
+        command = MockCommand::Flash_firmware;
     } else if (0 == cmd.compare(CMD_START_FLASH_BOOTLOADER)) {
-        return MockCommand::Start_flash_bootloader;
+        command = MockCommand::Start_flash_bootloader;
     } else if (0 == cmd.compare(CMD_FLASH_BOOTLOADER)) {
-        return MockCommand::Flash_bootloader;
+        command = MockCommand::Flash_bootloader;
     } else if (0 == cmd.compare(CMD_START_BACKUP_FIRMWARE)) {
-        return MockCommand::Start_backup_firmware;
+        command = MockCommand::Start_backup_firmware;
     } else if (0 == cmd.compare(CMD_BACKUP_FIRMWARE)) {
-        return MockCommand::Backup_firmware;
+        command = MockCommand::Backup_firmware;
     } else if (0 == cmd.compare(CMD_SET_ASSISTED_PLATFORM_ID)) {
-        return MockCommand::Set_assisted_platform_id;
+        command = MockCommand::Set_assisted_platform_id;
     } else if (0 == cmd.compare(CMD_SET_PLATFORM_ID)) {
-        return MockCommand::Set_platform_id;
+        command = MockCommand::Set_platform_id;
+    } else {
+        return false;
     }
-    return MockCommand::Any_command;
+    return true;
 }
 
 enum class MockResponse {

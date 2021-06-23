@@ -107,7 +107,6 @@ void SciMockCommandModel::setModelRoles()
 void SciMockCommandModel::setModelData()
 {
     commands_.clear();
-    commands_.push_back({MockCommand::Any_command, "Any Command"});
     commands_.push_back({MockCommand::Get_firmware_info, CMD_GET_FIRMWARE_INFO});
     commands_.push_back({MockCommand::Request_platform_id, CMD_REQUEST_PLATFORM_ID});
     commands_.push_back({MockCommand::Start_bootloader, CMD_START_BOOTLOADER});

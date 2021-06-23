@@ -173,7 +173,7 @@ void PlatformOperationsTest::noResponseTest()
 
 void PlatformOperationsTest::notJSONTest()
 {
-    mockDevice_->mockSetResponse(MockResponse::No_JSON);
+    mockDevice_->mockSetResponseForCommand(MockResponse::No_JSON, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -211,6 +211,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
     QVERIFY(platform_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
 
+    mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Get_firmware_info);
     mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Request_platform_id);
 
     platformOperation = platformOperations_.Identify(platform_, true);
@@ -228,6 +229,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
     QCOMPARE(operationTimeoutCount_,2);
 
+    mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Request_platform_id);
     mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Start_application);
 
     platformOperation = platformOperations_.StartApplication(platform_);
@@ -248,6 +250,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
     QVERIFY(platform_->classId().isEmpty());
     QCOMPARE(operationTimeoutCount_,3);
 
+    mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Start_application);
     mockDevice_->mockSetResponseForCommand(MockResponse::No_payload, MockCommand::Start_bootloader);
 
     platformOperation = platformOperations_.StartBootloader(platform_);
@@ -285,7 +288,7 @@ void PlatformOperationsTest::JSONWithoutPayloadTest()
 
 void PlatformOperationsTest::nackTest()
 {
-    mockDevice_->mockSetResponse(MockResponse::Nack);
+    mockDevice_->mockSetResponseForCommand(MockResponse::Nack, MockCommand::Get_firmware_info);
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
@@ -321,6 +324,7 @@ void PlatformOperationsTest::invalidValueTest()
     QVERIFY(platform_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
 
+    mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Get_firmware_info);
     mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Request_platform_id);
 
     platformOperation = platformOperations_.Identify(platform_, true);
@@ -338,6 +342,7 @@ void PlatformOperationsTest::invalidValueTest()
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
     QCOMPARE(operationTimeoutCount_,2);
 
+    mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Request_platform_id);
     mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Start_application);
 
     platformOperation = platformOperations_.StartApplication(platform_);
@@ -358,6 +363,7 @@ void PlatformOperationsTest::invalidValueTest()
     QVERIFY(platform_->classId().isEmpty());
     QCOMPARE(operationTimeoutCount_,3);
 
+    mockDevice_->mockSetResponseForCommand(MockResponse::Normal, MockCommand::Start_application);
     mockDevice_->mockSetResponseForCommand(MockResponse::Invalid, MockCommand::Start_bootloader);
 
     platformOperation = platformOperations_.StartBootloader(platform_);

@@ -7,8 +7,11 @@
 #include <QVector>
 #include <QTemporaryFile>
 #include <list>
+#include <map>
 
 namespace strata::device {
+
+typedef std::map<MockCommand, MockResponse> MockCommandResponseMap;
 
 class MockDeviceControl : public QObject
 {
@@ -33,16 +36,13 @@ public:
     bool isFirmwareEnabled() const;
     bool isErrorOnCloseSet() const;
     bool isErrorOnNthMessageSet() const;
-    MockCommand getCommand() const;
-    MockResponse getResponse() const;
+    MockResponse getResponseForCommand(MockCommand command) const;
     MockVersion getVersion() const;
 
     bool setOpenEnabled(bool enabled);
     bool setLegacy(bool legacy);
     bool setAutoResponse(bool autoResponse);
     bool setSaveMessages(bool saveMessages);
-    bool setCommand(MockCommand command);
-    bool setResponse(MockResponse response);
     bool setResponseForCommand(MockResponse response, MockCommand command);
     bool setVersion(MockVersion version);
     bool setAsBootloader(bool isBootloader);
@@ -65,6 +65,8 @@ signals:
     void errorOccurred(Device::ErrorCode errCode, QString msg);
 
 private:
+    void initializeResponses();
+
     std::vector<QByteArray> getResponses(const QByteArray& request);
 
     const std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
@@ -87,8 +89,7 @@ private:
     bool isFirmwareEnabled_ = true;
     bool emitErrorOnClose_ = false;
     unsigned emitErrorOnNthMessage_ = 0;
-    MockCommand command_ = MockCommand::Any_command;
-    MockResponse response_ = MockResponse::Normal;
+    MockCommandResponseMap responses_;
     MockVersion version_ = MockVersion::Version_1;
 
     // variables used to store mock firmware's expected values

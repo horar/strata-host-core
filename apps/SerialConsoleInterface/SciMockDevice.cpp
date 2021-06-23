@@ -150,11 +150,7 @@ bool SciMockDevice::mockIsAutoResponse() const
 
 MockCommand SciMockDevice::mockGetCommand() const
 {
-    if (mockDevice_ == nullptr) {
-        return MockCommand::Any_command;
-    }
-
-    return mockDevice_->mockGetCommand();
+    return currentCommand_;
 }
 
 MockResponse SciMockDevice::mockGetResponse() const
@@ -163,7 +159,7 @@ MockResponse SciMockDevice::mockGetResponse() const
         return MockResponse::Normal;
     }
 
-    return mockDevice_->mockGetResponse();
+    return mockDevice_->mockGetResponseForCommand(currentCommand_);
 }
 
 MockVersion SciMockDevice::mockGetVersion() const
@@ -209,9 +205,13 @@ void SciMockDevice::mockSetAutoResponse(bool autoResponse)
 
 void SciMockDevice::mockSetCommand(MockCommand command)
 {
-    if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetCommand(command) == true) {
-            emit mockCommandChanged();
+    if (currentCommand_ != command) {
+        MockResponse oldResponse = mockGetResponse();
+        currentCommand_ = command;
+        emit mockCommandChanged();
+        MockResponse newResponse = mockGetResponse();
+        if (oldResponse != newResponse) {
+            emit mockResponseChanged();
         }
     }
 }
@@ -219,7 +219,7 @@ void SciMockDevice::mockSetCommand(MockCommand command)
 void SciMockDevice::mockSetResponse(MockResponse response)
 {
     if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetResponse(response) == true) {
+        if (mockDevice_->mockSetResponseForCommand(response, currentCommand_) == true) {
             emit mockResponseChanged();
         }
     }

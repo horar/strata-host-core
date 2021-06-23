@@ -72,4 +72,5 @@ private:
     SciMockResponseModel mockResponseModel_;
     SciMockVersionModel mockVersionModel_;
     strata::device::MockDevicePtr mockDevice_;
+    strata::device::MockCommand currentCommand_ = strata::device::MockCommand::Get_firmware_info;
 };

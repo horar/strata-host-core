@@ -135,16 +135,11 @@ public:
     bool mockIsErrorOnNthMessageSet() const;
 
     /**
-     * Returns which command has configured special response behavior
-     * @return the particular command with special response behavior
-     */
-    MockCommand mockGetCommand() const;
-
-    /**
      * Returns which response is to be used for a particular command
+     * @param command the particular command whose response should be returned
      * @return the special response used for a particular command
      */
-    MockResponse mockGetResponse() const;
+    MockResponse mockGetResponseForCommand(MockCommand command) const;
 
     /**
      * Returns configured mock device version
@@ -180,20 +175,6 @@ public:
      * @return true if parameter was changed, otherwise false
      */
     bool mockSetSaveMessages(bool saveMessages);
-
-    /**
-     * Configures special response behavior for a particular command
-     * @param command the particular command with special response behavior
-     * @return true if parameter was changed, otherwise false
-     */
-    bool mockSetCommand(MockCommand command);
-
-    /**
-     * Configures special response behavior for a particular command
-     * @param response the special response used for a particular command
-     * @return true if parameter was changed, otherwise false
-     */
-    bool mockSetResponse(MockResponse response);
 
     /**
      * Configures special response behavior for a particular command
