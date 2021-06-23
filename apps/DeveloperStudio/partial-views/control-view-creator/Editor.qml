@@ -68,10 +68,9 @@ Item {
 
         SideBar {
             id: sideBar
+            Layout.fillHeight: true
             implicitWidth: 200
             Layout.minimumWidth: 25
-            Layout.fillHeight: true
-            Layout.minimumWidth: 250
             Layout.maximumWidth: parent.width * 0.75
         }
 
@@ -221,12 +220,12 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                 closeFileTab(index, model)
+                                closeFileTab(index, model)
                             }
                         }
 
                         onClicked: {
-                        	openFilesModel.currentIndex = index
+                            openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
