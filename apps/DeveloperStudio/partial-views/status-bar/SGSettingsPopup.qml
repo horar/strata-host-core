@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import "../"
+import "qrc:/partial-views/general/"
 
 SGStrataPopup {
     id: root

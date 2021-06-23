@@ -18,8 +18,6 @@ Item {
 
         SGSideNavItem {
             id: cleanupProjectNecessary
-            height: 70
-
             iconText: "Clean"
             iconSource: "qrc:/sgimages/exclamation-triangle.svg"
             iconColor: "#ffc107"
@@ -34,11 +32,9 @@ Item {
 
         SGSideNavItem {
             id: settingForProject
-            height: 70
-            enabled: true
-
             iconText: "Settings"
             iconSource: "qrc:/sgimages/cog.svg"
+            tooltipDescription: "Global settings for the Control View Creator"
 
             onClicked: {
                 cvcSettingsLoader.active = true

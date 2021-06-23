@@ -1,12 +1,12 @@
-// @disable-check M300 // Ignore false positive (M311) QtCreator warning
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import "qrc:/partial-views/"
+import "qrc:/partial-views/general/"
 
-SGStrataPopup {
+SGStrataPopup { // @disable-check M300 // Ignore false positive (M311) QtCreator warning
     id: root
     modal: true
     visible: true
@@ -36,7 +36,7 @@ SGStrataPopup {
             color: "#666"
         }
 
-        SGControlViewCheckbox {
+        SGSettingsCheckbox { // @disable-check M300 // Ignore false positive (M311) QtCreator warning
             id: openViewBox
             text: "Switch to \"View\" mode after running build"
             checked: cvcUserSettings.openViewOnBuild
