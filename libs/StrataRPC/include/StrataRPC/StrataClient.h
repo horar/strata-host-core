@@ -156,7 +156,7 @@ private slots:
      * Slot to handle new incoming messages from StrataServer.
      * @param [in] jsonServerMessage QByteArray json of StrataServer's message.
      */
-    void newServerMessage(const QByteArray &jsonServerMessage);
+    void messageReceivedHandler(const QByteArray &jsonServerMessage);
 
     /**
      * Handles timed out requests.

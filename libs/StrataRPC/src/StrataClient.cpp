@@ -30,7 +30,7 @@ StrataClient::StrataClient(const QString &serverAddress, const QByteArray &deale
     QObject::connect(this, &StrataClient::sendMessage, connector_.get(),
                      &ClientConnector::sendMessage);
     QObject::connect(connector_.get(), &ClientConnector::messageReceived, this,
-                     &StrataClient::newServerMessage);
+                     &StrataClient::messageReceivedHandler);
     QObject::connect(this, &StrataClient::messageParsed, this, &StrataClient::dispatchHandler);
     QObject::connect(connector_.get(), &ClientConnector::errorOccurred, this,
                      &StrataClient::connectorErrorHandler);
@@ -68,7 +68,7 @@ void StrataClient::disconnect()
     emit disconnectClient();
 }
 
-void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
+void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
 {
     qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
 

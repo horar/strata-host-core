@@ -31,10 +31,9 @@ StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObj
                      &ServerConnector::initialize, Qt::QueuedConnection);
     QObject::connect(this, &StrataServer::sendMessage, connector_.get(),
                      &ServerConnector::sendMessage, Qt::QueuedConnection);
-    QObject::connect(this, &StrataServer::newClientMessageParsed, this,
-                     &StrataServer::dispatchHandler);
+    QObject::connect(this, &StrataServer::MessageParsed, this, &StrataServer::dispatchHandler);
     QObject::connect(connector_.get(), &ServerConnector::messageReceived, this,
-                     &StrataServer::newClientMessage);
+                     &StrataServer::messageReceived);
     QObject::connect(connector_.get(), &ServerConnector::errorOccurred, this,
                      &StrataServer::connectorErrorHandler);
     QObject::connect(connector_.get(), &ServerConnector::initialized, this, [this]() {
@@ -86,9 +85,9 @@ bool StrataServer::unregisterHandler(const QString &handlerName)
     return true;
 }
 
-void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray &message)
+void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServer) << "StrataServer newClientMessage"
+    qCDebug(logCategoryStrataServer) << "StrataServer messageReceived"
                                      << "Client ID:" << clientId << "Message:" << message;
 
     QJsonParseError jsonParseError;
@@ -155,7 +154,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
         }
     }
 
-    emit newClientMessageParsed(clientMessage);
+    emit MessageParsed(clientMessage);
 }
 
 bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage)

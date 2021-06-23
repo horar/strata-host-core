@@ -108,7 +108,7 @@ private slots:
      * @param [in] clientId client id of the sender
      * @param [in] message QByteArray of the message json string.
      */
-    void newClientMessage(const QByteArray &clientId, const QByteArray &message);
+    void messageReceived(const QByteArray &clientId, const QByteArray &message);
 
     /**
      * Slot to handle dispatching client notification/requests handlers.
@@ -129,15 +129,15 @@ signals:
      * Signal emitted when a new client message is parsed and ready to be dispatched
      * @param [in] clientMessage populated Message object with the command/notification metadata.
      */
-    void newClientMessageParsed(const Message &clientMessage);
+    void MessageParsed(const Message &clientMessage);
 
     /**
      * Emitted when an error has occurred.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-
     void errorOccurred(const StrataServer::ServerError &errorType, const QString &errorMessage);
+
     /**
      * Signal to initialize the server.
      */
