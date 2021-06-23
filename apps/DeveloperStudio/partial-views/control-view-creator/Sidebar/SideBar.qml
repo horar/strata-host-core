@@ -164,7 +164,7 @@ Item {
         closePolicy: Popup.NoAutoClose
         anchors.centerIn: Overlay.overlay
 
-        acceptButtonColor: Theme.palette.green
+        acceptButtonColor: Theme.palette.red
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Permanently delete"
         cancelButtonText: "Cancel"
