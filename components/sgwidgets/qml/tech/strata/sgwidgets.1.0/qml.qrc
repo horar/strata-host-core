@@ -55,40 +55,5 @@
         <file>dialogs/SGDialog.qml</file>
         <file>dialogs/SGConfirmationDialog.qml</file>
         <file>dialogs/SGMessageDialog.qml</file>
-        <file>cvc-layout/UIBase.qml</file>
-        <file>cvc-layout/LayoutInfo.qml</file>
-        <file>cvc-layout/LayoutContainer.qml</file>
-        <file>cvc-layout/widgets/Button/LayoutButton.qml</file>
-        <file>cvc-layout/widgets/Button/Button.txt</file>
-        <file>cvc-layout/widgets/Divider/LayoutDivider.qml</file>
-        <file>cvc-layout/widgets/Divider/Divider.txt</file>
-        <file>cvc-layout/widgets/Text/LayoutText.qml</file>
-        <file>cvc-layout/widgets/Text/Text.txt</file>
-        <file>cvc-layout/widgets/SGIcon/LayoutSGIcon.qml</file>
-        <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
-        <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
-        <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
-        <file>cvc-layout/widgets/Switch/LayoutSGSwitch.qml</file>
-        <file>cvc-layout/widgets/Switch/SGSwitch.txt</file>
-        <file>cvc-layout/widgets/InfoBox/SGInfoBox.txt</file>
-        <file>cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml</file>
-        <file>cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml</file>
-        <file>cvc-layout/widgets/CircularGauge/SGCircularGauge.txt</file>
-        <file>cvc-layout/widgets/StatusLight/LayoutSGStatusLight.qml</file>
-        <file>cvc-layout/widgets/StatusLight/SGStatusLight.txt</file>
-        <file>cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml</file>
-        <file>cvc-layout/widgets/ComboBox/SGComboBox.txt</file>
-        <file>cvc-layout/widgets/Graph/LayoutSGGraph.qml</file>
-        <file>cvc-layout/widgets/Graph/SGGraph.txt</file>
-        <file>cvc-layout/widgets/Slider/LayoutSGSlider.qml</file>
-        <file>cvc-layout/widgets/Slider/SGSlider.txt</file>
-        <file>cvc-layout/widgets/ButtonStrip/LayoutSGButtonStrip.qml</file>
-        <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.txt</file>
-        <file>cvc-layout/widgets/ButtonStrip/SGButtonStrip.qml</file>
-        <file>cvc-layout/widgets/RadioButtons/LayoutRadioButtons.qml</file>
-        <file>cvc-layout/widgets/RadioButtons/SGRadioButtons.qml</file>
-        <file>cvc-layout/widgets/RadioButtons/SGRadioButtons.txt</file>
-        <file>cvc-layout/widgets/StatusLogBox/LayoutSGStatusLogBox.qml</file>
-        <file>cvc-layout/widgets/StatusLogBox/SGStatusLogBox.txt</file>
     </qresource>
 </RCC>
