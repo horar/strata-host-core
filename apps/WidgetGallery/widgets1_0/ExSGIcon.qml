@@ -45,11 +45,14 @@ ColumnLayout {
             }
         }
     }
-    /*
-      The SGWidgets library contains a number of SVG icon files that you can use. If you have imported SGWidgets 1.0,
-      which is a pre-cursor for SGIcon use, you can set these icons in your SGIcon like so: source: "qrc:/sgimages/<icon filename here>.svg"
-      - each filename is shown below the icon in the following grid.
-    */
+
+    SGText {
+        text: "(Note): The SGWidgets library contains a number of SVG icon files that you can use. If you have imported SGWidgets 1.0, which is a pre-cursor for SGIcon use, you can set these icons in your SGIcon like so: source: \"qrc:/sgimages/<icon filename here>.svg\" - each filename is shown below the icon in the following grid."
+        fontSizeMultiplier: 1.1
+        Layout.maximumWidth: flickWrapper.width
+        wrapMode: Text.WordWrap
+    }
+
     SGAlignedLabel {
         target: basicIconGrid
         text: "SGIcons"
@@ -106,20 +109,22 @@ ColumnLayout {
             let arr = SGUtilsCpp.getQrcPaths(":sgimages")
 
             for (let i = 0; i < arr.length; i++) {
-                const iconObj = {
-                    "name": arr[i].substring(arr[i].lastIndexOf("/") + 1,arr[i].lastIndexOf(".svg")),
-                    "source": `qrc${arr[i]}`,
-                    "color": "transparent",
-                }
+                if(arr[i].includes(".svg") && !arr[i].includes("status-light")){
+                    const iconObj = {
+                        "name": arr[i].substring(arr[i].lastIndexOf("/") + 1,arr[i].lastIndexOf(".svg")),
+                        "source": `qrc${arr[i]}`,
+                        "color": "transparent",
+                    }
 
-                append(iconObj)
+                    append(iconObj)
+                }
             }
         }
     }
 
     TextMetrics {
         id: longestTextWidth
-        text: "status-light-transparent"
+        text: "exclamation-triangle"
         font.pixelSize: 13 * 1.1
     }
 
