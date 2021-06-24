@@ -100,11 +100,11 @@ void Platform::messageSentHandler(QByteArray rawMsg) {
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
-    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpenRequestRetry) {
         if (errMsg.isEmpty()) {
             errMsg = "Unable to open device.";
         }
-        if (retryInterval_ != std::chrono::milliseconds::zero()) {
+        if (retryInterval_ != std::chrono::milliseconds::zero()) { // TODO consider moving retry into serial device
             reconnectTimer_.start(retryInterval_.count());
         }
     }

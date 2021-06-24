@@ -27,6 +27,8 @@ void PlatformController::initialize() {
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
     if (bleDeviceScanner != nullptr) {
         connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::discoveryFinished, this, &PlatformController::bleDiscoveryFinishedHandler);
+        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::connectDeviceFinished, this, &PlatformController::bleConnectDeviceFinishedHandler);
+        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::connectDeviceFailed, this, &PlatformController::bleConnectDeviceFailedHandler);
     }
 }
 
@@ -146,6 +148,67 @@ void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::Bl
             qCWarning(logCategoryHcsPlatform).noquote() << "BLE discovery ended with unknown status" << status;
     }
     emit bluetoothScanFinished(payload);
+}
+
+void PlatformController::connectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
+    std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+    if (bleDeviceScanner != nullptr) {
+        QString errorMessage = bleDeviceScanner->connectDevice(deviceId);
+        if (false == errorMessage.isEmpty()) {
+            emit connectDeviceFailed(deviceId, clientId, errorMessage);
+        } else {
+            connectDeviceRequests_.insert(deviceId, clientId);
+        }
+    } else
+    {
+        emit connectDeviceFailed(deviceId, clientId, "BluetoothLowEnergyScanner not initialized.");
+    }
+}
+
+void PlatformController::bleConnectDeviceFinishedHandler(const QByteArray& deviceId) {
+    QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+    int notifiedCount = connectDeviceRequests_.remove(deviceId);
+    if (notifiedCount == 0) {
+        qCWarning(logCategoryHcsPlatform).noquote() << "BLE device connection finished, no client waiting for response:" << deviceId;
+    } else {
+        for (const auto &clientId : clients) {
+            emit connectDeviceFinished(deviceId, clientId);
+        }
+    }
+}
+
+void PlatformController::bleConnectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString) {
+    QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+    int notifiedCount = connectDeviceRequests_.remove(deviceId);
+    if (notifiedCount == 0) {
+        qCWarning(logCategoryHcsPlatform).noquote() << "BLE device connection failed, no client waiting for response:" << deviceId;
+    } else {
+        for (const auto &clientId : clients) {
+            emit connectDeviceFailed(deviceId, clientId, errorString);
+        }
+    }
+}
+
+void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
+    std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+    if (bleDeviceScanner != nullptr) {
+        QString errorMessage = bleDeviceScanner->disconnectDevice(deviceId);
+        if (errorMessage.isEmpty()) {
+            QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+            connectDeviceRequests_.remove(deviceId);
+            for (const auto &connectClientId : clients) {
+                emit connectDeviceFailed(deviceId, connectClientId, "Cancelled.");
+            }
+            emit disconnectDeviceFinished(deviceId, clientId);
+        } else {
+            emit disconnectDeviceFailed(deviceId, clientId, errorMessage);
+        }
+    } else
+    {
+        emit disconnectDeviceFailed(deviceId, clientId, "BluetoothLowEnergyScanner not initialized.");
+    }
 }
 
 QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner) {

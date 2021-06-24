@@ -134,6 +134,10 @@ private slots:
     void platformDisconnected(const QByteArray& deviceId);
 
     void bluetoothScanFinished(const QJsonObject payload);
+    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
+    void connectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
+    void disconnectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
 private:
     void handleMessage(const DispatcherMessage& msg);
 
@@ -153,10 +157,14 @@ private:
         updateFirmwareJob,
         programController,
         programControllerJob,
-        bluetoothScan
+        bluetoothScan,
+        connectDevice,
+        disconnectDevice
     };
     const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
     QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
+    void sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString);
+    void sendDeviceSuccess(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId);
 
     void processCmdRequestHcsStatus(const QByteArray &clientId);
     void processCmdClientUnregister(const QByteArray &clientId);
@@ -169,6 +177,8 @@ private:
     void processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId);
     void processCmdCheckForUpdates(const QByteArray &clientId);
     void processCmdBluetoothScan();
+    void processCmdConnectDevice(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdDisconnectDevice(const QJsonObject &payload, const QByteArray &clientId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 

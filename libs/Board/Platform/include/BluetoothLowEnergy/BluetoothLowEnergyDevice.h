@@ -30,7 +30,7 @@ public:
 
     /**
      * Open device communication channel and discovers services.
-     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
+     * Emits opened() on success or deviceError(DeviceError, ...) on failure.
      */
     virtual void open() override;
 

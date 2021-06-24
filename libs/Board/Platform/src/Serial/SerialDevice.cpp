@@ -82,7 +82,7 @@ void SerialDevice::open() {
     if (opened) {
         emit Device::opened();
     } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open serial port.");
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpenRequestRetry, "Unable to open serial port.");
     }
 }
 

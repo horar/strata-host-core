@@ -89,6 +89,10 @@ bool HostControllerService::initialize(const QString& config)
     connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
     connect(&platformController_, &PlatformController::bluetoothScanFinished, this, &HostControllerService::bluetoothScanFinished);
+    connect(&platformController_, &PlatformController::connectDeviceFinished, this, &HostControllerService::connectDeviceFinished);
+    connect(&platformController_, &PlatformController::connectDeviceFailed, this, &HostControllerService::connectDeviceFailed);
+    connect(&platformController_, &PlatformController::disconnectDeviceFinished, this, &HostControllerService::disconnectDeviceFinished);
+    connect(&platformController_, &PlatformController::disconnectDeviceFailed, this, &HostControllerService::disconnectDeviceFailed);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
@@ -405,6 +409,26 @@ void HostControllerService::bluetoothScanFinished(const QJsonObject payload)
     broadcastMessage(message);
 }
 
+void HostControllerService::connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId)
+{
+    sendDeviceSuccess(hcsNotificationType::connectDevice, deviceId, clientId);
+}
+
+void HostControllerService::connectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
+{
+    sendDeviceError(hcsNotificationType::connectDevice, deviceId, clientId, errorMessage);
+}
+
+void HostControllerService::disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId)
+{
+    sendDeviceSuccess(hcsNotificationType::disconnectDevice, deviceId, clientId);
+}
+
+void HostControllerService::disconnectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
+{
+    sendDeviceError(hcsNotificationType::disconnectDevice, deviceId, clientId, errorMessage);
+}
+
 // clients handler...
 
 void HostControllerService::processCmdRequestHcsStatus(const QByteArray &clientId)
@@ -683,6 +707,28 @@ void HostControllerService::processCmdBluetoothScan()
     platformController_.startBluetoothScan();
 }
 
+void HostControllerService::processCmdConnectDevice(const QJsonObject &payload, const QByteArray &clientId)
+{
+    QByteArray deviceId = payload.value("device_id").toVariant().toByteArray();
+    if (deviceId.isEmpty()) {
+        sendDeviceError(hcsNotificationType::connectDevice, QByteArray(), clientId, "device_id attribute is empty or has bad format");
+        return;
+    }
+
+    platformController_.connectDevice(deviceId, clientId);
+}
+
+void HostControllerService::processCmdDisconnectDevice(const QJsonObject &payload, const QByteArray &clientId)
+{
+    QByteArray deviceId = payload.value("device_id").toVariant().toByteArray();
+    if (deviceId.isEmpty()) {
+        sendDeviceError(hcsNotificationType::disconnectDevice, QByteArray(), clientId, "device_id attribute is empty or has bad format");
+        return;
+    }
+
+    platformController_.disconnectDevice(deviceId, clientId);
+}
+
 Client* HostControllerService::getClientById(const QByteArray& clientId)
 {
     auto findIt = std::find_if(clientList_.begin(), clientList_.end(),
@@ -896,6 +942,12 @@ const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationTy
     case hcsNotificationType::bluetoothScan:
         type = "bluetooth_scan";
         break;
+    case hcsNotificationType::connectDevice:
+        type = "connect_device";
+        break;
+    case hcsNotificationType::disconnectDevice:
+        type = "disconnect_device";
+        break;
     }
 
     return type;
@@ -925,6 +977,25 @@ QByteArray HostControllerService::createHcsNotification(hcsNotificationType noti
     QJsonDocument doc(message);
 
     return doc.toJson(QJsonDocument::Compact);
+}
+
+void HostControllerService::sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString)
+{
+    QJsonObject payloadBody {
+        { "error_string", errorString },
+        { "device_id", QLatin1String(deviceId) }
+    };
+    QByteArray notification = createHcsNotification(notificationType, payloadBody, true);
+    clients_.sendMessage(clientId, notification);
+}
+
+void HostControllerService::sendDeviceSuccess(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId)
+{
+    QJsonObject payloadBody {
+        { "device_id", QLatin1String(deviceId) }
+    };
+    QByteArray notification = createHcsNotification(notificationType, payloadBody, true);
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::processCmdCheckForUpdates(const QByteArray &clientId )
@@ -986,6 +1057,10 @@ void HostControllerService::callHandlerForTypeHcsCmd(
         processCmdProgramController(payload, clientId);
     } else if (cmdName == "bluetooth_scan") {
         processCmdBluetoothScan();
+    } else if (cmdName == "connect_device") {
+        processCmdConnectDevice(payload, clientId);
+    } else if (cmdName == "disconnect_device") {
+        processCmdDisconnectDevice(payload, clientId);
     } else {
         qCWarning(logCategoryHcs).nospace().noquote()
                 << "unhandled command from client: 0x" << clientId.toHex()

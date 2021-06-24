@@ -32,6 +32,7 @@ namespace strata::device {
 
             DeviceBusy,         // device is currently locked by another operation (possible cause: more than 1 operation ongoing)
             DeviceFailedToOpen, // device failed to open (possible cause: port open in another application)
+            DeviceFailedToOpenRequestRetry, // device failed to open, should be retried (possible cause: port open in another application)
 
             // [ERROR] - device should be disconnected
 
@@ -66,7 +67,7 @@ namespace strata::device {
 
         /**
          * Open device communication channel. Non-blocking.
-         * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
+         * Emits opened() on success or deviceError(DeviceFailedToOpenRequestRetry, ...) on failure.
          */
         virtual void open() = 0;
 

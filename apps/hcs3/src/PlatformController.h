@@ -63,17 +63,41 @@ public:
      * Starts scanning for BLE devices. Will send a notification upon success/failure.
      */
     void startBluetoothScan();
+
+    /**
+     * Connects a device (don't confuse with a platform)
+     * Creates a communication channel. Used for BLE and in the future for other
+     * device types without direct connection to local computer.
+     * @param deviceId device ID, as returned from device scanner, e.g. via bluetoothScanFinished.
+     * @param clientId client starting this call
+     */
+    void connectDevice(const QByteArray &deviceId, const QByteArray &clientId);
+
+    /**
+     * Disconnects a device (don't confuse with a platform)
+     * Drops a communication channel. Used for BLE and in the future for other
+     * device types without direct connection to local computer.
+     * @param deviceId device ID
+     * @param clientId client starting this call
+     */
+    void disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId);
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
     void platformMessage(QString platformId, QString message);
     void bluetoothScanFinished(const QJsonObject payload);
+    void connectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
+    void connectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
+    void disconnectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
+    void disconnectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
 
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
     void closeConnection(const QByteArray& deviceId);
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
+    void bleConnectDeviceFinishedHandler(const QByteArray& deviceId);
+    void bleConnectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString);
 
 private:
     /**
@@ -95,4 +119,6 @@ private:
     // map: deviceID <-> Platform
     QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
     // access to platforms_ should be protected by mutex in case of multithread usage
+
+    QMultiMap<QByteArray, QByteArray> connectDeviceRequests_; //remember clients who have sent connectDevice requests
 };

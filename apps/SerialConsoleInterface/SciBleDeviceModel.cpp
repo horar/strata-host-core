@@ -69,7 +69,7 @@ void SciBleDeviceModel::tryConnectDevice(int index)
         qCWarning(logCategorySci) << "index out of range";
     }
 
-    scanner_->tryConnectDevice(data_.at(index).deviceId);
+    scanner_->connectDevice(data_.at(index).deviceId);
 }
 
 QVariantMap SciBleDeviceModel::get(int row)

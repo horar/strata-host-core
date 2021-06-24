@@ -75,31 +75,55 @@ const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredDevices
     return discoveredDevices_;
 }
 
-bool BluetoothLowEnergyScanner::tryConnectDevice(const QByteArray& deviceId)
+QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
 {
     qCDebug(logCategoryDeviceScanner()) << deviceId;
 
     if (discoveryAgent_ == nullptr) {
-        qCWarning(logCategoryDeviceScanner()) << "discovery agent not initialized";
-        return false;
+        qCWarning(logCategoryDeviceScanner()) << "Discovery agent not initialized.";
+        return "Discovery agent not initialized.";
+    }
+
+    if (createdDevices_.contains(deviceId)) {
+        qCWarning(logCategoryDeviceScanner()) << "Device already connected or connecting:" << deviceId;
+        return "Device already connected or connecting: " + deviceId;
     }
 
     auto deviceInfoIterator = discoveredDevicesMap_.find(deviceId);
     if (deviceInfoIterator == discoveredDevicesMap_.end()) {
-        qCWarning(logCategoryDeviceScanner()) << "no device with deviceId" << deviceId;
-        return false;
+        qCWarning(logCategoryDeviceScanner()) << "No device with deviceId" << deviceId;
+        return "No device with deviceId " + deviceId;
     }
     const QBluetoothDeviceInfo & deviceInfo = *deviceInfoIterator;
 
     DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(deviceId, deviceInfo);
 
+    connect(device.get(), &Device::opened,
+            this, &BluetoothLowEnergyScanner::deviceOpenedHandler);
     connect(device.get(), &Device::deviceError,
             this, &BluetoothLowEnergyScanner::deviceErrorHandler);
 
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
+    createdDevices_.append(deviceId);
     emit deviceDetected(platform);
-    return true;
+    return QString();
+}
+
+QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
+{
+    qCDebug(logCategoryDeviceScanner()) << deviceId;
+
+    if (createdDevices_.removeOne(deviceId)) {
+        emit deviceLost(deviceId);
+        return QString();
+    }
+    if (discoveredDevicesMap_.contains(deviceId)) {
+        qCWarning(logCategoryDeviceScanner()) << "Device not connected:" << deviceId;
+        return "Device not connected.";
+    }
+    qCWarning(logCategoryDeviceScanner()) << "No such device ID:" << deviceId;
+    return "No such device ID.";
 }
 
 void BluetoothLowEnergyScanner::discoveryFinishedHandler()
@@ -151,23 +175,35 @@ void BluetoothLowEnergyScanner::discoveryErrorHandler(QBluetoothDeviceDiscoveryA
     emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, discoveryAgent_->errorString());
 }
 
+void BluetoothLowEnergyScanner::deviceOpenedHandler()
+{
+    Device *device = qobject_cast<Device*>(QObject::sender());
+    if (device == nullptr) {
+        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
+        return;
+    }
+    emit connectDeviceFinished(device->deviceId());
+}
+
 void BluetoothLowEnergyScanner::deviceErrorHandler(Device::ErrorCode error, QString errorString)
 {
     Q_UNUSED(errorString)
 
-    if (error == Device::ErrorCode::DeviceDisconnected) {
-        Device *device = qobject_cast<Device*>(QObject::sender());
-        if (device == nullptr) {
-            qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
-            return;
-        }
+    Device *device = qobject_cast<Device*>(QObject::sender());
+    if (device == nullptr) {
+        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
+        return;
+    }
 
+    if (error == Device::ErrorCode::DeviceDisconnected) {
         //loss is reported after error is processed in Platform
         QByteArray deviceId = device->deviceId();
         QTimer::singleShot(1, this, [this, deviceId](){
             qCDebug(logCategoryDeviceScanner) << "device loss is about to be reported for" << deviceId;
             emit deviceLost(deviceId);
         });
+    } else if (error == Device::ErrorCode::DeviceFailedToOpen) {
+        emit connectDeviceFailed(device->deviceId(), errorString);
     }
 }
 
