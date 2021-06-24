@@ -141,17 +141,15 @@ Item {
 
                                 onClicked: {
                                     switch (modelData.buttonType) {
-                                    case "save":
-                                        editorToolBar.saveClicked()
-                                        break;
-                                    case "undo":
-                                        editorToolBar.undoClicked()
-                                        break;
-                                    case "redo":
-                                        editorToolBar.redoClicked()
-                                        break;
-                                    default:
-                                        break;
+                                        case "save":
+                                            editorToolBar.saveClicked()
+                                            break
+                                        case "undo":
+                                            editorToolBar.undoClicked()
+                                            break
+                                        case "redo":
+                                            editorToolBar.redoClicked()
+                                            break
                                     }
                                 }
                             }
@@ -365,7 +363,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            source: switch(model.filetype) {
+                            source: {
+                                switch (model.filetype) {
                                     case "svg":
                                     case "jpg":
                                     case "jpeg":
@@ -381,7 +380,8 @@ Item {
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
                                         return "./Editor/UnsupportedFileType.qml"
-                                    }
+                                }
+                            }
                         }
                     }
                 }
