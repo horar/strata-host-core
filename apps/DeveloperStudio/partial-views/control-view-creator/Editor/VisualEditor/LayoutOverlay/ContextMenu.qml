@@ -76,7 +76,7 @@ Popup {
             text: "Go to Documentation"
 
             onClicked: {
-                visualEditor.functions.goToDocumentation(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`,layoutOverlayRoot.type)
+                Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
                 contextMenu.close()
             }
         }

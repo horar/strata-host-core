@@ -379,7 +379,7 @@ Item {
                                     case "ts":
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
-                                        return "./Editor/GenericControlContainer.qml"
+                                        return "./Editor/UnsupportedFileTypes.qml"
                                     }
                         }
                     }

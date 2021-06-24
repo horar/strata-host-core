@@ -68,5 +68,4 @@ QtObject {
       Misc Signal for CVC
     */
     signal loadCVC()
-    signal goToDocumentation(url newUrl, string name)
 }

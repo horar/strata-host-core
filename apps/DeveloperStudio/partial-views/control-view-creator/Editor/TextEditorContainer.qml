@@ -9,7 +9,6 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -431,15 +430,6 @@ ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.minimumWidth: 800
-        }
-
-        Connections {
-            target: visualEditor.functions
-
-            onGoToDocumentation: {
-                openFilesModel.addTab(name, "", "", visualEditor.functions.create_UUID())
-                Signals.goToDocumentation(newUrl, name)
-            }
         }
     }
 
