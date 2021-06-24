@@ -28,7 +28,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Git)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/strata-cmake-modules/Modules")
 
 include(SetupConfigurations)
 include(FeatureSummary)

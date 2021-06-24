@@ -1,5 +1,6 @@
 #include "SGFileTabModel.h"
-#include <QDebug>
+#include "logging/LoggingQtCategories.h"
+
 /*******************************************************************
  * class SGFileTabItem
  ******************************************************************/
@@ -135,27 +136,27 @@ QVariant SGFileTabModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= data_.size()) {
-        qWarning() << "Trying to access to out of range index in file tab list";
+        qCWarning(logCategoryControlViewCreator) << "Trying to access to out of range index in file tab list";
         return QVariant();
     }
 
     SGFileTabItem* tab = data_.at(row);
 
     switch (role) {
-    case FilenameRole:
-        return tab->filename();
-    case FilepathRole:
-        return tab->filepath();
-    case FiletypeRole:
-        return tab->filetype();
-    case UIdRole:
-        return tab->id();
-    case UnsavedChangesRole:
-        return tab->unsavedChanges();
-    case ExistsRole:
-        return tab->exists();
-    default:
-        return QVariant();
+        case FilenameRole:
+            return tab->filename();
+        case FilepathRole:
+            return tab->filepath();
+        case FiletypeRole:
+            return tab->filetype();
+        case UIdRole:
+            return tab->id();
+        case UnsavedChangesRole:
+            return tab->unsavedChanges();
+        case ExistsRole:
+            return tab->exists();
+        default:
+            return QVariant();
     }
 }
 
@@ -163,7 +164,7 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
 {
     int row = index.row();
     if (row < 0 || row >= data_.size()) {
-        qWarning() << "Trying to access to out of range index in file tab list";
+        qCWarning(logCategoryControlViewCreator) << "Trying to access to out of range index in file tab list";
         return false;
     }
 
@@ -171,34 +172,34 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
     bool success;
 
     switch (role) {
-    case FilenameRole:
-        success = tab->setFilename(value.toString());
-        break;
-    case FilepathRole:
-        success = tab->setFilepath(value.toUrl());
-        break;
-    case FiletypeRole:
-        success = tab->setFiletype(value.toString());
-        break;
-    case UIdRole:
-        tabIds_.remove(tab->id());
-        if (currentId_ == tab->id()) {
-            success = tab->setId(value.toString());
-            tabIds_.insert(tab->id());
-            setCurrentId(tab->id());
-        } else {
-            success = tab->setId(value.toString());
-            tabIds_.insert(tab->id());
-        }
-        break;
-    case UnsavedChangesRole:
-        success = tab->setUnsavedChanges(value.toBool());
-        break;
-    case ExistsRole:
-        success = tab->setExists(value.toBool());
-        break;
-    default:
-        return false;
+        case FilenameRole:
+            success = tab->setFilename(value.toString());
+            break;
+        case FilepathRole:
+            success = tab->setFilepath(value.toUrl());
+            break;
+        case FiletypeRole:
+            success = tab->setFiletype(value.toString());
+            break;
+        case UIdRole:
+            tabIds_.remove(tab->id());
+            if (currentId_ == tab->id()) {
+                success = tab->setId(value.toString());
+                tabIds_.insert(tab->id());
+                setCurrentId(tab->id());
+            } else {
+                success = tab->setId(value.toString());
+                tabIds_.insert(tab->id());
+            }
+            break;
+        case UnsavedChangesRole:
+            success = tab->setUnsavedChanges(value.toBool());
+            break;
+        case ExistsRole:
+            success = tab->setExists(value.toBool());
+            break;
+        default:
+            return false;
     }
 
     if (success) {
@@ -446,4 +447,3 @@ void SGFileTabModel::setCurrentId(const QString &id)
 }
 
 // CUSTOM FUNCTIONS END
-
