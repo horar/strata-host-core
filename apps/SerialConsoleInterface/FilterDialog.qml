@@ -234,19 +234,13 @@ SGWidgets.SGDialog {
                                 Keys.priority: Keys.BeforeItem
 
                                 Keys.onPressed: {
-                                    if (event.key === Qt.Key_Down) {
-                                        if (suggestionPopup.opened === false && filterStringTextField.activeFocus) {
-                                            suggestionPopup.open()
-                                        }
-                                        event.accepted = true
+                                    if (suggestionPopup.opened === false && filterStringTextField.activeFocus) {
+                                        suggestionPopup.open()
                                     }
                                 }
 
                                 onTextChanged: {
                                     filterConditionModel.setProperty(index, "filter_string", text)
-                                    if (suggestionPopup.opened === false && dialog.isVisible) {
-                                        suggestionPopup.open()
-                                    }
                                 }
 
                                 Binding {
