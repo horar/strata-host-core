@@ -427,9 +427,6 @@ ColumnLayout {
         VisualEditor {
             id: visualEditor
             file: model.filepath
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.minimumWidth: 800
         }
     }
 

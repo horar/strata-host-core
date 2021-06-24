@@ -13,6 +13,7 @@
         <file alias="Editor/TextEditorContainer.qml">partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
         <file alias="Editor/NoActiveFile.qml">partial-views/control-view-creator/Editor/NoActiveFile.qml</file>
         <file alias="Editor/ImageContainer.qml">partial-views/control-view-creator/Editor/ImageContainer.qml</file>
+        <file alias="Editor/UnsupportedFileType.qml">partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
         <file alias="navigation/SGSideNavItem.qml">partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
         <file alias="navigation/SideNavFooter.qml">partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
         <file alias="navigation/NavigationBar.qml">partial-views/control-view-creator/navigation/NavigationBar.qml</file>
@@ -70,6 +71,5 @@
         <file alias="PlatformInterfaceGenerator/TypeSelectorComboBox.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/TypeSelectorComboBox.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml</file>
         <file alias="components/SGConsoleLogNavigationIcon.qml">partial-views/control-view-creator/components/SGConsoleLogNavigationIcon.qml</file>
-        <file alias="Editor/UnsupportedFileTypes.qml">partial-views/control-view-creator/Editor/UnsupportedFileTypes.qml</file>
     </qresource>
 </RCC>

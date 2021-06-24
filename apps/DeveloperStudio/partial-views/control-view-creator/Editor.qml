@@ -358,6 +358,7 @@ Item {
                 Repeater {
                     id: fileEditorRepeater
                     model: openFilesModel
+
                     delegate: Component {
                         Loader {
                             id: fileLoader
@@ -379,7 +380,7 @@ Item {
                                     case "ts":
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
-                                        return "./Editor/UnsupportedFileTypes.qml"
+                                        return "./Editor/UnsupportedFileType.qml"
                                     }
                         }
                     }
