@@ -15,6 +15,7 @@ BasePlatformCommand::BasePlatformCommand(const PlatformPtr& platform, const QStr
     : cmdName_(commandName),
       cmdType_(cmdType),
       platform_(platform),
+      lastMsgNumber_(0),
       ackOk_(false),
       status_(operation::DEFAULT_STATUS),
       ackTimeout_(ACK_TIMEOUT),
@@ -53,7 +54,7 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
 
     responseTimer_.setInterval(ackTimeout_);
     responseTimer_.start();
-    platform_->sendMessage(this->message(), lockId);
+    lastMsgNumber_ = platform_->sendMessage(this->message(), lockId);
 }
 
 // If method 'sendCommand' is overriden, check if this method is still valid.
@@ -180,10 +181,10 @@ void BasePlatformCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
-void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, QString errStr)
+void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, unsigned msgNumber, QString errStr)
 {
     Q_UNUSED(rawMessage)
-    if (errStr.isEmpty() == false) {
+    if ((errStr.isEmpty() == false) && (msgNumber == lastMsgNumber_)) {
         responseTimer_.stop();
         qCCritical(logCategoryPlatformCommand) << platform_ << QStringLiteral("Cannot send '")
             << cmdName_ << QStringLiteral("' command. Error: '") << errStr << '\'';

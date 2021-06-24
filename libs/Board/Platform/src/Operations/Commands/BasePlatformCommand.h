@@ -146,7 +146,7 @@ protected:
 private slots:
     void handleDeviceResponse(const PlatformMessage message);
     void handleResponseTimeout();
-    void handleMessageSent(QByteArray rawMessage, QString errStr);
+    void handleMessageSent(QByteArray rawMessage, unsigned msgNumber, QString errStr);
 
 protected slots:
     void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
@@ -162,6 +162,7 @@ protected:
     const CommandType cmdType_;
     const PlatformPtr& platform_;
     QTimer responseTimer_;
+    unsigned lastMsgNumber_;
     bool ackOk_;
     int status_;
 

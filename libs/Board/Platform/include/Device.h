@@ -76,8 +76,14 @@ namespace strata::device {
         /**
          * Send message to device. Emits deviceError() signal in case of failure.
          * @param msg message to be written to device
+         * @return serial number of the sent message
          */
-        virtual void sendMessage(const QByteArray& msg) = 0;
+        virtual unsigned sendMessage(const QByteArray& msg) = 0;
+
+        /**
+         * Returns serial number for next message.
+         */
+        virtual unsigned nextMessageNumber() final;
 
         /**
          * Get device ID.
@@ -127,9 +133,10 @@ namespace strata::device {
         /**
          * Emitted when message was written to device or some problem occured and message cannot be written.
          * @param msg writen message to device
+         * @param msgNum serial number of the sent message
          * @param errStr error string if message cannot be sent, empty (null) when everything is OK
          */
-        void messageSent(QByteArray msg, QString errStr);
+        void messageSent(QByteArray msg, unsigned msgNum, QString errStr);
 
         /**
          * Emitted when error occured during communication or connection.
@@ -142,5 +149,8 @@ namespace strata::device {
         const QByteArray deviceId_;
         const QString deviceName_;  // name given by system (e.g. COM3)
         const Type deviceType_;
+
+    private:
+        unsigned messageNumber_;
     };
 }  // namespace

@@ -35,7 +35,8 @@ Platform::Platform(const device::DevicePtr& device) :
 
     connect(device_.get(), &device::Device::opened, this, &Platform::openedHandler);
     connect(device_.get(), &device::Device::messageReceived, this, &Platform::messageReceivedHandler);
-    connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler);
+    // 'messageSent' must be connected via queued connection, see comment in 'messageSentHandler'
+    connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler, Qt::QueuedConnection);
     connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
 
     reconnectTimer_.setSingleShot(true);
@@ -95,8 +96,11 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
     }
 }
 
-void Platform::messageSentHandler(QByteArray rawMsg, QString errStr) {
-    emit messageSent(rawMsg, errStr);
+void Platform::messageSentHandler(QByteArray rawMsg, unsigned msgNum, QString errStr) {
+    // We need to emit 'messageSent' signal after return from 'sendMessage' method,
+    // (due to error handling), so this slot must be connected via 'Qt::QueuedConnection'
+    // or signal must be emitted via single-shot timer (with duration 0 ms).
+    emit messageSent(rawMsg, msgNum, errStr);
 }
 
 void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errStr) {
@@ -133,12 +137,12 @@ void Platform::terminate(bool close) {
 }
 
 // public method
-void Platform::sendMessage(const QByteArray& message) {
-    sendMessage(message, 0);
+unsigned Platform::sendMessage(const QByteArray& message) {
+    return sendMessage(message, 0);
 }
 
 // private method
-void Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+unsigned Platform::sendMessage(const QByteArray& message, quintptr lockId) {
     // Strata commands must end with new line character ('\n')
     QByteArray msgToWrite(message);
     if (msgToWrite.endsWith('\n') == false) {
@@ -153,12 +157,14 @@ void Platform::sendMessage(const QByteArray& message, quintptr lockId) {
         }
     }
     if (canWrite) {
-        device_->sendMessage(msgToWrite);
-    } else {
-        QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-        qCWarning(logCategoryPlatform) << this << errMsg;
-        emit device_->messageSent(msgToWrite, errMsg);
+        return device_->sendMessage(msgToWrite);
     }
+
+    QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
+    qCWarning(logCategoryPlatform) << this << errMsg;
+    unsigned messageNumber = device_->nextMessageNumber();
+    emit device_->messageSent(msgToWrite, messageNumber, errMsg);
+    return messageNumber;
 }
 
 QString Platform::name() {

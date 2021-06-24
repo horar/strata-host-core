@@ -44,8 +44,9 @@ public:
     /**
      * Send message to mock device. Emits messageSent.
      * @param msg message to be written to device
+     * @return serial number of the sent message
      */
-    virtual void sendMessage(const QByteArray& msg) override;
+    virtual unsigned sendMessage(const QByteArray& msg) override;
 
     /**
      * Check if mock device is connected (communication with it is possible).

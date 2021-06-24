@@ -294,8 +294,10 @@ void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage mes
     filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, QString errorString)
+void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, unsigned msgNumber, QString errorString)
 {
+    Q_UNUSED(msgNumber)
+
     if (errorString.isEmpty()) {
         scrollbackModel_->append(rawMessage, true);
     } else {

@@ -104,8 +104,9 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
     emit platformMessage(platform->platformId(), wrapperStrJson);
 }
 
-void PlatformController::messageToPlatform(QByteArray rawMessage, QString errorString)
+void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString)
 {
+    Q_UNUSED(msgNumber)
     if (errorString.isEmpty() == false) {
         qCWarning(logCategoryHcsPlatform).noquote().nospace() << "Cannot send message: '"
             << rawMessage << "', error: '" << errorString << '\'';
