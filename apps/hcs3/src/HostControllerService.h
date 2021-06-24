@@ -133,6 +133,7 @@ private slots:
     void platformConnected(const QByteArray& deviceId);
     void platformDisconnected(const QByteArray& deviceId);
 
+    void bluetoothScanFinished(const QJsonObject payload);
 private:
     void handleMessage(const DispatcherMessage& msg);
 
@@ -151,7 +152,8 @@ private:
         updateFirmware,
         updateFirmwareJob,
         programController,
-        programControllerJob
+        programControllerJob,
+        bluetoothScan
     };
     const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
     QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
@@ -166,6 +168,7 @@ private:
     void processCmdProgramController(const QJsonObject &payload, const QByteArray &clientId);
     void processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId);
     void processCmdCheckForUpdates(const QByteArray &clientId);
+    void processCmdBluetoothScan();
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 

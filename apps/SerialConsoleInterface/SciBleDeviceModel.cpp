@@ -69,7 +69,7 @@ void SciBleDeviceModel::tryConnectDevice(int index)
         qCWarning(logCategorySci) << "index out of range";
     }
 
-    scanner_->tryConnectDevice(data_.at(index).address);
+    scanner_->tryConnectDevice(data_.at(index).deviceId);
 }
 
 QVariantMap SciBleDeviceModel::get(int row)
@@ -125,9 +125,12 @@ void SciBleDeviceModel::populateModel()
     for (const auto &info : infoList) {
         SciBleDeviceModelItem item;
 
+        item.deviceId = info.deviceId;
         item.name = info.name;
         item.address = info.address;
+        item.rssi = info.rssi;
         item.manufacturerIds = info.manufacturerIds;
+        item.isStrata = info.isStrata;
 
         data_.append(item);
     }

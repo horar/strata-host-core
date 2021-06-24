@@ -7,9 +7,12 @@
 using strata::device::scanner::BluetoothLowEnergyScanner;
 
 struct SciBleDeviceModelItem {
+    QByteArray deviceId;
     QString name;
     QString address;
+    qint16 rssi;
     QVector<quint16> manufacturerIds;
+    bool isStrata;
 };
 
 class SciBleDeviceModel : public QAbstractListModel
