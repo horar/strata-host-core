@@ -42,6 +42,12 @@ bool SGUtilsCpp::isFile(const QString &file)
     return info.isFile();
 }
 
+bool SGUtilsCpp::isValidFile(const QString &file)
+{
+    QUrl url(file);
+    return url.isValid();
+}
+
 bool SGUtilsCpp::createFile(const QString &filepath)
 {
     QFile file(filepath);
