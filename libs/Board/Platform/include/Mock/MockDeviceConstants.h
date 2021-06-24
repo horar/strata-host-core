@@ -558,13 +558,13 @@ R"({
 const QByteArray request_platform_id_response_bootloader_invalid = normalizeMessage(
 R"({
     "notification":{
-        "value":"platform_id",
+        "value":"bootloader_id",
         "payload":{
-            "name":"Bootloader",
-            "platform_id":"Unknown",
-            "class_id":"bootloader",
-            "count":0,
-            "platform_id_version":"2.0"
+            "name":-1,
+            "platform_id":"bootloader",
+            "class_id":"class",
+            "count":-1,
+            "platform_id_version":-1,
         }
     }
 })");

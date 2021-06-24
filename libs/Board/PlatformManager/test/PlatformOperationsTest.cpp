@@ -304,19 +304,14 @@ void PlatformOperationsTest::invalidValueTest()
 
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
 
+    QVERIFY(platform_->name().isEmpty());
+    QVERIFY(platform_->classId().isEmpty());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
     QCOMPARE(platform_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
     QCOMPARE(platform_->applicationVer(),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
-    expectedDoc.Parse(test_commands::request_platform_id_response_bootloader_invalid.data());
-    QCOMPARE(platform_->name(),
-             expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(platform_->platformId(),
-             expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(platform_->classId(),
-             expectedDoc["notification"]["payload"]["class_id"].GetString());
-    QCOMPARE(operationTimeoutCount_,2);
+    QCOMPARE(operationTimeoutCount_,3);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 6);
