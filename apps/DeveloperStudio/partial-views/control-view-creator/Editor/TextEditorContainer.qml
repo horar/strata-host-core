@@ -11,6 +11,8 @@ import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
 
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 import "../../general"
 import "../"
 import "../components"
@@ -18,7 +20,7 @@ import "../components"
 ColumnLayout {
     id: fileContainerRoot
     spacing: 0
-    
+
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus()
@@ -339,7 +341,19 @@ ColumnLayout {
             settings.pluginsEnabled: true
             settings.showScrollBars: false
 
-            onJavaScriptConsoleMessage: console.log(message)
+            onJavaScriptConsoleMessage: {
+                switch (level) {
+                    case WebEngineView.InfoMessageLevel:
+                        console.log(message)
+                        break
+                    case WebEngineView.WarningMessageLevel:
+                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                    case WebEngineView.ErrorMessageLevel:
+                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                }
+            }
 
             onHeightChanged: {
                 var htmlHeight = height - 16
@@ -351,7 +365,7 @@ ColumnLayout {
                 channelObject.setContainerWidth(htmlWidth.toString())
             }
 
-            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
+            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
             // the visibilty changed is called when the window is resized from signals outside of the app
             Connections {
                 target: mainWindow
@@ -369,6 +383,13 @@ ColumnLayout {
                     let fileText = openFile(model.filepath)
                     channelObject.setHtml(fileText)
                     channelObject.fileText = fileText
+                } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
+                    let errorProperties = {
+                        "error_intro": "Control View Creator Error:",
+                        "error_message": "Monaco text editor component failed to load or was not found"
+                    }
+                    
+                    fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
                 }
             }
 
@@ -447,9 +468,9 @@ ColumnLayout {
             setValue(value)
         }
 
-         function checkForErrors(flag,log) {
-            if(flag){
-               console.error(log)
+        function checkForErrors(flag,log) {
+            if (flag) {
+            	console.error(log)
             }
         }
 

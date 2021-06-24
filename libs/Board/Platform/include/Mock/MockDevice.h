@@ -2,7 +2,6 @@
 
 #include <Device.h>
 #include <Mock/MockDeviceControl.h>
-#include <list>
 
 namespace strata::device {
 
@@ -26,9 +25,9 @@ public:
 
     /**
      * Open mock device
-     * @return true if port was opened, otherwise false
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close mock device
@@ -62,14 +61,12 @@ public:
 
     // commands to control mock device behavior
 
-    void mockEmitMessage(const QByteArray& msg);
     void mockEmitResponses(const QByteArray& msg);
 
-    std::vector<QByteArray> mockGetRecordedMessages();
+    std::vector<QByteArray> mockGetRecordedMessages() const;
     std::vector<QByteArray>::size_type mockGetRecordedMessagesCount() const;
     void mockClearRecordedMessages();
 
-    bool mockIsOpened() const;
     bool mockIsOpenEnabled() const;
     bool mockIsLegacy() const;
     bool mockIsBootloader() const;
@@ -87,13 +84,14 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
     bool mockSetAsBootloader(bool isBootloader);
-    bool mockCreateMockFirmware(bool createFirmware);
+    bool mockSetFirmwareEnabled(bool enabled);
+
+private slots:
+    void readMessage(QByteArray msg);
+    void handleError(ErrorCode errCode, QString msg);
 
 private:
     bool opened_ = false;
-    bool autoResponse_ = true;
-    bool saveMessages_;
-    std::list<QByteArray> recordedMessages_;
     MockDeviceControl control_;
 };
 
