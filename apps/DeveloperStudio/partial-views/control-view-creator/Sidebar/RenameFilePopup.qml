@@ -43,67 +43,65 @@ SGStrataPopup {
     contentItem: ColumnLayout {
         id: column
         width: parent.width
+        height: 150
 
-        ColumnLayout {
-            implicitWidth: parent.width
-            Layout.preferredHeight: 150
+        SGText {
+            text: "Renaming <i>" + fileName + "</i><br><br>to <i>" + newFilenameInfobox.text + (fileExtension === "" ? "" : ("." + fileExtension)) + "</i>"
+            wrapMode: Text.Wrap
+            Layout.fillWidth: true
+        }
+
+        RowLayout {
+            id: newFilenameRow
+            spacing: 0
+            Layout.fillWidth: true
 
             SGText {
-                text: "Renaming <i>" + fileName + "</i><br><br>to <i>" + newFilenameInfobox.text + (fileExtension === "" ? "" : ("." + fileExtension)) + "</i>"
+                text: "New " + renameType + " Name: "
             }
 
-            RowLayout {
-                id: newFilenameRow
-                spacing: 0
-                Layout.fillWidth: true
-
-                SGText {
-                    text: "New " + renameType + " Name: "
-                }
-
-                SGInfoBox {
-                    id: newFilenameInfobox
-                    implicitWidth: renameType === "File" ? 180 : 165
-                    readOnly: false
-                    enabled: true
-                    contextMenuEnabled: true
-                }
+            SGInfoBox {
+                id: newFilenameInfobox
+                implicitWidth: renameType === "File" ? 180 : 165
+                readOnly: false
+                enabled: true
+                contextMenuEnabled: true
             }
+        }
 
-            SGButton {
-                id: renameFileButton
-                text: "Rename " + renameType
-                enabled: filenameReqsPopup.filenameValid && newFilenameInfobox.text !== fileBaseName
+        SGButton {
+            id: renameFileButton
+            text: "Rename " + renameType
+            enabled: filenameReqsPopup.filenameValid && newFilenameInfobox.text !== fileBaseName
 
-                onClicked: {
-                    let parentDir
-                    if (directoryPath) {
-                        parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(directoryPath))
-                    } else {
-                        parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(treeModel.projectDirectory))
+            onClicked: {
+                let parentDir
+                if (directoryPath) {
+                    parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(directoryPath))
+                } else {
+                    parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(treeModel.projectDirectory))
+                }
+
+                const newFileName = newFilenameInfobox.text + (fileExtension === "" ? "" : ("." + fileExtension))
+                const url = SGUtilsCpp.joinFilePath(parentDir, newFileName)
+
+                treeModel.stopWatchingPath(parentDir)
+
+                const success = treeModel.renameFile(modelIndex, newFileName)
+                if (success) {
+                    if (openFilesModel.hasTab(uid)) {
+                        openFilesModel.updateTab(uid, newFileName, url, fileExtension)
+                    } else if (renameType === "Folder") {
+                        handleRenameForOpenFiles(treeModel.getNode(modelIndex))
                     }
+                }
 
-                    const newFileName = newFilenameInfobox.text + (fileExtension === "" ? "" : ("." + fileExtension))
-                    const url = SGUtilsCpp.joinFilePath(parentDir, newFileName)
+                treeModel.startWatchingPath(parentDir)
 
-                    treeModel.stopWatchingPath(parentDir)
-
-                    const success = treeModel.renameFile(modelIndex, newFileName)
-                    if (success) {
-                        if (openFilesModel.hasTab(uid)) {
-                            openFilesModel.updateTab(uid, newFileName, url, fileExtension)
-                        } else if (renameType === "Folder") {
-                            handleRenameForOpenFiles(treeModel.getNode(modelIndex))
-                        }
-                    }
-
-                    treeModel.startWatchingPath(parentDir)
-
-                    if (!success) {
-                        console.error("Could not rename file:", SGUtilsCpp.urlToLocalFile(url))
-                    } else {
-                        renameFilePopup.close()
-                    }
+                if (!success) {
+                    console.error("Could not rename file:", SGUtilsCpp.urlToLocalFile(url))
+                } else {
+                    renameFilePopup.close()
                 }
             }
         }
@@ -126,10 +124,10 @@ SGStrataPopup {
         property bool filenameAndExtensionValid: {
             if (renameFilePopup.renameType === "File" && renameFilePopup.fileExtension === "qml") {
                 // QML filenames must not contain anything but alphanumeric and underscores
-                return newFilenameInfobox.text.match(/^[a-zA-Z0-9_]*\.?[a-zA-Z0-9_]*$/)
+                return newFilenameInfobox.text.match(/^[a-zA-Z0-9_]+$/)
             } else {
                 // Other file types/folders name must be valid, not already exist
-                return newFilenameInfobox.text.match(/^[a-zA-Z0-9-_]*\.?[a-zA-Z0-9-_]+$/)
+                return newFilenameInfobox.text.match(/^[a-zA-Z0-9-_\. ]+$/)
             }
         }
 
