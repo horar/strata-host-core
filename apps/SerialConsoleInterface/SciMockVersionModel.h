@@ -15,7 +15,7 @@ public:
     virtual ~SciMockVersionModel() override;
 
     Q_INVOKABLE QVariantMap get(int row);
-    Q_INVOKABLE int find(const QVariant& version) const;
+    Q_INVOKABLE int find(const QVariant& type) const;
     Q_INVOKABLE QVariant data(int row, const QByteArray &role) const;
 
     enum ModelRole {

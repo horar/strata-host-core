@@ -38,12 +38,12 @@ QVariantMap SciMockVersionModel::get(int row)
     return res;
 }
 
-int SciMockVersionModel::find(const QVariant& version) const
+int SciMockVersionModel::find(const QVariant& type) const
 {
-    MockVersion mockVersion = version.value<MockVersion>();
+    MockVersion version = type.value<MockVersion>();
     int count = 0;
     for (auto iter = versions_.constBegin(); iter != versions_.constEnd(); ++iter) {
-        if (iter->type_ == mockVersion) {
+        if (iter->type_ == version) {
             return count;
         }
         ++count;
