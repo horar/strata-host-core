@@ -74,6 +74,7 @@ signals:
     bool platformStateChanged(bool platform_connected_state);
     bool platformListChanged(QString list);
     bool connectedPlatformListChanged(QString list);
+    void connectedPlatformListMessage(QJsonObject payload);
     bool hcsTokenChanged(QString token);
 
     void platformMetaData(QJsonObject payload);
@@ -93,6 +94,10 @@ signals:
 
     void programControllerReply(QJsonObject payload);
     void programControllerJobUpdate(QJsonObject payload);
+
+    void bluetoothScan(QJsonObject payload);
+    void connectDevice(QJsonObject payload);
+    void disconnectDevice(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);

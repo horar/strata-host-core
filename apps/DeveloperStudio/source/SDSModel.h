@@ -16,6 +16,7 @@ class SGNewControlView;
 class ProgramControllerManager;
 class PlatformInterfaceGenerator;
 class DebugMenuGenerator;
+class BleDeviceModel;
 
 class SDSModel: public QObject
 {
@@ -32,6 +33,7 @@ class SDSModel: public QObject
     Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
+    Q_PROPERTY(BleDeviceModel* bleDeviceModel READ bleDeviceModel CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -50,6 +52,7 @@ public:
     DebugMenuGenerator* debugMenuGenerator() const;
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
+    BleDeviceModel *bleDeviceModel() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -80,6 +83,7 @@ private:
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
     QPointer<QProcess> hcsProcess_;
     bool externalHcsConnected_{false};
+    BleDeviceModel *bleDeviceModel_{nullptr};
 
     void setHcsConnected(bool hcsConnected);
 };

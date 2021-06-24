@@ -172,6 +172,33 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    Connections {
+        target: sdsModel.bleDeviceModel
+        onTryConnectFinished: {
+            if (errorString.length > 0) {
+                showBleNotification("BLE device connection atempt failed", errorString);
+            }
+        }
+
+        onTryDisconnectFinished: {
+            if (errorString.length > 0) {
+                showBleNotification("BLE device disconnection atempt failed", errorString);
+            }
+        }
+
+        function showBleNotification(title, description) {
+            Notifications.createNotification(
+                        title,
+                        Notifications.Warning,
+                        "current",
+                        {
+                            "description": description,
+                            "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                        }
+                        )
+        }
+    }
+
     Loader {
         id: updateLoader
         active: false

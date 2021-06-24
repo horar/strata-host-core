@@ -34,6 +34,7 @@
 #include "ProgramControllerManager.h"
 #include "PlatformInterfaceGenerator.h"
 #include "DebugMenuGenerator.h"
+#include <BleDeviceModel.h>
 
 #include "AppUi.h"
 #include "config/AppConfig.h"
@@ -150,6 +151,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
     qmlRegisterUncreatableType<ProgramControllerManager>("tech.strata.ProgramControllerManager", 1, 0, "ProgramControllerManager", "You can't instantiate ProgramControllerManager in QML");
+    qmlRegisterUncreatableType<BleDeviceModel>("tech.strata.BleDeviceModel", 1, 0, "BleDeviceModel", "You can't instantiate BleDeviceModel in QML");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
