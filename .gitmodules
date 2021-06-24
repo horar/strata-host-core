@@ -27,3 +27,6 @@
 	path = extern/libevent
 	url = https://github.com/libevent/libevent.git
 	ignore = dirty
+[submodule "strata-cmake-modules"]
+	path = strata-cmake-modules
+	url = https://code.onsemi.com/scm/secswst/strata-cmake-modules.git

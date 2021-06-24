@@ -1,18 +1,18 @@
 #include <Mock/MockDevice.h>
-
 #include "logging/LoggingQtCategories.h"
-
-#include <QTimer>
 
 namespace strata::device {
 
 MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bool saveMessages)
     : Device(deviceId, name, Device::Type::MockDevice),
-      saveMessages_(saveMessages)
+      control_(saveMessages)
 {
     qCDebug(logCategoryDeviceMock).nospace().noquote()
         << "Created new mock device, ID: " << deviceId_ << ", name: " << deviceName_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
+
+    connect(&control_, &MockDeviceControl::errorOccurred, this, &MockDevice::handleError);
+    connect(&control_, &MockDeviceControl::messageDispatched, this, &MockDevice::readMessage);
 }
 
 MockDevice::~MockDevice()
@@ -23,22 +23,33 @@ MockDevice::~MockDevice()
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-bool MockDevice::open()
+void MockDevice::open()
 {
     if (opened_ == true) {
         qCWarning(logCategoryDeviceMock) << this << "Attempt to open already opened mock port";
-        return true;
+    } else {
+        opened_ = mockIsOpenEnabled();
     }
 
-    opened_ = mockIsOpenEnabled();
-
-    return opened_;
+    if (opened_) {
+        emit Device::opened();
+    } else {
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device (mockSetOpenEnabled set to true).");
+    }
 }
 
 void MockDevice::close()
 {
-    opened_ = false;
-    recordedMessages_.clear();
+    if (opened_) {
+        opened_ = false;
+        mockClearRecordedMessages();
+
+        if (mockIsErrorOnCloseSet()) {
+            QString errMsg(QStringLiteral("Unable to properly close mock device (mockSetErrorOnClose set to true)."));
+            qCWarning(logCategoryDeviceMock) << this << errMsg;
+            emit deviceError(ErrorCode::DeviceError, errMsg);
+        }
+    }
 }
 
 QByteArray MockDevice::createDeviceId(const QString& mockName)
@@ -49,25 +60,26 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
 bool MockDevice::sendMessage(const QByteArray& msg)
 {
     if (opened_ == false) {
+        QString errMsg(QStringLiteral("Cannot write data to device, device is not open."));
+        qCCritical(logCategoryDeviceMock) << this << errMsg;
+        emit deviceError(ErrorCode::DeviceError, errMsg);
         return false;
     }
 
     qCDebug(logCategoryDeviceMock) << this << "Received request:" << msg;
-    if (saveMessages_) {
-        if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
-            qCWarning(logCategoryDeviceMock) << this << "Maximum number (" << MAX_STORED_MESSAGES
-                                             << ") of stored messages reached";
-            recordedMessages_.pop_front();
+
+    if (control_.writeMessage(msg) == msg.size()) {
+        emit messageSent(msg);
+        if (mockIsAutoResponse()) {
+            mockEmitResponses(msg);
         }
-
-        recordedMessages_.push_back(msg);
+        return true;
+    } else {
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetErrorOnNthMessage set to true)."));
+        qCWarning(logCategoryDeviceSerial) << this << errMsg;
+        emit deviceError(ErrorCode::DeviceError, errMsg);
+        return false;
     }
-
-    emit messageSent(msg);
-    if (autoResponse_) {
-        mockEmitResponses(msg);
-    }
-    return true;
 }
 
 bool MockDevice::isConnected() const
@@ -81,142 +93,149 @@ void MockDevice::resetReceiving()
     return;
 }
 
-void MockDevice::mockEmitMessage(const QByteArray& msg)
+void MockDevice::readMessage(QByteArray msg)
 {
+    qCDebug(logCategoryDeviceMock) << this << "Returning response:" << msg;
     emit messageReceived(msg);
+}
+
+void MockDevice::handleError(ErrorCode errCode, QString msg) {
+    if (errCode != ErrorCode::NoError) {  // Do not emit error signal if there is no error.
+        emit deviceError(errCode, msg);
+    }
 }
 
 void MockDevice::mockEmitResponses(const QByteArray& msg)
 {
-    auto responses = control_.getResponses(msg);
-    QTimer::singleShot(
-                10, this, [=]() {
-        for (const QByteArray& response : responses) { // deferred emit (if emitted in the same loop, may cause trouble)
-            qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
-            emit messageReceived(response);
-        }
-    });
+    control_.emitResponses(msg);
 }
 
-std::vector<QByteArray> MockDevice::mockGetRecordedMessages()
+void MockDevice::mockEmitError(const ErrorCode& errCode, const QString& msg)
 {
-    // copy the result, recordedMessages_ may change over time
-    std::vector<QByteArray> result(recordedMessages_.size());
-    std::copy(recordedMessages_.begin(), recordedMessages_.end(), result.begin());
+    emit deviceError(errCode, msg);
+}
 
-    return result;
+std::vector<QByteArray> MockDevice::mockGetRecordedMessages() const
+{
+    return control_.getRecordedMessages();
 }
 
 std::vector<QByteArray>::size_type MockDevice::mockGetRecordedMessagesCount() const
 {
-    return recordedMessages_.size();
+    return control_.getRecordedMessagesCount();
 }
 
 void MockDevice::mockClearRecordedMessages()
 {
-    recordedMessages_.clear();
-}
-
-bool MockDevice::mockIsOpened() const
-{
-    return opened_;
+    return control_.clearRecordedMessages();
 }
 
 bool MockDevice::mockIsOpenEnabled() const
 {
-    return control_.mockIsOpenEnabled();
+    return control_.isOpenEnabled();
 }
 
 bool MockDevice::mockIsLegacy() const
 {
-    return control_.mockIsLegacy();
-}
-
-bool MockDevice::mockIsBootloader() const
-{
-    return control_.mockIsBootloader();
+    return control_.isLegacy();
 }
 
 bool MockDevice::mockIsAutoResponse() const
 {
-    return autoResponse_;
+    return control_.isAutoResponse();
+}
+
+bool MockDevice::mockIsBootloader() const
+{
+    return control_.isBootloader();
+}
+
+bool MockDevice::mockIsFirmwareEnabled() const
+{
+    return control_.isFirmwareEnabled();
+}
+
+bool MockDevice::mockIsErrorOnCloseSet() const
+{
+    return control_.isErrorOnCloseSet();
+}
+
+bool MockDevice::mockIsErrorOnNthMessageSet() const
+{
+    return control_.isErrorOnNthMessageSet();
 }
 
 MockCommand MockDevice::mockGetCommand() const
 {
-    return control_.mockGetCommand();
+    return control_.getCommand();
 }
 
 MockResponse MockDevice::mockGetResponse() const
 {
-    return control_.mockGetResponse();
+    return control_.getResponse();
 }
 
 MockVersion MockDevice::mockGetVersion() const
 {
-    return control_.mockGetVersion();
+    return control_.getVersion();
 }
 
 bool MockDevice::mockSetOpenEnabled(bool enabled)
 {
-    return control_.mockSetOpenEnabled(enabled);
+    return control_.setOpenEnabled(enabled);
 }
 
 bool MockDevice::mockSetLegacy(bool isLegacy)
 {
-    return control_.mockSetLegacy(isLegacy);
+    return control_.setLegacy(isLegacy);
 }
 
 bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
-    if (autoResponse_ != autoResponse) {
-        autoResponse_ = autoResponse;
-        qCDebug(logCategoryDeviceMock) << "Configured auto-response to" << autoResponse_;
-        return true;
-    }
-    qCDebug(logCategoryDeviceMock) << "Auto-response already configured to" << autoResponse_;
-    return false;
+    return control_.setAutoResponse(autoResponse);
 }
 
 bool MockDevice::mockSetSaveMessages(bool saveMessages)
 {
-    if (saveMessages_ != saveMessages) {
-        saveMessages_ = saveMessages;
-        qCDebug(logCategoryDeviceMock) << "Configured save-messages mode to" << saveMessages_;
-        return true;
-    }
-    qCDebug(logCategoryDeviceMock) << "Save-messages already configured to" << saveMessages_;
-    return false;
+    return control_.setSaveMessages(saveMessages);
 }
 
 bool MockDevice::mockSetCommand(MockCommand command)
 {
-    return control_.mockSetCommand(command);
+    return control_.setCommand(command);
 }
 
 bool MockDevice::mockSetResponse(MockResponse response)
 {
-    return control_.mockSetResponse(response);
+    return control_.setResponse(response);
 }
 
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
 {
-    return control_.mockSetResponseForCommand(response, command);
+    return control_.setResponseForCommand(response, command);
 }
 
 bool MockDevice::mockSetVersion(MockVersion version)
 {
-    return control_.mockSetVersion(version);
+    return control_.setVersion(version);
 }
 
 bool MockDevice::mockSetAsBootloader(bool isBootloader)
 {
-    return control_.mockSetAsBootloader(isBootloader);
+    return control_.setAsBootloader(isBootloader);
 }
 
 bool MockDevice::mockSetFirmwareEnabled(bool enabled)
 {
-    return control_.mockSetFirmwareEnabled(enabled);
+    return control_.setFirmwareEnabled(enabled);
+}
+
+bool MockDevice::mockSetErrorOnClose(bool enabled) {
+    return control_.setErrorOnClose(enabled);
+}
+
+bool MockDevice::mockSetErrorOnNthMessage(unsigned messageNumber) {
+    return control_.setErrorOnNthMessage(messageNumber);
 }
 
 }  // namespace strata::device

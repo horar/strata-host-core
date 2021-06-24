@@ -8,7 +8,7 @@ Menu {
         text: "Add to Qrc"
         enabled: !model.inQrc && model.filetype !== "rcc"
         onTriggered: {
-            treeModel.addToQrc(styleData.index);
+            treeModel.addToQrc(styleData.index)
             fileContextMenu.dismiss()
         }
     }
@@ -17,7 +17,7 @@ Menu {
         text: "Remove from Qrc"
         enabled: model.inQrc && model.filename !== "Control.qml"
         onTriggered: {
-            treeModel.removeFromQrc(styleData.index);
+            treeModel.removeFromQrc(styleData.index)
             fileContextMenu.dismiss()
         }
     }
@@ -43,8 +43,13 @@ Menu {
         text: "Delete File"
         enabled: model.filename !== "Control.qml"
         onTriggered: {
-            openFilesModel.closeTab(model.uid)
-            treeModel.deleteFile(model.row, styleData.index.parent)
+            confirmDeleteFile.deleteType = "File"
+            confirmDeleteFile.fileName = model.filename
+            confirmDeleteFile.uid = model.uid
+            confirmDeleteFile.row = model.row
+            confirmDeleteFile.index = styleData.index.parent
+
+            confirmDeleteFile.open()
             fileContextMenu.dismiss()
         }
     }
@@ -63,7 +68,7 @@ Menu {
         text: "Add Existing File to Qrc"
         onTriggered: {
             existingFileDialog.callerIndex = styleData.index.parent
-            existingFileDialog.open();
+            existingFileDialog.open()
             fileContextMenu.dismiss()
         }
     }

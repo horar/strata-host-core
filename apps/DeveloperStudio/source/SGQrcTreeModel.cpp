@@ -656,6 +656,8 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         }
         success = QDir(SGUtilsCpp::urlToLocalFile(child->filepath())).removeRecursively();
     } else {
+        // TODO: add feature to move file to trash instead of permanently deleting it (requires Qt >= 5.15)
+        // https://jira.onsemi.com/browse/CS-2055
         success = SGUtilsCpp::removeFile(SGUtilsCpp::urlToLocalFile(child->filepath()));
     }
 
