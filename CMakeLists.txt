@@ -82,11 +82,12 @@ if(IS_DIRECTORY "${STRATA_PLATFORM_CONTROL_VIEWS}")
     add_subdirectory("${STRATA_PLATFORM_CONTROL_VIEWS}" "${CMAKE_BINARY_DIR}/strata-platform-control-views")
 endif()
 
+# Note: please be careful with following subdirectory order; there are dependencies!
 add_subdirectory(extern)
-add_subdirectory(components)
 add_subdirectory(apps)
 add_subdirectory(libs)
 add_subdirectory(utils)
+add_subdirectory(components)
 
 message(STATUS "=============================================================================")
 message(STATUS "QML import paths:")
