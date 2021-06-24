@@ -154,10 +154,16 @@ void PlatformController::connectDevice(const QByteArray &deviceId, const QByteAr
     std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
     if (bleDeviceScanner != nullptr) {
-        QString errorMessage = bleDeviceScanner->connectDevice(deviceId);
-        if (false == errorMessage.isEmpty()) {
-            emit connectDeviceFailed(deviceId, clientId, errorMessage);
+        if (false == connectDeviceRequests_.contains(deviceId)) {
+            QString errorMessage = bleDeviceScanner->connectDevice(deviceId);
+            if (false == errorMessage.isEmpty()) {
+                emit connectDeviceFailed(deviceId, clientId, errorMessage);
+            } else {
+                //subscribe for the result
+                connectDeviceRequests_.insert(deviceId, clientId);
+            }
         } else {
+            // device already being connected, just subscribe for the result
             connectDeviceRequests_.insert(deviceId, clientId);
         }
     } else
