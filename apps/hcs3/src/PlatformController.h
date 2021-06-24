@@ -73,5 +73,7 @@ private:
 
     // map: deviceID <-> Platform
     QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
-    // access to platforms_ should be protected by mutex in case of multithread usage
+    // map: deviceID <-> number of last sent message
+    QHash<QByteArray, unsigned> sentMessageNumbers_;
+    // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage
 };
