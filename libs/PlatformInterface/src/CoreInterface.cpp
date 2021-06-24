@@ -194,7 +194,6 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
             connected_platform_list_ = strJson_payload;
             emit connectedPlatformListChanged(connected_platform_list_);
         }
-
         emit connectedPlatformListMessage(payload);
     } else if (type == "all_platforms") {
         if( platform_list_ != strJson_payload ) {
