@@ -105,7 +105,7 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
 
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    createdDevices_.append(deviceId);
+    createdDevices_.insert(deviceId);
     emit deviceDetected(platform);
     return QString();
 }
@@ -114,7 +114,7 @@ QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
 {
     qCDebug(logCategoryDeviceScanner()) << deviceId;
 
-    if (createdDevices_.removeOne(deviceId)) {
+    if (createdDevices_.remove(deviceId)) {
         emit deviceLost(deviceId);
         return QString();
     }
@@ -194,6 +194,8 @@ void BluetoothLowEnergyScanner::deviceErrorHandler(Device::ErrorCode error, QStr
         qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
         return;
     }
+
+    createdDevices_.remove(device->deviceId());
 
     if (error == Device::ErrorCode::DeviceDisconnected) {
         //loss is reported after error is processed in Platform

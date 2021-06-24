@@ -80,7 +80,7 @@ private:
     QBluetoothDeviceDiscoveryAgent *discoveryAgent_ = nullptr;
     const std::chrono::milliseconds discoveryTimeout_ = std::chrono::milliseconds(5000);
     QList<BlootoothLowEnergyInfo> discoveredDevices_;
-    QList<QByteArray> createdDevices_;
+    QSet<QByteArray> createdDevices_;
     QHash<QByteArray, QBluetoothDeviceInfo> discoveredDevicesMap_; // map deviceId -> QBluetoothDeviceInfo
 
     void createDiscoveryAgent();
