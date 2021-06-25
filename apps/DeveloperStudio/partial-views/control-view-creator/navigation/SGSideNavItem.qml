@@ -18,6 +18,8 @@ Rectangle {
     property string tooltipDescription
     property bool selected: false
 
+    signal clicked()
+
     ToolTip.text: tooltipDescription
     ToolTip.delay: 300
     ToolTip.visible: tooltipDescription.length > 0 && mouseArea.containsMouse
@@ -57,7 +59,7 @@ Rectangle {
         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onClicked: {
-            parent.onClicked()
+            parent.clicked()
         }
     }
 }
