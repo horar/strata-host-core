@@ -9,7 +9,8 @@ set(MONACO_TAG 0.20.0)
 file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/qtQuick.js
     ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/editor.html
     ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/qtQuickTypes.js
-    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/)
+    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/
+)
 
 ExternalProject_Add(monaco-editor-${MONACO_TAG}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
