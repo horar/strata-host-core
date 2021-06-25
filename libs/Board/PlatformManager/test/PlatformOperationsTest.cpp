@@ -333,8 +333,7 @@ void PlatformOperationsTest::bootloaderResponseTest()
     platformOperation->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
     platformOperation->run();
 
-    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
-    QCOMPARE(platformOperation->isSuccessfullyFinished(), true);
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(mockDevice_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response_bootloader.data());
