@@ -71,8 +71,8 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
     std::string data;
     if (payload.HasMember("data") && payload["data"].IsString()) {
         data = payload["data"].GetString();
+        attribute.data = QByteArray::fromHex(data.c_str());
     }
-    attribute.data = QByteArray::fromHex(data.c_str());
 
     return true;
 }
