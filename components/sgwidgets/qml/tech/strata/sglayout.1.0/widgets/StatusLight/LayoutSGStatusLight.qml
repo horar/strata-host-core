@@ -10,6 +10,16 @@ LayoutContainer {
     property alias customColor: statusLightObject.customColor
     property alias flatStyle: statusLightObject.flatStyle
 
+    enum IconStatus {
+        Blue,
+        Green,
+        Red,
+        Yellow,
+        Orange,
+        CustomColor,
+        Off
+    }
+
     contentItem: SGStatusLight {
         id: statusLightObject
     }
