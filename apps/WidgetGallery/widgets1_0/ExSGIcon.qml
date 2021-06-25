@@ -11,6 +11,7 @@ ColumnLayout {
         target: toolRow
         text: "Basic SGIcon example"
         fontSizeMultiplier: 1.3
+
         RowLayout {
             id: toolRow
             Layout.fillWidth: true
@@ -131,5 +132,4 @@ ColumnLayout {
     function randomColor() {
         return Qt.rgba(Math.random(),Math.random(),Math.random(),1).toString()
     }
-
 }
