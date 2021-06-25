@@ -27,6 +27,7 @@
         <file>widgets1_0/ExSGSpinBox.qml</file>
         <file>widgets1_0/ExSGAbstractContextMenu.qml</file>
         <file>widgets1_0/ExSGContextMenuEditActions.qml</file>
+        <file>widgets1_0/ExSGIcon.qml</file>
         <file>widgets1_0/ExSGTag.qml</file>
     </qresource>
 </RCC>
