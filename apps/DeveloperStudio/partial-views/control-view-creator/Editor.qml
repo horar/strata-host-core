@@ -148,15 +148,15 @@ Item {
 
                                 onClicked: {
                                     switch (modelData.buttonType) {
-                                    case "save":
-                                        editorToolBar.saveClicked()
-                                        break
-                                    case "undo":
-                                        editorToolBar.undoClicked()
-                                        break
-                                    case "redo":
-                                        editorToolBar.redoClicked()
-                                        break
+                                        case "save":
+                                            editorToolBar.saveClicked()
+                                            break
+                                        case "undo":
+                                            editorToolBar.undoClicked()
+                                            break
+                                        case "redo":
+                                            editorToolBar.redoClicked()
+                                            break
                                     }
                                 }
                             }
