@@ -66,6 +66,13 @@ Item {
     SGSplitView {
         anchors.fill: parent
 
+        Shortcut {
+            sequence: "Ctrl+R"
+            onActivated: {
+                recompileControlViewQrc()
+            }
+        }
+
         SideBar {
             id: sideBar
             Layout.fillHeight: true
@@ -141,15 +148,15 @@ Item {
 
                                 onClicked: {
                                     switch (modelData.buttonType) {
-                                        case "save":
-                                            editorToolBar.saveClicked()
-                                            break
-                                        case "undo":
-                                            editorToolBar.undoClicked()
-                                            break
-                                        case "redo":
-                                            editorToolBar.redoClicked()
-                                            break
+                                    case "save":
+                                        editorToolBar.saveClicked()
+                                        break
+                                    case "undo":
+                                        editorToolBar.undoClicked()
+                                        break
+                                    case "redo":
+                                        editorToolBar.redoClicked()
+                                        break
                                     }
                                 }
                             }
@@ -216,12 +223,12 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                 closeFileTab(index, model)
+                                closeFileTab(index, model)
                             }
                         }
 
                         onClicked: {
-                        	openFilesModel.currentIndex = index
+                            openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
@@ -365,21 +372,21 @@ Item {
 
                             source: {
                                 switch (model.filetype) {
-                                    case "svg":
-                                    case "jpg":
-                                    case "jpeg":
-                                    case "png":
-                                    case "gif":
-                                        return "./Editor/ImageContainer.qml"
-                                    case "qml":
-                                    case "csv":
-                                    case "html":
-                                    case "txt":
-                                    case "json":
-                                    case "ts":
-                                        return "./Editor/TextEditorContainer.qml"
-                                    default:
-                                        return "./Editor/UnsupportedFileType.qml"
+                                case "svg":
+                                case "jpg":
+                                case "jpeg":
+                                case "png":
+                                case "gif":
+                                    return "./Editor/ImageContainer.qml"
+                                case "qml":
+                                case "csv":
+                                case "html":
+                                case "txt":
+                                case "json":
+                                case "ts":
+                                    return "./Editor/TextEditorContainer.qml"
+                                default:
+                                    return "./Editor/UnsupportedFileType.qml"
                                 }
                             }
                         }
