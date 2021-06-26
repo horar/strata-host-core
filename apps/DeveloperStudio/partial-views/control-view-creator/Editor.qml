@@ -223,7 +223,7 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                closeFileTab(index, model)
+                                 closeFileTab(index, model)
                             }
                         }
 
@@ -372,21 +372,21 @@ Item {
 
                             source: {
                                 switch (model.filetype) {
-                                case "svg":
-                                case "jpg":
-                                case "jpeg":
-                                case "png":
-                                case "gif":
-                                    return "./Editor/ImageContainer.qml"
-                                case "qml":
-                                case "csv":
-                                case "html":
-                                case "txt":
-                                case "json":
-                                case "ts":
-                                    return "./Editor/TextEditorContainer.qml"
-                                default:
-                                    return "./Editor/UnsupportedFileType.qml"
+                                    case "svg":
+                                    case "jpg":
+                                    case "jpeg":
+                                    case "png":
+                                    case "gif":
+                                        return "./Editor/ImageContainer.qml"
+                                    case "qml":
+                                    case "csv":
+                                    case "html":
+                                    case "txt":
+                                    case "json":
+                                    case "ts":
+                                        return "./Editor/TextEditorContainer.qml"
+                                    default:
+                                        return "./Editor/UnsupportedFileType.qml"
                                 }
                             }
                         }
