@@ -123,7 +123,7 @@ void BleDeviceModel::tryDisconnect(int row)
     setPropertyAt(row, true, ConnectionInProgressRole);
 
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "connect_device");
+    cmdMessageObject.insert("hcs::cmd", "disconnect_device");
 
     QJsonObject payload;
     payload.insert("device_id", deviceId);

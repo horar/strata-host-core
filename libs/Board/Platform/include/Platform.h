@@ -70,7 +70,7 @@ namespace strata::platform {
         /**
          * Open device communication channel.
          * Emits opened() signal in case of success.
-         * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
+         * Emits deviceError signal in case of failure.
          * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
         void open(const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());

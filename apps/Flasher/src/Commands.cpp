@@ -107,7 +107,7 @@ bool DeviceCommand::createSerialDevice() {
 void DeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
 
-    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpenRequestRetry) {
         ++openRetries_;
         QString errorMessage(QStringLiteral("Cannot open board (serial device) "));
         errorMessage.append(platform_->deviceName());

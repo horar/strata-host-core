@@ -43,18 +43,34 @@ public:
 
     /**
      * Initiates connection to discovered BLE device.
+     * Possible outcomes:
+     * - immediate error -> will return non-empty string
+     * - error during connecting -> will emit connectDeviceFailed
+     * - success -> will emit connectDeviceFinished
      * @param deviceId device ID, returned by discoveredDevices()
-     * @return true iff connecting started (true doesn't mean successful connection, only initiation of connection process)
+     * @return empty string if connecting started (doesn't mean successful connection, only initiation of connection process).
+     * Error message if there was an error.
      */
-    bool tryConnectDevice(const QByteArray& deviceId);
+    QString connectDevice(const QByteArray& deviceId);
+
+    /**
+     * Drops connection to discovered BLE device.
+     * @param deviceId device ID
+     * @return empty string if disconnected.
+     * Error message if there was an error.
+     */
+    QString disconnectDevice(const QByteArray& deviceId);
 
 signals:
     void discoveryFinished(DiscoveryFinishStatus status, QString errorString);
+    void connectDeviceFinished(const QByteArray deviceId);
+    void connectDeviceFailed(const QByteArray deviceId, const QString errorString);
 
 private slots:
     void discoveryFinishedHandler();
     void discoveryCancelledHandler();
     void discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error);
+    void deviceOpenedHandler();
     void deviceErrorHandler(Device::ErrorCode error, QString errorString);
 
 private:
@@ -64,6 +80,7 @@ private:
     QBluetoothDeviceDiscoveryAgent *discoveryAgent_ = nullptr;
     const std::chrono::milliseconds discoveryTimeout_ = std::chrono::milliseconds(5000);
     QList<BlootoothLowEnergyInfo> discoveredDevices_;
+    QSet<QByteArray> createdDevices_;
     QHash<QByteArray, QBluetoothDeviceInfo> discoveredDevicesMap_; // map deviceId -> QBluetoothDeviceInfo
 
     void createDiscoveryAgent();

@@ -345,9 +345,14 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     case Device::ErrorCode::NoError: {
     } break;
     case Device::ErrorCode::DeviceBusy:
-    case Device::ErrorCode::DeviceFailedToOpen: {
+    case Device::ErrorCode::DeviceFailedToOpenRequestRetry: {
         // no need to handle these
         // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << platform->deviceId() << ", code: " << errCode << ", message: " << errStr;
+    } break;
+    case Device::ErrorCode::DeviceFailedToOpen: {
+        const QByteArray deviceId = platform->deviceId();
+        qCWarning(logCategoryPlatformManager).nospace() << "Platform didn't connect: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        disconnectPlatform(deviceId);
     } break;
     case Device::ErrorCode::DeviceDisconnected: {
         const QByteArray deviceId = platform->deviceId();
