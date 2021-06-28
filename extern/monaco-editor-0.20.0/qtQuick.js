@@ -9,9 +9,7 @@ const qtPropertyPairs = {}
 const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
 var isInitialized = false
-var searchedIds = false
 var functionsAdded = false
-var searchedProperties = false
 var suggestions = {}
 var functionSuggestions = {}
 var customProperties = []
@@ -161,7 +159,7 @@ function addCustomProperties(lineNumber, item, property) {
     if (qtObjectKeyValues.hasOwnProperty(item) && property !== undefined) {
         var onCall = property
         var onCallProperty = "on" + onCall[0].toUpperCase() + onCall.substring(1) + "Changed"
-       customProperties.push(onCallProperty)
+        customProperties.push(onCallProperty)
     }
 }
 
@@ -205,7 +203,7 @@ function registerQmlAsLanguage() {
             },
             {
                 beforeText: /^\s(?:readonly|property|for|if|else|do|while|try|int|real|var|string|color|url|alias|bool|double).*?:\s*$/,
-                action: {indentAction: monaco.languages.IndentAction.IndentOutdent}
+                action: { indentAction: monaco.languages.IndentAction.IndentOutdent }
             }
         ],
         autoClosingPairs: [
@@ -230,7 +228,7 @@ function registerQmlAsLanguage() {
         }
     })
     monaco.languages.setMonarchTokensProvider('qml', {
-        keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function","case","break"],
+        keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function", "case", "break"],
         typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool', 'double'],
         operators: [
             '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=', '===', '<==', '>==', '!==',
@@ -386,7 +384,7 @@ function registerQmlAsLanguage() {
         label: "Comment selection",
         contextMenuGroupId: "navigation",
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
-        run:(editor) =>{
+        run: (editor) => {
             editor.getAction('editor.action.commentLine').run()
         }
     })
@@ -585,6 +583,9 @@ function registerQmlAsLanguage() {
         var line = { lineNumber: firstLine.lineNumber, column: firstLine.startColumn }
         while (line.lineNumber >= firstLine.lineNumber) {
             var getNextPosition = model.findNextMatch("import", line)
+            if (getNextPosition === null) {
+                break;
+            }
             if (getNextPosition.range.startLineNumber < line.lineNumber) {
                 break;
             }
@@ -760,8 +761,8 @@ function registerQmlAsLanguage() {
                 }
                 if (active.includes(".")) {
                     var activeWord = active.substring(0, active.length - 1).split('.')[0]
-                    if(activeWord.includes("switch(")){
-                       activeWord = activeWord.replace("switch(","")
+                    if (activeWord.includes("switch(")) {
+                        activeWord = activeWord.replace("switch(", "")
                     }
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
@@ -862,7 +863,7 @@ function registerQmlAsLanguage() {
 
             var prevIdLine = model.getLineContent(getPrevIDPosition.range.startLineNumber)
             var prevId = prevIdLine.replace("\t", "").split(":")[1].trim()
-            if(prevId.includes("//")){
+            if (prevId.includes("//")) {
                 prevId = prevId.split("//")[0]
             }
             var getIdType = model.findPreviousMatch("{", { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn })
@@ -874,8 +875,8 @@ function registerQmlAsLanguage() {
             if (!otherProperties.hasOwnProperty(prevId)) {
                 otherProperties[prevId] = []
             }
-            var checkPrevIdPosition = model.findPreviousMatch("id:",position,false,false)
-            if(getPrevIDPosition.range.startLineNumber === checkPrevIdPosition.range.startLineNumber){
+            var checkPrevIdPosition = model.findPreviousMatch("id:", position, false, false)
+            if (getPrevIDPosition.range.startLineNumber === checkPrevIdPosition.range.startLineNumber) {
                 break;
             }
         }
@@ -883,20 +884,20 @@ function registerQmlAsLanguage() {
 
     function getPropertyType(model) {
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
-        while (position.lineNumber > fullRange.startLineNumber ) {
+        while (position.lineNumber > fullRange.startLineNumber) {
             var getPrevPropertyPosition = model.findPreviousMatch("property", position)
             if (getPrevPropertyPosition === null) {
                 break;
             }
-            if(getPrevPropertyPosition.range.startLineNumber > position.lineNumber){
+            if (getPrevPropertyPosition.range.startLineNumber > position.lineNumber) {
                 break;
             }
             var prevPropertyLine = model.getLineContent(getPrevPropertyPosition.range.startLineNumber).trim()
-            if(prevPropertyLine.substring(0,2) === "on"){
+            if (prevPropertyLine.substring(0, 2) === "on") {
                 break;
             }
             var prevProperty = prevPropertyLine.split(" ")[2].trim()
-            if(prevProperty.includes(":")){
+            if (prevProperty.includes(":")) {
                 prevProperty = prevProperty.split(":")[0].trim()
             }
 
@@ -965,7 +966,7 @@ function registerQmlAsLanguage() {
         var nextProperty = model.findNextMatch("property", nextPosition)
         var closestTop = matchingBrackets[0].top
         var closestBottom = matchingBrackets[0].bottom
-        for( var i = 0; i < matchingBrackets.length; i++){
+        for (var i = 0; i < matchingBrackets.length; i++) {
             if (position.lineNumber <= matchingBrackets[i].bottom && position.lineNumber >= matchingBrackets[i].top) {
                 if (closestTop < matchingBrackets[i].top) {
                     closestTop = matchingBrackets[i].top
@@ -991,7 +992,7 @@ function registerQmlAsLanguage() {
             var propertyWord = getProperty.trim().replace("\t", "").split(" ")[2].trim().split(":")[0].trim()
             var getPrevId = model.findPreviousMatch("id:", nextPosition)
 
-            if (getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber &&(getPrevId.range.startLineNumber >= closestTop && getPrevId.range.startLineNumber <= closestBottom)) {
+            if (getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber && (getPrevId.range.startLineNumber >= closestTop && getPrevId.range.startLineNumber <= closestBottom)) {
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
                 var id = getLine.replace("\t", "").split(":")[1].trim()
                 var propertySlot = "on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed"
@@ -1004,9 +1005,9 @@ function registerQmlAsLanguage() {
                     otherProperties[id].push(propertyWord)
                 }
             } else {
-                if(position.lineNumber >= closestTop && position.lineNumber <= closestBottom && (nextProperty.range.startLineNumber >= closestTop && nextProperty.range.startLineNumber <= closestBottom)){
+                if (position.lineNumber >= closestTop && position.lineNumber <= closestBottom && (nextProperty.range.startLineNumber >= closestTop && nextProperty.range.startLineNumber <= closestBottom)) {
                     var propertySlot = "on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed"
-                    if(!customProperties.includes(propertySlot)){
+                    if (!customProperties.includes(propertySlot)) {
                         var getLine = model.getLineContent(closestTop)
                         var getParent = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
                         qtObjectKeyValues[getParent].properties = qtObjectKeyValues[getParent].properties.concat(propertySlot)
@@ -1028,13 +1029,15 @@ function registerQmlAsLanguage() {
         fullRange = model.getFullModelRange()
         topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
         bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
-        createMatchingPairs(model)
-        initializeQtQuick(model)
+      	if (topOfFile !== null && bottomOfFile !== null) {
+        	createMatchingPairs(model)
+        	initializeQtQuick(model)
+        }
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getLine.includes("id:")) {
             var word = getLine.replace("\t", "").split(":")[1].trim()
-            if(word.includes("//")){
+            if (word.includes("//")) {
                 word = word.split("//")[0]
             }
             var getIdType = editor.getModel().findPreviousMatch("{", position, false, false)
@@ -1046,7 +1049,7 @@ function registerQmlAsLanguage() {
                 if (getLine.replace("\t", "").split(" ")[2] !== "" && getLine.replace("\t", "").split(" ")[2] !== undefined) {
                     if (getLine.replace("\t", "").split(" ")[2].includes(":")) {
                         var word = getLine.replace("\t", "").split(" ")[2].trim()
-                        if(word.includes(":")){
+                        if (word.includes(":")) {
                             word.split(":")[0].trim()
                         }
                         if (word !== undefined || word !== "") {

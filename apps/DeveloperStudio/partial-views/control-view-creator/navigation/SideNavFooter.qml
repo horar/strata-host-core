@@ -5,27 +5,41 @@ import QtQuick.Layouts 1.12
 import tech.strata.theme 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "../components"
 
 Item {
-    implicitHeight: divider.height + recompileNavButton.height + cleanupProjectNecessary.height
+    implicitHeight: divider.height + recompileNavButton.height + column.implicitHeight
     implicitWidth: toolBarListView.width
 
-    SGSideNavItem {
-        id: cleanupProjectNecessary
-
+    ColumnLayout {
+        id: column
         width: parent.width
-        height: 70
         anchors.top: parent.top
 
-        iconText: "Clean"
-        iconSource: "qrc:/sgimages/exclamation-triangle.svg"
-        iconColor: "#ffc107"
-        tooltipDescription: "The QRC file for this project contains files that no longer exist. Cleaning the project will remove these files from the QRC file."
-        visible: editor.fileTreeModel.needsCleaning
-        color: "transparent"
+        SGSideNavItem {
+            id: cleanupProjectNecessary
+            iconText: "Clean"
+            iconSource: "qrc:/sgimages/exclamation-triangle.svg"
+            iconColor: "#ffc107"
+            tooltipDescription: "The QRC file for this project contains files that no longer exist. Cleaning the project will remove these files from the QRC file."
+            visible: editor.fileTreeModel.needsCleaning
+            color: "transparent"
 
-        function onClicked () {
-            confirmCleanFiles.open()
+            onClicked: {
+                confirmCleanFiles.open()
+            }
+        }
+
+        SGSideNavItem {
+            id: settingForProject
+            iconText: "Settings"
+            iconSource: "qrc:/sgimages/cog.svg"
+            tooltipDescription: "Global settings for the Control View Creator"
+            enabled: true // Allows for Settings to be always active regardless editor.treeModel
+
+            onClicked: {
+                cvcSettingsLoader.active = true
+            }
         }
     }
 
@@ -35,7 +49,7 @@ Item {
         width: toolBarListView.width
         color: "lightgrey"
         anchors {
-            top: cleanupProjectNecessary.bottom
+            top: column.bottom
             left: parent.left
         }
     }
@@ -110,8 +124,18 @@ Item {
         color: "transparent"
         tooltipDescription: "Recompile your control view project."
 
-        function onClicked() {
+        onClicked: {
             recompileControlViewQrc();
+
+            if (cvcUserSettings.openViewOnBuild) {
+               viewStack.currentIndex = 2
+            }
         }
+    }
+
+    Loader {
+        id: cvcSettingsLoader
+        sourceComponent: SGControlViewCreatorSettingsPopup {}
+        active: false
     }
 }

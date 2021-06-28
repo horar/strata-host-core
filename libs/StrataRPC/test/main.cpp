@@ -29,5 +29,12 @@ int main(int argc, char *argv[])
     status |= QTest::qExec(&tc5, argc, argv);
     status |= QTest::qExec(&tc6, argc, argv);
     status |= QTest::qExec(&tc7, argc, argv);
+
+    if (status == 0) {
+        qInfo() << "All tests have passed.";
+    } else {
+        qWarning() << "Some of tests have failed!";
+    }
+
     return status;
 }

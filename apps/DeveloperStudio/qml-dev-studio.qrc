@@ -93,7 +93,6 @@
         <file>js/template_data.js</file>
         <file>partial-views/general/SGWebPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
-        <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
@@ -107,5 +106,6 @@
         <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
         <file>partial-views/help-tour/SGToolTipPopup.qml</file>
+        <file>partial-views/general/SGSettingsCheckbox.qml</file>
     </qresource>
 </RCC>
