@@ -4,13 +4,12 @@
 // Searches and initializes all id types to the suggestions object as well as allow updates to each item
 
 class QtIds {
-    constructor(model, qtQuick){
-        this.model = model
-        this.qtQuick = qtQuick
+    constructor(){
+        this.model = null
+        this.qtQuick = null
         this.qtIdPairs = {}
         this.ids = [];
-        this.otherProperties = []
-        this.getTypeID(model)
+        this.otherProperties = {}
     }
 
     update(model, qtQuick) {
@@ -18,7 +17,7 @@ class QtIds {
         this.qtIdPairs = {}
         this.qtQuick = qtQuick
         this.ids = [];
-        this.otherProperties = []
+        this.otherProperties = {}
         this.getTypeID(model)
     }
 
@@ -44,7 +43,10 @@ class QtIds {
             var content = model.getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             this.addCustomIdAndTypes(prevId, position, type)
-            this.ids.push(prevId)
+            if(!this.ids.includes(prevId)){
+                this.ids.push(prevId)
+            }
+            this.ids = this.qtQuick.qtHelper.removeDuplicates(this.ids)
             if (!this.otherProperties.hasOwnProperty(prevId)) {
                 this.otherProperties[prevId] = []
             }

@@ -23,6 +23,8 @@
     <script src="./min/vs/editor/editor.main.nls.js"></script>
     <script src="./min/vs/editor/editor.main.js"></script>
     <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="./model/qtItemModel.js" type="text/javascript"></script>
+    <script src="./model/qtQuickModel.js" type="text/javascript"></script>
     <script src="./utils/search.js" type="text/javascript"></script>
     <script src="./utils/helper.js" type="text/javascript"></script>
     <script src="./utils/ids.js" type="text/javascript"></script>
@@ -35,6 +37,7 @@
             // all published objects are available in channel.objects under
             // the identifier set in their attached WebChannel.id property
             var link = channel.objects.valueLink;
+            window.link = link;
 
             link.setValue.connect(function (value) {
                 editor.setValue(value);
@@ -63,37 +66,19 @@
             link.redo.connect(function () {
                 editor.trigger('redoClicked', 'redo');
             });
-
-            editor.getModel().onDidChangeContent((event) => {
-                link.fileText = editor.getValue();
-                link.setVersionId(editor.getModel().getAlternativeVersionId());
-                
-            });
         });
     </script>
     <script>
         document.onreadystatechange = function() {
             if (document.readyState === 'interactive') {
-                console.log(`Loading: ${Date.now()}`)
-            } else if(document.readyState === 'complete') {
-                console.log(`Complete: ${Date.now()}`)
-            }
+                if(editor !== null){
+                    editor.dispose()
+                }
+                initEditor()
+                registerQmlProvider()
+                console.log("Loading...")
+            } else if (document.readyState === 'complete') {}
         }
-
-        window.onload = function () {
-            console.log(`Complete: ${Date.now()}`)
-        }
-        if(!isInitialized){
-<<<<<<< HEAD
-            console.log(`Started Init: ${Date.now()}`)
-            registerQmlAsLanguage()
-            console.log(`Finished Init: ${Date.now()}`)
-=======
-            initEditor()
->>>>>>> 8bfe47cb71 (seperated files and created basic life cycle for monaco editor)
-        } else {
-            editor.dispose()
-        } 
     </script>
 </body>
 

@@ -1,12 +1,11 @@
 
 
 class QtProperties {
-    constructor(model,qtQuick) {
-        this.model = model
+    constructor() {
+        this.model = null
         this.qtPropertyPairs = {}
         this.customProperties = []
-        this.qtQuick = qtQuick
-        this.getPropertyType(model)
+        this.qtQuick = null
     }
 
     update(model, qtQuick) {

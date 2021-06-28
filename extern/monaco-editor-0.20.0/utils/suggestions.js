@@ -1,35 +1,31 @@
 class QtSuggestions {
-    constructor(model, qtQuick) {
+    constructor() {
+        this.model = null
+        this.qtQuick = null
+        this.qtObjectSuggestions = {}
+        this.qtImports = []
+        this.currentItems = {}
+        this.suggestions = {}
+        this.functionSuggestions = {}
+        this.qtObjectKeyValues = {}
+        this.qtObjectPropertyValues = {}
+        this.qtObjectMetaPropertyValues = {}
+        this.loadInQtQuickTypes()
+    }
+
+    update(model, qtQuick) {
         this.model = model
         this.qtQuick = qtQuick
         this.suggestions = {}
         this.functionSuggestions = {}
-        this.qtObjectSuggestions = {}
         this.qtImports = []
         this.currentItems = {}
-        this.qtObjectKeyValues = {}
-        this.qtObjectPropertyValues = {}
-        this.qtObjectMetaPropertyValues = {}
         this.functionsAdded = false
-        this.initializeQtQuick(this.model)
-    }
-
-    update(model) {
-        this.model = model
-        this.suggestions = {}
-        this.functionSuggestions = {}
-        this.qtObjectSuggestions = {}
-        this.currentItems = {}
-        this.qtImports = []
-        this.qtObjectKeyValues = {}
-        this.qtObjectPropertyValues = {}
-        this.qtObjectMetaPropertyValues = {}
-        this.functionsAdded = false
-        this.initializeQtQuick(this.model)
+        this.loadImportsAndValidate(model)
     }
 
     // Initializes the library to become an Object array to be feed into suggestions
-    initializeQtQuick(model) {
+    loadImportsAndValidate(model) {
         const firstLine = { lineNumber: this.qtQuick.qtSearch.fullRange.startLineNumber, column: this.qtQuick.qtSearch.fullRange.startColumn }
         var line = { lineNumber: firstLine.lineNumber, column: firstLine.startColumn }
         while (line.lineNumber >= firstLine.lineNumber) {
@@ -42,40 +38,16 @@ class QtSuggestions {
             line = { lineNumber: getNextPosition.range.startLineNumber + 1, column: getNextPosition.range.startColumn }
             this.qtImports.push(content)
         }
-        this.createSuggestionsBasedOffImports()
+        this.createSuggestions()
     }
 
-    createSuggestionsBasedOffImports() {
+    loadInQtQuickTypes() {
         for (const qtType in qtTypeJson["sources"]) {
             var flag = false
             const qtValues = qtTypeJson['sources'][qtType]
-            for (var i = 0; i < this.qtImports.length; i++) {
-                if (qtValues.source !== "" && this.qtImports[i].includes(qtValues.source)) {
-                    flag = true
-                } else if (qtValues.source === "") {
-                    flag = true
-                }
-            }
-            if (flag) {
-                this.appendInherited(qtType, qtValues)
-            }
+            this.appendInherited(qtType, qtValues)
         }
         this.updateObjectFormat()
-        // js functions
-        if (!this.functionsAdded) {
-            for (const qtCustomProps in qtTypeJson["custom_properties"]) {
-                const qtproperties = qtTypeJson["custom_properties"][qtCustomProps]
-                this.createQtObjectValPairs(qtCustomProps, { label: qtCustomProps, insertText: qtCustomProps, properties: qtproperties, flag: true })
-                this.functionSuggestions[qtCustomProps] = {
-                    label: this.qtObjectKeyValues[qtCustomProps].label.trim(),
-                    kind: monaco.languages.CompletionItemKind.Keyword,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: this.qtObjectKeyValues[qtCustomProps].insertText,
-                    range: null
-                }
-            }
-            this.functionsAdded = true
-        }
     }
 
     updateObjectFormat() {
@@ -93,35 +65,46 @@ class QtSuggestions {
             for (var j = 0; j < this.qtObjectSuggestions[key].properties.length; j++) {
                 arr.push(this.qtObjectSuggestions[key].properties[j])
             }
-            arr = this.qtQuick.qtHelper.removeDuplicates(arr)
+            arr = qtHelper.removeDuplicates(arr)
             this.createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
         }
+
         for (const key in qtTypeJson) {
             if (key === "property") {
                 this.createQtObjectValPairs(key, { label: key, insertText: key, properties: qtTypeJson[key], flag: true, isId: false })
-                this.suggestions[key] = {
-                    label: this.qtObjectKeyValues[key].label.trim(),
-                    kind: monaco.languages.CompletionItemKind.KeyWord,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: this.qtObjectKeyValues[key].insertText,
-                    range: null,
-                }
             }
         }
-        this.createSuggestions()
     }
 
     createSuggestions() {
+        
         for (const key in this.qtObjectKeyValues) {
-            if (!this.qtObjectKeyValues[key].isId && qtTypeJson["sources"].hasOwnProperty(key) && !qtTypeJson["sources"][key].nonInstantiable) {
-                this.suggestions[key] = {
-                    label: this.qtObjectKeyValues[key].label.trim(),
-                    kind: monaco.languages.CompletionItemKind.Class,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: this.qtObjectKeyValues[key].insertText,
-                    range: null,
+            for (var i = 0; i < this.qtImports.length; i++){
+                if (!this.qtObjectKeyValues[key].isId && qtTypeJson["sources"].hasOwnProperty(key) && !qtTypeJson["sources"][key].nonInstantiable && (qtTypeJson["sources"][key].source.includes(this.qtImports[i]) || qtTypeJson["sources"][key].source === "" )) {
+                    this.suggestions[key] = {
+                        label: this.qtObjectKeyValues[key].label.trim(),
+                        kind: monaco.languages.CompletionItemKind.Class,
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                        insertText: this.qtObjectKeyValues[key].insertText,
+                        range: null,
+                    }
                 }
             }
+        }
+
+        if (!this.functionsAdded) {
+            for (const qtCustomProps in qtTypeJson["custom_properties"]) {
+                const qtproperties = qtTypeJson["custom_properties"][qtCustomProps]
+                this.createQtObjectValPairs(qtCustomProps, { label: qtCustomProps, insertText: qtCustomProps, properties: qtproperties, flag: true })
+                this.functionSuggestions[qtCustomProps] = {
+                    label: this.qtObjectKeyValues[qtCustomProps].label.trim(),
+                    kind: monaco.languages.CompletionItemKind.Keyword,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: this.qtObjectKeyValues[qtCustomProps].insertText,
+                    range: null
+                }
+            }
+            this.functionsAdded = true
         }
     }
     // recursive traversal of Inherited Types
@@ -211,7 +194,7 @@ class QtSuggestions {
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
         if (this.qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-            this.convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties.concat(this.customProperties), qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId, bracketWord)
+            this.convertStrArrayToObjArray(bracketWord, this.qtObjectKeyValues[bracketWord].properties.concat(qtProperties.customProperties), this.qtObjectKeyValues[bracketWord].flag, this.qtObjectKeyValues[bracketWord].isId, bracketWord)
             if (this.currentItems[bracketWord] === undefined) {
                 this.currentItems[bracketWord] = {}
             }
@@ -219,7 +202,7 @@ class QtSuggestions {
             return this.currentItems[bracketWord][propRange]
         } else if (bracketWord.includes("function") || bracketWord.substring(0, 2) === "on" || bracketWord.includes("if") || bracketWord.includes("switch") || bracketWord.includes(":")) {
             //display signal Calls, function Calls, ids properties and function,signal, calls
-            return Object.values(this.qtQuick.qtSuggestions.functionSuggestions)
+            return Object.values(this.functionSuggestions)
         } else {
             const prevParent = this.qtQuick.qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
             if (this.qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
@@ -243,7 +226,7 @@ class QtSuggestions {
                     this.currentItems[newParent][propRange] = this.qtObjectPropertyValues[newParent]
                     return this.currentItems[newParent][propRange]
                 }
-                return Object.values(this.qtQuick.qtSuggestions.suggestions)
+                return Object.values(qtSuggestions.suggestions)
             }
         }
     }

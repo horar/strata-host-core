@@ -5,16 +5,15 @@
 
 var isInitialized = false
 var editor = null
+var qtSuggestions = null;
+var qtSearch = null;
+var qtProperties = null;
+var qtIds = null;
+var qtHelper = null;
 /*
     This the global registration for the monaco editor this creates the syntax and linguistics of the qml language, as well as defining the theme of the qml language
 */
 function registerQmlProvider() {
-
-    var qtSuggestions = null;
-    var qtSearch = null;
-    var qtProperties = null;
-    var qtIds = null;
-    var qtHelper = null;
 
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
@@ -53,8 +52,8 @@ function registerQmlProvider() {
                     const prevParent = qtSearch.findPreviousBracketParent(position)
                     if (qtSuggestions.qtObjectKeyValues.hasOwnProperty(activeWord)) {
                         var others = []
-                        if (otherProperties.hasOwnProperty(activeWord)) {
-                            others = otherProperties[activeWord]
+                        if (qtIds.otherProperties.hasOwnProperty(activeWord)) {
+                            others = qtIds.otherProperties[activeWord]
                         }
                         qtSuggestions.convertStrArrayToObjArray(activeWord, qtSuggestions.qtObjectKeyValues[activeWord].properties.concat(others), true, qtSuggestions.qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtSuggestions.qtObjectPropertyValues[activeWord] }
@@ -91,7 +90,7 @@ function registerQmlProvider() {
         if (line.includes(":") && line.substring(0, 2) !== "on" && !line.includes("property")) {
             var idsSuggestions = []
             for (var i = 0; i < qtIds.ids.length; i++) {
-                idsSuggestions.push(this.qtQuick.qtSuggestions.functionSuggestions[qtIds.ids[i]])
+                idsSuggestions.push(qtSuggestions.functionSuggestions[qtIds.ids[i]])
             }
             return idsSuggestions
         }
@@ -119,7 +118,7 @@ function registerQmlProvider() {
             }
         }
         //Edge Case 5: same as 3, just inveresed for the end of the file
-        if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
+        if (nextMatch.range.startLineNumber === qtSearch.bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === qtSearch.bottomOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
@@ -152,7 +151,7 @@ function registerQmlProvider() {
             }
             //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
         } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
-            var prevParent = findPreviousBracketParent(position).trim()
+            var prevParent = qtSearch.findPreviousBracketParent(position).trim()
             var prevBrack = model.findPreviousMatch(prevParent, position)
             var bracket = model.findPreviousMatch("{", { lineNumber: prevBrack.range.startLineNumber, column: prevBrack.range.startColumn })
             var getWord = model.getLineContent(bracket.range.startLineNumber).replace("\t", "").split(/\{|\t/)[0].trim()
@@ -163,12 +162,12 @@ function registerQmlProvider() {
                     startColumn: prevMatch.range.startColumn,
                     endColumn: prevBracketMatch.range.endColumn,
                 }
-                qtSuggestions.convertStrArrayToObjArray(prevParent, qtSuggestions.qtObjectKeyValues[prevParent].properties.concat(customProperties), qtSuggestions.qtObjectKeyValues[prevParent].flag, false, prevParent)
+                qtSuggestions.convertStrArrayToObjArray(prevParent, qtSuggestions.qtObjectKeyValues[prevParent].properties.concat(qtProperties.customProperties), qtSuggestions.qtObjectKeyValues[prevParent].flag, false, prevParent)
                 if (qtSuggestions.currentItems[prevParent] === undefined) {
                     qtSuggestions.currentItems[prevParent] = {}
                 }
                 qtSuggestions.currentItems[prevParent][propRange] = qtSuggestions.qtObjectPropertyValues[prevParent]
-                return currentItems[prevParent][propRange]
+                return qtSuggestions.currentItems[prevParent][propRange]
             } else if (qtSuggestions.qtObjectMetaPropertyValues[getWord].hasOwnProperty(prevParent)) {
                 qtSuggestions.convertStrArrayToObjArray(prevParent, qtSuggestions.qtObjectMetaPropertyValues[getWord][prevParent], true, true, null)
                 return qtSuggestions.qtObjectPropertyValues[prevParent]
@@ -253,45 +252,24 @@ function registerQmlProvider() {
 
     runQmlProvider()
 
+    editor.onDidType(()=>{
+        console.log("Hit")
+    })
+
     // Component did mount and update
     editor.getModel().onDidChangeContent((event) => {
         const model = editor.getModel()
+        qtSearch.update(model)
         // Mount
-        if (!isInitialized) {
-            // helper
-            qtHelper = new QtHelper(editor)
-            // base class
-            qtSearch = new QtSearch(model)
-            qtSuggestions = new QtSuggestions(model,{
-                qtHelper: qtHelper,
-                qtSearch: qtSearch,
-            })
-
-            qtIds = new QtIds(model,{
-                qtHelper: qtHelper,
-                qtSearch: qtSearch,
-                qtSuggestions: qtSuggestions,
-            })
-            qtProperties = new QtProperties(model,{
-                qtHelper: qtHelper,
-                qtIds: qtIds,
-                qtSearch: qtSearch,
-                qtSuggestions: qtSuggestions,
-            })
-            isInitialized = true
-        } else {
-            if(qtSearch.model !== model) {
-                qtSearch.update(model)
-            }
-
-            if(qtSuggestions.model !== model) {
+        if(!isInitialized){
+            if(qtSuggestions.model === null) {
                 qtSuggestions.update(model,{
                     qtHelper: qtHelper,
                     qtSearch: qtSearch,
                 })
             }
 
-            if(qtIds.model !== model){
+            if(qtIds.model === null){
                 qtIds.update(model,{
                     qtHelper: qtHelper,
                     qtSearch: qtSearch,
@@ -299,7 +277,7 @@ function registerQmlProvider() {
                 })
             }
 
-            if(qtProperties.model !== model) {
+            if(qtProperties.model === null) {
                 qtProperties.update(model, {
                     qtHelper: qtHelper,
                     qtIds: qtIds,
@@ -307,11 +285,24 @@ function registerQmlProvider() {
                     qtSuggestions: qtSuggestions,
                 })
             }
+            isInitialized = true
         }
 
         var getLine = model.getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
+        if (getLine.includes("import")) {
+            qtSuggestions.update(model,{
+                qtHelper: qtHelper,
+                qtSearch: qtSearch,
+            })
+        } 
+        
         if (getLine.includes("id:")) {
+            qtIds.update(model,{
+                qtHelper: qtHelper,
+                qtSearch: qtSearch,
+                qtSuggestions: qtSuggestions,
+            })
             var word = getLine.replace("\t", "").split(":")[1].trim()
             if (word.includes("//")) {
                 word = word.split("//")[0]
@@ -321,6 +312,12 @@ function registerQmlProvider() {
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             qtIds.addCustomIdAndTypes(word, position, type) // O(n)
         } else if (getLine.includes("property") && !getLine.includes("import")) {
+            qtProperties.update(model, {
+                qtHelper: qtHelper,
+                qtIds: qtIds,
+                qtSearch: qtSearch,
+                qtSuggestions: qtSuggestions,
+            })
             if (getLine.replace("\t", "").split(" ")[1] !== "" && getLine.replace("\t", "").split(" ")[1] !== undefined) {
                 if (getLine.replace("\t", "").split(" ")[2] !== "" && getLine.replace("\t", "").split(" ")[2] !== undefined) {
                     if (getLine.replace("\t", "").split(" ")[2].includes(":")) {
@@ -395,7 +392,13 @@ function initEditor() {
         }
     })
 
-    registerQmlProvider()
+    qtHelper = new QtHelper(editor)
+    // base class
+    qtSearch = new QtSearch()
+    qtSuggestions = new QtSuggestions()
+    qtIds = new QtIds()
+    qtProperties = new QtProperties()
+
 }
 
 function printCircularJSON(json) {
@@ -413,4 +416,3 @@ function printCircularJSON(json) {
     cache = null; // Enable garbage collection
     return retVal;
 }
-

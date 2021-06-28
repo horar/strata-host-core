@@ -4,13 +4,12 @@
 
 class QtSearch {
 
-    constructor(model) {
-        this.model = model
-        this.fullRange = model.getFullModelRange()
-        this.topOfFile = model.findNextMatch("{", { lineNumber: this.fullRange.startLineNumber, column: this.fullRange.startColumn })
-        this.bottomOfFile = model.findPreviousMatch("}", { lineNumber: this.fullRange.endLineNumber, column: this.fullRange.endColumn })
+    constructor() {
+        this.model = null
+        this.fullRange = null
+        this.topOfFile = 0
+        this.bottomOfFile = 0
         this.matchingBrackets = []
-        this.createMatchingPairs(model)
     }
 
     update(model) {
@@ -20,10 +19,6 @@ class QtSearch {
         this.bottomOfFile = model.findPreviousMatch("}", { lineNumber: this.fullRange.endLineNumber, column: this.fullRange.endColumn })
         this.matchingBrackets = []
         this.createMatchingPairs(model)
-    }
- 
-    findPreviousBracketParent(position) {
-        return this.findPreviousBracketParent(this.model, position)
     }
 
     createMatchingPairs(model) {
@@ -54,7 +49,7 @@ class QtSearch {
         }
     }
 
-    findPreviousBracketParent(model, position) {
+    findPreviousBracketParent(position) {
         var currentClosestTop = this.matchingBrackets[0].top
         var currentClosestBottom = this.matchingBrackets[0].bottom
         for (var i = 0; i < this.matchingBrackets.length; i++) {
@@ -67,7 +62,7 @@ class QtSearch {
                 }
             }
         }
-        var getParent = model.getLineContent(currentClosestTop)
+        var getParent = this.model.getLineContent(currentClosestTop)
         var content = getParent.replace("\t", "").split(/\{|\t/)[0].trim()
         return content
     }
