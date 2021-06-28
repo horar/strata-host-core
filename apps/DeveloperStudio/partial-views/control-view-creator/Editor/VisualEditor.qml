@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 import QtQml 2.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.sglayout 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 

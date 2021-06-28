@@ -69,13 +69,14 @@ Item {
         SideBar {
             id: sideBar
             Layout.fillHeight: true
-            Layout.minimumWidth: 250
-            Layout.maximumWidth: parent.width * 0.75
+            implicitWidth: 200
+            Layout.minimumWidth: 25
         }
 
         ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.minimumWidth: parent.width * 0.5
             spacing: 0
 
             Rectangle {
@@ -141,17 +142,15 @@ Item {
 
                                 onClicked: {
                                     switch (modelData.buttonType) {
-                                    case "save":
-                                        editorToolBar.saveClicked()
-                                        break;
-                                    case "undo":
-                                        editorToolBar.undoClicked()
-                                        break;
-                                    case "redo":
-                                        editorToolBar.redoClicked()
-                                        break;
-                                    default:
-                                        break;
+                                        case "save":
+                                            editorToolBar.saveClicked()
+                                            break
+                                        case "undo":
+                                            editorToolBar.undoClicked()
+                                            break
+                                        case "redo":
+                                            editorToolBar.redoClicked()
+                                            break
                                     }
                                 }
                             }
@@ -218,12 +217,12 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                 closeFileTab(index, model)
+                                closeFileTab(index, model)
                             }
                         }
 
                         onClicked: {
-                        	openFilesModel.currentIndex = index
+                            openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
@@ -365,7 +364,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            source: switch(model.filetype) {
+                            source: {
+                                switch (model.filetype) {
                                     case "svg":
                                     case "jpg":
                                     case "jpeg":
@@ -381,7 +381,8 @@ Item {
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
                                         return "./Editor/UnsupportedFileType.qml"
-                                    }
+                                }
+                            }
                         }
                     }
                 }
