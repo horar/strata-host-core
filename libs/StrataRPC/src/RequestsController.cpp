@@ -33,12 +33,12 @@ std::pair<DeferredRequest *, QByteArray> RequestsController::addNewRequest(
     return {deferredRequest, request.value().toJson()};
 }
 
-bool RequestsController::isPendingRequest(int id)
+bool RequestsController::isPendingRequest(const int &id)
 {
     return requestsList_.contains(id);
 }
 
-bool RequestsController::removePendingRequest(int id)
+bool RequestsController::removePendingRequest(const int &id)
 {
     qCDebug(logCategoryRequestsController) << "Removing pending request id:" << id;
     auto it = requestsList_.find(id);
@@ -49,7 +49,7 @@ bool RequestsController::removePendingRequest(int id)
     return requestsList_.remove(id) > 0;
 }
 
-std::pair<bool, Request> RequestsController::popPendingRequest(int id)
+std::pair<bool, Request> RequestsController::popPendingRequest(const int &id)
 {
     qCDebug(logCategoryRequestsController) << "Popping pending request id:" << id;
     auto it = requestsList_.find(id);
@@ -61,7 +61,7 @@ std::pair<bool, Request> RequestsController::popPendingRequest(int id)
     return {requestsList_.remove(id) > 0, request};
 }
 
-QString RequestsController::getMethodName(int id)
+QString RequestsController::getMethodName(const int &id)
 {
     auto it = requestsList_.find(id);
     if (it == requestsList_.end()) {
