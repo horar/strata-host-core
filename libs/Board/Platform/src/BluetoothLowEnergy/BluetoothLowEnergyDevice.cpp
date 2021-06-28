@@ -221,12 +221,9 @@ bool BluetoothLowEnergyDevice::processHardcodedReplies(const std::string &cmd)
         "payload": {
             "api_version":"2.0",
             "active":"application",
-            "bootloader": {
-                "version":"",
-                "date":""
-            },
+            "bootloader": {},
             "application": {
-                "version":"",
+                "version":"0.0.0",
                 "date":""
             }
         }
