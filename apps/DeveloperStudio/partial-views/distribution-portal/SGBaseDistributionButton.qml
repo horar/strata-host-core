@@ -158,7 +158,6 @@ RowLayout {
         SGIcon {
             id: urlIcon
             source: 'qrc:/partial-views/distribution-portal/images/arrow-circle-right.svg'
-            opacity: 1
             iconColor: 'white'
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
