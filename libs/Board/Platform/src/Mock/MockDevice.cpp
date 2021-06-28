@@ -135,11 +135,6 @@ bool MockDevice::mockIsOpenEnabled() const
     return control_.isOpenEnabled();
 }
 
-bool MockDevice::mockIsLegacy() const
-{
-    return control_.isLegacy();
-}
-
 bool MockDevice::mockIsAutoResponse() const
 {
     return control_.isAutoResponse();
@@ -165,14 +160,9 @@ bool MockDevice::mockIsErrorOnNthMessageSet() const
     return control_.isErrorOnNthMessageSet();
 }
 
-MockCommand MockDevice::mockGetCommand() const
+MockResponse MockDevice::mockGetResponseForCommand(MockCommand command) const
 {
-    return control_.getCommand();
-}
-
-MockResponse MockDevice::mockGetResponse() const
-{
-    return control_.getResponse();
+    return control_.getResponseForCommand(command);
 }
 
 MockVersion MockDevice::mockGetVersion() const
@@ -185,11 +175,6 @@ bool MockDevice::mockSetOpenEnabled(bool enabled)
     return control_.setOpenEnabled(enabled);
 }
 
-bool MockDevice::mockSetLegacy(bool isLegacy)
-{
-    return control_.setLegacy(isLegacy);
-}
-
 bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
     return control_.setAutoResponse(autoResponse);
@@ -198,16 +183,6 @@ bool MockDevice::mockSetAutoResponse(bool autoResponse)
 bool MockDevice::mockSetSaveMessages(bool saveMessages)
 {
     return control_.setSaveMessages(saveMessages);
-}
-
-bool MockDevice::mockSetCommand(MockCommand command)
-{
-    return control_.setCommand(command);
-}
-
-bool MockDevice::mockSetResponse(MockResponse response)
-{
-    return control_.setResponse(response);
 }
 
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)

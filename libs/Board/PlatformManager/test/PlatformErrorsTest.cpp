@@ -7,6 +7,7 @@ using strata::device::Device;
 using strata::device::MockDevice;
 using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::Identify;
+using strata::device::MockVersion;
 
 namespace test_commands = strata::device::test_commands;
 
@@ -66,6 +67,8 @@ void PlatformErrorsTest::addMockDevice()
     mockDevice_ = std::dynamic_pointer_cast<strata::device::MockDevice>(device);
     QVERIFY(mockDevice_.get() != nullptr);
     QVERIFY(platform_->deviceConnected());
+    mockDevice_->mockSetVersion(MockVersion::Version_1);
+    QVERIFY(mockDevice_->mockGetVersion() == MockVersion::Version_1);
 }
 
 void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
