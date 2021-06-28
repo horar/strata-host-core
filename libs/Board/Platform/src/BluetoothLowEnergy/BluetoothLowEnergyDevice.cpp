@@ -134,6 +134,11 @@ bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & r
         return false;
     }
 
+    if (attribute.data.isNull()) {
+        qCWarning(logCategoryDeviceBLE) << this << "No data";
+        return false;
+    }
+
     QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
         return false;
@@ -158,6 +163,11 @@ bool BluetoothLowEnergyDevice::processWriteDescriptorCommand(const rapidjson::Do
 
     BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
     if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
+        return false;
+    }
+
+    if (attribute.data.isNull()) {
+        qCWarning(logCategoryDeviceBLE) << this << "No data";
         return false;
     }
 
