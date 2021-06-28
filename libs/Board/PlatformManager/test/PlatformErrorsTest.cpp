@@ -206,9 +206,10 @@ void PlatformErrorsTest::errorDuringOperationTest()
         return;
     }
 
-    mockDevice_->mockSetErrorOnNthMessage(2);
+    mockDevice_->mockSetWriteErrorOnNthMessage(2);
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
+
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
 
@@ -217,7 +218,11 @@ void PlatformErrorsTest::errorDuringOperationTest()
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
     QCOMPARE(platformOperation->isSuccessfullyFinished(), false);
 
-    QVERIFY(platformErrorSignal.count() == 1);
+    // write error is set on 2nd message, exactly 2 messageSent signals are expected
+    QCOMPARE(platformSentSignal.count(), 2);
+    QList<QVariant> arguments = platformSentSignal.takeLast();
+    QVERIFY(arguments.at(2).type() == QVariant::String);
+    QVERIFY(qvariant_cast<QString>(arguments.at(2)).isEmpty() == false);
 }
 
 void PlatformErrorsTest::errorAfterOperationTest()
@@ -298,6 +303,7 @@ void PlatformErrorsTest::multipleOperationsTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
 
     std::unique_ptr<Identify> identifyOperation1 = std::make_unique<Identify>(platform_, true, 1, std::chrono::milliseconds(100));
@@ -306,7 +312,8 @@ void PlatformErrorsTest::multipleOperationsTest()
     identifyOperation1->run();
     identifyOperation2->run();
 
-    QVERIFY(platform_->sendMessage("{}") == false);
+    unsigned msgNumber = platform_->sendMessage("{}");
+    bool signalReceived = false;
 
     QCOMPARE(identifyOperation1->deviceId(), deviceId_);
     QCOMPARE(identifyOperation2->deviceId(), deviceId_);
@@ -324,12 +331,26 @@ void PlatformErrorsTest::multipleOperationsTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
-    QList<QVariant> arguments = platformErrorSignal.takeFirst();
-    QVERIFY(arguments.at(0).type() == QVariant::UserType);
-    QVERIFY(arguments.at(1).type() == QVariant::String);
-    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceBusy);
+    QVERIFY(platformSentSignal.count() > 0);
+    while (platformSentSignal.size() > 0) {
+        QList<QVariant> arguments = platformSentSignal.takeFirst();
+        QVERIFY(arguments.at(1).type() == QVariant::UInt);
+        if (qvariant_cast<unsigned>(arguments.at(1)) == msgNumber) {
+            signalReceived = true;
+            QVERIFY(arguments.at(0).type() == QVariant::ByteArray);
+            QVERIFY(qvariant_cast<QString>(arguments.at(0)) == "{}\n");
+            QVERIFY(arguments.at(2).type() == QVariant::String);
+            QVERIFY(qvariant_cast<QString>(arguments.at(2)).isEmpty() == false);
+            break;
+        }
+    }
+    QCOMPARE(signalReceived, true);
 
-    // DeviceBusy should not terminate the device
+    // Second operation didn't succeed because device was locked by first operation
+    // and messages from second operation could not be sent.
+    // Failure to send messages should not cause a device error.
+    QVERIFY((platformErrorSignal.count() == 0) && (platformErrorSignal.wait(250) == false));
+
+    // unsuccessful operation should not terminate the device
     QVERIFY((platformRemovedSignal.count() == 0) && (platformRemovedSignal.wait(250) == false));
 }

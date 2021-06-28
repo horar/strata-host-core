@@ -42,11 +42,11 @@ public:
     static QByteArray createDeviceId(const QString& mockName);
 
     /**
-     * Send message to mock device.
+     * Send message to mock device. Emits messageSent.
      * @param msg message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray& msg) override;
+    virtual unsigned sendMessage(const QByteArray& msg) override;
 
     /**
      * Check if mock device is connected (communication with it is possible).
@@ -200,12 +200,12 @@ public:
     bool mockSetErrorOnClose(bool enabled);
 
     /**
-     * Configures if mock device emits error on nth message it receives
+     * Configures if mock device emits write error on nth message it receives
      * After error is emitted, the counter starts from 0 again
      * @param messageNumber the nth message on which the error is to be emitted, (0 : disabled)
      * @return true if parameter was changed, otherwise false
      */
-    bool mockSetErrorOnNthMessage(unsigned messageNumber);
+    bool mockSetWriteErrorOnNthMessage(unsigned messageNumber);
 
 private slots:
     void readMessage(QByteArray msg);
