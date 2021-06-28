@@ -69,6 +69,9 @@ Item {
         Shortcut {
             sequence: "Ctrl+R"
             onActivated: {
+                if (cvcUserSettings.openViewOnBuild) {
+                   viewStack.currentIndex = 2
+                }
                 recompileControlViewQrc()
             }
         }
