@@ -57,29 +57,30 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
     return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
 }
 
-bool MockDevice::sendMessage(const QByteArray& msg)
+unsigned MockDevice::sendMessage(const QByteArray& msg)
 {
+    unsigned msgNum = Device::nextMessageNumber();
+
     if (opened_ == false) {
         QString errMsg(QStringLiteral("Cannot write data to device, device is not open."));
         qCCritical(logCategoryDeviceMock) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
-        return false;
+        emit messageSent(msg, msgNum, errMsg);
+        return msgNum;
     }
 
     qCDebug(logCategoryDeviceMock) << this << "Received request:" << msg;
 
     if (control_.writeMessage(msg) == msg.size()) {
-        emit messageSent(msg);
+        emit messageSent(msg, msgNum, QString());
         if (mockIsAutoResponse()) {
             mockEmitResponses(msg);
         }
-        return true;
     } else {
-        QString errMsg(QStringLiteral("Cannot write message to device (mockSetErrorOnNthMessage set to true)."));
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage set to true)."));
         qCWarning(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
-        return false;
+        emit messageSent(msg, msgNum, errMsg);
     }
+    return msgNum;
 }
 
 bool MockDevice::isConnected() const
@@ -135,11 +136,6 @@ bool MockDevice::mockIsOpenEnabled() const
     return control_.isOpenEnabled();
 }
 
-bool MockDevice::mockIsLegacy() const
-{
-    return control_.isLegacy();
-}
-
 bool MockDevice::mockIsAutoResponse() const
 {
     return control_.isAutoResponse();
@@ -165,14 +161,9 @@ bool MockDevice::mockIsErrorOnNthMessageSet() const
     return control_.isErrorOnNthMessageSet();
 }
 
-MockCommand MockDevice::mockGetCommand() const
+MockResponse MockDevice::mockGetResponseForCommand(MockCommand command) const
 {
-    return control_.getCommand();
-}
-
-MockResponse MockDevice::mockGetResponse() const
-{
-    return control_.getResponse();
+    return control_.getResponseForCommand(command);
 }
 
 MockVersion MockDevice::mockGetVersion() const
@@ -185,11 +176,6 @@ bool MockDevice::mockSetOpenEnabled(bool enabled)
     return control_.setOpenEnabled(enabled);
 }
 
-bool MockDevice::mockSetLegacy(bool isLegacy)
-{
-    return control_.setLegacy(isLegacy);
-}
-
 bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
     return control_.setAutoResponse(autoResponse);
@@ -198,16 +184,6 @@ bool MockDevice::mockSetAutoResponse(bool autoResponse)
 bool MockDevice::mockSetSaveMessages(bool saveMessages)
 {
     return control_.setSaveMessages(saveMessages);
-}
-
-bool MockDevice::mockSetCommand(MockCommand command)
-{
-    return control_.setCommand(command);
-}
-
-bool MockDevice::mockSetResponse(MockResponse response)
-{
-    return control_.setResponse(response);
 }
 
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
@@ -234,8 +210,8 @@ bool MockDevice::mockSetErrorOnClose(bool enabled) {
     return control_.setErrorOnClose(enabled);
 }
 
-bool MockDevice::mockSetErrorOnNthMessage(unsigned messageNumber) {
-    return control_.setErrorOnNthMessage(messageNumber);
+bool MockDevice::mockSetWriteErrorOnNthMessage(unsigned messageNumber) {
+    return control_.setWriteErrorOnNthMessage(messageNumber);
 }
 
 }  // namespace strata::device

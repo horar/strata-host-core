@@ -42,11 +42,11 @@ public:
     static QByteArray createDeviceId(const QString& mockName);
 
     /**
-     * Send message to mock device.
+     * Send message to mock device. Emits messageSent.
      * @param msg message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray& msg) override;
+    virtual unsigned sendMessage(const QByteArray& msg) override;
 
     /**
      * Check if mock device is connected (communication with it is possible).
@@ -99,12 +99,6 @@ public:
     bool mockIsOpenEnabled() const;
 
     /**
-     * Check if mock device behaves as very old board without 'get_firmware_info' command support
-     * @return true if behaves as very old board, otherwise false
-     */
-    bool mockIsLegacy() const;
-
-    /**
      * Check if mock device automatically responds to messages it receives
      * @return true if responds automatically, otherwise false
      */
@@ -135,16 +129,11 @@ public:
     bool mockIsErrorOnNthMessageSet() const;
 
     /**
-     * Returns which command has configured special response behavior
-     * @return the particular command with special response behavior
-     */
-    MockCommand mockGetCommand() const;
-
-    /**
      * Returns which response is to be used for a particular command
+     * @param command the particular command whose response should be returned
      * @return the special response used for a particular command
      */
-    MockResponse mockGetResponse() const;
+    MockResponse mockGetResponseForCommand(MockCommand command) const;
 
     /**
      * Returns configured mock device version
@@ -160,13 +149,6 @@ public:
     bool mockSetOpenEnabled(bool enabled);
 
     /**
-     * Configures if mock device behaves as very old board without 'get_firmware_info' command support
-     * @param isLegacy true if behaves as very old board, otherwise false
-     * @return true if parameter was changed, otherwise false
-     */
-    bool mockSetLegacy(bool isLegacy);
-
-    /**
      * Configures if mock device automatically responds to messages it receives
      * @note Use mockEmitResponses to send the responses manually
      * @param autoResponse true if responds automatically, otherwise false
@@ -180,20 +162,6 @@ public:
      * @return true if parameter was changed, otherwise false
      */
     bool mockSetSaveMessages(bool saveMessages);
-
-    /**
-     * Configures special response behavior for a particular command
-     * @param command the particular command with special response behavior
-     * @return true if parameter was changed, otherwise false
-     */
-    bool mockSetCommand(MockCommand command);
-
-    /**
-     * Configures special response behavior for a particular command
-     * @param response the special response used for a particular command
-     * @return true if parameter was changed, otherwise false
-     */
-    bool mockSetResponse(MockResponse response);
 
     /**
      * Configures special response behavior for a particular command
@@ -232,12 +200,12 @@ public:
     bool mockSetErrorOnClose(bool enabled);
 
     /**
-     * Configures if mock device emits error on nth message it receives
+     * Configures if mock device emits write error on nth message it receives
      * After error is emitted, the counter starts from 0 again
      * @param messageNumber the nth message on which the error is to be emitted, (0 : disabled)
      * @return true if parameter was changed, otherwise false
      */
-    bool mockSetErrorOnNthMessage(unsigned messageNumber);
+    bool mockSetWriteErrorOnNthMessage(unsigned messageNumber);
 
 private slots:
     void readMessage(QByteArray msg);

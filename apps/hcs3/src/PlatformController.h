@@ -41,9 +41,8 @@ public:
      * Sends message to platform specified by device Id
      * @param deviceId
      * @param message
-     * @return true if massage can be sent
      */
-    bool sendMessage(const QByteArray& deviceId, const QByteArray& message);
+    void sendMessage(const QByteArray& deviceId, const QByteArray& message);
 
     /**
      * Gets platform specified by device ID
@@ -67,11 +66,14 @@ private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
     void closeConnection(const QByteArray& deviceId);
     void messageFromPlatform(strata::platform::PlatformMessage message);
+    void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
 
 private:
     strata::PlatformManager platformManager_;
 
     // map: deviceID <-> Platform
     QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
-    // access to platforms_ should be protected by mutex in case of multithread usage
+    // map: deviceID <-> number of last sent message
+    QHash<QByteArray, unsigned> sentMessageNumbers_;
+    // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage
 };
