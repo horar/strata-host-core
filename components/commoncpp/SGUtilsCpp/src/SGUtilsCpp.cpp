@@ -31,9 +31,12 @@ SGUtilsCpp::~SGUtilsCpp()
 {
 }
 
-QString SGUtilsCpp::urlToLocalFile(const QUrl &url)
+QString SGUtilsCpp::urlToLocalFile(const QUrl &url, const bool toNativeSeparators)
 {
-    return QDir::toNativeSeparators(QUrl(url).toLocalFile());
+    if (toNativeSeparators) {
+        return QDir::toNativeSeparators(QUrl(url).toLocalFile());
+    }
+    return QUrl(url).toLocalFile();
 }
 
 bool SGUtilsCpp::isFile(const QString &file)
