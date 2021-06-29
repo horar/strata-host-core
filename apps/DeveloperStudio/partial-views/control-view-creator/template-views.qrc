@@ -25,5 +25,7 @@
         <file>template-views/visual-editor/qml.qrc</file>
         <file>template-views/visual-editor/Warning.qml</file>
         <file>template-views/images/visual-editor.jpg</file>
+        <file>template-views/visual-editor/PlatformInterface.qml</file>
+        <file>template-views/visual-editor/platformInterface.json</file>
     </qresource>
 </RCC>

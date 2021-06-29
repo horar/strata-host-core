@@ -7,6 +7,10 @@ import tech.strata.sgwidgets 1.0
 ColumnLayout {
     id: controlViewRoot
 
+    PlatformInterface {
+        id: platformInterface
+    }
+
     TabBar {
         id: tabBar
         Layout.fillWidth: true
@@ -20,30 +24,18 @@ ColumnLayout {
         }
     }
     
-    Loader {
-        id: loader
+    StackLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
+        currentIndex: tabBar.currentIndex
+        
+        Example {
+            id: exampleView
+        }
 
-        sourceComponent: { 
-            switch (tabBar.currentIndex) {
-                case 0:
-                    return exampleView
-                case 1: 
-                    return blankSandboxView
-            }
+        BlankSandbox {
+            id: blankSandboxView
         }
     }
-
-    Component {
-        id: exampleView
-        
-        Example {}
-    }
-
-    Component {
-        id: blankSandboxView
-
-        BlankSandbox {}
-    }
 }
+
