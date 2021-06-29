@@ -146,7 +146,9 @@ Rectangle {
                     source: "qrc:/sgimages/broom.svg"
 
                     onClicked:  {
+
                         consoleLogger.clearLogs()
+
                     }
                 }
 
@@ -156,8 +158,11 @@ Rectangle {
                     source: "qrc:/sgimages/list.svg"
 
                     onClicked:  {
-                        newWindowLoader.source = "Child.qml"
-                        root.parent = newWindowLoader
+                        popupWindow = true
+
+                        //newWindowLoader.visible = true
+                        root.parent = newWindowLoader.item.consoleLogParent
+
                     }
                 }
 
@@ -176,6 +181,10 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
+                            if(popupWindow) {
+                               popupWindow = false
+                               isConsoleLogOpen = false
+                            }
                             root.clicked()
                         }
                     }

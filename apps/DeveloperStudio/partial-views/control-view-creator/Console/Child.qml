@@ -3,15 +3,14 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
     id: root
-    width: 500
+    width: 800
     height: 200
     visible: true
     property real rectHeight : 200
     property alias consoleLogParent: resizeRect
 
-    Rectangle {
+    Item {
         id: resizeRect
         anchors.fill: parent
-        color: "red"
     }
 }

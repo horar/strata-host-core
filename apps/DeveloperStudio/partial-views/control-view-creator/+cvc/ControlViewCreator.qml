@@ -20,6 +20,7 @@ Rectangle {
 
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
+    property bool popupWindow: false
     property bool recompileRequested: false
     property bool projectInitialization: false
     property string previousCompiledRccFilePath: ""
@@ -140,14 +141,27 @@ Rectangle {
                 Layout.minimumHeight: 30
                 implicitHeight: 200
                 Layout.fillWidth: true
-                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true
+                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true && popupWindow === false
             }
         }
     }
 
     ConsoleContainer {
         id:consoleContainer
-        parent: viewStack.currentIndex === 1 ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
+        parent: {
+
+
+            if (viewStack.currentIndex === 1)
+                return editViewConsoleContainer
+            else /*if (viewStack.currentIndex === 2)*/
+                return viewConsoleLog.consoleLogParent
+//            else {
+//                 console.log(viewStack.currentIndex)
+//                return newWindowLoader.item.consoleLogParent
+//            }
+
+        }
+
         onClicked: {
             isConsoleLogOpen = false
         }
@@ -157,11 +171,16 @@ Rectangle {
         id: viewConsoleLog
         width: parent.width - 71
         implicitHeight: parent.height
-        visible: viewStack.currentIndex === 2 &&  isConsoleLogOpen === true
+        visible: viewStack.currentIndex === 2 && isConsoleLogOpen === true && popupWindow === false
     }
 
     Loader {
         id: newWindowLoader
+        active: popupWindow
+        source: "Console/Child.qml"
+        onActiveChanged: {
+            console.log(popupWindow)
+        }
     }
 
 
