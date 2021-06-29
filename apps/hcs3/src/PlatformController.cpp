@@ -22,14 +22,15 @@ void PlatformController::initialize() {
     platformManager_.init(strata::device::Device::Type::SerialDevice);
 }
 
-bool PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
+void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
     auto it = platforms_.constFind(deviceId);
     if (it == platforms_.constEnd()) {
         qCWarning(logCategoryHcsPlatform).noquote() << "Cannot send message, platform" << deviceId << "was not found.";
-        return false;
+        return;
     }
     qCDebug(logCategoryHcsPlatform).noquote() << "Sending message to platform" << deviceId;
-    return it.value()->sendMessage(message);
+    unsigned msgNumber = it.value()->sendMessage(message);
+    sentMessageNumbers_.insert(deviceId, msgNumber);
 }
 
 PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
@@ -48,6 +49,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         }
 
         connect(platform.get(), &Platform::messageReceived, this, &PlatformController::messageFromPlatform);
+        connect(platform.get(), &Platform::messageSent, this, &PlatformController::messageToPlatform);
         platforms_.insert(deviceId, platform);
 
         qCInfo(logCategoryHcsPlatform).noquote() << "Connected new platform" << deviceId;
@@ -58,6 +60,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         // Remove platform if it was previously connected.
         if (platforms_.contains(deviceId)) {
             platforms_.remove(deviceId);
+            sentMessageNumbers_.remove(deviceId);
             emit platformDisconnected(deviceId);
         }
     }
@@ -72,6 +75,7 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     }
 
     platforms_.remove(deviceId);
+    sentMessageNumbers_.remove(deviceId);
 
     qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected platform" << deviceId;
 
@@ -101,6 +105,25 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
     emit platformMessage(platform->platformId(), wrapperStrJson);
+}
+
+void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString)
+{
+    if (errorString.isEmpty()) {
+        // message was sent successfully
+        return;
+    }
+
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        return;
+    }
+
+    auto iter = sentMessageNumbers_.constFind(platform->deviceId());
+    if ((iter != sentMessageNumbers_.constEnd()) && (iter.value() == msgNumber)) {
+        qCWarning(logCategoryHcsPlatform) << platform << "Cannot send message: '"
+            << rawMessage << "', error: '" << errorString << '\'';
+    }
 }
 
 QString PlatformController::createPlatformsList() {

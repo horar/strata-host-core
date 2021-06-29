@@ -51,17 +51,19 @@ void TcpDevice::close()
     }
 }
 
-bool TcpDevice::sendMessage(const QByteArray &message)
+unsigned TcpDevice::sendMessage(const QByteArray &message)
 {
+    unsigned msgNum = Device::nextMessageNumber();
+
     if (tcpSocket_->write(message) != message.size() || false == tcpSocket_->flush()) {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceTcp) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
-        return false;
+        emit messageSent(message, msgNum, errMsg);
+    } else {
+        emit messageSent(message, msgNum, QString());
     }
 
-    emit messageSent(message);
-    return true;
+    return msgNum;
 }
 
 bool TcpDevice::isConnected() const

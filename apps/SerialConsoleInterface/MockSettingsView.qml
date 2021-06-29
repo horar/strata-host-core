@@ -7,18 +7,18 @@ import tech.strata.sci 1.0 as Sci
 FocusScope {
     id: mockSettingsView
 
+    property variant mockDevice: model.platform.mockDevice
+    property variant deviceType: model.platform.deviceType
+    property bool isValid: mockDevice.isValid
+    property int baseSpacing: 10
+    property int gridColumnSpacing: 6
+
     onDeviceTypeChanged: {
         // force close the view in case the same deviceId is reused for non-mock device
         if (deviceType !== Sci.SciPlatform.MockDevice) {
             closeView()
         }
     }
-
-    property variant mockDevice: model.platform.mockDevice
-    property variant deviceType: model.platform.deviceType
-    property bool isValid: mockDevice.isValid
-    property int baseSpacing: 10
-    property int gridColumnSpacing: 6
 
     FocusScope {
         id: content
@@ -73,27 +73,6 @@ FocusScope {
                     enabled: mockDevice.canReopenMockDevice
                     onClicked: {
                         mockDevice.reopenMockDevice()
-                    }
-                }
-
-                SGWidgets.SGCheckBox {
-                    id: legacyModeCheckBox
-                    text: "Legacy Mode"
-                    ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Simulate legacy functionality (no get_firmware_info)")
-                    ToolTip.delay: 1000
-                    enabled: isValid
-                    Layout.columnSpan: 2
-                    Layout.alignment: Qt.AlignLeft
-
-                    onCheckStateChanged: {
-                        mockDevice.legacyMode = checked
-                    }
-
-                    Binding {
-                        target: legacyModeCheckBox
-                        property: "checked"
-                        value: mockDevice.legacyMode
                     }
                 }
 
@@ -157,6 +136,36 @@ FocusScope {
                 enabled: !responseDisabledCheckBox.checked
 
                 SGWidgets.SGText {
+                    id: mockVersionComboBoxLabel
+                    fontSizeMultiplier: 1.2
+                    text: "Communication Protocol Version:"
+                }
+
+                SGWidgets.SGComboBox {
+                    id: mockVersionComboBox
+                    model: mockDevice.mockVersionModel
+                    textRole: "name"
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Version of protocol used for communication")
+                    ToolTip.delay: 1000
+
+                    onActivated: {
+                        if (currentIndex !== -1) {
+                            let version = model.data(currentIndex,"type")
+                            if (mockDevice.mockVersion !== version) {
+                                mockDevice.mockVersion = version
+                            }
+                        }
+                    }
+
+                    Binding {
+                        target: mockVersionComboBox
+                        property: "currentIndex"
+                        value: mockDevice.mockVersionModel.find(mockDevice.mockVersion)
+                    }
+                }
+
+                SGWidgets.SGText {
                     id: mockCommandComboBoxLabel
                     fontSizeMultiplier: 1.2
                     text: "Input Command:"
@@ -213,36 +222,6 @@ FocusScope {
                         target: mockResponseComboBox
                         property: "currentIndex"
                         value: mockDevice.mockResponseModel.find(mockDevice.mockResponse)
-                    }
-                }
-
-                SGWidgets.SGText {
-                    id: mockVersionComboBoxLabel
-                    fontSizeMultiplier: 1.2
-                    text: "Communication Protocol Version:"
-                }
-
-                SGWidgets.SGComboBox {
-                    id: mockVersionComboBox
-                    model: mockDevice.mockVersionModel
-                    textRole: "name"
-                    ToolTip.visible: hovered
-                    ToolTip.text: qsTr("Version of protocol used for communication")
-                    ToolTip.delay: 1000
-
-                    onActivated: {
-                        if (currentIndex !== -1) {
-                            let version = model.data(currentIndex,"type")
-                            if (mockDevice.mockVersion !== version) {
-                                mockDevice.mockVersion = version
-                            }
-                        }
-                    }
-
-                    Binding {
-                        target: mockVersionComboBox
-                        property: "currentIndex"
-                        value: mockDevice.mockVersionModel.find(mockDevice.mockVersion)
                     }
                 }
             }
