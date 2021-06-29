@@ -67,8 +67,21 @@
         });
     </script>
     <script>
+        document.onreadystatechange = function() {
+            if (document.readyState === 'interactive') {
+                console.log(`Loading: ${Date.now()}`)
+            } else if(document.readyState === 'complete') {
+                console.log(`Complete: ${Date.now()}`)
+            }
+        }
+
+        window.onload = function () {
+            console.log(`Complete: ${Date.now()}`)
+        }
         if(!isInitialized){
+            console.log(`Started Init: ${Date.now()}`)
             registerQmlAsLanguage()
+            console.log(`Finished Init: ${Date.now()}`)
         } else {
             editor.dispose()
         } 
