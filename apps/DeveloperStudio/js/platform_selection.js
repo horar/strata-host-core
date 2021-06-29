@@ -497,10 +497,10 @@ function openPlatformView(platform) {
     Disconnect listing, reset completely if no related PlatformView is open
 */
 function disconnectPlatform(platform) {
-    const class_id_string = platform.class_id   // will contain class_id_string
+    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
     let selector_listing = getDeviceListing(class_id_string, platform.device_id)
     if (selector_listing === null) {
-        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unable to disconnect platform: ", platform);
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unable to disconnect platform, class_id:", platform.class_id, "device_id:", platform.device_id)
         return;
     }
 
@@ -705,7 +705,7 @@ function insertErrorListing (platform) {
     platformSelectorModel.append(platform)
 
     let index = platformSelectorModel.count - 1
-    const class_id_string = platform.class_id   // will contain class_id_string
+    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
 
     if (classMap.hasOwnProperty(class_id_string)) {
         classMap[class_id_string].selector_listings.push(index)
