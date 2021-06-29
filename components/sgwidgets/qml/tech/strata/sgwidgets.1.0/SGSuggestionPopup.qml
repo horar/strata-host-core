@@ -306,7 +306,6 @@ Popup {
                 wrapMode: popup.delegateTextWrap ? Text.WrapAnywhere : Text.NoWrap
                 textFormat: Text.PlainText
                 readOnly: true
-                wrapMode: Text.WrapAnywhere
                 text: popup.textRole ? model[popup.textRole] : modelData
             }
 
