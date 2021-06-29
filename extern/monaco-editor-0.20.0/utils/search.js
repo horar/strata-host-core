@@ -35,7 +35,7 @@ class QtSearch {
                 var getLine = model.getLineContent(checkPrev.range.startLineNumber)
                 var content = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
                 var getWord = model.findPreviousMatch(content, initialPosition)
-                while (next.range.startColumn < getWord.range.startColumn) {
+                while (getWord !== null && next.range.startColumn < getWord.range.startColumn) {
                     initialPosition = { lineNumber: getWord.range.startLineNumber, column: getWord.range.startColumn }
                     checkPrev = this.getPrev(initialPosition)
                     getLine = model.getLineContent(checkPrev.range.startLineNumber)

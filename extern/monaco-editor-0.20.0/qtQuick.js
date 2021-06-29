@@ -64,8 +64,8 @@ function registerQmlProvider() {
                 }
                 if (active.includes(":")) {
                     var idsSuggestions = []
-                    for (var i = 0; i < ids.length; i++) {
-                        idsSuggestions.push(qtSuggestions.functionSuggestions[ids[i]])
+                    for (var i = 0; i < qtIds.ids.length; i++) {
+                        idsSuggestions.push(qtSuggestions.functionSuggestions[qtIds.ids[i]])
                     }
                     return { suggestions: idsSuggestions }
                 }
@@ -252,12 +252,10 @@ function registerQmlProvider() {
 
     runQmlProvider()
 
-    editor.onDidType(()=>{
-        console.log("Hit")
-    })
-
     // Component did mount and update
     editor.getModel().onDidChangeContent((event) => {
+        window.link.fileText = editor.getValue();
+        window.link.setVersionId(editor.getModel().getAlternativeVersionId());
         const model = editor.getModel()
         qtSearch.update(model)
         // Mount
