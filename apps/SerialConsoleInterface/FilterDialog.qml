@@ -229,6 +229,21 @@ SGWidgets.SGDialog {
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
                                 contextMenuEnabled: true
+                                showSuggestionButton: true
+                                suggestionCloseWithArrowKey: true
+                                suggestionCloseOnMouseSelection: true
+                                suggestionHighlightResults: true
+                                suggestionListModel: sortFilterModel
+                                suggestionModelTextRole: "suggestion"
+
+                                onSuggestionDelegateSelected: {
+                                   var sourceIndex = sortFilterModel.mapIndexToSource(index)
+                                   if (sourceIndex < 0) {
+                                        console.error(Logger.sciCategory, "Index out of scope.")
+                                        return
+                                    }
+                                    text = filterSuggestionModel.get(sourceIndex)["suggestion"]
+                                }
 
                                 Keys.forwardTo: suggestionPopup.contentItem
                                 Keys.priority: Keys.BeforeItem
@@ -247,72 +262,6 @@ SGWidgets.SGDialog {
                                     target: filterStringTextField
                                     property: "text"
                                     value: model["filter_string"]
-                                }
-
-                                SGWidgets.SGSuggestionPopup {
-                                    id: suggestionPopup
-                                    model: sortFilterModel
-                                    textRole: "suggestion"
-                                    textEditor: filterStringTextField
-                                    position: Item.Bottom
-                                    closeWithArrowKey: true
-
-                                    onDelegateSelected: {
-                                        var sourceIndex = sortFilterModel.mapIndexToSource(index)
-                                        if (sourceIndex < 0) {
-                                                console.error(Logger.sciCategory, "Index out of scope.")
-                                                return
-                                            }
-                                            filterStringTextField.text = filterSuggestionModel.get(sourceIndex)["suggestion"]
-                                            suggestionPopup.close()
-                                    }
-
-                                    delegate: Item {
-                                        width: ListView.view.width
-                                        height: textEdit.paintedHeight + 10
-
-                                        CommonCpp.SGTextHighlighter {
-                                            textDocument: textEdit.textDocument
-                                            filterPattern: filterStringTextField.text
-                                        }
-
-                                        Rectangle {
-                                            anchors.fill: parent
-                                            color: {
-                                                if (parent.ListView.isCurrentItem) {
-                                                    return Qt.lighter(TangoTheme.palette.highlight, 1.7)
-                                                } else if (delegateMouseArea.containsMouse) {
-                                                    return Qt.lighter(TangoTheme.palette.highlight, 1.9)
-                                                }
-
-                                                return "transparent"
-                                            }
-                                        }
-
-                                        SGWidgets.SGTextEdit {
-                                            id: textEdit
-                                            anchors {
-                                                verticalCenter: parent.verticalCenter
-                                                left: parent.left
-                                                leftMargin: 4
-                                            }
-
-                                            textFormat: Text.PlainText
-                                            readOnly: true
-                                            wrapMode: Text.WrapAnywhere
-                                            text: model.suggestion
-                                        }
-
-                                        MouseArea {
-                                            id: delegateMouseArea
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            onClicked: {
-                                                parent.ListView.view.currentIndex = index
-                                                suggestionPopup.delegateSelected(index)
-                                            }
-                                        }
-                                    }
                                 }
                             }
 
