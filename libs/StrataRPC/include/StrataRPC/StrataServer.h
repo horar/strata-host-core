@@ -4,12 +4,15 @@
 
 #include "Message.h"
 
+class QThread;
+
 namespace strata::strataRPC
 {
 template <class HandlerArgument>
 class Dispatcher;
 class ServerConnector;
 class ClientsController;
+enum class ServerConnectorError : short;
 
 class StrataServer : public QObject
 {
@@ -37,7 +40,7 @@ public:
      * @param [in] useDefaultHandlers boolean to use the built in handlers for register_client and
      * unregister commands. The default value is true.
      */
-    StrataServer(QString address, bool useDefaultHandlers = true, QObject *parent = nullptr);
+    StrataServer(const QString &address, bool useDefaultHandlers = true, QObject *parent = nullptr);
 
     /**
      * StrataServer destructor
@@ -46,9 +49,10 @@ public:
 
     /**
      * Initialize and start up the server
-     * @return true if the server initialization is successful. False otherwise.
+     * @note If the server is initialized successfully StrataServer will emit initialized
+     * signal. Otherwise it will emit errorOccurred.
      */
-    bool initializeServer();
+    void initialize();
 
     /**
      * Register a command handler in the server's dispatcher.
@@ -78,7 +82,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                      ResponseType responseType);
+                      const ResponseType &responseType);
 
     /**
      * Slot to send a message to a client. This overload is used to send unsolicited notifications
@@ -89,7 +93,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const QByteArray &clientId, const QString &handlerName,
-                      const QJsonObject &jsonObject, ResponseType responseType);
+                      const QJsonObject &jsonObject, const ResponseType &responseType);
 
     /**
      * Slot to notify all connected clients.
@@ -104,7 +108,7 @@ private slots:
      * @param [in] clientId client id of the sender
      * @param [in] message QByteArray of the message json string.
      */
-    void newClientMessage(const QByteArray &clientId, const QByteArray &message);
+    void messageReceived(const QByteArray &clientId, const QByteArray &message);
 
     /**
      * Slot to handle dispatching client notification/requests handlers.
@@ -113,19 +117,43 @@ private slots:
      */
     void dispatchHandler(const Message &clientMessage);
 
+    /**
+     * Slot to handle errors from the ServerConnector.
+     * @param [in] errorType enum of the the error.
+     * @param [in] errorMessage description of the error.
+     */
+    void connectorErrorHandler(const ServerConnectorError &errorType, const QString &errorMessage);
+
 signals:
     /**
      * Signal emitted when a new client message is parsed and ready to be dispatched
      * @param [in] clientMessage populated Message object with the command/notification metadata.
      */
-    void newClientMessageParsed(const Message &clientMessage);
+    void MessageParsed(const Message &clientMessage);
 
     /**
      * Emitted when an error has occurred.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(StrataServer::ServerError errorType, const QString &errorMessage);
+    void errorOccurred(const StrataServer::ServerError &errorType, const QString &errorMessage);
+
+    /**
+     * Signal to initialize the server.
+     */
+    void initializeConnector();
+
+    /**
+     * Emitted when the server is initialize successfully.
+     */
+    void initialized();
+
+    /**
+     * Signal to send a message to a client.
+     * @param [in] clientId QByteArray of the client id.
+     * @param [in] message QByteArray of the message.
+     */
+    void sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 private:
     /**
@@ -155,7 +183,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     ResponseType responseType);
+                                                     const ResponseType &responseType);
 
     /**
      * Build server message to be sent to clients using API v1.
@@ -168,7 +196,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     ResponseType responseType);
+                                                     const ResponseType &responseType);
 
     /**
      * StrataServer handler for client registration.
@@ -185,6 +213,7 @@ private:
     std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
     std::unique_ptr<ClientsController> clientsController_;
     std::unique_ptr<ServerConnector> connector_;
+    std::unique_ptr<QThread> connectorThread_;
 };
 
 }  // namespace strata::strataRPC

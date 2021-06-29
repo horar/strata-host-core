@@ -30,7 +30,7 @@ private slots:
     void JSONWithoutPayloadTest();
     void nackTest();
     void invalidValueTest();
-    void switchToBootloaderAndBackTest();
+    void bootloaderResponseTest();
     void cancelOperationTest();
     void identifyLegacyTest();
 
@@ -54,4 +54,3 @@ private:
     int operationTimeoutCount_ = 0;
     int operationCommandsCount_ = 0;
 };
-

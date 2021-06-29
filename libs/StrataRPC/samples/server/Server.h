@@ -14,7 +14,7 @@ class Server : public QObject
 public:
     explicit Server(QObject *parent = nullptr);
     ~Server();
-    bool init();
+    void init();
     void start();
 
 signals:

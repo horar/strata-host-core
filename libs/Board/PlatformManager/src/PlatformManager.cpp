@@ -338,9 +338,8 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     switch (errCode) {
     case Device::ErrorCode::NoError: {
     } break;
-    case Device::ErrorCode::DeviceBusy:
     case Device::ErrorCode::DeviceFailedToOpen: {
-        // no need to handle these
+        // no need to handle this error code
         // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << platform->deviceId() << ", code: " << errCode << ", message: " << errStr;
     } break;
     case Device::ErrorCode::DeviceDisconnected: {

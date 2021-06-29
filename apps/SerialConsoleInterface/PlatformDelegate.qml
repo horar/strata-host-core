@@ -529,8 +529,6 @@ FocusScope {
                 } else if (result.error === "json_error") {
                     var pos = messageEditor.resolveCoordinates(result.offset, messageEditor.text)
                     model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) +  "- " + result.message;
-                } else if (result.error === "send_error") {
-                    model.platform.errorString = "Could not send message"
                 } else {
                     model.platform.errorString = "Unknown error"
                 }

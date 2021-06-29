@@ -237,14 +237,11 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
     //compact format as line break is end of input for serial library
     QString compactMsg = SGJsonFormatter::minifyJson(message);
 
-    bool result = platform_->sendMessage(compactMsg.toUtf8());
-    if (result) {
-        commandHistoryModel_->add(compactMsg, isJsonValid);
-        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-        retStatus["error"] = "no_error";
-    } else {
-        retStatus["error"] = "send_error";
-    }
+    // TODO: CS-2028 - store message number returned from 'sendMessage'
+    platform_->sendMessage(compactMsg.toUtf8());
+    commandHistoryModel_->add(compactMsg, isJsonValid);
+    settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+    retStatus["error"] = "no_error";
 
     return retStatus;
 }
@@ -298,9 +295,18 @@ void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage mes
     filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray rawMessage)
+void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, unsigned msgNumber, QString errorString)
 {
-    scrollbackModel_->append(rawMessage, true);
+    Q_UNUSED(msgNumber)
+
+    if (errorString.isEmpty()) {
+        scrollbackModel_->append(rawMessage, true);
+    } else {
+        // TODO: handle this situation, task for it is CS-2028
+
+        qCWarning(logCategorySci) << platform_ << "Error '" << errorString
+            << "' occured while sending message '" << rawMessage << '\'';
+    }
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)

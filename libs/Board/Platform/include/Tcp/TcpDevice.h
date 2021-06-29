@@ -39,11 +39,11 @@ public:
     virtual void close() override;
 
     /**
-     * Send message asynchronously to tcp device. Emits deviceError in case of failure.
+     * Send message asynchronously to tcp device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray &message) override;
+    virtual unsigned sendMessage(const QByteArray &message) override;
 
     /**
      * return the status of the tcp device.
