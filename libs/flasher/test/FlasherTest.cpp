@@ -268,28 +268,15 @@ void FlasherTest::clearExpectedValues()
 
 QByteArray FlasherTest::generateMockFirmware(bool isBootloader)
 {
-    if (isBootloader == false) {
-        quint32 buffer[1279]; //represents 20 chunks of firmware (20 * mock_firmware_constants::CHUNK_SIZE/sizeof (int) - 1)
-        std::seed_seq sseq{1,2,3};
-        QRandomGenerator generator(sseq);
-        generator.fillRange(buffer);
-
-        QByteArray generatedFirmware;
-        QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
-        for (int i = 0; i < 1279; i ++) {
-            stream << buffer[i];
-        }
-        return generatedFirmware;
-    }
-
-    quint32 buffer[639];
+    const int bufferSize = isBootloader ? flasher_test_constants::bootloaderBufferSize : flasher_test_constants::firmwareBufferSize;
+    quint32 buffer[bufferSize];
     std::seed_seq sseq{1,2,3};
     QRandomGenerator generator(sseq);
-    generator.fillRange(buffer);
+    generator.fillRange(buffer, bufferSize);
 
     QByteArray generatedFirmware;
     QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
-    for (int i = 0; i < 639; i ++) {
+    for (int i = 0; i < bufferSize; i++) {
         stream << buffer[i];
     }
     return generatedFirmware;
