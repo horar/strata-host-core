@@ -625,11 +625,6 @@ function generateUnregisteredListing (platform, class_id_string) {
 }
 
 function generateAssistedNoPlatformListing (platform, class_id_string) {
-    let fw_class_id = String(platform.fw_class_id)
-    if (fw_class_id === "") {
-        fw_class_id = "no_firmware"
-    }
-
     let description = "Please connect platform to controller"
     return generateErrorListing(platform, "Strata Assisted Controller", class_id_string, "N/A", description)
 }
