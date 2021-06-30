@@ -5,12 +5,10 @@ class QtProperties {
         this.model = null
         this.qtPropertyPairs = {}
         this.customProperties = []
-        this.qtQuick = null
     }
 
-    update(model, qtQuick) {
+    update(model) {
         this.model = model
-        this.qtQuick = qtQuick
         this.qtPropertyPairs = {}
         this.customProperties = []
         this.getPropertyType(model)
@@ -25,7 +23,7 @@ class QtProperties {
         } else {
             this.qtPropertyPairs[item][lineNumber] = property
         }
-        if (this.qtQuick.qtSuggestions.qtObjectKeyValues.hasOwnProperty(item) && property !== undefined) {
+        if (qtSuggestions.qtObjectKeyValues.hasOwnProperty(item) && property !== undefined) {
             var onCall = property
             var onCallProperty = "on" + onCall[0].toUpperCase() + onCall.substring(1) + "Changed"
            this.customProperties.push(onCallProperty)
@@ -33,8 +31,8 @@ class QtProperties {
     }
     
     getPropertyType(model) {
-        var position = { lineNumber: this.qtQuick.qtSearch.fullRange.endLineNumber, column: this.qtQuick.qtSearch.fullRange.endColumn }
-        while (position.lineNumber > this.qtQuick.qtSearch.fullRange.startLineNumber ) {
+        var position = { lineNumber: qtSearch.fullRange.endLineNumber, column: qtSearch.fullRange.endColumn }
+        while (position.lineNumber > qtSearch.fullRange.startLineNumber ) {
             var getPrevPropertyPosition = model.findPreviousMatch("property", position)
             if (getPrevPropertyPosition === null) {
                 break;
@@ -68,20 +66,20 @@ class QtProperties {
         this.customProperties = []
         var startPosition = position
         const previousBracket = model.findPreviousMatch("{", startPosition)
-        const prevParent = this.qtQuick.qtSearch.findPreviousBracketParent(position)
+        const prevParent = qtSearch.findPreviousBracketParent(position)
         const prevParentBracket = model.findPreviousMatch(prevParent, position)
         var prevNextBracket = previousBracket
         var nextPosition = { lineNumber: prevParentBracket.range.startLineNumber, column: previousBracket.range.startColumn }
         var nextProperty = model.findNextMatch("property", nextPosition)
-        var closestTop = this.qtQuick.qtSearch.matchingBrackets[0].top
-        var closestBottom = this.qtQuick.qtSearch.matchingBrackets[0].bottom
-        for( var i = 0; i < this.qtQuick.qtSearch.matchingBrackets.length; i++){
-            if (position.lineNumber <= this.qtQuick.qtSearch.matchingBrackets[i].bottom && position.lineNumber >= this.qtQuick.qtSearch.matchingBrackets[i].top) {
-                if (closestTop < this.qtQuick.qtSearch.matchingBrackets[i].top) {
-                    closestTop = this.qtQuick.qtSearch.matchingBrackets[i].top
+        var closestTop = qtSearch.matchingBrackets[0].top
+        var closestBottom = qtSearch.matchingBrackets[0].bottom
+        for( var i = 0; i < qtSearch.matchingBrackets.length; i++){
+            if (position.lineNumber <= qtSearch.matchingBrackets[i].bottom && position.lineNumber >= qtSearch.matchingBrackets[i].top) {
+                if (closestTop < qtSearch.matchingBrackets[i].top) {
+                    closestTop = qtSearch.matchingBrackets[i].top
                 }
-                if (closestBottom > this.qtQuick.qtSearch.matchingBrackets[i].bottom) {
-                    closestBottom = this.qtQuick.qtSearch.matchingBrackets[i].bottom
+                if (closestBottom > qtSearch.matchingBrackets[i].bottom) {
+                    closestBottom = qtSearch.matchingBrackets[i].bottom
                 }
             }
         }
@@ -105,13 +103,13 @@ class QtProperties {
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
                 var id = getLine.replace("\t", "").split(":")[1].trim()
                 var propertySlot = "on" + propertyWord[0].toUpperCase() + propertyWord.substring(1) + "Changed"
-                this.qtQuick.qtSuggestions.qtObjectKeyValues[this.qtQuick.qtIds.qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertySlot)
-                if (this.qtQuick.qtIds.otherProperties.hasOwnProperty(id)) {
-                    this.qtQuick.qtIds.otherProperties[id].push(propertyWord)
-                    this.qtQuick.qtIds.otherProperties[id] = this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtIds.otherProperties[id])
+                qtSuggestions.qtObjectKeyValues[qtIds.qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertySlot)
+                if (qtIds.otherProperties.hasOwnProperty(id)) {
+                    qtIds.otherProperties[id].push(propertyWord)
+                    qtIds.otherProperties[id] = removeDuplicates(qtIds.otherProperties[id])
                 } else {
-                    this.qtQuick.qtIds.otherProperties[id] = []
-                    this.qtQuick.qtIds.otherProperties[id].push(propertyWord)
+                    qtIds.otherProperties[id] = []
+                    qtIds.otherProperties[id].push(propertyWord)
                 }
             } else {
                 if(position.lineNumber >= closestTop && position.lineNumber <= closestBottom && (nextProperty.range.startLineNumber >= closestTop && nextProperty.range.startLineNumber <= closestBottom)){
@@ -119,7 +117,7 @@ class QtProperties {
                     if(!this.customProperties.includes(propertySlot)){
                         var getLine = model.getLineContent(closestTop)
                         var getParent = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
-                        this.qtQuick.qtSuggestions.qtObjectKeyValues[getParent].properties = this.qtQuick.qtSuggestions.qtObjectKeyValues[getParent].properties.concat(propertySlot)
+                        qtSuggestions.qtObjectKeyValues[getParent].properties = qtSuggestions.qtObjectKeyValues[getParent].properties.concat(propertySlot)
                     }
                 }
             }

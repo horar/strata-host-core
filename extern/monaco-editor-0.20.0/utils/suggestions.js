@@ -1,7 +1,6 @@
 class QtSuggestions {
     constructor() {
         this.model = null
-        this.qtQuick = null
         this.qtObjectSuggestions = {}
         this.qtImports = []
         this.currentItems = {}
@@ -13,9 +12,8 @@ class QtSuggestions {
         this.loadInQtQuickTypes()
     }
 
-    update(model, qtQuick) {
+    update(model) {
         this.model = model
-        this.qtQuick = qtQuick
         this.suggestions = {}
         this.functionSuggestions = {}
         this.qtImports = []
@@ -26,7 +24,7 @@ class QtSuggestions {
 
     // Initializes the library to become an Object array to be feed into suggestions
     loadImportsAndValidate(model) {
-        const firstLine = { lineNumber: this.qtQuick.qtSearch.fullRange.startLineNumber, column: this.qtQuick.qtSearch.fullRange.startColumn }
+        const firstLine = { lineNumber: qtSearch.fullRange.startLineNumber, column: qtSearch.fullRange.startColumn }
         var line = { lineNumber: firstLine.lineNumber, column: firstLine.startColumn }
         while (line.lineNumber >= firstLine.lineNumber) {
             var getNextPosition = model.findNextMatch("import", line)
@@ -65,7 +63,7 @@ class QtSuggestions {
             for (var j = 0; j < this.qtObjectSuggestions[key].properties.length; j++) {
                 arr.push(this.qtObjectSuggestions[key].properties[j])
             }
-            arr = qtHelper.removeDuplicates(arr)
+            arr = removeDuplicates(arr)
             this.createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
         }
 
@@ -76,8 +74,7 @@ class QtSuggestions {
         }
     }
 
-    createSuggestions() {
-        
+    createSuggestions() {       
         for (const key in this.qtObjectKeyValues) {
             for (var i = 0; i < this.qtImports.length; i++){
                 if (!this.qtObjectKeyValues[key].isId && qtTypeJson["sources"].hasOwnProperty(key) && !qtTypeJson["sources"][key].nonInstantiable && (qtTypeJson["sources"][key].source.includes(this.qtImports[i]) || qtTypeJson["sources"][key].source === "" )) {
@@ -169,12 +166,12 @@ class QtSuggestions {
 
         for (var i = 0; i < properties.length; i++) {
             if (properties[i].includes("()")) {
-                propertySuggestions.push(this.qtQuick.qtHelper.createDynamicProperty(properties[i], true))
+                propertySuggestions.push(createDynamicProperty(properties[i], true))
             } else {
                 if (isIdReference || (this.qtObjectMetaPropertyValues.hasOwnProperty(metaParent) && this.qtObjectMetaPropertyValues[metaParent].hasOwnProperty(properties[i]) && this.qtObjectMetaPropertyValues[metaParent][properties[i]].length > 0)) {
-                    propertySuggestions.push(this.qtQuick.qtHelper.createDynamicProperty(properties[i], false))
+                    propertySuggestions.push(createDynamicProperty(properties[i], false))
                 } else {
-                    propertySuggestions.push(this.qtQuick.qtHelper.createDynamicProperty(properties[i] + ": ", false))
+                    propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
                 }
             }
         }
@@ -204,7 +201,7 @@ class QtSuggestions {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(this.functionSuggestions)
         } else {
-            const prevParent = this.qtQuick.qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
+            const prevParent = qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
             if (this.qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
                 this.convertStrArrayToObjArray(bracketWord, this.qtObjectMetaPropertyValues[prevParent][bracketWord], true, true)
                 if (this.currentItems[bracketWord] === undefined) {
@@ -213,11 +210,11 @@ class QtSuggestions {
                 this.currentItems[bracketWord][propRange] = this.qtObjectPropertyValues[bracketWord]
                 return this.currentItems[bracketWord][propRange]
             } else {
-                const prevParent = this.qtQuick.qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
+                const prevParent = qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
                 if (prevParent.includes("function") || prevParent.substring(0, 2) === "on" || prevParent.includes("if")) {
                     return Object.values(this.functionSuggestions)
                 }
-                const newParent = this.qtQuick.qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber, column: propRange.startColumn })
+                const newParent = qtSearch.findPreviousBracketParent({ lineNumber: propRange.startLineNumber, column: propRange.startColumn })
                 if (this.qtObjectKeyValues.hasOwnProperty(newParent)) {
                     this.convertStrArrayToObjArray(newParent, this.qtObjectKeyValues[newParent].properties, this.qtObjectKeyValues[newParent].flag, this.qtObjectKeyValues[newParent].isId, newParent)
                     if (this.currentItems[newParent] === undefined) {
@@ -226,7 +223,7 @@ class QtSuggestions {
                     this.currentItems[newParent][propRange] = this.qtObjectPropertyValues[newParent]
                     return this.currentItems[newParent][propRange]
                 }
-                return Object.values(qtSuggestions.suggestions)
+                return Object.values(this.suggestions)
             }
         }
     }

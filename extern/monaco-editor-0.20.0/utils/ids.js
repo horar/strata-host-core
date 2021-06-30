@@ -6,24 +6,22 @@
 class QtIds {
     constructor(){
         this.model = null
-        this.qtQuick = null
         this.qtIdPairs = {}
         this.ids = [];
         this.otherProperties = {}
     }
 
-    update(model, qtQuick) {
+    update(model) {
         this.model = model
         this.qtIdPairs = {}
-        this.qtQuick = qtQuick
         this.ids = [];
         this.otherProperties = {}
         this.getTypeID(model)
     }
 
     getTypeID(model) {
-        var position = { lineNumber: this.qtQuick.qtSearch.fullRange.endLineNumber, column: this.qtQuick.qtSearch.fullRange.endColumn }
-        while (position.lineNumber > this.qtQuick.qtSearch.fullRange.startLineNumber) {
+        var position = { lineNumber: qtSearch.fullRange.endLineNumber, column: qtSearch.fullRange.endColumn }
+        while (position.lineNumber > qtSearch.fullRange.startLineNumber) {
             var getPrevIDPosition = model.findPreviousMatch("id:", position, false, false)
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
                 break;
@@ -35,7 +33,7 @@ class QtIds {
     
             var prevIdLine = model.getLineContent(getPrevIDPosition.range.startLineNumber)
             var prevId = prevIdLine.replace("\t", "").split(":")[1].trim()
-            if(prevId.includes("//")){
+            if(prevId.includes("//") || prevId.includes("/*")){
                 prevId = prevId.split("//")[0]
             }
             var getIdType = model.findPreviousMatch("{", { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn })
@@ -46,7 +44,7 @@ class QtIds {
             if(!this.ids.includes(prevId)){
                 this.ids.push(prevId)
             }
-            this.ids = this.qtQuick.qtHelper.removeDuplicates(this.ids)
+            this.ids = removeDuplicates(this.ids)
             if (!this.otherProperties.hasOwnProperty(prevId)) {
                 this.otherProperties[prevId] = []
             }
@@ -60,64 +58,64 @@ class QtIds {
     addCustomIdAndTypes(idText, position, type = "Item") {
         if (!this.qtIdPairs.hasOwnProperty(position.lineNumber)) {
             this.qtIdPairs[position.lineNumber] = {}
-            if (!this.qtQuick.qtSuggestions.qtObjectKeyValues.hasOwnProperty(type)) {
+            if (!qtSuggestions.qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
             this.qtIdPairs[position.lineNumber][idText] = type
             var arr = []
-            arr = arr.concat(this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtHelper.removeOnCalls(this.qtQuick.qtSuggestions.qtObjectKeyValues[this.qtIdPairs[position.lineNumber][idText]].properties)))
-            arr = arr.concat(this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].functions))
-            arr = arr.concat(this.qtQuick.qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].signals)
-            this.qtQuick.qtSuggestions.createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
-            this.qtQuick.qtSuggestions.functionSuggestions[idText] = {
-                label: this.qtQuick.qtSuggestions.qtObjectKeyValues[idText].label,
+            arr = arr.concat(removeDuplicates(removeOnCalls(qtSuggestions.qtObjectKeyValues[this.qtIdPairs[position.lineNumber][idText]].properties)))
+            arr = arr.concat(removeDuplicates(qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].functions))
+            arr = arr.concat(qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].signals)
+            qtSuggestions.createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+            qtSuggestions.functionSuggestions[idText] = {
+                label: qtSuggestions.qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: this.qtQuick.qtSuggestions.qtObjectKeyValues[idText].insertText,
+                insertText: qtSuggestions.qtObjectKeyValues[idText].insertText,
                 range: null,
             }
         } else {
             if (!this.qtIdPairs[position.lineNumber].hasOwnProperty(idText)) {
                 var keys = Object.keys(this.qtIdPairs[position.lineNumber])
-                delete this.qtQuick.qtSuggestions.functionSuggestions[keys[0]]
-                delete this.qtQuick.qtSuggestions.qtObjectKeyValues[keys[0]]
+                delete qtSuggestions.functionSuggestions[keys[0]]
+                delete qtSuggestions.qtObjectKeyValues[keys[0]]
                 delete this.qtIdPairs[position.lineNumber]
                 this.qtIdPairs[position.lineNumber] = {}
-                if (!this.qtQuick.qtSuggestions.qtObjectKeyValues.hasOwnProperty(type)) {
+                if (!qtSuggestions.qtObjectKeyValues.hasOwnProperty(type)) {
                     type = "Item"
                 }
                 this.qtIdPairs[position.lineNumber][idText] = type
                 var arr = []
-                arr = arr.concat(this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtHelper.removeOnCalls(this.qtQuick.qtSuggestions.qtObjectKeyValues[this.qtIdPairs[position.lineNumber][idText]].properties)))
-                arr = arr.concat(this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].functions))
-                arr = arr.concat(this.qtQuick.qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].signals)
-                this.qtQuick.qtSuggestions.createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
-                this.qtQuick.qtSuggestions.functionSuggestions[idText] = {
-                    label: this.qtQuick.qtSuggestions.qtObjectKeyValues[idText].label,
+                arr = arr.concat(removeDuplicates(removeOnCalls(qtSuggestions.qtObjectKeyValues[this.qtIdPairs[position.lineNumber][idText]].properties)))
+                arr = arr.concat(removeDuplicates(qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].functions))
+                arr = arr.concat(qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].signals)
+                qtSuggestions.createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+                qtSuggestions.functionSuggestions[idText] = {
+                    label: qtSuggestions.qtObjectKeyValues[idText].label,
                     kind: monaco.languages.CompletionItemKind.Function,
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: this.qtQuick.qtSuggestions.qtObjectKeyValues[idText].insertText,
+                    insertText: qtSuggestions.qtObjectKeyValues[idText].insertText,
                     range: null,
                 }
             } else if (this.qtIdPairs[position.lineNumber][idText] !== type) {
                 var keys = Object.keys(this.qtIdPairs[position.lineNumber])
-                delete this.qtQuick.qtSuggestions.functionSuggestions[keys[0]]
-                delete this.qtQuick.qtSuggestions.qtObjectKeyValues[keys[0]]
-                if (!this.qtQuick.qtSuggestions.qtObjectKeyValues.hasOwnProperty(type)) {
+                delete qtSuggestions.functionSuggestions[keys[0]]
+                delete qtSuggestions.qtObjectKeyValues[keys[0]]
+                if (!qtSuggestions.qtObjectKeyValues.hasOwnProperty(type)) {
                     type = "Item"
                 }
                 this.qtIdPairs[position.lineNumber][idText] = type
                 var arr = []
-                arr = arr.concat(this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtHelper.removeOnCalls(this.qtQuick.qtSuggestions.qtObjectKeyValues[this.qtIdPairs[position.lineNumber][idText]].properties)))
-                arr = arr.concat(this.qtQuick.qtHelper.removeDuplicates(this.qtQuick.qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].functions))
-                arr = arr.concat(this.qtQuick.qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].signals)
-                this.qtQuick.qtSuggestions.createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+                arr = arr.concat(removeDuplicates(removeOnCalls(qtSuggestions.qtObjectKeyValues[this.qtIdPairs[position.lineNumber][idText]].properties)))
+                arr = arr.concat(removeDuplicates(qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].functions))
+                arr = arr.concat(qtSuggestions.qtObjectSuggestions[this.qtIdPairs[position.lineNumber][idText]].signals)
+                qtSuggestions.createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
     
-                this.qtQuick.qtSuggestions.functionSuggestions[idText] = {
-                    label: this.qtQuick.qtSuggestions.qtObjectKeyValues[idText].label,
+                qtSuggestions.functionSuggestions[idText] = {
+                    label: qtSuggestions.qtObjectKeyValues[idText].label,
                     kind: monaco.languages.CompletionItemKind.Function,
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText:this.qtQuick.qtSuggestions. qtObjectKeyValues[idText].insertText,
+                    insertText: qtSuggestions.qtObjectKeyValues[idText].insertText,
                     range: null,
                 }
             }

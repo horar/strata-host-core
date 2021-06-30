@@ -9,7 +9,6 @@ var qtSuggestions = null;
 var qtSearch = null;
 var qtProperties = null;
 var qtIds = null;
-var qtHelper = null;
 /*
     This the global registration for the monaco editor this creates the syntax and linguistics of the qml language, as well as defining the theme of the qml language
 */
@@ -257,50 +256,36 @@ function registerQmlProvider() {
         window.link.fileText = editor.getValue();
         window.link.setVersionId(editor.getModel().getAlternativeVersionId());
         const model = editor.getModel()
-        qtSearch.update(model)
         // Mount
         if(!isInitialized){
+            qtSearch.update(model)
             if(qtSuggestions.model === null) {
-                qtSuggestions.update(model,{
-                    qtHelper: qtHelper,
-                    qtSearch: qtSearch,
-                })
+                qtSuggestions.update(model)
             }
 
             if(qtIds.model === null){
-                qtIds.update(model,{
-                    qtHelper: qtHelper,
-                    qtSearch: qtSearch,
-                    qtSuggestions: qtSuggestions,
-                })
+                qtIds.update(model)
             }
 
             if(qtProperties.model === null) {
-                qtProperties.update(model, {
-                    qtHelper: qtHelper,
-                    qtIds: qtIds,
-                    qtSearch: qtSearch,
-                    qtSuggestions: qtSuggestions,
-                })
+                qtProperties.update(model)
             }
             isInitialized = true
+        }
+
+        if(!isEqual(qtSearch.fullRange, model.getFullModelRange())) {
+            qtSearch.update(model) //O(n^2)
+            qtIds.update(model)
+            qtProperties.update(model)
         }
 
         var getLine = model.getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getLine.includes("import")) {
-            qtSuggestions.update(model,{
-                qtHelper: qtHelper,
-                qtSearch: qtSearch,
-            })
+            qtSuggestions.update(model)
         } 
         
         if (getLine.includes("id:")) {
-            qtIds.update(model,{
-                qtHelper: qtHelper,
-                qtSearch: qtSearch,
-                qtSuggestions: qtSuggestions,
-            })
             var word = getLine.replace("\t", "").split(":")[1].trim()
             if (word.includes("//")) {
                 word = word.split("//")[0]
@@ -308,14 +293,8 @@ function registerQmlProvider() {
             var getIdType = model.findPreviousMatch("{", position, false, false) // O(n)
             var content = model.getLineContent(getIdType.range.startLineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            qtIds.addCustomIdAndTypes(word, position, type) // O(n)
+            qtIds.addCustomIdAndTypes(word, position.lineNumber, type)
         } else if (getLine.includes("property") && !getLine.includes("import")) {
-            qtProperties.update(model, {
-                qtHelper: qtHelper,
-                qtIds: qtIds,
-                qtSearch: qtSearch,
-                qtSuggestions: qtSuggestions,
-            })
             if (getLine.replace("\t", "").split(" ")[1] !== "" && getLine.replace("\t", "").split(" ")[1] !== undefined) {
                 if (getLine.replace("\t", "").split(" ")[2] !== "" && getLine.replace("\t", "").split(" ")[2] !== undefined) {
                     if (getLine.replace("\t", "").split(" ")[2].includes(":")) {
@@ -390,27 +369,10 @@ function initEditor() {
         }
     })
 
-    qtHelper = new QtHelper(editor)
     // base class
     qtSearch = new QtSearch()
     qtSuggestions = new QtSuggestions()
     qtIds = new QtIds()
     qtProperties = new QtProperties()
 
-}
-
-function printCircularJSON(json) {
-    var cache = [];
-   var retVal = JSON.stringify(json, (key, value) => {
-        if (typeof value === 'object' && value !== null) {
-            // Duplicate reference found, discard key
-            if (cache.includes(value)) return;
-
-            // Store value in our collection
-            cache.push(value);
-        }
-    return value;
-    });
-    cache = null; // Enable garbage collection
-    return retVal;
 }
