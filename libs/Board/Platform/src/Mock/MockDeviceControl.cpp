@@ -490,7 +490,7 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
 
 QByteArray MockDeviceControl::generateMockFirmware()
 {
-    quint32 buffer[mock_firmware_constants::firmwareBufferSize]; //represents 20 chunks of firmware (20 * mock_firmware_constants::CHUNK_SIZE/sizeof (int) - 1)
+    quint32 buffer[mock_firmware_constants::firmwareBufferSize];
     std::seed_seq sseq{1,2,3};
     QRandomGenerator generator(sseq);
     generator.fillRange(buffer);
