@@ -40,6 +40,7 @@ TextField {
     property bool suggestionDelegateTextWrap: false
     property alias suggestionPopup: suggestionPopupLoader.item
     property bool suggestionHighlightResults: false
+    property string suggestionHighlightString: ""
 
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
@@ -247,6 +248,7 @@ TextField {
             delegateRemovable: suggestionDelegateRemovable
             delegateTextWrap: suggestionDelegateTextWrap
             highlightResults: suggestionHighlightResults
+            filterString: suggestionHighlightString
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)

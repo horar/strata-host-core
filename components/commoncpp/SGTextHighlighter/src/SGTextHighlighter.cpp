@@ -9,6 +9,7 @@ SGTextHighlighter::SGTextHighlighter(QObject *parent)
     setCaseSensitive(false);
     setFilterPatternSyntax(FixedString);
 
+    highlightFormat_.setForeground(QColor(0,0,0));
     highlightFormat_.setBackground(QColor(255,255,0));
 }
 

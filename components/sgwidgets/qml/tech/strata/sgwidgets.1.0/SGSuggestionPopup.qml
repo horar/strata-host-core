@@ -30,6 +30,7 @@ Popup {
     property bool delegateRemovable: false
     property bool delegateTextWrap: false
     property bool highlightResults: false
+    property string filterString: ""
 
     readonly property Component implicitDelegate: delegateComponent
 
@@ -255,7 +256,7 @@ Popup {
                 id: highlightComponent
                 CommonCpp.SGTextHighlighter {
                     textDocument: text.textDocument
-                    filterPattern: filterStringTextField.text
+                    filterPattern: filterString
                 }
             }
 
@@ -307,6 +308,7 @@ Popup {
                 textFormat: Text.PlainText
                 readOnly: true
                 text: popup.textRole ? model[popup.textRole] : modelData
+                color: parent.ListView.isCurrentItem ? "white" : "black"
             }
 
             MouseArea {

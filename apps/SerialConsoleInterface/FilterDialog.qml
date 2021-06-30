@@ -235,6 +235,7 @@ SGWidgets.SGDialog {
                                 suggestionHighlightResults: true
                                 suggestionListModel: sortFilterModel
                                 suggestionModelTextRole: "suggestion"
+                                suggestionHighlightString: filterStringTextField.text
 
                                 onSuggestionDelegateSelected: {
                                    var sourceIndex = sortFilterModel.mapIndexToSource(index)
