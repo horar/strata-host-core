@@ -15,6 +15,16 @@ void Connector::addSubscriber(const std::string&)
     assert(false);
 }
 
+bool Connector::hasReadEvent()
+{
+    assert(false);
+}
+
+bool Connector::hasWriteEvent()
+{
+    assert(false);
+}
+
 void Connector::setDealerID(const std::string& id)
 {
     // As a historical note, ZeroMQ v2.2 and earlier use UUIDs as identities.

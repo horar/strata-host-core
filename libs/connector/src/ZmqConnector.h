@@ -44,6 +44,9 @@ public:
     bool socketValid() const;
     bool contextValid() const;
 
+    bool hasReadEvent() override;
+    bool hasWriteEvent() override;
+
 private:
     std::unique_ptr<zmq::context_t> context_; // there is 1-N relationship between context-socket
     const int socketType;
@@ -67,7 +70,7 @@ protected:
     void contextShutdown();
 
     // timeout for polling a socket in milliseconds
-    const int32_t SOCKET_POLLING_TIMEOUT{10};
+    const int32_t SOCKET_POLLING_TIMEOUT{0};
 
     std::unique_ptr<zmq::socket_t> socket_;
 };

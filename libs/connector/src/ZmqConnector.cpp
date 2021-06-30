@@ -176,6 +176,22 @@ bool ZmqConnector::contextValid() const
     return ((nullptr != context_) && (nullptr != context_->handle()));
 }
 
+bool ZmqConnector::hasReadEvent()
+{
+    int event;
+    socketGetOptInt(zmq::sockopt::events, event);
+    qCInfo(logCategoryZmqConnector) << "event" << event;
+    return std::bitset<sizeof(int)>(event).test(ZMQ_POLLIN - 1);
+}
+
+bool ZmqConnector::hasWriteEvent()
+{
+    int event;
+    socketGetOptInt(zmq::sockopt::events, event);
+    qCInfo(logCategoryZmqConnector) << "event" << event;
+    return std::bitset<sizeof(int)>(event).test(ZMQ_POLLOUT - 1);
+}
+
 // Receive 0MQ string from socket and convert to std::string
 bool ZmqConnector::socketRecv(std::string & ostring, zmq::recv_flags flags)
 {
