@@ -230,6 +230,14 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
+                        text: "Save FW"
+                        hintText: qsTr("Save firmware from device")
+                        icon.source: "qrc:/images/chip-download.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showSaveFirmwareView()
+                    }
+
+                    SGWidgets.SGIconButton {
                         id: hexViewButton
                         text: qsTr("Hex")
                         hintText: "Raw message in hex viewer"
@@ -621,6 +629,13 @@ FocusScope {
     }
 
     Component {
+        id: saveFirmwareComponent
+
+        SaveFirmwareView {
+        }
+    }
+
+    Component {
         id: exportComponent
 
         ExportView {
@@ -636,6 +651,10 @@ FocusScope {
 
     function showProgramView() {
         stackView.push(programDeviceComponent)
+    }
+
+    function showSaveFirmwareView() {
+        stackView.push(saveFirmwareComponent)
     }
 
     function showExportView() {
