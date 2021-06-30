@@ -6,6 +6,8 @@
 #include <Connector.h>
 #include <rapidjson/document.h>
 
+#include <QThread>
+
 ClientsController::ClientsController()
 {
 }
@@ -50,9 +52,18 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
 {
     assert(clientId.isEmpty() == false);
     assert(message.isEmpty() == false);
+    qCDebug(logCategoryHcs) << "Thread id:" << QThread::currentThreadId();
 
     client_connector_->setDealerID(clientId.toStdString());
-    return client_connector_->send(message.toStdString());
+
+    auto status = client_connector_->send(message.toStdString());
+    qCCritical(logCategoryHcs) << "******************* Checking for read event...";
+    if (true == client_connector_->hasReadEvent()) {
+        qCCritical(logCategoryHcs) << "******************* Read event == bug :(";
+        client_event_.fire(strata::events_mgr::EvEventBase::eEvStateRead);
+    }
+
+    return status;
 }
 
 void ClientsController::stop()
@@ -67,7 +78,7 @@ void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int
 {
     std::string read_message;
     DispatcherMessage msg;
-
+    qCDebug(logCategoryHcs) << "Thread id:" << QThread::currentThreadId();
     for(;;) {
         if (client_connector_->read(read_message) == false) {
             break;
