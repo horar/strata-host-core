@@ -225,7 +225,7 @@ QString BluetoothLowEnergyScanner::getDeviceAddress(const QBluetoothDeviceInfo &
 #ifdef Q_OS_MACOS
     address = info.deviceUuid().toString(QBluetoothUuid::WithoutBraces);
 #else
-    info.address = info.address().toString();
+    address = info.address().toString();
 #endif
 
     return address;
