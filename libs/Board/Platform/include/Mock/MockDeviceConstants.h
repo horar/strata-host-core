@@ -218,6 +218,7 @@ namespace mock_firmware_constants {
 
 // size of chunk in bytes
 constexpr int CHUNK_SIZE = 256;
+constexpr int firmwareBufferSize = 1279; //represents 20 chunks of firmware (20 * mock_firmware_constants::CHUNK_SIZE/sizeof (int) - 1)
 
 } // namespace mock_firmware_constants
 
