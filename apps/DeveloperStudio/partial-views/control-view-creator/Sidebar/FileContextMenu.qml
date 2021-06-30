@@ -37,7 +37,15 @@ Menu {
         }
         onTriggered: {
             treeView.selectItem(styleData.index)
-            model.editing = true
+
+            renameFilePopup.renameType = "File"
+            renameFilePopup.modelIndex = styleData.index
+            renameFilePopup.uid = model.uid
+            renameFilePopup.fileName = model.filename
+            renameFilePopup.fileExtension = model.filetype
+            renameFilePopup.directoryPath = model.filepath
+            renameFilePopup.open()
+            fileContextMenu.dismiss()
         }
     }
 
