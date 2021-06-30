@@ -77,6 +77,7 @@ private:
     void createMockFirmware();
     void removeMockFirmware();
     void getExpectedValues(QString firmwarePath);
+    QByteArray generateMockFirmware();
 
 private:
     bool autoResponse_ = true;

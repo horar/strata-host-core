@@ -70,6 +70,7 @@ private:
     void createFiles();
     void getExpectedValues(QString firmwarePath);
     void clearExpectedValues();
+    QByteArray generateMockFirmware(bool isBootloader);
 
     strata::platform::PlatformPtr platform_;
     strata::device::MockDevicePtr mockDevice_;

@@ -196,18 +196,16 @@ void FlasherTest::createFiles()
     if (fakeFirmware_.open() == false) {
         QFAIL("Cannot open fake firmware file");
     } else {
-        QTextStream fakeFirmwareOut(&fakeFirmware_);
-        fakeFirmwareOut << flasher_test_constants::fakeFirmwareData;
-        fakeFirmwareOut.flush();
+        QDataStream fakeFirmwareOut(&fakeFirmware_);
+        fakeFirmwareOut << generateMockFirmware(false);
         fakeFirmware_.close();
     }
 
     if (fakeBootloader_.open() == false) {
         QFAIL("Cannot open fake bootloader file");
     } else {
-        QTextStream fakeBootloaderOut(&fakeBootloader_);
-        fakeBootloaderOut << flasher_test_constants::fakeBootloaderData;
-        fakeBootloaderOut.flush();
+        QDataStream fakeBootloaderOut(&fakeBootloader_);
+        fakeBootloaderOut << generateMockFirmware(true);
         fakeBootloader_.close();
     }
 
@@ -266,6 +264,35 @@ void FlasherTest::clearExpectedValues()
     expectedChunkSize_.clear();
     expectedChunkData_.clear();
     expectedChunkCrc_.clear();
+}
+
+QByteArray FlasherTest::generateMockFirmware(bool isBootloader)
+{
+    if (isBootloader == false) {
+        quint32 buffer[1279]; //represents 20 chunks of firmware (20 * mock_firmware_constants::CHUNK_SIZE/sizeof (int) - 1)
+        std::seed_seq sseq{1,2,3};
+        QRandomGenerator generator(sseq);
+        generator.fillRange(buffer);
+
+        QByteArray generatedFirmware;
+        QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
+        for (int i = 0; i < 1279; i ++) {
+            stream << buffer[i];
+        }
+        return generatedFirmware;
+    }
+
+    quint32 buffer[639];
+    std::seed_seq sseq{1,2,3};
+    QRandomGenerator generator(sseq);
+    generator.fillRange(buffer);
+
+    QByteArray generatedFirmware;
+    QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
+    for (int i = 0; i < 639; i ++) {
+        stream << buffer[i];
+    }
+    return generatedFirmware;
 }
 
 void FlasherTest::flashFirmwareTest()
@@ -940,6 +967,8 @@ void FlasherTest::backupFirmwareTest()
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
+
+    //QFAIL("FAIL ON PURPOSE!");
 }
 
 void FlasherTest::backupFirmwareWithoutStartApplicationTest()
@@ -981,6 +1010,8 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
+
+    //QFAIL("FAIL");
 }
 
 void FlasherTest::backupFirmwareStartInBootloaderTest()

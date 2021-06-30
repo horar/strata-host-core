@@ -5,6 +5,8 @@
 #include <Buypass.h>
 #include <CodecBase64.h>
 #include <QMetaEnum>
+#include <QRandomGenerator>
+#include <QDataStream>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -486,6 +488,21 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
     }
 }
 
+QByteArray MockDeviceControl::generateMockFirmware()
+{
+    quint32 buffer[1279]; //represents 20 chunks of firmware (20 * mock_firmware_constants::CHUNK_SIZE/sizeof (int) - 1)
+    std::seed_seq sseq{1,2,3};
+    QRandomGenerator generator(sseq);
+    generator.fillRange(buffer);
+
+    QByteArray generatedFirmware;
+    QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
+    for (int i = 0; i < 1279; i ++) {
+        stream << buffer[i];
+    }
+    return generatedFirmware;
+}
+
 void MockDeviceControl::createMockFirmware()
 {
     mockFirmware_.createNativeFile(QStringLiteral("mockFirmware"));
@@ -494,9 +511,8 @@ void MockDeviceControl::createMockFirmware()
     if (mockFirmware_.open() == false) {
         qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
     } else {
-        QTextStream mockFirmwareOut(&mockFirmware_);
-        mockFirmwareOut << mock_firmware_constants::mockFirmwareData;
-        mockFirmwareOut.flush();
+        QDataStream mockFirmwareOut(&mockFirmware_);
+        mockFirmwareOut << generateMockFirmware();
         mockFirmware_.close();
         qCDebug(logCategoryDeviceMock) << "Mock firmware file prepared with the size of" << mockFirmware_.size() << "bytes";
     }
