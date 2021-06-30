@@ -28,7 +28,6 @@ Popup {
     property string headerText
     property bool delegateNumbering: false
     property bool delegateRemovable: false
-    property bool delegateTextWrap: false
     property bool highlightResults: false
     property string filterString: ""
 
@@ -304,7 +303,6 @@ Popup {
                     rightMargin: 4
                 }
 
-                wrapMode: popup.delegateTextWrap ? Text.WrapAnywhere : Text.NoWrap
                 textFormat: Text.PlainText
                 readOnly: true
                 text: popup.textRole ? model[popup.textRole] : modelData
