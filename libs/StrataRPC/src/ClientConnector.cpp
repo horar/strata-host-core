@@ -137,5 +137,9 @@ bool ClientConnector::sendMessage(const QByteArray &message)
         return false;
     }
 
+    if (true == connector_->hasReadEvent()) {
+        readNewMessages();
+    }
+
     return true;
 }

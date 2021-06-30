@@ -52,7 +52,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
             << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
             << QByteArray::fromStdString(message) << "'";
         emit messageReceived(QByteArray::fromStdString(connector_->getDealerID()),
-                                QByteArray::fromStdString(message));
+                             QByteArray::fromStdString(message));
     }
     readSocketNotifier_->setEnabled(true);
 }
@@ -91,5 +91,10 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
         emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
         return false;
     }
+
+    if (true == connector_->hasReadEvent()) {
+        readNewMessages();
+    }
+
     return true;
 }
