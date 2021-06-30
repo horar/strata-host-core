@@ -42,7 +42,13 @@ class QtSearch {
                     content = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
                     getWord = model.findPreviousMatch(content, initialPosition)
                 }
-                this.matchingBrackets.push({ top: getWord.range.startLineNumber, bottom: next.range.startLineNumber })
+                try {
+                    if (getWord !== null) {
+                        this.matchingBrackets.push({ top: getWord.range.startLineNumber, bottom: next.range.startLineNumber })
+                    }
+                } catch(err) {
+                    console.error("Invalid Placement")
+                }
             }
             next = this.getNext({ lineNumber: next.range.startLineNumber, column: next.range.endColumn })
             prev = this.getPrev({ lineNumber: next.range.startLineNumber, column: next.range.startColumn })

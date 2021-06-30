@@ -89,7 +89,9 @@ function registerQmlProvider() {
         if (line.includes(":") && line.substring(0, 2) !== "on" && !line.includes("property")) {
             var idsSuggestions = []
             for (var i = 0; i < qtIds.ids.length; i++) {
-                idsSuggestions.push(qtSuggestions.functionSuggestions[qtIds.ids[i]])
+                if(qtSuggestions.functionSuggestions[qtIds.ids[i]] !== undefined) {
+                    idsSuggestions.push(qtSuggestions.functionSuggestions[qtIds.ids[i]])
+                }
             }
             return idsSuggestions
         }

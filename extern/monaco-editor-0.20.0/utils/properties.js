@@ -44,6 +44,7 @@ class QtProperties {
             if(prevPropertyLine.substring(0,2) === "on"){
                 break;
             }
+            if(prevPropertyLine.substring(0,7) !== "property") break;
             var prevProperty = prevPropertyLine.split(" ")[2].trim()
             if(prevProperty.includes(":")){
                 prevProperty = prevProperty.split(":")[0].trim()
@@ -117,7 +118,9 @@ class QtProperties {
                     if(!this.customProperties.includes(propertySlot)){
                         var getLine = model.getLineContent(closestTop)
                         var getParent = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
-                        qtSuggestions.qtObjectKeyValues[getParent].properties = qtSuggestions.qtObjectKeyValues[getParent].properties.concat(propertySlot)
+                        try {
+                            qtSuggestions.qtObjectKeyValues[getParent].properties = qtSuggestions.qtObjectKeyValues[getParent].properties.concat(propertySlot)
+                        } catch(error) {}
                     }
                 }
             }
