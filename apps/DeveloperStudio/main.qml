@@ -88,6 +88,7 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        // QTBUG-45262 - 'close.accepted = false' is ignored on MacOS; fixed in further 5.14 releases
         if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose(function (){mainWindow.close()})) {
             close.accepted = false
             return
