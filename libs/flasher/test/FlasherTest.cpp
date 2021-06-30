@@ -967,8 +967,6 @@ void FlasherTest::backupFirmwareTest()
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
-
-    //QFAIL("FAIL ON PURPOSE!");
 }
 
 void FlasherTest::backupFirmwareWithoutStartApplicationTest()
@@ -1010,8 +1008,6 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
-
-    //QFAIL("FAIL");
 }
 
 void FlasherTest::backupFirmwareStartInBootloaderTest()
