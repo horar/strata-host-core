@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitset>
 #include <memory>
 #include <zmq.hpp> // https://github.com/zeromq/cppzmq
 #include "Connector.h"
