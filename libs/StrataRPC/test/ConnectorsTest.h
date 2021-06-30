@@ -22,8 +22,9 @@ private slots:
     void testFailedToSendMessageFromClientConnector();
     void testFailedToSendMessageFromServerConnector();
     void testClientConnectorErrorSignals();
+    // void testForCS1879();
 
 private:
     void waitForZmqMessages(int delay = 100);
-    static constexpr char address_[] = "tcp://127.0.0.1:5564";
+    static constexpr char address_[] = "tcp://127.0.0.1:55645";
 };

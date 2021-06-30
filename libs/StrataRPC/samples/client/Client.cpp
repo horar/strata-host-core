@@ -103,6 +103,7 @@ void Client::requestRandomGraph()
     connect(deferredRequest, &DeferredRequest::finishedWithError, this, [](const QJsonObject &) {
         qCCritical(logCategoryStrataClientSample) << "Failed to request graph from the server.";
     });
+    stopPingTest();
 }
 
 void Client::requestServerStatus()
@@ -123,6 +124,7 @@ void Client::requestServerStatus()
 
     connect(deferredRequest, &DeferredRequest::finishedWithError, this,
             &Client::serverDisconnectedHandler);
+    startPingTest();
 }
 
 void Client::pingServer()
@@ -170,6 +172,7 @@ void Client::strataClientErrorHandler(StrataClient::ClientError errorType,
 void Client::serverTimeHandler(const QJsonObject &payload)
 {
     serverTime_ = payload["time"].toString();
+    qCInfo(logCategoryStrataClientSample) << serverTime_;
     emit serverTimeUpdated();
 }
 
@@ -183,4 +186,16 @@ void Client::randomGraphHandler(const QJsonObject &payload)
     }
 
     emit randomGraphUpdated(randomNumbersList);
+}
+
+void Client::startPingTest()
+{
+    testPingTimer_.setInterval(100);
+    connect(&testPingTimer_, &QTimer::timeout, this, [this]() { pingServer(); });
+    testPingTimer_.start();
+}
+
+void Client::stopPingTest()
+{
+    testPingTimer_.stop();
 }

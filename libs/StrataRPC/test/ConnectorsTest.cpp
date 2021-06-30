@@ -1,6 +1,7 @@
 #include "ConnectorsTest.h"
 
 #include <QSignalSpy>
+#include <QThread>
 #include <QVector>
 
 void ConnectorsTest::waitForZmqMessages(int delay)
@@ -18,8 +19,7 @@ void ConnectorsTest::waitForZmqMessages(int delay)
 void ConnectorsTest::testOpenServerConnectorFaild()
 {
     strata::strataRPC::ServerConnector connector(address_);
-    QSignalSpy serverConnected_1(&connector,
-                                 &strata::strataRPC::ServerConnector::initialized);
+    QSignalSpy serverConnected_1(&connector, &strata::strataRPC::ServerConnector::initialized);
     QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccurred);
     QCOMPARE_(connector.initialize(), true);
     QCOMPARE_(serverConnected_1.isEmpty(), false);
@@ -319,3 +319,52 @@ void ConnectorsTest::testClientConnectorErrorSignals()
         errorOccurred.clear();
     }
 }
+
+// void ConnectorsTest::testForCS1879()
+// {
+//     QThread *clientThread = QThread::create([this]() {
+//         strata::strataRPC::ClientConnector client(address_);
+
+//         client.initializeConnector();
+//         connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
+//                 [&client](const QByteArray &) {
+//                     client.sendMessage("from client");
+//                 });
+
+//         int counter = 0;
+//         QTimer clientTimer;
+//         clientTimer.setInterval(4);
+//         clientTimer.connect(&clientTimer, &QTimer::timeout, this, [&client, &counter]() {
+//             client.sendMessage("test message");
+//             qDebug() << "client counter=" << ++counter;
+//         });
+//         clientTimer.start();
+//         waitForZmqMessages(60000);
+//     });
+
+//     QThread *serverThread = QThread::create([this]() {
+//         strata::strataRPC::ServerConnector server(address_);
+//         // add handler
+//         server.initilizeConnector();
+//         int counter = 0;
+//         connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+//                 [&server, &counter](const QByteArray &clientId, const QByteArray &message) {
+//                     if (message == "test message") {
+//                         ++counter;
+//                         server.sendMessage(clientId, "from server");
+//                     }
+//                     qDebug() << "server counter=" << counter;
+//                 });
+//         waitForZmqMessages(60000);
+//     });
+
+//     // start
+//     serverThread->start();
+//     clientThread->start();
+
+//     // wait -- maybe better use signals here!
+//     // while (false == serverThread->isFinished() || false == clientThread->isFinished()) {
+//     //     // do nothing!
+//     // }
+//     waitForZmqMessages(60000);
+// }
