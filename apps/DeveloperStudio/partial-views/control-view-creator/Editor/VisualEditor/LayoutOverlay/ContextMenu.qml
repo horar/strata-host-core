@@ -72,6 +72,14 @@ Popup {
             }
         }
 
+        ContextMenuButton {
+            text: "Go to Documentation"
+            onClicked: {
+                Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
+                contextMenu.close()
+            }
+        }
+
         Rectangle {
             // divider
             color: "grey"
@@ -82,6 +90,7 @@ Popup {
 
         Loader {
             id: extraContextLoader
+            Layout.fillWidth: true
             source: {
                 switch (layoutOverlayRoot.type) {
                 case "LayoutRectangle":
