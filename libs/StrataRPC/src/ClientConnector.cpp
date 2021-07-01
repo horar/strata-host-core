@@ -106,33 +106,14 @@ void ClientConnector::readNewMessages(/*int socket*/)
 void ClientConnector::readMessages()
 {
     std::string message;
-    for (;;) {
-        if (connector_->read(message) == false) {
-            break;
-        }
+    while (true == connector_->read(message)) {
         emit messageReceived(QByteArray::fromStdString(message));
     }
 }
 
 bool ClientConnector::sendMessage(const QByteArray &message)
 {
-    if (connector_) {
-        if (false == connector_->isConnected()) {
-            QString errorMessage(
-                QStringLiteral("Failed to send message. Client is not connected."));
-            qCCritical(logCategoryStrataClientConnector) << errorMessage;
-            emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
-            return false;
-        }
-
-        if (false == connector_->send(message.toStdString())) {
-            QString errorMessage(QStringLiteral("Failed to send message."));
-            qCCritical(logCategoryStrataClientConnector) << errorMessage;
-            emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
-            return false;
-        }
-
-    } else {
+    if (!connector_) {
         QString errorMessage(
             QStringLiteral("Failed to send message. Connector is not initialized."));
         qCCritical(logCategoryStrataClientConnector) << errorMessage;
@@ -140,9 +121,21 @@ bool ClientConnector::sendMessage(const QByteArray &message)
         return false;
     }
 
+    if (false == connector_->isConnected()) {
+        QString errorMessage(QStringLiteral("Failed to send message. Client is not connected."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
+        return false;
+    }
+
+    if (false == connector_->send(message.toStdString())) {
+        QString errorMessage(QStringLiteral("Failed to send message."));
+        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        emit errorOccurred(ClientConnectorError::FailedToSend, errorMessage);
+        return false;
+    }
+
     if (true == connector_->hasReadEvent()) {
-        qCCritical(logCategoryStrataClientConnector) << "error occurred";
-        // readNewMessages();
         emit messageAvailable();
     }
 
