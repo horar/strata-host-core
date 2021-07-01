@@ -201,40 +201,16 @@ FocusScope {
                         onClicked: mainPage.toggleExpand()
                     }
 
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
                     SGWidgets.SGIconButton {
                         text: "Filter"
                         hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
-                    }
-
-                    VerticalDivider {
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Export"
-                        hintText: qsTr("Export to file")
-                        icon.source: "qrc:/sgimages/file-export.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showExportView()
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Program"
-                        hintText: qsTr("Program device with new firmware")
-                        icon.source: "qrc:/sgimages/chip-flash.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showProgramView()
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Save FW"
-                        hintText: qsTr("Save firmware from device")
-                        icon.source: "qrc:/images/chip-download.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showSaveFirmwareView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -253,6 +229,34 @@ FocusScope {
                             property: "checked"
                             value: platformDelegate.hexViewShown
                         }
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Export"
+                        hintText: qsTr("Export to file")
+                        icon.source: "qrc:/sgimages/file-export.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showExportView()
+                    }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Program"
+                        hintText: qsTr("Program device with new firmware")
+                        icon.source: "qrc:/sgimages/chip-flash.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showProgramView()
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Save"
+                        hintText: qsTr("Save device firmware into file")
+                        icon.source: "qrc:/images/chip-download.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showSaveFirmwareView()
                     }
 
                     VerticalDivider {
