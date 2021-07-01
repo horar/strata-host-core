@@ -92,7 +92,6 @@ FocusScope {
             id: saveFirmwarePathEdit
             contextMenuEnabled: true
             width: content.width
-            hasHelperText: false
             anchors {
                 top: title.bottom
                 topMargin: baseSpacing
@@ -104,24 +103,20 @@ FocusScope {
             enabled: saveFirmwareView.editable
 
             filePath: {
+                let fileName = "application"
                 if (model.platform.verboseName.length > 0) {
-                    let fileName = model.platform.verboseName
-                    if (fileName === "Bootloader") {
-                        fileName = "application"
+                    if (model.platform.verboseName !== "Bootloader") {
+                        fileName = model.platform.verboseName
                     }
                     if (model.platform.appVersion.length > 0) {
                         fileName = fileName + "_v" + model.platform.appVersion
                     }
-                    fileName += ".bin"
-
-                    const documentsUrl = StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
-
-                    return CommonCpp.SGUtilsCpp.joinFilePath(
-                                CommonCpp.SGUtilsCpp.urlToLocalFile(documentsUrl),
-                                fileName.replace(/\s+/g,"_"))
                 }
+                fileName = fileName.replace(/\s+/g,"_") + "_" + currentTimestamp() + ".bin"
 
-                return ""
+                const documentsUrl = StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+
+                return CommonCpp.SGUtilsCpp.joinFilePath(CommonCpp.SGUtilsCpp.urlToLocalFile(documentsUrl), fileName)
             }
 
             dialogLabel: "Select path for firmware binary"
@@ -132,6 +127,8 @@ FocusScope {
             function inputValidationErrorMsg() {
                 if (filePath.length === 0) {
                     return qsTr("Path for firmware binary file is required")
+                } else if (CommonCpp.SGUtilsCpp.isFile(filePath)) {
+                    return qsTr("Selected file exists, it will be overwritten")
                 }
 
                 return ""
@@ -212,16 +209,7 @@ FocusScope {
                 enabled: saveFirmwareView.editable
                          && model.platform.status === Sci.SciPlatform.Ready
                 onClicked: {
-                    var error = saveFirmwarePathEdit.inputValidationErrorMsg()
-                    if (error.length > 0) {
-                        SGWidgets.SGDialogJS.showMessageDialog(
-                                    saveFirmwareView,
-                                    SGWidgets.SGMessageDialog.Error,
-                                    "Path for firmware file not set",
-                                    error)
-                    } else {
-                        startBackupProcess(saveFirmwarePathEdit.filePath)
-                    }
+                    startBackupProcess(saveFirmwarePathEdit.filePath)
                 }
              }
          }
@@ -267,5 +255,23 @@ FocusScope {
 
      function closeView() {
          StackView.view.pop();
+     }
+
+     function currentTimestamp() {
+         let timestamp = ""
+         let date = new Date()
+         timestamp += date.getFullYear()
+         let val = date.getMonth() + 1
+         timestamp += (val <= 9) ? "0" + val : val
+         val = date.getDate()
+         timestamp += (val <= 9) ? "0" + val : val
+         timestamp += "_"
+         val = date.getHours()
+         timestamp += (val <= 9) ? "0" + val : val
+         val = date.getMinutes()
+         timestamp += (val <= 9) ? "0" + val : val
+         val = date.getSeconds()
+         timestamp += (val <= 9) ? "0" + val : val
+         return timestamp
      }
 }
