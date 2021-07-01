@@ -398,36 +398,45 @@ Item {
                 }
             }
 
-            Button {
-                id: importJsonFileFromProjectButton
+            Item {
+                Layout.fillWidth: true
                 Layout.preferredHeight: 30
-                enabled: currentCvcProjectJsonUrl !== ""
+                Layout.preferredWidth: importJsonFileButton.width
 
-                icon {
-                    source: "qrc:/sgimages/file-import.svg"
-                    color: importFromProjectMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
-                    name: "Import JSON file from Project"
-                }
+                Button {
+                    id: importJsonFileFromProjectButton
+                    enabled: currentCvcProjectJsonUrl !== ""
+                    anchors.fill: parent
 
-                text: "Import from Project"
-                display: Button.TextBesideIcon
-                hoverEnabled: true
+                    icon {
+                        source: "qrc:/sgimages/file-import.svg"
+                        color: importFromProjectMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
+                        name: "Import JSON file from Project"
+                    }
 
-                Accessible.name: "Import JSON file from Project"
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    importFromProjectMouseArea.clicked()
+                    text: "Import from Project"
+                    display: Button.TextBesideIcon
+                    hoverEnabled: true
+
+                    Accessible.name: "Import JSON file from Project"
+                    Accessible.role: Accessible.Button
+                    Accessible.onPressAction: {
+                        importFromProjectMouseArea.clicked()
+                    }
                 }
 
                 MouseArea {
                     id: importFromProjectMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
-                        if (loadJsonFile(currentCvcProjectJsonUrl)) {
-                            outputFileText.text = findProjectRootDir()
-                        }
+                        loadJsonFile(currentCvcProjectJsonUrl)
+                    }
+
+                    ToolTip {
+                        text: "A project must be open and contain " + jsonFileName + " in its root directory"
+                        visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
                     }
                 }
             }
@@ -731,7 +740,15 @@ Item {
             }
         }
 
+        alertToast.hide()
+        alertToast.text = "Successfully imported JSON model." + (hasMadeChanges() ? "" : " Note: imported list of commands/notifications is empty.")
+        alertToast.textColor = "white"
+        alertToast.color = "green"
+        alertToast.interval = 4000
+        alertToast.show()
+
         finishedModel.modelReset()
+        outputFileText.text = findProjectRootDir()
     }
 
     /**
@@ -899,7 +916,7 @@ Item {
 
         if (!SGUtilsCpp.isValidFile(inputFilePath)) {
             console.error("Invalid JSON file: " + inputFilePath)
-            return false
+            return
         }
 
         if (!hasMadeChanges()) {
@@ -914,13 +931,11 @@ Item {
                 alertToast.color = "#D10000"
                 alertToast.interval = 0
                 alertToast.show()
-                return false
+                return
             }
         } else {
             confirmDeleteInProgress.open()
         }
-
-        return true
     }
 
     /**
