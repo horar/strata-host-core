@@ -29,7 +29,9 @@ Popup {
     property bool delegateNumbering: false
     property bool delegateRemovable: false
     property bool highlightResults: false
-    property string filterString: ""
+    property string highlightFilterPattern: ""
+    property variant highlightFilterPatternSyntax: CommonCpp.SGTextHighlighter.RegExp
+    property bool highlightCaseSensitive: false
 
     readonly property Component implicitDelegate: delegateComponent
 
@@ -255,7 +257,9 @@ Popup {
                 id: highlightComponent
                 CommonCpp.SGTextHighlighter {
                     textDocument: text.textDocument
-                    filterPattern: filterString
+                    filterPattern: highlightFilterPattern
+                    filterPatternSyntax: highlightFilterPatternSyntax
+                    caseSensitive: highlightCaseSensitive
                 }
             }
 

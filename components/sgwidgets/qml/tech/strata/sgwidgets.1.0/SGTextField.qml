@@ -2,6 +2,7 @@ import QtQuick.Controls 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
+import tech.strata.commoncpp 1.0 as CommonCpp
 
 TextField {
     id: control
@@ -39,7 +40,9 @@ TextField {
     property bool suggestionDelegateRemovable: false
     property alias suggestionPopup: suggestionPopupLoader.item
     property bool suggestionHighlightResults: false
-    property string suggestionHighlightString: ""
+    property string suggestionFilterPattern: ""
+    property variant suggestionFilterPatternSyntax: CommonCpp.SGTextHighlighter.RegExp
+    property bool suggestionCaseSensitive: false
 
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
@@ -246,7 +249,9 @@ TextField {
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable
             highlightResults: suggestionHighlightResults
-            filterString: suggestionHighlightString
+            highlightFilterPattern: suggestionFilterPattern
+            highlightFilterPatternSyntax: suggestionFilterPatternSyntax
+            highlightCaseSensitive: suggestionCaseSensitive
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)
