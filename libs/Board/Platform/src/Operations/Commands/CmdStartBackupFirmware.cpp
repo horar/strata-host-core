@@ -38,6 +38,7 @@ bool CmdStartBackupFirmware::processNotification(const rapidjson::Document& doc,
             //const rapidjson::Value& md5 = payload[JSON_MD5];
             if (size.IsUint() && chunks.IsUint()) {
                 chunks_ = chunks.GetUint();
+                qCInfo(logCategoryPlatformCommand) << platform_ << "Going to backup firmware with size " << size.GetUint() << " bytes.";
                 /* these values ​​are not used yet
                 size_ = size.GetUint();
                 md5_ = md5.GetString();
