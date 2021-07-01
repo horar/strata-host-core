@@ -104,13 +104,14 @@ bool ZmqConnector::read(std::string& message)
         return false;
     }
 
-    zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (false == socketPoll(&items)) {
-        qCWarning(logCategoryZmqConnector) << "Failed to poll items";
-        return false;
-    }
+    // zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
+    // if (false == socketPoll(&items)) {
+    //     qCWarning(logCategoryZmqConnector) << "Failed to poll items";
+    //     return false;
+    // }
 
-    if (items.revents & ZMQ_POLLIN) {
+    // if (items.revents & ZMQ_POLLIN) {
+    if (true == hasReadEvent()) {
         if (socketRecv(message)) {
             qCDebug(logCategoryZmqConnector).nospace().noquote()
                     << "Rx'ed message: '" << QString::fromStdString(message) << "'";
