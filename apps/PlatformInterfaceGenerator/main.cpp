@@ -19,7 +19,8 @@ void loadResources() {
 
     const auto resources = {
         QStringLiteral("component-sgwidgets.rcc"),
-        QStringLiteral("component-theme.rcc")
+        QStringLiteral("component-theme.rcc"),
+        QStringLiteral("component-common.rcc"),
     };
 
 #ifdef Q_OS_MACOS
