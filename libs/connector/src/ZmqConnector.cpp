@@ -1,5 +1,6 @@
 #include "ZmqConnector.h"
 
+#include <bitset>
 #include <iomanip>
 #include <sstream>
 
@@ -104,13 +105,6 @@ bool ZmqConnector::read(std::string& message)
         return false;
     }
 
-    // zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    // if (false == socketPoll(&items)) {
-    //     qCWarning(logCategoryZmqConnector) << "Failed to poll items";
-    //     return false;
-    // }
-
-    // if (items.revents & ZMQ_POLLIN) {
     if (true == hasReadEvent()) {
         if (socketRecv(message)) {
             qCDebug(logCategoryZmqConnector).nospace().noquote()
@@ -181,7 +175,6 @@ bool ZmqConnector::hasReadEvent()
 {
     int event;
     socketGetOptInt(zmq::sockopt::events, event);
-    qCInfo(logCategoryZmqConnector) << "event" << event;
     return std::bitset<sizeof(int)>(event).test(ZMQ_POLLIN - 1);
 }
 
@@ -189,7 +182,6 @@ bool ZmqConnector::hasWriteEvent()
 {
     int event;
     socketGetOptInt(zmq::sockopt::events, event);
-    qCInfo(logCategoryZmqConnector) << "event" << event;
     return std::bitset<sizeof(int)>(event).test(ZMQ_POLLOUT - 1);
 }
 

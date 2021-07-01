@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bitset>
 #include <memory>
 #include <zmq.hpp> // https://github.com/zeromq/cppzmq
 #include "Connector.h"
@@ -71,7 +70,7 @@ protected:
     void contextShutdown();
 
     // timeout for polling a socket in milliseconds
-    const int32_t SOCKET_POLLING_TIMEOUT{0};
+    const int32_t SOCKET_POLLING_TIMEOUT{10};
 
     std::unique_ptr<zmq::socket_t> socket_;
 };
