@@ -479,8 +479,18 @@ Item {
                         Layout.fillHeight: true
                     }
                 }
-
             }
+        }
+
+        Text {
+            Layout.alignment: Qt.AlignHCenter
+            text: "(NOTE): The Platform Interface Generator will auto sort all parameters"
+            padding: 0
+            font {
+                bold: true
+                pointSize: 20
+            }
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Button {
@@ -488,7 +498,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.maximumWidth: 600
-            Layout.preferredHeight: 30
+            Layout.minimumHeight: 40
             Layout.alignment: Qt.AlignHCenter
 
             text: "Generate"
@@ -504,7 +514,7 @@ Item {
                 anchors.fill: parent
                 color: {
                     if (!generateButton.enabled) {
-                        return "lightgrey"
+                        return "lightGrey"
                     } else {
                         return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                     }
@@ -513,7 +523,6 @@ Item {
 
             contentItem: Text {
                 text: "Generate"
-                color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
