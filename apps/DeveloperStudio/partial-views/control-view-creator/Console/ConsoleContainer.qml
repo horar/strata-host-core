@@ -146,22 +146,19 @@ Rectangle {
                     source: "qrc:/sgimages/broom.svg"
 
                     onClicked:  {
-
                         consoleLogger.clearLogs()
-
                     }
                 }
 
                 SGControlViewIconButton {
+                    id: openWindow
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
-                    source: "qrc:/sgimages/list.svg"
+                    source: popupWindow ? "qrc:/sgimages/sign-out.svg" : "qrc:/sgimages/sign-in.svg"
 
                     onClicked:  {
-                        popupWindow = true
+                        popupWindow = !popupWindow
 
-                        //newWindowLoader.visible = true
-                        root.parent = newWindowLoader.item.consoleLogParent
 
                     }
                 }
@@ -182,8 +179,8 @@ Rectangle {
 
                         onClicked:  {
                             if(popupWindow) {
-                               popupWindow = false
-                               isConsoleLogOpen = false
+                                popupWindow = false
+
                             }
                             root.clicked()
                         }

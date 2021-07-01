@@ -9,8 +9,16 @@ ApplicationWindow {
     property real rectHeight : 200
     property alias consoleLogParent: resizeRect
 
+    onClosing: {
+        if(popupWindow) {
+            popupWindow = false
+        }
+        isConsoleLogOpen = false
+    }
+
     Item {
         id: resizeRect
         anchors.fill: parent
+
     }
 }

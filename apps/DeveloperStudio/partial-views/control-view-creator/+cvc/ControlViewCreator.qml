@@ -141,7 +141,7 @@ Rectangle {
                 Layout.minimumHeight: 30
                 implicitHeight: 200
                 Layout.fillWidth: true
-                visible:  viewStack.currentIndex === 1 &&  isConsoleLogOpen === true && popupWindow === false
+                visible:  viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
             }
         }
     }
@@ -149,18 +149,22 @@ Rectangle {
     ConsoleContainer {
         id:consoleContainer
         parent: {
+            if(popupWindow)
+                return newWindowLoader.item.consoleLogParent
+            else {
+                if (viewStack.currentIndex === 1)
+                    return editViewConsoleContainer
+                else
+                    return viewConsoleLog.consoleLogParent
+            }
 
-
-            if (viewStack.currentIndex === 1)
-                return editViewConsoleContainer
-            else /*if (viewStack.currentIndex === 2)*/
-                return viewConsoleLog.consoleLogParent
-//            else {
-//                 console.log(viewStack.currentIndex)
-//                return newWindowLoader.item.consoleLogParent
-//            }
-
+//            if (viewStack.currentIndex === 1)
+//                return editViewConsoleContainer
+//            else
+//                return viewConsoleLog.consoleLogParent
         }
+
+        // parent: viewStack.currentIndex === 1 ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
 
         onClicked: {
             isConsoleLogOpen = false
@@ -172,6 +176,7 @@ Rectangle {
         width: parent.width - 71
         implicitHeight: parent.height
         visible: viewStack.currentIndex === 2 && isConsoleLogOpen === true && popupWindow === false
+
     }
 
     Loader {

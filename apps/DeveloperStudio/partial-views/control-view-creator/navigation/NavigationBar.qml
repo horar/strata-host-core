@@ -90,13 +90,9 @@ Rectangle {
 
             function onClicked() {
                 isConsoleLogOpen = !isConsoleLogOpen
-
-
-
                 if(popupWindow) {
                    popupWindow = false
                 }
-                console.log("isConsoleLogOpen",isConsoleLogOpen,popupWindow)
             }
 
             SGConsoleLogNavigationIcon {
