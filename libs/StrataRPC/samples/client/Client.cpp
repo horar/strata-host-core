@@ -190,7 +190,7 @@ void Client::randomGraphHandler(const QJsonObject &payload)
 
 void Client::startPingTest()
 {
-    testPingTimer_.setInterval(100);
+    testPingTimer_.setInterval(5);
     connect(&testPingTimer_, &QTimer::timeout, this, [this]() { pingServer(); });
     testPingTimer_.start();
 }

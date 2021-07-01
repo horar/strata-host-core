@@ -35,6 +35,9 @@ bool ServerConnector::initialize()
     connect(readSocketNotifier_, &QSocketNotifier::activated, this,
             &ServerConnector::readNewMessages);
 
+    QObject::connect(this, &ServerConnector::messageAvailable, this,
+                     &ServerConnector::readNewMessages, Qt::QueuedConnection);
+
     emit initialized();
     return true;
 }
@@ -43,7 +46,8 @@ void ServerConnector::readNewMessages(/*int socket*/)
 {
     readSocketNotifier_->setEnabled(false);
     std::string message;
-    for (;;) {
+    // for (;;) {
+    while (true == connector_->hasReadEvent()) {
         if (connector_->read(message) == false) {
             break;
         }
@@ -93,7 +97,8 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
     }
 
     if (true == connector_->hasReadEvent()) {
-        readNewMessages();
+        qCCritical(logCategoryStrataServerConnector) << "error occurred";
+        emit messageAvailable();
     }
 
     return true;

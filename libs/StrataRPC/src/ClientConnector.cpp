@@ -35,6 +35,9 @@ bool ClientConnector::initialize()
         return false;
     }
 
+    QObject::connect(this, &ClientConnector::messageAvailable, this,
+                     &ClientConnector::readNewMessages, Qt::QueuedConnection);
+
     emit initialized();
     return true;
 }
@@ -138,7 +141,9 @@ bool ClientConnector::sendMessage(const QByteArray &message)
     }
 
     if (true == connector_->hasReadEvent()) {
-        readNewMessages();
+        qCCritical(logCategoryStrataClientConnector) << "error occurred";
+        // readNewMessages();
+        emit messageAvailable();
     }
 
     return true;

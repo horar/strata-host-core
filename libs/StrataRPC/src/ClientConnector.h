@@ -112,6 +112,8 @@ signals:
      */
     void disconnected();
 
+    void messageAvailable();
+
 private slots:
     /**
      * Slot to handle QSocketNotifier::activated signal.

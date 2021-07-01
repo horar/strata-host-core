@@ -71,6 +71,8 @@ signals:
      */
     void initialized();
 
+    void messageAvailable();
+
 private slots:
     /**
      * Slot to handle QSocketNotifier::activated signal.
