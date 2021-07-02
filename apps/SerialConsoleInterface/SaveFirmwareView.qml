@@ -104,15 +104,13 @@ FocusScope {
 
             filePath: {
                 let fileName = "application"
-                if (model.platform.verboseName.length > 0) {
-                    if (model.platform.verboseName !== "Bootloader") {
-                        fileName = model.platform.verboseName
-                    }
-                    if (model.platform.appVersion.length > 0) {
-                        fileName = fileName + "_v" + model.platform.appVersion
-                    }
+                if (model.platform.verboseName.length > 0 && model.platform.verboseName !== "Bootloader") {
+                    fileName = model.platform.verboseName.replace(/\s+/g,"_")
                 }
-                fileName = fileName.replace(/\s+/g,"_") + "_" + currentTimestamp() + ".bin"
+                if (model.platform.appVersion.length > 0) {
+                    fileName = fileName + "_v" + model.platform.appVersion
+                }
+                fileName = fileName + "_" + currentTimestamp() + ".bin"
 
                 const documentsUrl = StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
 
