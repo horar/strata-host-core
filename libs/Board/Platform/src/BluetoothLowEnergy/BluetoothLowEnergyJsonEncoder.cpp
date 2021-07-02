@@ -5,17 +5,17 @@
 namespace strata::device
 {
 
-bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & requestDocument, BluetoothLowEnergyAttribute & attribute)
+QString BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & requestDocument, BluetoothLowEnergyAttribute & attribute)
 {
     if (requestDocument.HasMember("payload") == false) {
         qCWarning(logCategoryDeviceBLE) << "Request missing payload";
-        return false;
+        return "Request missing payload";
     }
 
     auto *payloadObject = &requestDocument["payload"];
     if (payloadObject->IsObject() == false) {
         qCWarning(logCategoryDeviceBLE) << "Payload is not an object";
-        return false;
+        return "Payload is not an object";
     }
 
     const rapidjson::GenericObject payload = payloadObject->GetObject();
@@ -25,7 +25,7 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
         serviceUuid = payload["service"].GetString();
     } else {
         qCWarning(logCategoryDeviceBLE) << "Request missing service";
-        return false;
+        return "Request missing service";
     }
 
     std::string characteristicUuid;
@@ -33,7 +33,7 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
         characteristicUuid = payload["characteristic"].GetString();
     } else {
         qCWarning(logCategoryDeviceBLE) << "Request missing characteristic";
-        return false;
+        return "Request missing characteristic";
     }
 
     std::string descriptorUuid;
@@ -41,8 +41,8 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
         if (payload["descriptor"].IsString()) {
             descriptorUuid = payload["descriptor"].GetString();
         } else {
-            qCWarning(logCategoryDeviceBLE) << "Request missing descriptor";
-            return false;
+            qCWarning(logCategoryDeviceBLE) << "Malformed descriptor";
+            return "Malformed descriptor";
         }
     }
 
@@ -50,20 +50,20 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
     if (attribute.service.isNull())
     {
         qCWarning(logCategoryDeviceBLE) << "Invalid service uuid";
-        return false;
+        return "Invalid service uuid";
     }
     attribute.characteristic = normalizeBleUuid(characteristicUuid);
     if (attribute.characteristic.isNull())
     {
         qCWarning(logCategoryDeviceBLE) << "Invalid characteristic uuid";
-        return false;
+        return "Invalid characteristic uuid";
     }
     if (descriptorUuid.empty() == false) {
         attribute.descriptor = normalizeBleUuid(descriptorUuid);
         if (attribute.descriptor.isNull())
         {
             qCWarning(logCategoryDeviceBLE) << "Invalid descriptor uuid";
-            return false;
+            return "Invalid descriptor uuid";
         }
     } else {
         attribute.descriptor = QBluetoothUuid();
@@ -74,7 +74,7 @@ bool BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & req
         attribute.data = QByteArray::fromHex(data.c_str());
     }
 
-    return true;
+    return QString();
 }
 
 QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(const std::string &uuid)

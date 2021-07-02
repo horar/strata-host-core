@@ -290,6 +290,15 @@ bool SGUtilsCpp::keySequenceMatches(QString sequence, int key)
     return QKeySequence(sequence).matches(QKeySequence(key));
 }
 
+QList<QString> SGUtilsCpp::getQrcPaths(QString path) {
+    QList<QString> pathList;
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        pathList.append(it.next());
+    }
+    return pathList;
+}
+
 float SGUtilsCpp::hexStringToFloat32(const QByteArray &hexString)
 {
     QDataStream stream(QByteArray::fromHex(hexString));

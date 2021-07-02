@@ -28,9 +28,9 @@ public:
      * @param requestDocument Document to be parsed.
      * @param[out] addresses After successful call, will contained parsed data
      * about the attribute to be read/written.
-     * @return true iff document was parsed successfully.
+     * @return error message. Or null string if document was parsed successfully.
      */
-    [[nodiscard]] static bool parseRequest(const rapidjson::Document &requestDocument,
+    [[nodiscard]] static QString parseRequest(const rapidjson::Document &requestDocument,
                                            BluetoothLowEnergyAttribute &attribute);
 
     /**

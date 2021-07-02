@@ -60,6 +60,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGIcon"
+            page: "ExSGIcon.qml"
+        }
+
+        ListElement {
             name: "SGInfoBox"
             page: "ExSGInfoBox.qml"
         }
