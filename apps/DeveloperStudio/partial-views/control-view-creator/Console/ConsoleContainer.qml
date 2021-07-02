@@ -150,19 +150,6 @@ Rectangle {
                     }
                 }
 
-                SGControlViewIconButton {
-                    id: openWindow
-                    Layout.preferredHeight: 30
-                    Layout.preferredWidth: 30
-                    source: popupWindow ? "qrc:/sgimages/sign-out.svg" : "qrc:/sgimages/sign-in.svg"
-
-                    onClicked:  {
-                        popupWindow = !popupWindow
-
-
-                    }
-                }
-
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -170,6 +157,18 @@ Rectangle {
 
                 RowLayout{
                     Layout.alignment: Qt.AlignRight
+
+                    SGControlViewIconButton {
+                        id: openWindow
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
+                        source: popupWindow ? "qrc:/sgimages/sign-out.svg" : "qrc:/sgimages/sign-in.svg"
+
+                        onClicked:  {
+                            popupWindow = !popupWindow
+                        }
+                    }
+
 
                     SGControlViewIconButton {
                         Layout.preferredHeight: 30
