@@ -60,7 +60,7 @@ Item {
         currentCvcProjectQrcUrl = editor.fileTreeModel.url
 
         if (visible) {
-            if (!platformInterfaceGeneratorSeen) {
+            if (!platformInterfaceGeneratorSeen && findPlatformInterfaceJsonInProject() != "") {
                 alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
                 alertToast.color = "green"
@@ -405,7 +405,7 @@ Item {
 
                 Button {
                     id: importJsonFileFromProjectButton
-                    enabled: currentCvcProjectJsonUrl !== ""
+                    enabled: currentCvcProjectJsonUrl != ""
                     anchors.fill: parent
 
                     icon {
@@ -429,9 +429,11 @@ Item {
                     id: importFromProjectMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    cursorShape: importJsonFileFromProjectButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
-                        loadJsonFile(currentCvcProjectJsonUrl)
+                        if (currentCvcProjectJsonUrl != "") {
+                            loadJsonFile(currentCvcProjectJsonUrl)
+                        }
                     }
 
                     ToolTip {
@@ -947,6 +949,7 @@ Item {
 
     /**
       * findPlatformInterfaceJsonInProject find platform interface JSON given root Qrc file url
+      * return the JSON filepath or empty if does not exist
      **/
     function findPlatformInterfaceJsonInProject() {
         const projectRootDir = findProjectRootDir()
