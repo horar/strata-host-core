@@ -10,36 +10,36 @@ Item {
     id: root
 
     readonly property var baseModel: ({
-        "commands": [],
-        "notifications": []
-    });
+                                          "commands": [],
+                                          "notifications": []
+                                      });
 
     readonly property var templateCommand: ({
-        "type": "cmd",
-        "name": "",
-        "valid": false,
-        "payload": [],
-        "editing": false
-    });
+                                                "type": "cmd",
+                                                "name": "",
+                                                "valid": false,
+                                                "payload": [],
+                                                "editing": false
+                                            });
 
     readonly property var templateNotification: ({
-        "type": "value",
-        "name": "",
-        "valid": false,
-        "payload": [
-            templatePayload
-        ],
-        "editing": false
-    });
+                                                     "type": "value",
+                                                     "name": "",
+                                                     "valid": false,
+                                                     "payload": [
+                                                         templatePayload
+                                                     ],
+                                                     "editing": false
+                                                 });
 
     readonly property var templatePayload: ({
-        "name": "", // The name of the property
-        "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
-        "indexSelected": 0,
-        "valid": false,
-        "array": [], // This is only filled if the type == "array"
-        "object": []
-    });
+                                                "name": "", // The name of the property
+                                                "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
+                                                "indexSelected": 0,
+                                                "valid": false,
+                                                "array": [], // This is only filled if the type == "array"
+                                                "object": []
+                                            });
 
     property string inputFilePath
 
@@ -304,9 +304,10 @@ Item {
         }
 
         Text {
-            Layout.alignment: Qt.AlignHCenter
             text: "Platform Interface Generator"
+            Layout.alignment: Qt.AlignHCenter
             padding: 0
+
             font {
                 bold: true
                 pointSize: 24
@@ -320,6 +321,46 @@ Item {
             Layout.fillWidth: true
             Layout.bottomMargin: 20
             color: "black"
+        }
+
+        Rectangle {
+            id: warningRect
+            Layout.fillWidth: true
+            Layout.preferredHeight: 40
+            Layout.alignment: Qt.AlignHCenter
+            color: "red"
+
+            SGIcon {
+                source: "qrc:/sgimages/exclamation-triangle.svg"
+                width: 35
+                height: 35
+                anchors.left: warningRect.left
+                anchors.verticalCenter: warningRect.verticalCenter
+            }
+
+            Text {
+                anchors.centerIn: warningRect
+                text: "The P.I.G. will lexicographically sort parameters and properties when building PlatformInterface.qml"
+                padding: 0
+                font {
+                    bold: true
+                    pointSize: 20
+                }
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            SGIcon {
+                source: "qrc:/sgimages/exclamation-triangle.svg"
+                width: 35
+                height: 35
+                anchors.right: warningRect.right
+                anchors.verticalCenter: warningRect.verticalCenter
+            }
+        }
+
+        Item {
+            Layout.preferredHeight: 10
+            Layout.fillWidth: true
         }
 
         RowLayout {
@@ -480,17 +521,6 @@ Item {
                     }
                 }
             }
-        }
-
-        Text {
-            Layout.alignment: Qt.AlignHCenter
-            text: "(NOTE): The Platform Interface Generator will auto sort all parameters"
-            padding: 0
-            font {
-                bold: true
-                pointSize: 20
-            }
-            horizontalAlignment: Text.AlignHCenter
         }
 
         Button {
