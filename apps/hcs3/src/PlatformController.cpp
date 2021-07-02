@@ -45,6 +45,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
     if (recognized) {
         PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
+            qCWarning(logCategoryHcsPlatform).noquote() << "Platform not found by its id" << deviceId;
             return;
         }
 
