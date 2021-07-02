@@ -4,6 +4,7 @@ import QtQml.Models 2.12
 import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
+import tech.strata.commoncpp 1.0 as CommonCpp
 
 Popup {
     id: popup
@@ -27,7 +28,10 @@ Popup {
     property string headerText
     property bool delegateNumbering: false
     property bool delegateRemovable: false
-    property bool delegateTextWrap: false
+    property bool highlightResults: false
+    property string highlightFilterPattern: ""
+    property variant highlightFilterPatternSyntax: CommonCpp.SGTextHighlighter.RegExp
+    property bool highlightCaseSensitive: false
 
     readonly property Component implicitDelegate: delegateComponent
 
@@ -245,6 +249,20 @@ Popup {
                 }
             }
 
+            Loader {
+                sourceComponent: highlightResults ? highlightComponent : null
+            }
+
+            Component {
+                id: highlightComponent
+                CommonCpp.SGTextHighlighter {
+                    textDocument: text.textDocument
+                    filterPattern: highlightFilterPattern
+                    filterPatternSyntax: highlightFilterPatternSyntax
+                    caseSensitive: highlightCaseSensitive
+                }
+            }
+
             Item {
                 id: delegateNumberWrapper
                 width: 15
@@ -279,7 +297,7 @@ Popup {
                 }
             }
 
-            SGWidgets.SGText {
+            SGWidgets.SGTextEdit {
                 id: text
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -289,10 +307,10 @@ Popup {
                     rightMargin: 4
                 }
 
-                elide: popup.delegateTextWrap ? Text.ElideNone : Text.ElideRight
-                wrapMode: popup.delegateTextWrap ? Text.WrapAnywhere : Text.NoWrap
-                text: popup.textRole? model[popup.textRole] : modelData
-                alternativeColorEnabled: parent.ListView.isCurrentItem
+                textFormat: Text.PlainText
+                readOnly: true
+                text: popup.textRole ? model[popup.textRole] : modelData
+                color: parent.ListView.isCurrentItem ? "white" : "black"
             }
 
             MouseArea {

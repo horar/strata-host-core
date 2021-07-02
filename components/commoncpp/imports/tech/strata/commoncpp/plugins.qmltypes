@@ -509,6 +509,16 @@ Module {
         Property { name: "textDocument"; type: "QQuickTextDocument"; isPointer: true }
     }
     Component {
+        name: "SGTextHighlighter"
+        prototype: "QSyntaxHighlighter"
+        exports: ["tech.strata.commoncpp/SGTextHighlighter 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "textDocument"; type: "QQuickTextDocument"; isPointer: true }
+        Property { name: "filterPattern"; type: "string" }
+        Property { name: "filterPatternSyntax"; type: "FilterSyntax" }
+        Property { name: "caseSensitive"; type: "bool" }
+    }
+    Component {
         name: "SGQWTPlot"
         defaultProperty: "data"
         prototype: "QQuickPaintedItem"
