@@ -34,14 +34,22 @@ void MockDevice::open()
     if (opened_) {
         emit Device::opened();
     } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpenRequestRetry, "Unable to open mock device.");
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpenRequestRetry, "Unable to open mock device (mockSetOpenEnabled set to true).");
     }
 }
 
 void MockDevice::close()
 {
-    opened_ = false;
-    mockClearRecordedMessages();
+    if (opened_) {
+        opened_ = false;
+        mockClearRecordedMessages();
+
+        if (mockIsErrorOnCloseSet()) {
+            QString errMsg(QStringLiteral("Unable to properly close mock device (mockSetErrorOnClose set to true)."));
+            qCWarning(logCategoryDeviceMock) << this << errMsg;
+            emit deviceError(ErrorCode::DeviceError, errMsg);
+        }
+    }
 }
 
 QByteArray MockDevice::createDeviceId(const QString& mockName)
@@ -49,26 +57,30 @@ QByteArray MockDevice::createDeviceId(const QString& mockName)
     return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
 }
 
-bool MockDevice::sendMessage(const QByteArray& msg)
+unsigned MockDevice::sendMessage(const QByteArray& msg)
 {
+    unsigned msgNum = Device::nextMessageNumber();
+
     if (opened_ == false) {
-        return false;
+        QString errMsg(QStringLiteral("Cannot write data to device, device is not open."));
+        qCCritical(logCategoryDeviceMock) << this << errMsg;
+        emit messageSent(msg, msgNum, errMsg);
+        return msgNum;
     }
 
     qCDebug(logCategoryDeviceMock) << this << "Received request:" << msg;
 
     if (control_.writeMessage(msg) == msg.size()) {
-        emit messageSent(msg);
+        emit messageSent(msg, msgNum, QString());
         if (mockIsAutoResponse()) {
             mockEmitResponses(msg);
         }
-        return true;
     } else {
-        QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
-        return false;
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage set to true)."));
+        qCWarning(logCategoryDeviceSerial) << this << errMsg;
+        emit messageSent(msg, msgNum, errMsg);
     }
+    return msgNum;
 }
 
 bool MockDevice::isConnected() const
@@ -84,6 +96,7 @@ void MockDevice::resetReceiving()
 
 void MockDevice::readMessage(QByteArray msg)
 {
+    qCDebug(logCategoryDeviceMock) << this << "Returning response:" << msg;
     emit messageReceived(msg);
 }
 
@@ -96,6 +109,11 @@ void MockDevice::handleError(ErrorCode errCode, QString msg) {
 void MockDevice::mockEmitResponses(const QByteArray& msg)
 {
     control_.emitResponses(msg);
+}
+
+void MockDevice::mockEmitError(const ErrorCode& errCode, const QString& msg)
+{
+    emit deviceError(errCode, msg);
 }
 
 std::vector<QByteArray> MockDevice::mockGetRecordedMessages() const
@@ -118,9 +136,9 @@ bool MockDevice::mockIsOpenEnabled() const
     return control_.isOpenEnabled();
 }
 
-bool MockDevice::mockIsLegacy() const
+bool MockDevice::mockIsAutoResponse() const
 {
-    return control_.isLegacy();
+    return control_.isAutoResponse();
 }
 
 bool MockDevice::mockIsBootloader() const
@@ -128,19 +146,24 @@ bool MockDevice::mockIsBootloader() const
     return control_.isBootloader();
 }
 
-bool MockDevice::mockIsAutoResponse() const
+bool MockDevice::mockIsFirmwareEnabled() const
 {
-    return control_.isAutoResponse();
+    return control_.isFirmwareEnabled();
 }
 
-MockCommand MockDevice::mockGetCommand() const
+bool MockDevice::mockIsErrorOnCloseSet() const
 {
-    return control_.getCommand();
+    return control_.isErrorOnCloseSet();
 }
 
-MockResponse MockDevice::mockGetResponse() const
+bool MockDevice::mockIsErrorOnNthMessageSet() const
 {
-    return control_.getResponse();
+    return control_.isErrorOnNthMessageSet();
+}
+
+MockResponse MockDevice::mockGetResponseForCommand(MockCommand command) const
+{
+    return control_.getResponseForCommand(command);
 }
 
 MockVersion MockDevice::mockGetVersion() const
@@ -153,11 +176,6 @@ bool MockDevice::mockSetOpenEnabled(bool enabled)
     return control_.setOpenEnabled(enabled);
 }
 
-bool MockDevice::mockSetLegacy(bool isLegacy)
-{
-    return control_.setLegacy(isLegacy);
-}
-
 bool MockDevice::mockSetAutoResponse(bool autoResponse)
 {
     return control_.setAutoResponse(autoResponse);
@@ -166,16 +184,6 @@ bool MockDevice::mockSetAutoResponse(bool autoResponse)
 bool MockDevice::mockSetSaveMessages(bool saveMessages)
 {
     return control_.setSaveMessages(saveMessages);
-}
-
-bool MockDevice::mockSetCommand(MockCommand command)
-{
-    return control_.setCommand(command);
-}
-
-bool MockDevice::mockSetResponse(MockResponse response)
-{
-    return control_.setResponse(response);
 }
 
 bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
@@ -196,6 +204,14 @@ bool MockDevice::mockSetAsBootloader(bool isBootloader)
 bool MockDevice::mockSetFirmwareEnabled(bool enabled)
 {
     return control_.setFirmwareEnabled(enabled);
+}
+
+bool MockDevice::mockSetErrorOnClose(bool enabled) {
+    return control_.setErrorOnClose(enabled);
+}
+
+bool MockDevice::mockSetWriteErrorOnNthMessage(unsigned messageNumber) {
+    return control_.setWriteErrorOnNthMessage(messageNumber);
 }
 
 }  // namespace strata::device

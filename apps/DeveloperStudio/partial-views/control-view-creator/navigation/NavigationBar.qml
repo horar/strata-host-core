@@ -36,7 +36,7 @@ Rectangle {
             selected: viewStack.currentIndex === 0
             tooltipDescription: "Open or create project"
 
-            function onClicked() {
+            onClicked: {
                 viewStack.currentIndex = 0
             }
         }
@@ -47,7 +47,7 @@ Rectangle {
             selected: viewStack.currentIndex === 1
             tooltipDescription: "Edit control view project files"
 
-            function onClicked() {
+            onClicked: {
                 viewStack.currentIndex = 1
             }
         }
@@ -58,7 +58,7 @@ Rectangle {
             selected: viewStack.currentIndex === 2
             tooltipDescription: "View/use control view"
 
-            function onClicked() {
+            onClicked: {
                 if (viewStack.currentIndex !== 2) {
                     viewStack.currentIndex = 2
                 }
@@ -72,7 +72,7 @@ Rectangle {
             selected: debugPanel.expanded
             tooltipDescription: "Toggle debug panel"
 
-            function onClicked() {
+            onClicked: {
                 if (debugPanel.expanded) {
                     debugPanel.collapse()
                 } else {
@@ -88,7 +88,7 @@ Rectangle {
             enabled: viewStack.currentIndex === 1 || viewStack.currentIndex === 2
             tooltipDescription: "Toggle logger panel"
 
-            function onClicked() {
+            onClicked: {
                 isConsoleLogOpen = !isConsoleLogOpen
             }
 
@@ -107,7 +107,7 @@ Rectangle {
             enabled: true
             tooltipDescription: "Show Platform Interface Generator"
 
-            function onClicked() {
+            onClicked: {
                 viewStack.currentIndex = 3
             }
         }
