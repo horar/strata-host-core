@@ -47,13 +47,9 @@ Rectangle {
         }
     }
 
-<<<<<<< HEAD
-
-=======
     Component.onCompleted: {
         cvcUserSettings.loadSettings()
     }
->>>>>>> develop
 
     RowLayout {
         anchors {
@@ -164,10 +160,10 @@ Rectangle {
                     return viewConsoleLog.consoleLogParent
             }
 
-//            if (viewStack.currentIndex === 1)
-//                return editViewConsoleContainer
-//            else
-//                return viewConsoleLog.consoleLogParent
+            //            if (viewStack.currentIndex === 1)
+            //                return editViewConsoleContainer
+            //            else
+            //                return viewConsoleLog.consoleLogParent
         }
 
         // parent: viewStack.currentIndex === 1 ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
