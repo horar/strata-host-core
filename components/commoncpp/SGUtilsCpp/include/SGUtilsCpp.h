@@ -44,6 +44,15 @@ public:
     Q_INVOKABLE static bool keySequenceMatches(QString sequence, int key);
     Q_INVOKABLE  QList<QString> getQrcPaths(QString path);
 
+    /* data type conversion of hex string in little endian*/
+    Q_INVOKABLE static float hexStringToFloat32(const QByteArray &hexString);
+    Q_INVOKABLE static quint16 hexStringToUint16(const QByteArray &hexString);
+    Q_INVOKABLE static qint16 hexStringToInt16(const QByteArray &hexString);
+
+    Q_INVOKABLE static QByteArray float32ToHexString(float number);
+    Q_INVOKABLE static QByteArray uint16ToHexString(quint16 number);
+    Q_INVOKABLE static QByteArray int16ToHexString(qint16 number);
+
 private:
     const QStringList fileSizePrefixList_;
 };
