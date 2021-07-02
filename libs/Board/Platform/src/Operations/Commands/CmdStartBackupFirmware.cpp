@@ -38,9 +38,9 @@ bool CmdStartBackupFirmware::processNotification(const rapidjson::Document& doc,
             //const rapidjson::Value& md5 = payload[JSON_MD5];
             if (size.IsUint() && chunks.IsUint()) {
                 chunks_ = chunks.GetUint();
-                qCInfo(logCategoryPlatformCommand) << platform_ << "Going to backup firmware with size " << size.GetUint() << " bytes.";
-                /* these values ​​are not used yet
                 size_ = size.GetUint();
+                qCInfo(logCategoryPlatformCommand) << platform_ << "Going to backup firmware with size " << size_ << " bytes.";
+                /* this value is not used yet
                 md5_ = md5.GetString();
                 */
                 result = CommandResult::DoneAndWait;
@@ -58,6 +58,10 @@ bool CmdStartBackupFirmware::processNotification(const rapidjson::Document& doc,
 
 int CmdStartBackupFirmware::totalChunks() const {
     return static_cast<int>(chunks_);
+}
+
+uint CmdStartBackupFirmware::backupSize() const {
+    return size_;
 }
 
 }  // namespace

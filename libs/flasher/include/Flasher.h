@@ -232,6 +232,8 @@ class Flasher : public QObject
         int chunkCount_;
         int chunkProgress_;
         int expectedBackupChunkNumber_;
+        uint actualBackupSize_;
+        uint expectedBackupSize_;
 
         enum class Action {
             FlashFirmware,
