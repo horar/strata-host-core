@@ -105,11 +105,16 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            if (scrollbackView.currentIndex < 0) {
+                            if (scrollbackView.currentIndex < 0 || scrollbackView.count === 0) {
                                 return ""
                             }
 
-                            return platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            var selectedMsg = platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            if (selectedMsg === undefined) {
+                                return ""
+                            } else {
+                                return selectedMsg
+                            }
                         }
                     }
                 }
