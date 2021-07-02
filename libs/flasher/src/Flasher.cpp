@@ -237,6 +237,7 @@ bool Flasher::prepareForBackup()
     if (binaryFile_.open(QIODevice::WriteOnly)) {
         chunkProgress_ = BACKUP_PROGRESS_STEP;
         chunkCount_ = 0;
+        expectedBackupChunkNumber_ = 1;
         qCInfo(logCategoryFlasher) << platform_ << "Preparing for firmware backup.";
         return true;
     } else {
@@ -540,6 +541,19 @@ void Flasher::manageBackup(int chunkNumber)
             return;
         }
     } else {
+        // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
+        ++chunkNumber;  // move chunk number to range from 1 to N
+
+        if (chunkNumber == expectedBackupChunkNumber_) {
+            ++expectedBackupChunkNumber_;
+        } else {
+            QString errStr(QStringLiteral("Received other chunk than expected."));
+            qCCritical(logCategoryFlasher) << platform_ << errStr
+                << " Expected chunk number: " << expectedBackupChunkNumber_ << ", received: " << chunkNumber << '.';
+            finish(Result::Error, errStr);
+            return;
+        }
+
         QVector<quint8> chunk = backupOp->recentBackupChunk();
         qint64 bytesWritten = binaryFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
@@ -547,9 +561,6 @@ void Flasher::manageBackup(int chunkNumber)
             finish(Result::Error, QStringLiteral("File write error. ") + binaryFile_.errorString());
             return;
         }
-
-        // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
-        ++chunkNumber;  // move chunk number to range from 1 to N
 
         if (chunkNumber < chunkCount_) {
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
