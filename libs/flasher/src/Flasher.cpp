@@ -193,6 +193,9 @@ bool Flasher::startActionCheck(const QString& errorString)
 
 bool Flasher::prepareForFlash(bool flashingFirmware)
 {
+    if (binaryFile_.isOpen()) {
+        binaryFile_.close();
+    }
     if (binaryFile_.open(QIODevice::ReadOnly)) {
         if (binaryFile_.size() > 0) {
             {
@@ -234,6 +237,9 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
 
 bool Flasher::prepareForBackup()
 {
+    if (binaryFile_.isOpen()) {
+        binaryFile_.close();
+    }
     if (binaryFile_.open(QIODevice::WriteOnly)) {
         chunkProgress_ = BACKUP_PROGRESS_STEP;
         chunkCount_ = 0;
