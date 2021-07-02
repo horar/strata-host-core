@@ -289,3 +289,58 @@ bool SGUtilsCpp::keySequenceMatches(QString sequence, int key)
 {
     return QKeySequence(sequence).matches(QKeySequence(key));
 }
+
+float SGUtilsCpp::hexStringToFloat32(const QByteArray &hexString)
+{
+    QDataStream stream(QByteArray::fromHex(hexString));
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    stream.setByteOrder(QDataStream::LittleEndian);
+
+    float number;
+    stream >> number;
+
+    return number;
+}
+
+quint16 SGUtilsCpp::hexStringToUint16(const QByteArray &hexString)
+{
+    QDataStream stream(QByteArray::fromHex(hexString));
+    stream.setByteOrder(QDataStream::LittleEndian);
+
+    quint16 number;
+    stream >> number;
+
+    return number;
+}
+
+qint16 SGUtilsCpp::hexStringToInt16(const QByteArray &hexString)
+{
+    QDataStream stream(QByteArray::fromHex(hexString));
+    stream.setByteOrder(QDataStream::LittleEndian);
+
+    qint16 number;
+    stream >> number;
+
+    return number;
+}
+
+QByteArray SGUtilsCpp::float32ToHexString(float number)
+{
+    return QByteArray::fromRawData(
+                reinterpret_cast<char*>(&number),
+                sizeof(float)).toHex();
+}
+
+QByteArray SGUtilsCpp::uint16ToHexString(quint16 number)
+{
+    return QByteArray::fromRawData(
+                reinterpret_cast<char*>(&number),
+                sizeof(quint16)).toHex();
+}
+
+QByteArray SGUtilsCpp::int16ToHexString(qint16 number)
+{
+    return QByteArray::fromRawData(
+                reinterpret_cast<char*>(&number),
+                sizeof(qint16)).toHex();
+}
