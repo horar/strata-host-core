@@ -1088,7 +1088,6 @@ void FlasherTest::startBackupNoFirmwareTest()
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Start_backup_firmware_no_fw, MockCommand::Start_backup_firmware);
 
     flasher_->backupFirmware();
 
@@ -1113,7 +1112,6 @@ void FlasherTest::backupNoFirmwareTest()
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Backup_firmware_no_fw,MockCommand::Backup_firmware);
 
     flasher_->backupFirmware();
 
