@@ -46,7 +46,7 @@ void BluetoothLowEnergyDevice::deinit()
         lowEnergyController_->deleteLater();
         lowEnergyController_ = nullptr;
         if (allDiscovered_ == false) {
-            emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to connect to BLE device.");
+            emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to connect to BLE device");
         }
     }
     for (auto service : discoveredServices_) {
@@ -67,46 +67,45 @@ void BluetoothLowEnergyDevice::close()
     deinit();
 }
 
-bool BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
+unsigned BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
 {
     qCDebug(logCategoryDeviceBLE).nospace().noquote()
         << deviceId_ << message;
 
-    if (processRequest(message) == false) {
-        return false;
-    }
+    unsigned msgNum = Device::nextMessageNumber();
 
-    emit messageSent(message);
-    return true;
+    emit messageSent(message, msgNum, processRequest(message));
+
+    return msgNum;
 }
 
-bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
+QString BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
 {
     if (isConnected() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Not connected, refusing message.";
-        return false;
+        qCWarning(logCategoryDeviceBLE) << this << "Not connected, refusing message";
+        return "Not connected, refusing message";
     }
     rapidjson::Document requestDocument;
     rapidjson::ParseResult parseResult = requestDocument.Parse(message.data(), message.size());
 
     if (parseResult.IsError()) {
-        qCWarning(logCategoryDeviceBLE) << this << "Unable to parse request.";
-        return false;
+        qCWarning(logCategoryDeviceBLE) << this << "Unable to parse request";
+        return "Unable to parse request";
     }
 
     if (requestDocument.HasMember("cmd") == false) {
-        return false;
+        return "Missing cmd parameter";
     }
 
     auto *cmdObject = &requestDocument["cmd"];
     if (cmdObject->IsString() == false) {
-        return false;
+        return "Invalid cmd parameter";
     }
 
     // TODO!!! return real discovered data
     std::string cmd = cmdObject->GetString();
     if (processHardcodedReplies(cmd)) {
-        return true;
+        return QString();
     }
 
     // process messages
@@ -120,103 +119,106 @@ bool BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
         return processReadCommand(requestDocument);
     }
 
-    return false;
+    return "Command not supported";
 }
 
-bool BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & requestDocument)
+QString BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document & requestDocument)
 {
     if (isConnected() == false) {
-        return false;
+        return "Not connected, refusing message";
     }
 
     BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
-    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
-        return false;
+    QString parseError = BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute);
+    if (parseError.isEmpty() == false) {
+        return parseError;
     }
 
     if (attribute.data.isNull()) {
         qCWarning(logCategoryDeviceBLE) << this << "No data";
-        return false;
+        return "No data";
     }
 
     QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
-        return false;
+        return "Invalid service";
     }
 
     QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
-        return false;
+        return "Invalid characteristic";
     }
 
     qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
     service->writeCharacteristic(characteristic, attribute.data);
-    return true;
+    return QString();
 }
 
-bool BluetoothLowEnergyDevice::processWriteDescriptorCommand(const rapidjson::Document & requestDocument)
+QString BluetoothLowEnergyDevice::processWriteDescriptorCommand(const rapidjson::Document & requestDocument)
 {
     if (isConnected() == false) {
-        return false;
+        return "Not connected, refusing message";
     }
 
     BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
-    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
-        return false;
+    QString parseError = BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute);
+    if (parseError.isEmpty() == false) {
+        return parseError;
     }
 
     if (attribute.data.isNull()) {
         qCWarning(logCategoryDeviceBLE) << this << "No data";
-        return false;
+        return "No data";
     }
 
     QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
-        return false;
+        return "Invalid service";
     }
 
     QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
-        return false;
+        return "Invalid characteristic";
     }
 
     QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
     if (descriptor.isValid() == false) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
-        return false;
+        return "Invalid descriptor";
     }
     qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
     service->writeDescriptor(descriptor, attribute.data);
-    return true;
+    return QString();
 }
 
-bool BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & requestDocument)
+QString BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document & requestDocument)
 {
     if (isConnected() == false) {
-        return false;
+        return "Not connected, refusing message";
     }
 
     BluetoothLowEnergyJsonEncoder::BluetoothLowEnergyAttribute attribute;
-    if (BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute) == false) {
-        return false;
+    QString parseError = BluetoothLowEnergyJsonEncoder::parseRequest(requestDocument, attribute);
+    if (parseError.isEmpty() == false) {
+        return parseError;
     }
 
     QLowEnergyService * service = getService(attribute.service);
     if (service == nullptr) {
-        return false;
+        return "Invalid service";
     }
 
     QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
-        return false;
+        return "Invalid characteristic";
     }
 
     qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
     service->readCharacteristic(characteristic);
-    return true;
+    return QString();
 }
 
 bool BluetoothLowEnergyDevice::processHardcodedReplies(const std::string &cmd)

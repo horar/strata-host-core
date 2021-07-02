@@ -40,11 +40,11 @@ public:
     virtual void close() override;
 
     /**
-     * Send message to device.
-     * @param message message to be written to device
-     * @return true if message can be sent, otherwise false
+     * Send message to device. Emits deviceError() signal in case of failure.
+     * @param msg message to be written to device
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray &message) override;
+    virtual unsigned sendMessage(const QByteArray& msg) override;
 
     /**
      * Check if device is connected (communication with it is possible).
@@ -115,27 +115,27 @@ private:
     /**
      * Processes a message for the BLE device. Converts the JSON message to GATT commands.
      * @param message Request for the BLE device.
-     * @return true iff message was correct and processed.
+     * @return error message. Or null string if message was correct and processed.
      */
-    [[nodiscard]] bool processRequest(const QByteArray &message);
+    [[nodiscard]] QString processRequest(const QByteArray &message);
     /**
      * Forwards write command to BLE device.
      * @param requestDocument request with the command.
-     * @return true iff message was correct and processed.
+     * @return error message. Or null string if message was correct and processed.
      */
-    [[nodiscard]] bool processWriteCommand(const rapidjson::Document &requestDocument);
+    [[nodiscard]] QString processWriteCommand(const rapidjson::Document &requestDocument);
     /**
      * Forwards write descriptor command to BLE device.
      * @param requestDocument request with the command.
-     * @return true iff message was correct and processed.
+     * @return error message. Or null string if message was correct and processed.
      */
-    [[nodiscard]] bool processWriteDescriptorCommand(const rapidjson::Document &requestDocument);
+    [[nodiscard]] QString processWriteDescriptorCommand(const rapidjson::Document &requestDocument);
     /**
      * Forwards read command to BLE device.
      * @param requestDocument request with the command.
-     * @return true iff message was correct and processed.
+     * @return error message. Or null string if message was correct and processed.
      */
-    [[nodiscard]] bool processReadCommand(const rapidjson::Document &requestDocument);
+    [[nodiscard]] QString processReadCommand(const rapidjson::Document &requestDocument);
     /**
      * Temporary workaround, until discovery is implemented, returnshard-coded responses to
      * get_firmware_info and request_platform_id.
