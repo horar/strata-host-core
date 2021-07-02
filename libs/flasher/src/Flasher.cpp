@@ -215,7 +215,8 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
             chunkCount_ = static_cast<int>((binaryFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
             const char* binaryType = (flashingFirmware) ? "firmware" : "bootloader";
-            qCInfo(logCategoryFlasher) << platform_ << "Preparing for flashing " << chunkCount_ << " chunks of " << binaryType << '.';
+            qCInfo(logCategoryFlasher) << platform_ << "Preparing for flashing " << chunkCount_ << " chunks ("
+                << CHUNK_SIZE << " bytes) of " << binaryType << " with size " << binaryFile_.size() << " bytes.";
         } else {
             QString errStr = QStringLiteral("File '") + binaryFile_.fileName() + QStringLiteral("' is empty.");
             qCCritical(logCategoryFlasher) << platform_ << errStr;

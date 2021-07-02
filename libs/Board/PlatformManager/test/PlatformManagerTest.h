@@ -61,7 +61,7 @@ private:
      * \param deviceName name of the added device
      * \return Created mock device.
      */
-    std::shared_ptr<strata::device::MockDevice> addMockDevice(const QByteArray& deviceId, const QString& deviceName);
+    strata::platform::PlatformPtr addMockDevice(const QByteArray& deviceId, const QString& deviceName);
     /*!
      * \brief Helper function, pretends a serial port was removed (only used for clean up after
      * disconnect) \param deviceId ID of the removed device

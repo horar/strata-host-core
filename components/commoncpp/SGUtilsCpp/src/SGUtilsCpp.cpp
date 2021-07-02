@@ -42,6 +42,12 @@ bool SGUtilsCpp::isFile(const QString &file)
     return info.isFile();
 }
 
+bool SGUtilsCpp::isValidFile(const QString &file)
+{
+    QUrl url(file);
+    return url.isValid();
+}
+
 bool SGUtilsCpp::createFile(const QString &filepath)
 {
     QFile file(filepath);
@@ -70,13 +76,15 @@ QString SGUtilsCpp::fileSuffix(const QString &filename)
     return QFileInfo(filename).suffix();
 }
 
+QString SGUtilsCpp::fileBaseName(const QString &filename)
+{
+    return QFileInfo(filename).baseName();
+}
+
 bool SGUtilsCpp::isValidImage(const QString &file)
 {
     QImageReader reader(file);
-    if(reader.canRead()){
-        return true;
-    }
-    return false;
+    return reader.canRead();
 }
 
 bool SGUtilsCpp::isExecutable(const QString &file)
@@ -141,11 +149,7 @@ bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, QString dirPath)
         dirPath.append(QDir::separator());
     }
 
-    if (filePath.startsWith(dirPath)) {
-        return true;
-    } else {
-        return false;
-    }
+    return filePath.startsWith(dirPath);
 }
 
 QString SGUtilsCpp::readTextFileContent(const QString &path)
@@ -288,4 +292,13 @@ QString SGUtilsCpp::keySequenceNativeText(QString sequence)
 bool SGUtilsCpp::keySequenceMatches(QString sequence, int key)
 {
     return QKeySequence(sequence).matches(QKeySequence(key));
+}
+
+QList<QString> SGUtilsCpp::getQrcPaths(QString path) {
+    QList<QString> pathList;
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        pathList.append(it.next());
+    }
+    return pathList;
 }

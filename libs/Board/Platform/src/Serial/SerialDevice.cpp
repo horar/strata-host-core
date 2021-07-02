@@ -59,7 +59,7 @@ void SerialDevice::initSerialDevice() {
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-bool SerialDevice::open() {
+void SerialDevice::open() {
     bool opened = false;
 
     if (serialPort_->isOpen()) {
@@ -79,7 +79,11 @@ bool SerialDevice::open() {
     }
     connected_ = opened;
 
-    return opened;
+    if (opened) {
+        emit Device::opened();
+    } else {
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open serial port.");
+    }
 }
 
 void SerialDevice::close() {
@@ -131,20 +135,22 @@ void SerialDevice::readMessage() {
     }
 }
 
-bool SerialDevice::sendMessage(const QByteArray& data) {
+unsigned SerialDevice::sendMessage(const QByteArray& data) {
     // Data cannot be written to serial port from another thread as
     // in which this SerialDevice object was created. Otherwise error
     // "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs.
 
+    unsigned msgNum = Device::nextMessageNumber();
+
     if (serialPort_->write(data) == data.size()) {
-        emit messageSent(data);
-        return true;
+        emit messageSent(data, msgNum, QString());
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategoryDeviceSerial) << this << errMsg;
-        emit deviceError(ErrorCode::DeviceError, errMsg);
-        return false;
+        emit messageSent(data, msgNum, errMsg);
     }
+
+    return msgNum;
 }
 
 bool SerialDevice::isConnected() const
@@ -192,8 +198,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
             // board was unconnected from computer (cable was unplugged)
             qCWarning(logCategoryDeviceSerial) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
             connected_ = false;
-        }
-        else {
+        } else {
             qCCritical(logCategoryDeviceSerial) << this << errMsg;
         }
         emit deviceError(translateQSerialPortError(error), serialPort_->errorString());

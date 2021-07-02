@@ -15,7 +15,8 @@ struct Request {
      * @param [in] payload QJsonObject of the request payload.
      * @param [in] deferredRequest deferredRequest of the request.
      */
-    Request(QString method, QJsonObject payload, int messageId, DeferredRequest *deferredRequest)
+    Request(const QString &method, const QJsonObject &payload, const int &messageId,
+            DeferredRequest *deferredRequest)
         : method_(method),
           payload_(payload),
           messageId_(messageId),

@@ -40,9 +40,9 @@ public:
 
     /**
      * Open serial port.
-     * @return true if port was opened, otherwise false
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
-    virtual bool open() override;
+    virtual void open() override;
 
     /**
      * Close serial port.
@@ -64,11 +64,11 @@ public:
     static QByteArray createDeviceId(const QString& portName);
 
     /**
-     * Send message to serial device. Emits deviceError in case of failure.
+     * Send message to serial device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray& data) override;
+    virtual unsigned sendMessage(const QByteArray& data) override;
 
     /**
      * Check if serial device is connected (communication with it is possible - device

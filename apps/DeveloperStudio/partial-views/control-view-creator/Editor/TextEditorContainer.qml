@@ -12,6 +12,7 @@ import tech.strata.commoncpp 1.0
 
 import "../../general"
 import "../"
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
     id: fileContainerRoot
@@ -31,7 +32,7 @@ Item {
     property bool externalChanges: false
 
     function openFile() {
-        let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+        let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath))
 
         // Before returning the fileText, replace tabs with 4 spaces
         return fileText.replace(/\t/g, '    ')
@@ -63,15 +64,26 @@ Item {
             return
         }
 
-        const path = SGUtilsCpp.urlToLocalFile(model.filepath);
-        treeModel.stopWatchingPath(path);
-        const success = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
-        treeModel.startWatchingPath(path);
+        let path
+        if (SGUtilsCpp.isFile(model.filepath)) {
+            path = model.filepath
+        } else {
+            path = SGUtilsCpp.urlToLocalFile(model.filepath)
+        }
+
+        if (!SGUtilsCpp.isValidFile(path)) {
+            console.error("File path is not valid: ", path)
+            return
+        }
+
+        treeModel.stopWatchingPath(path)
+        const success = SGUtilsCpp.atomicWrite(path, channelObject.fileText)
+        treeModel.startWatchingPath(path)
 
         if (success) {
-            savedVersionId = currentVersionId;
-            model.unsavedChanges = false;
-            externalChanges = false;
+            savedVersionId = currentVersionId
+            model.unsavedChanges = false
+            externalChanges = false
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
             }
@@ -100,11 +112,11 @@ Item {
             // Here we handle the situation where a file that was previously deleted is now recreated.
             // We want to check to see if the files have different contents
             if (model.filepath === path) {
-                let newFileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+                let newFileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath))
                 if (newFileText !== channelObject.fileText) {
-                    externalChanges = true;
+                    externalChanges = true
                     if (!model.unsavedChanges) {
-                        channelObject.refreshEditorWithExternalChanges();
+                        channelObject.refreshEditorWithExternalChanges()
                     }
                 }
             }
@@ -150,7 +162,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile(close);
+                saveFile(close)
             }
         }
 
@@ -159,7 +171,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile(close, true);
+                saveFile(close, true)
             }
         }
     }
@@ -197,7 +209,7 @@ Item {
                 // User chose to overwrite the external changes
                 externalChanges = false
                 model.unsavedChanges = true
-                saveFile(closeOnSave);
+                saveFile(closeOnSave)
             } else if (closeReason === closeFilesReason) {
                 // User chose to abandon their changes
                 channelObject.refreshEditorWithExternalChanges()
@@ -236,12 +248,12 @@ Item {
         property string fileText: ""
         property bool reset: false
 
-        signal setValue(string value);
-        signal setContainerHeight(string height);
-        signal setContainerWidth(string width);
+        signal setValue(string value)
+        signal setContainerHeight(string height)
+        signal setContainerWidth(string width)
         signal resetContainer(string height, string width)
-        signal undo();
-        signal redo();
+        signal undo()
+        signal redo()
 
         function setHtml(value) {
             setValue(value)
@@ -291,7 +303,20 @@ Item {
             bottom: parent.bottom
         }
 
-        onJavaScriptConsoleMessage: console.log(message)
+        onJavaScriptConsoleMessage: {
+            switch (level) {
+                case WebEngineView.InfoMessageLevel:
+                    console.log(message)
+                    break
+                case WebEngineView.WarningMessageLevel:
+                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
+                case WebEngineView.ErrorMessageLevel:
+                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
+            }
+        }
+            
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -320,6 +345,12 @@ Item {
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
+            } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
+            	let errorProperties = {
+                	"error_message": "Monaco text editor component failed to load or was not found"
+                }
+                
+                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties)
             }
         }
 

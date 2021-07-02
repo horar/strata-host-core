@@ -4,6 +4,7 @@
 
 #include <Serial/SerialDeviceScanner.h>
 #include <Mock/MockDeviceScanner.h>
+#include <Tcp/TcpDeviceScanner.h>
 
 namespace strata {
 
@@ -14,6 +15,7 @@ using device::scanner::DeviceScanner;
 using device::scanner::DeviceScannerPtr;
 using device::scanner::MockDeviceScanner;
 using device::scanner::SerialDeviceScanner;
+using device::scanner::TcpDeviceScanner;
 
 namespace operation = platform::operation;
 
@@ -47,6 +49,9 @@ void PlatformManager::init(Device::Type scannerType) {
     } break;
     case Device::Type::MockDevice: {
         scanner = std::make_shared<MockDeviceScanner>();
+    } break;
+    case Device::Type::TcpDevice: {
+        scanner = std::make_shared<TcpDeviceScanner>();
     } break;
     default: {
         qCCritical(logCategoryPlatformManager) << "Invalid DeviceScanner type:" << scannerType;
@@ -333,9 +338,8 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     switch (errCode) {
     case Device::ErrorCode::NoError: {
     } break;
-    case Device::ErrorCode::DeviceBusy:
     case Device::ErrorCode::DeviceFailedToOpen: {
-        // no need to handle these
+        // no need to handle this error code
         // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << platform->deviceId() << ", code: " << errCode << ", message: " << errStr;
     } break;
     case Device::ErrorCode::DeviceDisconnected: {

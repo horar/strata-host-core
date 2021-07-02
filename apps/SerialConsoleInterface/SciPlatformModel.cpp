@@ -213,7 +213,7 @@ void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 {
     strata::platform::PlatformPtr platform = platformManager_->getPlatform(deviceId);
     if (platform == nullptr) {
-        qCCritical(logCategorySci) << "platform not found by its id";
+        qCWarning(logCategorySci).noquote() << "Platform not found by its id" << deviceId;
         return;
     }
 

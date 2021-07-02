@@ -24,7 +24,7 @@ Menu {
             }
 
             existingFileDialog.callerIndex = styleData.index
-            existingFileDialog.open();
+            existingFileDialog.open()
             folderContextMenu.dismiss()
         }
     }
@@ -33,14 +33,31 @@ Menu {
         text: "Rename Folder"
         onTriggered: {
             treeView.selectItem(styleData.index)
-            model.editing = true
+            if (!styleData.isExpanded) {
+                treeView.expand(styleData.index)
+            }
+
+            renameFilePopup.renameType = "Folder"
+            renameFilePopup.modelIndex = styleData.index
+            renameFilePopup.uid = model.uid
+            renameFilePopup.fileName = model.filename
+            renameFilePopup.fileExtension = model.filetype
+            renameFilePopup.directoryPath = model.filepath
+            renameFilePopup.open()
+            folderContextMenu.dismiss()
         }
     }
 
     MenuItem {
         text: "Delete Folder"
         onTriggered: {
-            treeModel.deleteFile(model.row, styleData.index.parent)
+            confirmDeleteFile.deleteType = "Folder"
+            confirmDeleteFile.fileName = model.filename
+            confirmDeleteFile.uid = model.uid
+            confirmDeleteFile.row = model.row
+            confirmDeleteFile.index = styleData.index.parent
+
+            confirmDeleteFile.open()
             folderContextMenu.dismiss()
         }
     }

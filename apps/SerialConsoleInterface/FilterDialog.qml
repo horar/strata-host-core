@@ -229,9 +229,14 @@ SGWidgets.SGDialog {
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
                                 contextMenuEnabled: true
-                                rightIconSource: "qrc:/sgimages/chevron-down.svg"
+                                showSuggestionButton: true
                                 suggestionCloseWithArrowKey: true
+                                suggestionCloseOnMouseSelection: true
+                                suggestionHighlightResults: true
                                 suggestionListModel: sortFilterModel
+                                suggestionModelTextRole: "suggestion"
+                                suggestionFilterPattern: filterStringTextField.text
+
                                 onSuggestionDelegateSelected: {
                                    var sourceIndex = sortFilterModel.mapIndexToSource(index)
                                    if (sourceIndex < 0) {
@@ -239,6 +244,15 @@ SGWidgets.SGDialog {
                                         return
                                     }
                                     text = filterSuggestionModel.get(sourceIndex)["suggestion"]
+                                }
+
+                                Keys.forwardTo: suggestionPopup.contentItem
+                                Keys.priority: Keys.BeforeItem
+
+                                Keys.onPressed: {
+                                    if (suggestionPopup.opened === false && filterStringTextField.activeFocus) {
+                                        suggestionPopup.open()
+                                    }
                                 }
 
                                 onTextChanged: {

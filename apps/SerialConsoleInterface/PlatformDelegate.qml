@@ -105,11 +105,16 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            if (scrollbackView.currentIndex < 0) {
+                            if (scrollbackView.currentIndex < 0 || scrollbackView.count === 0) {
                                 return ""
                             }
 
-                            return platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            var selectedMsg = platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            if (selectedMsg === undefined) {
+                                return ""
+                            } else {
+                                return selectedMsg
+                            }
                         }
                     }
                 }
@@ -529,8 +534,6 @@ FocusScope {
                 } else if (result.error === "json_error") {
                     var pos = messageEditor.resolveCoordinates(result.offset, messageEditor.text)
                     model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) +  "- " + result.message;
-                } else if (result.error === "send_error") {
-                    model.platform.errorString = "Could not send message"
                 } else {
                     model.platform.errorString = "Unknown error"
                 }

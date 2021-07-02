@@ -66,6 +66,16 @@ Item {
     SGSplitView {
         anchors.fill: parent
 
+        Shortcut {
+            sequence: "Ctrl+R"
+            onActivated: {
+                if (cvcUserSettings.openViewOnBuild) {
+                   viewStack.currentIndex = 2
+                }
+                recompileControlViewQrc()
+            }
+        }
+
         SideBar {
             id: sideBar
             Layout.fillHeight: true
@@ -141,17 +151,15 @@ Item {
 
                                 onClicked: {
                                     switch (modelData.buttonType) {
-                                    case "save":
-                                        editorToolBar.saveClicked()
-                                        break;
-                                    case "undo":
-                                        editorToolBar.undoClicked()
-                                        break;
-                                    case "redo":
-                                        editorToolBar.redoClicked()
-                                        break;
-                                    default:
-                                        break;
+                                        case "save":
+                                            editorToolBar.saveClicked()
+                                            break
+                                        case "undo":
+                                            editorToolBar.undoClicked()
+                                            break
+                                        case "redo":
+                                            editorToolBar.redoClicked()
+                                            break
                                     }
                                 }
                             }
@@ -223,7 +231,7 @@ Item {
                         }
 
                         onClicked: {
-                        	openFilesModel.currentIndex = index
+                            openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
@@ -355,17 +363,18 @@ Item {
                 currentIndex: openFilesModel.currentIndex
                 visible: !parsingErrorRect.visible
 
-
                 Repeater {
                     id: fileEditorRepeater
                     model: openFilesModel
 
                     delegate: Component {
                         Loader {
+                            id: fileLoader
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
-                            source: switch(model.filetype) {
+                            source: {
+                                switch (model.filetype) {
                                     case "svg":
                                     case "jpg":
                                     case "jpeg":
@@ -381,7 +390,8 @@ Item {
                                         return "./Editor/TextEditorContainer.qml"
                                     default:
                                         return "./Editor/UnsupportedFileType.qml"
-                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -390,7 +400,6 @@ Item {
                     id: noActiveFile
                 }
             }
-
         }
     }
 

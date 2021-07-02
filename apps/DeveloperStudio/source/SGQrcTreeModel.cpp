@@ -167,6 +167,10 @@ bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
         return false;
     }
 
+    if (rowCount(parent) < 1 || row + count < 1) {
+        return false;
+    }
+
     // Remove children first
     for (int i = 0; i < count; ++i) {
         if (parentItem->childNode(row + i)->isDir()) {
@@ -652,6 +656,8 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         }
         success = QDir(SGUtilsCpp::urlToLocalFile(child->filepath())).removeRecursively();
     } else {
+        // TODO: add feature to move file to trash instead of permanently deleting it (requires Qt >= 5.15)
+        // https://jira.onsemi.com/browse/CS-2055
         success = SGUtilsCpp::removeFile(SGUtilsCpp::urlToLocalFile(child->filepath()));
     }
 
@@ -1105,8 +1111,8 @@ void SGQrcTreeModel::handleExternalFileDeleted(const QString uid)
     startSave();
 }
 
-bool SGQrcTreeModel::containsPath(const QUrl url)
+bool SGQrcTreeModel::containsPath(const QString url)
 {
-    QUrl localUrl = QUrl::fromLocalFile(url.toString());
+    QUrl localUrl = QUrl::fromLocalFile(url);
     return pathsInTree_.contains(localUrl);
 }

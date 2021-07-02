@@ -47,7 +47,13 @@ Rectangle {
         }
     }
 
+<<<<<<< HEAD
 
+=======
+    Component.onCompleted: {
+        cvcUserSettings.loadSettings()
+    }
+>>>>>>> develop
 
     RowLayout {
         anchors {
@@ -370,6 +376,30 @@ Rectangle {
                     controlViewCreatorRoot.editor.sideBar.openControlQML()
                 }
             }
+        }
+    }
+
+    SGUserSettings {
+        id: cvcUserSettings
+        classId: "cvc-settings"
+        user: NavigationControl.context.user_id
+
+        property bool openViewOnBuild: false
+
+        function loadSettings() {
+            const settings = readFile("cvc-settings.json")
+
+            if (settings.hasOwnProperty("openViewOnBuild")) {
+                openViewOnBuild = settings.openViewOnBuild
+            }
+        }
+
+        function saveSettings() {
+            const settings = {
+                openViewOnBuild: openViewOnBuild
+            }
+
+            writeFile("cvc-settings.json",settings)
         }
     }
 }

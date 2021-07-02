@@ -122,7 +122,7 @@ SGStrataPopup {
 
             SGButton {
                 id: createFileButton
-                text: "Create file"
+                text: "Create File"
                 enabled: filenameReqsPopup.filenameValid
 
                 onClicked: {
@@ -170,7 +170,7 @@ SGStrataPopup {
             if (createFilePopup.viewState === "QML") {
                 return filenameInfobox.text.match(/^[a-zA-Z0-9_]*\.?[a-zA-Z0-9_]*$/) // QML filenames must not contain anything but alphanumeric and underscores
             } else if (createFilePopup.viewState === "otherFileType") {
-                return filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/)
+                return filenameInfobox.text.match(/^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-z0-9_-]+$/)
             }
         }
 
@@ -186,8 +186,8 @@ SGStrataPopup {
         }
 
         // Required for QML files
-        property bool qmlFileBeginWithUppercaseLetter: filenameInfobox.text.match(/^[A-Z]/)     // begins with A-Z
-        property bool qmlFileEndWithQmlExtension: filenameInfobox.text.match(/^.*\.(qml|QML)$/) // end in .qml or .QML
+        property bool qmlFileBeginWithUppercaseLetter: filenameInfobox.text.match(/^[A-Z]/) // begins with A-Z
+        property bool qmlFileEndWithQmlExtension: filenameInfobox.text.match(/^.*\.(qml)$/) // end in .qml
 
         property bool filenameValid: {
             if (createFilePopup.viewState === "QML") {

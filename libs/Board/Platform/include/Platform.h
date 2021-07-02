@@ -92,11 +92,11 @@ namespace strata::platform {
 
         /**
          * Send message to device (public).
-         * Emits deviceError() signal in case of failure.
+         * Emits messageSent() signal.
          * @param message message to be written to device
-         * @return true if message can be sent, false otherwise
+         * @return serial number of the sent message
          */
-        bool sendMessage(const QByteArray& message);
+        unsigned sendMessage(const QByteArray& message);
 
         // *** Platform properties (start) ***
 
@@ -222,17 +222,19 @@ namespace strata::platform {
         void messageReceived(PlatformMessage msg);
 
         /**
-         * Emitted when message was written to device.
+         * Emitted when message was written to device or some problem occured and message cannot be written.
          * @param rawMsg writen raw message to device
+         * @param msgNum serial number of the sent message
+         * @param errStr error string if message cannot be sent, empty (null) when everything is OK
          */
-        void messageSent(QByteArray rawMsg);
+        void messageSent(QByteArray rawMsg, unsigned msgNum, QString errStr);
 
         /**
          * Emitted when error occured during communication on the serial port.
          * @param errCode error code
-         * @param errMsg error description
+         * @param errStr error description
          */
-        void deviceError(device::Device::ErrorCode errCode, QString errMsg);
+        void deviceError(device::Device::ErrorCode errCode, QString errStr);
 
         /**
          * Emitted when device communication channel was opened.
@@ -266,9 +268,10 @@ namespace strata::platform {
         void platformIdChanged();
 
     private slots:
+        void openedHandler();
         void messageReceivedHandler(QByteArray rawMsg);
-        void messageSentHandler(QByteArray rawMsg);
-        void deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg);
+        void messageSentHandler(QByteArray rawMsg, unsigned msgNum, QString errStr);
+        void deviceErrorHandler(device::Device::ErrorCode errCode, QString errStr);
 
     private:
       // *** functions used by friend classes BasePlatformOperation and BasePlatformCommand:
@@ -331,12 +334,12 @@ namespace strata::platform {
 
         /**
          * Send message to device using the specified lock Id (internal).
-         * Emits deviceError() signal in case of failure.
+         * Emits messageSent() signal.
          * @param message message to be written to device
          * @param lockId lock Id
-         * @return true if message can be sent, false otherwise
+         * @return serial number of the sent message
          */
-        bool sendMessage(const QByteArray& message, quintptr lockId);
+        unsigned sendMessage(const QByteArray& message, quintptr lockId);
 
         /**
          * Sets flag if device was recognized and emits 'recognized()' signal.

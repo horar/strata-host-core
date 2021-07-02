@@ -13,7 +13,7 @@ Rectangle {
     height: width
     radius: 25
     color: type === "error" ? Theme.palette.error : Theme.palette.warning
-    visible: !isConsoleLogOpen && count > 0
+    visible: !isConsoleLogOpen && count > 0 && parent.enabled
 
     property int count: 0
     property string type: ""

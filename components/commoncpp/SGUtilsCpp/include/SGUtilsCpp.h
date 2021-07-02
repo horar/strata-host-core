@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QDirIterator>
 
 class SGUtilsCpp : public QObject
 {
@@ -16,11 +17,13 @@ public:
     Q_INVOKABLE static bool removeFile(const QString &filepath);
     Q_INVOKABLE static bool copyFile(const QString &fromPath, const QString &toPath);
     Q_INVOKABLE static QString fileSuffix(const QString &filename);
+    Q_INVOKABLE static QString fileBaseName(const QString &filename);
     Q_INVOKABLE static QString parentDirectoryPath(const QString &filepath);
     Q_INVOKABLE static bool exists(const QString &filepath);
     Q_INVOKABLE static bool fileIsChildOfDir(const QString &filePath, QString dirPath);
     Q_INVOKABLE static QString urlToLocalFile(const QUrl &url);
     Q_INVOKABLE bool isFile(const QString &file);
+    Q_INVOKABLE bool isValidFile(const QString &file);
     Q_INVOKABLE bool isValidImage(const QString &file);
     Q_INVOKABLE bool isExecutable(const QString &file);
     Q_INVOKABLE QString fileName(const QString &file);
@@ -41,6 +44,7 @@ public:
     Q_INVOKABLE static void copyToClipboard(const QString &text);
     Q_INVOKABLE static QString keySequenceNativeText(QString sequence);
     Q_INVOKABLE static bool keySequenceMatches(QString sequence, int key);
+    Q_INVOKABLE  QList<QString> getQrcPaths(QString path);
 
 private:
     const QStringList fileSizePrefixList_;
