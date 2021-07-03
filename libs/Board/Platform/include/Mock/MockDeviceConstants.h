@@ -40,8 +40,6 @@ constexpr const char* const RES_FLASH_FIRMWARE_INVALID_VALUE        = "Flash Fir
 constexpr const char* const RES_START_FLASH_FIRMWARE_INVALID        = "Start Flash Firmware: Invalid";
 constexpr const char* const RES_START_FLASH_FIRMWARE_INVALID_COMMAND = "Start Flash Firmware: Invalid command";
 constexpr const char* const RES_START_FLASH_FIRMWARE_TOO_LARGE      = "Start Flash Firmware: Firmware too large";
-constexpr const char* const RES_START_BACKUP_FIRMWARE_NO_FW         = "Backup Firmware: No firmware";
-constexpr const char* const RES_BACKUP_FIRMWARE_NO_FW               = "Start Backup Firmware: No firmware";
 
 constexpr const char* const VERSION_1        = "Version 1 (non-OTA)";
 constexpr const char* const VERSION_2        = "Version 2 (OTA)";
@@ -151,11 +149,7 @@ enum class MockResponse {
 
     Start_flash_firmware_invalid,
     Start_flash_firmware_invalid_command,
-    Start_flash_firmware_too_large,
-
-    Start_backup_firmware_no_fw,
-
-    Backup_firmware_no_fw
+    Start_flash_firmware_too_large
 };
 Q_ENUM_NS(MockResponse)
 
@@ -199,10 +193,6 @@ inline QString mockResponseConvertEnumToString(const MockResponse& response) {
         return RES_START_FLASH_FIRMWARE_INVALID_COMMAND;
     case MockResponse::Start_flash_firmware_too_large:
         return RES_START_FLASH_FIRMWARE_TOO_LARGE;
-    case MockResponse::Start_backup_firmware_no_fw:
-        return RES_START_BACKUP_FIRMWARE_NO_FW;
-    case MockResponse::Backup_firmware_no_fw:
-        return RES_BACKUP_FIRMWARE_NO_FW;
     }
 
     return "";
@@ -917,13 +907,11 @@ const QMap<MockVersion, QMap<MockCommand, QMap<MockResponse, QByteArray> > > moc
         }},
 
         {MockCommand::Start_backup_firmware, {
-            {MockResponse::Normal, start_backup_firmware_response},
-            {MockResponse::Start_backup_firmware_no_fw, start_backup_firmware_response}
+            {MockResponse::Normal, start_backup_firmware_response}
         }},
 
         {MockCommand::Backup_firmware, {
-            {MockResponse::Normal, backup_firmware_response},
-            {MockResponse::Backup_firmware_no_fw, backup_firmware_response}
+            {MockResponse::Normal, backup_firmware_response}
         }}
     }}}
 };
