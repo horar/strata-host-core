@@ -2,7 +2,6 @@
 
 #include <StrataRPC/StrataClient.h>
 #include <QObject>
-#include <QTimer>
 
 class Client : public QObject
 {
@@ -42,13 +41,9 @@ public slots:
     void serverTimeHandler(const QJsonObject &payload);
     void randomGraphHandler(const QJsonObject &payload);
 
-    void startPingTest();
-    void stopPingTest();
-
 private:
     std::unique_ptr<strata::strataRPC::StrataClient> strataClient_;
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
     bool connectionStatus_;
     QString serverTime_;
-    QTimer testPingTimer_;
 };
