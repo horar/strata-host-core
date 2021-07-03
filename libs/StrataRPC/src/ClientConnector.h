@@ -112,7 +112,10 @@ signals:
      */
     void disconnected();
 
-    void messageAvailable();
+    /**
+     * Private signal emitted when there is unhandled socket readReady event.
+     */
+    void messagesQueued(QPrivateSignal);
 
 private slots:
     /**

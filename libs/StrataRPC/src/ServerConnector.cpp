@@ -35,7 +35,7 @@ bool ServerConnector::initialize()
     connect(readSocketNotifier_, &QSocketNotifier::activated, this,
             &ServerConnector::readNewMessages);
 
-    QObject::connect(this, &ServerConnector::messageAvailable, this,
+    QObject::connect(this, &ServerConnector::messagesQueued, this,
                      &ServerConnector::readNewMessages, Qt::QueuedConnection);
 
     emit initialized();
@@ -72,7 +72,7 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
     qCDebug(logCategoryStrataServerConnector).nospace().noquote()
         << "Sending message. Client ID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
-    if (!connector_) {
+    if (nullptr == connector_) {
         QString errorMessage(
             QStringLiteral("Failed to send message. Connector is not initialized."));
         qCCritical(logCategoryStrataClientConnector) << errorMessage;
@@ -92,8 +92,7 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
     }
 
     if (true == connector_->hasReadEvent()) {
-        qCCritical(logCategoryStrataServerConnector) << "error occurred";
-        emit messageAvailable();
+        emit messagesQueued(QPrivateSignal());
     }
 
     return true;

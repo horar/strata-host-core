@@ -35,7 +35,7 @@ bool ClientConnector::initialize()
         return false;
     }
 
-    QObject::connect(this, &ClientConnector::messageAvailable, this,
+    QObject::connect(this, &ClientConnector::messagesQueued, this,
                      &ClientConnector::readNewMessages, Qt::QueuedConnection);
 
     emit initialized();
@@ -64,7 +64,7 @@ bool ClientConnector::disconnect()
 
 bool ClientConnector::connect()
 {
-    if (!connector_) {
+    if (nullptr == connector_) {
         QString errorMessage(QStringLiteral("Uninitialized connector."));
         qCCritical(logCategoryStrataClientConnector) << errorMessage;
         emit errorOccurred(ClientConnectorError::FailedToConnect, errorMessage);
@@ -113,7 +113,7 @@ void ClientConnector::readMessages()
 
 bool ClientConnector::sendMessage(const QByteArray &message)
 {
-    if (!connector_) {
+    if (nullptr == connector_) {
         QString errorMessage(
             QStringLiteral("Failed to send message. Connector is not initialized."));
         qCCritical(logCategoryStrataClientConnector) << errorMessage;
@@ -136,7 +136,7 @@ bool ClientConnector::sendMessage(const QByteArray &message)
     }
 
     if (true == connector_->hasReadEvent()) {
-        emit messageAvailable();
+        emit messagesQueued(QPrivateSignal());
     }
 
     return true;
