@@ -52,13 +52,7 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
     assert(message.isEmpty() == false);
 
     client_connector_->setDealerID(clientId.toStdString());
-    auto status = client_connector_->send(message.toStdString());
-
-    if (true == client_connector_->hasReadEvent()) {
-        client_event_.fire(strata::events_mgr::EvEventBase::eEvStateRead);
-    }
-
-    return status;
+    return client_connector_->send(message.toStdString());
 }
 
 void ClientsController::stop()
@@ -74,7 +68,11 @@ void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int
     std::string read_message;
     DispatcherMessage msg;
 
-    while (true == client_connector_->read(read_message)) {
+    for(;;) {
+        if (client_connector_->read(read_message) == false) {
+            break;
+        }
+
         msg.from_client = QByteArray::fromStdString(client_connector_->getDealerID());
         msg.message = QByteArray::fromStdString(read_message);
 
