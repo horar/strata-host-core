@@ -179,7 +179,6 @@ Rectangle {
         source: "Console/NewWindowConsoleLog.qml"
     }
 
-
     ConfirmClosePopup {
         id: confirmBuildClean
         parent: mainWindow.contentItem

@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
     id: root
-    width: 800
+    width: 1000
     height: 200
     visible: true
     property alias consoleLogParent: resizeRect
