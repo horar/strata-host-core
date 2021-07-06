@@ -6,7 +6,7 @@ ApplicationWindow {
     width: 1000
     height: 200
     visible: true
-    property alias consoleLogParent: resizeRect
+    property alias consoleLogParent: newWindowContainer
 
     onClosing: {
         if(popupWindow) {
@@ -16,7 +16,7 @@ ApplicationWindow {
     }
 
     Item {
-        id: resizeRect
+        id: newWindowContainer
         anchors.fill: parent
     }
 }
