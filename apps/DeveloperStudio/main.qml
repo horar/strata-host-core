@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -43,6 +44,16 @@ SGWidgets.SGMainWindow {
     {
         mainWindow.width = 1200
         mainWindow.height = 900
+    }
+
+    QtLabsPlatform.Menu {
+        QtLabsPlatform.MenuItem {
+            text: qsTr("&About")
+            role: QtLabsPlatform.MenuItem.AboutRole
+            onTriggered:  {
+                showAboutWindow()
+            }
+        }
     }
 
     Shortcut {
@@ -232,6 +243,10 @@ SGWidgets.SGMainWindow {
                 PlatformSelection.parseConnectedPlatforms(list)
             }
         }
+    }
+
+    function showAboutWindow() {
+        SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
     SGDebugBar {
