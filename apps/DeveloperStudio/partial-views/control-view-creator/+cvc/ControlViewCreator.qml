@@ -177,9 +177,6 @@ Rectangle {
         id: newWindowLoader
         active: popupWindow
         source: "Console/NewWindowConsoleLog.qml"
-        onActiveChanged: {
-            console.log(popupWindow)
-        }
     }
 
 
