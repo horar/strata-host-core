@@ -43,6 +43,9 @@ Popup {
             return 0
         }
 
+        /* this is to trigger calculation when positions changes */
+        var calculatePositionAgain = popup.parent.x + textEditor.x
+
         var pos = textEditor.mapToItem(popup.parent, 0, 0)
         return  pos.x
     }
@@ -50,6 +53,9 @@ Popup {
         if (!textEditor) {
             return 0
         }
+
+        /* this is to trigger calculation when position changes */
+        var calculatePositionAgain = popup.parent.y + textEditor.y + textEditor.height
 
         var deltaY = 0
 
@@ -60,6 +66,8 @@ Popup {
         if (position === Item.Top) {
             deltaY = -popup.contentItem.height - popup.topPadding - popup.bottomPadding
         }
+
+
 
         var pos = textEditor.mapToItem(popup.parent, 0, deltaY)
         return  pos.y
