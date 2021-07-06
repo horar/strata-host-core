@@ -93,6 +93,7 @@ Item {
             console.error("Unable to save file", model.filepath)
         }
     }
+
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
@@ -271,8 +272,9 @@ Item {
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
-                if (reset)
+                if (reset) {
                     reset = false
+                }
             }
 
             currentVersionId = version
@@ -316,7 +318,7 @@ Item {
                     break
             }
         }
-            
+
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -346,10 +348,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-            	let errorProperties = {
-                	"error_message": "Monaco text editor component failed to load or was not found"
+                let errorProperties = {
+                    "error_message": "Monaco text editor component failed to load or was not found"
                 }
-                
+
                 fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties)
             }
         }
