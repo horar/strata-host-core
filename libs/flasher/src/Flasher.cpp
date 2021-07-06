@@ -193,6 +193,9 @@ bool Flasher::startActionCheck(const QString& errorString)
 
 bool Flasher::prepareForFlash(bool flashingFirmware)
 {
+    if (binaryFile_.isOpen()) {
+        binaryFile_.close();
+    }
     if (binaryFile_.open(QIODevice::ReadOnly)) {
         if (binaryFile_.size() > 0) {
             {
@@ -234,9 +237,15 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
 
 bool Flasher::prepareForBackup()
 {
+    if (binaryFile_.isOpen()) {
+        binaryFile_.close();
+    }
     if (binaryFile_.open(QIODevice::WriteOnly)) {
         chunkProgress_ = BACKUP_PROGRESS_STEP;
         chunkCount_ = 0;
+        expectedBackupChunkNumber_ = 1;
+        actualBackupSize_ = 0;
+        expectedBackupSize_ = 0;
         qCInfo(logCategoryFlasher) << platform_ << "Preparing for firmware backup.";
         return true;
     } else {
@@ -531,8 +540,9 @@ void Flasher::manageBackup(int chunkNumber)
 
     if (chunkNumber < 0) {  // if no chunk was backed up yet, 'chunkNumber' is negative number (-1)
         chunkCount_ = backupOp->totalChunks();
-        if (chunkCount_ <= 0) {
-            qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks.";
+        expectedBackupSize_ = backupOp->backupSize();
+        if ((chunkCount_ <= 0) || (expectedBackupSize_ <= 0)) {
+            qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks or size 0.";
             // Operation 'Backup' is currently runing, it must be cancelled.
             currentOperation_->operation->disconnect(this);  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
             currentOperation_->operation->cancelOperation();
@@ -540,16 +550,27 @@ void Flasher::manageBackup(int chunkNumber)
             return;
         }
     } else {
-        QVector<quint8> chunk = backupOp->recentBackupChunk();
-        qint64 bytesWritten = binaryFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
+        // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
+        ++chunkNumber;  // move chunk number to range from 1 to N
+
+        if (chunkNumber == expectedBackupChunkNumber_) {
+            ++expectedBackupChunkNumber_;
+        } else {
+            QString errStr(QStringLiteral("Received other chunk than expected."));
+            qCCritical(logCategoryFlasher) << platform_ << errStr
+                << " Expected chunk number: " << expectedBackupChunkNumber_ << ", received: " << chunkNumber << '.';
+            finish(Result::Error, errStr);
+            return;
+        }
+
+        const QVector<quint8> chunk = backupOp->recentBackupChunk();
+        const qint64 bytesWritten = binaryFile_.write(reinterpret_cast<const char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
             qCCritical(logCategoryFlasher) << platform_ << "Cannot write to file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
             finish(Result::Error, QStringLiteral("File write error. ") + binaryFile_.errorString());
             return;
         }
-
-        // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
-        ++chunkNumber;  // move chunk number to range from 1 to N
+        actualBackupSize_ += static_cast<uint>(chunk.size());
 
         if (chunkNumber < chunkCount_) {
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
@@ -563,8 +584,16 @@ void Flasher::manageBackup(int chunkNumber)
             binaryFile_.close();
 
             qCInfo(logCategoryFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
-            qCInfo(logCategoryFlasher) << platform_ << "Firmware is backed up.";
             emit backupFirmwareProgress(chunkNumber, chunkCount_);
+
+            if (actualBackupSize_ != expectedBackupSize_) {
+                QString errStr(QStringLiteral("Saved firmware size is different than expected."));
+                qCCritical(logCategoryFlasher) << platform_ << errStr;
+                finish(Result::Error, errStr);
+                return;
+            }
+
+            qCInfo(logCategoryFlasher) << platform_ << "Firmware is backed up.";
 
             runNextOperation();
             return;
