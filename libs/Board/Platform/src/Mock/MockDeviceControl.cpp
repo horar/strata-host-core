@@ -490,14 +490,14 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
 
 QByteArray MockDeviceControl::generateMockFirmware()
 {
-    quint32 buffer[mock_firmware_constants::firmwareBufferSize];
+    quint32 buffer[(mock_firmware_constants::firmwareBufferSize + sizeof(quint32) - 1) / sizeof(quint32)];
     std::seed_seq sseq{1,2,3};
     QRandomGenerator generator(sseq);
     generator.fillRange(buffer);
 
     QByteArray generatedFirmware;
     QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
-    for (int i = 0; i < mock_firmware_constants::firmwareBufferSize; i ++) {
+    for (quint32 i = 0; i < mock_firmware_constants::firmwareBufferSize; i++) {
         stream << buffer[i];
     }
     return generatedFirmware;
