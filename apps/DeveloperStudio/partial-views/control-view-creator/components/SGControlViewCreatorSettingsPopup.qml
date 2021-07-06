@@ -47,7 +47,7 @@ SGStrataPopup { // @disable-check M300 // Ignore false positive (M311) QtCreator
         }
 
         SGSettingsCheckbox { // @disable-check M300 // Ignore false positive (M311) QtCreator warning
-            text: "Reload visual editor when external file changes are detected"
+            text: "Refresh Visual Editor when external file changes are detected"
             checked: cvcUserSettings.reloadViewExternalChanges
 
             onCheckedChanged: {
