@@ -6,7 +6,6 @@ ApplicationWindow {
     width: 800
     height: 200
     visible: true
-    property real rectHeight : 200
     property alias consoleLogParent: resizeRect
 
     onClosing: {
@@ -19,6 +18,5 @@ ApplicationWindow {
     Item {
         id: resizeRect
         anchors.fill: parent
-
     }
 }

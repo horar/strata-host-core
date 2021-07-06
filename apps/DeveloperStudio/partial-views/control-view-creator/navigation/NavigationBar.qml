@@ -90,9 +90,9 @@ Rectangle {
 
             onClicked: {
                 isConsoleLogOpen = !isConsoleLogOpen
-                if(popupWindow) {
-                   popupWindow = false
-                }
+//                if(popupWindow) {
+//                   popupWindow = false
+//                }
             }
 
             SGConsoleLogNavigationIcon {
