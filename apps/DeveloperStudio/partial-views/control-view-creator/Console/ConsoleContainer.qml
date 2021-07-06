@@ -6,7 +6,6 @@ import QtQuick.Window 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
-
 import "../components"
 
 Rectangle {
@@ -16,8 +15,6 @@ Rectangle {
     z: 3
 
     signal clicked()
-    property var window
-    property bool newWindowOpened: false
 
     ColumnLayout {
         anchors.fill: parent

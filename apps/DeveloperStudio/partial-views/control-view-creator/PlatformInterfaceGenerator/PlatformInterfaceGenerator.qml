@@ -433,7 +433,6 @@ Item {
                         Layout.fillHeight: true
                         Layout.maximumHeight: contentHeight
                         Layout.preferredHeight: contentHeight
-                        orientation: ListView.Vertical
 
                         property var modelIndex: index
 
