@@ -352,6 +352,7 @@ Rectangle {
         user: NavigationControl.context.user_id
 
         property bool openViewOnBuild: false
+        property bool reloadViewExternalChanges: true
 
         function loadSettings() {
             const settings = readFile("cvc-settings.json")
@@ -359,14 +360,18 @@ Rectangle {
             if (settings.hasOwnProperty("openViewOnBuild")) {
                 openViewOnBuild = settings.openViewOnBuild
             }
+            if (settings.hasOwnProperty("reloadViewExternalChanges")) {
+                openViewOnBuild = settings.reloadViewExternalChanges
+            }
         }
 
         function saveSettings() {
             const settings = {
-                openViewOnBuild: openViewOnBuild
+                openViewOnBuild: openViewOnBuild,
+                reloadViewExternalChanges: reloadViewExternalChanges
             }
 
-            writeFile("cvc-settings.json",settings)
+            writeFile("cvc-settings.json", settings)
         }
     }
 }

@@ -29,6 +29,15 @@ ColumnLayout {
         functions.checkFile()
     }
 
+    Connections {
+        target: treeModel
+        onFileChanged: {
+            if (cvcUserSettings.reloadViewExternalChanges && path == visualEditor.file) {
+                functions.unload(true)
+            }
+        }
+    }
+
     onVisibleChanged: {
         if (visible) {
             functions.load()
