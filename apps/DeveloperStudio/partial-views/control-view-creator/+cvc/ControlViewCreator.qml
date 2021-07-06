@@ -159,14 +159,7 @@ Rectangle {
                 else
                     return viewConsoleLog.consoleLogParent
             }
-
-            //            if (viewStack.currentIndex === 1)
-            //                return editViewConsoleContainer
-            //            else
-            //                return viewConsoleLog.consoleLogParent
         }
-
-        // parent: viewStack.currentIndex === 1 ? editViewConsoleContainer : viewConsoleLog.consoleLogParent
 
         onClicked: {
             isConsoleLogOpen = false
@@ -178,13 +171,12 @@ Rectangle {
         width: parent.width - 71
         implicitHeight: parent.height
         visible: viewStack.currentIndex === 2 && isConsoleLogOpen === true && popupWindow === false
-
     }
 
     Loader {
         id: newWindowLoader
         active: popupWindow
-        source: "Console/Child.qml"
+        source: "Console/NewWindowConsoleLog.qml"
         onActiveChanged: {
             console.log(popupWindow)
         }
