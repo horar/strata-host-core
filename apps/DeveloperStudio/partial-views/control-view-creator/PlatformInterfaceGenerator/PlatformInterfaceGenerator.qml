@@ -433,6 +433,7 @@ Item {
                         Layout.fillHeight: true
                         Layout.maximumHeight: contentHeight
                         Layout.preferredHeight: contentHeight
+                        ScrollBar.vertical: ScrollBar {}
 
                         property var modelIndex: index
 

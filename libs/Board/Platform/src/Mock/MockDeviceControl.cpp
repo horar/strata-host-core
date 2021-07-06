@@ -360,6 +360,7 @@ QString MockDeviceControl::getFirmwareValue(const QString placeholder)
 
     if (mockFirmware_.exists()) {
         actualChunk_ = 0; //begin of backup_firmware
+        payloadCount_ = 0;
 
         if (placeholder == "firmware.size") {
             return QString::number(mockFirmware_.size());

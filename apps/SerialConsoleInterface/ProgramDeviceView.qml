@@ -184,7 +184,7 @@ FocusScope {
 
             enabled: programDeviceView.editable
             leftPadding: 0
-            text: "Backup firmware before programming"
+            text: "Restore original firmware if programming fails"
             onCheckStateChanged: {
                 programDeviceView.doBackup = checked
                 Sci.Settings.backupFirmware = checked

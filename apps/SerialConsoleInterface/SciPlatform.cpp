@@ -274,6 +274,30 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     return true;
 }
 
+bool SciPlatform::saveDeviceFirmware(QString filePath) {
+    if (status_ != PlatformStatus::Ready) {
+        qCWarning(logCategorySci) << "platform not ready";
+        return false;
+    }
+
+    if (flasherConnector_.isNull() == false) {
+        qCWarning(logCategorySci) << "flasherConnector already exists";
+        return false;
+    }
+
+    flasherConnector_ = new strata::FlasherConnector(platform_, filePath, this);
+
+    connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &SciPlatform::flasherOperationStateChangedHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
+
+    flasherConnector_->backup();
+    setProgramInProgress(true);
+
+    return true;
+}
+
 void SciPlatform::storeCommandHistory(const QStringList &list)
 {
     settings_->setCommandHistory(verboseName_, list);

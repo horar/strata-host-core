@@ -73,6 +73,7 @@ public:
     void resetPropertiesFromDevice();
     Q_INVOKABLE QVariantMap sendMessage(const QString &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
+    Q_INVOKABLE bool saveDeviceFirmware(QString filePath);
 
     //settings handlers
     void storeCommandHistory(const QStringList &list);
