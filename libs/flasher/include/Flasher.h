@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QFile>
+#include <QSaveFile>
 
 #include <memory>
 #include <functional>
@@ -222,7 +223,9 @@ class Flasher : public QObject
 
         platform::PlatformPtr platform_;
 
-        QFile binaryFile_;
+        const QString fileName_;
+        QFile sourceFile_;
+        QSaveFile destinationFile_;
         QString fileMD5_;
         bool fileFlashed_;
 
