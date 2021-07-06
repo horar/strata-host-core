@@ -255,6 +255,10 @@ Item {
         signal undo()
         signal redo()
 
+        function setFinished(isFinished) {
+            indicator.visible = !isFinished
+        }
+
         function setHtml(value) {
             setValue(value)
         }
@@ -360,26 +364,40 @@ Item {
             anchors {
                 fill: webEngine
             }
-            visible: progressBar.value !== 100
+
+            visible: progressBar.value !== 100 || indicator.playing
 
             ProgressBar {
                 id: progressBar
+                height: 0
+                width: 0
+                from: 0
+                to: 100
+                value: webEngine.loadProgress
+            }
+
+            AnimatedImage {
+                id: indicator
                 anchors {
                     centerIn: barContainer
                     verticalCenterOffset: 10
                 }
-                height: 10
-                width: webEngine.width/2
-                from: 0
-                to: 100
-                value: webEngine.loadProgress
+                source: "qrc:/images/loading.gif"
+
+                onVisibleChanged: {
+                    if (visible) {
+                        indicator.playing = true
+                    } else {
+                        indicator.playing = false
+                    }
+                }
 
                 Text {
-                    text: qsTr("Loading...")
+                    text: qsTr(`Loading: ${(webEngine.loadProgress/100) * 100}%`)
                     anchors {
-                        bottom: progressBar.top
+                        bottom: indicator.top
                         bottomMargin: 10
-                        horizontalCenter: progressBar.horizontalCenter
+                        horizontalCenter: indicator.horizontalCenter
                     }
                 }
             }
