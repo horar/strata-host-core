@@ -214,5 +214,10 @@ bool MockDevice::mockSetWriteErrorOnNthMessage(unsigned messageNumber) {
     return control_.setWriteErrorOnNthMessage(messageNumber);
 }
 
+QByteArray MockDevice::generateMockFirmware(bool isBootloader)
+{
+    return control_.generateMockFirmware(isBootloader);
+}
+
 }  // namespace strata::device
 

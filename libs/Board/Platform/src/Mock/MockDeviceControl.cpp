@@ -488,16 +488,19 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
     }
 }
 
-QByteArray MockDeviceControl::generateMockFirmware()
+QByteArray MockDeviceControl::generateMockFirmware(bool isBootloader)
 {
-    quint32 buffer[(mock_firmware_constants::firmwareBufferSize + sizeof(quint32) - 1) / sizeof(quint32)];
+    const quint32 bufferSize = isBootloader ?
+                mock_firmware_constants::bootloaderBufferSize : mock_firmware_constants::firmwareBufferSize;
+
+    auto buffer = std::make_unique<quint32[]>(bufferSize);
     std::seed_seq sseq{1,2,3};
     QRandomGenerator generator(sseq);
-    generator.fillRange(buffer);
+    generator.fillRange(buffer.get(), bufferSize);
 
     QByteArray generatedFirmware;
     QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
-    for (quint32 i = 0; i < mock_firmware_constants::firmwareBufferSize; i++) {
+    for (quint32 i = 0; i < bufferSize; i++) {
         stream << buffer[i];
     }
     return generatedFirmware;

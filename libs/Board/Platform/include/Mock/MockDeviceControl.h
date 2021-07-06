@@ -48,6 +48,8 @@ public:
     bool setErrorOnClose(bool enabled);
     bool setWriteErrorOnNthMessage(unsigned messageNumber);
 
+    QByteArray generateMockFirmware(bool isBootloader = false);
+
 signals:
     /**
      * Emitted when message was sent from device.
@@ -77,7 +79,6 @@ private:
     void createMockFirmware();
     void removeMockFirmware();
     void getExpectedValues(QString firmwarePath);
-    QByteArray generateMockFirmware();
 
 private:
     bool autoResponse_ = true;

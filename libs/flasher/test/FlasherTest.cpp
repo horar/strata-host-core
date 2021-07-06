@@ -197,7 +197,7 @@ void FlasherTest::createFiles()
         QFAIL("Cannot open fake firmware file");
     } else {
         QDataStream fakeFirmwareOut(&fakeFirmware_);
-        fakeFirmwareOut << generateMockFirmware(false);
+        fakeFirmwareOut << mockDevice_->generateMockFirmware();
         fakeFirmware_.close();
     }
 
@@ -205,7 +205,7 @@ void FlasherTest::createFiles()
         QFAIL("Cannot open fake bootloader file");
     } else {
         QDataStream fakeBootloaderOut(&fakeBootloader_);
-        fakeBootloaderOut << generateMockFirmware(true);
+        fakeBootloaderOut << mockDevice_->generateMockFirmware(true);
         fakeBootloader_.close();
     }
 
@@ -264,22 +264,6 @@ void FlasherTest::clearExpectedValues()
     expectedChunkSize_.clear();
     expectedChunkData_.clear();
     expectedChunkCrc_.clear();
-}
-
-QByteArray FlasherTest::generateMockFirmware(bool isBootloader)
-{
-    const int bufferSize = isBootloader ? flasher_test_constants::bootloaderBufferSize : flasher_test_constants::firmwareBufferSize;
-    quint32 buffer[bufferSize];
-    std::seed_seq sseq{1,2,3};
-    QRandomGenerator generator(sseq);
-    generator.fillRange(buffer, bufferSize);
-
-    QByteArray generatedFirmware;
-    QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
-    for (int i = 0; i < bufferSize; i++) {
-        stream << buffer[i];
-    }
-    return generatedFirmware;
 }
 
 void FlasherTest::flashFirmwareTest()
