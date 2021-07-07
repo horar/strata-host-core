@@ -303,12 +303,12 @@ void BluetoothLowEnergyDevice::connectToDevice()
 {
     if (lowEnergyController_ == nullptr) {
         lowEnergyController_ = QLowEnergyController::createCentral(bluetoothDeviceInfo_, this);
-        connect(lowEnergyController_, &QLowEnergyController::discoveryFinished, this, &BluetoothLowEnergyDevice::discoveryFinishedHandler);
-        connect(lowEnergyController_, &QLowEnergyController::connected, this, &BluetoothLowEnergyDevice::deviceConnectedHandler);
-        connect(lowEnergyController_, &QLowEnergyController::disconnected, this, &BluetoothLowEnergyDevice::deviceDisconnectedHandler);
+        connect(lowEnergyController_, &QLowEnergyController::discoveryFinished, this, &BluetoothLowEnergyDevice::discoveryFinishedHandler, Qt::QueuedConnection);
+        connect(lowEnergyController_, &QLowEnergyController::connected, this, &BluetoothLowEnergyDevice::deviceConnectedHandler, Qt::QueuedConnection);
+        connect(lowEnergyController_, &QLowEnergyController::disconnected, this, &BluetoothLowEnergyDevice::deviceDisconnectedHandler, Qt::QueuedConnection);
         connect(lowEnergyController_, (void (QLowEnergyController::*)(QLowEnergyController::Error)) &QLowEnergyController::error,
-                this, &BluetoothLowEnergyDevice::deviceErrorReceivedHandler);
-        connect(lowEnergyController_, &QLowEnergyController::stateChanged, this, &BluetoothLowEnergyDevice::deviceStateChangeHandler);
+                this, &BluetoothLowEnergyDevice::deviceErrorReceivedHandler, Qt::QueuedConnection);
+        connect(lowEnergyController_, &QLowEnergyController::stateChanged, this, &BluetoothLowEnergyDevice::deviceStateChangeHandler, Qt::QueuedConnection);
     }
 
     qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
@@ -459,6 +459,7 @@ void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescript
 
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
 {
+    qCDebug(logCategoryDeviceBLE) << this << "Service state changed: " << newState;
     Q_UNUSED(newState);
     checkServiceDetailsDiscovery();
 }
