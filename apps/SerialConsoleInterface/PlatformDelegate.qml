@@ -105,11 +105,16 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            if (scrollbackView.currentIndex < 0) {
+                            if (scrollbackView.currentIndex < 0 || scrollbackView.count === 0) {
                                 return ""
                             }
 
-                            return platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            var selectedMsg = platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            if (selectedMsg === undefined) {
+                                return ""
+                            } else {
+                                return selectedMsg
+                            }
                         }
                     }
                 }
@@ -201,32 +206,16 @@ FocusScope {
                         onClicked: mainPage.toggleExpand()
                     }
 
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
                     SGWidgets.SGIconButton {
                         text: "Filter"
                         hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
-                    }
-
-                    VerticalDivider {
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Export"
-                        hintText: qsTr("Export to file")
-                        icon.source: "qrc:/sgimages/file-export.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showExportView()
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Program"
-                        hintText: qsTr("Program device with new firmware")
-                        icon.source: "qrc:/sgimages/chip-flash.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showProgramView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -245,6 +234,34 @@ FocusScope {
                             property: "checked"
                             value: platformDelegate.hexViewShown
                         }
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Export"
+                        hintText: qsTr("Export to file")
+                        icon.source: "qrc:/sgimages/file-export.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showExportView()
+                    }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Program"
+                        hintText: qsTr("Program device with new firmware")
+                        icon.source: "qrc:/sgimages/chip-flash.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showProgramView()
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Save"
+                        hintText: qsTr("Save device firmware into file")
+                        icon.source: "qrc:/images/chip-download.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showSaveFirmwareView()
                     }
 
                     VerticalDivider {
@@ -413,6 +430,7 @@ FocusScope {
 
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
+                    suggestionParent: messageHistoryButton
 
                     onTextChanged: {
                         model.platform.errorString = "";
@@ -470,6 +488,23 @@ FocusScope {
                         onClicked: {
                             messageEditor.forceActiveFocus()
                             messageEditor.clear()
+                        }
+                    }
+
+                    SGWidgets.SGIconButton {
+                        id: messageHistoryButton
+                        anchors.verticalCenter: parent.verticalCenter
+                        hintText: "Message history"
+                        icon.source: "qrc:/sgimages/history.svg"
+
+                        onClicked: {
+                            messageEditor.forceActiveFocus()
+
+                            if (messageEditor.suggestionOpened) {
+                                messageEditor.closeSuggestionPopup()
+                            } else {
+                                messageEditor.openSuggestionPopup()
+                            }
                         }
                     }
                 }
@@ -621,6 +656,13 @@ FocusScope {
     }
 
     Component {
+        id: saveFirmwareComponent
+
+        SaveFirmwareView {
+        }
+    }
+
+    Component {
         id: exportComponent
 
         ExportView {
@@ -636,6 +678,10 @@ FocusScope {
 
     function showProgramView() {
         stackView.push(programDeviceComponent)
+    }
+
+    function showSaveFirmwareView() {
+        stackView.push(saveFirmwareComponent)
     }
 
     function showExportView() {

@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed,
+    QObject::connect(&app, &QGuiApplication::aboutToQuit,
                      sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QObject::connect(coreUpdate.get(), &CoreUpdate::applicationTerminationRequested,

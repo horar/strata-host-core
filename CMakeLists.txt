@@ -63,6 +63,9 @@ enable_testing()
 option(BUILD_EXAMPLES "Build project examples" OFF)
 add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 
+option(BUILD_BENCHMARK "Build project benchmark" OFF)
+add_feature_info(BUILD_BENCHMARK BUILD_BENCHMARK "Build project benchmark")
+
 option(APPS_UTILS "Build project supplementary utils" ON)
 add_feature_info(APPS_UTILS APPS_UTILS "Build project supplementary utils")
 

@@ -5,6 +5,8 @@
 
 #include "DeferredRequest.h"
 
+class QThread;
+
 namespace strata::strataRPC
 {
 template <class HandlerArgument>
@@ -12,6 +14,7 @@ class Dispatcher;
 class ClientConnector;
 class RequestsController;
 struct Message;
+enum class ClientConnectorError : short;
 
 class StrataClient : public QObject
 {
@@ -42,15 +45,10 @@ public:
     /**
      * StrataClient constructor
      * @param [in] serverAddress Sets the server address.
-     */
-    StrataClient(QString serverAddress, QObject *parent = nullptr);
-
-    /**
-     * StrataClient constructor
-     * @param [in] serverAddress Sets the server address.
      * @param [in] dealerId Sets the client id.
      */
-    StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent = nullptr);
+    StrataClient(const QString &serverAddress, const QByteArray &dealerId = "StrataClient",
+                 QObject *parent = nullptr);
 
     /**
      * StrataClient destructor
@@ -59,15 +57,17 @@ public:
 
     /**
      * Function to establish the server connection
-     * @return True if the connection is established successfully, False otherwise.
+     * @note If the client connected successfully StrataClient will emit connected signal,
+     * Otherwise it will emit errorOccurred signal.
      */
-    bool connectServer();
+    void connect();
 
     /**
      * Function to close the connection to the server.
-     * @return True if the connection was disconnected successfully, False otherwise.
+     * @note If the connection was disconnected successfully, StrataClient will emit
+     * disconnected signal.
      */
-    bool disconnectServer();
+    void disconnect();
 
     /**
      * Register a command handler in the client's dispatcher.
@@ -111,40 +111,78 @@ signals:
      * Emitted when a new server message is parsed and ready to be handled
      * @param [in] serverMessage populated Message object with the notification meta data.
      */
-    void newServerMessageParsed(const Message &serverMessage);
+    void messageParsed(const Message &serverMessage);
 
     /**
      * Emitted when the client connects to the server successfully.
      */
-    void clientConnected();
+    void connected();
+
+    /**
+     * Emitted when the client is disconnected from the server.
+     */
+    void disconnected();
 
     /**
      * Emitted when an error has occurred.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(StrataClient::ClientError errorType, const QString &errorMessage);
+    void errorOccurred(const StrataClient::ClientError &errorType, const QString &errorMessage);
+
+    /**
+     * Signal to initialize the ClientConnector.
+     */
+    void initializeConnector();
+
+    /**
+     * Signal to connect to the server.
+     */
+    void connectClient();
+
+    /**
+     * signal to disconnect the server.
+     */
+    void disconnectClient();
+
+    /**
+     * Signal to send a message to the server.
+     * @param [in] message QByteArray of the message.
+     */
+    void sendMessage(const QByteArray &message);
 
 private slots:
     /**
      * Slot to handle new incoming messages from StrataServer.
      * @param [in] jsonServerMessage QByteArray json of StrataServer's message.
      */
-    void newServerMessage(const QByteArray &jsonServerMessage);
+    void messageReceivedHandler(const QByteArray &jsonServerMessage);
 
     /**
      * Handles timed out requests.
      * @param [in] requestId request id of the timed out request.
      */
-    void requestTimeoutHandler(int requestId);
+    void requestTimeoutHandler(const int &requestId);
 
     /**
      * Slot to handle dispatching server notification handlers.
      * @note This will emit errorOccurred signal if the handler is not registered.
      * @param [in] serverMessage parsed server message.
-     * NOTE: This will emit errorOccurred signal if the handler is not registered.
      */
     void dispatchHandler(const Message &serverMessage);
+
+    /**
+     * Slot to handle initialized signal from ClientConnector by sending register_client
+     * message to the server.
+     */
+    void clientInitializedHandler();
+
+    /**
+     * Slot to handle errors from the ClientConnector.
+     * @param [in] errorType enum of the the error.
+     * @param [in] errorMessage description of the error.
+     */
+    void connectorErrorHandler(const ClientConnectorError &errorType, const QString &errorMessage);
 
 private:
     /**
@@ -160,5 +198,6 @@ private:
     std::unique_ptr<Dispatcher<const QJsonObject &>> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;
     std::unique_ptr<RequestsController> requestController_;
+    std::unique_ptr<QThread> connectorThread_;
 };
 }  // namespace strata::strataRPC
