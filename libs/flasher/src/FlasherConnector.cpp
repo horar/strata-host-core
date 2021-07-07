@@ -188,27 +188,27 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
     flasher_.reset();
 
     QString errorMessage;
-    State result = State::Failed;
+    State state = State::Failed;
 
     switch (flasherResult) {
     case Flasher::Result::Ok :
-        result = State::Finished;
+        state = State::Finished;
         break;
     case Flasher::Result::NoFirmware :
         if (operation_ == Operation::BackupBeforeFlash || operation_ == Operation::Backup) {
-            result = State::NoFirmware;
+            state = State::NoFirmware;
         } else {
-            result = State::Failed;
+            state = State::Failed;
         }
         errorMessage = QStringLiteral("Platform has no valid firmware.");
         break;
     case Flasher::Result::BadFirmware :
-        result = State::BadFirmware;
+        state = State::BadFirmware;
         errorMessage = QStringLiteral("Platform firmware is unable to start.");
         break;
     case Flasher::Result::Error :
     case Flasher::Result::Disconnect :
-        result = State::Failed;
+        state = State::Failed;
         if (errorString.isEmpty()) {
             errorMessage = QStringLiteral("Unknown error");
         } else {
@@ -217,17 +217,17 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         }
         break;
     case Flasher::Result::Timeout :
-        result = State::Failed;
+        state = State::Failed;
         errorMessage = QStringLiteral("Timeout. No response from platform.");
         break;
     case Flasher::Result::Cancelled :
-        result = State::Cancelled;
+        state = State::Cancelled;
         qCWarning(logCategoryFlasherConnector) << "Firmware operation was cancelled.";
         break;
     }
 
-    if (result != State::Finished) {
-        emit operationStateChanged(operation_, result, errorMessage);
+    if (state != State::Finished) {
+        emit operationStateChanged(operation_, state, errorMessage);
     }
 
     switch (action_) {
