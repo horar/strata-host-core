@@ -197,7 +197,7 @@ Item {
 
                     SGText {
                         Layout.fillWidth: true
-                        text: model.url
+                        text: SGUtilsCpp.urlToLocalFile(model.url)
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
