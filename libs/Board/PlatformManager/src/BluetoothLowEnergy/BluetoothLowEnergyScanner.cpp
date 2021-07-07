@@ -241,13 +241,13 @@ void BluetoothLowEnergyScanner::createDiscoveryAgent()
     discoveryAgent_->setLowEnergyDiscoveryTimeout(discoveryTimeout_.count());
 
     connect(discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::finished,
-            this, &BluetoothLowEnergyScanner::discoveryFinishedHandler);
+            this, &BluetoothLowEnergyScanner::discoveryFinishedHandler, Qt::QueuedConnection);
 
     connect(discoveryAgent_, &QBluetoothDeviceDiscoveryAgent::canceled,
-            this, &BluetoothLowEnergyScanner::discoveryCancelledHandler);
+            this, &BluetoothLowEnergyScanner::discoveryCancelledHandler, Qt::QueuedConnection);
 
     connect(discoveryAgent_, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
-            this, &BluetoothLowEnergyScanner::discoveryErrorHandler);
+            this, &BluetoothLowEnergyScanner::discoveryErrorHandler, Qt::QueuedConnection);
 }
 
 }  // namespace
