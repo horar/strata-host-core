@@ -303,12 +303,12 @@ void BluetoothLowEnergyDevice::connectToDevice()
 {
     if (lowEnergyController_ == nullptr) {
         lowEnergyController_ = QLowEnergyController::createCentral(bluetoothDeviceInfo_, this);
-        connect(lowEnergyController_, &QLowEnergyController::discoveryFinished, this, &BluetoothLowEnergyDevice::discoveryFinishedHandler);
-        connect(lowEnergyController_, &QLowEnergyController::connected, this, &BluetoothLowEnergyDevice::deviceConnectedHandler);
-        connect(lowEnergyController_, &QLowEnergyController::disconnected, this, &BluetoothLowEnergyDevice::deviceDisconnectedHandler);
+        connect(lowEnergyController_, &QLowEnergyController::discoveryFinished, this, &BluetoothLowEnergyDevice::discoveryFinishedHandler, Qt::QueuedConnection);
+        connect(lowEnergyController_, &QLowEnergyController::connected, this, &BluetoothLowEnergyDevice::deviceConnectedHandler, Qt::QueuedConnection);
+        connect(lowEnergyController_, &QLowEnergyController::disconnected, this, &BluetoothLowEnergyDevice::deviceDisconnectedHandler, Qt::QueuedConnection);
         connect(lowEnergyController_, (void (QLowEnergyController::*)(QLowEnergyController::Error)) &QLowEnergyController::error,
-                this, &BluetoothLowEnergyDevice::deviceErrorReceivedHandler);
-        connect(lowEnergyController_, &QLowEnergyController::stateChanged, this, &BluetoothLowEnergyDevice::deviceStateChangeHandler);
+                this, &BluetoothLowEnergyDevice::deviceErrorReceivedHandler, Qt::QueuedConnection);
+        connect(lowEnergyController_, &QLowEnergyController::stateChanged, this, &BluetoothLowEnergyDevice::deviceStateChangeHandler, Qt::QueuedConnection);
     }
 
     qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
@@ -459,7 +459,7 @@ void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescript
 
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
 {
-    Q_UNUSED(newState);
+    qCDebug(logCategoryDeviceBLE) << this << "Service state changed: " << newState;
     checkServiceDetailsDiscovery();
 }
 
@@ -525,12 +525,12 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
     }
     discoveredServices_[service->serviceUuid()] = service;
 
-    connect(service, &QLowEnergyService::characteristicWritten, this, &BluetoothLowEnergyDevice::characteristicWrittenHandler);
-    connect(service, &QLowEnergyService::descriptorWritten, this, &BluetoothLowEnergyDevice::descriptorWrittenHandler);
-    connect(service, &QLowEnergyService::characteristicRead, this, &BluetoothLowEnergyDevice::characteristicReadHandler);
-    connect(service, &QLowEnergyService::characteristicChanged, this, &BluetoothLowEnergyDevice::characteristicChangedHandler);
-    connect(service, (void (QLowEnergyService::*)(QLowEnergyService::ServiceError)) &QLowEnergyService::error, this, &BluetoothLowEnergyDevice::serviceErrorHandler);
-    connect(service, &QLowEnergyService::stateChanged, this, &BluetoothLowEnergyDevice::serviceStateChangedHandler);
+    connect(service, &QLowEnergyService::characteristicWritten, this, &BluetoothLowEnergyDevice::characteristicWrittenHandler, Qt::QueuedConnection);
+    connect(service, &QLowEnergyService::descriptorWritten, this, &BluetoothLowEnergyDevice::descriptorWrittenHandler, Qt::QueuedConnection);
+    connect(service, &QLowEnergyService::characteristicRead, this, &BluetoothLowEnergyDevice::characteristicReadHandler, Qt::QueuedConnection);
+    connect(service, &QLowEnergyService::characteristicChanged, this, &BluetoothLowEnergyDevice::characteristicChangedHandler, Qt::QueuedConnection);
+    connect(service, (void (QLowEnergyService::*)(QLowEnergyService::ServiceError)) &QLowEnergyService::error, this, &BluetoothLowEnergyDevice::serviceErrorHandler, Qt::QueuedConnection);
+    connect(service, &QLowEnergyService::stateChanged, this, &BluetoothLowEnergyDevice::serviceStateChangedHandler, Qt::QueuedConnection);
 }
 
 QLowEnergyService * BluetoothLowEnergyDevice::getService(const QBluetoothUuid & serviceUuid)
