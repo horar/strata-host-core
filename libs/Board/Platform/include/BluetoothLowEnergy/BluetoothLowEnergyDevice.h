@@ -2,6 +2,7 @@
 
 #include <Device.h>
 #include <rapidjson/document.h>
+#include <QTimer>
 #include <QBluetoothDeviceInfo>
 #include <QLowEnergyController>
 
@@ -62,6 +63,8 @@ public:
     virtual void resetReceiving() override;
 
 private slots:
+    void openingTimeoutHandler();
+
     void deviceConnectedHandler();
     void discoveryFinishedHandler();
     void deviceErrorReceivedHandler(QLowEnergyController::Error error);
@@ -78,6 +81,16 @@ private slots:
     void serviceErrorHandler(QLowEnergyService::ServiceError error);
 
 private:
+    /**
+     * Helper function, called after successful opening of device (including service scan).
+     */
+    void onOpenSuccess();
+
+    /**
+     * Helper function, called after unsuccessful opening of device (including service scan).
+     */
+    void onOpenFailure();
+
     /**
      * Deinitializes the object, deletes stored objects.
      */
@@ -160,6 +173,8 @@ private:
     QLowEnergyController *lowEnergyController_{nullptr};
     std::map<QBluetoothUuid, QLowEnergyService *> discoveredServices_;
     bool allDiscovered_;
+
+    QTimer openingTimer_;
 };
 
 }  // namespace strata::device
