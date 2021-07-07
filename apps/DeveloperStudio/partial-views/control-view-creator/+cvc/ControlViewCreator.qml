@@ -151,12 +151,15 @@ Rectangle {
     ConsoleContainer {
         id:consoleContainer
         parent: {
-            if(popupWindow)
+            if(popupWindow) {
                 return newWindowLoader.item.consoleLogParent
-            else if (viewStack.currentIndex === 1)
+            }
+            else if (viewStack.currentIndex === 1) {
                 return editViewConsoleContainer
-            else
+            }
+            else {
                 return viewConsoleLog.consoleLogParent
+            }
         }
 
         onClicked: {
