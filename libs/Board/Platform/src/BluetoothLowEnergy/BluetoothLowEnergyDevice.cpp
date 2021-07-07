@@ -460,7 +460,6 @@ void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescript
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
 {
     qCDebug(logCategoryDeviceBLE) << this << "Service state changed: " << newState;
-    Q_UNUSED(newState);
     checkServiceDetailsDiscovery();
 }
 
