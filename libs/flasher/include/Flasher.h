@@ -31,6 +31,7 @@ class Flasher : public QObject
         enum class Result {
             Ok,          // successfully done
             NoFirmware,  // device has no firmware
+            BadFirmware, // firmware is bad - it cannot start
             Error,       // error during firmware / bootloader operation
             Disconnect,  // device disconnected
             Timeout,     // command timed out
