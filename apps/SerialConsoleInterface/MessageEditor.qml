@@ -17,7 +17,7 @@ FocusScope {
     property int tabSize: 4
     property alias cursorPosition: edit.cursorPosition
     property alias lineCount: edit.lineCount
-    property alias suggestioOpened: suggestionPopup.opened
+    property alias suggestionOpened: suggestionPopup.opened
     property alias suggestionParent: suggestionPopup.parent
 
     readonly property var currentCoordinates: resolveCoordinates(edit.cursorPosition, edit.text)

@@ -500,7 +500,7 @@ FocusScope {
                         onClicked: {
                             messageEditor.forceActiveFocus()
 
-                            if (messageEditor.suggestioOpened) {
+                            if (messageEditor.suggestionOpened) {
                                 messageEditor.closeSuggestionPopup()
                             } else {
                                 messageEditor.openSuggestionPopup()
