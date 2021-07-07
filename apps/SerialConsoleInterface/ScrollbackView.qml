@@ -488,7 +488,7 @@ Item {
 
                 textFormat: Text.PlainText
                 font.family: "monospace"
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 selectByKeyboard: true
                 selectByMouse: false
                 readOnly: true
