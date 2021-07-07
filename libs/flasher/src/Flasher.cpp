@@ -52,7 +52,6 @@ Flasher::~Flasher()
 void Flasher::flashFirmware(bool startApplication)
 {
     constexpr bool flashingFw = true;
-    action_ = Action::FlashFirmware;
 
     if (startActionCheck(QStringLiteral("Cannot flash firmware")) == false) {
         return;
@@ -90,7 +89,6 @@ void Flasher::flashFirmware(bool startApplication)
 void Flasher::flashBootloader()
 {
     constexpr bool flashingFw = false;
-    action_ = Action::FlashBootloader;
     std::chrono::milliseconds identifyDelay = (platform_->deviceType() == device::Device::Type::MockDevice) ? IDENTIFY_OPERATION_MOCK_DELAY : IDENTIFY_OPERATION_DELAY;
 
     if (startActionCheck(QStringLiteral("Cannot flash bootloader")) == false) {
@@ -117,8 +115,6 @@ void Flasher::flashBootloader()
 
 void Flasher::backupFirmware(bool startApplication)
 {
-    action_ = Action::BackupFirmware;
-
     if (startActionCheck(QStringLiteral("Cannot backup firmware")) == false) {
         return;
     }
@@ -144,8 +140,6 @@ void Flasher::backupFirmware(bool startApplication)
 
 void Flasher::setFwClassId(bool startApplication)
 {
-    action_ = Action::SetFwClassId;
-
     if (startActionCheck(QStringLiteral("Cannot set firmware class ID")) == false) {
         return;
     }

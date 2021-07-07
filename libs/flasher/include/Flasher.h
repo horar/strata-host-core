@@ -238,14 +238,6 @@ class Flasher : public QObject
         int expectedBackupChunkNumber_;
         uint actualBackupSize_;
         uint expectedBackupSize_;
-
-        enum class Action {
-            FlashFirmware,
-            FlashBootloader,
-            BackupFirmware,
-            SetFwClassId
-        };
-        Action action_;
 };
 
 }  // namespace
