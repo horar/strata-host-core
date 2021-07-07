@@ -34,6 +34,7 @@ Item {
 
     function positionViewAtEnd() {
         listView.positionViewAtEnd()
+        scrollbackViewAtEndTimer.restart()
     }
 
     // internal stuff
