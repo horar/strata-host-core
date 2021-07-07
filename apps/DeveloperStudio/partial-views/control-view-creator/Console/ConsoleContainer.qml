@@ -166,7 +166,6 @@ Rectangle {
                         }
                     }
 
-
                     SGControlViewIconButton {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
@@ -176,7 +175,6 @@ Rectangle {
                         onClicked:  {
                             if(popupWindow) {
                                 popupWindow = false
-
                             }
                             root.clicked()
                         }

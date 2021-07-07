@@ -153,12 +153,10 @@ Rectangle {
         parent: {
             if(popupWindow)
                 return newWindowLoader.item.consoleLogParent
-            else {
-                if (viewStack.currentIndex === 1)
-                    return editViewConsoleContainer
-                else
-                    return viewConsoleLog.consoleLogParent
-            }
+            else if (viewStack.currentIndex === 1)
+                return editViewConsoleContainer
+            else
+                return viewConsoleLog.consoleLogParent
         }
 
         onClicked: {
