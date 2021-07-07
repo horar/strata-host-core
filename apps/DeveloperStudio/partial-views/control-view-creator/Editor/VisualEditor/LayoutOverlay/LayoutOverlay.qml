@@ -91,6 +91,17 @@ LayoutContainer {
             }
 
             onWheel: wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    // fetch type and id of object when mousing over
+                    // overlay's object name is equivalent to the id of the item since id's are not accessible at runtime
+                    if (layoutOverlayRoot.objectName === "") {
+                        layoutOverlayRoot.objectName = functions.getObjectPropertyValue(layoutOverlayRoot.sourceItem.layoutInfo.uuid, "id")
+                        layoutOverlayRoot.type = functions.getType(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                    }
+                }
+            }
         }
 
         Rectangle {
