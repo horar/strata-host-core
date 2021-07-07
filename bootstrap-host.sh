@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Copyright (c) 2019 Lubomir Carik (Lubomir.Carik@onsemi.com)
+# Copyright (c) 2019
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)

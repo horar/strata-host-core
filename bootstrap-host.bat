@@ -2,7 +2,7 @@
 REM
 REM Simple build script for all 'host' targets
 REM
-REM Copyright (c) 2019-2020 Lubomir Carik (Lubomir.Carik@onsemi.com)
+REM Copyright (c) 2019-2020
 REM
 REM Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 REM or copy at http://opensource.org/licenses/MIT)
