@@ -67,8 +67,6 @@ Popup {
             deltaY = -popup.contentItem.height - popup.topPadding - popup.bottomPadding
         }
 
-
-
         var pos = textEditor.mapToItem(popup.parent, 0, deltaY)
         return  pos.y
     }
