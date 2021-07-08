@@ -245,11 +245,11 @@ FocusScope {
          if (result === FlasherConnector.Success) {
              processingStatus = SaveFirmwareView.BackupSucceed
              finishedNode.nodeState = StatusNode.Succeed
-             finishedNode.subText = "Device firmware is saved."
+             finishedNode.subText = "The device firmware is saved."
          } else if (result === FlasherConnector.Unsuccess) {
              processingStatus = SaveFirmwareView.BackupSucceed
              finishedNode.nodeState = StatusNode.SucceedWithWarning
-             finishedNode.subText = "Saved file is not valid firmware."
+             finishedNode.subText = "The saved file is not a valid firmware."
          } else {
              // FlasherConnector.Failure
              processingStatus = SaveFirmwareView.BackupFailed
