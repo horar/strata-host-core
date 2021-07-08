@@ -256,7 +256,7 @@ Item {
         signal redo()
 
         function setFinished(isFinished) {
-            indicator.visible = !isFinished
+            indicator.playing = !isFinished
         }
 
         function setHtml(value) {
@@ -320,7 +320,7 @@ Item {
                     break
             }
         }
-            
+
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -350,10 +350,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-            	let errorProperties = {
-                	"error_message": "Monaco text editor component failed to load or was not found"
+                let errorProperties = {
+                    "error_message": "Monaco text editor component failed to load or was not found"
                 }
-                
+
                 fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties)
             }
         }
@@ -364,8 +364,8 @@ Item {
             anchors {
                 fill: webEngine
             }
-
-            visible: progressBar.value !== 100 || indicator.playing
+            z: 1000
+            visible: indicator.playing
 
             ProgressBar {
                 id: progressBar
@@ -383,14 +383,6 @@ Item {
                     verticalCenterOffset: 10
                 }
                 source: "qrc:/images/loading.gif"
-
-                onVisibleChanged: {
-                    if (visible) {
-                        indicator.playing = true
-                    } else {
-                        indicator.playing = false
-                    }
-                }
 
                 Text {
                     text: qsTr(`Loading: ${(webEngine.loadProgress/100) * 100}%`)

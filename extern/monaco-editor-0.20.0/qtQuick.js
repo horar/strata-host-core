@@ -1032,6 +1032,7 @@ function registerQmlAsLanguage() {
       	if (topOfFile !== null && bottomOfFile !== null) {
         	createMatchingPairs(model)
         	initializeQtQuick(model)
+            window.link.setFinished(true)
         }
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
         var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
