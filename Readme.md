@@ -1,88 +1,59 @@
-# Host directory
+# Strata Host Core
 
-## How to build applications
+## Requirements
 
-### Installing prerequisites in Linux (Ubuntu 18.04)
+### Windows
+    * Git Bash
+    * CMake >= 3.19
+    * Qt5 5.12.xx
+    * Visual Studio Build Tools 2017
+    * OpenSSL (can be installed through Qt installer)
+### MacOS
 
+    * Xcode and Command Line Tools
+    * Git
+    * Qt5 5.12.xx
+    * CMake >= 3.19
+    * OpenSSL
+
+## Qt5 installation
+
+Download and install Qt5 version is 5.12.xx
+
+The following Qt5 components are required:
+
+### Windows
+* MSVC 2017 64-bit
+* Qt Charts
+* Qt WebEngin
+* Qt Developer and Designer Tools -> OpenSSL Toolkit
+
+### MacOS
+* macOS 
+* Qt Charts
+* Qt WebEngin
+
+## Build Instructions
+
+Building through CLI:
+
+### Windows 
+make sure Qt directory is added into the path
+- Search for Environment Variable
+- Click Environment Variables
+- Add the following to user variables Path (if not already added)
+  `<QT installed directory>\5.12.xx\msvc2017_64\bin`
+  `<QT installed directory>\Tools\OpenSSL\Win_x64\bin`
+- Create a new user environment variable (if not already there)
+    variable name: `Qt_DIR`
+    variable value: `<QT installed directory>\5.12.xx\msvc2017_64\lib\cmake\Qt5`
+
+Open `Command Prompt`, navigate to Strata Host Core directory and run `bootstrap-host.bat`
+
+### MacOS
+make sure Qt directory is added into the path
+if not open Terminal and run the following command 
 ```
-sudo apt-get update
-sudo apt-get install build-essential cmake
+export PATH=$PATH:<QT installed directory>/5.12.xx/clang_64/bin
 ```
-
-### Installing prerequisites in Mac
-
-* Install Xcode and Command Line Tools as described in http://railsapps.github.io/xcode-command-line-tools.html
-* Install Homebrew, see http://brew.sh
-
-```
-brew install cmake
-```
-
-### Qt5 installation (for Linux and MacOS)
-
-Download and install Qt5. Minimum required version is 5.12 and QtChart component installed as well
-
-To set paths for build run command in console (for MacOS)
-```
-export Qt5_DIR=<QT installed directory>/5.12.2/clang_64/lib/cmake/Qt5
-```
-
-or for Linux:
-```
-export Qt5_DIR=<QT installed directory>/5.12.2/gcc_64/lib/cmake/Qt5
-```
-
-
-second option is to install QT trough brew.
-```
-brew install --force-bottle qt5
-```
-
-and the cmake finds this installation and uses it.
-
-
-### Compilation for Linux and MacOS
-Before you run compilation make sure you have updated git branch and git submodules as well. For git submodules update:
-```
-git submodule update --init --recursive
-```
-
-In spyglass root directory run commands in console:
-
-```
-mkdir build
-cd build
-cmake ..
-make
-```
-
-
-
-### Serial Console Interface deployment
-Optionally create simple app DMG with all dependant libraries
-
-```
-    cd spyglass/build
-    macdeployqt bin/Serial\ Console\ Interface.app -dmg -qmldir=../apps/SerialConsoleInterface/
-
-```
-
-DMG file with application will be created inside the directory:
-spyglass/build/bin
-
-Or on Windows:
-```
-    cd spyglass\build
-    windeployqt --force --no-translations --qmldir ..\apps\SerialConsoleInterface "bin\Serial Console Interface.exe"
-
-```
-
-#### Windows
-
-### Compilation for Windows
-To start a build run cmd in a console: windows_build.sh in host folder
-
-We are currently cross compiling for windows from linux. Hence downloading mingw toolchain is essential. In linux terminal please follow these steps
-```
-sudo apt-get install mingw-w64
-```
+run `bootstrap-host.sh`
