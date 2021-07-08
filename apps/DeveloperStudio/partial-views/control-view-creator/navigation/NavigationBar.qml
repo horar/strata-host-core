@@ -91,7 +91,6 @@ Rectangle {
             onClicked: {
                 if (popupWindow) {
                     newWindowLoader.item.raise()
-
                 } else {
                     isConsoleLogOpen = !isConsoleLogOpen
                 }
