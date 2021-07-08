@@ -50,7 +50,7 @@ void BluetoothLowEnergyDevice::deinit()
         lowEnergyController_->deleteLater();
         lowEnergyController_ = nullptr;
         if (allDiscovered_ == false) {
-            onOpenFailure();
+            notifyOpenFailure();
         }
     }
     for (auto service : discoveredServices_) {
@@ -73,13 +73,13 @@ void BluetoothLowEnergyDevice::openingTimeoutHandler()
     close();
 }
 
-void BluetoothLowEnergyDevice::onOpenSuccess()
+void BluetoothLowEnergyDevice::notifyOpenSuccess()
 {
     openingTimer_.stop();
     emit Device::opened();
 }
 
-void BluetoothLowEnergyDevice::onOpenFailure()
+void BluetoothLowEnergyDevice::notifyOpenFailure()
 {
     openingTimer_.stop();
     emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to connect to BLE device");
@@ -387,7 +387,7 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
             for (const auto &service : discoveredServices_) {
                 qCDebug(logCategoryDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
             }
-            onOpenSuccess();
+            notifyOpenSuccess();
         } else {
             qCWarning(logCategoryDeviceBLE) << this << "Service details discovery finished, but the BLE device is not open.";
             //no need to deinit(), deviceDisconnectedHandler should have been called before this happens

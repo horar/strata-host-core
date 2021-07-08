@@ -82,14 +82,14 @@ private slots:
 
 private:
     /**
-     * Helper function, called after successful opening of device (including service scan).
+     * Processing after opening of device (including service scan) successfully ends.
      */
-    void onOpenSuccess();
+    void notifyOpenSuccess();
 
     /**
-     * Helper function, called after unsuccessful opening of device (including service scan).
+     * Processing after opening of device (including service scan) failed.
      */
-    void onOpenFailure();
+    void notifyOpenFailure();
 
     /**
      * Deinitializes the object, deletes stored objects.
