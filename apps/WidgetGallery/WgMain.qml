@@ -5,8 +5,6 @@ import tech.strata.theme 1.0
 
 Item {
 
-    // property string currentPage: "PageSGWidgetsOneZero.qml"
-
     ListModel {
         id: pageModel
 
@@ -24,11 +22,8 @@ Item {
     StackView {
         id: stackView
         anchors.fill: parent
-    }
 
-    Component.onCompleted: {
-        // select SGWidgets 1.0 by default
-        stackView.push(welcomePage, "commoncpp1_0/PageSGCommonCppOneZero.qml")
+        initialItem: welcomePage
     }
 
     Component {
