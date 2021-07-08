@@ -17,13 +17,17 @@ BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, c
           info.name(),
           Type::BLEDevice),
       bluetoothDeviceInfo_(info),
-      allDiscovered_(false)
+      allDiscovered_(false),
+      openingTimer_(this)
 {
 
     qCDebug(logCategoryDeviceBLE).nospace().noquote()
         << "Created new BLE device, ID: " << deviceId_
         << ", name: '" << deviceName_ << "'"
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
+    openingTimer_.setInterval(10000); //connect timer, 10s
+    openingTimer_.setSingleShot(true);
+    connect(&openingTimer_, &QTimer::timeout, this, &BluetoothLowEnergyDevice::openingTimeoutHandler);
 }
 
 BluetoothLowEnergyDevice::~BluetoothLowEnergyDevice()
@@ -46,7 +50,7 @@ void BluetoothLowEnergyDevice::deinit()
         lowEnergyController_->deleteLater();
         lowEnergyController_ = nullptr;
         if (allDiscovered_ == false) {
-            emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to connect to BLE device");
+            notifyOpenFailure();
         }
     }
     for (auto service : discoveredServices_) {
@@ -59,11 +63,31 @@ void BluetoothLowEnergyDevice::deinit()
 
 void BluetoothLowEnergyDevice::open()
 {
+    openingTimer_.start();
     connectToDevice();
+}
+
+void BluetoothLowEnergyDevice::openingTimeoutHandler()
+{
+    qCDebug(logCategoryDeviceBLE) << this << "Timeout while connecting and/or discovering services";
+    close();
+}
+
+void BluetoothLowEnergyDevice::notifyOpenSuccess()
+{
+    openingTimer_.stop();
+    emit Device::opened();
+}
+
+void BluetoothLowEnergyDevice::notifyOpenFailure()
+{
+    openingTimer_.stop();
+    emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to connect to BLE device");
 }
 
 void BluetoothLowEnergyDevice::close()
 {
+    openingTimer_.stop();
     deinit();
 }
 
@@ -363,7 +387,7 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
             for (const auto &service : discoveredServices_) {
                 qCDebug(logCategoryDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
             }
-            emit Device::opened();
+            notifyOpenSuccess();
         } else {
             qCWarning(logCategoryDeviceBLE) << this << "Service details discovery finished, but the BLE device is not open.";
             //no need to deinit(), deviceDisconnectedHandler should have been called before this happens

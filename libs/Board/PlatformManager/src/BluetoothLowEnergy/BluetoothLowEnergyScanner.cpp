@@ -197,15 +197,17 @@ void BluetoothLowEnergyScanner::deviceErrorHandler(Device::ErrorCode error, QStr
 
     createdDevices_.remove(device->deviceId());
 
-    if (error == Device::ErrorCode::DeviceDisconnected) {
+    if (error == Device::ErrorCode::DeviceFailedToOpen) {
+        emit connectDeviceFailed(device->deviceId(), errorString);
+    }
+
+    if (error == Device::ErrorCode::DeviceDisconnected || error == Device::ErrorCode::DeviceFailedToOpen) {
         //loss is reported after error is processed in Platform
         QByteArray deviceId = device->deviceId();
         QTimer::singleShot(1, this, [this, deviceId](){
             qCDebug(logCategoryDeviceScanner) << "device loss is about to be reported for" << deviceId;
             emit deviceLost(deviceId);
         });
-    } else if (error == Device::ErrorCode::DeviceFailedToOpen) {
-        emit connectDeviceFailed(device->deviceId(), errorString);
     }
 }
 
