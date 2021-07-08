@@ -430,6 +430,7 @@ FocusScope {
 
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
+                    suggestionParent: messageHistoryButton
 
                     onTextChanged: {
                         model.platform.errorString = "";
@@ -487,6 +488,23 @@ FocusScope {
                         onClicked: {
                             messageEditor.forceActiveFocus()
                             messageEditor.clear()
+                        }
+                    }
+
+                    SGWidgets.SGIconButton {
+                        id: messageHistoryButton
+                        anchors.verticalCenter: parent.verticalCenter
+                        hintText: "Message history"
+                        icon.source: "qrc:/sgimages/history.svg"
+
+                        onClicked: {
+                            messageEditor.forceActiveFocus()
+
+                            if (messageEditor.suggestionOpened) {
+                                messageEditor.closeSuggestionPopup()
+                            } else {
+                                messageEditor.openSuggestionPopup()
+                            }
                         }
                     }
                 }

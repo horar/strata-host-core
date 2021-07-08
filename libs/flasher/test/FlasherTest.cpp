@@ -196,18 +196,16 @@ void FlasherTest::createFiles()
     if (fakeFirmware_.open() == false) {
         QFAIL("Cannot open fake firmware file");
     } else {
-        QTextStream fakeFirmwareOut(&fakeFirmware_);
-        fakeFirmwareOut << flasher_test_constants::fakeFirmwareData;
-        fakeFirmwareOut.flush();
+        QDataStream fakeFirmwareOut(&fakeFirmware_);
+        fakeFirmwareOut << mockDevice_->generateMockFirmware();
         fakeFirmware_.close();
     }
 
     if (fakeBootloader_.open() == false) {
         QFAIL("Cannot open fake bootloader file");
     } else {
-        QTextStream fakeBootloaderOut(&fakeBootloader_);
-        fakeBootloaderOut << flasher_test_constants::fakeBootloaderData;
-        fakeBootloaderOut.flush();
+        QDataStream fakeBootloaderOut(&fakeBootloader_);
+        fakeBootloaderOut << mockDevice_->generateMockFirmware(true);
         fakeBootloader_.close();
     }
 

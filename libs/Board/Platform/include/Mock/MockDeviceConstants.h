@@ -216,26 +216,10 @@ inline QString mockVersionConvertEnumToString(const MockVersion& version) {
 
 namespace mock_firmware_constants {
 
-const QByteArray mockFirmwareData = R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac lobortis tellus. Sed mattis ultricies porta. Aliquam fringilla hendrerit felis, in ultricies odio. Quisque sit amet ex lacinia, dignissim ex et, mollis est. Pellentesque imperdiet nulla vitae velit lacinia fringilla. Integer molestie commodo felis, non condimentum ipsum aliquam ut. Sed vel orci dui.
-
-Pellentesque massa risus, vulputate nec accumsan sed, cursus sit amet metus. Maecenas sed lobortis elit. Donec quis lectus finibus, condimentum turpis at, blandit tortor. Praesent molestie tortor eu diam blandit, et varius nunc rutrum. Vestibulum non placerat massa. Aenean vulputate nibh id pulvinar luctus. Pellentesque facilisis eros magna, et dapibus nulla vestibulum sit amet. Etiam sit amet mattis erat. In eu nulla sollicitudin, dictum dolor viverra, aliquam lectus. In nec odio a tortor tincidunt finibus. Proin efficitur, tortor eget rhoncus scelerisque, dolor dolor viverra sem, vitae maximus ante dui non nulla. Nullam fringilla eros id velit egestas, ut rutrum orci pretium. Sed volutpat quis libero quis lacinia.
-
-Ut non dapibus turpis. Vivamus at mauris ac ligula pretium iaculis ut sed nibh. Etiam bibendum scelerisque facilisis. Mauris sit amet vulputate turpis. Aliquam lobortis quam sit amet urna volutpat suscipit eget vel nisi. Donec pharetra a purus eu imperdiet. Aenean vel sem et dolor sollicitudin tempus et vel erat. Fusce dictum leo eu tellus facilisis, mollis cursus sem lobortis. Donec tempor, urna a congue interdum, elit risus malesuada est, et auctor nulla felis ut tortor. Suspendisse congue laoreet elit in mollis.
-
-Integer tempor purus mauris, sed elementum neque venenatis et. Fusce sed libero diam. Sed lacinia gravida augue id molestie. Cras at dapibus urna, quis ornare leo. Vivamus viverra consectetur dictum. Praesent sit amet metus tristique nisi tempor pretium. Pellentesque scelerisque augue a ultrices mattis. In hac habitasse platea dictumst. Phasellus sit amet velit odio. Pellentesque vitae ante nec felis commodo condimentum ac et est. Aliquam sollicitudin tempor tellus et varius.
-
-Pellentesque ut venenatis magna. Sed feugiat neque eget ipsum egestas, vel hendrerit lectus cursus. Nulla vitae lacus sodales dui mollis vehicula ut a massa. Sed ultrices erat non volutpat ultrices. Nullam lobortis ultrices lorem, et laoreet ligula vulputate vel. Nulla pharetra quam eget justo egestas dapibus. Nam at fringilla mi, vel hendrerit dolor. Nam nisi dolor, dictum eu malesuada ut, mollis ut metus. Duis porttitor sollicitudin scelerisque. Nulla finibus augue ac sem euismod, nec condimentum dui pulvinar. Cras ullamcorper purus sed augue feugiat rutrum. Morbi consectetur non dui ac viverra. Pellentesque id elementum tellus. Quisque at nulla eget purus porttitor vehicula eu at nulla. Donec pulvinar urna ac tellus malesuada, sit amet dignissim mi vulputate.
-
-Curabitur ultrices quam a sem maximus imperdiet. Cras non est urna. Nam facilisis libero ac nibh tincidunt, venenatis aliquam augue tempus. Pellentesque ultricies arcu in magna ornare tincidunt. Nunc non commodo velit. Nulla venenatis lacus eget fermentum hendrerit. Phasellus malesuada sit amet metus id sodales. Suspendisse non tincidunt quam.
-
-Nulla ac velit ac augue hendrerit venenatis. Etiam odio mi, pharetra et augue quis, malesuada laoreet ligula. Curabitur ligula purus, fermentum eu urna vel, ultrices lacinia neque. Nunc fermentum, nunc eu porttitor ornare, purus risus mollis erat, vel dictum arcu nibh nec enim. Quisque sapien nunc, laoreet eu semper sit amet, feugiat sed lectus. Nullam eleifend fringilla aliquam. Cras accumsan egestas rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin a lorem vel odio mattis porttitor. Fusce dapibus rutrum est sed vulputate. Aliquam consectetur pulvinar elit eu eleifend. Nullam eleifend odio ante, a imperdiet ex ornare quis. Duis dolor nisi, consequat at egestas ut, bibendum id purus. Fusce semper cursus sapien, semper luctus nisl gravida nec.
-
-Donec ultricies tortor odio, a tristique massa malesuada eget. Aliquam in ipsum placerat, fermentum nisl eget, posuere nulla. Cras sagittis suscipit augue nec dictum. Quisque in ligula et lorem dapibus accumsan nec sed purus. Pellentesque libero purus, auctor quis pretium eget, maximus id libero. Nulla sit amet vehicula enim, eu maximus erat. Donec felis sapien, fermentum non tortor at, fringilla dapibus quam. Morbi et placerat felis. Proin fermentum nulla nec libero commodo, vitae fermentum dolor euismod. Pellentesque ut libero eu est scelerisque egestas. Nunc quam elit, lobortis sit amet facilisis eget, ullamcorper eu nibh. Proin tempus lorem vel velit hendrerit, vitae consectetur quam porttitor. Morbi venenatis enim at scelerisque cursus. Maecenas dictum, tortor sit amet tempor varius, tortor lorem sodales ipsum, non aliquet lacus orci porta neque.
-
-Curabitur tempus finibus leo, sed hendrerit elit mattis et. Etiam in semper risus. Duis dui lacus, porttitor id tincidunt nec, ullamcorper rhoncus nulla.)";
-
 // size of chunk in bytes
 constexpr int CHUNK_SIZE = 256;
+constexpr quint32 firmwareBufferSize = (20 * mock_firmware_constants::CHUNK_SIZE/sizeof (quint32) - 1); //represents 20 chunks of firmware
+constexpr quint32 bootloaderBufferSize = (10 * mock_firmware_constants::CHUNK_SIZE/sizeof (quint32) - 1); //represents 10 chunks
 
 } // namespace mock_firmware_constants
 
