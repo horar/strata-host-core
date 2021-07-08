@@ -12,7 +12,7 @@ ApplicationWindow {
     property alias consoleLogParent: newWindowContainer
 
     onClosing: {
-        if(popupWindow) {
+        if (popupWindow) {
             popupWindow = false
         }
         isConsoleLogOpen = false

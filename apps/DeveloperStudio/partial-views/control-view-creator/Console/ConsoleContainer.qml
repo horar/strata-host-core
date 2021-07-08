@@ -173,7 +173,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
-                            if(popupWindow) {
+                            if (popupWindow) {
                                 popupWindow = false
                             }
                             root.clicked()
