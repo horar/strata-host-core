@@ -31,8 +31,9 @@ ColumnLayout {
 
     Connections {
         target: treeModel
+        enabled: cvcUserSettings.reloadViewExternalChanges
         onFileChanged: {
-            if (cvcUserSettings.reloadViewExternalChanges && path == visualEditor.file) {
+            if (path == visualEditor.file) {
                 functions.unload(true)
             }
         }
