@@ -49,7 +49,6 @@ class QtSuggestions {
 
     getMetaPropertySuggestions(uuid,propertyName) {
         const getItem = qtQuickModel.fetchItem(uuid)
-        console.log(propertyName)
         const metaArray = getItem.metaPropMap[propertyName]["meta_properties"]
         if(metaArray !== undefined && metaArray.length !== 0) {
             this.createSuggestions(metaArray,"meta-sub")
