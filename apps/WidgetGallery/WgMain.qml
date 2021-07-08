@@ -5,7 +5,7 @@ import tech.strata.theme 1.0
 
 Item {
 
-    property string currentPage: "PageSGWidgetsOneZero.qml"
+    // property string currentPage: "PageSGWidgetsOneZero.qml"
 
     ListModel {
         id: pageModel
@@ -13,6 +13,11 @@ Item {
         ListElement {
             name: "SGWidgets 1.0"
             page: "widgets1_0/PageSGWidgetsOneZero.qml"
+        }
+
+        ListElement {
+            name: "SGCommonCpp 1.0"
+            page: "commoncpp1_0/PageSGCommonCppOneZero.qml"
         }
     }
 
@@ -22,8 +27,8 @@ Item {
     }
 
     Component.onCompleted: {
-        //select SGWidgets 1.0 by default
-        stackView.push(welcomePage, "widgets1_0/PageSGWidgetsOneZero.qml")
+        // select SGWidgets 1.0 by default
+        stackView.push(welcomePage, "commoncpp1_0/PageSGCommonCppOneZero.qml")
     }
 
     Component {
