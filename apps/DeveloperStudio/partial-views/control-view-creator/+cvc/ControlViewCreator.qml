@@ -155,8 +155,7 @@ Rectangle {
                 return newWindowLoader.item.consoleLogParent
             } else if (viewStack.currentIndex === 1) {
                 return editViewConsoleContainer
-            }
-            else {
+            } else {
                 return viewConsoleLog.consoleLogParent
             }
         }
