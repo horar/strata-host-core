@@ -931,10 +931,16 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 
-    if (fakeFirmware_.open() && fakeFirmwareBackup_.open()) {
-        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+    QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
+
+    if (fakeFirmware_.open()) {
+        if (backedUpFirmware.open(QIODevice::ReadOnly)) {
+            QCOMPARE(backedUpFirmware.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+            backedUpFirmware.close();
+        } else {
+            QFAIL("Failed to open backed up firmware file.");
+        }
         fakeFirmware_.close();
-        fakeFirmwareBackup_.close();
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
@@ -972,10 +978,16 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
     QCOMPARE(recordedMessages.size(),26);
     QCOMPARE(flasherFinishedCount_,1);
 
-    if (fakeFirmware_.open() && fakeFirmwareBackup_.open()) {
-        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+    QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
+
+    if (fakeFirmware_.open()) {
+        if (backedUpFirmware.open(QIODevice::ReadOnly)) {
+            QCOMPARE(backedUpFirmware.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+            backedUpFirmware.close();
+        } else {
+            QFAIL("Failed to open backed up firmware file.");
+        }
         fakeFirmware_.close();
-        fakeFirmwareBackup_.close();
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
@@ -1019,10 +1031,16 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
     QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 
-    if (fakeFirmware_.open() && fakeFirmwareBackup_.open()) {
-        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+    QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
+
+    if (fakeFirmware_.open()) {
+        if (backedUpFirmware.open(QIODevice::ReadOnly)) {
+            QCOMPARE(backedUpFirmware.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+            backedUpFirmware.close();
+        } else {
+            QFAIL("Failed to open backed up firmware file.");
+        }
         fakeFirmware_.close();
-        fakeFirmwareBackup_.close();
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
