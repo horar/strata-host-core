@@ -241,7 +241,7 @@ bool Flasher::prepareForBackup()
         expectedBackupChunkNumber_ = 1;
         actualBackupSize_ = 0;
         expectedBackupSize_ = 0;
-        qCInfo(logCategoryFlasher) << platform_ << "Preparing for firmware backup.";
+        qCInfo(logCategoryFlasher) << platform_ << "Preparing to back up the firmware to the '" << fileName_ << "' file.";
         return true;
     } else {
         qCCritical(logCategoryFlasher) << platform_ << "Cannot open file '" << fileName_ << "'. " << destinationFile_.errorString();
