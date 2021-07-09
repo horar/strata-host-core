@@ -299,11 +299,11 @@ ColumnLayout {
             model: [
                 { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: true },
                 { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true },
-                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true}
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true }
             ]
 
             delegate: Button {
-                Layout.preferredHeight: 40
+                Layout.preferredHeight: 25
                 Layout.preferredWidth: height
 
                 enabled: openFilesModel.count > 0
@@ -318,7 +318,7 @@ ColumnLayout {
                     id: icon
                     anchors.fill: parent
                     anchors.margins: 4
-                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "black"
+                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "white"
                     source: modelData.iconSource
                     fillMode: Image.PreserveAspectFit
                 }
@@ -333,7 +333,7 @@ ColumnLayout {
                     }
 
                     onReleased: {
-                        icon.iconColor = "white"
+                        icon.iconColor = Qt.rgba(255, 255, 255, 0.4)
                     }
 
                     onClicked: {
