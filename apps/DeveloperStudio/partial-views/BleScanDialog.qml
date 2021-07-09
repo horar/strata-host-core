@@ -10,7 +10,7 @@ SGStrataPopup {
     x: parent.width/2 - dialog.width/2
     y: parent.height/2 - dialog.height/2
 
-    headerText: "Connect Bluetooth Low Energy Device"
+    headerText: "Bluetooth Low Energy Devices"
     modal: true
     focus: true
     closePolicy: Popup.CloseOnEscape
