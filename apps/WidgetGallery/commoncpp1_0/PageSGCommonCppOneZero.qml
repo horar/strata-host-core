@@ -208,13 +208,6 @@ FocusScope {
         }
     }
 
-    SGUserSettings {
-        // placed here to replicate "built-in" manner of use for control views
-        id: sgUserSettings
-        classId: "ExUserSettings"   // Normally pre-set in SDS to link the settings to the current Control View class_id
-        user: ""                    // Normally pre-set in SDS to link the settings to the current user
-    }
-
     function setPage(index) {
         var item = commoncppModel.get(index)
         headerText.text = item.name
