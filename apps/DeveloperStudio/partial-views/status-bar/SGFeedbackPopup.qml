@@ -223,7 +223,7 @@ SGStrataPopup {
                     }
 
                     Rectangle {
-                        id: textEditContainer
+                        id: textAreaContainer
                         color: "white"
                         border {
                             width: 1
@@ -233,28 +233,18 @@ SGStrataPopup {
                         Layout.fillWidth: true
                         clip: true
 
-                        Flickable {
-                            id: textEditFlickable
+                        Item {
+                            id: textAreaWrapper
                             anchors {
-                                fill: textEditContainer
+                                fill: textAreaContainer
                                 margins: 10
                             }
-                            contentHeight: textEdit.contentHeight
-                            flickableDirection: Flickable.VerticalFlick
-                            boundsMovement: Flickable.StopAtBounds
-                            boundsBehavior: Flickable.DragAndOvershootBounds
 
-                            ScrollBar.vertical: ScrollBar {
-                                policy: ScrollBar.AsNeeded
-                            }
-
-                            SGTextEdit {
-                                id: textEdit
-                                width: textEditFlickable.width
-                                wrapMode: TextEdit.Wrap
-                                height: Math.max(textEditFlickable.height, contentHeight)
+                            SGTextArea {
+                                id: textArea
+                                width: textAreaWrapper.width
+                                height: Math.max(textAreaWrapper.height, contentHeight)
                                 enabled: !feedbackStatus.visible
-                                selectByMouse: true
                                 contextMenuEnabled: true
                                 // Text Length Limiter
                                 readOnly: feedbackStatus.visible
@@ -270,12 +260,12 @@ SGStrataPopup {
                                     if(alertToast.visible) alertToast.hide();
 
                                     if (text.length > maximumLength) {
-                                        var cursor = cursorPosition;
+                                        var cursor = textArea.textEdit.cursorPosition
                                         text = previousText;
                                         if (cursor > text.length) {
-                                            cursorPosition = text.length;
+                                            textArea.textEdit.cursorPosition = text.length;
                                         } else {
-                                            cursorPosition = cursor-1;
+                                            textArea.textEdit.cursorPosition = cursor - 1;
                                         }
                                     }
                                     previousText = text
@@ -289,7 +279,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: textEdit.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: textArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -312,7 +302,7 @@ SGStrataPopup {
                         Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
-                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
+                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textArea.text, type: feedbackTypeListView.currentItem.typeValue }
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
@@ -355,7 +345,7 @@ SGStrataPopup {
     }
 
     function resetForm(){
-        textEdit.text = ""
+        textArea.text = ""
         feedbackTypeListView.currentIndex = -1
     }
 }
