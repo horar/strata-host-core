@@ -298,8 +298,8 @@ ColumnLayout {
 
             model: [
                 { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: true },
-                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: false },
-                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: true }
+                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true },
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true}
             ]
 
             delegate: Button {
@@ -307,17 +307,18 @@ ColumnLayout {
                 Layout.preferredWidth: height
 
                 enabled: openFilesModel.count > 0
+                visible:  modelData.visible
 
                 background: Rectangle {
                     radius: 0
-                    color: "#777"
+                    color: "white"
                 }
 
                 SGIcon {
                     id: icon
                     anchors.fill: parent
                     anchors.margins: 4
-                    iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
+                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "black"
                     source: modelData.iconSource
                     fillMode: Image.PreserveAspectFit
                 }
@@ -339,7 +340,6 @@ ColumnLayout {
                         switch (modelData.buttonType) {
                         case "save":
                             editorToolBar.saveClicked()
-
                             break
                         case "undo":
                             editorToolBar.undoClicked()
@@ -369,7 +369,6 @@ ColumnLayout {
             property bool menuLoaded: false
 
             source: {
-                console.log(mainButtons.model[1].visible)
                 switch (viewStack.currentIndex) {
                 case 0:
                     menuLoaded = false
