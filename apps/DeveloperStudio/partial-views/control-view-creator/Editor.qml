@@ -100,7 +100,7 @@ Item {
                     anchors {
                         fill: parent
                     }
-                    spacing: 0
+                    spacing: 10
 
                     property color buttonColor: "#777"
 
@@ -108,70 +108,119 @@ Item {
                     signal undoClicked()
                     signal redoClicked()
 
-                    Repeater {
-                        id: mainButtons
+                    //                    Repeater {
+                    //                        id: mainButtons
 
-                        model: [
-                            { buttonType: "save", iconSource: "qrc:/sgimages/save.svg" },
-                            { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg" },
-                            { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
-                        ]
+                    //                        model: [
+                    //                            { buttonType: "save", iconSource: "qrc:/sgimages/save.svg" },
+                    //                            { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg" },
+                    //                            { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
+                    //                        ]
 
-                        delegate: Button {
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: height
+                    //                        delegate: Button {
+                    //                            Layout.fillHeight: true
+                    //                            Layout.preferredWidth: height
 
-                            enabled: openFilesModel.count > 0
+                    //                            enabled: openFilesModel.count > 0
 
+                    //                            background: Rectangle {
+                    //                                radius: 0
+                    //                                color: editorToolBar.buttonColor
+                    //                            }
+
+                    //                            SGIcon {
+                    //                                id: icon
+                    //                                anchors.fill: parent
+                    //                                anchors.margins: 4
+                    //                                iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
+                    //                                source: modelData.iconSource
+                    //                                fillMode: Image.PreserveAspectFit
+                    //                            }
+
+                    //                            MouseArea {
+                    //                                anchors.fill: parent
+                    //                                enabled: parent.enabled
+                    //                                hoverEnabled: true
+                    //                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    //                                onPressed: {
+                    //                                    icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                    //                                }
+
+                    //                                onReleased: {
+                    //                                    icon.iconColor = "white"
+                    //                                }
+
+                    //                                onClicked: {
+                    //                                    switch (modelData.buttonType) {
+                    //                                        case "save":
+                    //                                            editorToolBar.saveClicked()
+                    //                                            break
+                    //                                        case "undo":
+                    //                                            editorToolBar.undoClicked()
+                    //                                            break
+                    //                                        case "redo":
+                    //                                            editorToolBar.redoClicked()
+                    //                                            break
+                    //                                    }
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                    }
+
+                    Item {
+                        Layout.preferredWidth: parent.width/7.5
+                        Layout.fillHeight: true
+
+                        Button {
+                            anchors.fill: parent
+                            text: "File Tree"
                             background: Rectangle {
                                 radius: 0
-                                color: editorToolBar.buttonColor
+                                color: sideBar.visible ? "white":  editorToolBar.buttonColor
                             }
-
-                            SGIcon {
-                                id: icon
-                                anchors.fill: parent
-                                anchors.margins: 4
-                                iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
-                                source: modelData.iconSource
-                                fillMode: Image.PreserveAspectFit
-                            }
-
                             MouseArea {
                                 anchors.fill: parent
                                 enabled: parent.enabled
                                 hoverEnabled: true
                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                onPressed: {
-                                    icon.iconColor = Qt.darker(icon.iconColor, 1.5)
-                                }
-
-                                onReleased: {
-                                    icon.iconColor = "white"
-                                }
-
                                 onClicked: {
-                                    switch (modelData.buttonType) {
-                                        case "save":
-                                            editorToolBar.saveClicked()
-                                            break
-                                        case "undo":
-                                            editorToolBar.undoClicked()
-                                            break
-                                        case "redo":
-                                            editorToolBar.redoClicked()
-                                            break
-                                    }
+                                    sideBar.visible = !sideBar.visible
                                 }
                             }
                         }
                     }
 
                     Item {
+                        Layout.preferredWidth: parent.width/7.5
+                        Layout.fillHeight: true
+
+
+                        Button {
+                            anchors.fill: parent
+                            text: "Edit QRC"
+                            background: Rectangle {
+                                radius: 0
+                                color: sideBar.visible ? "white" : editorToolBar.buttonColor
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: parent.enabled
+                                hoverEnabled: true
+                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+//                                onClicked: {
+//                                    sideBar.visible = !sideBar.visible
+//                                }
+                            }
+                        }
+                    }
+
+
+                    Item {
                         // space filler
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }
+
 
                     SGComboBox {
                         Layout.fillHeight: true
@@ -197,6 +246,7 @@ Item {
             }
 
             Rectangle {
+                id: fileTree
                 Layout.preferredHeight: 45
                 Layout.minimumHeight: 45
                 Layout.fillWidth: true
@@ -376,21 +426,21 @@ Item {
 
                             source: {
                                 switch (model.filetype) {
-                                    case "svg":
-                                    case "jpg":
-                                    case "jpeg":
-                                    case "png":
-                                    case "gif":
-                                        return "./Editor/ImageContainer.qml"
-                                    case "qml":
-                                    case "csv":
-                                    case "html":
-                                    case "txt":
-                                    case "json":
-                                    case "ts":
-                                        return "./Editor/TextEditorContainer.qml"
-                                    default:
-                                        return "./Editor/UnsupportedFileType.qml"
+                                case "svg":
+                                case "jpg":
+                                case "jpeg":
+                                case "png":
+                                case "gif":
+                                    return "./Editor/ImageContainer.qml"
+                                case "qml":
+                                case "csv":
+                                case "html":
+                                case "txt":
+                                case "json":
+                                case "ts":
+                                    return "./Editor/TextEditorContainer.qml"
+                                default:
+                                    return "./Editor/UnsupportedFileType.qml"
                                 }
                             }
                         }

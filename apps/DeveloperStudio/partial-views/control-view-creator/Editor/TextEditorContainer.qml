@@ -289,6 +289,71 @@ ColumnLayout {
             }
         }
 
+        signal saveClicked()
+        signal undoClicked()
+        signal redoClicked()
+
+        Repeater {
+            id: mainButtons
+
+            model: [
+                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: true },
+                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: false },
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: true }
+            ]
+
+            delegate: Button {
+                Layout.preferredHeight: 40
+                Layout.preferredWidth: height
+
+                enabled: openFilesModel.count > 0
+
+                background: Rectangle {
+                    radius: 0
+                    color: "#777"
+                }
+
+                SGIcon {
+                    id: icon
+                    anchors.fill: parent
+                    anchors.margins: 4
+                    iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
+                    source: modelData.iconSource
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: parent.enabled
+                    hoverEnabled: true
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onPressed: {
+                        icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                    }
+
+                    onReleased: {
+                        icon.iconColor = "white"
+                    }
+
+                    onClicked: {
+                        switch (modelData.buttonType) {
+                        case "save":
+                            editorToolBar.saveClicked()
+
+                            break
+                        case "undo":
+                            editorToolBar.undoClicked()
+                            break
+                        case "redo":
+                            editorToolBar.redoClicked()
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+
         Rectangle {
             // divider
             Layout.preferredHeight: menuRow.height - 6
@@ -301,17 +366,17 @@ ColumnLayout {
             id: menuLoader
             active: menuLoaded
             Layout.fillWidth: true
-
             property bool menuLoaded: false
 
             source: {
+                console.log(mainButtons.model[1].visible)
                 switch (viewStack.currentIndex) {
-                    case 0:
-                        menuLoaded = false
-                        return ""
-                    case 1:
-                        menuLoaded = true
-                        return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
+                case 0:
+                    menuLoaded = false
+                    return ""
+                case 1:
+                    menuLoaded = true
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
                 }
             }
         }
@@ -353,15 +418,15 @@ ColumnLayout {
 
             onJavaScriptConsoleMessage: {
                 switch (level) {
-                    case WebEngineView.InfoMessageLevel:
-                        console.log(message)
-                        break
-                    case WebEngineView.WarningMessageLevel:
-                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                        break
-                    case WebEngineView.ErrorMessageLevel:
-                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                        break
+                case WebEngineView.InfoMessageLevel:
+                    console.log(message)
+                    break
+                case WebEngineView.WarningMessageLevel:
+                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
+                case WebEngineView.ErrorMessageLevel:
+                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                    break
                 }
             }
 
@@ -468,7 +533,7 @@ ColumnLayout {
 
         function checkForErrors(flag,log) {
             if (flag) {
-            	console.error(log)
+                console.error(log)
             }
         }
 
