@@ -89,7 +89,11 @@ Rectangle {
             tooltipDescription: "Toggle logger panel"
 
             onClicked: {
-                isConsoleLogOpen = !isConsoleLogOpen
+                if (popupWindow) {
+                    newWindowLoader.item.raise()
+                } else {
+                    isConsoleLogOpen = !isConsoleLogOpen
+                }
             }
 
             SGConsoleLogNavigationIcon {
