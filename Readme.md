@@ -80,7 +80,13 @@ Building through Qt Creator:
 
 
 ## Contributions
-TBD
+You may contribute in various ways such as reporting a bug, open a PR, or share your thoughts.
 
+For pull requests, please follow the steps below:
+  * Keep it simple.
+  * Keep it consistence with the design.
+  * Follow C++ style guidelines found in `.clang-format` under root directory of Strata Host Core.
+
+TBD - if there is any other input from legal team.
 ## License
-TBD
+TBD - legal team
