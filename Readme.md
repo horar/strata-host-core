@@ -1,9 +1,9 @@
 # Strata Host Core
-
+Strata Host Core contains all the applications and dependencies necessary for Strata Developer Studio.
 ## Requirements
 
 ### Windows
-    * Git Bash
+    * Git Bash >= 2.28.0
     * CMake >= 3.19
     * Qt5 5.12.xx
     * Visual Studio Build Tools 2017
@@ -11,7 +11,7 @@
 ### MacOS
 
     * Xcode and Command Line Tools
-    * Git
+    * Git >= 2.28.0
     * Qt5 5.12.xx
     * CMake >= 3.19
     * OpenSSL
@@ -37,23 +37,50 @@ The following Qt5 components are required:
 
 Building through CLI:
 
-### Windows 
-make sure Qt directory is added into the path
-- Search for Environment Variable
-- Click Environment Variables
-- Add the following to user variables Path (if not already added)
-  `<QT installed directory>\5.12.xx\msvc2017_64\bin`
-  `<QT installed directory>\Tools\OpenSSL\Win_x64\bin`
-- Create a new user environment variable (if not already there)
-    variable name: `Qt_DIR`
-    variable value: `<QT installed directory>\5.12.xx\msvc2017_64\lib\cmake\Qt5`
+    ### Windows 
+    make sure Qt directory is added to the path
+    if not, follow the instructions below
+    - Search for Environment Variable
+    - Click Environment Variables
+    - Add the following to user variables Path
+    `<QT installation directory>\5.12.xx\msvc2017_64\bin`
+    `<QT installation directory>\Tools\OpenSSL\Win_x64\bin`
+    - Create a new user environment variable
+        variable name: `Qt_DIR`
+        variable value: `<QT installation directory>\5.12.xx\msvc2017_64\lib\cmake\Qt5`
 
-Open `Command Prompt`, navigate to Strata Host Core directory and run `bootstrap-host.bat`
+    In addition, make sure that other tools in the requirements section are properly installed
+    and added to the path if needed.
 
-### MacOS
-make sure Qt directory is added into the path
-if not open Terminal and run the following command 
-```
-export PATH=$PATH:<QT installed directory>/5.12.xx/clang_64/bin
-```
-run `bootstrap-host.sh`
+    Open `Command Prompt`, navigate to Strata Host Core directory and run `bootstrap-host.bat`
+
+    ### MacOS
+    make sure Qt directory is added into the path
+    if not, open Terminal and run the following command 
+    ```
+    export PATH=$PATH:<QT installed directory>/5.12.xx/clang_64/bin
+    ```
+
+    In addition, make sure that other tools in the requirements section are properly installed
+    and added to the path if needed.
+
+    run `bootstrap-host.sh`
+
+Building through Qt Creator:
+  
+  * Make sure that you have updated/cloned Strata Host Core submodules by running the following commands
+    ```
+    cd <Strata Host Core cloned path>
+    git submodule update --init --recursive
+    ```
+  * Open Qt Creator 
+  * Projects -> Open -> select `CMakeLists.txt` under root directory of Strata Host Core
+  * For project configuration make sure to select Qt 5.12.xx
+  * Build/Run the project
+
+
+## Contributions
+TBD
+
+## License
+TBD
