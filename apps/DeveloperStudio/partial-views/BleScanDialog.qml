@@ -255,11 +255,39 @@ SGStrataPopup {
                         topMargin: delegate.innerSpacing
                     }
 
-                    text: "CONNECTED"
-                    visible: model.isConnected
-                    textColor: "white"
-                    font.bold: true
-                    color: Theme.palette.green
+                    states: [
+                        State {
+                            id: connectingState
+                            when: model.isConnected === false && model.connectionInProgress
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "Connecting..."
+                                textColor: "black"
+                                color: "transparent"
+                            }
+                        },
+                        State {
+                            id: disconnectingState
+                            when: model.isConnected && model.connectionInProgress
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "Disconnecting..."
+                                textColor: "black"
+                                color: "transparent"
+                            }
+                        },
+                        State {
+                            id: connectedState
+                            when: model.isConnected && model.connectionInProgress === false
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "CONNECTED"
+                                textColor: "white"
+                                color: Theme.palette.green
+                                font.bold: true
+                            }
+                        }
+                    ]
                 }
 
                 Rectangle {
