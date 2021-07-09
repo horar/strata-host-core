@@ -31,6 +31,7 @@ class Flasher : public QObject
         enum class Result {
             Ok,          // successfully done
             NoFirmware,  // device has no firmware
+            BadFirmware, // firmware is bad - it cannot start
             Error,       // error during firmware / bootloader operation
             Disconnect,  // device disconnected
             Timeout,     // command timed out
@@ -237,14 +238,6 @@ class Flasher : public QObject
         int expectedBackupChunkNumber_;
         uint actualBackupSize_;
         uint expectedBackupSize_;
-
-        enum class Action {
-            FlashFirmware,
-            FlashBootloader,
-            BackupFirmware,
-            SetFwClassId
-        };
-        Action action_;
 };
 
 }  // namespace
