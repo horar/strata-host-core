@@ -53,7 +53,9 @@ QtObject {
 
     function checkFile() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")){
+            sdsModel.qtLogger.visualEditorReloading = true
             loader.setSource(visualEditor.file)
+            sdsModel.qtLogger.visualEditorReloading = false
 
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
                 visualEditor.fileValid = true
@@ -77,7 +79,9 @@ QtObject {
     function load() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")){
             fileContents = readFileContents(visualEditor.file)
+            sdsModel.qtLogger.visualEditorReloading = true
             loader.setSource(visualEditor.file)
+            sdsModel.qtLogger.visualEditorReloading = false
 
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
                 overlayContainer.rowCount = loader.children[0].rowCount

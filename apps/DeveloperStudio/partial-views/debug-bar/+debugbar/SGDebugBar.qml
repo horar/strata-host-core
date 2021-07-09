@@ -322,7 +322,9 @@ Item {
         Connections {
             target: sdsModel
             onNotifyQmlError: {
-                qmlErrorModel.append({"data" : notifyQmlError})
+                if (sdsModel.qtLogger.visualEditorReloading === false) {
+                    qmlErrorModel.append({"data" : notifyQmlError})
+                }
             }
         }
     }

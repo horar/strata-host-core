@@ -10,6 +10,9 @@
 
 namespace strata::loggers
 {
+
+bool QtLogger::visualEditorReloading = false;
+
 QtLogger::QtLogger(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QtMsgType>("QtMsgType");
@@ -23,6 +26,10 @@ QtLogger &QtLogger::instance()
 
 void QtLogger::MsgHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    if (visualEditorReloading) {
+        return;
+    }
+
     const QString formattedMsg{qFormatLogMessage(type, context, msg)};
 
     switch (type) {
