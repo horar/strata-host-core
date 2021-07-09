@@ -9,7 +9,6 @@ ColumnLayout {
     ColumnLayout {
         id: contentColumn
         spacing: 10
-        enabled: editEnabledCheckBox.checked
         Layout.fillWidth: true 
 
         SGWidgets.SGTextEdit {
@@ -52,16 +51,19 @@ ColumnLayout {
                 id: regExpRadioBtn
                 text: "RegExp"
                 checked: true
+                focusPolicy: Qt.NoFocus
             }
 
             SGWidgets.SGRadioButton {
                 id: wildCardRadioBtn
                 text: "WildCard"
+                focusPolicy: Qt.NoFocus
             }
 
             SGWidgets.SGRadioButton {
                 id: fixedStringRadioBtn
                 text: "FixedString"
+                focusPolicy: Qt.NoFocus
             }
         }
 
@@ -69,13 +71,7 @@ ColumnLayout {
             id: caseSensitiveCheckBox
             text: "Case Sensitive"
             checked: false
+            focusPolicy: Qt.NoFocus
         }
-    }
-
-    SGWidgets.SGCheckBox {
-        id: editEnabledCheckBox
-
-        text: "Everything enabled"
-        checked: true
     }
 }

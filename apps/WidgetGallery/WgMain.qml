@@ -14,7 +14,7 @@ Item {
         }
 
         ListElement {
-            name: "SGCommonCpp 1.0"
+            name: "CommonCpp 1.0"
             page: "commoncpp1_0/PageSGCommonCppOneZero.qml"
         }
     }

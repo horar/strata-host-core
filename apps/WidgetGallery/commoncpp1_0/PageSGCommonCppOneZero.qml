@@ -69,7 +69,7 @@ FocusScope {
                     verticalCenter: parent.verticalCenter
                 }
 
-                text: "SGCommonCpp 1.0"
+                text: "CommonCpp 1.0"
                 fontSizeMultiplier: 1.4
                 color: "white"
             }
