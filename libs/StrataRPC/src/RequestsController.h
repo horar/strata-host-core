@@ -2,8 +2,9 @@
 
 #include "Request.h"
 
-#include <QHash>
+#include <QMap>
 #include <QObject>
+#include <QTimer>
 
 namespace strata::strataRPC
 {
@@ -64,9 +65,28 @@ public:
      */
     [[nodiscard]] QString getMethodName(const int &id);
 
+signals:
+    /**
+     * signal emitted when there are timed out requests.
+     * @param [in] id of the timed out request.
+     * @note connections to this signal must be Qt::ConnectionType::QueuedConnection, otherwise the
+     * requests map will be modified during the search.
+     */
+    void requestTimedout(const int &id);
+
 private:
-    QHash<int, Request> requestsList_;
+    /**
+     * Search for timed out requests in requests map.
+     * @note requestTimedout() signal will be emitted when timed out request are found.
+     */
+    void findTimedoutRequests();
+
+    QMap<int, Request> requestsList_;
     int currentRequestId_;
+
+    QTimer requestsTimer_;
+    static constexpr int CHECK_REQUESTS_INTERVAL{10};
+    static constexpr int REQUEST_TIMOUT{500};
 };
 
 }  // namespace strata::strataRPC

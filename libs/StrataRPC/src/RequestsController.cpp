@@ -3,9 +3,14 @@
 
 using namespace strata::strataRPC;
 
-RequestsController::RequestsController()
+RequestsController::RequestsController() : requestsTimer_(this)
 {
     currentRequestId_ = 0;
+    requestsTimer_.setInterval(CHECK_REQUESTS_INTERVAL);
+    connect(&requestsTimer_, &QTimer::timeout, this, &RequestsController::findTimedoutRequests);
+
+    requestsTimer_.start();  // It might be more beneficial to add a init function instead of
+                             // polling all the time!
 }
 
 RequestsController::~RequestsController()
@@ -71,4 +76,15 @@ QString RequestsController::getMethodName(const int &id)
     qCDebug(logCategoryRequestsController)
         << "request id" << it->messageId_ << "method" << it->method_;
     return it->method_;
+}
+
+void RequestsController::findTimedoutRequests()
+{
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+    for (const auto &request : requestsList_) {
+        if ((currentTime - request.timestamp_) < REQUEST_TIMOUT) {
+            return;
+        }
+        emit requestTimedout(request.messageId_);
+    }
 }

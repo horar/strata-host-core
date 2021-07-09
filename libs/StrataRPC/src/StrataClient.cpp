@@ -38,6 +38,8 @@ StrataClient::StrataClient(const QString &serverAddress, const QByteArray &deale
                      &StrataClient::clientInitializedHandler);
     QObject::connect(connector_.get(), &ClientConnector::disconnected, this,
                      [this]() { emit disconnected(); });
+    QObject::connect(requestController_.get(), &RequestsController::requestTimedout, this,
+                     &StrataClient::requestTimeoutHandler, Qt::QueuedConnection);
 
     connectorThread_->start();
 }
