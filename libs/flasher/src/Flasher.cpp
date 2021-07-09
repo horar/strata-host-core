@@ -52,7 +52,6 @@ Flasher::~Flasher()
 void Flasher::flashFirmware(bool startApplication)
 {
     constexpr bool flashingFw = true;
-    action_ = Action::FlashFirmware;
 
     if (startActionCheck(QStringLiteral("Cannot flash firmware")) == false) {
         return;
@@ -90,7 +89,6 @@ void Flasher::flashFirmware(bool startApplication)
 void Flasher::flashBootloader()
 {
     constexpr bool flashingFw = false;
-    action_ = Action::FlashBootloader;
     std::chrono::milliseconds identifyDelay = (platform_->deviceType() == device::Device::Type::MockDevice) ? IDENTIFY_OPERATION_MOCK_DELAY : IDENTIFY_OPERATION_DELAY;
 
     if (startActionCheck(QStringLiteral("Cannot flash bootloader")) == false) {
@@ -117,8 +115,6 @@ void Flasher::flashBootloader()
 
 void Flasher::backupFirmware(bool startApplication)
 {
-    action_ = Action::BackupFirmware;
-
     if (startActionCheck(QStringLiteral("Cannot backup firmware")) == false) {
         return;
     }
@@ -144,8 +140,6 @@ void Flasher::backupFirmware(bool startApplication)
 
 void Flasher::setFwClassId(bool startApplication)
 {
-    action_ = Action::SetFwClassId;
-
     if (startActionCheck(QStringLiteral("Cannot set firmware class ID")) == false) {
         return;
     }
@@ -247,7 +241,7 @@ bool Flasher::prepareForBackup()
         expectedBackupChunkNumber_ = 1;
         actualBackupSize_ = 0;
         expectedBackupSize_ = 0;
-        qCInfo(logCategoryFlasher) << platform_ << "Preparing for firmware backup.";
+        qCInfo(logCategoryFlasher) << platform_ << "Preparing to back up the firmware to the '" << fileName_ << "' file.";
         return true;
     } else {
         qCCritical(logCategoryFlasher) << platform_ << "Cannot open file '" << fileName_ << "'. " << destinationFile_.errorString();
@@ -425,9 +419,8 @@ void Flasher::startApplicationFinished(int status)
     }
 
     if (status == operation::FIRMWARE_UNABLE_TO_START) {
-        QString errStr(QStringLiteral("Platform firmware is unable to start."));
-        qCCritical(logCategoryFlasher) << platform_ << errStr << " Platform remains in bootloader mode.";
-        finish(Result::Error, errStr);
+        qCCritical(logCategoryFlasher) << platform_ << "Platform firmware is unable to start, platform remains in bootloader mode.";
+        finish(Result::BadFirmware);
         return;
     }
 

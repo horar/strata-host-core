@@ -42,13 +42,7 @@ bool ZmqRouterConnector::read(std::string& message)
         return false;
     }
 
-    zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (false == socketPoll(&items)) {
-        qCWarning(logCategoryZmqRouterConnector) << "Failed to poll items";
-        return false;
-    }
-
-    if (items.revents & ZMQ_POLLIN) {
+    if (true == hasReadEvent()) {
         std::string identity;
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);

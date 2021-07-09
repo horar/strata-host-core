@@ -57,6 +57,9 @@ FocusScope {
                 } else if (state === FlasherConnector.NoFirmware) {
                     backupNode.nodeState = StatusNode.SucceedWithWarning
                     backupProgress = -1;
+                } else if (state === FlasherConnector.BadFirmware) {
+                    backupNode.nodeState = StatusNode.SucceedWithWarning
+                    backupNode.subText = "Warning: " + errorString
                 }
             } else {
                 console.warn(Logger.sciCategory, "Unknown state for firmware backup")
@@ -180,8 +183,8 @@ FocusScope {
                     "Done"
                 }
                 isFinal: true
-                highlight: processingStatus === SaveFirmwareView.ProgramSucceed
-                           || processingStatus === SaveFirmwareView.ProgramFailed
+                highlight: processingStatus === SaveFirmwareView.BackupSucceed
+                           || processingStatus === SaveFirmwareView.BackupFailed
             }
         }
 
@@ -242,9 +245,13 @@ FocusScope {
          if (result === FlasherConnector.Success) {
              processingStatus = SaveFirmwareView.BackupSucceed
              finishedNode.nodeState = StatusNode.Succeed
-             finishedNode.subText = "Device firmware is saved."
+             finishedNode.subText = "The device firmware is saved."
+         } else if (result === FlasherConnector.Unsuccess) {
+             processingStatus = SaveFirmwareView.BackupSucceed
+             finishedNode.nodeState = StatusNode.SucceedWithWarning
+             finishedNode.subText = "The saved file is not a valid firmware."
          } else {
-             // FlasherConnector.Unsuccess OR FlasherConnector.Failure
+             // FlasherConnector.Failure
              processingStatus = SaveFirmwareView.BackupFailed
              finishedNode.nodeState = StatusNode.Failed
              finishedNode.subText = "Firmware was not saved successfully."

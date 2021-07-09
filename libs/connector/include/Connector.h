@@ -50,6 +50,8 @@ public:
     std::string getDealerID() const;
 
     bool isConnected() const;
+    virtual bool hasReadEvent();
+    virtual bool hasWriteEvent();
 
     friend std::ostream& operator<<(std::ostream& stream, const Connector& c);
 
