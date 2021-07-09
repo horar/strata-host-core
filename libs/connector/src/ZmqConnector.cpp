@@ -1,5 +1,6 @@
 #include "ZmqConnector.h"
 
+#include <bitset>
 #include <iomanip>
 #include <sstream>
 
@@ -104,13 +105,7 @@ bool ZmqConnector::read(std::string& message)
         return false;
     }
 
-    zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (false == socketPoll(&items)) {
-        qCWarning(logCategoryZmqConnector) << "Failed to poll items";
-        return false;
-    }
-
-    if (items.revents & ZMQ_POLLIN) {
+    if (true == hasReadEvent()) {
         if (socketRecv(message)) {
             qCDebug(logCategoryZmqConnector).nospace().noquote()
                     << "Rx'ed message: '" << QString::fromStdString(message) << "'";
@@ -174,6 +169,20 @@ bool ZmqConnector::socketValid() const
 bool ZmqConnector::contextValid() const
 {
     return ((nullptr != context_) && (nullptr != context_->handle()));
+}
+
+bool ZmqConnector::hasReadEvent()
+{
+    int event;
+    socketGetOptInt(zmq::sockopt::events, event);
+    return std::bitset<sizeof(int)>(event).test(ZMQ_POLLIN - 1);
+}
+
+bool ZmqConnector::hasWriteEvent()
+{
+    int event;
+    socketGetOptInt(zmq::sockopt::events, event);
+    return std::bitset<sizeof(int)>(event).test(ZMQ_POLLOUT - 1);
 }
 
 // Receive 0MQ string from socket and convert to std::string

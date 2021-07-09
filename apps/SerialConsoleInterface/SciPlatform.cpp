@@ -210,40 +210,33 @@ void SciPlatform::resetPropertiesFromDevice()
     setDeviceName(platform_->deviceName());
 }
 
-QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
+void SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 {
-    QVariantMap retStatus;
-
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
 
-        retStatus["error"] = "not_connected";
-        return retStatus;
+        emit sendMessageResultReceived(SendMessageErrorType::NotConnectedError, QVariantMap());
+        return;
     }
 
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
-    bool isJsonValid = parseError.error == QJsonParseError::NoError;
-
     if (onlyValidJson) {
-        if (isJsonValid == false) {
-            retStatus["error"] = "json_error";
-            retStatus["offset"] = parseError.offset;
-            retStatus["message"] = parseError.errorString();
-            return retStatus;
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+
+        if (parseError.error != QJsonParseError::NoError) {
+            QVariantMap data;
+            data["offset"] = parseError.offset;
+            data["message"] = parseError.errorString();
+
+            emit sendMessageResultReceived(SendMessageErrorType::JsonError, data);
+            return;
         }
     }
 
     //compact format as line break is end of input for serial library
     QString compactMsg = SGJsonFormatter::minifyJson(message);
 
-    // TODO: CS-2028 - store message number returned from 'sendMessage'
-    platform_->sendMessage(compactMsg.toUtf8());
-    commandHistoryModel_->add(compactMsg, isJsonValid);
-    settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-    retStatus["error"] = "no_error";
-
-    return retStatus;
+    currentMessageId_ = platform_->sendMessage(compactMsg.toUtf8());
 }
 
 bool SciPlatform::programDevice(QString filePath, bool doBackup)
@@ -319,18 +312,33 @@ void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage mes
     filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, unsigned msgNumber, QString errorString)
+void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, uint msgNumber, QString errorString)
 {
-    Q_UNUSED(msgNumber)
+    if (currentMessageId_ != msgNumber) {
+        //message not sent by user manually
+        if (errorString.isEmpty()) {
+            scrollbackModel_->append(rawMessage, true);
+        }
+
+        return;
+    }
+
+    SendMessageErrorType errorType = SendMessageErrorType::NoError;
+    QVariantMap result;
 
     if (errorString.isEmpty()) {
+        commandHistoryModel_->add(SGJsonFormatter::minifyJson(rawMessage));
+        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
         scrollbackModel_->append(rawMessage, true);
     } else {
-        // TODO: handle this situation, task for it is CS-2028
+        errorType = SendMessageErrorType::PlatformError;
+        result.insert("error_string", errorString);
 
         qCWarning(logCategorySci) << platform_ << "Error '" << errorString
             << "' occured while sending message '" << rawMessage << '\'';
     }
+
+    emit sendMessageResultReceived(errorType, result);
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
