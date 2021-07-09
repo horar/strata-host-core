@@ -24,7 +24,7 @@ constexpr const char* const CMD_SET_PLATFORM_ID          = "set_platform_id";
 constexpr const char* const RES_NORMAL          = "Normal";
 constexpr const char* const RES_NO_PAYLOAD      = "No Payload";
 constexpr const char* const RES_NO_JSON         = "No JSON";
-constexpr const char* const RES_NACK            = "No JSON";
+constexpr const char* const RES_NACK            = "Nack";
 constexpr const char* const RES_INVALID         = "Invalid";
 constexpr const char* const RES_PLATFORM_CONFIG_BOOTLOADER          = "Platform Config: Bootloader";
 constexpr const char* const RES_PLATFORM_CONFIG_BOOTLOADER_INVALID  = "Platform Config: Bootloader Invalid";
@@ -919,7 +919,11 @@ inline QList<MockResponse> mockSupportedResponses(const MockVersion& version, co
     if (versionIter != test_commands::mockResponsesMap.constEnd()) {
         auto commandIter = versionIter.value().constFind(command);
         if (commandIter != versionIter.value().constEnd()) {
-            return commandIter.value().keys();
+            QList<MockResponse> responses = commandIter.value().keys();
+            // universal responses, place after MockResponse::Normal which is always first
+            responses.insert(1, MockResponse::No_JSON);
+            responses.insert(1, MockResponse::Nack);
+            return responses;
         }
     }
     return QList<MockResponse>();
