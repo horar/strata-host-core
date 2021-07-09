@@ -378,10 +378,23 @@ SGStrataPopup {
             }
 
             BusyIndicator {
+                id: busyIndicator
                 anchors.centerIn: parent
                 width: 80
                 height: width
                 visible: deviceView.enabled === false
+            }
+
+            SGWidgets.SGText {
+                anchors {
+                    top: busyIndicator.bottom
+                    horizontalCenter: busyIndicator.horizontalCenter
+                }
+
+                text: "Scanning..."
+                font.italic: true
+                visible: busyIndicator.visible
+                fontSizeMultiplier: 1.3
             }
         }
 
