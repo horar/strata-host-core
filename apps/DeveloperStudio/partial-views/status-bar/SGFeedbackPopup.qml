@@ -223,7 +223,7 @@ SGStrataPopup {
                     }
 
                     Rectangle {
-                        id: textAreaContainer
+                        id: commentAreaContainer
                         color: "white"
                         border {
                             width: 1
@@ -234,16 +234,16 @@ SGStrataPopup {
                         clip: true
 
                         Item {
-                            id: textAreaWrapper
+                            id: commentAreaWrapper
                             anchors {
-                                fill: textAreaContainer
+                                fill: commentAreaContainer
                                 margins: 10
                             }
 
                             SGTextArea {
-                                id: textArea
-                                width: textAreaWrapper.width
-                                height: Math.max(textAreaWrapper.height, contentHeight)
+                                id: commentArea
+                                width: commentAreaWrapper.width
+                                height: Math.max(commentAreaWrapper.height, contentHeight)
                                 enabled: !feedbackStatus.visible
                                 contextMenuEnabled: true
                                 // Text Length Limiter
@@ -260,12 +260,12 @@ SGStrataPopup {
                                     if(alertToast.visible) alertToast.hide();
 
                                     if (text.length > maximumLength) {
-                                        var cursor = textArea.textEdit.cursorPosition
+                                        var cursor = commentArea.textEdit.cursorPosition
                                         text = previousText;
                                         if (cursor > text.length) {
-                                            textArea.textEdit.cursorPosition = text.length;
+                                            commentArea.textEdit.cursorPosition = text.length;
                                         } else {
-                                            textArea.textEdit.cursorPosition = cursor - 1;
+                                            commentArea.textEdit.cursorPosition = cursor - 1;
                                         }
                                     }
                                     previousText = text
@@ -279,7 +279,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: textArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: commentArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -302,7 +302,7 @@ SGStrataPopup {
                         Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
-                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textArea.text, type: feedbackTypeListView.currentItem.typeValue }
+                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentArea.text, type: feedbackTypeListView.currentItem.typeValue }
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
@@ -345,7 +345,7 @@ SGStrataPopup {
     }
 
     function resetForm(){
-        textArea.text = ""
+        commentArea.text = ""
         feedbackTypeListView.currentIndex = -1
     }
 }
