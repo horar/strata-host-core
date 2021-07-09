@@ -34,7 +34,7 @@ void MockDevice::open()
     if (opened_) {
         emit Device::opened();
     } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device (mockSetOpenEnabled set to true).");
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device (mockSetOpenEnabled set to false).");
     }
 }
 
@@ -76,7 +76,7 @@ unsigned MockDevice::sendMessage(const QByteArray& msg)
             mockEmitResponses(msg);
         }
     } else {
-        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage set to true)."));
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage enabled)."));
         qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit messageSent(msg, msgNum, errMsg);
     }
