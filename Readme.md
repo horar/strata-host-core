@@ -9,7 +9,6 @@ Strata Host Core contains all the applications and dependencies necessary for St
     * Visual Studio Build Tools 2017
     * OpenSSL (can be installed through Qt installer)
 ### MacOS
-
     * Xcode and Command Line Tools
     * Git >= 2.28.0
     * Qt5 5.12.xx
@@ -18,7 +17,7 @@ Strata Host Core contains all the applications and dependencies necessary for St
 
 ## Qt5 installation
 
-Download and install Qt5 version is 5.12.xx
+Download and install Qt5 version 5.12.xx
 
 The following Qt5 components are required:
 
@@ -39,8 +38,8 @@ Building through CLI:
 
     ### Windows 
     make sure Qt directory is added to the path
-    if not, follow the instructions below
-    - Search for Environment Variable
+    if not, follow the instructions below:
+    - From the start menu, search for `edit the system environment variables`
     - Click Environment Variables
     - Add the following to user variables Path
     `<QT installation directory>\5.12.xx\msvc2017_64\bin`
@@ -52,11 +51,11 @@ Building through CLI:
     In addition, make sure that other tools in the requirements section are properly installed
     and added to the path if needed.
 
-    Open `Command Prompt`, navigate to Strata Host Core directory and run `bootstrap-host.bat`
+    Open `Command Prompt`, navigate to Strata Host Core root directory and run `bootstrap-host.bat`
 
     ### MacOS
     make sure Qt directory is added into the path
-    if not, open Terminal and run the following command 
+    if not, open `Terminal` and run the following command:
     ```
     export PATH=$PATH:<QT installed directory>/5.12.xx/clang_64/bin
     ```
@@ -64,7 +63,7 @@ Building through CLI:
     In addition, make sure that other tools in the requirements section are properly installed
     and added to the path if needed.
 
-    run `bootstrap-host.sh`
+    open `Terminal`, navigate to Strata Host Core root directory and run `bootstrap-host.sh`
 
 Building through Qt Creator:
   
