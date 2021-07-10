@@ -36,7 +36,7 @@ The following Qt5 components are required:
 
 Building through CLI:
 
-    ### Windows 
+  ### Windows 
     make sure Qt directory is added to the path
     if not, follow the instructions below:
     - From the start menu, search for `edit the system environment variables`
@@ -53,7 +53,7 @@ Building through CLI:
 
     Open `Command Prompt`, navigate to Strata Host Core root directory and run `bootstrap-host.bat`
 
-    ### MacOS
+  ### MacOS
     make sure Qt directory is added into the path
     if not, open `Terminal` and run the following command:
     ```
