@@ -443,37 +443,77 @@ Item {
                 }
             }
 
-            Button {
-                id: selectOutFolderButton
-                text: "Select Output Folder"
-                Layout.preferredWidth: 150
-                Layout.preferredHeight: 30
+            ColumnLayout {
+                RowLayout {
+                    Layout.preferredWidth: outputFileText.width
 
-                Accessible.name: selectOutFolderButton.text
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    selectOutFolderMouseArea.clicked()
-                }
+                    Button {
+                        id: selectOutFolderButton
+                        text: "Select Output Directory"
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: (outputFileText.width - spacing)/2
 
-                MouseArea {
-                    id: selectOutFolderMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
+                        Accessible.name: selectOutFolderButton.text
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            selectOutFolderMouseArea.clicked()
+                        }
 
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: {
-                        outputFileDialog.open()
+                        MouseArea {
+                            id: selectOutFolderMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+
+                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: {
+                                outputFileDialog.open()
+                            }
+                        }
+                    }
+
+                    Item {
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: selectOutFolderButton.width
+
+                        Button {
+                            id: useProjectOutFolder
+                            text: "Use Project Directory for Output"
+
+                            anchors.fill: parent
+                            enabled: currentCvcProjectQrcUrl != ""
+
+                            Accessible.name: selectOutFolderButton.text
+                            Accessible.role: Accessible.Button
+                            Accessible.onPressAction: {
+                                selectOutFolderMouseArea.clicked()
+                            }
+                        }
+
+                        MouseArea {
+                            id: useProjectOutFolderMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: useProjectOutFolder.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: {
+                                outputFileText.text = findProjectRootDir()
+                            }
+
+                            ToolTip {
+                                text: "A project must be open"
+                                visible: !useProjectOutFolder.enabled && useProjectOutFolderMouseArea.containsMouse
+                            }
+                        }
                     }
                 }
-            }
 
-            SGTextField {
-                id: outputFileText
-                Layout.fillWidth: true
-                Layout.preferredHeight: 30
-                placeholderText: "Output Folder Location"
-                contextMenuEnabled: true
-                readOnly: true
+                SGTextField {
+                    id: outputFileText
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 600
+                    placeholderText: "Output Folder Location"
+                    contextMenuEnabled: true
+                    readOnly: true
+                }
             }
         }
 
