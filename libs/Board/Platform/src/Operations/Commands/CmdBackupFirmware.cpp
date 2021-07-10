@@ -59,6 +59,7 @@ bool CmdBackupFirmware::processNotification(const rapidjson::Document& doc, Comm
 
                 bool ok = false;
                 if (size.GetUint() == realDecodedSize) {
+                    qCDebug(logCategoryPlatformCommand) << platform_ << "Received chunk with size " << realDecodedSize << " bytes.";
                     if (crc.GetUint() == crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size()))) {
                         ok = true;
                     } else {

@@ -233,18 +233,26 @@ SGStrataPopup {
                         Layout.fillWidth: true
                         clip: true
 
-                        ScrollView {
-                            id: scrollingText
+                        Flickable {
+                            id: textEditFlickable
                             anchors {
                                 fill: textEditContainer
                                 margins: 10
                             }
+                            contentHeight: textEdit.contentHeight
+                            flickableDirection: Flickable.VerticalFlick
+                            boundsMovement: Flickable.StopAtBounds
+                            boundsBehavior: Flickable.DragAndOvershootBounds
+
+                            ScrollBar.vertical: ScrollBar {
+                                policy: ScrollBar.AsNeeded
+                            }
 
                             SGTextEdit {
                                 id: textEdit
-                                width: scrollingText.width
+                                width: textEditFlickable.width
                                 wrapMode: TextEdit.Wrap
-                                height: Math.max(scrollingText.height, contentHeight)
+                                height: Math.max(textEditFlickable.height, contentHeight)
                                 enabled: !feedbackStatus.visible
                                 selectByMouse: true
                                 contextMenuEnabled: true

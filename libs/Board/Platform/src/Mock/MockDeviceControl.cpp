@@ -5,6 +5,8 @@
 #include <Buypass.h>
 #include <CodecBase64.h>
 #include <QMetaEnum>
+#include <QRandomGenerator>
+#include <QDataStream>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -360,6 +362,7 @@ QString MockDeviceControl::getFirmwareValue(const QString placeholder)
 
     if (mockFirmware_.exists()) {
         actualChunk_ = 0; //begin of backup_firmware
+        payloadCount_ = 0;
 
         if (placeholder == "firmware.size") {
             return QString::number(mockFirmware_.size());
@@ -485,6 +488,24 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
     }
 }
 
+QByteArray MockDeviceControl::generateMockFirmware(bool isBootloader)
+{
+    const quint32 bufferSize = isBootloader ?
+                mock_firmware_constants::bootloaderBufferSize : mock_firmware_constants::firmwareBufferSize;
+
+    auto buffer = std::make_unique<quint32[]>(bufferSize);
+    std::seed_seq sseq{1,2,3};
+    QRandomGenerator generator(sseq);
+    generator.fillRange(buffer.get(), bufferSize);
+
+    QByteArray generatedFirmware;
+    QDataStream stream(&generatedFirmware, QIODevice::WriteOnly);
+    for (quint32 i = 0; i < bufferSize; i++) {
+        stream << buffer[i];
+    }
+    return generatedFirmware;
+}
+
 void MockDeviceControl::createMockFirmware()
 {
     mockFirmware_.createNativeFile(QStringLiteral("mockFirmware"));
@@ -493,9 +514,8 @@ void MockDeviceControl::createMockFirmware()
     if (mockFirmware_.open() == false) {
         qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
     } else {
-        QTextStream mockFirmwareOut(&mockFirmware_);
-        mockFirmwareOut << mock_firmware_constants::mockFirmwareData;
-        mockFirmwareOut.flush();
+        QDataStream mockFirmwareOut(&mockFirmware_);
+        mockFirmwareOut << generateMockFirmware();
         mockFirmware_.close();
         qCDebug(logCategoryDeviceMock) << "Mock firmware file prepared with the size of" << mockFirmware_.size() << "bytes";
     }
