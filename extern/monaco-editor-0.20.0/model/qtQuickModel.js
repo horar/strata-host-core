@@ -18,7 +18,7 @@ class QtQuickModel {
     }
 
     updateImports(newImports) {
-        this.imports = newImports
+        this.imports.push(newImports)
     }
 
     get currentQtModel() {
