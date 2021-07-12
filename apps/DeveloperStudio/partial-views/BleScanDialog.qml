@@ -10,7 +10,7 @@ SGStrataPopup {
     x: parent.width/2 - dialog.width/2
     y: parent.height/2 - dialog.height/2
 
-    headerText: "Connect Bluetooth Low Energy Device"
+    headerText: "Bluetooth Low Energy Devices"
     modal: true
     focus: true
     closePolicy: Popup.CloseOnEscape
@@ -255,11 +255,39 @@ SGStrataPopup {
                         topMargin: delegate.innerSpacing
                     }
 
-                    text: "CONNECTED"
-                    visible: model.isConnected
-                    textColor: "white"
-                    font.bold: true
-                    color: Theme.palette.green
+                    states: [
+                        State {
+                            id: connectingState
+                            when: model.isConnected === false && model.connectionInProgress
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "Connecting..."
+                                textColor: "black"
+                                color: "transparent"
+                            }
+                        },
+                        State {
+                            id: disconnectingState
+                            when: model.isConnected && model.connectionInProgress
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "Disconnecting..."
+                                textColor: "black"
+                                color: "transparent"
+                            }
+                        },
+                        State {
+                            id: connectedState
+                            when: model.isConnected && model.connectionInProgress === false
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "CONNECTED"
+                                textColor: "white"
+                                color: Theme.palette.green
+                                font.bold: true
+                            }
+                        }
+                    ]
                 }
 
                 Rectangle {
@@ -350,10 +378,23 @@ SGStrataPopup {
             }
 
             BusyIndicator {
+                id: busyIndicator
                 anchors.centerIn: parent
                 width: 80
                 height: width
                 visible: deviceView.enabled === false
+            }
+
+            SGWidgets.SGText {
+                anchors {
+                    top: busyIndicator.bottom
+                    horizontalCenter: busyIndicator.horizontalCenter
+                }
+
+                text: "Scanning..."
+                font.italic: true
+                visible: busyIndicator.visible
+                fontSizeMultiplier: 1.3
             }
         }
 
