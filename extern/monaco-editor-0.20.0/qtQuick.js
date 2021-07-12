@@ -34,12 +34,6 @@ function registerQmlProvider() {
     editor.getModel().onDidChangeContent((event) => {
         window.link.fileText = editor.getValue();
         window.link.setVersionId(editor.getModel().getAlternativeVersionId());
-        const model = editor.getModel()
-        // Mount
-        if(!isInitialized){
-            qtSearch.update(model)
-            isInitialized = true
-        }
     })
 
     // Component will unmount

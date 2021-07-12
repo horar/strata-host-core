@@ -2,16 +2,19 @@ class QtItemModel {
     constructor() {
         this.id = ""
         this.properties = Object.keys(qtTypeJson.sources["Item"].properties)
-        this.signals = qtTypeJson.sources["Item"].signals
+        this.signals = Object.keys(qtTypeJson.sources["Item"].signals)
         this.value = "Item"
         this.metaPropMap = qtTypeJson.sources["Item"].properties
-        this.functions = []
+        this.metaSignalMap = qtTypeJson.sources["Item"].signals
+        this.metaFuncMap = qtTypeJson.sources["Item"].functions
+        this.functions = Object.keys(qtTypeJson.sources["Item"].functions)
         this.uuid = ""
     }
 
-    updateFunctions(newFunction) {
+    updateFunctions(newFunction, newFunctionObj = {}) {
         if(newFunction.length !== 0) {
             this.functions.push(newFunction)
+            this.metaFuncMap = Object.assign(this.metaFuncMap, newFunctionObj)
         }
     }
 
@@ -33,9 +36,10 @@ class QtItemModel {
         return this.id;
     }
 
-    updateProperties(newProperty) {
+    updateProperties(newProperty, newPropObj = {}) {
         if(newProperty.length !== 0) {
             this.properties.push(newProperty)
+            this.metaPropMap = Object.assign(this.metaPropMap, newPropObj)
         }
     }
 
@@ -43,9 +47,10 @@ class QtItemModel {
         return this.properties
     }
 
-    updateSignals(newSignal) {
+    updateSignals(newSignal, newSignalObj = {}) {
         if(newSignal.length !== 0) {
             this.signals.push(newSignal)
+            this.metaSignalMap = Object.assign(this.metaSignalMap, newSignalObj)
         }
     }
 
@@ -62,16 +67,25 @@ class QtItemModel {
                     this.properties = inheritObject.properties
                     this.signals = inheritObject.signals
                     this.metaPropMap = inheritObject.metaPropMap
+                    this.functions = inheritObject.functions
+                    this.metaSignalMap = inheritObject.metaSignalMap
+                    this.metaFuncMap = inheritObject.metaFuncMap
                 } else {
                     this.properties = Object.keys(qtTypeJson.sources[this.value].properties)
-                    this.signals = qtTypeJson.sources[this.value].signals
+                    this.signals =  Object.keys(qtTypeJson.sources[this.value].signals)
                     this.metaPropMap = qtTypeJson.sources[this.value].properties
+                    this.functions = Object.keys(qtTypeJson.sources[this.value].functions)
+                    this.metaSignalMap = qtTypeJson.sources[this.value].signals
+                    this.metaFuncMap = qtTypeJson.sources[this.value].functions
                 }
 
             } else {
                 this.properties = []
                 this.signals = []
                 this.metaPropMap = {}
+                this.metaFuncMap = {}
+                this.functions = []
+                this.metaSignalMap = {}
             }
         }
     }

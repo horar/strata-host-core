@@ -1,7 +1,7 @@
 
 
 // return an object from a string with definable properties
-function createDynamicSuggestion(suggestion, type) {
+function createDynamicSuggestion(suggestion, type, params_name = [""]) {
     const uuid = randomUUID()
     switch (type) {
         case "property":
@@ -14,10 +14,10 @@ function createDynamicSuggestion(suggestion, type) {
             }
         case "function":
             return {
-                label: suggestion,
+                label: `${suggestion}(${params_name.toString()})`,
                 kind: monaco.languages.CompletionItemKind.Function,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: suggestion,
+                insertText: `${suggestion}()`,
                 range: null
             }
         case "item":
@@ -50,6 +50,14 @@ function createDynamicSuggestion(suggestion, type) {
                 kind: monaco.languages.CompletionItemKind.Keyword,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                 insertText: `${suggestion} {\n \n}`,
+                range: null
+            }
+        case "parameter": 
+            return  {
+                label: suggestion,
+                kind: monaco.languages.CompletionItemKind.Property,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                insertText: suggestion,
                 range: null
             }
     }
@@ -106,14 +114,19 @@ function addInheritedItems(masterItem, item) {
 
     const object = {
         properties: Object.keys(qtTypeJson.sources[masterItem].properties),
-        signals: qtTypeJson.sources[masterItem].signals,
-        metaPropMap: qtTypeJson.sources[masterItem].properties
+        signals: Object.keys(qtTypeJson.sources[masterItem].signals),
+        functions: Object.keys(qtTypeJson.sources[masterItem].functions),
+        metaPropMap: qtTypeJson.sources[masterItem].properties,
+        metaSignalMap: qtTypeJson.sources[masterItem].signals,
+        metaFuncMap: qtTypeJson.sources[masterItem].functions,
     }
 
     object.properties = removeDuplicates(object.properties.concat(Object.keys(qtTypeJson.sources[item].properties)))
-    object.signals = removeDuplicates(object.signals.concat(qtTypeJson.sources[item].signals))
-    const newObject = Object.assign(object.metaPropMap, qtTypeJson.sources[item].properties)
-    object.metaPropMap = newObject
+    object.signals = removeDuplicates(object.signals.concat(Object.keys(qtTypeJson.sources[item].signals)))
+    object.functions = removeDuplicates(object.functions.concat(Object.keys(qtTypeJson.sources[item].functions)))
+    object.metaPropMap = Object.assign(object.metaPropMap, qtTypeJson.sources[item].properties)
+    object.metaSignalMap = Object.assign(object.metaSignalMap, qtTypeJson.sources[item].signals)
+    object.metaFuncMap = Object.assign(object.metaFuncMap, qtTypeJson.sources[item].functions)
 
     if (qtTypeJson.sources[item].inherits !== "") {
         return Object.assign(addInheritedItems(masterItem, qtTypeJson.sources[item].inherits), object);

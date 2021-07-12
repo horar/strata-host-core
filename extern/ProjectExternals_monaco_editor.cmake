@@ -12,6 +12,17 @@ file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/qtQuick.js
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/
 )
 
+file(COPY  ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtItemModel.js
+    ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtQuickModel.js
+    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/model/
+)
+
+file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/utils/helper.js
+     ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/utils/search.js
+     ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/utils/suggestions.js
+    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/utils/
+)
+
 ExternalProject_Add(monaco-editor-${MONACO_TAG}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
     INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}

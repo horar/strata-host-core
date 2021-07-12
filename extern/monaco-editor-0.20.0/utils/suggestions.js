@@ -41,10 +41,10 @@ class QtSuggestions {
             slotSignalArr.push(`on${slot}:`)
         }
 
-        this.createSuggestions(regPropArr,"property")
+        this.createSuggestions(removeDuplicates(regPropArr),"property")
         this.createSuggestions(metaPropArr, "meta-parent")
-        this.createSuggestions(slotPropArr,"slot")
-        this.createSuggestions(slotSignalArr, "slot")
+        this.createSuggestions(removeDuplicates(slotPropArr),"slot")
+        this.createSuggestions(removeDuplicates(slotSignalArr), "slot")
     }
 
     getMetaPropertySuggestions(uuid,propertyName) {
@@ -55,8 +55,9 @@ class QtSuggestions {
         }
     }
 
-    getFunctionGlobalSuggestions(uuid) {
+    getFunctionGlobalSuggestions(uuid, which, value) {
         const idKeys = []
+        let map = {}
         for(const key of Object.keys(qtQuickModel.model)) {
             const item = qtQuickModel.fetchItem(key)
             if(item.id !== ""){
@@ -69,13 +70,23 @@ class QtSuggestions {
         const properties = getItem.properties
         const signals = getItem.signals
         const functions = getItem.functions
+        if(which === "slot") {
+            map = getItem.metaSignalMap
+        } else {
+            map = getItem.metaFuncMap
+        }
+
+        if(map.hasOwnProperty(value) && map[value].params_name.length !== 0) {
+            this.createSuggestions(map[value].params_name,"parameter")
+        }
+
         const custom_functions = Object.keys(qtTypeJson["custom_properties"])
 
-        this.createSuggestions(properties,"property")
-        this.createSuggestions(signals, "function")
-        this.createSuggestions(functions, "function")
+        this.createSuggestions(removeDuplicates(properties),"property")
+        this.createSuggestions(removeDuplicates(signals), "function")
+        this.createSuggestions(removeDuplicates(functions), "function")
         this.createSuggestions(removeDuplicates(idKeys), "property")
-        this.createSuggestions(custom_functions, "function")
+        this.createSuggestions(removeDuplicates(custom_functions), "function")
     }
 
     createSuggestions(arr,type="item") {
@@ -85,15 +96,16 @@ class QtSuggestions {
     }
 
     get currentSuggestions() {
-        this.suggestions
+       return this.suggestions
     }
 
     determineSuggestions(position) {
+        if(Object.keys(qtQuickModel.model).length !== 0) {
         const checkLine = qtSearch.model.getLineContent(position.lineNumber)
         const checkProperty = qtSearch.isInMetaProperty(position)
         const checkFunction = qtSearch.isInFunction(position)
         const checkSlot = qtSearch.isInSlot(position)
-        const itemCheck = qtSearch.fetchParentItem(position)
+        const itemCheck = qtSearch.fetchParentItem(position, position)
         if(checkLine.includes(".")) {
             const checkSub = checkLine.split(".")[0].trim()
             this.determineSubProperties(checkSub)
@@ -104,12 +116,24 @@ class QtSuggestions {
                 const propertyLineNumber = qtSearch.findPreviousMetaPropertyParent(position)
                 const propertyName = qtSearch.getMetaPropertyParent(propertyLineNumber.range.startLineNumber)
                 this.getMetaPropertySuggestions(itemCheck.uuid, propertyName)
-            } else if(checkSlot || checkFunction) {
-                this.getFunctionGlobalSuggestions(itemCheck.uuid)
+            } else if(checkFunction || checkSlot) {
+                if(checkSlot) {
+                    const slot = qtSearch.findPreviousSlot(position)
+                    const slotName = qtSearch.getSlotName(slot.range.startLineNumber)
+                    this.getFunctionGlobalSuggestions(itemCheck.uuid, "slot", slotName)
+                } else {
+                    const func = qtSearch.findPreviousFunction(position)
+                    const funcName = qtSearch.getFunc(func.range.startLineNumber)
+                    this.getFunctionGlobalSuggestions(itemCheck.uuid, "func", funcName.name)
+                }
             }
             return;
         }
         this.getQtItemGlobalSuggestions(itemCheck.uuid)
+        } else {
+            const getOtherGlobals = getImportedItemList();
+            this.createSuggestions(getOtherGlobals,"item")
+        }
     }
 
     determineSubProperties(checkSub) {
