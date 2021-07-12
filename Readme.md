@@ -1,88 +1,91 @@
-# Host directory
+# Strata Host Core
+Strata Host Core contains all the applications and dependencies necessary for Strata Developer Studio.
+## Requirements
 
-## How to build applications
+### Windows
+* Git Bash >= 2.28.0
+* CMake >= 3.19
+* Qt5 5.12.xx
+* Visual Studio Build Tools 2017
+* OpenSSL (can be installed through Qt installer)
+### MacOS
+* Xcode and Command Line Tools
+* Git >= 2.28.0
+* Qt5 5.12.xx
+* CMake >= 3.19
+* OpenSSL
 
-### Installing prerequisites in Linux (Ubuntu 18.04)
+## Qt5 installation
 
+Download and install Qt5 version 5.12.xx
+
+The following Qt5 components are required:
+
+### Windows
+* MSVC 2017 64-bit
+* Qt Charts
+* Qt WebEngine
+* Qt Developer and Designer Tools -> OpenSSL Toolkit
+
+### MacOS
+* macOS 
+* Qt Charts
+* Qt WebEngine
+
+## Build Instructions
+
+**Building through CLI:**
+
+### Windows 
+make sure Qt directory is added to the path
+if not, follow the instructions below:
+* From the start menu, search for `edit the system environment variables`
+* Click Environment Variables
+* Add the following to user variables Path
+  * `<QT installation directory>\5.12.xx\msvc2017_64\bin`
+  * `<QT installation directory>\Tools\OpenSSL\Win_x64\bin`
+* Create a new user environment variable
+  * variable name: `Qt_DIR`
+  * variable value: `<QT installation directory>\5.12.xx\msvc2017_64\lib\cmake\Qt5`
+
+In addition, make sure that other tools in the requirements section are properly installed
+and added to the path if needed.
+
+Open `Command Prompt`, navigate to strata-host-core root directory and run `bootstrap-host.bat`
+
+### MacOS
+make sure Qt directory is added into the path
+if not, open `Terminal` and run the following command:
 ```
-sudo apt-get update
-sudo apt-get install build-essential cmake
-```
-
-### Installing prerequisites in Mac
-
-* Install Xcode and Command Line Tools as described in http://railsapps.github.io/xcode-command-line-tools.html
-* Install Homebrew, see http://brew.sh
-
-```
-brew install cmake
-```
-
-### Qt5 installation (for Linux and MacOS)
-
-Download and install Qt5. Minimum required version is 5.12 and QtChart component installed as well
-
-To set paths for build run command in console (for MacOS)
-```
-export Qt5_DIR=<QT installed directory>/5.12.2/clang_64/lib/cmake/Qt5
-```
-
-or for Linux:
-```
-export Qt5_DIR=<QT installed directory>/5.12.2/gcc_64/lib/cmake/Qt5
-```
-
-
-second option is to install QT trough brew.
-```
-brew install --force-bottle qt5
-```
-
-and the cmake finds this installation and uses it.
-
-
-### Compilation for Linux and MacOS
-Before you run compilation make sure you have updated git branch and git submodules as well. For git submodules update:
-```
-git submodule update --init --recursive
-```
-
-In spyglass root directory run commands in console:
-
-```
-mkdir build
-cd build
-cmake ..
-make
-```
-
-
-
-### Serial Console Interface deployment
-Optionally create simple app DMG with all dependant libraries
-
-```
-    cd spyglass/build
-    macdeployqt bin/Serial\ Console\ Interface.app -dmg -qmldir=../apps/SerialConsoleInterface/
-
+export PATH=$PATH:<QT installed directory>/5.12.xx/clang_64/bin
 ```
 
-DMG file with application will be created inside the directory:
-spyglass/build/bin
+In addition, make sure that other tools in the requirements section are properly installed
+and added to the path if needed.
 
-Or on Windows:
-```
-    cd spyglass\build
-    windeployqt --force --no-translations --qmldir ..\apps\SerialConsoleInterface "bin\Serial Console Interface.exe"
+open `Terminal`, navigate to strata-host-core root directory and run `bootstrap-host.sh`
 
-```
+**Building through Qt Creator:**
+  
+* Make sure that you have updated/cloned strata-host-core submodules by running the following commands
+  ```
+  cd <strata-host-core cloned path>
+  git submodule update --init --recursive
+  ```
+* Open Qt Creator 
+* Projects -> Open -> select `CMakeLists.txt` under root directory of strata-host-core
+* For project configuration make sure to select Qt 5.12.xx
+* Build/Run the project
 
-#### Windows
 
-### Compilation for Windows
-To start a build run cmd in a console: windows_build.sh in host folder
+## Contributions
+You may contribute in various ways such as reporting a bug, open a PR, or share your thoughts.
 
-We are currently cross compiling for windows from linux. Hence downloading mingw toolchain is essential. In linux terminal please follow these steps
-```
-sudo apt-get install mingw-w64
-```
+For pull requests, please follow the steps below:
+* Keep it simple.
+* Keep it consistence with the design.
+* Follow C++ style guidelines found in `.clang-format` under root directory of strata-host-core.
+
+TBD - if there is any other input from legal team.
+## License
+TBD - legal team
