@@ -321,7 +321,6 @@ Item {
             }
         }
 
-
         onHeightChanged: {
             var htmlHeight = height - 16
             channelObject.setContainerHeight(htmlHeight.toString())
