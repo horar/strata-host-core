@@ -365,80 +365,81 @@ Item {
             Layout.preferredHeight: 30
             Layout.bottomMargin: 15
             Layout.alignment: Qt.AlignHCenter
-            spacing: 5
+            spacing: 50
 
-            Button {
-                id: importJsonFileButton
-                Layout.preferredHeight: 30
-
-                icon {
-                    source: "qrc:/sgimages/file-import.svg"
-                    color: importJsonMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
-                    name: "Import JSON file"
-                }
-
-                text: "Import"
-                display: Button.TextBesideIcon
-                hoverEnabled: true
-
-                Accessible.name: "Open file dialog for importing a JSON file"
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    importJsonMouseArea.clicked()
-                }
-
-                MouseArea {
-                    id: importJsonMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        inputFileDialog.open()
-                    }
-                }
-            }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 30
-                Layout.preferredWidth: importJsonFileButton.width
-
+            RowLayout {
                 Button {
-                    id: importJsonFileFromProjectButton
-                    enabled: currentCvcProjectJsonUrl != ""
-                    anchors.fill: parent
+                    id: importJsonFileButton
+                    Layout.preferredHeight: 30
 
                     icon {
                         source: "qrc:/sgimages/file-import.svg"
-                        color: importFromProjectMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
-                        name: "Import JSON file from Project"
+                        color: importJsonMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
+                        name: "Import JSON file"
                     }
 
-                    text: "Import from Project"
+                    text: "Import"
                     display: Button.TextBesideIcon
                     hoverEnabled: true
 
-                    Accessible.name: "Import JSON file from Project"
+                    Accessible.name: "Open file dialog for importing a JSON file"
                     Accessible.role: Accessible.Button
                     Accessible.onPressAction: {
-                        importFromProjectMouseArea.clicked()
+                        importJsonMouseArea.clicked()
+                    }
+
+                    MouseArea {
+                        id: importJsonMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            inputFileDialog.open()
+                        }
                     }
                 }
 
-                MouseArea {
-                    id: importFromProjectMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: importJsonFileFromProjectButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: {
-                        if (currentCvcProjectJsonUrl != "") {
-                            loadJsonFile(currentCvcProjectJsonUrl)
+                Item {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 200
+
+                    Button {
+                        id: importJsonFileFromProjectButton
+                        enabled: currentCvcProjectJsonUrl != ""
+                        anchors.fill: parent
+
+                        icon {
+                            source: "qrc:/sgimages/file-import.svg"
+                            color: importFromProjectMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
+                            name: "Import JSON file from Project"
+                        }
+
+                        text: "Import from Project"
+                        display: Button.TextBesideIcon
+                        hoverEnabled: true
+
+                        Accessible.name: "Import JSON file from Project"
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            importFromProjectMouseArea.clicked()
                         }
                     }
 
-                    ToolTip {
-                        text: "A project must be open and contain " + jsonFileName + " in its root directory"
-                        visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
+                    MouseArea {
+                        id: importFromProjectMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: importJsonFileFromProjectButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        onClicked: {
+                            if (currentCvcProjectJsonUrl != "") {
+                                loadJsonFile(currentCvcProjectJsonUrl)
+                            }
+                        }
+
+                        ToolTip {
+                            text: "A project must be open and contain " + jsonFileName + " in its root directory"
+                            visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
+                        }
                     }
                 }
             }
@@ -509,7 +510,7 @@ Item {
                 SGTextField {
                     id: outputFileText
                     Layout.preferredHeight: 30
-                    Layout.preferredWidth: 600
+                    Layout.preferredWidth: 500
                     placeholderText: "Output Folder Location"
                     contextMenuEnabled: true
                     readOnly: true
