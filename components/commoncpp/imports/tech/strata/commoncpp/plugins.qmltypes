@@ -414,7 +414,8 @@ Module {
             values: {
                 "PROCESS_NO_PROCESS": 0,
                 "PROCESS_CHECK_CONNECTION": 1,
-                "PROCESS_PROGRAM": 2
+                "PROCESS_PROGRAM": 2,
+                "PROCESS_CHECK_HOST_VERSION": 3
             }
         }
         Property { name: "exePath"; type: "string" }
@@ -426,6 +427,10 @@ Module {
             name: "checkConnectionProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
             Parameter { name: "connected"; type: "bool" }
+        }
+        Signal {
+            name: "checkHostVersionProcessFinished"
+            Parameter { name: "exitedNormally"; type: "bool" }
         }
         Signal {
             name: "programBoardProcessFinished"
@@ -446,6 +451,8 @@ Module {
             Parameter { name: "speed"; type: "int" }
             Parameter { name: "startAddress"; type: "int" }
         }
+        Method { name: "checkHostVersion"; type: "bool" }
+        Method { name: "latestOutputInfo"; type: "QVariantMap" }
     }
     Component {
         name: "SGJsonFormatter"
@@ -507,16 +514,6 @@ Module {
         exports: ["tech.strata.commoncpp/SGJsonSyntaxHighlighter 1.0"]
         exportMetaObjectRevisions: [0]
         Property { name: "textDocument"; type: "QQuickTextDocument"; isPointer: true }
-    }
-    Component {
-        name: "SGTextHighlighter"
-        prototype: "QSyntaxHighlighter"
-        exports: ["tech.strata.commoncpp/SGTextHighlighter 1.0"]
-        exportMetaObjectRevisions: [0]
-        Property { name: "textDocument"; type: "QQuickTextDocument"; isPointer: true }
-        Property { name: "filterPattern"; type: "string" }
-        Property { name: "filterPatternSyntax"; type: "FilterSyntax" }
-        Property { name: "caseSensitive"; type: "bool" }
     }
     Component {
         name: "SGQWTPlot"
@@ -706,6 +703,37 @@ Module {
         }
     }
     Component {
+        name: "SGTextHighlighter"
+        prototype: "QSyntaxHighlighter"
+        exports: ["tech.strata.commoncpp/SGTextHighlighter 1.0"]
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "FilterSyntax"
+            values: {
+                "RegExp": 0,
+                "Wildcard": 1,
+                "FixedString": 2
+            }
+        }
+        Property { name: "textDocument"; type: "QQuickTextDocument"; isPointer: true }
+        Property { name: "filterPattern"; type: "string" }
+        Property { name: "filterPatternSyntax"; type: "FilterSyntax" }
+        Property { name: "caseSensitive"; type: "bool" }
+    }
+    Component {
+        name: "SGTranslator"
+        defaultProperty: "data"
+        prototype: "QQuickItem"
+        exports: ["tech.strata.commoncpp/SGTranslator 1.0"]
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "loadLanguageFile"
+            type: "bool"
+            Parameter { name: "languageFileName"; type: "string" }
+        }
+        Method { name: "loadLanguageFile"; type: "bool" }
+    }
+    Component {
         name: "SGUserSettings"
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGUserSettings 1.0"]
@@ -796,6 +824,11 @@ Module {
             Parameter { name: "filename"; type: "string" }
         }
         Method {
+            name: "fileBaseName"
+            type: "string"
+            Parameter { name: "filename"; type: "string" }
+        }
+        Method {
             name: "parentDirectoryPath"
             type: "string"
             Parameter { name: "filepath"; type: "string" }
@@ -815,9 +848,20 @@ Module {
             name: "urlToLocalFile"
             type: "string"
             Parameter { name: "url"; type: "QUrl" }
+            Parameter { name: "toNativeSeparators"; type: "bool" }
+        }
+        Method {
+            name: "urlToLocalFile"
+            type: "string"
+            Parameter { name: "url"; type: "QUrl" }
         }
         Method {
             name: "isFile"
+            type: "bool"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
+            name: "isValidFile"
             type: "bool"
             Parameter { name: "file"; type: "string" }
         }
@@ -938,6 +982,11 @@ Module {
             type: "bool"
             Parameter { name: "sequence"; type: "string" }
             Parameter { name: "key"; type: "int" }
+        }
+        Method {
+            name: "getQrcPaths"
+            type: "QList<QString>"
+            Parameter { name: "path"; type: "string" }
         }
     }
     Component {
