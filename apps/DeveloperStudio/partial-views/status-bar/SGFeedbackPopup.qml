@@ -222,55 +222,37 @@ SGStrataPopup {
                         }
                     }
 
-                    Rectangle {
-                        id: commentAreaContainer
-                        color: "white"
-                        border {
-                            width: 1
-                            color: "lightgrey"
-                        }
+                    SGTextArea {
+                        id: commentsQuestionsArea
+                        width: parent.width
+                        height: Math.max(parent.height, contentHeight)
+                        enabled: !feedbackStatus.visible
+                        contextMenuEnabled: true
+                        // Text Length Limiter
+                        readOnly: feedbackStatus.visible
+                        KeyNavigation.tab: submitButton
+                        KeyNavigation.priority: KeyNavigation.BeforeItem
+                        Accessible.role: Accessible.EditableText
+                        Accessible.name: "FeedbackEdit"
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        clip: true
 
-                        Item {
-                            id: commentAreaWrapper
-                            anchors {
-                                fill: commentAreaContainer
-                                margins: 10
-                            }
+                        property int maximumLength: 1000
+                        property string previousText: text
 
-                            SGTextArea {
-                                id: commentArea
-                                width: commentAreaWrapper.width
-                                height: Math.max(commentAreaWrapper.height, contentHeight)
-                                enabled: !feedbackStatus.visible
-                                contextMenuEnabled: true
-                                // Text Length Limiter
-                                readOnly: feedbackStatus.visible
-                                KeyNavigation.tab: submitButton
-                                KeyNavigation.priority: KeyNavigation.BeforeItem
-                                Accessible.role: Accessible.EditableText
-                                Accessible.name: "FeedbackEdit"
+                        onTextChanged: {
+                            if(alertToast.visible) alertToast.hide();
 
-                                property int maximumLength: 1000
-                                property string previousText: text
-
-                                onTextChanged: {
-                                    if(alertToast.visible) alertToast.hide();
-
-                                    if (text.length > maximumLength) {
-                                        var cursor = commentArea.textEdit.cursorPosition
-                                        text = previousText;
-                                        if (cursor > text.length) {
-                                            commentArea.textEdit.cursorPosition = text.length;
-                                        } else {
-                                            commentArea.textEdit.cursorPosition = cursor - 1;
-                                        }
-                                    }
-                                    previousText = text
+                            if (text.length > maximumLength) {
+                                var cursor = commentsQuestionsArea.textEdit.cursorPosition
+                                text = previousText;
+                                if (cursor > text.length) {
+                                    commentsQuestionsArea.textEdit.cursorPosition = text.length;
+                                } else {
+                                    commentsQuestionsArea.textEdit.cursorPosition = cursor - 1;
                                 }
                             }
+                            previousText = text
                         }
                     }
 
@@ -279,7 +261,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: commentArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: commentsQuestionsArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -302,7 +284,7 @@ SGStrataPopup {
                         Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
-                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentArea.text, type: feedbackTypeListView.currentItem.typeValue }
+                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentsQuestionsArea.text, type: feedbackTypeListView.currentItem.typeValue }
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
@@ -314,7 +296,6 @@ SGStrataPopup {
                     }
                 }
             }
-
         }
     }
 
@@ -345,7 +326,7 @@ SGStrataPopup {
     }
 
     function resetForm(){
-        commentArea.text = ""
+        commentsQuestionsArea.text = ""
         feedbackTypeListView.currentIndex = -1
     }
 }
