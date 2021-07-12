@@ -11,7 +11,7 @@ FocusScope {
     property alias text: edit.text
     property alias font: edit.font
     property alias placeholderText: placeholderTextItem.text
-    property alias textEdit: edit
+    property alias cursorPosition: edit.cursorPosition
     property int minimumLineCount: 3
     property int maximumLineCount: minimumLineCount
     property bool tabAllowed: false

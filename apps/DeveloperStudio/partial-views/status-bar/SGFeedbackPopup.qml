@@ -244,12 +244,12 @@ SGStrataPopup {
                             if(alertToast.visible) alertToast.hide();
 
                             if (text.length > maximumLength) {
-                                var cursor = commentsQuestionsArea.textEdit.cursorPosition
+                                var cursor = commentsQuestionsArea.cursorPosition
                                 text = previousText;
                                 if (cursor > text.length) {
-                                    commentsQuestionsArea.textEdit.cursorPosition = text.length;
+                                    commentsQuestionsArea.cursorPosition = text.length;
                                 } else {
-                                    commentsQuestionsArea.textEdit.cursorPosition = cursor - 1;
+                                    commentsQuestionsArea.cursorPosition = cursor - 1;
                                 }
                             }
                             previousText = text
