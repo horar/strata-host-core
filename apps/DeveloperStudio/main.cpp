@@ -128,6 +128,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    // make sure that context properties are declared before engine, to maintain proper order of destruction
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss(), configFilePath)};
     if (sdsModel->urls() == nullptr) {
         return EXIT_FAILURE;
