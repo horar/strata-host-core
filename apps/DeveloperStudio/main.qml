@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -44,6 +45,16 @@ SGWidgets.SGMainWindow {
     {
         mainWindow.width = 1200
         mainWindow.height = 900
+    }
+
+    QtLabsPlatform.Menu {
+        QtLabsPlatform.MenuItem {
+            text: qsTr("&About")
+            role: QtLabsPlatform.MenuItem.AboutRole
+            onTriggered:  {
+                showAboutWindow()
+            }
+        }
     }
 
     Shortcut {
@@ -92,6 +103,7 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        // QTBUG-45262 - 'close.accepted = false' is ignored on MacOS; fixed in further 5.14 releases
         if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose(function (){mainWindow.close()})) {
             close.accepted = false
             return
@@ -295,6 +307,10 @@ SGWidgets.SGMainWindow {
                 CoreUpdate.parseUpdateInfo(payload)
             }
         }
+    }
+
+    function showAboutWindow() {
+        SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
     SGDebugBar {

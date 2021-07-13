@@ -19,5 +19,6 @@
         <file>SciConnectMockDeviceDialog.qml</file>
         <file>MockSettingsView.qml</file>
         <file>ConnectBleDeviceDialog.qml</file>
+        <file>SaveFirmwareView.qml</file>
     </qresource>
 </RCC>

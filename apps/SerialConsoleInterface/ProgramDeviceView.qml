@@ -69,6 +69,9 @@ FocusScope {
                 } else if (state === FlasherConnector.NoFirmware) {
                     backupNode.nodeState = StatusNode.SucceedWithWarning
                     backupProgress = -1;
+                } else if (state === FlasherConnector.BadFirmware) {
+                    backupNode.nodeState = StatusNode.SucceedWithWarning
+                    backupNode.subText = "Warning: " + errorString
                 }
             } else if (operation === FlasherConnector.Flash) {
                 if (state === FlasherConnector.Started) {
@@ -76,7 +79,8 @@ FocusScope {
                     programNode.nodeState = StatusNode.NotSet
                 } else if (state === FlasherConnector.Finished) {
                     programNode.nodeState = StatusNode.Succeed
-                } else if (state === FlasherConnector.Failed) {
+                } else if (state === FlasherConnector.Failed
+                           || state === FlasherConnector.BadFirmware) {
                     programNode.nodeState = StatusNode.Failed
                     programNode.subText = "Error: " + errorString
                 }
@@ -87,7 +91,8 @@ FocusScope {
                     programBackupNode.visible = true
                 } else if (state === FlasherConnector.Finished) {
                     programBackupNode.nodeState = StatusNode.Succeed
-                } else if (state === FlasherConnector.Failed) {
+                } else if (state === FlasherConnector.Failed
+                           || state === FlasherConnector.BadFirmware) {
                     programBackupNode.nodeState = StatusNode.Failed
                     programBackupNode.subText = "Error: " + errorString
                 }
@@ -184,7 +189,7 @@ FocusScope {
 
             enabled: programDeviceView.editable
             leftPadding: 0
-            text: "Backup firmware before programming"
+            text: "Restore original firmware if programming fails"
             onCheckStateChanged: {
                 programDeviceView.doBackup = checked
                 Sci.Settings.backupFirmware = checked

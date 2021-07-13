@@ -207,6 +207,13 @@ public:
      */
     bool mockSetWriteErrorOnNthMessage(unsigned messageNumber);
 
+    /**
+     * Generates mock firmware if needed for comparison in tests
+     * @param isBootloader true = 10 chunks; false = 20 chunks of firmware, (default : false)
+     * @return QByteArray of mockFirmware
+     */
+    QByteArray generateMockFirmware(bool isBootloader = false);
+
 private slots:
     void readMessage(QByteArray msg);
     void handleError(ErrorCode errCode, QString msg);

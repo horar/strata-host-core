@@ -34,7 +34,7 @@ void MockDevice::open()
     if (opened_) {
         emit Device::opened();
     } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpenRequestRetry, "Unable to open mock device (mockSetOpenEnabled set to true).");
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpenRequestRetry, "Unable to open mock device (mockSetOpenEnabled set to false).");
     }
 }
 
@@ -76,7 +76,7 @@ unsigned MockDevice::sendMessage(const QByteArray& msg)
             mockEmitResponses(msg);
         }
     } else {
-        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage set to true)."));
+        QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage enabled)."));
         qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit messageSent(msg, msgNum, errMsg);
     }
@@ -212,6 +212,11 @@ bool MockDevice::mockSetErrorOnClose(bool enabled) {
 
 bool MockDevice::mockSetWriteErrorOnNthMessage(unsigned messageNumber) {
     return control_.setWriteErrorOnNthMessage(messageNumber);
+}
+
+QByteArray MockDevice::generateMockFirmware(bool isBootloader)
+{
+    return control_.generateMockFirmware(isBootloader);
 }
 
 }  // namespace strata::device
