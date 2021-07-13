@@ -26,14 +26,14 @@ import tech.strata.notifications 1.0
 SGWidgets.SGMainWindow {
     id: mainWindow
 
-    property int defaultWidth: 1280
-    property int defaultHeight: 720
+    readonly property int defaultWidth: 1024
+    readonly property int defaultHeight: 768-40 // -40 for Win10 taskbar height
 
     visible: true
     width: defaultWidth
     height: defaultHeight
-    minimumHeight: 768-40 // -40 for Win10 taskbar height
-    minimumWidth: 1024
+    minimumHeight: defaultHeight
+    minimumWidth: defaultWidth
     title: Qt.application.displayName
 
     property alias notificationsInbox: notificationsInbox
