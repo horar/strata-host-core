@@ -25,25 +25,37 @@ public:
     ~TcpDeviceScanner();
 
     /**
-     * Start scanning for new devices.
+     * Initialize scanner.
      */
     virtual void init() override;
 
     /**
-     * Stop scanning for new devices. Will close all open devices.
+     * Deinitialize scanner and stop scanning for new devices. Will close all open devices.
      */
     virtual void deinit() override;
+
+    /**
+     * Start an automatic scan of new devices.
+     */
+    virtual void startAutomaticScan();
+
+    /**
+     * Stop an automatic scan of new devices.
+     */
+    virtual void stopAutomaticScan();
 
 private slots:
     void processPendingDatagrams();
     void deviceDisconnectedHandler();
 
 private:
-    bool addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    void addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
     QList<QByteArray> discoveredDevices_;
+
+    bool scanRunning_;
 
     static constexpr qint16 UDP_LISTEN_PORT{5146};
 };

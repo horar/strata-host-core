@@ -7,13 +7,17 @@
 namespace strata::device::scanner
 {
 TcpDeviceScanner::TcpDeviceScanner()
-    : DeviceScanner(Device::Type::TcpDevice), udpSocket_(new QUdpSocket(this))
+    : DeviceScanner(Device::Type::TcpDevice),
+      udpSocket_(new QUdpSocket(this)),
+      scanRunning_(false)
 {
 }
 
 TcpDeviceScanner::~TcpDeviceScanner()
 {
-    TcpDeviceScanner::deinit();
+    if (udpSocket_->isOpen() || (discoveredDevices_.size() != 0)) {
+        TcpDeviceScanner::deinit();
+    }
 }
 
 void TcpDeviceScanner::init()
@@ -22,19 +26,40 @@ void TcpDeviceScanner::init()
         qCCritical(logCategoryDeviceScanner) << "Failed to bind UDP socket to" << UDP_LISTEN_PORT;
         return;
     }
-    connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
-            &TcpDeviceScanner::processPendingDatagrams);
+    startAutomaticScan();
 }
 
 void TcpDeviceScanner::deinit()
 {
+    udpSocket_->close();
+    disconnect(udpSocket_.get(), nullptr, this, nullptr);
+    scanRunning_ = false;
+
     for (const auto &deviceId : discoveredDevices_) {
         emit deviceLost(deviceId);
     }
     discoveredDevices_.clear();
+}
 
-    udpSocket_->close();
-    disconnect(udpSocket_.get(), nullptr, this, nullptr);
+void TcpDeviceScanner::startAutomaticScan()
+{
+    if (scanRunning_) {
+        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
+    } else {
+        connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
+                &TcpDeviceScanner::processPendingDatagrams);
+        scanRunning_ = true;
+    }
+}
+
+void TcpDeviceScanner::stopAutomaticScan()
+{
+    if (scanRunning_) {
+        disconnect(udpSocket_.get(), nullptr, this, nullptr);
+        scanRunning_ = false;
+    } else {
+        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
+    }
 }
 
 void TcpDeviceScanner::processPendingDatagrams()
@@ -62,7 +87,7 @@ void TcpDeviceScanner::processPendingDatagrams()
     }
 }
 
-bool TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
+void TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
 {
     DevicePtr device = std::make_shared<TcpDevice>(createDeviceId(TcpDevice::createUniqueHash(deviceAddress)), deviceAddress, tcpPort);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
@@ -72,7 +97,6 @@ bool TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
 
     discoveredDevices_.push_back(device->deviceId());
     emit deviceDetected(platform);
-    return true;
 }
 
 void TcpDeviceScanner::deviceDisconnectedHandler()
