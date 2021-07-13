@@ -13,14 +13,13 @@ SerialDeviceScanner::SerialDeviceScanner()
 }
 
 SerialDeviceScanner::~SerialDeviceScanner() {
-    if (timer_.isActive()) {
+    if (timer_.isActive() || (deviceIds_.size() != 0)) {
         SerialDeviceScanner::deinit();
     }
 }
 
 void SerialDeviceScanner::init() {
-    // If the timer is already running, it will be stopped and restarted
-    timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
+    startAutomaticScan();
 }
 
 void SerialDeviceScanner::deinit() {
@@ -32,6 +31,22 @@ void SerialDeviceScanner::deinit() {
 
     deviceIds_.clear();
     portNames_.clear();
+}
+
+void SerialDeviceScanner::startAutomaticScan() {
+    if (timer_.isActive()) {
+        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
+    } else {
+        timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
+    }
+}
+
+void SerialDeviceScanner::stopAutomaticScan() {
+    if (timer_.isActive()) {
+        timer_.stop();
+    } else {
+        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
+    }
 }
 
 void SerialDeviceScanner::checkNewSerialDevices() {

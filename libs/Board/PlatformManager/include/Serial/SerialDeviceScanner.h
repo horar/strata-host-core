@@ -30,15 +30,24 @@ public:
     ~SerialDeviceScanner() override;
 
     /**
-     * Start scanning for new devices.
-     * @return true if scanning was started, otherwise false
+     * Initialize scanner.
      */
     virtual void init() override;
 
     /**
-     * Stop scanning for new devices. Will close all open devices.
+     * Deinitialize scanner and stop scanning for new devices. Will close all open devices.
      */
     virtual void deinit() override;
+
+    /**
+     * Start an automatic scan of new devices.
+     */
+    virtual void startAutomaticScan();
+
+    /**
+     * Stop an automatic scan of new devices.
+     */
+    virtual void stopAutomaticScan();
 
 private slots:
     void checkNewSerialDevices();
