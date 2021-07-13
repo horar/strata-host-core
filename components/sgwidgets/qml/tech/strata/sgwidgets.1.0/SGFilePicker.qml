@@ -133,9 +133,9 @@ FocusScope {
     }
 
     function resolveAbsoluteFileUrl(path, selectExisting) {
-        return CommonCpp.SGUtilsCpp.pathToUrl(
-            selectExisting
-            ? CommonCpp.SGUtilsCpp.parentDirectoryPath(path)
-            : CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
+        let fullPath = selectExisting
+                       ? CommonCpp.SGUtilsCpp.parentDirectoryPath(path)
+                       : CommonCpp.SGUtilsCpp.fileAbsolutePath(path)
+        return CommonCpp.SGUtilsCpp.pathToUrl(fullPath)
     }
 }
