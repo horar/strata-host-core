@@ -405,6 +405,94 @@ Module {
         }
     }
     Component {
+        name: "SGConversion"
+        prototype: "QObject"
+        exports: ["tech.strata.commoncpp/SGConversion 1.0"]
+        isCreatable: false
+        isSingleton: true
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "hexStringLeToInt8"
+            type: "signed char"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToInt16"
+            type: "short"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToInt32"
+            type: "int"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToUint8"
+            type: "uchar"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToUint16"
+            type: "ushort"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToUint32"
+            type: "uint"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToFloat32"
+            type: "float"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "hexStringLeToFloat64"
+            type: "double"
+            Parameter { name: "hexString"; type: "QByteArray" }
+        }
+        Method {
+            name: "int8ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "signed char" }
+        }
+        Method {
+            name: "int16ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "short" }
+        }
+        Method {
+            name: "int32ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "int" }
+        }
+        Method {
+            name: "uint8ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "uchar" }
+        }
+        Method {
+            name: "uint16ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "ushort" }
+        }
+        Method {
+            name: "uint32ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "uint" }
+        }
+        Method {
+            name: "float32ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "float" }
+        }
+        Method {
+            name: "float64ToHexStringLe"
+            type: "QByteArray"
+            Parameter { name: "number"; type: "double" }
+        }
+    }
+    Component {
         name: "SGJLinkConnector"
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGJLinkConnector 1.0"]
