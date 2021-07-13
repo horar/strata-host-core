@@ -8,6 +8,7 @@ using strata::device::Device;
 using strata::device::MockDevice;
 using strata::device::scanner::DeviceScanner;
 using strata::device::scanner::MockDeviceScanner;
+using strata::device::scanner::MockDeviceScannerPtr;
 using strata::platform::PlatformPtr;
 
 SciMockDeviceModel::SciMockDeviceModel(PlatformManager *platformManager):
@@ -31,7 +32,7 @@ void SciMockDeviceModel::clear()
 
 void SciMockDeviceModel::init()
 {
-    scanner_ = platformManager_->getScanner(Device::Type::MockDevice);
+    scanner_ = std::dynamic_pointer_cast<MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
 
     if (scanner_ == nullptr) {
         qCCritical(logCategorySci) << "Received empty Mock Scanner pointer:" << scanner_.get();
@@ -78,8 +79,7 @@ bool SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByt
         return false;
     }
 
-    if (static_cast<MockDeviceScanner*>(scanner_.get())->
-            mockDeviceDetected(deviceId, deviceName, false) == true) {
+    if (scanner_->mockDeviceDetected(deviceId, deviceName, false) == true) {
         ++latestMockIdx_;
         return true;
     }
@@ -93,7 +93,7 @@ bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
         return false;
     }
 
-    return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
+    return scanner_->mockDeviceLost(deviceId);
 }
 
 void SciMockDeviceModel::disconnectAllMockDevices() {
@@ -101,7 +101,7 @@ void SciMockDeviceModel::disconnectAllMockDevices() {
         return;
     }
 
-    return static_cast<MockDeviceScanner*>(scanner_.get())->mockAllDevicesLost();
+    return scanner_->mockAllDevicesLost();
 }
 
 QString SciMockDeviceModel::getLatestMockDeviceName() const {
@@ -109,7 +109,11 @@ QString SciMockDeviceModel::getLatestMockDeviceName() const {
 }
 
 QByteArray SciMockDeviceModel::getMockDeviceId(const QString& deviceName) const {
-    return MockDevice::createDeviceId(deviceName);
+    if (scanner_ == nullptr) {
+        return QByteArray();
+    }
+
+    return scanner_->mockCreateDeviceId(deviceName);
 }
 
 QVariant SciMockDeviceModel::data(const QModelIndex &index, int role) const

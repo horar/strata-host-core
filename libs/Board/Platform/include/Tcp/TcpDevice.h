@@ -20,7 +20,7 @@ public:
      * @param deviceAddress IP address of the tcp device.
      * @param tcpPort Open tcp port of the device.
      */
-    TcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    TcpDevice(const QByteArray& deviceId, QHostAddress deviceAddress, quint16 tcpPort);
 
     /**
      * TcpDevice destructor.
@@ -57,10 +57,12 @@ public:
     virtual void resetReceiving() override;
 
     /**
-     * Creates device ID based on it's IP address.
-     * @return QByteArray of the generated device ID.
+     * Creates unique hash for the device, based on it's IP address.
+     * Will be used to generate device ID.
+     * @param hostAddress address of the connected device.
+     * @return unique hash bytes.
      */
-    static QByteArray createDeviceId(QHostAddress hostAddress);
+    static QByteArray createUniqueHash(QHostAddress hostAddress);
 
 signals:
     void deviceDisconnected();
