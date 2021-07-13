@@ -55,7 +55,7 @@ strata::platform::PlatformPtr PlatformManagerTest::addMockDevice(const QByteArra
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
     QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
-    QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceDetected(deviceId, deviceName, true));
+    QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceDetected(deviceId, deviceName, true).isEmpty());
     QVERIFY_((platformAddedSignal.count() == 1) || (platformAddedSignal.wait(250) == true));
     QVERIFY_(platformManager_->getDeviceIds().contains(deviceId));
     QCOMPARE_(platformManager_->getDeviceIds().count(), ++devicesCount);
