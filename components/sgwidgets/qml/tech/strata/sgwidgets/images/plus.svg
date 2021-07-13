@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   aria-hidden="true"
+   focusable="false"
+   data-prefix="fas"
+   data-icon="plus"
+   class="svg-inline--fa fa-plus fa-w-14"
+   role="img"
+   viewBox="0 0 500 500"
+   version="1.1"
+   id="svg4"
+   width="500"
+   height="500"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <path
+     d="M 460,197.5 H 302.49999 V 40 C 302.49999,20.673437 286.82656,5 267.5,5 h -35 c -19.32657,0 -35,15.673437 -35,35 V 197.5 H 40 c -19.326563,0 -35,15.67343 -35,35 v 35 c 0,19.32656 15.673437,34.99999 35,34.99999 H 197.5 V 460 c 0,19.32656 15.67343,35 35,35 h 35 c 19.32656,0 34.99999,-15.67344 34.99999,-35 V 302.49999 H 460 c 19.32656,0 35,-15.67343 35,-34.99999 v -35 c 0,-19.32657 -15.67344,-35 -35,-35 z"
+     id="path2"
+     style="fill:currentColor;stroke-width:1.12053573" />
+</svg>

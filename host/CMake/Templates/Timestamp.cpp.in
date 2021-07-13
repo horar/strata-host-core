@@ -1,9 +1,0 @@
-// !! WARNING !!
-// Generated file. All changes made in this file will be lost!!
-
-#include "Timestamp.h"
-
-using namespace std::literals::string_view_literals;
-
-const std::string_view Timestamp::buildTimestamp{"@formattedTimestamp@"sv};
-const std::string_view Timestamp::buildOnHost{"@hostName@"sv};

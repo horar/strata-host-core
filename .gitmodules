@@ -1,6 +1,3 @@
-[submodule "cloud/couchbase-lite-core"]
-	path = cloud/couchbase-lite-core
-	url = https://github.com/couchbase/couchbase-lite-core.git
 [submodule "extern/spdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
@@ -10,18 +7,14 @@
 [submodule "extern/googletest"]
 	path = extern/googletest
 	url = https://github.com/google/googletest.git
-[submodule "extern/couchbase-lite-cpp"]
-	path = extern/couchbase-lite-cpp
-	url = https://github.com/stratadeveloperstudio/couchbase-lite-cpp.git
-	ignore = dirty
 [submodule "extern/qtmqtt"]
 	path = extern/qtmqtt
 	url = https://github.com/qt/qtmqtt.git
-	ignore = all
+	ignore = dirty
 [submodule "extern/couchbase-lite-C"]
 	path = extern/couchbase-lite-C
 	url = https://github.com/stratadeveloperstudio/couchbase-lite-C.git
-	ignore = all
+	ignore = dirty
 [submodule "extern/libzmq"]
 	path = extern/libzmq
 	url = https://github.com/zeromq/libzmq.git
@@ -29,4 +22,11 @@
 [submodule "extern/cppzmq"]
 	path = extern/cppzmq
 	url = https://github.com/zeromq/cppzmq.git
-	ignore = all
+	ignore = dirty
+[submodule "extern/libevent"]
+	path = extern/libevent
+	url = https://github.com/libevent/libevent.git
+	ignore = dirty
+[submodule "strata-cmake-modules"]
+	path = strata-cmake-modules
+	url = https://code.onsemi.com/scm/secswst/strata-cmake-modules.git

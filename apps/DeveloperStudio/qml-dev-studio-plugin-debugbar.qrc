@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/partial-views/debug-bar/+debugbar">
+        <file alias="SGDebugBar.qml">partial-views/debug-bar/+debugbar/SGDebugBar.qml</file>
+    </qresource>
+    <qresource prefix="/partial-views/debug-bar">
+        <file alias="SGLocalPlatformListPopup.qml">partial-views/debug-bar/SGLocalPlatformListPopup.qml</file>
+        <file alias="SGQmlErrorListPopUp.qml">partial-views/debug-bar/SGQmlErrorListPopUp.qml</file>
+        <file alias="SGQmlErrorListView.qml">partial-views/debug-bar/SGQmlErrorListView.qml</file>
+        <file alias="SGQmlErrorListViewDelegate.qml">partial-views/debug-bar/SGQmlErrorListViewDelegate.qml</file>
+        <file alias="SGQmlErrorListButton.qml">partial-views/debug-bar/SGQmlErrorListButton.qml</file>
+    </qresource>
+</RCC>

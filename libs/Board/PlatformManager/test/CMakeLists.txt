@@ -1,0 +1,33 @@
+project(PlatformManager-qtest LANGUAGES CXX)
+
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Test
+    REQUIRED
+)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOMOC ON)
+
+add_executable(${PROJECT_NAME}-test
+    PlatformManagerIntegrationTest.cpp
+    PlatformManagerTest.cpp
+    PlatformOperationsTest.cpp
+    PlatformOperationsV2Test.cpp
+    PlatformMessageTest.cpp
+    PlatformErrorsTest.cpp
+    main.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}-test
+    PRIVATE Qt5::Test
+    PRIVATE strata::Platform
+    PRIVATE strata::PlatformManager
+    PRIVATE strata::CommandValidator
+    PRIVATE strata::base64
+)
+
+add_test(NAME ${PROJECT_NAME}-test
+    COMMAND ${PROJECT_NAME}-test
+)
+

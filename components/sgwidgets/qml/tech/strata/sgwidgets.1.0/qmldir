@@ -1,0 +1,58 @@
+module tech.strata.sgwidgets
+
+SGUtilsJS 1.0 utils/SGUtils.js
+
+SGAboutWindow 1.0 SGAboutWindow.qml
+SGAbstractContextMenu 1.0 SGAbstractContextMenu.qml
+SGAlignedLabel 1.0 SGAlignedLabel.qml
+SGButton 1.0 SGButton.qml
+SGButtonStrip 1.0 SGButtonStrip.qml
+SGCapacityBar 1.0 SGCapacityBar.qml
+SGCapacityBarElement 1.0 SGCapacityBarElement.qml
+SGCheckBox 1.0 SGCheckBox.qml
+SGCircularGauge 1.0 SGCircularGauge.qml
+SGComboBox 1.0 SGComboBox.qml
+SGContextMenuEditActions 1.0 SGContextMenuEditActions.qml
+SGFilePicker 1.0 SGFilePicker.qml
+SGGraph 1.0 SGGraph.qml
+SGHueSlider 1.0 SGHueSlider.qml
+SGIcon 1.0 SGIcon.qml
+SGIconButton 1.0 SGIconButton.qml
+SGInfoBox 1.0 SGInfoBox.qml
+SGLogLevelSelector 1.0 SGLogLevelSelector.qml
+SGMainWindow 1.0 SGMainWindow.qml
+SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer.qml
+SGPage 1.0 SGPage.qml
+SGRadioButton 1.0 SGRadioButton.qml
+SGRadioButtonContainer 1.0 SGRadioButtonContainer.qml
+SGResponsiveScrollView 1.0 SGResponsiveScrollView.qml
+SGRGBSlider 1.0 SGRGBSlider.qml
+SGSlider 1.0 SGSlider.qml
+SGSpinBox 1.0 SGSpinBox.qml
+SGSplitView 1.0 SGSplitView.qml
+SGStatusLight 1.0 SGStatusLight.qml
+SGStatusLogBox 1.0 SGStatusLogBox.qml
+SGStatusLogBoxSelectableDelegates 1.0 SGStatusLogBoxSelectableDelegates.qml
+SGStatusLogBoxSelectableText 1.0 SGStatusLogBoxSelectableText.qml
+SGSubmitInfoBox 1.0 SGSubmitInfoBox.qml
+SGSuggestionPopup 1.0 SGSuggestionPopup.qml
+SGSwitch 1.0 SGSwitch.qml
+SGTag 1.0 SGTag.qml
+SGText 1.0 SGText.qml
+SGTextArea 1.0 SGTextArea.qml
+SGTextEdit 1.0 SGTextEdit.qml
+SGTextField 1.0 SGTextField.qml
+SGTextInput 1.0 SGTextInput.qml
+SGWindow 1.0 SGWindow.qml
+
+SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog.qml
+SGDialog 1.0 dialogs/SGDialog.qml
+SGMessageDialog 1.0 dialogs/SGMessageDialog.qml
+SGDialogJS 1.0 dialogs/SGDialog.js
+
+SGBaseEditor 1.0 editors/SGBaseEditor.qml
+SGTextFieldEditor 1.0 editors/SGTextFieldEditor.qml
+
+singleton SGSettings 1.0 SGSettings.qml
+
+depends tech.strata.theme 1.0

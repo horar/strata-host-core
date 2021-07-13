@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/partial-views/control-view-creator">
+        <file alias="ControlViewCreator.qml">partial-views/control-view-creator/ControlViewCreator.qml</file>
+        <file alias="CVCButton.qml">partial-views/control-view-creator/CVCButton.qml</file>
+    </qresource>
+</RCC>
