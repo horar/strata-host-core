@@ -59,34 +59,38 @@ class QtItemModel {
     }
 
     updateValue(newValue) {
-        if(this.value !== newValue) {
-            this.value = newValue
-            if(qtTypeJson.sources[this.value] !== undefined) {
-                if(qtTypeJson.sources[this.value].inherits !== "") {
-                    const inheritObject = addInheritedItems(this.value, qtTypeJson.sources[this.value].inherits)
-                    this.properties = inheritObject.properties
-                    this.signals = inheritObject.signals
-                    this.metaPropMap = inheritObject.metaPropMap
-                    this.functions = inheritObject.functions
-                    this.metaSignalMap = inheritObject.metaSignalMap
-                    this.metaFuncMap = inheritObject.metaFuncMap
-                } else {
-                    this.properties = Object.keys(qtTypeJson.sources[this.value].properties)
-                    this.signals =  Object.keys(qtTypeJson.sources[this.value].signals)
-                    this.metaPropMap = qtTypeJson.sources[this.value].properties
-                    this.functions = Object.keys(qtTypeJson.sources[this.value].functions)
-                    this.metaSignalMap = qtTypeJson.sources[this.value].signals
-                    this.metaFuncMap = qtTypeJson.sources[this.value].functions
-                }
-
+        this.value = newValue
+        this.properties = []
+        this.signals = []
+        this.metaPropMap = {}
+        this.metaFuncMap = {}
+        this.functions = []
+        this.metaSignalMap = {}
+        if(qtTypeJson.sources[this.value] !== undefined) {
+            if(qtTypeJson.sources[this.value].inherits !== "") {
+                const inheritObject = addInheritedItems(this.value, qtTypeJson.sources[this.value].inherits)
+                this.properties = inheritObject.properties
+                this.signals = inheritObject.signals
+                this.metaPropMap = inheritObject.metaPropMap
+                this.functions = inheritObject.functions
+                this.metaSignalMap = inheritObject.metaSignalMap
+                this.metaFuncMap = inheritObject.metaFuncMap
             } else {
-                this.properties = []
-                this.signals = []
-                this.metaPropMap = {}
-                this.metaFuncMap = {}
-                this.functions = []
-                this.metaSignalMap = {}
+                this.properties = Object.keys(qtTypeJson.sources[this.value].properties)
+                this.signals =  Object.keys(qtTypeJson.sources[this.value].signals)
+                this.metaPropMap = qtTypeJson.sources[this.value].properties
+                this.functions = Object.keys(qtTypeJson.sources[this.value].functions)
+                this.metaSignalMap = qtTypeJson.sources[this.value].signals
+                this.metaFuncMap = qtTypeJson.sources[this.value].functions
             }
+
+        } else {
+            this.properties = []
+            this.signals = []
+            this.metaPropMap = {}
+            this.metaFuncMap = {}
+            this.functions = []
+            this.metaSignalMap = {}
         }
     }
 

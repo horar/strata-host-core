@@ -65,11 +65,11 @@ class QtSearch {
     }
 
     findNextFunction(position) {
-        return this.model.findNextMatch(/\s(function)+\s*/, position, true)
+        return this.model.findNextMatch(/(function)+\s*/, position, true)
     }
 
     findPreviousFunction(position) {
-        return this.model.findPreviousMatch(/\s(function)+\s/, position, true)
+        return this.model.findPreviousMatch(/(function)+\s/, position, true)
     }
 
     findPreviousId(position) {
