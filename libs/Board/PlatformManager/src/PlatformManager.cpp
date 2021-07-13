@@ -32,13 +32,13 @@ PlatformManager::~PlatformManager() {
 
     QList<Device::Type> scannerTypes = scanners_.keys();
     foreach(auto scannerType, scannerTypes) {
-        deinit(scannerType);
+        removeScanner(scannerType);
     }
 }
 
-void PlatformManager::init(Device::Type scannerType) {
+void PlatformManager::addScanner(Device::Type scannerType) {
     if (scanners_.contains(scannerType)) {
-        return; // already initialized
+        return; // already added
     }
 
     DeviceScannerPtr scanner;
@@ -78,7 +78,7 @@ void PlatformManager::init(Device::Type scannerType) {
     scanner->init();
 }
 
-void PlatformManager::deinit(Device::Type scannerType) {
+void PlatformManager::removeScanner(Device::Type scannerType) {
     auto iter = scanners_.find(scannerType);
     if (iter == scanners_.end()) {
         return; // scanner not found

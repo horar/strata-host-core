@@ -25,7 +25,7 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-    platformManager_.init(strata::device::Device::Type::SerialDevice);
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
 
     connect(&platformManager_, &strata::PlatformManager::platformRecognized, this, &PrtModel::deviceInfoChangeHandler);
     connect(&platformManager_, &strata::PlatformManager::platformAboutToClose, this, &PrtModel::deviceDisconnectedHandler);

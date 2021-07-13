@@ -31,14 +31,14 @@ void PlatformManagerTest::init()
     platformManager_ = std::make_shared<PlatformManager>(true, false, handleIdentify);
     connect(platformManager_.get(), &PlatformManager::platformRemoved, this,
             &PlatformManagerTest::onBoardDisconnected);
-    platformManager_->init(Device::Type::MockDevice);
+    platformManager_->addScanner(Device::Type::MockDevice);
     mockDeviceScanner_ = platformManager_->getScanner(Device::Type::MockDevice);
     QVERIFY_(mockDeviceScanner_.get() != nullptr);
 }
 
 void PlatformManagerTest::cleanup()
 {
-    platformManager_->deinit(Device::Type::MockDevice);
+    platformManager_->removeScanner(Device::Type::MockDevice);
 
     disconnect(platformManager_.get(), &PlatformManager::platformRemoved, this,
                &PlatformManagerTest::onBoardDisconnected);

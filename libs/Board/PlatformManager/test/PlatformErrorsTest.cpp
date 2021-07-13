@@ -26,7 +26,7 @@ void PlatformErrorsTest::cleanupTestCase()
 void PlatformErrorsTest::init()
 {
     platformManager_ = std::make_shared<strata::PlatformManager>(true, false, false);
-    platformManager_->init(Device::Type::MockDevice);
+    platformManager_->addScanner(Device::Type::MockDevice);
 
     auto deviceScanner = platformManager_->getScanner(Device::Type::MockDevice);
     QVERIFY(deviceScanner.get() != nullptr);
@@ -46,7 +46,7 @@ void PlatformErrorsTest::cleanup()
         mockDevice_.reset();
     }
 
-    platformManager_->deinit(Device::Type::MockDevice);
+    platformManager_->removeScanner(Device::Type::MockDevice);
 }
 
 void PlatformErrorsTest::addMockDevice()
