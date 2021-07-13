@@ -65,6 +65,15 @@ void PlatformManager::init(Device::Type scannerType) {
     }
     }
 
+    for (const auto &existingScanner : scanners_) {
+        if (existingScanner->scannerPrefix().startsWith(scanner->scannerPrefix()) ||
+            scanner->scannerPrefix().startsWith(existingScanner->scannerPrefix())) {
+
+            qCCritical(logCategoryPlatformManager) << "Colliding scanner prefixes:" << scanner->scannerType() << scanner->scannerPrefix() << existingScanner->scannerType() << existingScanner->scannerPrefix();
+            return;
+        }
+    }
+
     scanners_.insert(scannerType, scanner);
 
     qCDebug(logCategoryPlatformManager) << "Created DeviceScanner with type:" << scannerType;
