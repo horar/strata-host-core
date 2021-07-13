@@ -18,6 +18,11 @@ FocusScope {
             name: "SGTextHighlighter"
             page: "ExSGTextHighlighter.qml"
         }
+
+        ListElement {
+            name: "SGSortFilterProxyModel"
+            page: "ExSGSortFilterProxyModel.qml"
+        }
     }
 
     Component.onCompleted: {
