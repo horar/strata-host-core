@@ -48,7 +48,7 @@ void TcpDeviceScanner::processPendingDatagrams()
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
             if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
-                          TcpDevice::createDeviceId(clientAddress)) != discoveredDevices_.end()) {
+                          createDeviceId(TcpDevice::createUniqueHash(clientAddress))) != discoveredDevices_.end()) {
                 qCCritical(logCategoryDeviceScanner)
                     << "Tcp device" << clientAddress.toString() << "already discovered";
                 return;
@@ -64,7 +64,7 @@ void TcpDeviceScanner::processPendingDatagrams()
 
 bool TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
 {
-    DevicePtr device = std::make_shared<TcpDevice>(deviceAddress, tcpPort);
+    DevicePtr device = std::make_shared<TcpDevice>(createDeviceId(TcpDevice::createUniqueHash(deviceAddress)), deviceAddress, tcpPort);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     connect(dynamic_cast<device::TcpDevice *>(device.get()), &TcpDevice::deviceDisconnected, this,
