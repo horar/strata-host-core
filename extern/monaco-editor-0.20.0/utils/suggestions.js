@@ -14,8 +14,8 @@ class QtSuggestions {
         if(getItem === undefined) {
             return;
         }
-        const itemProperties = getItem.properties
-        const itemSignals = getItem.signals
+        const itemProperties = removeDefaults(getItem.properties,"property")
+        const itemSignals = removeDefaults(getItem.signals, "signal")
 
         const regPropArr = []
         const metaPropArr = []
@@ -67,31 +67,42 @@ class QtSuggestions {
 
 
         const getItem = qtQuickModel.fetchItem(uuid)
-        const properties = getItem.properties
-        const signals = getItem.signals
-        const functions = getItem.functions
+        const properties = removeDefaults(getItem.properties,"property")
+        const signals = removeDefaults(getItem.signals, "signal")
+        const functions = removeDefaults(getItem.functions, "function")
         if(which === "slot") {
             map = getItem.metaSignalMap
+            if(map.hasOwnProperty(value) && map[value].params_name.length !== 0) {
+                this.createSuggestions(map[value].params_name,"parameter")
+            }
+            this.createSuggestions(removeDuplicates(signals), "function", map)
         } else {
             map = getItem.metaFuncMap
+            if(map.hasOwnProperty(value) && map[value].params_name.length !== 0) {
+                this.createSuggestions(map[value].params_name,"parameter")
+            }
+            this.createSuggestions(removeDuplicates(functions), "function", map)
         }
 
-        if(map.hasOwnProperty(value) && map[value].params_name.length !== 0) {
-            this.createSuggestions(map[value].params_name,"parameter")
-        }
 
         const custom_functions = Object.keys(qtTypeJson["custom_properties"])
 
         this.createSuggestions(removeDuplicates(properties),"property")
-        this.createSuggestions(removeDuplicates(signals), "function")
-        this.createSuggestions(removeDuplicates(functions), "function")
         this.createSuggestions(removeDuplicates(idKeys), "property")
-        this.createSuggestions(removeDuplicates(custom_functions), "function")
+        this.createSuggestions(removeDuplicates(custom_functions), "item")
     }
 
-    createSuggestions(arr,type="item") {
+    createSuggestions(arr,type="item", map = {}) {
         for(let i = 0; i < arr.length; i++) {
-            this.suggestions.push(createDynamicSuggestion(arr[i],type))
+            if(type === "function" && Object.keys(map).length !== 0) {
+                if(map.hasOwnProperty(arr[i])) {
+                    this.suggestions.push(createDynamicSuggestion(arr[i],type, map[arr[i]].params_name))
+                } else {
+                    this.suggestions.push(createDynamicSuggestion(arr[i],type))
+                }
+            } else {
+                this.suggestions.push(createDynamicSuggestion(arr[i],type))
+            }
         }
     }
 
@@ -153,7 +164,7 @@ class QtSuggestions {
 
         for(const customs of Object.keys(qtTypeJson["custom_properties"])) {
             if(checkSub === customs) {
-                this.createSuggestions(qtTypeJson["custom_properties"][customs],"function")
+                this.createSuggestions(qtTypeJson["custom_properties"][customs],"property")
                 break;
             }
         }

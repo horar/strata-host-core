@@ -27,6 +27,7 @@ class QtQuickModel {
 
     resetModel() {
         this.model = {}
+        this.imports = []
     }
 
     fetchItem(uuid) {

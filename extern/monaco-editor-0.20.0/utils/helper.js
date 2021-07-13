@@ -69,6 +69,12 @@ function removeDuplicates(propertySuggestions) {
     })
 }
 
+function removeDefaults(suggestions, default_) {
+    return suggestions.filter(function(itm) {
+        return itm !== default_
+    })
+}
+
 function removeOnCalls(properties) {
     return properties.filter(function (itm) {
         return !itm.includes("on")
@@ -141,7 +147,7 @@ function getImportedItemList() {
     const imports = qtQuickModel.imports
     for (qtObjects in qtTypeJson["sources"]) {
         for (var i = 0; i < imports.length; i++) {
-            if ((qtTypeJson["sources"][qtObjects].source === "" || qtTypeJson["sources"][qtObjects].source.includes(imports[i])) && !qtTypeJson["sources"][qtObjects].nonInstantiable) {
+            if ((qtTypeJson["sources"][qtObjects].source === "" || imports[i].includes(qtTypeJson["sources"][qtObjects].source)) && !qtTypeJson["sources"][qtObjects].nonInstantiable) {
                 itemList.push(qtObjects)
                 break;
             }
