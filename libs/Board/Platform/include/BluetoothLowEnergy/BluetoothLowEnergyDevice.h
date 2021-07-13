@@ -54,11 +54,12 @@ public:
     virtual bool isConnected() const override;
 
     /**
-     * Creates device ID string, based on discovered data.
+     * Creates unique hash, based on discovered data.
+     * Will be used to generate device ID.
      * @param info Info about discovered BLE device.
-     * @return device ID.
+     * @return unique hash bytes.
      */
-    static QByteArray createDeviceId(const QBluetoothDeviceInfo &info);
+    static QByteArray createUniqueHash(const QBluetoothDeviceInfo &info);
 
     virtual void resetReceiving() override;
 
