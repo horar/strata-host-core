@@ -17,6 +17,7 @@ public:
     explicit Backup(const PlatformPtr& platform);
     ~Backup() = default;
     int totalChunks() const;
+    uint backupSize() const;
     void backupNextChunk();
     QVector<quint8> recentBackupChunk() const;
 private:

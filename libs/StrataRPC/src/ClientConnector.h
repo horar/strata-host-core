@@ -112,6 +112,11 @@ signals:
      */
     void disconnected();
 
+    /**
+     * Private signal emitted when there is unhandled socket readReady event.
+     */
+    void messagesQueued(QPrivateSignal);
+
 private slots:
     /**
      * Slot to handle QSocketNotifier::activated signal.

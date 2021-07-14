@@ -6,5 +6,5 @@
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
-        status: SGStatusLight.Green
+        status: LayoutSGStatusLight.Green
     } // end_%1

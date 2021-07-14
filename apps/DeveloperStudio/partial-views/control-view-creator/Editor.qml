@@ -66,6 +66,16 @@ Item {
     SGSplitView {
         anchors.fill: parent
 
+        Shortcut {
+            sequence: "Ctrl+R"
+            onActivated: {
+                if (cvcUserSettings.openViewOnBuild) {
+                   viewStack.currentIndex = 2
+                }
+                recompileControlViewQrc()
+            }
+        }
+
         SideBar {
             id: sideBar
             Layout.fillHeight: true

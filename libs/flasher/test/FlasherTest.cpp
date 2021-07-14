@@ -196,18 +196,16 @@ void FlasherTest::createFiles()
     if (fakeFirmware_.open() == false) {
         QFAIL("Cannot open fake firmware file");
     } else {
-        QTextStream fakeFirmwareOut(&fakeFirmware_);
-        fakeFirmwareOut << flasher_test_constants::fakeFirmwareData;
-        fakeFirmwareOut.flush();
+        QDataStream fakeFirmwareOut(&fakeFirmware_);
+        fakeFirmwareOut << mockDevice_->generateMockFirmware();
         fakeFirmware_.close();
     }
 
     if (fakeBootloader_.open() == false) {
         QFAIL("Cannot open fake bootloader file");
     } else {
-        QTextStream fakeBootloaderOut(&fakeBootloader_);
-        fakeBootloaderOut << flasher_test_constants::fakeBootloaderData;
-        fakeBootloaderOut.flush();
+        QDataStream fakeBootloaderOut(&fakeBootloader_);
+        fakeBootloaderOut << mockDevice_->generateMockFirmware(true);
         fakeBootloader_.close();
     }
 
@@ -933,10 +931,16 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 
-    if (fakeFirmware_.open() && fakeFirmwareBackup_.open()) {
-        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+    QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
+
+    if (fakeFirmware_.open()) {
+        if (backedUpFirmware.open(QIODevice::ReadOnly)) {
+            QCOMPARE(backedUpFirmware.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+            backedUpFirmware.close();
+        } else {
+            QFAIL("Failed to open backed up firmware file.");
+        }
         fakeFirmware_.close();
-        fakeFirmwareBackup_.close();
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
@@ -974,10 +978,16 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
     QCOMPARE(recordedMessages.size(),26);
     QCOMPARE(flasherFinishedCount_,1);
 
-    if (fakeFirmware_.open() && fakeFirmwareBackup_.open()) {
-        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+    QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
+
+    if (fakeFirmware_.open()) {
+        if (backedUpFirmware.open(QIODevice::ReadOnly)) {
+            QCOMPARE(backedUpFirmware.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+            backedUpFirmware.close();
+        } else {
+            QFAIL("Failed to open backed up firmware file.");
+        }
         fakeFirmware_.close();
-        fakeFirmwareBackup_.close();
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
@@ -1021,10 +1031,16 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
     QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 
-    if (fakeFirmware_.open() && fakeFirmwareBackup_.open()) {
-        QCOMPARE(fakeFirmwareBackup_.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+    QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
+
+    if (fakeFirmware_.open()) {
+        if (backedUpFirmware.open(QIODevice::ReadOnly)) {
+            QCOMPARE(backedUpFirmware.readAll(), fakeFirmware_.readAll()); //Compare backed up data with the actual source
+            backedUpFirmware.close();
+        } else {
+            QFAIL("Failed to open backed up firmware file.");
+        }
         fakeFirmware_.close();
-        fakeFirmwareBackup_.close();
     } else {
         QFAIL("Failed to open fake firmware source file.");
     }
@@ -1088,7 +1104,6 @@ void FlasherTest::startBackupNoFirmwareTest()
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Start_backup_firmware_no_fw, MockCommand::Start_backup_firmware);
 
     flasher_->backupFirmware();
 
@@ -1113,7 +1128,6 @@ void FlasherTest::backupNoFirmwareTest()
     flasher_ = QSharedPointer<strata::Flasher>(
                 new strata::Flasher(platform_,fakeFirmwareBackup_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
-    mockDevice_->mockSetResponseForCommand(MockResponse::Backup_firmware_no_fw,MockCommand::Backup_firmware);
 
     flasher_->backupFirmware();
 
