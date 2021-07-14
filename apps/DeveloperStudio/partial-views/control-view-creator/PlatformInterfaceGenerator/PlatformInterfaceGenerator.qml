@@ -362,7 +362,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true
             Layout.maximumWidth: 900
-            Layout.preferredHeight: 30
+            Layout.preferredHeight: 60
             Layout.bottomMargin: 15
             Layout.alignment: Qt.AlignHCenter
             spacing: 50
