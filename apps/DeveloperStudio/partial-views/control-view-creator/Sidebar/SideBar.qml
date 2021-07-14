@@ -173,6 +173,7 @@ Item {
             if (treeModel.root.childNode(i).filename === "Control.qml") {
                 let idx = treeModel.index(i)
                 let node = treeModel.root.childNode(i)
+                console.log(node.filename, node.filepath, node.filetype, node.uid)
 
                 openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
                 // Need to use callLater here because the model indices haven't been set yet
