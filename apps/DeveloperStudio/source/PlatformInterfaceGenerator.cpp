@@ -21,23 +21,11 @@ QString PlatformInterfaceGenerator::lastError()
     return lastError_;
 }
 
-bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QString &outputPath)
+bool PlatformInterfaceGenerator::generate(const QString &jsonString, const QString &outputPath)
 {
-    lastError_ = "";
-    if (!QFile::exists(pathToJson)) {
-        lastError_ = "Path to input file (" + pathToJson + ") does not exist.";
-        qCCritical(logCategoryControlViewCreator) << "Input file path does not exist. Tried to read from" << pathToJson;
-        return false;
-    }
-
-    QFile inputFile(pathToJson);
-    inputFile.open(QIODevice::ReadOnly | QIODevice::Text);
-
-    QString fileText = inputFile.readAll();
-    inputFile.close();
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8(), &parseError);
+    QJsonDocument doc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
         lastError_ = "Failed to parse json: " + parseError.errorString();

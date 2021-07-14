@@ -323,46 +323,6 @@ Item {
             color: "black"
         }
 
-        Rectangle {
-            id: warningRect
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            Layout.alignment: Qt.AlignHCenter
-            color: "red"
-
-            SGIcon {
-                source: "qrc:/sgimages/exclamation-triangle.svg"
-                width: 35
-                height: 35
-                anchors.left: warningRect.left
-                anchors.verticalCenter: warningRect.verticalCenter
-            }
-
-            Text {
-                anchors.centerIn: warningRect
-                text: "The P.I.G. will lexicographically sort parameters and properties when building PlatformInterface.qml"
-                padding: 0
-                font {
-                    bold: true
-                    pointSize: 20
-                }
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            SGIcon {
-                source: "qrc:/sgimages/exclamation-triangle.svg"
-                width: 35
-                height: 35
-                anchors.right: warningRect.right
-                anchors.verticalCenter: warningRect.verticalCenter
-            }
-        }
-
-        Item {
-            Layout.preferredHeight: 10
-            Layout.fillWidth: true
-        }
-
         RowLayout {
             Layout.fillWidth: true
             Layout.maximumWidth: 900
@@ -847,7 +807,8 @@ Item {
 
         let jsonObject = createJsonObject();
         let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
-        let result = sdsModel.platformInterfaceGenerator.generate(jsonInputFilePath, outputFileText.text);
+        const jsonString = JSON.stringify(jsonObject, null, 4)
+        let result = sdsModel.platformInterfaceGenerator.generate(jsonString, outputFileText.text);
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
@@ -859,13 +820,13 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
+            sdsModel.debugMenuGenerator.generate(jsonString, outputFileText.text);
         } else {
             alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.color = "green"
             alertToast.interval = 4000
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
+            sdsModel.debugMenuGenerator.generate(jsonString, outputFileText.text);
         }
         alertToast.show();
     }
