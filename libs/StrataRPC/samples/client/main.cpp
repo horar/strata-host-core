@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         clientId = parser.value("i");
     }
 
-    // make sure that context properties are declared before engine, to maintain proper order of destruction
+    // make sure that objects in context properties are declared before engine, to maintain proper order of destruction
     std::unique_ptr<Client> client_(new Client(clientId));
 
     QQmlApplicationEngine engine;

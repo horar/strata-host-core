@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
     loadResources();
 
-    // make sure that context properties are declared before engine, to maintain proper order of destruction
+    // make sure that objects in context properties are declared before engine, to maintain proper order of destruction
     SciModel sciModel_;
 
     QQmlApplicationEngine engine;
