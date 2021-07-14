@@ -2,7 +2,7 @@
 
 #include <QAbstractListModel>
 #include <PlatformManager.h>
-#include <Mock/MockDeviceConstants.h>
+#include <Mock/MockDeviceScanner.h>
 
 class SciMockDeviceModel : public QAbstractListModel
 {
@@ -51,6 +51,6 @@ private:
 
     QList<DeviceData> platforms_;
     strata::PlatformManager *platformManager_;
-    strata::device::scanner::DeviceScannerPtr scanner_;
+    strata::device::scanner::MockDeviceScannerPtr scanner_;
     unsigned latestMockIdx_ = 1;
 };

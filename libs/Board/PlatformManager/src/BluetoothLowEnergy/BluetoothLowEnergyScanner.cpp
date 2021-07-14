@@ -79,6 +79,11 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
 {
     qCDebug(logCategoryDeviceScanner()) << deviceId;
 
+    if (deviceId.startsWith(scannerPrefix()) == false) {
+        qCWarning(logCategoryDeviceScanner()) << "Device ID for incorrect scanner:" << deviceId;
+        return "Device ID for incorrect scanner: " + deviceId;
+    }
+
     if (discoveryAgent_ == nullptr) {
         qCWarning(logCategoryDeviceScanner()) << "Discovery agent not initialized.";
         return "Discovery agent not initialized.";
@@ -114,6 +119,11 @@ QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
 {
     qCDebug(logCategoryDeviceScanner()) << deviceId;
 
+    if (deviceId.startsWith(scannerPrefix()) == false) {
+        qCWarning(logCategoryDeviceScanner()) << "Device ID for incorrect scanner:" << deviceId;
+        return "Device ID for incorrect scanner: " + deviceId;
+    }
+
     if (createdDevices_.remove(deviceId)) {
         emit deviceLost(deviceId);
         return QString();
@@ -137,7 +147,7 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
     for (const auto &info : infoList) {
         if (isEligible(info)) {
             BlootoothLowEnergyInfo infoItem;
-            infoItem.deviceId = BluetoothLowEnergyDevice::createDeviceId(info);
+            infoItem.deviceId = createDeviceId(BluetoothLowEnergyDevice::createUniqueHash(info));
             infoItem.name = info.name();
             infoItem.address = getDeviceAddress(info);
             infoItem.rssi = info.rssi();
