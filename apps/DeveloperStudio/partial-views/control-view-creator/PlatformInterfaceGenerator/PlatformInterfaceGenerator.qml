@@ -648,37 +648,33 @@ Item {
                 commandsModel.append(commandObject);
 
                 const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
-                let payloadPropertiesArray = [];
 
                 if (payload) {
-                    let payloadProperties = Object.keys(payload);
+                    let payloadPropertiesArray = [];
                     let payloadModel = commandsModel.get(j).payload;
-                    for (let k = 0; k < payloadProperties.length; k++) {
+                    for (let k = 0; k < payload.length; k++) {
 
-                        const key = payloadProperties[k];
-                        const type = getType(payload[key]);
+                        const payloadProperty = payload[k];
+                        const type = getType(payloadProperty);
                         if (type === "unknown") {
                             continue
                         }
 
                         let payloadPropObject = Object.assign({}, templatePayload);
-                        payloadPropObject["name"] = key;
+                        payloadPropObject["name"] = payloadProperty.name;
                         payloadPropObject["type"] = type;
                         payloadPropObject["valid"] = true;
                         payloadPropObject["indexSelected"] = -1;
                         if (type !== "array" && type !== "object") {
-                            payloadPropObject["value"] = String(payload[key].value);
+                            payloadPropObject["value"] = String(payloadProperty.value);
                         }
 
                         payloadModel.append(payloadPropObject);
 
-                        let propertyArray = [];
-                        let propertyObject = [];
-
                         if (type === "array") {
-                            generateArrayModel(payload[key], payloadModel.get(k).array);
+                            generateArrayModel(payloadProperty.value, payloadModel.get(k).array);
                         } else if (type === "object") {
-                            generateObjectModel(payload[key], payloadModel.get(k).object);
+                            generateObjectModel(payloadProperty.value, payloadModel.get(k).object);
                         }
                     }
                 }
@@ -703,9 +699,9 @@ Item {
             parentListModel.append(obj);
 
             if (type === "array") {
-                generateArrayModel(arr[i], parentListModel.get(i).array)
+                generateArrayModel(arr[i].value, parentListModel.get(i).array)
             } else if (type === "object") {
-                generateObjectModel(arr[i], parentListModel.get(i).object)
+                generateObjectModel(arr[i].value, parentListModel.get(i).object)
             }
         }
     }
@@ -714,23 +710,21 @@ Item {
       * This function takes an Object and transforms it into an array readable by our delegates
      **/
     function generateObjectModel(object, parentListModel) {
-        let keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            const type = getType(object[key]);
+        for (let i = 0; i < object.length; i++) {
+            const type = getType(object[i]);
 
-            let obj = {"key": key, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""};
+            let obj = {"key": object[i].name, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""};
 
             if (type !== "array" && type !== "object") {
-                obj["value"] = String(object[key].value);
+                obj["value"] = String(object[i].value);
             }
 
             parentListModel.append(obj);
 
             if (type === "array") {
-                generateArrayModel(object[key], parentListModel.get(i).array)
+                generateArrayModel(object[i].value, parentListModel.get(i).array)
             } else if (type === "object") {
-                generateObjectModel(object[key], parentListModel.get(i).object)
+                generateObjectModel(object[i].value, parentListModel.get(i).object)
             }
         }
     }
@@ -739,18 +733,12 @@ Item {
       * This function returns the type of an item
      **/
     function getType(item) {
-        if (Array.isArray(item)) {
+        if (item.type.startsWith("array")) {
             return "array";
-        } else if (typeof item === "object") {
-            // if item only has 2 properties, type and value, it should be whatever type it claims
-            if (item.hasOwnProperty("type") && item.hasOwnProperty("value") && Object.keys(item).length === 2){
-                return item.type
-            } else {
-                return "object";
-            }
+        } else if (item.type.startsWith("object")) {
+            return "object";
         } else {
-            console.error("Unknown JSON type:", JSON.stringify(item))
-            return "unknown";
+            return item.type;
         }
     }
 
