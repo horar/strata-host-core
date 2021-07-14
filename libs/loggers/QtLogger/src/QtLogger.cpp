@@ -27,6 +27,8 @@ QtLogger &QtLogger::instance()
 void QtLogger::MsgHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     if (visualEditorReloading) {
+        // While the Visual Editor loads, the loaded file can throw reference errors (and others) that should be ignored.
+        // This actively suppresses those logs during the reload process.
         return;
     }
 
