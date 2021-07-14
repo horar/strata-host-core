@@ -38,7 +38,8 @@ Item {
         "indexSelected": 0,
         "valid": false,
         "array": [], // This is only filled if the type == "array"
-        "object": []
+        "object": [],
+        "value": "0"
     });
 
     property string inputFilePath
@@ -656,11 +657,18 @@ Item {
 
                         const key = payloadProperties[k];
                         const type = getType(payload[key]);
+                        if (type === "unknown") {
+                            continue
+                        }
+
                         let payloadPropObject = Object.assign({}, templatePayload);
                         payloadPropObject["name"] = key;
                         payloadPropObject["type"] = type;
                         payloadPropObject["valid"] = true;
                         payloadPropObject["indexSelected"] = -1;
+                        if (type !== "array" && type !== "object") {
+                            payloadPropObject["value"] = String(payload[key].value);
+                        }
 
                         payloadModel.append(payloadPropObject);
 
@@ -686,7 +694,11 @@ Item {
     function generateArrayModel(arr, parentListModel) {
         for (let i = 0; i < arr.length; i++) {
             const type = getType(arr[i]);
-            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel};
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""};
+
+            if (type !== "array" && type !== "object") {
+                obj["value"] = String(arr[i].value);
+            }
 
             parentListModel.append(obj);
 
@@ -707,7 +719,12 @@ Item {
             const key = keys[i];
             const type = getType(object[key]);
 
-            let obj = {"key": key, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel};
+            let obj = {"key": key, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""};
+
+            if (type !== "array" && type !== "object") {
+                obj["value"] = String(object[key].value);
+            }
+
             parentListModel.append(obj);
 
             if (type === "array") {
@@ -725,9 +742,15 @@ Item {
         if (Array.isArray(item)) {
             return "array";
         } else if (typeof item === "object") {
-            return "object";
+            // if item only has 2 properties, type and value, it should be whatever type it claims
+            if (item.hasOwnProperty("type") && item.hasOwnProperty("value") && Object.keys(item).length === 2){
+                return item.type
+            } else {
+                return "object";
+            }
         } else {
-            return item;
+            console.error("Unknown JSON type:", JSON.stringify(item))
+            return "unknown";
         }
     }
 
@@ -762,7 +785,10 @@ Item {
                     } else if (payloadProperty.type === "object") {
                         commandObj["payload"][payloadProperty.name] = createJsonObjectFromObjectProperty(payloadProperty.object, {});
                     } else {
-                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
+                        commandObj["payload"][payloadProperty.name] = {
+                            type: payloadProperty.type,
+                            value: getTypedValue(payloadProperty.type, payloadProperty.value)
+                        };
                     }
                 }
                 commands.push(commandObj)
@@ -781,7 +807,10 @@ Item {
             } else if (arrayElement.type === "array") {
                 outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))
             } else {
-                outputArr.push(arrayElement.type)
+                outputArr.push({
+                                   type: arrayElement.type,
+                                   value: getTypedValue(arrayElement.type, arrayElement.value)
+                               })
             }
         }
         return outputArr;
@@ -797,12 +826,38 @@ Item {
             } else if (objectProperty.type === "object") {
                 outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})
             } else {
-                outputObj[objectProperty.key] = objectProperty.type
+                outputObj[objectProperty.key] = {
+                    type: objectProperty.type,
+                    value: getTypedValue(objectProperty.type, objectProperty.value)
+                };
             }
         }
         return outputObj;
     }
 
+    /**
+      * Convert string values to typed values
+     **/
+    function getTypedValue (type, value) {
+        switch (type) {
+            case "int":
+                return parseInt(value)
+            case "double":
+                return parseFloat(value)
+            case "bool":
+                if (value === "false") {
+                    return false
+                } else {
+                    return true
+                }
+            default: // case "string"
+                return value
+        }
+    }
+
+    /**
+      * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
+     **/
     function generatePlatformInterface() {
         let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
 

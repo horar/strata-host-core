@@ -296,7 +296,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
             return "";
         }
 
-        if (propValue.isObject() || (propValue.isArray() && propValue.toArray().count() > 0)) {
+        if ((propType == "var" && propValue.isObject()) || (propValue.isArray() && propValue.toArray().count() > 0)) {
             continue;
         }
 
@@ -405,12 +405,12 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
             QString childType = getType(val);
             if (childType.isNull()) {
-                lastError_ = "Unrecognized type of property for notificaition " + parentId;
+                lastError_ = "Unrecognized type of property for notification " + parentId;
                 qCCritical(logCategoryControlViewCreator) << lastError_;
                 return;
             }
 
-            if (val.isObject() || (val.isArray() && val.toArray().count() > 0)) {
+            if ((childType == "var" && val.isObject()) || (val.isArray() && val.toArray().count() > 0)) {
                 continue;
             }
 
@@ -460,25 +460,29 @@ QString PlatformInterfaceGenerator::getType(const QJsonValue &value)
 {
     if (value.isArray()) {
         return "var";
-    } else if (value.isString()) {
-        QString str = value.toString();
-        if (str == TYPE_STRING) {
-            return TYPE_STRING;
-        } else if (str == TYPE_INT) {
-            return TYPE_INT;
-        } else if (str == TYPE_DOUBLE) {
-            return TYPE_DOUBLE;
-        } else if (str == TYPE_BOOL) {
-            return TYPE_BOOL;
-        } else if (str == TYPE_ARRAY_DYNAMIC) {
-            return "var";
-        } else if (str == TYPE_OBJECT_DYNAMIC) {
-            return "var";
-        } else {
-            lastError_ = "Unknown type " + str;
-            return QString();
-        }
     } else if (value.isObject()) {
+        QJsonObject object = value.toObject();
+        if (object.length() == 2 && object.contains("value") && object.contains("type")){
+            QJsonValue typeValue = object.value("type");
+            QString str = typeValue.toString();
+
+            if (str == TYPE_STRING) {
+                return TYPE_STRING;
+            } else if (str == TYPE_INT) {
+                return TYPE_INT;
+            } else if (str == TYPE_DOUBLE) {
+                return TYPE_DOUBLE;
+            } else if (str == TYPE_BOOL) {
+                return TYPE_BOOL;
+            } else if (str == TYPE_ARRAY_DYNAMIC) {
+                return "var";
+            } else if (str == TYPE_OBJECT_DYNAMIC) {
+                return "var";
+            } else {
+                lastError_ = "Unknown type " + str;
+                return QString();
+            }
+        }
         return "var";
     } else {
         lastError_ = "Unknown type";
@@ -488,6 +492,7 @@ QString PlatformInterfaceGenerator::getType(const QJsonValue &value)
 
 QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, const QString &propertyType, const int indentLevel)
 {
+    QJsonObject object = value.toObject();
     if (propertyType == "var" && value.isArray()) {
         QString returnText = "[";
         QJsonArray arr = value.toArray();
@@ -500,13 +505,17 @@ QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, co
         returnText += "]";
         return returnText;
     } else if (propertyType == TYPE_BOOL) {
-        return "false";
+        if (object.value("value").toBool() == 1) {
+            return "true";
+        } else {
+            return "false";
+        }
     } else if (propertyType == TYPE_STRING) {
-        return "\"\"";
+        return "\"" + object.value("value").toString() + "\"";
     } else if (propertyType == TYPE_INT) {
-        return "0";
+        return QString::number(object.value("value").toInt());
     } else if (propertyType == TYPE_DOUBLE) {
-        return "0.0";
+        return QString::number(object.value("value").toDouble());
     } else if (propertyType == "var" && value.isObject()) {
         QString returnText = "{\n";
         QJsonObject obj = value.toObject();
