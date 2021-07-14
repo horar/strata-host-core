@@ -1,6 +1,5 @@
 #include "SciMockDeviceModel.h"
 #include <Mock/MockDevice.h>
-#include <Mock/MockDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
 using strata::PlatformManager;
