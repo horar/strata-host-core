@@ -103,11 +103,13 @@ int main(int argc, char *argv[])
 
     loadResources();
 
+    // make sure that objects in context properties are declared before engine, to maintain proper order of destruction
+    SciModel sciModel_;
+
     QQmlApplicationEngine engine;
 
     addImportPaths(&engine);
 
-    SciModel sciModel_;
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

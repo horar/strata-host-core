@@ -601,7 +601,7 @@ Window {
 
                                         delegate: Item {
                                             height: 40
-                                            width: parent.width
+                                            width: ListView.view.width
 
                                             SGText {
                                                 id: opnText
