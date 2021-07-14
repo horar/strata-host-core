@@ -117,7 +117,7 @@ FocusScope {
                         "title": dialogLabel,
                         "selectExisting": dialogSelectExisting,
                         "defaultSuffix": dialogDefaultSuffix,
-                        "folderRequested": resolveAbsoluteFileUrl(textEdit.text),
+                        "folderRequested": resolveAbsoluteFileUrl(textEdit.text, dialogSelectExisting),
                         "nameFilters": dialogNameFilters,
                     })
 
@@ -132,8 +132,10 @@ FocusScope {
         dialog.open();
     }
 
-    function resolveAbsoluteFileUrl(path) {
-        return CommonCpp.SGUtilsCpp.pathToUrl(
-            CommonCpp.SGUtilsCpp.parentDirectoryPath(path))
+    function resolveAbsoluteFileUrl(path, selectExisting) {
+        let fullPath = selectExisting
+                       ? CommonCpp.SGUtilsCpp.parentDirectoryPath(path)
+                       : CommonCpp.SGUtilsCpp.fileAbsolutePath(path)
+        return CommonCpp.SGUtilsCpp.pathToUrl(fullPath)
     }
 }
