@@ -71,9 +71,13 @@ void SciCommandHistoryModel::setMaximumCount(int maximumCount)
     }
 }
 
-void SciCommandHistoryModel::add(const QString &message, bool isJsonValid)
+void SciCommandHistoryModel::add(const QString &message)
 {
     QString messageToStore = message;
+
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+    bool isJsonValid = parseError.error == QJsonParseError::NoError;
 
     if (isJsonValid) {
         messageToStore = SGJsonFormatter::minifyJson(message);

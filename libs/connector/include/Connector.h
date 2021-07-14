@@ -1,67 +1,3 @@
-/**
-******************************************************************************
-* @file Connector.h
-* @author Prasanth Vivek
-* $Rev: 2 $
-* $Date: 2021-02-02
-* @brief Abstract class for connector objects
-******************************************************************************
-
-* @copyright Copyright 2021 ON Semiconductor
-*/
-
-/**
- * @mainpage libconnector API
- *
- * Introduction
- * ============
- *
- * linconnector is minimalistic library written in cpp. Libconnector uses
- * "zeroMQ" for socket I/O operation.
- *
- * The library was conceived by Ian Cain and Prasanth Vivek.
- *
- * API information
- * ===============
- *
- * The following subsections will help explain the principles of the API.
- *
- * Headers
- * -------
- *
- * To use libconnector functions in your code, you should include the
- * Connector.h header, i.e. "#include <Connector.h>".
- *
- * Functions
- * ---------
- *
- * The functions provided by the library are documented in detail in
- * the following sections:
- *
- * - getConnector() (creates Connector object with the specified CONNECTOR_TYPE)
- * - open() (opens the socket, configuring and connecting it to the speciffied IP address)
- * - close() (closes the open socket, to reuse the socket, open() must be called again)
- * - shutdown() (sends terminate signal to all ongoing read/write operations on the open socket, should be later followed by close())
- * - read() (reads data from open socket using either blocking or non-blocking approach)
- * - send() (writes data into open socket)
- * - getFileDescriptor() (get file descriptor information of open socket)
- * - addSubscriber() (for publisher socket, adds a subscriber to the list of subscribers)
- * - getDealerID() (gets the dealer id of the socket)
- * - setDealerID() (sets the dealer id of the socket)
- * - isConnected() (returns if the socket is currently connected)
- *
- * Debugging
- * ---------
- *
- * The library outputs extensive tracing and debugging information using Qt
- * logging framework. Simply enable adequate log level in the Qt application
- * using this library and it will log the messages.
- *
- * No guarantees are made about the content of the debug output; it is chosen
- * to suit the needs of the developers and may change between releases.
- *
- */
-
 #pragma once
 
 #include <iostream>
@@ -114,6 +50,8 @@ public:
     std::string getDealerID() const;
 
     bool isConnected() const;
+    virtual bool hasReadEvent();
+    virtual bool hasWriteEvent();
 
     friend std::ostream& operator<<(std::ostream& stream, const Connector& c);
 

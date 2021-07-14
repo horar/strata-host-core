@@ -11,6 +11,8 @@
 #include "SGJsonSyntaxHighlighter.h"
 #include "SGJsonFormatter.h"
 #include "SGTranslator.h"
+#include "SGTextHighlighter.h"
+#include "SGConversion.h"
 
 #include <QtQml/qqml.h>
 
@@ -43,4 +45,6 @@ void CommonCppPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<SGVersionUtils>(uri, 1, 0, "SGVersionUtils", SGVersionUtils::SingletonTypeProvider);
     qmlRegisterType<SGJsonSyntaxHighlighter>(uri, 1, 0, "SGJsonSyntaxHighlighter");
     qmlRegisterType<SGTranslator>(uri, 1, 0, "SGTranslator");
+    qmlRegisterType<SGTextHighlighter>(uri, 1, 0, "SGTextHighlighter");
+    qmlRegisterSingletonType<SGConversion>(uri, 1, 0,"SGConversion", SGConversion::singletonTypeProvider);
 }

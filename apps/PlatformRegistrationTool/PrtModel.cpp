@@ -446,6 +446,10 @@ void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recogniz
     Q_UNUSED(recognized)
 
     strata::platform::PlatformPtr platform = platformManager_.getPlatform(deviceId);
+    if (platform == nullptr) {
+        qCWarning(logCategoryPrt).noquote() << "Platform not found by its id" << deviceId;
+        return;
+    }
 
     if (platformList_.indexOf(platform) < 0) {
         //new platform connected
