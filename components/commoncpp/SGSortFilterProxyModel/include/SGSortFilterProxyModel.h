@@ -1,5 +1,4 @@
-#ifndef SGSORTFILTERPROXYMODEL_H
-#define SGSORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QtCore/qsortfilterproxymodel.h>
 #include <QtQml/qqmlparserstatus.h>
@@ -115,5 +114,3 @@ private:
 private slots:
     void sourceModelRolesMaybeChanged();
 };
-
-#endif  // SGSORTFILTERPROXYMODEL_H
