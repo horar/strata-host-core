@@ -10,7 +10,7 @@ import tech.strata.logger 1.0
 
 Rectangle {
     id: root
-    width: parent.width
+    width: ListView.view.width
     implicitHeight: content.implicitHeight + content.anchors.margins * 2
 
     property int modelIndex
