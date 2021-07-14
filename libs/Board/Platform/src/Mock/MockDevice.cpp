@@ -52,9 +52,9 @@ void MockDevice::close()
     }
 }
 
-QByteArray MockDevice::createDeviceId(const QString& mockName)
+QByteArray MockDevice::createUniqueHash(const QString& mockName)
 {
-    return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
+    return QByteArray(QByteArray::number(qHash(mockName), 16));
 }
 
 unsigned MockDevice::sendMessage(const QByteArray& msg)

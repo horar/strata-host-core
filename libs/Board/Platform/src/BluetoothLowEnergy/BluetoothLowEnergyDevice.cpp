@@ -586,7 +586,7 @@ QByteArray BluetoothLowEnergyDevice::getSignalSenderService() const
     return serviceUuid;
 }
 
-QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &info)
+QByteArray BluetoothLowEnergyDevice::createUniqueHash(const QBluetoothDeviceInfo &info)
 {
     QByteArray idBase;
     if (info.deviceUuid().isNull() == false) {
@@ -594,7 +594,7 @@ QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &
     } else if (info.address().isNull() == false) {
         idBase = info.address().toString().toUtf8();
     } else {
-        qCWarning(logCategoryDeviceBLE) << "No device ID, using random";
+        qCWarning(logCategoryDeviceBLE) << "No unique device identifier, using random";
         QVector<quint32> data;
         data.resize(4);
         QRandomGenerator::system()->fillRange(data.data(), data.size());
@@ -603,7 +603,7 @@ QByteArray BluetoothLowEnergyDevice::createDeviceId(const QBluetoothDeviceInfo &
         }
     }
 
-    return QByteArray('b' + QByteArray::number(qHash(idBase), 16));
+    return QByteArray(QByteArray::number(qHash(idBase), 16));
 }
 
 }  // namespace

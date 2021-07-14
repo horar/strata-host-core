@@ -48,6 +48,7 @@ namespace strata::device {
             MockDevice,
             TcpDevice,
             BLEDevice
+            // IMPORTANT: If adding new values, add them to allScannerTypes_ in DeviceScanner.cpp as well.
         };
         Q_ENUM(Type)
 

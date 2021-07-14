@@ -40,6 +40,13 @@ public:
     virtual void deinit() override;
 
     /**
+     * Create ID for mock device - for external callers.
+     * @param mockName name of the mock device
+     * @return ID for mock device
+     */
+    QByteArray mockCreateDeviceId(const QString& mockName);
+
+    /**
      * Will create new mock device and emit detected signal
      * @param deviceId device ID
      * @param name mock device name
@@ -71,5 +78,7 @@ private:
     std::set<QByteArray> deviceIds_;
     bool running_ = false;
 };
+
+typedef std::shared_ptr<MockDeviceScanner> MockDeviceScannerPtr;
 
 }  // namespace

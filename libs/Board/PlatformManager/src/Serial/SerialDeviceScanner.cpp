@@ -64,7 +64,7 @@ void SerialDeviceScanner::checkNewSerialDevices() {
         }
 #endif
         // device ID must be int because of integration with QML
-        const QByteArray deviceId = SerialDevice::createDeviceId(portName);
+        const QByteArray deviceId = createDeviceId(SerialDevice::createUniqueHash(portName));
         auto [iter, success] = detectedDeviceIds.emplace(deviceId);
         if (success == false) {
             // Error: hash already exists!
