@@ -39,9 +39,8 @@ void SGSortFilterProxyModel::setSourceModel(QObject *sourceModel)
     disconnectFromSourceModel();
 
     QAbstractItemModel *m = qobject_cast<QAbstractItemModel *>(sourceModel);
-    if (m != nullptr) {
-        /* In case source model is a ListModel, it does not have roles until first item is inserted,
-           so we have to wait for it */
+    if (m != nullptr && m->roleNames().count() == 0) {
+        /* In case source model is a ListModel, it gains roles only after first item is inserted. */
         connect(m, &QAbstractItemModel::rowsInserted, this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
         connect(m, &QAbstractItemModel::modelReset, this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
         connect(m, &QAbstractItemModel::layoutChanged, this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
