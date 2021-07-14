@@ -76,11 +76,12 @@ private slots:
 private:
     bool isEligible(const QBluetoothDeviceInfo &info) const;
     QString getDeviceAddress(const QBluetoothDeviceInfo &info) const;
+    BlootoothLowEnergyInfo convertBlootoothLowEnergyInfo(const QBluetoothDeviceInfo &info) const;
 
     QBluetoothDeviceDiscoveryAgent *discoveryAgent_ = nullptr;
     const std::chrono::milliseconds discoveryTimeout_ = std::chrono::milliseconds(5000);
     QList<BlootoothLowEnergyInfo> discoveredDevices_;
-    QSet<QByteArray> createdDevices_;
+    QHash<QByteArray, QBluetoothDeviceInfo> createdDevices_;
     QHash<QByteArray, QBluetoothDeviceInfo> discoveredDevicesMap_; // map deviceId -> QBluetoothDeviceInfo
 
     void createDiscoveryAgent();

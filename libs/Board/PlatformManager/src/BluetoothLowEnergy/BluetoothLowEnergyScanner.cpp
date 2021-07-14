@@ -110,7 +110,7 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
 
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    createdDevices_.insert(deviceId);
+    createdDevices_.insert(deviceId, deviceInfo);
     emit deviceDetected(platform);
     return QString();
 }
@@ -146,13 +146,7 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
     qCDebug(logCategoryDeviceScanner) << "";
     for (const auto &info : infoList) {
         if (isEligible(info)) {
-            BlootoothLowEnergyInfo infoItem;
-            infoItem.deviceId = createDeviceId(BluetoothLowEnergyDevice::createUniqueHash(info));
-            infoItem.name = info.name();
-            infoItem.address = getDeviceAddress(info);
-            infoItem.rssi = info.rssi();
-            infoItem.manufacturerIds = info.manufacturerIds();
-            infoItem.isStrata = infoItem.manufacturerIds.contains(BluetoothLowEnergyDevice::MANUFACTURER_ID_ON_SEMICONDICTOR); // TODO!!! replace by real detection once the service+detection design is final
+            BlootoothLowEnergyInfo infoItem = convertBlootoothLowEnergyInfo(info);
 
             discoveredDevices_.append(infoItem);
             discoveredDevicesMap_.insert(infoItem.deviceId, info);
@@ -167,8 +161,36 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
             qCDebug(logCategoryDeviceScanner) << "";
         }
     }
+    qCDebug(logCategoryDeviceScanner) << "connected devices:";
+    qCDebug(logCategoryDeviceScanner) << "";
+    for (auto it = createdDevices_.keyValueBegin(); it != createdDevices_.keyValueEnd(); it++) {
+        BlootoothLowEnergyInfo infoItem = convertBlootoothLowEnergyInfo((*it).second);
+        infoItem.deviceId = (*it).first; // just in case, deviceId computation may return different value under certain circumstances
+        discoveredDevices_.append(infoItem);
+        discoveredDevicesMap_.insert((*it).first, (*it).second);
+
+        qCDebug(logCategoryDeviceScanner) << "device ID" << infoItem.deviceId;
+        qCDebug(logCategoryDeviceScanner) << "name" << infoItem.name;
+        qCDebug(logCategoryDeviceScanner) << "device address" << infoItem.address;
+        qCDebug(logCategoryDeviceScanner) << "rssi" << infoItem.rssi;
+        qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
+        qCDebug(logCategoryDeviceScanner) << "is Strata" << infoItem.isStrata;
+        qCDebug(logCategoryDeviceScanner) << "";
+    }
 
     emit discoveryFinished(DiscoveryFinishStatus::Finished, "");
+}
+
+BlootoothLowEnergyInfo BluetoothLowEnergyScanner::convertBlootoothLowEnergyInfo(const QBluetoothDeviceInfo &info) const
+{
+    BlootoothLowEnergyInfo infoItem;
+    infoItem.deviceId = createDeviceId(BluetoothLowEnergyDevice::createUniqueHash(info));
+    infoItem.name = info.name();
+    infoItem.address = getDeviceAddress(info);
+    infoItem.rssi = info.rssi();
+    infoItem.manufacturerIds = info.manufacturerIds();
+    infoItem.isStrata = infoItem.manufacturerIds.contains(BluetoothLowEnergyDevice::MANUFACTURER_ID_ON_SEMICONDICTOR); // TODO!!! replace by real detection once the service+detection design is final
+    return infoItem;
 }
 
 void BluetoothLowEnergyScanner::discoveryCancelledHandler()
