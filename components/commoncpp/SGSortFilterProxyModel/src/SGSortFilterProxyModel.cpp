@@ -144,13 +144,9 @@ void SGSortFilterProxyModel::setSortAscending(bool sortAscending)
 {
     if (sortAscending_ != sortAscending) {
         sortAscending_ = sortAscending;
-        if (complete_) {
-            if (sortEnabled_) {
-                QSortFilterProxyModel::sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
-            }
-        }
-
         emit sortAscendingChanged();
+
+        doSort();
     }
 }
 
@@ -213,13 +209,10 @@ bool SGSortFilterProxyModel::sortEnabled()
 void SGSortFilterProxyModel::setSortEnabled(bool sortEnabled)
 {
     if (sortEnabled_ != sortEnabled) {
-
         sortEnabled_ = sortEnabled;
         emit sortEnabledChanged();
 
-        if (sortEnabled_) {
-            sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
-        }
+        doSort();
     }
 }
 
@@ -233,10 +226,7 @@ void SGSortFilterProxyModel::componentComplete()
     complete_ = true;
     doSetFilterRole();
     doSetSortRole();
-
-    if (sortEnabled_) {
-        QSortFilterProxyModel::sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
-    }
+    doSort();
 }
 
 int SGSortFilterProxyModel::naturalCompare(const QString &left, const QString &right) const
@@ -400,6 +390,18 @@ void SGSortFilterProxyModel::disconnectFromSourceModel()
     if (QSortFilterProxyModel::sourceModel()) {
         disconnect(QSortFilterProxyModel::sourceModel(), nullptr, this, SLOT(sourceModelRolesMaybeChanged()));
     }
+}
+
+void SGSortFilterProxyModel::doSort()
+{
+    if (complete_ == false) {
+        return;
+    }
+
+    int column = sortEnabled_ ? 0 : -1;
+    Qt::SortOrder order = sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder;
+
+    sort(column, order);
 }
 
 void SGSortFilterProxyModel::sourceModelRolesMaybeChanged()
