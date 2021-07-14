@@ -10,36 +10,36 @@ Item {
     id: root
 
     readonly property var baseModel: ({
-                                          "commands": [],
-                                          "notifications": []
-                                      });
+        "commands": [],
+        "notifications": []
+    });
 
     readonly property var templateCommand: ({
-                                                "type": "cmd",
-                                                "name": "",
-                                                "valid": false,
-                                                "payload": [],
-                                                "editing": false
-                                            });
+        "type": "cmd",
+        "name": "",
+        "valid": false,
+        "payload": [],
+        "editing": false
+    });
 
     readonly property var templateNotification: ({
-                                                     "type": "value",
-                                                     "name": "",
-                                                     "valid": false,
-                                                     "payload": [
-                                                         templatePayload
-                                                     ],
-                                                     "editing": false
-                                                 });
+         "type": "value",
+         "name": "",
+         "valid": false,
+         "payload": [
+             templatePayload
+         ],
+         "editing": false
+     });
 
     readonly property var templatePayload: ({
-                                                "name": "", // The name of the property
-                                                "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
-                                                "indexSelected": 0,
-                                                "valid": false,
-                                                "array": [], // This is only filled if the type == "array"
-                                                "object": []
-                                            });
+        "name": "", // The name of the property
+        "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
+        "indexSelected": 0,
+        "valid": false,
+        "array": [], // This is only filled if the type == "array"
+        "object": []
+    });
 
     property string inputFilePath
 
