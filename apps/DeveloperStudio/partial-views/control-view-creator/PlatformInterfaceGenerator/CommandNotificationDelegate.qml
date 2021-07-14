@@ -6,7 +6,7 @@ import tech.strata.sgwidgets 1.0
 ColumnLayout {
     id: commandsColumn
 
-    width: parent.width
+    width: ListView.view.width
 
     property ListModel payloadModel: model.payload
     property var modelIndex: index
