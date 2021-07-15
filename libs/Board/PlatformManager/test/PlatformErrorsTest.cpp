@@ -62,7 +62,7 @@ void PlatformErrorsTest::addMockDevice()
 
     platform_ = platformManager_->getPlatform(deviceId_);
     QVERIFY(platform_.get() != nullptr);
-    auto device = platform_->getDevice();
+    auto device = mockDeviceScanner_->getMockDevice(platform_->deviceId());
     QVERIFY(device.get() != nullptr);
     mockDevice_ = std::dynamic_pointer_cast<strata::device::MockDevice>(device);
     QVERIFY(mockDevice_.get() != nullptr);

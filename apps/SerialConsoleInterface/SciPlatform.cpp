@@ -1,6 +1,8 @@
 #include "SciPlatform.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <Mock/MockDeviceScanner.h>
+
 #include <SGUtilsCpp.h>
 #include <SGJsonFormatter.h>
 
@@ -18,8 +20,9 @@ SciPlatform::SciPlatform(
 {
     verboseName_ = "Unknown Board";
     status_ = PlatformStatus::Disconnected;
+    platformManager_ = platformManager;
 
-    mockDevice_ = new SciMockDevice(platformManager);
+    mockDevice_ = new SciMockDevice(platformManager_);
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
@@ -69,7 +72,13 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
         setDeviceType(platform_->deviceType());
         mockDevice_->mockSetDeviceId(deviceId_);
         if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
-            strata::device::DevicePtr device = platform_->getDevice();
+            auto scanner = platformManager_->getScanner(strata::device::Device::Type::MockDevice);
+            auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(scanner);
+            if (mockScanner == nullptr) {
+                qCCritical(logCategorySci) << "cannot get scanner for mock devices";
+                return;
+            }
+            strata::device::DevicePtr device = mockScanner->getMockDevice(deviceId_);
             mockDevice_->setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
         }
 
