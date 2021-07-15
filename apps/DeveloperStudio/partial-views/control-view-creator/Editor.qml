@@ -79,13 +79,14 @@ Item {
         SideBar {
             id: sideBar
             Layout.fillHeight: true
-            Layout.minimumWidth: 250
-            Layout.maximumWidth: parent.width * 0.75
+            implicitWidth: 200
+            Layout.minimumWidth: 25
         }
 
         ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.minimumWidth: parent.width * 0.5
             spacing: 0
 
             Rectangle {
@@ -226,7 +227,7 @@ Item {
                             acceptedButtons: Qt.MiddleButton
 
                             onClicked: {
-                                 closeFileTab(index, model)
+                                closeFileTab(index, model)
                             }
                         }
 

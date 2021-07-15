@@ -1,0 +1,13 @@
+    LayoutSGCircularGauge { // start_%1
+        id: sgCircularGauge_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 5
+        layoutInfo.rowsTall: 5
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        unitText: "%"
+        minimumValue: 0
+        maximumValue: 10
+        value: 10
+    } // end_%1

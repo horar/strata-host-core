@@ -1,0 +1,8 @@
+    LayoutDivider { // start_%1
+        id: divider_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 5
+        layoutInfo.rowsTall: 1
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+    } // end_%1

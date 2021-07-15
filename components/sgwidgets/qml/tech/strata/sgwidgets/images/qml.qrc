@@ -58,5 +58,6 @@
         <file>redo.svg</file>
         <file>undo.svg</file>
         <file>minus.svg</file>
+        <file>three-dots.svg</file>
     </qresource>
 </RCC>

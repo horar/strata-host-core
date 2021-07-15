@@ -1,0 +1,10 @@
+    LayoutRectangle { // start_%1
+        id: rect_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 3
+        layoutInfo.rowsTall: 3
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        color: "grey"
+    } // end_%1

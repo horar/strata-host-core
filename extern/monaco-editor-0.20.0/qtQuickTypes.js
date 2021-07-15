@@ -1772,7 +1772,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1802,7 +1802,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "Item",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1829,7 +1829,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1859,7 +1859,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "QtObject",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": true,
             "isVisualWidget": true,
         },
@@ -1898,7 +1898,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1931,7 +1931,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1964,7 +1964,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2024,7 +2024,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2087,7 +2087,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2165,7 +2165,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2201,7 +2201,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2264,7 +2264,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2387,7 +2387,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2414,7 +2414,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2480,7 +2480,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2546,7 +2546,7 @@ const qtTypeJson = {
                 },
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2604,7 +2604,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "LayoutContainer",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -6772,7 +6772,7 @@ const qtTypeJson = {
                 }
             },
             "inherits": "",
-            "source": "tech.strata.sglayouts 1.0",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -7012,7 +7012,7 @@ const qtTypeJson = {
                 "1.0",
             ]
         },
-        "tech.strata.sglayouts": {
+        "tech.strata.sglayout": {
             "ver": [
                 "1.0"
             ]

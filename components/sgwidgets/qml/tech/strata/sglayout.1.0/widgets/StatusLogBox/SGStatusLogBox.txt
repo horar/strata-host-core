@@ -1,0 +1,17 @@
+    LayoutSGStatusLogBox { // start_%1
+        id: sgStatusLog_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 10
+        layoutInfo.rowsTall: 5
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        title : "Status Log"
+
+        // appends example messages to the box
+        Component.onCompleted: {
+            for (let i = 0; i < 10; i++) {
+                append("Message " + i)
+            }
+        }
+    } // end_%1

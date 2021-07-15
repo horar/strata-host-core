@@ -1,0 +1,14 @@
+    LayoutText { // start_%1
+        id: text_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 5
+        layoutInfo.rowsTall: 1
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        text: "Your Text Here"
+        fontSizeMode: Text.Fit
+        font.pixelSize: 40
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+    } // end_%1
