@@ -241,15 +241,15 @@ void BleDeviceModel::disconnectReplyHandler(QJsonObject payload)
 void BleDeviceModel::updateDeviceConnection(QJsonObject payload)
 {
     QJsonArray list = payload.value("list").toArray();
-    QSet<QString> connectedDeviceIds;
+    connectedDeviceIds_.clear();
 
     for (const QJsonValueRef value : list) {
         QString deviceId = value.toObject().value("device_id").toString();
-        connectedDeviceIds.insert(deviceId);
+        connectedDeviceIds_.insert(deviceId);
     }
 
     for (int i = 0; i < data_.length(); ++i) {
-        bool isConnected = connectedDeviceIds.contains(data_.at(i).deviceId);
+        bool isConnected = connectedDeviceIds_.contains(data_.at(i).deviceId);
         setPropertyAt(i, isConnected, IsConnectedRole);
     }
 }
@@ -300,6 +300,7 @@ void BleDeviceModel::populateModel(const QJsonObject &payload)
         item.address = device.value("address").toString();
         item.rssi = device.value("rssi").toInt();
         item.isStrata = device.value("is_strata").toBool();
+        item.isConnected = connectedDeviceIds_.contains(item.deviceId);
 
         data_.append(item);
     }
