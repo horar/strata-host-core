@@ -424,6 +424,7 @@ const qtTypeJson = {
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "CircularGauge": {
             "properties": {
@@ -456,6 +457,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Extra",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Column": {
             "properties": {
@@ -500,6 +502,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ColumnLayout": {
             "properties": {
@@ -523,6 +526,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "ComboBox": {
             "properties": {
@@ -612,6 +616,7 @@ const qtTypeJson = {
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Component": {
             "properties": {
@@ -653,6 +658,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Connections": {
             "properties": {
@@ -679,6 +685,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "QtQml",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Control": {
             "properties": {
@@ -786,6 +793,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Dialog": {
             "properties": {
@@ -854,6 +862,7 @@ const qtTypeJson = {
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "FileDialog": {
             "properties": {
@@ -913,6 +922,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Dialogs",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Flickable": {
             "properties": {
@@ -1070,6 +1080,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Flow": {
             "properties": {
@@ -1123,6 +1134,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Grid": {
             "properties": {
@@ -1197,6 +1209,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "GridLayout": {
             "properties": {
@@ -1232,6 +1245,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Image": {
             "properties": {
@@ -1294,6 +1308,7 @@ const qtTypeJson = {
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Item": {
             "properties": {
@@ -1477,6 +1492,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Keys": {
             "properties": {
@@ -1621,6 +1637,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "Label": {
             "properties": {
@@ -1662,6 +1679,7 @@ const qtTypeJson = {
             "inherits": "Text",
             "source": "Controls",
             "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "Layout": {
             "properties": {
@@ -1733,6 +1751,7 @@ const qtTypeJson = {
             "inherits": "",
             "source": "Layouts",
             "nonInstantiable": true,
+            "isVisualWidget": false,
         },
         "LayoutButton": {
             "properties": {

@@ -89,7 +89,7 @@ class QtSuggestions {
 
         this.createSuggestions(removeDuplicates(properties), "property")
         this.createSuggestions(removeDuplicates(idKeys), "property")
-        this.createSuggestions(removeDuplicates(custom_functions), "item")
+        this.createSuggestions(removeDuplicates(custom_functions), "property")
     }
 
     createSuggestions(arr, type = "item", map = {}) {
@@ -101,7 +101,11 @@ class QtSuggestions {
                     this.suggestions.push(createDynamicSuggestion(arr[i], type))
                 }
             } else {
-                this.suggestions.push(createDynamicSuggestion(arr[i], type))
+                if (type === "item" && qtTypeJson["sources"][arr[i]]["isVisualWidget"] && arr[i] !== "UIBase") {
+                    this.suggestions.push(createDynamicSuggestion(arr[i], "visual-widget"))
+                } else {
+                    this.suggestions.push(createDynamicSuggestion(arr[i], type))
+                }
             }
         }
     }
@@ -145,20 +149,20 @@ class QtSuggestions {
             this.createSuggestions(["import"], "property")
             const checkLine = qtSearch.model.getLineContent(position.lineNumber)
             const importStatements = []
-            if(checkLine.includes("import")) {
+            if (checkLine.includes("import")) {
                 for (const key in qtTypeJson["import_statements"]) {
-                    if(qtTypeJson["import_statements"][key].hasOwnProperty("ver")) {
+                    if (qtTypeJson["import_statements"][key].hasOwnProperty("ver")) {
                         const vers = qtTypeJson["import_statements"][key]["ver"]
-                        for ( var i = 0; i < vers.length; i++) {
+                        for (var i = 0; i < vers.length; i++) {
                             importStatements.push(`${key} ${vers[i]}`)
                         }
                     }
-                    if(qtTypeJson["import_statements"][key].hasOwnProperty("subTypes")) {
+                    if (qtTypeJson["import_statements"][key].hasOwnProperty("subTypes")) {
                         const subTypes = qtTypeJson["import_statements"][key]["subTypes"]
-                        for(const type in subTypes) {
-                            if(qtTypeJson["import_statements"][key]["subTypes"][type].hasOwnProperty("ver")) {
+                        for (const type in subTypes) {
+                            if (qtTypeJson["import_statements"][key]["subTypes"][type].hasOwnProperty("ver")) {
                                 const vers_ = qtTypeJson["import_statements"][key]["subTypes"][type]["ver"]
-                                for(var i = 0; i < vers_.length; i++) {
+                                for (var i = 0; i < vers_.length; i++) {
                                     importStatements.push(`${key}.${type} ${vers_[i]}`)
                                 }
                             }
