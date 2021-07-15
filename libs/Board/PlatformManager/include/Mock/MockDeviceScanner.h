@@ -1,7 +1,5 @@
 #pragma once
 
-#include <set>
-
 #include <QObject>
 #include <QString>
 #include <QByteArray>
@@ -74,8 +72,16 @@ public:
      */
     void mockAllDevicesLost();
 
+    /**
+     * Get existing mock device.
+     * @param deviceId device ID
+     * @return mock device if such device exists for given deviceID, nullptr otherwise
+     */
+    DevicePtr getMockDevice(const QByteArray& deviceId) const;
+
 private:
-    std::set<QByteArray> deviceIds_;
+    // deviceID <-> MockDevice
+    QHash<QByteArray, DevicePtr> devices_;
     bool running_ = false;
 };
 
