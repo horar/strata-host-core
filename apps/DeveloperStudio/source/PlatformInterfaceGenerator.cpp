@@ -21,19 +21,10 @@ QString PlatformInterfaceGenerator::lastError()
     return lastError_;
 }
 
-bool PlatformInterfaceGenerator::generate(const QString &jsonString, const QString &outputPath)
+bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QString &outputPath)
 {
 
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(jsonString.toUtf8(), &parseError);
-
-    if (parseError.error != QJsonParseError::NoError) {
-        lastError_ = "Failed to parse json: " + parseError.errorString();
-        qCCritical(logCategoryControlViewCreator) << lastError_;
-        return false;
-    }
-
-    QJsonObject platInterfaceData = doc.object();
+    QJsonObject platInterfaceData = jsonObject.toObject();
 
     QDir outputDir(outputPath);
 
@@ -142,6 +133,10 @@ bool PlatformInterfaceGenerator::generate(const QString &jsonString, const QStri
     indentLevel--;
     outputStream << "}\n";
     outputFile.close();
+
+    QString jsonInputFilePath = utils.joinFilePath(outputPath, "platformInterface.json");
+    QJsonDocument document = QJsonDocument(jsonObject.toObject());
+    utils.atomicWrite(jsonInputFilePath, document.toJson());
 
     if (indentLevel != 0) {
         lastError_ = "Final indent level is not 0. Check file for indentation errors";

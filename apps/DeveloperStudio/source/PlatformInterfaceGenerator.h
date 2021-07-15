@@ -38,7 +38,7 @@ public:
      * @param outputPath Path to the output directory
      * @return Returns True if successfully created the file, else False
      */
-    Q_INVOKABLE static bool generate(const QString &jsonString, const QString &outputPath);
+    Q_INVOKABLE static bool generate(const QJsonValue &jsonObject, const QString &outputPath);
 
     /**
      * @brief generateImports Generates the import section of the QML file
