@@ -138,7 +138,7 @@ Rectangle {
                     spacing: 10
                     model: commandsModel
                     delegate: ColumnLayout {
-                        width: parent.width
+                        width: ListView.view.width
 
                         property ListModel payloadListModel: model.payload
                         spacing: 5

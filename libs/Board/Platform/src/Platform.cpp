@@ -10,6 +10,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
 
+#include <stdexcept>
+
 namespace strata::platform {
 
 QDebug operator<<(QDebug dbg, const Platform* d) {

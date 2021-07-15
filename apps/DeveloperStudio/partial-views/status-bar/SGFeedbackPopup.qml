@@ -222,65 +222,37 @@ SGStrataPopup {
                         }
                     }
 
-                    Rectangle {
-                        id: textEditContainer
-                        color: "white"
-                        border {
-                            width: 1
-                            color: "lightgrey"
-                        }
+                    SGTextArea {
+                        id: commentsQuestionsArea
+                        width: parent.width
+                        height: Math.max(parent.height, contentHeight)
+                        enabled: !feedbackStatus.visible
+                        contextMenuEnabled: true
+                        // Text Length Limiter
+                        readOnly: feedbackStatus.visible
+                        KeyNavigation.tab: submitButton
+                        KeyNavigation.priority: KeyNavigation.BeforeItem
+                        Accessible.role: Accessible.EditableText
+                        Accessible.name: "FeedbackEdit"
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        clip: true
 
-                        Flickable {
-                            id: textEditFlickable
-                            anchors {
-                                fill: textEditContainer
-                                margins: 10
-                            }
-                            contentHeight: textEdit.contentHeight
-                            flickableDirection: Flickable.VerticalFlick
-                            boundsMovement: Flickable.StopAtBounds
-                            boundsBehavior: Flickable.DragAndOvershootBounds
+                        property int maximumLength: 1000
+                        property string previousText: text
 
-                            ScrollBar.vertical: ScrollBar {
-                                policy: ScrollBar.AsNeeded
-                            }
+                        onTextChanged: {
+                            if(alertToast.visible) alertToast.hide();
 
-                            SGTextEdit {
-                                id: textEdit
-                                width: textEditFlickable.width
-                                wrapMode: TextEdit.Wrap
-                                height: Math.max(textEditFlickable.height, contentHeight)
-                                enabled: !feedbackStatus.visible
-                                selectByMouse: true
-                                contextMenuEnabled: true
-                                // Text Length Limiter
-                                readOnly: feedbackStatus.visible
-                                KeyNavigation.tab: submitButton
-                                KeyNavigation.priority: KeyNavigation.BeforeItem
-                                Accessible.role: Accessible.EditableText
-                                Accessible.name: "FeedbackEdit"
-
-                                property int maximumLength: 1000
-                                property string previousText: text
-
-                                onTextChanged: {
-                                    if(alertToast.visible) alertToast.hide();
-
-                                    if (text.length > maximumLength) {
-                                        var cursor = cursorPosition;
-                                        text = previousText;
-                                        if (cursor > text.length) {
-                                            cursorPosition = text.length;
-                                        } else {
-                                            cursorPosition = cursor-1;
-                                        }
-                                    }
-                                    previousText = text
+                            if (text.length > maximumLength) {
+                                var cursor = commentsQuestionsArea.cursorPosition
+                                text = previousText;
+                                if (cursor > text.length) {
+                                    commentsQuestionsArea.cursorPosition = text.length;
+                                } else {
+                                    commentsQuestionsArea.cursorPosition = cursor - 1;
                                 }
                             }
+                            previousText = text
                         }
                     }
 
@@ -289,7 +261,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: textEdit.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: commentsQuestionsArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -312,7 +284,7 @@ SGStrataPopup {
                         Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
-                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
+                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentsQuestionsArea.text, type: feedbackTypeListView.currentItem.typeValue }
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
@@ -324,7 +296,6 @@ SGStrataPopup {
                     }
                 }
             }
-
         }
     }
 
@@ -355,7 +326,7 @@ SGStrataPopup {
     }
 
     function resetForm(){
-        textEdit.text = ""
+        commentsQuestionsArea.text = ""
         feedbackTypeListView.currentIndex = -1
     }
 }
