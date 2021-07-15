@@ -27,13 +27,14 @@ import tech.strata.notifications 1.0
 SGWidgets.SGMainWindow {
     id: mainWindow
 
+    readonly property int defaultWidth: 1024
+    readonly property int defaultHeight: 768-40 // -40 for Win10 taskbar height
+
     visible: true
-    x: Screen.width / 2 - mainWindow.width / 2
-    y: Screen.height / 2 - mainWindow.height / 2
-    width: 1200
-    height: 900
-    minimumHeight: 768-40 // -40 for Win10 taskbar height
-    minimumWidth: 1024
+    width: defaultWidth
+    height: defaultHeight
+    minimumHeight: defaultHeight
+    minimumWidth: defaultWidth
     title: Qt.application.displayName
 
     property alias notificationsInbox: notificationsInbox
@@ -43,8 +44,12 @@ SGWidgets.SGMainWindow {
 
     function resetWindowSize()
     {
-        mainWindow.width = 1200
-        mainWindow.height = 900
+        if (mainWindow.visibility === Window.FullScreen) {
+            mainWindow.showNormal()
+        }
+
+        mainWindow.width = defaultWidth
+        mainWindow.height = defaultHeight
     }
 
     QtLabsPlatform.Menu {

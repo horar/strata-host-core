@@ -11,7 +11,7 @@ import tech.strata.notifications 1.0
 
 Item {
     id: root
-    implicitWidth: parent.width
+    implicitWidth: ListView.view.width
     implicitHeight: notificationContainer.height + (2 * notificationShadow.radius)
     opacity: 0
 

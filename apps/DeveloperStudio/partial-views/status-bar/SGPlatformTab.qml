@@ -14,7 +14,6 @@ Item {
     height: 40
     width: 250 // will be set by the listview
     property color menuColor: Theme.palette.green
-    state: parent.state
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
