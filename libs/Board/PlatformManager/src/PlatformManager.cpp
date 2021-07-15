@@ -36,7 +36,7 @@ PlatformManager::~PlatformManager() {
     }
 }
 
-void PlatformManager::addScanner(Device::Type scannerType) {
+void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     if (scanners_.contains(scannerType)) {
         return; // already added
     }
@@ -75,7 +75,7 @@ void PlatformManager::addScanner(Device::Type scannerType) {
     connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected);
     connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost);
 
-    scanner->init();
+    scanner->init(flags);
 }
 
 void PlatformManager::removeScanner(Device::Type scannerType) {

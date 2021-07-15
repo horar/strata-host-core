@@ -28,8 +28,9 @@ public:
 
     /**
      * Initialize scanner.
+     * @param flags flags defining properties for mock device scanner (currently unused)
      */
-    virtual void init() override;
+    virtual void init(quint32 flags = 0) override;
 
     /**
      * Deinitialize scanner. Will close all open devices.

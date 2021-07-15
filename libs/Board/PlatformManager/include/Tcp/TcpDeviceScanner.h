@@ -14,6 +14,11 @@ class TcpDeviceScanner : public DeviceScanner
     Q_DISABLE_COPY(TcpDeviceScanner);
 
 public:
+    enum TcpScannerFlag {
+        DisableAutomaticScan = 0x0001
+    };
+    Q_DECLARE_FLAGS(TcpScannerProperty, TcpScannerFlag)
+
     /**
      * TcpDeviceScanner constructor
      */
@@ -26,8 +31,9 @@ public:
 
     /**
      * Initialize scanner.
+     * @param flags flags defining properties for TCP device scanner
      */
-    virtual void init() override;
+    virtual void init(quint32 flags = 0) override;
 
     /**
      * Deinitialize scanner and stop scanning for new devices. Will close all open devices.
@@ -35,20 +41,25 @@ public:
     virtual void deinit() override;
 
     /**
-     * Start an automatic scan of new devices.
+     * Set properties for TCP device scanner.
+     * @param flags flags defining properties for TCP device scanner
      */
-    virtual void startAutomaticScan();
+    void setProperties(quint32 flags);
 
     /**
-     * Stop an automatic scan of new devices.
+     * Unset properties for TCP device scanner.
+     * @param flags flags defining properties for TCP device scanner
      */
-    virtual void stopAutomaticScan();
+    void unsetProperties(quint32 flags);
+
 
 private slots:
     void processPendingDatagrams();
     void deviceDisconnectedHandler();
 
 private:
+    void startAutomaticScan();
+    void stopAutomaticScan();
     void addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 

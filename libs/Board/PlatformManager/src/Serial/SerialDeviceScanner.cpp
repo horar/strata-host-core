@@ -18,8 +18,10 @@ SerialDeviceScanner::~SerialDeviceScanner() {
     }
 }
 
-void SerialDeviceScanner::init() {
-    startAutomaticScan();
+void SerialDeviceScanner::init(quint32 flags) {
+    if ((flags & SerialDeviceScanner::DisableAutomaticScan) == 0) {
+        startAutomaticScan();
+    }
 }
 
 void SerialDeviceScanner::deinit() {
@@ -31,6 +33,18 @@ void SerialDeviceScanner::deinit() {
 
     deviceIds_.clear();
     portNames_.clear();
+}
+
+void SerialDeviceScanner::setProperties(quint32 flags) {
+    if (flags & SerialDeviceScanner::DisableAutomaticScan) {
+        stopAutomaticScan();
+    }
+}
+
+void SerialDeviceScanner::unsetProperties(quint32 flags) {
+    if (flags & SerialDeviceScanner::DisableAutomaticScan) {
+        startAutomaticScan();
+    }
 }
 
 void SerialDeviceScanner::startAutomaticScan() {

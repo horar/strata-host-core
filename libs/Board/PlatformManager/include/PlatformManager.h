@@ -39,8 +39,9 @@ namespace strata {
         /**
          * Add a particular device scanner.
          * @param scannerType scanner type
+         * @param flags flags defining properties for scanner
          */
-        void addScanner(device::Device::Type scannerType);
+        void addScanner(device::Device::Type scannerType, quint32 flags = 0);
 
         /**
          * Remove a particular device scanner.

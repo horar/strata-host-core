@@ -12,7 +12,8 @@ MockDeviceScanner::~MockDeviceScanner() {
     }
 }
 
-void MockDeviceScanner::init() {
+void MockDeviceScanner::init(quint32 flags) {
+    Q_UNUSED(flags)
     running_ = true;
 }
 

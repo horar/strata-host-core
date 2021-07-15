@@ -20,13 +20,15 @@ TcpDeviceScanner::~TcpDeviceScanner()
     }
 }
 
-void TcpDeviceScanner::init()
+void TcpDeviceScanner::init(quint32 flags)
 {
     if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
         qCCritical(logCategoryDeviceScanner) << "Failed to bind UDP socket to" << UDP_LISTEN_PORT;
         return;
     }
-    startAutomaticScan();
+    if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
+        startAutomaticScan();
+    }
 }
 
 void TcpDeviceScanner::deinit()
@@ -39,6 +41,18 @@ void TcpDeviceScanner::deinit()
         emit deviceLost(deviceId);
     }
     discoveredDevices_.clear();
+}
+
+void TcpDeviceScanner::setProperties(quint32 flags) {
+    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
+        stopAutomaticScan();
+    }
+}
+
+void TcpDeviceScanner::unsetProperties(quint32 flags) {
+    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
+        startAutomaticScan();
+    }
 }
 
 void TcpDeviceScanner::startAutomaticScan()

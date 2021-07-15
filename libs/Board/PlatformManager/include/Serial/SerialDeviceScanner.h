@@ -19,6 +19,11 @@ class SerialDeviceScanner : public DeviceScanner
     Q_DISABLE_COPY(SerialDeviceScanner)
 
 public:
+    enum SerialScannerFlag {
+        DisableAutomaticScan = 0x0001
+    };
+    Q_DECLARE_FLAGS(SerialScannerProperty, SerialScannerFlag)
+
     /**
      * SerialDeviceScanner constructor
      */
@@ -31,8 +36,9 @@ public:
 
     /**
      * Initialize scanner.
+     * @param flags flags defining properties for serial device scanner
      */
-    virtual void init() override;
+    virtual void init(quint32 flags = 0) override;
 
     /**
      * Deinitialize scanner and stop scanning for new devices. Will close all open devices.
@@ -40,19 +46,23 @@ public:
     virtual void deinit() override;
 
     /**
-     * Start an automatic scan of new devices.
+     * Set properties for serial device scanner.
+     * @param flags flags defining properties for serial device scanner
      */
-    virtual void startAutomaticScan();
+    void setProperties(quint32 flags);
 
     /**
-     * Stop an automatic scan of new devices.
+     * Unset properties for serial device scanner.
+     * @param flags flags defining properties for serial device scanner
      */
-    virtual void stopAutomaticScan();
+    void unsetProperties(quint32 flags);
 
 private slots:
     void checkNewSerialDevices();
 
 private:
+    void startAutomaticScan();
+    void stopAutomaticScan();
     void computeListDiff(const std::set<QByteArray>& originalList, const std::set<QByteArray>& newList,
                          std::set<QByteArray>& addedList, std::set<QByteArray>& removedList) const;
     bool addSerialDevice(const QByteArray& deviceId);
