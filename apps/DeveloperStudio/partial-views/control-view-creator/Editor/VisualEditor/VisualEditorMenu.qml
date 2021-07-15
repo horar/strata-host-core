@@ -194,10 +194,6 @@ RowLayout {
         onUndoRedoState: {
             undoButton.enabled = undo
             redoButton.enabled = redo
-
-            // if (visualEditor.file == file) {
-            //     functions.setObjectPropertyAndSave(uuid, propertyName, value, false)
-            // }
         }
     }
 
