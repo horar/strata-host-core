@@ -792,7 +792,7 @@ FocusScope {
 
                         delegate: Item {
                             id: delegateSide
-                            width: parent.width
+                            width: ListView.view.width
                             height: fileName.height + horizontalDivider.height
 
                             property bool inRemoveMode: index === listViewSide.maybeRemoveIndex
@@ -974,7 +974,7 @@ FocusScope {
 
                         delegate: Item {
                             id: markDelegate
-                            width: parent.width
+                            width: ListView.view.width
                             height: markTimestamp.height + horizontalDividerMark.height
 
                             MouseArea {

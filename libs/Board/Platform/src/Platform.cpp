@@ -10,6 +10,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
 
+#include <stdexcept>
+
 namespace strata::platform {
 
 QDebug operator<<(QDebug dbg, const Platform* d) {
@@ -48,10 +50,6 @@ Platform::~Platform() {
     abortReconnect();
 
     // no need to close device here (if close was not called before), will be done in device
-}
-
-device::DevicePtr Platform::getDevice() const {
-    return device_;
 }
 
 const rapidjson::SchemaDocument platformIdChangedSchema(

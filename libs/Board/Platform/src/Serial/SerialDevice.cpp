@@ -108,9 +108,9 @@ SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
     return nullptr;
 }
 
-QByteArray SerialDevice::createDeviceId(const QString& portName)
+QByteArray SerialDevice::createUniqueHash(const QString& portName)
 {
-    return QByteArray('s' + QByteArray::number(qHash(portName), 16));
+    return QByteArray(QByteArray::number(qHash(portName), 16));
 }
 
 void SerialDevice::readMessage() {
