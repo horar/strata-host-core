@@ -12,7 +12,7 @@ LayoutContainer {
     visible: layoutDebugMode
 
     property string type: ""
-    property var sourceItem  // Item that this overlay represents
+    property var sourceItem // Item that this overlay represents
 
     contentItem: Item {
 
@@ -20,7 +20,7 @@ LayoutContainer {
             id: dragMouseArea
             width: parent.width
             height: parent.height
-            drag.target: this  // determines which object will be moved in a drag
+            drag.target: this // determines which object will be moved in a drag
             Drag.active: drag.active
             Drag.hotSpot.x: width/2
             Drag.hotSpot.y: height/2
@@ -66,6 +66,7 @@ LayoutContainer {
                 if (position.x !== 0 || position.y !== 0) {
                     let newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
+
                     visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
                     console.log("Moved:", layoutOverlayRoot.objectName)
                 }
@@ -178,10 +179,8 @@ LayoutContainer {
 
                     if (colRow.x !== layoutOverlayRoot.layoutInfo.columnsWide || colRow.y !== layoutOverlayRoot.layoutInfo.rowsTall) {
                         // if actually resized, edit file
-                        fileContents = visualEditor.functions.setObjectProperty(layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.columnsWide",  colRow.x)
-                        fileContents = visualEditor.functions.setObjectProperty(layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.rowsTall",  colRow.y)
-
-                        visualEditor.functions.saveFile(file, fileContents)
+                        visualEditor.functions.resizeItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
+                        console.log("Resized:", layoutOverlayRoot.objectName)
                     } else {
                         // reset mousearea position when it was dragged out of place but not enough to trigger above resize
                         x = 0

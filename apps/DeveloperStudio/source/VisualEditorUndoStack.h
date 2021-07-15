@@ -59,6 +59,8 @@ signals:
 
     void runItemMoved(QString file, QString uuid, int x, int y, int undoX, int undoY);
 
+    void runItemResized(QString file, QString uuid, int x, int y, int undoX, int undoY);
+
     void undoRedoState(bool undo, bool redo);
 
 private:

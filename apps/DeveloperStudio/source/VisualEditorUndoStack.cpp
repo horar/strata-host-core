@@ -22,10 +22,10 @@ void VisualEditorUndoStack::undo() {
             emit runItemDeleted(poppedCmd.file, poppedCmd.uuid, poppedCmd.objectString);
             break;
         case CommandType::itemMoved:
-            emit runItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.undoX, poppedCmd.undoY);
+            emit runItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
             break;
         case CommandType::itemResized:
-
+            emit runItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
             break;
     }
 
@@ -51,10 +51,10 @@ void VisualEditorUndoStack::redo() {
             emit runItemAdded(poppedCmd.file, poppedCmd.uuid);
             break;
         case CommandType::itemMoved:
-
+            emit runItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
             break;
         case CommandType::itemResized:
-
+            emit runItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
             break;
     }
 
@@ -80,12 +80,6 @@ void VisualEditorUndoStack::addXYCommand(QString file, QString uuid, QString pro
     UndoCommand cmd;
     cmd.file = file;
     cmd.uuid = uuid;
-    cmd.propertyName = propertyName;
-    // cmd.value = value;
-    // cmd.undoValue = undoValue;
-
-qCCritical(logCategoryControlViewCreator) << "\n\nc++ VisualEditorUndoStack::addXYCommand x" << x << "y" << y << "undoX" << undoX << "undoY" << undoY << "\n\n";
-
     cmd.x = x;
     cmd.y = y;
     cmd.undoX = undoX;

@@ -147,7 +147,7 @@ QtObject {
     }
 
     function insertTextAtEndOfFile(text) {
-        let regex = new RegExp(endOfObjectRegexString("uibase"))  // insert text before file ending '} // end_uibase'
+        let regex = new RegExp(endOfObjectRegexString("uibase")) // insert text before file ending '} // end_uibase'
         let endOfFile = fileContents.match(regex)
         if (endOfFile === null) {
             return
@@ -304,10 +304,8 @@ QtObject {
             let propertyLine = propertyMatch[0]
             let propertyValue = propertyMatch[1]
 
-            ///// wrong
-            if (!value || value === 0) {
+            if (!value && value !== 0) {
                 // new value is empty, so remove the line containing it
-                console.error("\n\n ---- new value is empty, so remove the line containing it ------\n\n")
                 newObjectContents = objectContents.replace(propertyLine, "")
             } else {
                 // new value is valid, so replace it
@@ -344,26 +342,20 @@ QtObject {
         visualEditor.functions.saveFile(file, fileContents)
     }
 
+    function resizeItem(uuid, newX, newY, addToUndoCommandStack = true) {
+        const oldX = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
+        const oldY = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
 
+        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newX, "", false)
+        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newY, "", false)
 
+        // UNDO/REDO
+        if (addToUndoCommandStack) {
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newX, newY, oldX, oldY)
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        visualEditor.functions.saveFile(file, fileContents)
+    }
 
     // returns object contents between tags
     // and if removeChildren, return object contents that occur before first child
