@@ -22,6 +22,10 @@ void MockDeviceScanner::deinit() {
     mockAllDevicesLost();
 }
 
+QByteArray MockDeviceScanner::mockCreateDeviceId(const QString& mockName) {
+    return createDeviceId(MockDevice::createUniqueHash(mockName));
+}
+
 bool MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages) {
     if (deviceIds_.find(deviceId) != deviceIds_.end()) {
         qCWarning(logCategoryDeviceScanner).nospace().noquote()
