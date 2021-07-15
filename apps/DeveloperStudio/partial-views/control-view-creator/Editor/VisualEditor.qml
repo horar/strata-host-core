@@ -128,4 +128,34 @@ ColumnLayout {
             }
         }
     }
+
+    Connections {
+        target: sdsModel.visualEditorUndoStack
+
+        onRunCommand: {
+            if (visualEditor.file == file) {
+                functions.setObjectPropertyAndSave(uuid, propertyName, value, false)
+            }
+        }
+
+        onRunItemAdded: {
+            if (visualEditor.file == file) {
+                functions.removeControl(uuid, false)
+            }
+        }
+
+        onRunItemDeleted: {
+            if (visualEditor.file == file) {
+                functions.addControlWithPremadeObjectString(objectString)
+            }
+        }
+
+        onRunItemMoved: {
+            if (visualEditor.file == file) {
+                console.error("\ncalling moveItem to move to x " + x + " y " + y)
+                functions.moveItem(uuid, x, y)
+                // functions.moveItem(uuid, undoX, undoY)
+            }
+        }
+    }
 }

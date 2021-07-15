@@ -103,6 +103,32 @@ RowLayout {
         }
     }
 
+    MenuButton {
+        id: undoButton
+        text: "UNDO"
+        implicitHeight: menuRow.height - 10
+        implicitWidth: implicitContentWidth + 10
+        padding: 0
+        enabled: false
+
+        onClicked: {
+            sdsModel.visualEditorUndoStack.undo()
+        }
+    }
+
+    MenuButton {
+        id: redoButton
+        text: "REDO"
+        implicitHeight: menuRow.height - 10
+        implicitWidth: implicitContentWidth + 10
+        padding: 0
+        enabled: false
+
+        onClicked: {
+            sdsModel.visualEditorUndoStack.redo()
+        }
+    }
+
     Item {
         //filler
         Layout.fillHeight: true
@@ -125,7 +151,7 @@ RowLayout {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked:  {
+            onClicked: {
                 dotsMenu.open()
             }
         }
@@ -160,6 +186,18 @@ RowLayout {
             if (visualEditor.loader.status === Loader.Ready) {
                 fetchValues()
             }
+        }
+    }
+
+    Connections {
+        target: sdsModel.visualEditorUndoStack
+        onUndoRedoState: {
+            undoButton.enabled = undo
+            redoButton.enabled = redo
+
+            // if (visualEditor.file == file) {
+            //     functions.setObjectPropertyAndSave(uuid, propertyName, value, false)
+            // }
         }
     }
 

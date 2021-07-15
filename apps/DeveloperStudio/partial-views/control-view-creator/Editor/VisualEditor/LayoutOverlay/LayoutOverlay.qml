@@ -26,11 +26,12 @@ LayoutContainer {
             Drag.hotSpot.y: height/2
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             hoverEnabled: true
+            onWheel: wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
 
             property point startPoint
 
             onPressedChanged: {
-                if (pressed){
+                if (pressed) {
                     startPoint = Qt.point(mouseX, mouseY)
                 }
             }
@@ -62,15 +63,11 @@ LayoutContainer {
 
                 // if moved, edit file
                 let position = dragMouseArea.mapToItem(layoutOverlayRoot, x, y)
-                if (position.x !== 0 || position.y !==0 ) {
-                    console.log("Moved:", layoutOverlayRoot.objectName)
+                if (position.x !== 0 || position.y !== 0) {
                     let newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
-
-                    fileContents = visualEditor.functions.setObjectProperty(layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.xColumns",  colRow.x)
-                    fileContents = visualEditor.functions.setObjectProperty(layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.yRows",  colRow.y)
-
-                    visualEditor.functions.saveFile(file, fileContents)
+                    visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
+                    console.log("Moved:", layoutOverlayRoot.objectName)
                 }
             }
 
@@ -84,13 +81,10 @@ LayoutContainer {
                     newY = Math.max(0, newY)
 
                     let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
-
                     rect.x = newPosition.x
                     rect.y = newPosition.y
                 }
             }
-
-            onWheel: wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
         }
 
         Rectangle {
@@ -160,7 +154,7 @@ LayoutContainer {
                 width: parent.width * 1.5
                 height: parent.height * 1.5
                 cursorShape: Qt.SizeFDiagCursor
-                drag.target: this     //this determines which object will be moved in a drag
+                drag.target: this // this determines which object will be moved in a drag
                 Drag.active: drag.active
                 Drag.hotSpot.x: width/2
                 Drag.hotSpot.y: height/2

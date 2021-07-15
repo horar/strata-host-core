@@ -51,11 +51,7 @@ GenericPopup {
             id: textField
             implicitWidth: 400
             onAccepted: {
-                if (mustNotBeEmpty && text !== "") {
-                    okButton.clicked()
-                } else {
-                    okButton.clicked()
-                }
+                okButton.clicked()
             }
         }
 

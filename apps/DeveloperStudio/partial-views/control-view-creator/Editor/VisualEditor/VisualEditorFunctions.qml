@@ -35,24 +35,26 @@ QtObject {
     }
 
     function readFileContents(fileUrl) {
-        if (fileUrl.startsWith("file")) {
+        if (!SGUtilsCpp.isFile(fileUrl)) {
             fileUrl = SGUtilsCpp.urlToLocalFile(fileUrl)
         }
-        // console.log("readFileContents:", fileUrl)
 
-        let fileContent = SGUtilsCpp.readTextFileContent(fileUrl)
-        // console.log("content:", fileContent)
-        return fileContent
+        if (!SGUtilsCpp.exists(fileUrl)) {
+            console.warn("Tried to read non-existent file: " + fileUrl)
+            return ""
+        }
+
+        return SGUtilsCpp.readTextFileContent(fileUrl)
     }
 
     function saveFile(fileUrl = file, text = fileContents) {
-        // todo: potentially clean up empty lines in file before save, e.g. more than 2 empty lines in a row -> 1 empty line
+        text = sdsModel.visualEditorUndoStack.trimQmlEmptyLines(text)
         SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text)
         unload(true)
     }
 
     function checkFile() {
-        if (visualEditor.file.toLowerCase().endsWith(".qml")){
+        if (visualEditor.file.toLowerCase().endsWith(".qml")) {
             loader.setSource(visualEditor.file)
 
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
@@ -75,7 +77,7 @@ QtObject {
     }
 
     function load() {
-        if (visualEditor.file.toLowerCase().endsWith(".qml")){
+        if (visualEditor.file.toLowerCase().endsWith(".qml")) {
             fileContents = readFileContents(visualEditor.file)
             loader.setSource(visualEditor.file)
 
@@ -99,7 +101,7 @@ QtObject {
         if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
             console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
             loader.item.error_intro = "Unable to display file"
-            loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
+            loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use Visual Editor."
             visualEditor.fileValid = false
             visualEditor.error = "Visual Editor supports files derived from UIBase only"
         } else {
@@ -108,25 +110,36 @@ QtObject {
         }
     }
 
-    function identifyChildren(item){
-        // console.log("Item:", item.uuid)
-        if (item.hasOwnProperty("layoutInfo")){
+    function identifyChildren(item) {
+        if (item.hasOwnProperty("layoutInfo")) {
             overlayContainer.createOverlay(item)
         }
 
         for (let i = 0; i < item.children.length; i++) {
-            if (item.children[i].objectName !== "UIBase") { // don't examine children made up of a separate UIBase (e.g. composite widgets also created in VisualEditor)
+            if (item.children[i].objectName !== "UIBase") {
+                // don't examine children made up of a separate UIBase (e.g. composite widgets also created in VisualEditor)
                 identifyChildren(item.children[i])
             }
         }
     }
 
-    function addControl(controlPath){
-        // console.log("addControl:", controlPath)
-        let testComponent = readFileContents(controlPath)
-        testComponent = testComponent.arg(create_UUID()) // replace all instances of %1 with uuid
+    function addControlWithPremadeObjectString(objectString) {
+        insertTextAtEndOfFile(objectString)
 
-        insertTextAtEndOfFile(testComponent)
+        if (!layoutDebugMode) {
+            layoutDebugMode = true
+        }
+    }
+
+    function addControl(controlPath) {
+        const uuid = create_UUID()
+        let objectString = readFileContents(controlPath)
+        objectString = objectString.arg(uuid) // replace all instances of %1 with uuid
+
+        insertTextAtEndOfFile(objectString)
+
+        // UNDO/REDO
+        sdsModel.visualEditorUndoStack.addItem(file, uuid, objectString)
 
         if (!layoutDebugMode) {
             layoutDebugMode = true
@@ -140,21 +153,25 @@ QtObject {
             return
         }
         fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile);
-        // console.log("fileContents:", fileContents)
         saveFile()
     }
 
-    function removeControl(uuid) {
+    function removeControl(uuid, addToUndoCommandStack = true) {
         const objectString = getObjectFromString(uuid)
         if (objectString === null) {
             return
         }
-        fileContents = fileContents.replace(objectString, "\n");
+        fileContents = fileContents.replace(objectString, "\n")
+
+        // UNDO/REDO
+        if (addToUndoCommandStack) {
+            sdsModel.visualEditorUndoStack.removeItem(file, uuid, objectString)
+        }
 
         saveFile(file, fileContents)
     }
 
-    function duplicateControl(uuid){
+    function duplicateControl(uuid) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
@@ -164,7 +181,7 @@ QtObject {
         if (type === null) {
             return
         }
-        type = type.charAt(0).toLowerCase() + type.slice(1); // lowercase the first letter of the type
+        type = type.charAt(0).toLowerCase() + type.slice(1) // lowercase the first letter of the type
         const newUuid = create_UUID()
 
         // replace old uuid in tags
@@ -177,7 +194,7 @@ QtObject {
 
         // duplicate object's id replaced with "<type>_<newUuid>"
         // append "_<uuid>" to nested id's, to prevent collision
-        copy = copy.replace(idRegex, function(match, idKey, idValue){
+        copy = copy.replace(idRegex, function(match, idKey, idValue) {
             if (first) {
                 first = false
                 return `${idKey}${type}_${newUuid}`
@@ -207,12 +224,12 @@ QtObject {
         insertTextAtEndOfFile(copy)
     }
 
-    function bringToFront(uuid){
+    function bringToFront(uuid) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
         }
-        fileContents = fileContents.replace(copy, "\n");
+        fileContents = fileContents.replace(copy, "\n")
         insertTextAtEndOfFile(copy)
     }
 
@@ -254,8 +271,8 @@ QtObject {
         return objectString;
     }
 
-    function setObjectPropertyAndSave(uuid, propertyName, value) {
-        fileContents = setObjectProperty(uuid, propertyName, value, fileContents)
+    function setObjectPropertyAndSave(uuid, propertyName, value, addToUndoCommandStack = true) {
+        fileContents = setObjectProperty(uuid, propertyName, value, fileContents, addToUndoCommandStack)
         saveFile()
     }
 
@@ -264,7 +281,11 @@ QtObject {
         If <propertyName> is not found, it will be appended as a new property above the first child or end of object
         ** Only works on properties declared above children - see getObjectContents
     */
-    function setObjectProperty(uuid, propertyName, value, string = fileContents) {
+    function setObjectProperty(uuid, propertyName, value, string = fileContents, addToUndoCommandStack = true) {
+        if (string == "") {
+            string = fileContents
+        }
+
         const objectString = getObjectFromString(uuid, string)
         if (objectString === null) {
             return
@@ -275,27 +296,79 @@ QtObject {
             return
         }
 
+        let undoValue = ""
         let newObjectContents
         let propertyMatch = getPropertyFromString(propertyName, objectContents)
         if (propertyMatch !== null) {
-            // property found in objectContents, replace its value
+            // property found in objectContents
             let propertyLine = propertyMatch[0]
             let propertyValue = propertyMatch[1]
-            let newPropertyLine = propertyLine.replace(propertyValue, value)
-            newObjectContents = objectContents.replace(propertyLine, newPropertyLine)
+
+            ///// wrong
+            if (!value || value === 0) {
+                // new value is empty, so remove the line containing it
+                console.error("\n\n ---- new value is empty, so remove the line containing it ------\n\n")
+                newObjectContents = objectContents.replace(propertyLine, "")
+            } else {
+                // new value is valid, so replace it
+                let newPropertyLine = propertyLine.replace(propertyValue, value)
+                newObjectContents = objectContents.replace(propertyLine, newPropertyLine)
+                undoValue = propertyValue
+            }
         } else {
             // property not currently assigned in objectContents, append property to end
-            newObjectContents = objectContents + getIndentLevel(objectContents) + propertyName +": " + value +"\n"
+            newObjectContents = objectContents + getIndentLevel(objectContents) + propertyName + ": " + value + "\n"
         }
 
-        let newObjectString = objectString.replace(objectContents, newObjectContents);
-        return string.replace(objectString, newObjectString);
+        // UNDO/REDO
+        if (addToUndoCommandStack) {
+            sdsModel.visualEditorUndoStack.addCommand(file, uuid, propertyName, value, undoValue)
+        }
+
+        let newObjectString = objectString.replace(objectContents, newObjectContents)
+        return string.replace(objectString, newObjectString)
     }
+
+    function moveItem(uuid, newX, newY, addToUndoCommandStack = true) {
+        const oldX = getObjectPropertyValue(uuid, "layoutInfo.xColumns")
+        const oldY = getObjectPropertyValue(uuid, "layoutInfo.yRows")
+
+        fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", newX, "", false)
+        fileContents = setObjectProperty(uuid, "layoutInfo.yRows", newY, "", false)
+
+        // UNDO/REDO
+        if (addToUndoCommandStack) {
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "move", newX, newY, oldX, oldY)
+        }
+
+        visualEditor.functions.saveFile(file, fileContents)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // returns object contents between tags
     // and if removeChildren, return object contents that occur before first child
     function getObjectContents(objectString, removeChildren = true) {
-        let captureContentsRegex = new RegExp(startOfObjectRegexString() + "([\\S\\s]*(?:\\r\\n|\\r|\\n))" +  endOfObjectRegexString())
+        let captureContentsRegex = new RegExp(startOfObjectRegexString() + "([\\S\\s]*(?:\\r\\n|\\r|\\n))" + endOfObjectRegexString())
         let objectContents
 
         try {
@@ -354,7 +427,7 @@ QtObject {
         return type;
     }
 
-    function create_UUID(){
+    function create_UUID() {
         var dt = new Date().getTime();
         var uuid = 'xxxxx'.replace(/[xy]/g, function(c) {
             var r = (dt + Math.random()*16)%16 | 0;
