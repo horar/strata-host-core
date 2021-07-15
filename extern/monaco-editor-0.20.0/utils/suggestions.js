@@ -144,25 +144,28 @@ class QtSuggestions {
         } else {
             this.createSuggestions(["import"], "property")
             const checkLine = qtSearch.model.getLineContent(position.lineNumber)
-            if (checkLine.includes("import") && !checkLine.includes(".")) {
-                this.createSuggestions(Object.keys(qtTypeJson["import_statements"]), "property")
-            } else if (checkLine.includes("import") && checkLine.includes(".")) {
-                const initialName = qtSearch.getImportName(position.lineNumber).split(".")[0].trim()
-                const subNames = Object.keys(qtTypeJson["import_statements"][initialName]["subTypes"])
-                const vers = qtTypeJson["import_statements"][initialName]["ver"]
-                if (subNames !== undefined) {
-                    this.createSuggestions(subNames, "property")
-                }
-                this.createSuggestions(vers, "property")
-                if (subNames !== undefined) {
-                    for (var i = 0; i < subNames.length; i++) {
-                        if (checkLine.includes("import") && checkLine.includes(".") && checkLine.includes(subNames[i])) {
-                            this.suggestions = []
-                            this.createSuggestions(qtTypeJson["import_statements"][initialName]["subTypes"][subNames[i]]["ver"], "property")
-                            break;
+            const importStatements = []
+            if(checkLine.includes("import")) {
+                for (const key in qtTypeJson["import_statements"]) {
+                    if(qtTypeJson["import_statements"][key].hasOwnProperty("ver")) {
+                        const vers = qtTypeJson["import_statements"][key]["ver"]
+                        for ( var i = 0; i < vers.length; i++) {
+                            importStatements.push(`${key} ${vers[i]}`)
+                        }
+                    }
+                    if(qtTypeJson["import_statements"][key].hasOwnProperty("subTypes")) {
+                        const subTypes = qtTypeJson["import_statements"][key]["subTypes"]
+                        for(const type in subTypes) {
+                            if(qtTypeJson["import_statements"][key]["subTypes"][type].hasOwnProperty("ver")) {
+                                const vers_ = qtTypeJson["import_statements"][key]["subTypes"][type]["ver"]
+                                for(var i = 0; i < vers_.length; i++) {
+                                    importStatements.push(`${key}.${type} ${vers_[i]}`)
+                                }
+                            }
                         }
                     }
                 }
+                this.createSuggestions(importStatements, "property")
             }
         }
     }

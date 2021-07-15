@@ -5971,7 +5971,7 @@ const qtTypeJson = {
                         "1.12",
                     ]
                 },
-                "window": {
+                "Window": {
                     "ver": [
                         "2.0",
                         "2.1",
