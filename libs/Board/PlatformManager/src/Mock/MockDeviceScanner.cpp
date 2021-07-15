@@ -22,8 +22,12 @@ void MockDeviceScanner::deinit() {
     mockAllDevicesLost();
 }
 
+QByteArray MockDeviceScanner::mockCreateDeviceId(const QString& mockName) {
+    return createDeviceId(MockDevice::createUniqueHash(mockName));
+}
+
 bool MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages) {
-    if (deviceIds_.find(deviceId) != deviceIds_.end()) {
+    if (devices_.find(deviceId) != devices_.cend()) {
         qCWarning(logCategoryDeviceScanner).nospace().noquote()
             << "Unable to create new mock device: ID: " << deviceId << ", name: '" << name << "', device already exists";
         return false;
@@ -32,7 +36,7 @@ bool MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QSt
     DevicePtr device = std::make_shared<MockDevice>(deviceId, name, saveMessages);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    deviceIds_.insert(deviceId);
+    devices_.insert(deviceId, device);
 
     qCInfo(logCategoryDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << deviceId << ", name: '" << name << "'";
@@ -48,7 +52,7 @@ bool MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
         return false;
     }
 
-    if (deviceIds_.find(mockDevice->deviceId()) != deviceIds_.end()) {
+    if (devices_.find(mockDevice->deviceId()) != devices_.cend()) {
         qCWarning(logCategoryDeviceScanner).nospace().noquote()
             << "Unable to create new mock device: ID: " << mockDevice->deviceId()
             << ", name: '" << mockDevice->deviceName() << "', device already exists";
@@ -57,7 +61,7 @@ bool MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
 
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(mockDevice);
 
-    deviceIds_.insert(mockDevice->deviceId());
+    devices_.insert(mockDevice->deviceId(), mockDevice);
 
     qCInfo(logCategoryDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << mockDevice->deviceId()
@@ -69,7 +73,7 @@ bool MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
 }
 
 bool MockDeviceScanner::mockDeviceLost(const QByteArray& deviceId) {
-    if (deviceIds_.erase(deviceId) == 0) {
+    if (devices_.remove(deviceId) == 0) {
         qCWarning(logCategoryDeviceScanner).nospace().noquote()
             << "Unable to erase mock device: ID: " << deviceId << ", device does not exists";
         return false;
@@ -84,12 +88,15 @@ bool MockDeviceScanner::mockDeviceLost(const QByteArray& deviceId) {
 }
 
 void MockDeviceScanner::mockAllDevicesLost() {
-    for (const auto& deviceId : deviceIds_) {
-        emit deviceLost(deviceId);
+    for (auto devIdIter = devices_.keyBegin(); devIdIter != devices_.keyEnd(); ++devIdIter) {
+        emit deviceLost(*devIdIter);
     }
 
-    deviceIds_.clear();
+    devices_.clear();
+}
+
+DevicePtr MockDeviceScanner::getMockDevice(const QByteArray& deviceId) const {
+    return devices_.value(deviceId, nullptr);
 }
 
 }  // namespace
-

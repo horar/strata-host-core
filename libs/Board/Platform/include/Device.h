@@ -45,7 +45,9 @@ namespace strata::device {
         enum class Type {
             SerialDevice,
             MockDevice,
-            TcpDevice
+            TcpDevice,
+            BLEDevice
+            // IMPORTANT: If adding new values, add them to allScannerTypes_ in DeviceScanner.cpp as well.
         };
         Q_ENUM(Type)
 
