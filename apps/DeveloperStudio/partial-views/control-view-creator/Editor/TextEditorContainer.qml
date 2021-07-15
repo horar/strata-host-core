@@ -9,6 +9,7 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.SGFileTabModel 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -31,6 +32,11 @@ ColumnLayout {
     property int savedVersionId
     property int currentVersionId
     property bool externalChanges: false
+    property bool internalChanged: model.unsavedChanges
+
+    signal saveClicked()
+    signal undoClicked()
+    signal redoClicked()
 
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath))
@@ -130,7 +136,7 @@ ColumnLayout {
     }
 
     Connections {
-        target: editor.editorToolBar
+        target: fileContainerRoot
 
         onSaveClicked: {
             if (modelIndex === openFilesModel.currentIndex) {
@@ -289,25 +295,29 @@ ColumnLayout {
             }
         }
 
-        signal saveClicked()
-        signal undoClicked()
-        signal redoClicked()
+        Rectangle {
+            // divider
+            Layout.preferredHeight: menuRow.height - 6
+            Layout.preferredWidth: 1
+            color: "grey"
+            visible: menuLoader.active ? false : true
+        }
 
         Repeater {
             id: mainButtons
 
             model: [
-                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: true },
-                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true },
-                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true }
+                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: menuLoader.active ? false : true, enabled: internalChanged },
+                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true, enabled: true },
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true, enabled: true }
             ]
 
             delegate: Button {
                 Layout.preferredHeight: 25
                 Layout.preferredWidth: height
 
-                enabled: openFilesModel.count > 0
-                visible:  modelData.visible
+                enabled: openFilesModel.count > 0 && modelData.enabled
+                visible: modelData.visible
 
                 background: Rectangle {
                     radius: 0
@@ -318,7 +328,7 @@ ColumnLayout {
                     id: icon
                     anchors.fill: parent
                     anchors.margins: 4
-                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "white"
+                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "light gray"
                     source: modelData.iconSource
                     fillMode: Image.PreserveAspectFit
                 }
@@ -339,20 +349,19 @@ ColumnLayout {
                     onClicked: {
                         switch (modelData.buttonType) {
                         case "save":
-                            editorToolBar.saveClicked()
+                            saveClicked()
                             break
                         case "undo":
-                            editorToolBar.undoClicked()
+                            undoClicked()
                             break
                         case "redo":
-                            editorToolBar.redoClicked()
+                            redoClicked()
                             break
                         }
                     }
                 }
             }
         }
-
 
         Rectangle {
             // divider
@@ -404,7 +413,7 @@ ColumnLayout {
             id: webEngine
             webChannel: channel
             url: "qrc:///tech/strata/monaco/minified/editor.html"
-            
+
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: true
@@ -462,7 +471,7 @@ ColumnLayout {
                         "error_intro": "Control View Creator Error:",
                         "error_message": "Monaco text editor component failed to load or was not found"
                     }
-                    
+
                     fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
                 }
             }
