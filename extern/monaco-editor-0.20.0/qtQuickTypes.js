@@ -6014,7 +6014,16 @@ const qtTypeJson = {
             "ver": [
                 "1.0",
             ]
-        }
-
+        },
+        "tech.strata.fonts": {
+            "ver": [
+                "1.0",
+            ]
+        },
+        "tech.strata.theme": {
+            "ver": [
+                "1.0",
+            ]
+        },
     }
 }
