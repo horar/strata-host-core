@@ -41,6 +41,7 @@ function registerQmlProvider() {
     editor.getModel().onDidChangeContent((event) => {
         window.link.fileText = editor.getValue();
         window.link.setVersionId(editor.getModel().getAlternativeVersionId());
+        window.link.setFinished(true)
     })
 
     // Component will unmount
