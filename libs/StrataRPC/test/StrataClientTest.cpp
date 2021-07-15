@@ -655,7 +655,6 @@ void StrataClientTest::testErrorOccourredSignal()
     QCOMPARE_(errorOccurred.count(), 1);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToRegisterHandler);
-    // waitForZmqMessages(50);
     errorOccurred.clear();
 
     client.unregisterHandler("handler_2");
@@ -678,14 +677,12 @@ void StrataClientTest::testErrorOccourredSignal()
     waitForZmqMessages(50);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToSendNotification);
-    // waitForZmqMessages();
     errorOccurred.clear();
 
     server.initialize();
     client.connect();
     waitForZmqMessages(50);
     client.connect();  // This should fail
-    // waitForZmqMessages(50);
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToConnect);
