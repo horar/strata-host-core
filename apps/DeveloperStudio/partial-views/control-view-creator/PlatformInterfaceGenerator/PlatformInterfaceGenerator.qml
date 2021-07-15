@@ -288,7 +288,7 @@ Item {
         buttons: [...defaultButtons.slice(0, 1), ...defaultButtons.slice(1)]
         cancelButtonText: "Cancel"
         titleText: "About to lose in progress work"
-        popupText: "You currently have unsaved changes. If you continue, you will lose all progress made. Do you want to continue?"
+        popupText: "You currently have unsaved changes. If you continue, you will lose all progress made. Are you sure you want to continue?"
 
         onPopupClosed: {
             if (closeReason === cancelCloseReason) {
