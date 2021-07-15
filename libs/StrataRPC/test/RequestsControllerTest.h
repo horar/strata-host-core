@@ -16,5 +16,4 @@ private slots:
     void testGetMethodName();
     void testPopRequest();
     void testRequestTimeout();
-    void testRequestTimeout_1();
 };

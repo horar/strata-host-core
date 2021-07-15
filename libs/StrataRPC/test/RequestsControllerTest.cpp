@@ -111,12 +111,12 @@ void RequestsControllerTest::testRequestTimeout()
 {
     int totalTimedoutRequests = 0;
     int totalNumOfRequests = 1000;
-    // we need to find tests timeouts
+
     RequestsController rc;
+
     connect(
         &rc, &RequestsController::requestTimedout, this,
         [&totalTimedoutRequests, &rc](const int &id) {
-            // remove the timed out requests from the controller
             auto [requestFound, request] = rc.popPendingRequest(id);
             if (false == requestFound && request.deferredRequest_ == nullptr) {
                 return;
@@ -124,56 +124,12 @@ void RequestsControllerTest::testRequestTimeout()
 
             request.deferredRequest_->deleteLater();
             ++totalTimedoutRequests;
-            // maybe count how many timed out?
         },
         Qt::QueuedConnection);
 
-    // add too many requests
     for (int i = 0; i < totalNumOfRequests; i++) {
         rc.addNewRequest("test", QJsonObject({{}}));
     }
 
-    // randomly remove some
-
-    // remove the timeouts -- maybe you need to add a lambda for this part
     QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 550);
-}
-
-void RequestsControllerTest::testRequestTimeout_1()
-{
-    QTimer timer;
-    RequestsController rc;
-    int requestsCounter = 0;
-    int totalTimedoutRequests = 0;
-    int totalNumOfRequests = 1000;
-
-    connect(
-        &rc, &RequestsController::requestTimedout, this,
-        [&totalTimedoutRequests, &rc](const int &id) {
-            // remove the timed out requests from the controller
-            auto [requestFound, request] = rc.popPendingRequest(id);
-            if (false == requestFound && request.deferredRequest_ == nullptr) {
-                return;
-            }
-
-            request.deferredRequest_->deleteLater();
-            ++totalTimedoutRequests;
-            // maybe count how many timed out?
-        },
-        Qt::QueuedConnection);
-
-    // need to add requests using a timer
-    timer.setInterval(1);
-    connect(&timer, &QTimer::timeout, this, [&timer, &requestsCounter, &rc, &totalNumOfRequests]() {
-        rc.addNewRequest("test", QJsonObject({{}}));
-        requestsCounter++;
-
-        if (requestsCounter == totalNumOfRequests) {
-            timer.stop();
-        }
-    });
-    timer.start();
-
-    // remove the timeouts -- maybe you need to add a lambda for this part
-    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 15000);
 }
