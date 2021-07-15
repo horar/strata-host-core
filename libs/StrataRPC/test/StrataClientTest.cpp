@@ -276,6 +276,13 @@ void StrataClientTest::testWithAllCallbacks()
 
     StrataClient client(address_);
 
+    connect(&client, &StrataClient::errorOccurred, this,
+            [](const StrataClient::ClientError &errorType, const QString &) {
+                if (StrataClient::ClientError::RequestTimeout == errorType) {
+                    QFAIL_("Request timed out.");
+                }
+            });
+
     client.registerHandler("test_all_callbacks", [&allCallbacksHandler](const QJsonObject &) {
         allCallbacksHandler = true;
     });
@@ -298,8 +305,6 @@ void StrataClientTest::testWithAllCallbacks()
         connect(
             deferredRequest, &DeferredRequest::finishedWithError, this,
             [&allCallbacksErrCallback](const QJsonObject &) { allCallbacksErrCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(allCallbacksErrCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == allCallbacksResCallback, zmqWaitTime);
@@ -321,8 +326,6 @@ void StrataClientTest::testWithAllCallbacks()
         connect(
             deferredRequest, &DeferredRequest::finishedWithError, this,
             [&allCallbacksErrCallback](const QJsonObject &) { allCallbacksErrCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(allCallbacksResCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == allCallbacksErrCallback, zmqWaitTime);
@@ -345,8 +348,6 @@ void StrataClientTest::testWithAllCallbacks()
         connect(
             deferredRequest, &DeferredRequest::finishedWithError, this,
             [&allCallbacksErrCallback](const QJsonObject &) { allCallbacksErrCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(false == allCallbacksResCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == allCallbacksErrCallback, zmqWaitTime);
@@ -401,6 +402,13 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
     StrataClient client(address_);
 
+    connect(&client, &StrataClient::errorOccurred, this,
+            [](const StrataClient::ClientError &errorType, const QString &) {
+                if (StrataClient::ClientError::RequestTimeout == errorType) {
+                    QFAIL_("Request timed out.");
+                }
+            });
+
     client.registerHandler("test_res_callback", [&resCallbackHandler](const QJsonObject &) {
         resCallbackHandler = true;
     });
@@ -418,8 +426,6 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
         connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const QJsonObject &) { resCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(resCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == resCallbackHandler, zmqWaitTime);
@@ -435,8 +441,6 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
         connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const QJsonObject &) { resCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(false == resCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == resCallbackHandler, zmqWaitTime);
@@ -452,8 +456,6 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
         connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const QJsonObject &) { resCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(false == resCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(resCallbackHandler, zmqWaitTime);
@@ -507,6 +509,13 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
     StrataClient client(address_);
 
+    connect(&client, &StrataClient::errorOccurred, this,
+            [](const StrataClient::ClientError &errorType, const QString &) {
+                if (StrataClient::ClientError::RequestTimeout == errorType) {
+                    QFAIL_("Request timed out.");
+                }
+            });
+
     client.registerHandler("test_err_callback", [&errorCallbackHander](const QJsonObject &) {
         errorCallbackHander = true;
     });
@@ -524,8 +533,6 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
         connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const QJsonObject &) { errorCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(false == errorCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == errorCallbackHander, zmqWaitTime);
@@ -541,8 +548,6 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
         connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const QJsonObject &) { errorCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(errorCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(false == errorCallbackHander, zmqWaitTime);
@@ -558,8 +563,6 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
         connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const QJsonObject &) { errorCallback = true; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [](int) { QFAIL_("Request timed out."); });
 
         QTRY_VERIFY_WITH_TIMEOUT(false == errorCallback, zmqWaitTime);
         QTRY_VERIFY_WITH_TIMEOUT(errorCallbackHander, zmqWaitTime);
@@ -594,7 +597,7 @@ void StrataClientTest::testNoTimedoutRequest()
 {
     using DeferredRequest = strata::strataRPC::DeferredRequest;
     int testsNum = 10;
-    // int timedOutRequests = 0;
+    int timedOutRequests = 0;
     int successCallBacks = 0;
 
     strata::strataRPC::ServerConnector server(address_);
@@ -616,6 +619,14 @@ void StrataClientTest::testNoTimedoutRequest()
     server.initialize();
 
     StrataClient client(address_);
+
+    connect(&client, &StrataClient::errorOccurred, this,
+            [&timedOutRequests](const StrataClient::ClientError &errorType, const QString &) {
+                if (StrataClient::ClientError::RequestTimeout == errorType) {
+                    ++timedOutRequests;
+                }
+            });
+
     client.connect();
     waitForZmqMessages(50);
 
@@ -624,11 +635,9 @@ void StrataClientTest::testNoTimedoutRequest()
         QVERIFY_(deferredRequest != nullptr);
         connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&successCallBacks](const QJsonObject &) { ++successCallBacks; });
-        // connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-        //         [&timedOutRequests](int) { ++timedOutRequests; });
     }
 
-    // QTRY_COMPARE_WITH_TIMEOUT(timedOutRequests, 0, 100);
+    QTRY_COMPARE_WITH_TIMEOUT(timedOutRequests, 0, 100);
     QTRY_COMPARE_WITH_TIMEOUT(successCallBacks, testsNum, 100);
 }
 
