@@ -50,7 +50,6 @@ Item {
             addToTheProjectList(path)
         }
 
-        editor.editQRCEnabled = true
         viewStack.currentIndex = 1 // switch to edit view
         controlViewCreatorRoot.projectInitialization = true
         controlViewCreatorRoot.recompileControlViewQrc();

@@ -27,9 +27,10 @@ Item {
         id: treeModel
 
         onModelAboutToBeReset: {
-            openFilesModel.clear()
+            openFilesModel.closeAll()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
+           // editor.editQRCEnabled = true
         }
 
         onErrorParsing: {
