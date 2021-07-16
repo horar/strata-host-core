@@ -20,7 +20,6 @@ Item {
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
     property alias sideBar: sideBar
-
     property bool editQRCEnabled: true
 
     SGQrcTreeModel {
