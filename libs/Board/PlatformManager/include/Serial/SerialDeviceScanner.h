@@ -19,6 +19,10 @@ class SerialDeviceScanner : public DeviceScanner
     Q_DISABLE_COPY(SerialDeviceScanner)
 
 public:
+    /**
+     * Flags defining properties for serial device scanner.
+     * By default, scanner starts with all flags unset.
+     */
     enum SerialScannerFlag {
         DisableAutomaticScan = 0x0001
     };
@@ -36,7 +40,7 @@ public:
 
     /**
      * Initialize scanner.
-     * @param flags flags defining properties for serial device scanner
+     * @param flags flags defining properties for serial device scanner (by default are all flags are unset)
      */
     virtual void init(quint32 flags = 0) override;
 
@@ -47,12 +51,15 @@ public:
 
     /**
      * Set properties for serial device scanner.
+     * Calling setProperties(A | B) is equivalent to calling setProperties(A) and then setProperties(B).
      * @param flags flags defining properties for serial device scanner
      */
     void setProperties(quint32 flags);
 
     /**
      * Unset properties for serial device scanner.
+     * Calling unsetProperties(A | B) is equivalent to calling unsetProperties(A) and then unsetProperties(B).
+     * To unset all properties (restore default values), call unsetProperties(0xFFFFFFFF).
      * @param flags flags defining properties for serial device scanner
      */
     void unsetProperties(quint32 flags);

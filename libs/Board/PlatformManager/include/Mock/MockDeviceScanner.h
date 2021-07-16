@@ -28,7 +28,8 @@ public:
 
     /**
      * Initialize scanner.
-     * @param flags flags defining properties for mock device scanner (currently unused)
+     * @param flags flags defining properties for mock device scanner (by default are all flags are unset)
+     * Flags are not currently used in mock device scanner.
      */
     virtual void init(quint32 flags = 0) override;
 
