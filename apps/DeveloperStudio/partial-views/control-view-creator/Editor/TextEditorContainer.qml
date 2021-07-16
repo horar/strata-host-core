@@ -471,6 +471,7 @@ ColumnLayout {
                         "error_intro": "Control View Creator Error:",
                         "error_message": "Monaco text editor component failed to load or was not found"
                     }
+
                     fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
                 }
             }
