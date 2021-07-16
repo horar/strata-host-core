@@ -82,10 +82,6 @@ FocusScope {
         onValidationReadyChanged: {
             delegate.validate()
         }
-
-        onEnabledChanged: {
-            delegate.validate()
-        }
     }
 
     function validate(focusChanged) {
@@ -113,6 +109,10 @@ FocusScope {
         } else if (error.length === 0) {
             setIsValid()
         }
+    }
+
+    onEnabledChanged: {
+        delegate.validate()
     }
 
     SGText {
