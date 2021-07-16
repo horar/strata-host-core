@@ -5,10 +5,8 @@
 #include <QStandardPaths>
 #include <QFile>
 #include <QJsonDocument>
-#include <QJsonValue>
 #include <QDirIterator>
 #include <QDir>
-#include <QDebug>
 
 SGUserSettings::SGUserSettings(QObject *parent, const QString &user, const QString &classId) : QObject(parent), classId_(classId), user_(user)
 {
@@ -22,15 +20,10 @@ SGUserSettings::~SGUserSettings()
 bool SGUserSettings::writeFile(const QString &fileName, const QJsonObject &data, const QString &subdirectory)
 {
     SGUtilsCpp utils;
-
     QString filePath = utils.joinFilePath(base_output_path_, subdirectory);
-
     makePath(filePath);
-
     filePath = utils.joinFilePath(filePath, fileName);
-
-    qDebug(logCategoryUserSettings) << "Writing to path : " << filePath;
-
+    qCDebug(logCategoryUserSettings) << "Writing to" << filePath;
     QJsonDocument doc(data);
 
     return utils.atomicWrite(filePath, doc.toJson());
@@ -46,7 +39,7 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
 
     QFileInfo fi(filePath);
     if (fi.exists() == false || fi.isFile() == false) {
-        qCWarning(logCategoryUserSettings) << "Settings file at path " << filePath << " doesn't exist or is not a file.";
+        qCWarning(logCategoryUserSettings) << "Settings file at" << filePath << "does not exist or is not a file.";
         return returnedObj;
     }
 
@@ -58,10 +51,10 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
         if (!doc.isNull() && doc.isObject()) {
             returnedObj = doc.object();
         } else {
-            qCCritical(logCategoryUserSettings) << "unable to convert document to object";
+            qCCritical(logCategoryUserSettings) << "Unable to convert document to object";
         }
     } else {
-        qCCritical(logCategoryUserSettings) << "document at " << filePath << " is not valid JSON";
+        qCCritical(logCategoryUserSettings) << "Document at" << filePath << "is not valid JSON";
     }
 
     return returnedObj;
@@ -85,7 +78,7 @@ QStringList SGUserSettings::listFilesInDirectory(const QString &subdirectory)
         filesInDir.append(fi.fileName());
     }
 
-    qDebug(logCategoryUserSettings) << filesInDir;
+    qCDebug(logCategoryUserSettings) << filesInDir;
 
     return filesInDir;
 }
@@ -102,7 +95,7 @@ bool SGUserSettings::deleteFile(const QString &fileName, const QString &subdirec
         return false;
     }
 
-    qDebug(logCategoryUserSettings) << "Successfully deleted user setting located at " << filePath;
+    qCDebug(logCategoryUserSettings) << "Successfully deleted user setting located at " << filePath;
 
     return true;
 }
@@ -118,12 +111,11 @@ bool SGUserSettings::renameFile(const QString &origFileName, const QString &newF
     newFilePath = utils.joinFilePath(newFilePath, newFileName);
 
     if (!QFile::rename(oldFilePath, newFilePath)) {
-        qCCritical(logCategoryUserSettings) << "could not rename file from " << oldFilePath << " to " << newFilePath;
+        qCCritical(logCategoryUserSettings) << "Could not rename file from" << oldFilePath << "to" << newFilePath;
         return false;
     }
 
-    qDebug(logCategoryUserSettings) << "Successfully renamed " << oldFilePath << " to " << newFilePath;
-
+    qCDebug(logCategoryUserSettings) << "Successfully renamed" << oldFilePath << "to" << newFilePath;
     return true;
 }
 
@@ -163,7 +155,7 @@ void SGUserSettings::setUser(const QString &user)
 void SGUserSettings::setBaseOutputPath()
 {
     SGUtilsCpp utils;
-    const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);    
+    const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QString hashedString;
     if (user_ != "") {
         const uint hashedUser = qHash(user_);
@@ -178,5 +170,5 @@ void SGUserSettings::setBaseOutputPath()
         base_output_path_ = utils.joinFilePath(base_output_path_, classId_);
     }
 
-    qCDebug(logCategoryUserSettings) << "Setting base output path for user settings to " << base_output_path_;
+    qCDebug(logCategoryUserSettings) << "Setting base output path for user settings to" << base_output_path_;
 }
