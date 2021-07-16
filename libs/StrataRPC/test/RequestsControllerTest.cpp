@@ -128,7 +128,8 @@ void RequestsControllerTest::testRequestTimeout()
         Qt::QueuedConnection);
 
     for (int i = 0; i < totalNumOfRequests; i++) {
-        rc.addNewRequest("test", QJsonObject({{}}));
+        std::pair<DeferredRequest *, QByteArray> requestInfo =
+            rc.addNewRequest("test", QJsonObject({{}}));
     }
 
     QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 550);
