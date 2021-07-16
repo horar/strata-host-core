@@ -540,7 +540,7 @@ ColumnLayout {
 
         function checkForErrors(flag,log) {
             if (flag) {
-                console.error(log)
+               console.error(log)
             }
         }
 
