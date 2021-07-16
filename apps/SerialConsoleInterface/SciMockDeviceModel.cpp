@@ -21,12 +21,14 @@ SciMockDeviceModel::~SciMockDeviceModel()
 
 void SciMockDeviceModel::clear()
 {
-    beginResetModel();
+    if (platforms_.empty() == false) {
+        beginResetModel();
 
-    platforms_.clear();
+        platforms_.clear();
 
-    endResetModel();
-    emit countChanged();
+        endResetModel();
+        emit countChanged();
+    }
 }
 
 void SciMockDeviceModel::init()
