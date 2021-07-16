@@ -381,8 +381,8 @@ ColumnLayout {
             source: {
                 switch (viewStack.currentIndex) {
                    case 0:
-                       menuLoaded = false
-                       return ""
+                        menuLoaded = false
+                        return ""
                     case 1:
                         menuLoaded = true
                         return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
