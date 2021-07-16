@@ -101,6 +101,7 @@ ColumnLayout {
             console.error("Unable to save file", model.filepath)
         }
     }
+
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
