@@ -413,6 +413,7 @@ ColumnLayout {
             id: webEngine
             webChannel: channel
             url: "qrc:///tech/strata/monaco/minified/editor.html"
+
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: true
@@ -470,6 +471,7 @@ ColumnLayout {
                         "error_intro": "Control View Creator Error:",
                         "error_message": "Monaco text editor component failed to load or was not found"
                     }
+
                     fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
                 }
             }
