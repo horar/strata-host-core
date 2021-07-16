@@ -317,7 +317,7 @@ Item {
         text: "You currently have unsaved changes. If you continue, you will lose all progress made. Are you sure you want to continue?"
 
         onAccepted: {
-            let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
+            const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)
                 createModelFromJson(jsonObject)
@@ -603,7 +603,6 @@ Item {
                         Layout.fillHeight: true
                     }
                 }
-
             }
         }
 
@@ -792,7 +791,12 @@ Item {
         alertToast.show()
 
         finishedModel.modelReset()
-        outputFileText.text = findProjectRootDir()
+
+        if (inputFilePath == currentCvcProjectJsonUrl) {
+            outputFileText.text = findProjectRootDir()
+        } else {
+            outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
+        }
     }
 
     /**
