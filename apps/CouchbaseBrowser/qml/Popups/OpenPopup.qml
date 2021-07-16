@@ -78,7 +78,7 @@ CustomPopup {
                 id: listCard
                 Rectangle {
                     id: cardBackground
-                    width: parent.width - 10
+                    width: ListView.view.width - 10
                     height: 60
 
                     color: "white"

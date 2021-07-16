@@ -15,6 +15,15 @@ class TcpDeviceScanner : public DeviceScanner
 
 public:
     /**
+     * Flags defining properties for TCP device scanner.
+     * By default, scanner starts with all flags unset.
+     */
+    enum TcpScannerFlag {
+        DisableAutomaticScan = 0x0001
+    };
+    Q_DECLARE_FLAGS(TcpScannerProperty, TcpScannerFlag)
+
+    /**
      * TcpDeviceScanner constructor
      */
     TcpDeviceScanner();
@@ -25,25 +34,46 @@ public:
     ~TcpDeviceScanner();
 
     /**
-     * Start scanning for new devices.
+     * Initialize scanner.
+     * @param flags flags defining properties for TCP device scanner (by default are all flags are unset)
      */
-    virtual void init() override;
+    virtual void init(quint32 flags = 0) override;
 
     /**
-     * Stop scanning for new devices. Will close all open devices.
+     * Deinitialize scanner and stop scanning for new devices. Will close all open devices.
      */
     virtual void deinit() override;
+
+    /**
+     * Set properties for TCP device scanner.
+     * Calling setProperties(A | B) is equivalent to calling setProperties(A) and then setProperties(B).
+     * @param flags flags defining properties for TCP device scanner
+     */
+    void setProperties(quint32 flags);
+
+    /**
+     * Unset properties for TCP device scanner.
+     * Calling unsetProperties(A | B) is equivalent to calling unsetProperties(A) and then unsetProperties(B).
+     * To unset all properties (restore default values), call unsetProperties(0xFFFFFFFF).
+     * @param flags flags defining properties for TCP device scanner
+     */
+    void unsetProperties(quint32 flags);
+
 
 private slots:
     void processPendingDatagrams();
     void deviceDisconnectedHandler();
 
 private:
-    bool addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    void startAutomaticScan();
+    void stopAutomaticScan();
+    void addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
     QList<QByteArray> discoveredDevices_;
+
+    bool scanRunning_;
 
     static constexpr qint16 UDP_LISTEN_PORT{5146};
 };
