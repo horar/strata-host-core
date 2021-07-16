@@ -557,8 +557,9 @@ ColumnLayout {
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
-                if (reset)
+                if (reset) {
                     reset = false
+                }
             }
 
             currentVersionId = version
