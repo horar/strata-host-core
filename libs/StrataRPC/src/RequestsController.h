@@ -67,7 +67,7 @@ public:
 
 signals:
     /**
-     * signal emitted when there are timed out requests.
+     * Signal emitted when there are timed out requests.
      * @param [in] id of the timed out request.
      * @note connections to this signal must be Qt::ConnectionType::QueuedConnection, otherwise the
      * requests map will be modified during the search.
@@ -81,12 +81,12 @@ private:
      */
     void findTimedoutRequests();
 
-    QMap<int, Request> requestsList_;
+    QMap<int, Request> requests_;
     int currentRequestId_;
 
-    QTimer requestsTimer_;
-    static constexpr int CHECK_REQUESTS_INTERVAL{10};
-    static constexpr int REQUEST_TIMOUT{500};
+    QTimer findTimedoutRequestsTimer_;
+    static constexpr int FIND_TIMEDOUT_REQUESTS_INTERVAL{10};
+    static constexpr int REQUEST_TIMEOUT{500};
 };
 
 }  // namespace strata::strataRPC
