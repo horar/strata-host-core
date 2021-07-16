@@ -30,7 +30,7 @@ Item {
             openFilesModel.closeAll()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
-           // editor.editQRCEnabled = true
+            editor.editQRCEnabled = true
         }
 
         onErrorParsing: {

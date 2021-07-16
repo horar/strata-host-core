@@ -49,7 +49,6 @@ Item {
         if (inRecentProjects === false) {
             addToTheProjectList(path)
         }
-
         viewStack.currentIndex = 1 // switch to edit view
         controlViewCreatorRoot.projectInitialization = true
         controlViewCreatorRoot.recompileControlViewQrc();
