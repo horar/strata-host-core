@@ -32,7 +32,7 @@ ColumnLayout {
     property int savedVersionId
     property int currentVersionId
     property bool externalChanges: false
-    property bool internalChanged: model.unsavedChanges
+    property bool internalChanges: model.unsavedChanges
 
     signal saveClicked()
     signal undoClicked()
@@ -307,7 +307,7 @@ ColumnLayout {
             id: mainButtons
 
             model: [
-                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: menuLoader.active ? false : true, enabled: internalChanged },
+                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: menuLoader.active ? false : true, enabled: internalChanges },
                 { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true, enabled: true },
                 { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true, enabled: true }
             ]
