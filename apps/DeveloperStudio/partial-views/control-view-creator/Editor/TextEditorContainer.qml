@@ -93,6 +93,7 @@ Item {
             console.error("Unable to save file", model.filepath)
         }
     }
+
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
@@ -271,8 +272,9 @@ Item {
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
-                if (reset)
+                if (reset) {
                     reset = false
+                }
             }
 
             currentVersionId = version
@@ -316,7 +318,6 @@ Item {
                     break
             }
         }
-            
 
         onHeightChanged: {
             var htmlHeight = height - 16
@@ -327,6 +328,7 @@ Item {
             var htmlWidth = width - 16
             channelObject.setContainerWidth(htmlWidth.toString())
         }
+
         // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
         // the visibilty changed is called when the window is resized from signals outside of the app
         Connections {
@@ -346,10 +348,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-            	let errorProperties = {
-                	"error_message": "Monaco text editor component failed to load or was not found"
+                let errorProperties = {
+                    "error_message": "Monaco text editor component failed to load or was not found"
                 }
-                
+
                 fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties)
             }
         }
