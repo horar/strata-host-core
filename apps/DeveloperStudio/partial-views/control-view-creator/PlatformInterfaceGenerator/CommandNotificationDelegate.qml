@@ -187,6 +187,7 @@ ColumnLayout {
                     id: textField
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    selectByMouse: true
                 }
             }
         }

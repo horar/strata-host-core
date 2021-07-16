@@ -116,6 +116,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 30
         active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+        visible: active
 
         onItemChanged: {
             if (item) {

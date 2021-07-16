@@ -10,9 +10,9 @@ ComboBox {
         { name: "Double", value: sdsModel.platformInterfaceGenerator.TYPE_DOUBLE, description: "Type double" },
         { name: "String", value: sdsModel.platformInterfaceGenerator.TYPE_STRING, description: "Type string" },
         { name: "Bool", value: sdsModel.platformInterfaceGenerator.TYPE_BOOL, description: "Type bool" },
-        { name: "Array - Static Sized", value: "array", description: "With this you are able to listen to changes made to each individual element in the array" },
+        { name: "Array - Static Sized", value: sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC, description: "With this you are able to listen to changes made to each individual element in the array" },
         { name: "Array - Dynamic Sized", value: sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC, description: "With this you are unable to listen to changes to the individual elements in the array. You are only able to listen to when the entire array changes" },
-        { name: "Object - Known Properties", value: "object", description: "With this you are able to listen to changes made to individual properties in the object" },
+        { name: "Object - Known Properties", value: sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC, description: "With this you are able to listen to changes made to individual properties in the object" },
         { name: "Object - Unknown Properties", value: sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC, description: "With this you are unable to listen to changes made to individual properties in the object. You are only able to listen to when the entire object changes." }
     ]
 
