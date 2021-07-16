@@ -380,7 +380,7 @@ ColumnLayout {
 
             source: {
                 switch (viewStack.currentIndex) {
-                   case 0:
+                    case 0:
                         menuLoaded = false
                         return ""
                     case 1:
