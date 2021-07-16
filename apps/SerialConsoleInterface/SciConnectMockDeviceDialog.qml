@@ -102,10 +102,11 @@ SGWidgets.SGDialog {
                 text: "Connect"
                 enabled: (deviceName.text.length > 0) && (deviceId.text.length > 0)
                 onClicked: {
-                    if (sciModel.mockDeviceModel.connectMockDevice(deviceName.text, deviceId.text) === true) {
+                    let errorString = sciModel.mockDeviceModel.connectMockDevice(deviceName.text, deviceId.text)
+                    if (errorString.length === 0) {
                         dialog.accept()
                     } else {
-                        errorText.text = "Unable to connect this device, device already exists."
+                        errorText.text = errorString
                     }
                 }
             }
