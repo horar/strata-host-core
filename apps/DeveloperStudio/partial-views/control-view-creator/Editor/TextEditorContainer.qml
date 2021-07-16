@@ -418,6 +418,7 @@ ColumnLayout {
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: true
+
             settings.errorPageEnabled: false
             settings.javascriptCanOpenWindows: false
             settings.javascriptEnabled: true
