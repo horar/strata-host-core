@@ -101,7 +101,6 @@ ColumnLayout {
             console.error("Unable to save file", model.filepath)
         }
     }
-
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
@@ -414,11 +413,9 @@ ColumnLayout {
             id: webEngine
             webChannel: channel
             url: "qrc:///tech/strata/monaco/minified/editor.html"
-
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: true
-
             settings.errorPageEnabled: false
             settings.javascriptCanOpenWindows: false
             settings.javascriptEnabled: true
@@ -558,9 +555,8 @@ ColumnLayout {
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
-                if (reset) {
+                if (reset)
                     reset = false
-                }
             }
 
             currentVersionId = version
