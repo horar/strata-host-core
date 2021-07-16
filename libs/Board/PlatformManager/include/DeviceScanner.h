@@ -27,8 +27,9 @@ public:
     /**
      * Start scanning for new devices.
      * @return true if scanning was started, otherwise false
+     * @param flags flags defining properties for scanner (by default are all flags are unset)
      */
-    virtual void init() = 0;
+    virtual void init(quint32 flags = 0) = 0;
 
     /**
      * Stop scanning for new devices. Will close all open devices.
@@ -41,6 +42,26 @@ public:
      */
     virtual Device::Type scannerType() const final;
 
+    /**
+     * Get scanner prefix - should be added at the start of deviceId.
+     * Must be unique. Two scanners with coliding prefixes can't run.
+     * @return scanner prefix
+     */
+    virtual QByteArray scannerPrefix() const final;
+
+    /**
+     * Mapping of deviceId to scanner/device type
+     * @param deviceId deviceId to be checked for type
+     * @return scanner/device type
+     */
+    static Device::Type scannerType(const QByteArray deviceId);
+
+    /**
+     * Mapping of Type to deviceId prefix added by scanner.
+     * @param type device type
+     * @return deviceId prefix
+     */
+    static const QByteArray scannerPrefix(const Device::Type type);
 signals:
     /**
      * Emitted when new device was detected.
@@ -55,6 +76,15 @@ signals:
     void deviceLost(QByteArray deviceId);
 
 protected:
+    /**
+     * Creates device ID string, based on unique hash identifying the device.
+     * Adds scanner prefix to the hash.
+     * @param uniqueHash unique hash, identifying the device.
+     * @return device ID.
+     */
+    virtual QByteArray createDeviceId(const QByteArray &uniqueHash) const final;
+
+    const static QMap<Device::Type, QByteArray> allScannerTypes_;
     const Device::Type scannerType_;
 };
 

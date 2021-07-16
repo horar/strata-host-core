@@ -48,20 +48,16 @@ Item {
     property int delegateButtonRowX: delegateTimestampX + timestampWidth + buttonRowSpacing
     property int delegateTextX: delegateButtonRowX + buttonRowWidth + delegateBaseSpacing
 
-    Shortcut {
-        id: copyShortcut
-        sequence: StandardKey.Copy
-        onActivated: {
+    Keys.onPressed: {
+        if (event.matches(StandardKey.Copy)) {
             copyToClipboard()
-        }
-    }
-
-    Shortcut {
-        id: selectShortcut
-        sequence: StandardKey.SelectAll
-        onActivated: {
+        } else if (event.matches(StandardKey.SelectAll)) {
             selectAllText()
+        } else {
+            return
         }
+
+        event.accepted = true
     }
 
     Timer {
