@@ -28,13 +28,13 @@ RowLayout {
     }
 
     Item {
-        Layout.preferredWidth: parent.width/12
+        Layout.preferredWidth: parent.width/8.5
         Layout.fillHeight: true
 
         Button {
             id: fileTreeButton
             anchors.fill: parent
-            text: "File Tree"
+            text: "Toggle File Tree"
             background: Rectangle {
                 radius: 1.5
                 color: fileTreemouseArea.containsMouse ? "lightgray": root.buttonColor

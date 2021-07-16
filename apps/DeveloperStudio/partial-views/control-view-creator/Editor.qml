@@ -67,7 +67,6 @@ Item {
     }
 
     ColumnLayout {
-        id: test
         anchors.fill: parent
         spacing: 0
 
@@ -80,7 +79,6 @@ Item {
                 recompileControlViewQrc()
             }
         }
-
 
         Rectangle {
             Layout.fillWidth: true
