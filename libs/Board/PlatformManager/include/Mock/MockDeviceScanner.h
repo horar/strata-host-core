@@ -1,7 +1,5 @@
 #pragma once
 
-#include <set>
-
 #include <QObject>
 #include <QString>
 #include <QByteArray>
@@ -29,31 +27,39 @@ public:
     ~MockDeviceScanner() override;
 
     /**
-     * Start scanning for new devices.
-     * @return true if scanning was started, otherwise false
+     * Initialize scanner.
+     * @param flags flags defining properties for mock device scanner (by default are all flags are unset)
+     * Flags are not currently used in mock device scanner.
      */
-    virtual void init() override;
+    virtual void init(quint32 flags = 0) override;
 
     /**
-     * Stop scanning for new devices. Will close all open devices.
+     * Deinitialize scanner. Will close all open devices.
      */
     virtual void deinit() override;
+
+    /**
+     * Create ID for mock device - for external callers.
+     * @param mockName name of the mock device
+     * @return ID for mock device
+     */
+    QByteArray mockCreateDeviceId(const QString& mockName);
 
     /**
      * Will create new mock device and emit detected signal
      * @param deviceId device ID
      * @param name mock device name
      * @param saveMessages true when mock device should save messages (for tests), otherwise false
-     * @return true if device did not existed and was created, otherwise false
+     * @return an empty (null) string if the device was created, otherwise a string containing an error
      */
-    bool mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages);
+    QString mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages);
 
     /**
      * Will assign platform to an existing mock device and emit detected signal
      * @param mockDevice mock device
-     * @return true if device did not existed and was assigned platform, otherwise false
+     * @return an empty (null) string if the device was assigned to platform, otherwise a string containing an error
      */
-    bool mockDeviceDetected(DevicePtr mockDevice);
+    QString mockDeviceDetected(DevicePtr mockDevice);
 
     /**
      * Will emit lost signal for previously detected device
@@ -67,9 +73,19 @@ public:
      */
     void mockAllDevicesLost();
 
+    /**
+     * Get existing mock device.
+     * @param deviceId device ID
+     * @return mock device if such device exists for given deviceID, nullptr otherwise
+     */
+    DevicePtr getMockDevice(const QByteArray& deviceId) const;
+
 private:
-    std::set<QByteArray> deviceIds_;
+    // deviceID <-> MockDevice
+    QHash<QByteArray, DevicePtr> devices_;
     bool running_ = false;
 };
+
+typedef std::shared_ptr<MockDeviceScanner> MockDeviceScannerPtr;
 
 }  // namespace

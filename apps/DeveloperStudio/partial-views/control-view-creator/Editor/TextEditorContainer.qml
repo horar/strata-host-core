@@ -96,6 +96,7 @@ ColumnLayout {
             console.error("Unable to save file", model.filepath)
         }
     }
+
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
@@ -484,8 +485,9 @@ ColumnLayout {
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
-                if (reset)
+                if (reset) {
                     reset = false
+                }
             }
 
             currentVersionId = version

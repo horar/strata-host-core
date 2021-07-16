@@ -1,5 +1,4 @@
-#ifndef SGSORTFILTERPROXYMODEL_H
-#define SGSORTFILTERPROXYMODEL_H
+#pragma once
 
 #include <QtCore/qsortfilterproxymodel.h>
 #include <QtQml/qqmlparserstatus.h>
@@ -27,9 +26,7 @@ class SGSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserSt
     Q_PROPERTY(bool caseSensitive READ caseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
     Q_PROPERTY(bool invokeCustomFilter READ invokeCustomFilter WRITE setInvokeCustomFilter NOTIFY invokeCustomFilterChanged)
     Q_PROPERTY(bool invokeCustomLessThan READ invokeCustomLessThan WRITE setInvokeCustomLessThan NOTIFY invokeCustomLessThanChanged)
-    /* Due to implementation detail of QSortFilterProxyModel,
-     * once sort is enabled it cannot be disabled.
-     * (setting this property to false after it was true has no effect) */
+    /* When sort is disabled, order from source model is used */
     Q_PROPERTY(bool sortEnabled READ sortEnabled WRITE setSortEnabled NOTIFY sortEnabledChanged)
 
     Q_ENUMS(FilterSyntax)
@@ -111,9 +108,8 @@ private:
     bool callFilterAcceptsRow(int sourceRow) const;
     bool callLessThan(int leftRow, int rightRow) const;
     void disconnectFromSourceModel();
+    void doSort();
 
 private slots:
     void sourceModelRolesMaybeChanged();
 };
-
-#endif  // SGSORTFILTERPROXYMODEL_H
