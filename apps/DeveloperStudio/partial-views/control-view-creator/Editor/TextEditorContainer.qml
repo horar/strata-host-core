@@ -413,7 +413,6 @@ ColumnLayout {
             id: webEngine
             webChannel: channel
             url: "qrc:///tech/strata/monaco/minified/editor.html"
-
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: true
@@ -426,15 +425,15 @@ ColumnLayout {
 
             onJavaScriptConsoleMessage: {
                 switch (level) {
-                case WebEngineView.InfoMessageLevel:
-                    console.log(message)
-                    break
-                case WebEngineView.WarningMessageLevel:
-                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
-                case WebEngineView.ErrorMessageLevel:
-                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
+                    case WebEngineView.InfoMessageLevel:
+                        console.log(message)
+                        break
+                    case WebEngineView.WarningMessageLevel:
+                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                    case WebEngineView.ErrorMessageLevel:
+                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
                 }
             }
 
