@@ -9,7 +9,6 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.SGFileTabModel 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
