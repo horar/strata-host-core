@@ -375,16 +375,17 @@ ColumnLayout {
             id: menuLoader
             active: menuLoaded
             Layout.fillWidth: true
+
             property bool menuLoaded: false
 
             source: {
                 switch (viewStack.currentIndex) {
-                case 0:
-                    menuLoaded = false
-                    return ""
-                case 1:
-                    menuLoaded = true
-                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
+                   case 0:
+                       menuLoaded = false
+                       return ""
+                    case 1:
+                        menuLoaded = true
+                        return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
                 }
             }
         }
