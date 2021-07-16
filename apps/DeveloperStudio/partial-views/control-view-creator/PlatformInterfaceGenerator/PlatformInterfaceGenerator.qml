@@ -650,7 +650,6 @@ Item {
                 const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
 
                 if (payload) {
-                    let payloadPropertiesArray = []
                     let payloadModel = commandsModel.get(j).payload
                     for (let k = 0; k < payload.length; k++) {
 
@@ -711,7 +710,6 @@ Item {
     function generateObjectModel(object, parentListModel) {
         for (let i = 0; i < object.length; i++) {
             const type = object[i].type
-
             let obj = {"name": object[i].name, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""}
 
             if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
