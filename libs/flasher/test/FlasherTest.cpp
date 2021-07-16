@@ -281,6 +281,7 @@ void FlasherTest::flashFirmwareTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -310,7 +311,6 @@ void FlasherTest::flashFirmwareTest()
     QCOMPARE(recordedMessages[27],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[28],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -329,6 +329,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),28); //Without start application
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -357,7 +358,6 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
     QCOMPARE(recordedMessages[26],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[27],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),28); //Without start application
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -379,6 +379,7 @@ void FlasherTest::flashFirmwareStartInBootloaderTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -408,7 +409,6 @@ void FlasherTest::flashFirmwareStartInBootloaderTest()
     QCOMPARE(recordedMessages[27],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[28],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -427,6 +427,7 @@ void FlasherTest::flashBootloaderTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),18);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -455,7 +456,6 @@ void FlasherTest::flashBootloaderTest()
     QCOMPARE(recordedMessages[16],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[17],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),18);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -477,6 +477,7 @@ void FlasherTest::flashBootloaderStartInBootloaderTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),18);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -505,7 +506,6 @@ void FlasherTest::flashBootloaderStartInBootloaderTest()
     QCOMPARE(recordedMessages[16],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[17],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),18);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -524,6 +524,7 @@ void FlasherTest::setFwClassIdTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),10);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -540,7 +541,6 @@ void FlasherTest::setFwClassIdTest()
     QCOMPARE(recordedMessages[8],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[9],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),10);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -559,6 +559,7 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),7);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
 
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
@@ -573,7 +574,6 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
 
     QCOMPARE(recordedMessages[6],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),7);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -593,6 +593,7 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),6);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -606,7 +607,6 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
-    QCOMPARE(recordedMessages.size(),6);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -626,6 +626,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),6);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -639,7 +640,6 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
     QCOMPARE(actualPayload["chunks"].GetInt(),expectedChunksCount_);
     QCOMPARE(actualPayload["md5"].GetString(),expectedMd5_);
 
-    QCOMPARE(recordedMessages.size(),6);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -659,6 +659,7 @@ void FlasherTest::flashFirmwareResendChunkTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),8);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -690,7 +691,6 @@ void FlasherTest::flashFirmwareResendChunkTest()
         QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
     }
 
-    QCOMPARE(recordedMessages.size(),8);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -710,6 +710,7 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),7);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -731,7 +732,6 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
     QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
     QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
 
-    QCOMPARE(recordedMessages.size(),7);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -751,6 +751,7 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),7);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -772,7 +773,6 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
     QCOMPARE(actualChunk["crc"].GetInt(),expectedChunkCrc_[0]);
     QCOMPARE(actualChunk["data"].GetString(),expectedChunkData_[0]);
 
-    QCOMPARE(recordedMessages.size(),7);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -823,6 +823,8 @@ void FlasherTest::flashFirmwareCancelTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Firmware operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(),16);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -848,7 +850,6 @@ void FlasherTest::flashFirmwareCancelTest()
         messageNumber++;
     }
 
-    QCOMPARE(recordedMessages.size(),16);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -866,6 +867,8 @@ void FlasherTest::flashBootloaderCancelTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Flash bootlaoder operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(),11);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -891,7 +894,6 @@ void FlasherTest::flashBootloaderCancelTest()
         messageNumber++;
     }
 
-    QCOMPARE(recordedMessages.size(),11);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -909,6 +911,8 @@ void FlasherTest::backupFirmwareTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -928,7 +932,6 @@ void FlasherTest::backupFirmwareTest()
     QCOMPARE(recordedMessages[27],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[28],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 
     QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
@@ -960,6 +963,8 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(),26);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -975,7 +980,6 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
         messageNumber++;
     }
 
-    QCOMPARE(recordedMessages.size(),26);
     QCOMPARE(flasherFinishedCount_,1);
 
     QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
@@ -1009,6 +1013,7 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
 
+    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -1028,7 +1033,6 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
     QCOMPARE(recordedMessages[27],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[28],test_commands::request_platform_id_request);
 
-    QCOMPARE(recordedMessages.size(),29);
     QCOMPARE(flasherFinishedCount_,1);
 
     QFile backedUpFirmware(fakeFirmwareBackup_.fileName());
@@ -1078,6 +1082,8 @@ void FlasherTest::backupFirmwareCancelTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Flash bootlaoder operation was cancelled.
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(),16);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -1093,7 +1099,6 @@ void FlasherTest::backupFirmwareCancelTest()
         messageNumber++;
     }
 
-    QCOMPARE(recordedMessages.size(),16);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -1110,6 +1115,8 @@ void FlasherTest::startBackupNoFirmwareTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherNoFirmwareCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(), 6);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -1117,7 +1124,6 @@ void FlasherTest::startBackupNoFirmwareTest()
     QCOMPARE(recordedMessages[4],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[5],test_commands::start_backup_firmware_request);
 
-    QCOMPARE(recordedMessages.size(), 6);
     QCOMPARE(flasherFinishedCount_,1);
 }
 
@@ -1134,6 +1140,8 @@ void FlasherTest::backupNoFirmwareTest()
     QTRY_COMPARE_WITH_TIMEOUT(flasherNoFirmwareCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(),6);
     QCOMPARE(recordedMessages[0],test_commands::get_firmware_info_request);
     QCOMPARE(recordedMessages[1],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[2],test_commands::start_bootloader_request);
@@ -1141,6 +1149,5 @@ void FlasherTest::backupNoFirmwareTest()
     QCOMPARE(recordedMessages[4],test_commands::request_platform_id_request);
     QCOMPARE(recordedMessages[5],test_commands::start_backup_firmware_request);
 
-    QCOMPARE(recordedMessages.size(),6);
     QCOMPARE(flasherFinishedCount_,1);
 }
