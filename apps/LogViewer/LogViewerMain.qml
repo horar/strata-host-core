@@ -1124,23 +1124,15 @@ FocusScope {
                         showMarks: logViewerMain.showMarks
                         searchingMode: logViewerMain.searchingMode
 
-                        onCurrentIndexChanged: {
-                            if (currentIndex >= 0 && secondaryLogView.activeFocus) {
-                                if (showMarks && searchingMode) {
-                                    var sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
-                                } else if (showMarks) {
-                                    sourceIndex = markedModel.mapIndexToSource(currentIndex)
-                                } else {
-                                    sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
-                                }
-                                if (sourceIndex < 0) {
-                                    console.error(Logger.logviewerCategory, "Index out of scope.")
-                                    return
-                                }
-
-                                primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
-                                primaryLogView.currentIndex = sourceIndex
+                        onDelegateSelected: {
+                            var sourceIndex = searchResultModel.mapIndexToSource(index)
+                            if (sourceIndex < 0) {
+                                console.error(Logger.logviewerCategory, "Index out of range")
+                                return
                             }
+
+                            primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
+                            primaryLogView.currentIndex = sourceIndex
                         }
 
                         KeyNavigation.tab: primaryLogView
