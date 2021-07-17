@@ -57,11 +57,11 @@ class QtSearch {
     }
 
     findPreviousQtItem(position) {
-        return this.model.findPreviousMatch(/([A-Z]+[a-zA-Z0-9_]*)[\.]*([A-Z]+[a-zA-Z0-9_]*)*\s*(\{\s*\/\/)/, position, true, true)
+        return this.model.findPreviousMatch(/([a-zA-Z0-9_]+)[\.]*([A-Z]+[a-zA-Z0-9_]*)*\s*(\{\n*)/, position, true, true)
     }
 
     findNextQtItem(position) {
-        return this.model.findNextMatch(/([A-Z]+[a-zA-Z0-9_]*)[\.]*([A-Z]+[a-zA-Z0-9_]*)*\s*(\{\s*\/\/)/, position, true, true)
+        return this.model.findNextMatch(/([a-zA-Z0-9_]+)[\.]*([a-zA-Z0-9_]+)*\s*(\{\n*)/, position, true, true)
     }
 
     findNextFunction(position) {
@@ -136,17 +136,23 @@ class QtSearch {
         return this.model.findNextMatch(/([a-z]+\s*\{)/, position, true, true)
     }
 
+    findPreviousExpandedProperty(position) {
+        return this.model.findPreviousMatch(/([a-z]+\s*\:\s*\{)/, position, true)
+    }
+
+    findNextExpandedProperty(position) {
+        return this.model.findNextMatch(/([a-z]+\s*\:\s*\{)/, position, true)
+    }
+
     getNextQtItem(position) {
         const itemLine = this.findNextQtItem(position)
         const getItem = this.model.getLineContent(itemLine.range.startLineNumber).trim().split(/[\s*\{|\s+]/)[0].trim()
-        const getTag = this.model.getLineContent(itemLine.range.startLineNumber).split("//")[1].trim().split("start_")[1].trim()
-        return { item: getItem, range: itemLine.range, uuid: getTag }
+        return { item: getItem, range: itemLine.range }
     }
     getPrevQtItem(position) {
         const itemLine = this.findPreviousQtItem(position)
         const getItem = this.model.getLineContent(itemLine.range.startLineNumber).trim().split(/[\s*\{|\s+]/)[0].trim()
-        const getTag = this.model.getLineContent(itemLine.range.startLineNumber).split("//")[1].trim().split("start_")[1].trim()
-        return { item: getItem, range: itemLine.range, uuid: getTag }
+        return { item: getItem, range: itemLine.range }
     }
 
     getNextIdName(position) {
@@ -251,14 +257,44 @@ class QtSearch {
         }
     }
 
+    isInExpandedProperty(position) {
+        const checkPrev = this.findPreviousExpandedProperty(position)
+        if (checkPrev === null) {
+            return false;
+        }
+
+        let nextCheck = this.getNextCloseBracket({ lineNumber: checkPrev.range.startLineNumber, column: checkPrev.range.startColumn })
+        while (nextCheck.range.startColumn >= checkPrev.range.startColumn) {
+            if (nextCheck.range.startColumn === checkPrev.range.startColumn) {
+                break;
+            }
+            const check = this.getNextCloseBracket({ lineNumber: nextCheck.range.startLineNumber, column: nextCheck.range.endColumn })
+            nextCheck = check
+        }
+
+        if (position.lineNumber <= nextCheck.range.startLineNumber && position.lineNumber >= checkPrev.range.startLineNumber) {
+            if (position.lineNumber === nextCheck.range.startLineNumber && position.column < nextCheck.range.startColumn) {
+                return true
+            } else if (position.lineNumber === checkPrev.range.startLineNumber && position.column > checkPrev.range.endColumn) {
+                return true
+            } else if (position.lineNumber < nextCheck.range.startLineNumber && position.lineNumber > checkPrev.range.startLineNumber) {
+                return true
+            }
+        }
+
+        return false;
+    }
+
 
     isInItem(position) {
         const checkItem = this.getPrevQtItem(position)
+        const getItem = qtQuickModel.fetchItem(checkItem.range.startLineNumber)
+
         if (checkItem.range === null) {
             return false;
         }
-        const nextTag = this.findNextEndUUID({ lineNumber: checkItem.range.startLineNumber, column: checkItem.range.startColumn }, checkItem.uuid)
-        if (position.lineNumber <= nextTag.range.startLineNumber) {
+
+        if (position.lineNumber <= getItem.range.endLineNumber) {
             return true;
         } else {
             return false;
@@ -271,7 +307,7 @@ class QtSearch {
             return false;
         }
         const checkIfIsProperty = this.model.getLineContent(checkPrev.range.startLineNumber)
-        if (checkIfIsProperty.includes("//")) {
+        if (/[A-Z]/.test(checkIfIsProperty)) {
             return false;
         }
         let nextCheck = this.getNextCloseBracket({ lineNumber: checkPrev.range.startLineNumber, column: checkPrev.range.startColumn })
@@ -373,11 +409,14 @@ class QtSearch {
             const newItem = this.getNextQtItem(position)
             try {
                 const itemModel = new QtItemModel();
-                itemModel.updateValue(newItem.item);
-                const nextId = this.getNextIdName({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
-                itemModel.updateId(nextId)
-                itemModel.updateUUID(newItem.uuid)
-                qtQuickModel.updateQtModel(newItem.uuid, itemModel)
+                if (/[A-Z]/.test(newItem.item)) {
+                    itemModel.updateValue(newItem.item);
+                    const itemRange = this.findMatchingBracket({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
+                    const nextId = this.getNextIdName({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
+                    itemModel.updateId(nextId)
+                    itemModel.updateRange(itemRange)
+                    qtQuickModel.updateQtModel(newItem.range.startLineNumber, itemModel)
+                }
                 const checkNext = this.findNextQtItem(position)
                 if (checkNext.range === null) {
                     break
@@ -386,25 +425,11 @@ class QtSearch {
                     break;
                 }
                 position = { lineNumber: newItem.range.startLineNumber, column: newItem.range.endColumn }
+
             } catch (error) {
                 console.log(`(search.js) function -> getItems: ${error}`)
                 break;
             }
-        }
-    }
-
-    addItem(itemPosition) {
-        try {
-            const itemModel = new QtItemModel();
-            itemModel.updateValue(newItem.item);
-            const nextId = this.getNextIdName(itemPosition)
-            if (nextId !== "") {
-                itemModel.updateId(nextId)
-            }
-            itemModel.updateUUID()
-            qtQuickModel.updateQtModel(itemPosition.lineNumber, itemModel)
-        } catch (error) {
-            break;
         }
     }
 
@@ -430,9 +455,9 @@ class QtSearch {
             try {
                 const nextPropertyName = this.getPropertyName(nextProperty.range.startLineNumber)
                 const checkPrev = this.fetchParentItem({ lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn }, { lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn })
-                const updateModel = qtQuickModel.fetchItem(checkPrev.uuid)
+                const updateModel = qtQuickModel.fetchItem(checkPrev.range.startLineNumber)
                 updateModel.updateProperties(nextPropertyName)
-                qtQuickModel.updateQtModel(checkPrev.uuid, updateModel)
+                qtQuickModel.updateQtModel(checkPrev.range.startLineNumber, updateModel)
                 const checkNext = this.findNextProperty({ lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.endColumn });
 
                 if (checkNext.range.startLineNumber <= nextProperty.range.startLineNumber) {
@@ -440,7 +465,6 @@ class QtSearch {
                 }
                 position = { lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.endColumn }
             } catch (error) {
-                console.error(`(search.js) function -> addProperty: ${error}`)
                 break;
             }
         }
@@ -453,9 +477,9 @@ class QtSearch {
             try {
                 const nextSignalData = this.getSignal(nextSignal.range.startLineNumber)
                 const checkPrev = this.fetchParentItem({ lineNumber: nextSignal.range.startLineNumber, column: nextSignal.range.startColumn }, { lineNumber: nextSignal.range.startLineNumber, column: nextSignal.range.startColumn })
-                const updateModel = qtQuickModel.fetchItem(checkPrev.uuid)
+                const updateModel = qtQuickModel.fetchItem(checkPrev.range.startLineNumber)
                 updateModel.updateSignals(nextSignalData.name, nextSignalData.data)
-                qtQuickModel.updateQtModel(checkPrev.uuid, updateModel)
+                qtQuickModel.updateQtModel(checkPrev.range.startLineNumber, updateModel)
                 const checkNext = this.findNextSignal({ lineNumber: nextSignal.range.startLineNumber, column: nextSignal.range.endColumn });
 
                 if (checkNext.range.startLineNumber <= nextSignal.range.startLineNumber) {
@@ -463,7 +487,6 @@ class QtSearch {
                 }
                 position = { lineNumber: nextSignal.range.startLineNumber, column: nextSignal.range.endColumn }
             } catch (error) {
-                console.error(`(search.js) function -> addSignal: ${error}`)
                 break;
             }
         }
@@ -476,9 +499,9 @@ class QtSearch {
             try {
                 const nextFunctionData = this.getFunc(nextFunction.range.startLineNumber)
                 const checkPrev = this.fetchParentItem({ lineNumber: nextFunction.range.startLineNumber, column: nextFunction.range.startColumn }, { lineNumber: nextFunction.range.startLineNumber, column: nextFunction.range.startColumn })
-                const updateModel = qtQuickModel.fetchItem(checkPrev.uuid)
+                const updateModel = qtQuickModel.fetchItem(checkPrev.range.startLineNumber)
                 updateModel.updateFunctions(nextFunctionData.name, nextFunctionData.data)
-                qtQuickModel.updateQtModel(checkPrev.uuid, updateModel)
+                qtQuickModel.updateQtModel(checkPrev.range.startLineNumber, updateModel)
                 const checkNext = this.findNextFunction({ lineNumber: nextFunction.range.startLineNumber, column: nextFunction.range.endColumn });
 
                 if (checkNext.range.startLineNumber <= nextFunction.range.startLineNumber) {
@@ -486,7 +509,6 @@ class QtSearch {
                 }
                 position = { lineNumber: nextFunction.range.startLineNumber, column: nextFunction.range.endColumn }
             } catch (error) {
-                console.error(`(search.js) function -> addFunction: ${error}`)
                 break;
             }
         }
@@ -497,7 +519,7 @@ class QtSearch {
         if (initialImport === null) {
             return;
         }
-        const initialImportName = this.getImportName( initialImport.range.startLineNumber)
+        const initialImportName = this.getImportName(initialImport.range.startLineNumber)
         qtQuickModel.updateImports(initialImportName)
         let position = { lineNumber: initialImport.range.startLineNumber, column: initialImport.range.endColumn }
         while (position.lineNumber < this.fullRange.endLineNumber) {
@@ -520,14 +542,34 @@ class QtSearch {
         }
     }
 
+    findMatchingBracket(position) {
+        let nextCloseBracket = this.getNextCloseBracket(position)
+
+        while (position.column < nextCloseBracket.range.startColumn) {
+            const check = this.getNextCloseBracket({ lineNumber: nextCloseBracket.range.startLineNumber, column: nextCloseBracket.range.endColumn })
+            if (nextCloseBracket.range.startColumn === position.column) {
+                break
+            }
+            nextCloseBracket = check
+        }
+
+        return {
+            startLineNumber: position.lineNumber,
+            startColumn: position.column,
+            endLineNumber: nextCloseBracket.range.startLineNumber - 1,
+            endColumn: nextCloseBracket.range.startColumn
+        }
+    }
+
 
     fetchParentItem(origPosition, newPosition) {
         const checkItem = this.getPrevQtItem(newPosition)
-        const nextTag = this.findNextEndUUID({ lineNumber: checkItem.range.startLineNumber, column: checkItem.range.startColumn }, checkItem.uuid)
-        if (nextTag === null) {
+        const getCurrentItem = qtQuickModel.fetchItem(checkItem.range.startLineNumber)
+        if (getCurrentItem === null) {
             return;
         }
-        if (origPosition.lineNumber <= nextTag.range.startLineNumber && origPosition.lineNumber >= checkItem.range.startLineNumber) {
+
+        if (getCurrentItem !== undefined && (origPosition.lineNumber <= getCurrentItem.range.endLineNumber && origPosition.lineNumber >= getCurrentItem.range.startLineNumber)) {
             return checkItem;
         } else {
             return this.fetchParentItem(origPosition, { lineNumber: checkItem.range.startLineNumber, column: checkItem.range.startColumn })

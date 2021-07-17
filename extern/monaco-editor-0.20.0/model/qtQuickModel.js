@@ -4,16 +4,16 @@ class QtQuickModel {
         this.imports = []
     }
 
-    updateQtModel(uuid, obj = new QtItemModel()){
-        if(this.model[uuid] === undefined) {
-            this.model[uuid] = {}
+    updateQtModel(lineNumber, obj = new QtItemModel()){
+        if(this.model[lineNumber] === undefined) {
+            this.model[lineNumber] = {}
         }
-        this.model[uuid] = obj
+        this.model[lineNumber] = obj
     }
 
-    deleteModelMember(uuid) {
-        if(this.model[uuid] !== undefined) {
-            delete this.model[uuid]
+    deleteModelMember(lineNumber) {
+        if(this.model[lineNumber] !== undefined) {
+            delete this.model[lineNumber]
         }
     }
 
@@ -30,8 +30,8 @@ class QtQuickModel {
         this.imports = []
     }
 
-    fetchItem(uuid) {
-        return this.model[uuid]
+    fetchItem(lineNumber) {
+        return this.model[lineNumber]
     }
 
     get currentImports() {

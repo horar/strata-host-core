@@ -8,9 +8,9 @@ class QtSuggestions {
         this.determineSuggestions(position)
     }
 
-    getQtItemGlobalSuggestions(itemUUID) {
+    getQtItemGlobalSuggestions(startLineNumber) {
         const getOtherGlobals = getImportedItemList();
-        const getItem = qtQuickModel.fetchItem(itemUUID)
+        const getItem = qtQuickModel.fetchItem(startLineNumber)
         if (getItem === undefined) {
             return;
         }
@@ -47,15 +47,15 @@ class QtSuggestions {
         this.createSuggestions(removeDuplicates(slotSignalArr), "slot")
     }
 
-    getMetaPropertySuggestions(uuid, propertyName) {
-        const getItem = qtQuickModel.fetchItem(uuid)
+    getMetaPropertySuggestions(startLineNumber, propertyName) {
+        const getItem = qtQuickModel.fetchItem(startLineNumber)
         const metaArray = getItem.metaPropMap[propertyName]["meta_properties"]
         if (metaArray !== undefined && metaArray.length !== 0) {
             this.createSuggestions(metaArray, "meta-sub")
         }
     }
 
-    getFunctionGlobalSuggestions(uuid, which, value) {
+    getFunctionGlobalSuggestions(startLineNumber, which, value) {
         const idKeys = []
         let map = {}
         for (const key of Object.keys(qtQuickModel.model)) {
@@ -66,7 +66,7 @@ class QtSuggestions {
         }
 
 
-        const getItem = qtQuickModel.fetchItem(uuid)
+        const getItem = qtQuickModel.fetchItem(startLineNumber)
         const properties = removeDefaults(getItem.properties, "property")
         const signals = removeDefaults(getItem.signals, "signal")
         const functions = removeDefaults(getItem.functions, "function")
@@ -120,31 +120,34 @@ class QtSuggestions {
             const checkProperty = qtSearch.isInMetaProperty(position)
             const checkFunction = qtSearch.isInFunction(position)
             const checkSlot = qtSearch.isInSlot(position)
+            const checkExpanded = qtSearch.isInExpandedProperty(position)
             const itemCheck = qtSearch.fetchParentItem(position, position)
             if (checkLine.includes(".")) {
                 const checkSub = checkLine.split(".")[0].trim()
                 this.determineSubProperties(checkSub)
                 return;
             }
-            if (checkProperty || checkFunction || checkSlot) {
+            if (checkProperty || checkFunction || checkSlot || checkExpanded) {
                 if (checkProperty) {
                     const propertyLineNumber = qtSearch.findPreviousMetaPropertyParent(position)
                     const propertyName = qtSearch.getMetaPropertyParent(propertyLineNumber.range.startLineNumber)
-                    this.getMetaPropertySuggestions(itemCheck.uuid, propertyName)
+                    this.getMetaPropertySuggestions(itemCheck.range.startLineNumber, propertyName)
                 } else if (checkFunction || checkSlot) {
                     if (checkSlot) {
                         const slot = qtSearch.findPreviousSlot(position)
                         const slotName = qtSearch.getSlotName(slot.range.startLineNumber)
-                        this.getFunctionGlobalSuggestions(itemCheck.uuid, "slot", slotName)
+                        this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber, "slot", slotName)
                     } else {
                         const func = qtSearch.findPreviousFunction(position)
                         const funcName = qtSearch.getFunc(func.range.startLineNumber)
-                        this.getFunctionGlobalSuggestions(itemCheck.uuid, "func", funcName.name)
+                        this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber, "func", funcName.name)
                     }
+                } else if(checkExpanded) {
+                    this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber,"slot","N/A")
                 }
                 return;
             }
-            this.getQtItemGlobalSuggestions(itemCheck.uuid)
+            this.getQtItemGlobalSuggestions(itemCheck.range.startLineNumber)
         } else {
             this.createSuggestions(["import"], "property")
             const checkLine = qtSearch.model.getLineContent(position.lineNumber)
