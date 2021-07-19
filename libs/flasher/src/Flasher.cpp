@@ -2,6 +2,8 @@
 #include "FlasherConstants.h"
 
 #include <QCryptographicHash>
+#include <QFileInfo>
+#include <QDir>
 
 #include <Operations/StartBootloader.h>
 #include <Operations/Flash.h>
@@ -234,6 +236,15 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
 
 bool Flasher::prepareForBackup()
 {
+    QFileInfo fileInfo(fileName_);
+    QDir fileDir;
+    if (fileDir.mkpath(fileInfo.absolutePath()) == false) {
+        QString errStr(QStringLiteral("Cannot create path for backup file."));
+        qCCritical(logCategoryFlasher) << platform_ << errStr;
+        finish(Result::Error, errStr);
+        return false;
+    }
+
     destinationFile_.setFileName(fileName_);
     if (destinationFile_.open(QIODevice::WriteOnly)) {
         chunkProgress_ = BACKUP_PROGRESS_STEP;
