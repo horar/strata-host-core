@@ -2,7 +2,6 @@
 
 // return an object from a string with definable properties
 function createDynamicSuggestion(suggestion, type, params_name = [""]) {
-    const uuid = randomUUID()
     switch (type) {
         case "property":
             return {
@@ -25,7 +24,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 label: suggestion,
                 kind: monaco.languages.CompletionItemKind.Class,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `${suggestion} { // start_${uuid}\n \n} // end_${uuid}`,
+                insertText: `${suggestion} {\n \n}`,
                 range: null
             }
         case "meta-sub":

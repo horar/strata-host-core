@@ -8,7 +8,18 @@ class QtItemModel {
         this.metaSignalMap = qtTypeJson.sources["Item"].signals
         this.metaFuncMap = qtTypeJson.sources["Item"].functions
         this.functions = Object.keys(qtTypeJson.sources["Item"].functions)
-        this.uuid = ""
+        this.range = {
+            startLineNumber: 0, 
+            startColumn: 0, 
+            endLineNumber: 0, 
+            endColumn: 0,
+        }
+    }
+
+    updateRange(range) {
+        if(!isEqual(this.range, range)) {
+            this.range = range
+        }
     }
 
     updateFunctions(newFunction, newFunctionObj = {}) {
@@ -16,10 +27,6 @@ class QtItemModel {
             this.functions.push(newFunction)
             this.metaFuncMap = Object.assign(this.metaFuncMap, newFunctionObj)
         }
-    }
-
-    updateUUID(newUUID) {
-        this.uuid = newUUID
     }
 
     get currentFunctions() {
@@ -83,14 +90,6 @@ class QtItemModel {
                 this.metaSignalMap = qtTypeJson.sources[this.value].signals
                 this.metaFuncMap = qtTypeJson.sources[this.value].functions
             }
-
-        } else {
-            this.properties = []
-            this.signals = []
-            this.metaPropMap = {}
-            this.metaFuncMap = {}
-            this.functions = []
-            this.metaSignalMap = {}
         }
     }
 
