@@ -43,6 +43,11 @@ int main(int argc, char *argv[])
         QObject::tr("filename")
     });
     parser.addOption({
+        {QStringLiteral("i")},
+        QObject::tr("Optional numerical HCS Identifier <identifier> (default: 0)."),
+        QObject::tr("identifier")
+    });
+    parser.addOption({
         {QStringLiteral("c")},
         QObject::tr("Clear cache data of Host Controller Service for <stage>."),
     });
@@ -117,7 +122,18 @@ int main(int argc, char *argv[])
     strata::events_mgr::EvEventsMgrInstance instance;
 #endif
 
-    HostControllerServiceNode hcsNode;
+    unsigned hcsIdentifier = 0;
+    if (parser.isSet(QStringLiteral("i"))) {
+        const QString hcsStringIdentifier{parser.value(QStringLiteral("i"))};
+        bool ok = true;
+        hcsIdentifier = hcsStringIdentifier.toUInt(&ok);
+        if (ok == false) {
+            qCCritical(logCategoryHcs) << QStringLiteral("Non-numerical identifier provided:") << hcsStringIdentifier;
+            return EXIT_FAILURE;
+        }
+    }
+
+    HostControllerServiceNode hcsNode(hcsIdentifier);
     hcsNode.start(QUrl(QStringLiteral("local:hcs3")));
     QObject::connect(qApp, &QCoreApplication::aboutToQuit,
                      &hcsNode, &HostControllerServiceNode::stop);

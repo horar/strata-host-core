@@ -4,5 +4,5 @@ class HostControllerService
 {
     PROP(AppInfoPod appInfoPod READONLY)
 
-    SLOT(void shutdown_cb());
+    SLOT(void shutdown_cb(unsigned));
 };
