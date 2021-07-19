@@ -141,6 +141,7 @@ private:
     SciPlatformSettings *settings_;
     SciFilterSuggestionModel *filterSuggestionModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
+    strata::PlatformManager *platformManager_;
     uint currentMessageId_ = 0;
 
     void setProgramInProgress(bool programInProgress);
