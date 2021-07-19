@@ -37,12 +37,21 @@ SGStrataPopup { // @disable-check M300 // Ignore false positive (M311) QtCreator
         }
 
         SGSettingsCheckbox { // @disable-check M300 // Ignore false positive (M311) QtCreator warning
-            id: openViewBox
             text: "Switch to \"View\" mode after running build"
             checked: cvcUserSettings.openViewOnBuild
 
             onCheckedChanged: {
                 cvcUserSettings.openViewOnBuild = checked
+                cvcUserSettings.saveSettings()
+            }
+        }
+
+        SGSettingsCheckbox { // @disable-check M300 // Ignore false positive (M311) QtCreator warning
+            text: "Refresh Visual Editor when external file changes are detected"
+            checked: cvcUserSettings.reloadViewExternalChanges
+
+            onCheckedChanged: {
+                cvcUserSettings.reloadViewExternalChanges = checked
                 cvcUserSettings.saveSettings()
             }
         }
