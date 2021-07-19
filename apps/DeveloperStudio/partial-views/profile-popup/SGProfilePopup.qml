@@ -265,14 +265,14 @@ SGStrataPopup {
 
             SubSectionLabel {
                 id: titleText
-                text: "Title"
+                text: "Occupation"
             }
 
             SGTextValidationSwitch {
                 id: jobTitleColumn
 
                 plainText.text: root.jobTitle
-                placeHolderText: "Title"
+                placeHolderText: "Occupation"
                 validationCheck: true
                 showValidIcon: false
             }

@@ -94,7 +94,7 @@ bool DeviceCommand::createSerialDevice() {
         return false;
     }
 
-    const QByteArray deviceId = SerialDevice::createDeviceId(name);
+    const QByteArray deviceId = SerialDevice::createUniqueHash(name); // no scanner prefix in deviceId, because there is no scanner
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
     platform_ = std::make_shared<platform::Platform>(device);
 

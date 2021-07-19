@@ -5971,7 +5971,7 @@ const qtTypeJson = {
                         "1.12",
                     ]
                 },
-                "window": {
+                "Window": {
                     "ver": [
                         "2.0",
                         "2.1",
@@ -6014,7 +6014,16 @@ const qtTypeJson = {
             "ver": [
                 "1.0",
             ]
-        }
-
+        },
+        "tech.strata.fonts": {
+            "ver": [
+                "1.0",
+            ]
+        },
+        "tech.strata.theme": {
+            "ver": [
+                "1.0",
+            ]
+        },
     }
 }

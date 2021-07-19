@@ -35,11 +35,12 @@ public:
     virtual void close() override;
 
     /**
-     * Create ID for mock device
+     * Creates unique hash for mock device, based on device name.
+     * Will be used to generate device ID.
      * @param mockName name of the mock device
-     * @return ID for mock device
+     * @return unique hash.
      */
-    static QByteArray createDeviceId(const QString& mockName);
+    static QByteArray createUniqueHash(const QString& mockName);
 
     /**
      * Send message to mock device. Emits messageSent.
