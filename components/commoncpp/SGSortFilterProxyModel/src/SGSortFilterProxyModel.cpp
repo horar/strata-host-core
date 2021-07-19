@@ -10,10 +10,10 @@ SGSortFilterProxyModel::SGSortFilterProxyModel(QObject *parent)
       invokeCustomLessThan_(false),
       sortEnabled_(true)
 {
-    connect(this, SIGNAL(rowsInserted(const QModelIndex &, int, int)), this,SIGNAL(countChanged()));
-    connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SIGNAL(countChanged()));
-    connect(this, SIGNAL(modelReset()), this, SIGNAL(countChanged()));
-    connect(this, SIGNAL(layoutChanged()), this, SIGNAL(countChanged()));
+    connect(this, &SGSortFilterProxyModel::rowsInserted, this, &SGSortFilterProxyModel::countChanged);
+    connect(this, &SGSortFilterProxyModel::rowsRemoved, this, &SGSortFilterProxyModel::countChanged);
+    connect(this, &SGSortFilterProxyModel::modelReset, this, &SGSortFilterProxyModel::countChanged);
+    connect(this, &SGSortFilterProxyModel::layoutChanged, this, &SGSortFilterProxyModel::countChanged);
 
     setCaseSensitive(false);
 
@@ -39,13 +39,11 @@ void SGSortFilterProxyModel::setSourceModel(QObject *sourceModel)
     disconnectFromSourceModel();
 
     QAbstractItemModel *m = qobject_cast<QAbstractItemModel *>(sourceModel);
-    if (m != nullptr) {
-        /* In case source model is a ListModel, it does not have roles until first item is inserted,
-           so we have to wait for it */
-        connect(m, SIGNAL(rowsInserted(const QModelIndex &, int, int)), this,
-                SLOT(sourceModelRolesMaybeChanged()));
-        connect(m, SIGNAL(modelReset()), this, SLOT(sourceModelRolesMaybeChanged()));
-        connect(m, SIGNAL(layoutChanged()), this, SLOT(sourceModelRolesMaybeChanged()));
+    if (m != nullptr && m->roleNames().count() == 0) {
+        /* In case source model is a ListModel, it gains roles only after first item is inserted. */
+        connect(m, &QAbstractItemModel::rowsInserted, this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
+        connect(m, &QAbstractItemModel::modelReset, this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
+        connect(m, &QAbstractItemModel::layoutChanged, this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
     }
 
     QSortFilterProxyModel::setSourceModel(m);
@@ -144,13 +142,9 @@ void SGSortFilterProxyModel::setSortAscending(bool sortAscending)
 {
     if (sortAscending_ != sortAscending) {
         sortAscending_ = sortAscending;
-        if (complete_) {
-            if (sortEnabled_) {
-                QSortFilterProxyModel::sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
-            }
-        }
-
         emit sortAscendingChanged();
+
+        doSort();
     }
 }
 
@@ -213,13 +207,10 @@ bool SGSortFilterProxyModel::sortEnabled()
 void SGSortFilterProxyModel::setSortEnabled(bool sortEnabled)
 {
     if (sortEnabled_ != sortEnabled) {
-
         sortEnabled_ = sortEnabled;
         emit sortEnabledChanged();
 
-        if (sortEnabled_) {
-            sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
-        }
+        doSort();
     }
 }
 
@@ -233,10 +224,7 @@ void SGSortFilterProxyModel::componentComplete()
     complete_ = true;
     doSetFilterRole();
     doSetSortRole();
-
-    if (sortEnabled_) {
-        QSortFilterProxyModel::sort(0, sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder);
-    }
+    doSort();
 }
 
 int SGSortFilterProxyModel::naturalCompare(const QString &left, const QString &right) const
@@ -398,8 +386,27 @@ bool SGSortFilterProxyModel::callLessThan(int leftRow, int rightRow) const
 void SGSortFilterProxyModel::disconnectFromSourceModel()
 {
     if (QSortFilterProxyModel::sourceModel()) {
-        disconnect(QSortFilterProxyModel::sourceModel(), nullptr, this, SLOT(sourceModelRolesMaybeChanged()));
+        disconnect(QSortFilterProxyModel::sourceModel(), &QAbstractItemModel::rowsInserted,
+                   this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
+
+        disconnect(QSortFilterProxyModel::sourceModel(), &QAbstractItemModel::modelReset,
+                   this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
+
+        disconnect(QSortFilterProxyModel::sourceModel(), &QAbstractItemModel::layoutChanged,
+                   this, &SGSortFilterProxyModel::sourceModelRolesMaybeChanged);
     }
+}
+
+void SGSortFilterProxyModel::doSort()
+{
+    if (complete_ == false) {
+        return;
+    }
+
+    int column = sortEnabled_ ? 0 : -1;
+    Qt::SortOrder order = sortAscending_ ? Qt::AscendingOrder : Qt::DescendingOrder;
+
+    sort(column, order);
 }
 
 void SGSortFilterProxyModel::sourceModelRolesMaybeChanged()

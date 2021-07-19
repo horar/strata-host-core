@@ -4,8 +4,8 @@
 
 namespace strata::device
 {
-TcpDevice::TcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
-    : Device(createDeviceId(deviceAddress), deviceAddress.toString(), Type::TcpDevice),
+TcpDevice::TcpDevice(const QByteArray& deviceId, QHostAddress deviceAddress, quint16 tcpPort)
+    : Device(deviceId, deviceAddress.toString(), Type::TcpDevice),
       tcpSocket_(new QTcpSocket(this)),
       deviceAddress_(deviceAddress),
       isConnected_(false),
@@ -122,8 +122,8 @@ void TcpDevice::deviceOpenedHandler()
     emit Device::opened();
 }
 
-QByteArray TcpDevice::createDeviceId(QHostAddress hostAddress)
+QByteArray TcpDevice::createUniqueHash(QHostAddress hostAddress)
 {
-    return QByteArray('n' + QByteArray::number(qHash(hostAddress.toString()), 16));
+    return QByteArray(QByteArray::number(qHash(hostAddress.toString()), 16));
 }
 }  // namespace strata::device

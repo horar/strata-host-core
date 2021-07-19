@@ -14,7 +14,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
       platformManager_(true, true, true),
@@ -25,7 +24,27 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-    platformManager_.init(strata::device::Device::Type::SerialDevice);
+/*
+ Notes for future:
+ * If you want to add serial device scanner with disabled automatic scanning do:
+
+    #include <Serial/SerialDeviceScanner.h>
+    using strata::device::scanner::SerialDeviceScanner;
+    ...
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice, SerialDeviceScanner::DisableAutomaticScan);
+
+ * For enabling automatic scan do:
+
+    #include <Serial/SerialDeviceScanner.h>
+    using strata::device::scanner::SerialDeviceScanner;
+    ...
+    auto serialScanner = std::dynamic_pointer_cast<SerialDeviceScanner>(platformManager_.getScanner(strata::device::Device::Type::SerialDevice));
+    if (serialScanner) {
+        serialScanner->unsetProperties(SerialDeviceScanner::DisableAutomaticScan);
+    }
+*/
+
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
 
     connect(&platformManager_, &strata::PlatformManager::platformRecognized, this, &PrtModel::deviceInfoChangeHandler);
     connect(&platformManager_, &strata::PlatformManager::platformAboutToClose, this, &PrtModel::deviceDisconnectedHandler);
