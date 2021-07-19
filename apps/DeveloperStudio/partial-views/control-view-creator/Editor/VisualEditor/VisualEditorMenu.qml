@@ -12,6 +12,11 @@ import "../../components"
 RowLayout {
     id: controls
 
+    Component.onCompleted: {
+        undoButton.enabled = sdsModel.visualEditorUndoStack.isUndoPossible(visualEditor.file)
+        redoButton.enabled = sdsModel.visualEditorUndoStack.isRedoPossible(visualEditor.file)
+    }
+
     MenuButton {
         text: "Layout mode"
         checkable: true
@@ -103,29 +108,65 @@ RowLayout {
         }
     }
 
-    MenuButton {
+    Button {
         id: undoButton
-        text: "UNDO"
-        implicitHeight: menuRow.height - 10
-        implicitWidth: implicitContentWidth + 10
-        padding: 0
+        Layout.fillHeight: true
+        Layout.preferredWidth: height
+
         enabled: false
 
-        onClicked: {
-            sdsModel.visualEditorUndoStack.undo()
+        background: Rectangle {
+            color: undoButton.enabled === false ? "transparent" : undoButton.hovered ? "#eee" : "#fff"
+        }
+
+        SGIcon {
+            anchors.fill: parent
+            anchors.margins: 4
+            iconColor: undoButton.enabled ? "grey" : "#eee"
+            source: "qrc:/sgimages/undo.svg"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: parent.enabled
+            hoverEnabled: true
+            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+            onClicked: {
+                sdsModel.visualEditorUndoStack.undo(visualEditor.file)
+            }
         }
     }
 
-    MenuButton {
+    Button {
         id: redoButton
-        text: "REDO"
-        implicitHeight: menuRow.height - 10
-        implicitWidth: implicitContentWidth + 10
-        padding: 0
+        Layout.fillHeight: true
+        Layout.preferredWidth: height
+
         enabled: false
 
-        onClicked: {
-            sdsModel.visualEditorUndoStack.redo()
+        background: Rectangle {
+            color: redoButton.enabled === false ? "transparent" : redoButton.hovered ? "#eee" : "#fff"
+        }
+
+        SGIcon {
+            anchors.fill: parent
+            anchors.margins: 4
+            iconColor: redoButton.enabled ? "grey" : "#eee"
+            source: "qrc:/sgimages/redo.svg"
+            fillMode: Image.PreserveAspectFit
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: parent.enabled
+            hoverEnabled: true
+            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+            onClicked: {
+                sdsModel.visualEditorUndoStack.redo(visualEditor.file)
+            }
         }
     }
 
@@ -192,8 +233,10 @@ RowLayout {
     Connections {
         target: sdsModel.visualEditorUndoStack
         onUndoRedoState: {
-            undoButton.enabled = undo
-            redoButton.enabled = redo
+            if (visualEditor.file == file) {
+                undoButton.enabled = undo
+                redoButton.enabled = redo
+            }
         }
     }
 

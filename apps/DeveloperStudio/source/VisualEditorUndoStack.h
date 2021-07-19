@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QStack>
+#include <QHash>
 
 enum class CommandType
 {
@@ -36,38 +37,39 @@ class VisualEditorUndoStack : public QObject
 public:
     VisualEditorUndoStack(QObject *parent = nullptr);
 
-    Q_INVOKABLE void undo();
+    Q_INVOKABLE void undo(const QString &file);
 
-    Q_INVOKABLE void redo();
+    Q_INVOKABLE void redo(const QString &file);
 
-    Q_INVOKABLE void addCommand(QString file, QString uuid, QString propertyName, QString value, QString undoValue);
+    Q_INVOKABLE void addCommand(const QString &file, const QString &uuid, const QString &propertyName, const QString &value, const QString &undoValue);
 
-    Q_INVOKABLE void addXYCommand(QString file, QString uuid, QString propertyName, int x, int y, int undoX, int undoY);
+    Q_INVOKABLE void addXYCommand(const QString &file, const QString &uuid, const QString &propertyName, const int x, const int y, const int undoX, const int undoY);
 
-    Q_INVOKABLE void addItem(QString file, QString uuid, QString objectString);
+    Q_INVOKABLE void addItem(const QString &file, const QString &uuid, const QString &objectString);
 
-    Q_INVOKABLE void removeItem(QString file, QString uuid, QString objectString);
+    Q_INVOKABLE void removeItem(const QString &file, const QString &uuid, const QString &objectString);
 
     Q_INVOKABLE QString trimQmlEmptyLines(QString fileContents);
 
+    Q_INVOKABLE bool isUndoPossible(const QString &file);
+
+    Q_INVOKABLE bool isRedoPossible(const QString &file);
+
 signals:
-    void runCommand(QString file, QString uuid, QString propertyName, QString value);
+    void undoCommand(QString file, QString uuid, QString propertyName, QString value);
 
-    void runItemAdded(QString file, QString uuid);
+    void undoItemAdded(QString file, QString uuid);
 
-    void runItemDeleted(QString file, QString uuid, QString objectString);
+    void undoItemDeleted(QString file, QString uuid, QString objectString);
 
-    void runItemMoved(QString file, QString uuid, int x, int y, int undoX, int undoY);
+    void undoItemMoved(QString file, QString uuid, int x, int y, int undoX, int undoY);
 
-    void runItemResized(QString file, QString uuid, int x, int y, int undoX, int undoY);
+    void undoItemResized(QString file, QString uuid, int x, int y, int undoX, int undoY);
 
-    void undoRedoState(bool undo, bool redo);
+    void undoRedoState(QString file, bool undo, bool redo);
 
 private:
-    QStack<UndoCommand> undoStack;
-    QStack<UndoCommand> redoStack;
+    QHash<QString, QPair<QStack<UndoCommand>, QStack<UndoCommand>>> commandTable;
 
-    bool isUndoPossible();
-
-    bool isRedoPossible();
+    void addToHashTable(const QString &file, const UndoCommand cmd);
 };

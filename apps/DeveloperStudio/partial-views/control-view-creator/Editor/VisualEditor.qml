@@ -132,31 +132,31 @@ ColumnLayout {
     Connections {
         target: sdsModel.visualEditorUndoStack
 
-        onRunCommand: {
+        onUndoCommand: {
             if (visualEditor.file == file) {
                 functions.setObjectPropertyAndSave(uuid, propertyName, value, false)
             }
         }
 
-        onRunItemAdded: {
+        onUndoItemAdded: {
             if (visualEditor.file == file) {
                 functions.removeControl(uuid, false)
             }
         }
 
-        onRunItemDeleted: {
+        onUndoItemDeleted: {
             if (visualEditor.file == file) {
                 functions.addControlWithPremadeObjectString(objectString)
             }
         }
 
-        onRunItemMoved: {
+        onUndoItemMoved: {
             if (visualEditor.file == file) {
                 functions.moveItem(uuid, x, y, false)
             }
         }
 
-        onRunItemResized: {
+        onUndoItemResized: {
             if (visualEditor.file == file) {
                 functions.resizeItem(uuid, x, y, false)
             }

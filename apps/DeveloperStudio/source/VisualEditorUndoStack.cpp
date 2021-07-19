@@ -3,65 +3,65 @@
 
 VisualEditorUndoStack::VisualEditorUndoStack(QObject *parent) : QObject(parent) {}
 
-void VisualEditorUndoStack::undo() {
-    if (!isUndoPossible()) {
+void VisualEditorUndoStack::undo(const QString &file) {
+    if (!isUndoPossible(file)) {
         return;
     }
 
-    UndoCommand poppedCmd = undoStack.pop();
-    redoStack.push(poppedCmd);
+    UndoCommand poppedCmd = commandTable[file].first.pop();
+    commandTable[file].second.push(poppedCmd);
 
     switch (poppedCmd.commandType) {
         case CommandType::propertyChanged:
-            emit runCommand(poppedCmd.file, poppedCmd.uuid, poppedCmd.propertyName, poppedCmd.undoValue);
+            emit undoCommand(poppedCmd.file, poppedCmd.uuid, poppedCmd.propertyName, poppedCmd.undoValue);
             break;
         case CommandType::itemAdded:
-            emit runItemAdded(poppedCmd.file, poppedCmd.uuid);
+            emit undoItemAdded(poppedCmd.file, poppedCmd.uuid);
             break;
         case CommandType::itemDeleted:
-            emit runItemDeleted(poppedCmd.file, poppedCmd.uuid, poppedCmd.objectString);
+            emit undoItemDeleted(poppedCmd.file, poppedCmd.uuid, poppedCmd.objectString);
             break;
         case CommandType::itemMoved:
-            emit runItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
+            emit undoItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
             break;
         case CommandType::itemResized:
-            emit runItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
+            emit undoItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
             break;
     }
 
-    emit undoRedoState(isUndoPossible(), isRedoPossible());
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
 }
 
-void VisualEditorUndoStack::redo() {
-    if (!isRedoPossible()) {
+void VisualEditorUndoStack::redo(const QString &file) {
+    if (!isRedoPossible(file)) {
         return;
     }
 
-    UndoCommand poppedCmd = redoStack.pop();
-    undoStack.push(poppedCmd);
+    UndoCommand poppedCmd = commandTable[file].second.pop();
+    commandTable[file].first.push(poppedCmd);
 
     switch (poppedCmd.commandType) {
         case CommandType::propertyChanged:
-            emit runCommand(poppedCmd.file, poppedCmd.uuid, poppedCmd.propertyName, poppedCmd.value);
+            emit undoCommand(poppedCmd.file, poppedCmd.uuid, poppedCmd.propertyName, poppedCmd.value);
             break;
         case CommandType::itemAdded:
-            emit runItemDeleted(poppedCmd.file, poppedCmd.uuid, poppedCmd.objectString);
+            emit undoItemDeleted(poppedCmd.file, poppedCmd.uuid, poppedCmd.objectString);
             break;
         case CommandType::itemDeleted:
-            emit runItemAdded(poppedCmd.file, poppedCmd.uuid);
+            emit undoItemAdded(poppedCmd.file, poppedCmd.uuid);
             break;
         case CommandType::itemMoved:
-            emit runItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
+            emit undoItemMoved(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
             break;
         case CommandType::itemResized:
-            emit runItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
+            emit undoItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
             break;
     }
 
-    emit undoRedoState(isUndoPossible(), isRedoPossible());
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
 }
 
-void VisualEditorUndoStack::addCommand(QString file, QString uuid, QString propertyName, QString value, QString undoValue) {
+void VisualEditorUndoStack::addCommand(const QString &file, const QString &uuid, const QString &propertyName, const QString &value, const QString &undoValue) {
     UndoCommand cmd;
     cmd.file = file;
     cmd.uuid = uuid;
@@ -70,13 +70,11 @@ void VisualEditorUndoStack::addCommand(QString file, QString uuid, QString prope
     cmd.undoValue = undoValue;
     cmd.commandType = CommandType::propertyChanged;
 
-    undoStack.push(cmd);
-    redoStack.clear();
-
-    emit undoRedoState(isUndoPossible(), isRedoPossible());
+    addToHashTable(file, cmd);
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
 }
 
-void VisualEditorUndoStack::addXYCommand(QString file, QString uuid, QString propertyName, int x, int y, int undoX, int undoY) {
+void VisualEditorUndoStack::addXYCommand(const QString &file, const QString &uuid, const QString &propertyName, const int x, const int y, const int undoX, const int undoY) {
     UndoCommand cmd;
     cmd.file = file;
     cmd.uuid = uuid;
@@ -93,44 +91,54 @@ void VisualEditorUndoStack::addXYCommand(QString file, QString uuid, QString pro
         return;
     }
 
-    undoStack.push(cmd);
-    redoStack.clear();
-
-    emit undoRedoState(isUndoPossible(), isRedoPossible());
+    addToHashTable(file, cmd);
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
 }
 
-void VisualEditorUndoStack::addItem(QString file, QString uuid, QString objectString) {
+void VisualEditorUndoStack::addItem(const QString &file, const QString &uuid, const QString &objectString) {
     UndoCommand cmd;
     cmd.file = file;
     cmd.uuid = uuid;
     cmd.objectString = objectString;
     cmd.commandType = CommandType::itemAdded;
 
-    undoStack.push(cmd);
-    redoStack.clear();
-
-    emit undoRedoState(isUndoPossible(), isRedoPossible());
+    addToHashTable(file, cmd);
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
 }
 
-void VisualEditorUndoStack::removeItem(QString file, QString uuid, QString objectString) {
+void VisualEditorUndoStack::removeItem(const QString &file, const QString &uuid, const QString &objectString) {
     UndoCommand cmd;
     cmd.file = file;
     cmd.uuid = uuid;
     cmd.objectString = objectString;
     cmd.commandType = CommandType::itemDeleted;
 
-    undoStack.push(cmd);
-    redoStack.clear();
-
-    emit undoRedoState(isUndoPossible(), isRedoPossible());
+    addToHashTable(file, cmd);
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
 }
 
-bool VisualEditorUndoStack::isUndoPossible() {
-    return !undoStack.isEmpty();
+void VisualEditorUndoStack::addToHashTable(const QString &file, const UndoCommand cmd) {
+    if (commandTable.contains(file)) {
+        commandTable[file].first.push(cmd);
+        commandTable[file].second.clear();
+    } else {
+        commandTable.insert(file, qMakePair(QStack<UndoCommand>(), QStack<UndoCommand>()));
+        commandTable[file].first.push(cmd);
+    }
 }
 
-bool VisualEditorUndoStack::isRedoPossible() {
-    return !redoStack.isEmpty();
+bool VisualEditorUndoStack::isUndoPossible(const QString &file) {
+    if (!commandTable.contains(file) || commandTable[file].first.isEmpty()) {
+        return false;
+    }
+    return true;
+}
+
+bool VisualEditorUndoStack::isRedoPossible(const QString &file) {
+    if (!commandTable.contains(file) || commandTable[file].second.isEmpty()) {
+        return false;
+    }
+    return true;
 }
 
 QString VisualEditorUndoStack::trimQmlEmptyLines(QString fileContents) {
