@@ -12,8 +12,22 @@ SciPlatformModel::SciPlatformModel(strata::PlatformManager *platformManager, QOb
 
 SciPlatformModel::~SciPlatformModel()
 {
-    for (int i = platformList_.length() - 1; i >= 0 ; --i) {
-        removePlatform(i);
+    clear();
+}
+
+void SciPlatformModel::clear()
+{
+    if (platformList_.empty() == false) {
+        beginResetModel();
+
+        foreach(SciPlatform *item, platformList_) {
+            item->deleteLater();
+        }
+
+        platformList_.clear();
+
+        endResetModel();
+        emit countChanged();
     }
 }
 

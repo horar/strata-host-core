@@ -13,7 +13,9 @@
 namespace strata::device {
 
 MockDeviceControl::MockDeviceControl(const bool saveMessages, QObject *parent)
-    : QObject(parent), saveMessages_(saveMessages)
+    : QObject(parent),
+      saveMessages_(saveMessages),
+      mockFirmware_(QDir(QDir::tempPath()).filePath(QStringLiteral("mockFirmware")))
 {
     initializeDefaultResponses();
 }
@@ -508,9 +510,6 @@ QByteArray MockDeviceControl::generateMockFirmware(bool isBootloader)
 
 void MockDeviceControl::createMockFirmware()
 {
-    mockFirmware_.createNativeFile(QStringLiteral("mockFirmware"));
-    mockFirmware_.setAutoRemove(true);
-
     if (mockFirmware_.open() == false) {
         qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
     } else {
