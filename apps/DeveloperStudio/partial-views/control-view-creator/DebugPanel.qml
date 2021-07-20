@@ -2,6 +2,9 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.signals 1.0
+import tech.strata.commoncpp 1.0
+
 Rectangle {
     id: root
 
@@ -15,6 +18,9 @@ Rectangle {
     property int expandWidth: minimumExpandWidth
     property alias mainContainer: mainContainer
 
+    signal expand()
+    signal collapse()
+
     Rectangle {
         id: mainContainer
         width: parent.width
@@ -27,6 +33,11 @@ Rectangle {
         Loader {
             anchors.fill: parent
             source: root.debugMenuSource
+
+            onLoaded: {
+                let jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(root.debugMenuSource.toString().split("DebugMenu.qml")[0]+"platformInterface.json")))
+                Signals.platformInterfaceUpdate(jsonObject)
+            }
         }
     }
 
@@ -48,11 +59,11 @@ Rectangle {
         to: root.expandWidth
     }
 
-    function expand() {
+    onExpand: {
         expandAnimation.start()
     }
 
-    function collapse() {
+    onCollapse: {
         collapseAnimation.start()
     }
 }

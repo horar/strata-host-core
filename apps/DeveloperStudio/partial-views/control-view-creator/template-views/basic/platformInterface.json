@@ -1,4 +1,161 @@
 {
-    "commands": [],
-    "notifications": []
+    "commands": [
+        {
+            "cmd": "arr",
+            "payload": [
+                {
+                    "name": "stat",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 123
+                        },
+                        {
+                            "type": "int",
+                            "value": 456
+                        }
+                    ]
+                },
+                {
+                    "name": "dyn",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "cmd": "obj",
+            "payload": [
+                {
+                    "name": "kno",
+                    "type": "object-known-properties",
+                    "value": [
+                        {
+                            "name": "knoprop",
+                            "type": "int",
+                            "value": 5
+                        },
+                        {
+                            "name": "knoprop2",
+                            "type": "int",
+                            "value": 20
+                        }
+                    ]
+                },
+                {
+                    "name": "unkno",
+                    "type": "object-unknown-properties",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "cmd": "allVarTypes",
+            "payload": [
+                {
+                    "name": "integerType",
+                    "type": "int",
+                    "value": 8
+                },
+                {
+                    "name": "doubleType",
+                    "type": "double",
+                    "value": 1.2
+                },
+                {
+                    "name": "stringType",
+                    "type": "string",
+                    "value": "this is a string"
+                },
+                {
+                    "name": "boolType",
+                    "type": "bool",
+                    "value": true
+                }
+            ]
+        }
+    ],
+    "notifications": [
+        {
+            "value": "arrays",
+            "payload": [
+                {
+                    "name": "stat",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 453
+                        },
+                        {
+                            "type": "array-static-sized",
+                            "value": [
+                                {
+                                    "type": "array-dynamic-sized",
+                                    "value": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "ddyn",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "obj",
+            "payload": [
+                {
+                    "name": "kno",
+                    "type": "object-known-properties",
+                    "value": [
+                        {
+                            "name": "knoprop1",
+                            "type": "int",
+                            "value": 3
+                        },
+                        {
+                            "name": "knoprop",
+                            "type": "int",
+                            "value": 46546
+                        }
+                    ]
+                },
+                {
+                    "name": "unkno",
+                    "type": "object-unknown-properties",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "allVarTypes",
+            "payload": [
+                {
+                    "name": "integerType",
+                    "type": "int",
+                    "value": 20
+                },
+                {
+                    "name": "doubleType",
+                    "type": "double",
+                    "value": 1.2
+                },
+                {
+                    "name": "stringType",
+                    "type": "string",
+                    "value": "this is a string"
+                },
+                {
+                    "name": "boolType",
+                    "type": "bool",
+                    "value": true
+                }
+            ]
+        }
+    ]
 }
