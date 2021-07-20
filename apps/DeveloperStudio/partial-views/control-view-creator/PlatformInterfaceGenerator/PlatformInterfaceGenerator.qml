@@ -575,7 +575,7 @@ Item {
                 let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
                 try {
                     const jsonObject = JSON.parse(fileText)
-                    if(importValidationCheck(jsonObject)) {
+                    if (importValidationCheck(jsonObject)) {
                         createModelFromJson(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
