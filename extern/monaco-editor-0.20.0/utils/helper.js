@@ -1,5 +1,3 @@
-
-
 // return an object from a string with definable properties
 function createDynamicSuggestion(suggestion, type, params_name = [""]) {
     switch (type) {
