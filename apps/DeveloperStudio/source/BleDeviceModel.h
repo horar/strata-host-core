@@ -75,6 +75,7 @@ private:
     QList<BleDeviceModelItem> data_;
     QHash<int, QByteArray> roleByEnumHash_;
     QSet<QString> requestedIds_;
+    QSet<QString> connectedDeviceIds_;
     bool inScanMode_ = false;
     QString lastScanError_;
 };
