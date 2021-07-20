@@ -10,7 +10,7 @@ class SGNewControlView: public QObject
 public:
     SGNewControlView(QObject *parent=nullptr);
 
-    Q_INVOKABLE QUrl createNewProject(const QString &projectName, const QUrl &newProjectPath, const QString &templatePath);
+    Q_INVOKABLE QUrl createNewProject(const QString &projectName, const QUrl &newProjectPath, const QString &templatePath, const QString &debugPath);
 
     Q_INVOKABLE bool projectExists(const QString &projectName, const QUrl &projectPath);
 

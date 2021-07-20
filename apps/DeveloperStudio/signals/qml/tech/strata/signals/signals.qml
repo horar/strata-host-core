@@ -68,4 +68,10 @@ QtObject {
       Misc Signal for CVC
     */
     signal loadCVC()
+
+    /*
+        Platform Interface update signal
+    */
+
+    signal platformInterfaceUpdate(var json)
 }

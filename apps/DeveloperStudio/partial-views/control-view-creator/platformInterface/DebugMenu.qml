@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Window 2.12
 import "qrc:/js/constants.js" as Constants
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 Rectangle {
     id: root
@@ -22,83 +23,8 @@ Rectangle {
 
     ListModel {
         id: mainModel
-
-        property var baseModel: ({
-            "commands": [
-            ],
-            "notifications": [
-            ]
-        })
-
-        Component.onCompleted: {
-            let topLevelKeys = Object.keys(baseModel); // This contains "commands" / "notifications" arrays
-
-            mainModel.modelAboutToBeReset()
-            mainModel.clear();
-
-            for (let i = 0; i < topLevelKeys.length; i++) {
-                const topLevelType = topLevelKeys[i];
-                const arrayOfCommandsOrNotifications = baseModel[topLevelType];
-                let listOfCommandsOrNotifications = {
-                    "name": topLevelType, // "commands" / "notifications"
-                    "data": []
-                }
-
-                mainModel.append(listOfCommandsOrNotifications);
-
-                for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                    let commandsModel = mainModel.get(i).data;
-
-                    let cmd = arrayOfCommandsOrNotifications[j];
-                    let commandName;
-                    let commandType;
-                    let commandObject = {};
-
-                    if (topLevelType === "commands") {
-                        // If we are dealing with commands, then look for the "cmd" key
-                        commandName = cmd["cmd"];
-                        commandType = "cmd";
-                    } else {
-                        commandName = cmd["value"];
-                        commandType = "value";
-                    }
-
-                    commandObject["type"] = commandType;
-                    commandObject["name"] = commandName;
-                    commandObject["payload"] = [];
-
-                    commandsModel.append(commandObject);
-
-                    const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
-                    let payloadPropertiesArray = [];
-
-                    if (payload) {
-                        let payloadProperties = Object.keys(payload);
-                        let payloadModel = commandsModel.get(j).payload;
-                        for (let k = 0; k < payloadProperties.length; k++) {
-                            const key = payloadProperties[k];
-                            const type = getType(payload[key]);
-                            let payloadPropObject = {};
-                            payloadPropObject["name"] = key;
-                            payloadPropObject["type"] = type;
-                            payloadPropObject["value"] = "";
-                            payloadPropObject["array"] = [];
-                            payloadPropObject["object"] = [];
-                            payloadModel.append(payloadPropObject);
-
-                            if (type === "array") {
-                                generateArrayModel(payload[key], payloadModel.get(k).array);
-                            } else if (type === "object") {
-                                generateObjectModel(payload[key], payloadModel.get(k).object);
-                            }
-                        }
-                    }
-                }
-            }
-
-            mainModel.modelReset()
-        }
     }
+
     ColumnLayout {
         id: columnContainer
         anchors {
@@ -124,6 +50,7 @@ Rectangle {
                     font.bold: true
                     text: (model.name === "commands" ? "Commands" : "Notifications")
                 }
+
                 ListView {
                     id: mainListView
                     Layout.fillWidth: true
@@ -135,9 +62,9 @@ Rectangle {
                     model: commandsModel
                     delegate: ColumnLayout {
                         width: ListView.view.width
+                        spacing: 5
 
                         property ListModel payloadListModel: model.payload
-                        spacing: 5
 
                         Rectangle {
                             Layout.preferredHeight: 1
@@ -184,7 +111,7 @@ Rectangle {
                                         Layout.maximumWidth: 175
                                         placeholderText: generatePlaceholder(model.type, model.value)
                                         selectByMouse: true
-                                        visible: model.type !== "array" && model.type !== "object" && model.type !== "bool"
+                                        visible: model.type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC && model.type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC && model.type !== "bool"
                                         contextMenuEnabled: true
                                         validator: RegExpValidator {
                                             regExp: {
@@ -197,6 +124,7 @@ Rectangle {
                                                 }
                                             }
                                         }
+                                        text: model.value
 
                                         onTextChanged: {
                                             model.value = text
@@ -256,21 +184,20 @@ Rectangle {
                                     payload = {}
                                     for (let i = 0; i < payloadArr.count; i++) {
                                         let payloadProp = payloadArr.get(i);
-                                        if (payloadProp.type === "array") {
-                                            payload[payloadProp.name] = createJsonObjectFromArrayProperty(payloadProp.array, []);
-                                        } else if (payloadProp.type === "object") {
-                                            payload[payloadProp.name] = createJsonObjectFromObjectProperty(payloadProp.object, {});
-                                        } else if (payloadProp.type === "bool") {
-                                            payload[payloadProp.name] = (payloadProp.value === "true");
-                                        } else if (payloadProp.type === "int") {
-                                            payload[payloadProp.name] = parseInt(payloadProp.value);
-                                        } else if (payloadProp.type === "double") {
-                                            payload[payloadProp.name] = parseFloat(payloadProp.value);
+                                        if (payloadProp.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                                            payload[payloadProp.name] = createJsonObjectFromArrayProperty(payloadProp.array);
+                                        } else if (payloadProp.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                                            payload[payloadProp.name] = createJsonObjectFromObjectProperty(payloadProp.object);
+                                        } else if (payloadProp.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC) {
+                                            payload[payloadProp.name] = []
+                                        } else if (payloadProp.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC) {
+                                            payload[payloadProp.name] = {}
                                         } else {
-                                            payload[payloadProp.name] = payloadProp.value
+                                            payload[payloadProp.name] = getTypedValue(payloadProp.type, payloadProp.value)
                                         }
                                     }
                                 }
+
                                 if (model.type === "value") {
                                     let notification = {
                                         "notification": {
@@ -279,12 +206,14 @@ Rectangle {
                                         }
                                     }
                                     let wrapper = { "device_id": Constants.NULL_DEVICE_ID, "message": JSON.stringify(notification) }
+                                    console.log("NOTIFICATION", JSON.stringify(notification, null, 2))
                                     coreInterface.notification(JSON.stringify(wrapper))
                                 } else {
                                     let command = { "cmd": model.name, "device_id": controlViewCreatorRoot.debugPlatform.deviceId }
                                     if (payload) {
                                         command["payload"] = payload;
                                     }
+                                    console.log("COMMAND", JSON.stringify(command, null, 2))
                                     coreInterface.sendCommand(JSON.stringify(command))
                                 }
                             }
@@ -294,7 +223,6 @@ Rectangle {
             }
         }
     }
-
 
     /********* COMPONENTS AND FUNCTIONS *********/
 
@@ -331,7 +259,7 @@ Rectangle {
                     Layout.maximumWidth: 175
                     placeholderText: generatePlaceholder(modelData.type, modelData.value)
                     selectByMouse: true
-                    visible: modelData.type !== "array" && modelData.type !== "object" && modelData.type !== "bool"
+                    visible: modelData.type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC && modelData.type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC && modelData.type !== "bool"
                     contextMenuEnabled: true
                     validator: RegExpValidator {
                         regExp: {
@@ -344,6 +272,7 @@ Rectangle {
                             }
                         }
                     }
+                    text: modelData.value
 
                     onTextChanged: {
                         modelData.value = text
@@ -418,7 +347,7 @@ Rectangle {
                 spacing: 5
 
                 Text {
-                    text: modelData.key
+                    text: modelData.name
                     Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: 200
                     Layout.fillHeight: true
@@ -433,7 +362,7 @@ Rectangle {
                     Layout.maximumWidth: 175
                     placeholderText: generatePlaceholder(modelData.type, modelData.value)
                     selectByMouse: true
-                    visible: modelData.type !== "array" && modelData.type !== "object" && modelData.type !== "bool"
+                    visible: modelData.type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC && modelData.type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC && modelData.type !== "bool"
                     contextMenuEnabled: true
                     validator: RegExpValidator {
                         regExp: {
@@ -446,6 +375,7 @@ Rectangle {
                             }
                         }
                     }
+                    text: modelData.value
 
                     onTextChanged: {
                         modelData.value = text
@@ -509,27 +439,22 @@ Rectangle {
         return ""
     }
 
-    function getType(value) {
-        if (Array.isArray(value)) {
-            return "array";
-        } else if (typeof value === "object") {
-            return "object";
-        } else {
-            return value;
-        }
-    }
-
     function generateArrayModel(arr, parentListModel) {
         for (let i = 0; i < arr.length; i++) {
-            const type = getType(arr[i]);
+            const type = arr[i].type
             let obj = {"type": type, "array": [], "object": [], "value": ""};
+
+            if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                    type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                obj["value"] = String(arr[i].value)
+            }
 
             parentListModel.append(obj);
 
-            if (type === "array") {
-                generateArrayModel(arr[i], parentListModel.get(i).array)
-            } else if (type === "object") {
-                generateObjectModel(arr[i], parentListModel.get(i).object)
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModel(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModel(arr[i].value, parentListModel.get(i).object)
             }
         }
     }
@@ -538,63 +463,170 @@ Rectangle {
     * This function takes an Object and transforms it into an array readable by our delegates
     **/
     function generateObjectModel(object, parentListModel) {
-        let keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            const type = getType(object[key]);
+        for (let i = 0; i < object.length; i++) {
+            const type = object[i].type
+            let obj = {"name": object[i].name, "type": type, "array": [], "object": [], "value": "" };
 
-            let obj = {"key": key, "type": type, "array": [], "object": [], "value": "" };
+            if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                    type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                obj["value"] = String(object[i].value)
+            }
 
             parentListModel.append(obj);
 
-            if (type === "array") {
-                generateArrayModel(object[key], parentListModel.get(i).array)
-            } else if (type === "object") {
-                generateObjectModel(object[key], parentListModel.get(i).object)
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModel(object[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModel(object[i].value, parentListModel.get(i).object)
             }
         }
     }
 
-    function createJsonObjectFromArrayProperty(arrayModel, outputArr) {
-        for (let m = 0; m < arrayModel.count; m++) {
-            let arrayElement = arrayModel.get(m);
+    function createJsonObjectFromArrayProperty(model) {
+        let outputArr = []
+        for (let m = 0; m < model.count; m++) {
+            let arrayElement = model.get(m)
+            let value
 
-            if (arrayElement.type === "object") {
-                outputArr.push(createJsonObjectFromObjectProperty(arrayElement.object, {}))
-            } else if (arrayElement.type === "array") {
-                outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))
-            } else if (arrayElement.type === "bool") {
-                outputArr.push((arrayElement.value === "true"))
-            } else if (arrayElement.type === "int") {
-                outputArr.push(parseInt(arrayElement.value))
-            } else if (arrayElement.type === "double") {
-                outputArr.push(parseFloat(arrayElement.value))
+            if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                value = createJsonObjectFromArrayProperty(arrayElement.array)
+            } else if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                value = createJsonObjectFromArrayProperty(arrayElement.object)
+            } else if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC) {
+                value = []
+            } else if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC) {
+                value = {}
             } else {
-                outputArr.push(arrayElement.value)
+                value = getTypedValue(arrayElement.type, arrayElement.value)
             }
+            outputArr.push(value)
         }
-        return outputArr;
+        return outputArr
     }
 
-    function createJsonObjectFromObjectProperty(objectModel, outputObj) {
+    function createJsonObjectFromObjectProperty(objectModel) {
+        let outputObj = {}
         for (let i = 0; i < objectModel.count; i++) {
             let objectProperty = objectModel.get(i);
 
             // Recurse through array
-            if (objectProperty.type === "array") {
-                outputObj[objectProperty.key] = createJsonObjectFromArrayProperty(objectProperty.array, [])
-            } else if (objectProperty.type === "object") {
-                outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})
-            } else if (objectProperty.type === "bool") {
-                outputObj[objectProperty.key] = (objectProperty.value === "true")
-            } else if (objectProperty.type === "int") {
-                outputObj[objectProperty.key] = parseInt(objectProperty.value)
-            } else if (objectProperty.type === "double") {
-                outputObj[objectProperty.key] = parseFloat(objectProperty.value)
+            if (objectProperty.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                outputObj[objectProperty.name] = createJsonObjectFromArrayProperty(objectProperty.array)
+            } else if (objectProperty.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                outputObj[objectProperty.name] = createJsonObjectFromObjectProperty(objectProperty.object)
+            } else if (objectProperty.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC) {
+                outputObj[objectProperty.name] = []
+            } else if (objectProperty.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC) {
+                outputObj[objectProperty.name] = {}
             } else {
-                outputObj[objectProperty.key] = objectProperty.value
+                outputObj[objectProperty.name] = getTypedValue(objectProperty.type, objectProperty.value)
             }
         }
         return outputObj;
+    }
+
+    /**
+      * Convert string values to typed values
+     **/
+    function getTypedValue (type, value) {
+        switch (type) {
+            case "int":
+                return parseInt(value)
+            case "double":
+                return parseFloat(value)
+            case "bool":
+                if (value === "false") {
+                    return false
+                } else {
+                    return true
+                }
+            default: // case "string"
+                return value
+        }
+    }
+
+
+    function createBaseModel(jsonObject) {
+        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+
+        mainModel.modelAboutToBeReset()
+        mainModel.clear();
+
+        for (let i = 0; i < topLevelKeys.length; i++) {
+            const topLevelType = topLevelKeys[i];
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
+            let listOfCommandsOrNotifications = {
+                "name": topLevelType, // "commands" / "notifications"
+                "data": []
+            }
+
+            mainModel.append(listOfCommandsOrNotifications);
+
+            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+                let commandsModel = mainModel.get(i).data;
+
+                let cmd = arrayOfCommandsOrNotifications[j];
+                let commandName;
+                let commandType;
+                let commandObject = {};
+
+                if (topLevelType === "commands") {
+                    // If we are dealing with commands, then look for the "cmd" key
+                    commandName = cmd["cmd"];
+                    commandType = "cmd";
+                } else {
+                    commandName = cmd["value"];
+                    commandType = "value";
+                }
+
+                commandObject["type"] = commandType;
+                commandObject["name"] = commandName;
+                commandObject["payload"] = [];
+
+                commandsModel.append(commandObject);
+
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
+                let payloadPropertiesArray = [];
+
+                if (payload) {
+                    let payloadModel = commandsModel.get(j).payload;
+                    for (let k = 0; k < payload.length; k++) {
+                        const payloadProperty = payload[k]
+                        const type = payloadProperty.type
+
+                        let payloadPropObject = {}
+                        payloadPropObject["name"] = payloadProperty.name
+                        payloadPropObject["type"] = type
+                        payloadPropObject["array"] = []
+                        payloadPropObject["object"] = []
+
+                        if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                                type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            payloadPropObject["value"] = String(payloadProperty.value)
+                        } else {
+                            payloadPropObject["value"] = ""
+                        }
+
+                        payloadModel.append(payloadPropObject)
+
+                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
+                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            generateObjectModel(payloadProperty.value, payloadModel.get(k).object)
+                        }
+                    }
+                }
+            }
+        }
+
+        mainModel.modelReset()
+    }
+
+    Connections {
+        target: Signals
+
+        onPlatformInterfaceUpdate: {
+            createBaseModel(json)
+        }
     }
 }

@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 
 Item {
     id: root
@@ -841,13 +842,13 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text)
+            Signals.platformInterfaceUpdate(jsonObject)
         } else {
             alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.color = "green"
             alertToast.interval = 4000
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text)
+            Signals.platformInterfaceUpdate(jsonObject)
         }
         alertToast.show()
     }
