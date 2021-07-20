@@ -881,13 +881,11 @@ Item {
             return false;
         }
 
-
         for (var i = 0; i < commands.length; i++) {
             const command = commands[i]
             if(!command.hasOwnProperty("cmd")) {
                 return false;
             }
-
             if(!searchLevel1(command)) {
                 return false;
             }
@@ -898,7 +896,6 @@ Item {
             if(!notification.hasOwnProperty("value")) {
                 return false;
             }
-
             if(!searchLevel1(notification)) {
                 return false
             }
@@ -907,7 +904,6 @@ Item {
     }
 
     function searchLevel1(object) {
-
         if(object.hasOwnProperty("payload")) {
             if(!Array.isArray(object["payload"])) {
                 return false
@@ -915,11 +911,9 @@ Item {
 
             for (var i = 0; i < object["payload"].length; i++) {
                 const payload = object["payload"][i]
-
                 if(!payload.hasOwnProperty("type") || !payload.hasOwnProperty("value") || !payload.hasOwnProperty("name")) {
                     return false;
                 }
-
                 if(payload["type"].includes("array-static") || payload["type"].includes("object-known")) {
                     for(var j = 0; j < payload["value"].length; j++) {
                         const obj = payload["value"][j]
@@ -930,7 +924,6 @@ Item {
                 }
             }
         }
-
         return true
     }
 
@@ -945,8 +938,6 @@ Item {
                 return searchLevel2Recurse(obj)
             }
         }
-
         return true
     }
-
 }
