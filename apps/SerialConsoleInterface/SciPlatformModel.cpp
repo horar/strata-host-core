@@ -21,6 +21,7 @@ void SciPlatformModel::clear()
         beginResetModel();
 
         foreach(SciPlatform *item, platformList_) {
+            item->setPlatform(nullptr); // erase platform references
             item->deleteLater();
         }
 
