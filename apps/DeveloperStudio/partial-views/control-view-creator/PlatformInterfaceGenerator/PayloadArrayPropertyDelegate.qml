@@ -55,7 +55,7 @@ ColumnLayout {
         Text {
             text: "[Index " + modelIndex  + "] Element type: "
             Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: 150
+            Layout.fillWidth: true
             verticalAlignment: Text.AlignVCenter
         }
 
@@ -80,8 +80,9 @@ ColumnLayout {
             id: addItemToArrayButton
             Layout.preferredHeight: 25
             Layout.preferredWidth: 25
-            hoverEnabled: true
-            visible: modelIndex === parentListModel.count - 1
+            hoverEnabled: enabled
+            enabled: modelIndex === parentListModel.count - 1
+            opacity: enabled ? 1 : 0
 
             icon {
                 source: "qrc:/sgimages/plus.svg"
@@ -103,10 +104,31 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
-                    parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                    parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value": "0"})
                     commandsListView.contentY += 40
                 }
             }
+        }
+    }
+
+    Loader {
+        sourceComponent: defaultValue
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
+        active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+        visible: active
+
+        onItemChanged: {
+            if (item) {
+                item.leftMargin = 20 * 2
+                item.rightMargin = 30
+                item.text = model.value
+                item.textChanged.connect(textChanged)
+            }
+        }
+
+        function textChanged() {
+            model.value = item.text
         }
     }
 

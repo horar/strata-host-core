@@ -28,7 +28,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
 
     QDir outputDir(outputPath);
 
-    if (!outputDir.exists()) {
+    if (outputDir.exists() == false) {
         lastError_ = "Path to output folder (" + outputPath + ") does not exist.";
         qCCritical(logCategoryControlViewCreator) << "Output folder path does not exist.";
         return false;
@@ -36,7 +36,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
 
     QFile outputFile(outputDir.filePath("PlatformInterface.qml"));
 
-    if (!outputFile.open(QFile::WriteOnly | QFile::Truncate)) {
+    if (outputFile.open(QFile::WriteOnly | QFile::Truncate) == false) {
         lastError_ = "Could not open " + outputFile.fileName() + " for writing";
         qCCritical(logCategoryControlViewCreator) << "Could not open" << outputFile.fileName() + "for writing";
         return false;
@@ -71,7 +71,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
 
     // Create QtObjects to handle notifications
 
-    if (!platInterfaceData.contains("notifications")) {
+    if (platInterfaceData.contains("notifications") == false) {
         lastError_ = "Missing notifications list in JSON.";
         qCCritical(logCategoryControlViewCreator) << lastError_;
         return false;
@@ -79,7 +79,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
 
     QJsonValue notificationsList = platInterfaceData["notifications"];
 
-    if (!notificationsList.isArray()) {
+    if (notificationsList.isArray() == false) {
         lastError_ = "'notifications' needs to be an array";
         qCCritical(logCategoryControlViewCreator) << lastError_;
         return false;
@@ -106,7 +106,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
     indentLevel++;
     outputStream << insertTabs(indentLevel) << "id: commands\n";
 
-    if (!platInterfaceData.contains("commands")) {
+    if (platInterfaceData.contains("commands") == false) {
         lastError_ = "Missing commands list in JSON.";
         qCCritical(logCategoryControlViewCreator) << lastError_;
         return false;
@@ -114,7 +114,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
 
     QJsonArray commandsList = platInterfaceData["commands"].toArray();
 
-    if (!notificationsList.isArray()) {
+    if (notificationsList.isArray() == false) {
         lastError_ = "'commands' needs to be an array";
         qCCritical(logCategoryControlViewCreator) << lastError_;
         return false;
@@ -160,6 +160,11 @@ QString PlatformInterfaceGenerator::generateImports()
 
 QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, int &indentLevel)
 {
+    if (command.contains("cmd") == false) {
+        lastError_ = "Command did not contain 'cmd'";
+        qCCritical(logCategoryControlViewCreator) << lastError_;
+        return QString();
+    }
     const QString cmd = command["cmd"].toString();
     QString documentationText = generateComment("@command " + cmd, indentLevel);
     QString commandBody = "";
@@ -170,10 +175,13 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
     QStringList updateFunctionParams;
     QStringList updateFunctionKwRemoved;
 
-    if (command.contains("payload") && !command["payload"].isNull()) {
-        QJsonObject payload = command["payload"].toObject();
-        for (QString key : payload.keys()) {
-            updateFunctionParams.append(key);
+    if (command.contains("payload") && command["payload"].isNull() == false) {
+        QJsonArray payload = command["payload"].toArray();
+        for (QJsonValue payloadPropertyValue : payload) {
+            QJsonObject payloadProperty = payloadPropertyValue.toObject();
+            QJsonValue propertyNameValue = payloadProperty.value("name");
+            QString propertyName = propertyNameValue.toString();
+            updateFunctionParams.append(propertyName);
         }
         updateFunctionKwRemoved = updateFunctionParams;
         removeReservedKeywords(updateFunctionKwRemoved);
@@ -181,26 +189,25 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         commandBody += insertTabs(indentLevel + 1) + "\"payload\": {\n";
         QStringList payloadProperties;
 
-        for (QString key : payload.keys()) {
-            QJsonValue propValue = payload[key];
-            QString propType = getType(propValue);
-            if (propType.isNull()) {
-                lastError_ = "Property '" + key + "' in command '" + cmd + "' does not have a valid value.";
-                qCCritical(logCategoryControlViewCreator) << lastError_;
-                return "";
-            }
+        for (QJsonValue payloadPropertyValue : payload) {
+            QJsonObject payloadProperty = payloadPropertyValue.toObject();
+            QJsonValue propNameValue = payloadProperty.value("name");
+            QString propName = propNameValue.toString();
+            QJsonValue propValue = payloadProperty.value("value");
+            QJsonValue typeValue = payloadProperty.value("type");
+            QString propType = typeValue.toString();
 
-            payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + key + "\": " + getPropertyValue(propValue, propType, indentLevel + 2));
+            payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + propName + "\": " + getPropertyValue(payloadProperty, propType, indentLevel + 2));
 
             if (lastError_.length() > 0) {
                 qCCritical(logCategoryControlViewCreator) << lastError_;
                 return "";
             }
 
-            if (propType == "var" && propValue.isArray()) {
-                documentationText += generateComment("@property " + key + ": list of size " + QString::number(propValue.toArray().count()), indentLevel);
+            if (propType == TYPE_ARRAY_STATIC) {
+                documentationText += generateComment("@property " + propName + ": list of size " + QString::number(propValue.toArray().count()), indentLevel);
             } else {
-                documentationText += generateComment("@property " + key + ": " + propType, indentLevel);
+                documentationText += generateComment("@property " + propName + ": " + propType, indentLevel);
             }
         }
 
@@ -208,7 +215,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         commandBody += "\n";
         commandBody += insertTabs(indentLevel + 1) + "},\n";
         commandBody += insertTabs(indentLevel + 1) + "update: function (";
-        commandBody += updateFunctionKwRemoved.join(",");
+        commandBody += updateFunctionKwRemoved.join(", ");
         commandBody += ") {\n";
     } else {
         commandBody += insertTabs(indentLevel + 1) + "update: function () {\n";
@@ -216,14 +223,14 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
 
     // Write update function definition
     if (updateFunctionParams.count() > 0) {
-        commandBody += insertTabs(indentLevel + 2) + "this.set(" + updateFunctionKwRemoved.join(",") + ")\n";
+        commandBody += insertTabs(indentLevel + 2) + "this.set(" + updateFunctionKwRemoved.join(", ") + ")\n";
     }
     commandBody += insertTabs(indentLevel + 2) + "this.send(this)\n";
     commandBody += insertTabs(indentLevel + 1) + "},\n";
 
     // Create set function if necessary
     if (updateFunctionParams.count() > 0) {
-        commandBody += insertTabs(indentLevel + 1) + "set: function (" + updateFunctionKwRemoved.join(",") + ") {\n";
+        commandBody += insertTabs(indentLevel + 1) + "set: function (" + updateFunctionKwRemoved.join(", ") + ") {\n";
         for (int i = 0; i < updateFunctionParams.count(); ++i) {
             commandBody += insertTabs(indentLevel + 2) + "this.payload." + updateFunctionParams.at(i) + " = " + updateFunctionKwRemoved.at(i) + "\n";
         }
@@ -239,7 +246,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
 
 QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &notification, int &indentLevel)
 {
-    if (!notification.contains("value")) {
+    if (notification.contains("value") == false) {
         lastError_ = "Notification did not contain 'value'";
         qCCritical(logCategoryControlViewCreator) << lastError_;
         return QString();
@@ -260,30 +267,36 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
     QString childrenDocumentationBody = "";
     QString propertiesBody = "";
 
-    QJsonObject payload = notification["payload"].toObject();
+    QJsonArray payload = notification["payload"].toArray();
 
     // Add the properties to the notification
-    for (QString payloadProperty : payload.keys()) {
-        QJsonValue propValue = payload[payloadProperty];
+    for (QJsonValue payloadPropertyValue : payload) {
+        if (payloadPropertyValue.isObject() == false) {
+            lastError_ = "Payload elements are not objects";
+            qCCritical(logCategoryControlViewCreator) << lastError_;
+            return QString();
+        }
 
-        generateNotificationProperty(indentLevel, notificationId, payloadProperty, propValue, childrenNotificationBody, childrenDocumentationBody);
+        QJsonObject payloadProperty = payloadPropertyValue.toObject();
+        QJsonValue propNameValue = payloadProperty.value("name");
+        QString propName = propNameValue.toString();
+        QJsonValue propValue = payloadProperty.value("value");
+        QJsonValue typeValue = payloadProperty.value("type");
+        QString propType =  typeValue.toString();
+
+        generateNotificationProperty(indentLevel, notificationId, propName, propType, propValue, childrenNotificationBody, childrenDocumentationBody);
 
         if (lastError_.length() > 0) {
             return "";
         }
 
-        QString propType = getType(propValue);
-        if (propType.isNull()) {
-            lastError_ = "Property for notification " + notificationId + " has unknown type";
-            qCCritical(logCategoryControlViewCreator) << lastError_;
-            return "";
-        }
-
-        if (propValue.isObject() || (propValue.isArray() && propValue.toArray().count() > 0)) {
+        if (propType == TYPE_OBJECT_STATIC || propType == TYPE_ARRAY_STATIC) {
             continue;
+        } else if (propType == TYPE_ARRAY_DYNAMIC || propType == TYPE_OBJECT_DYNAMIC) {
+            propertiesBody += insertTabs(indentLevel) + "property var " + propName + ": " + getPropertyValue(payloadProperty, propType, indentLevel) + "\n";
+        } else {
+            propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + propName + ": " + getPropertyValue(payloadProperty, propType, indentLevel) + "\n";
         }
-
-        propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + payloadProperty + ": " + getPropertyValue(propValue, propType, indentLevel) + "\n";
 
         if (lastError_.length() > 0) {
             qCCritical(logCategoryControlViewCreator) << lastError_;
@@ -301,19 +314,12 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
     return documentationBody + notificationBody;
 }
 
-void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const QJsonValue &value, QString &childrenNotificationBody, QString &childrenDocumentationBody)
+void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const QString &type, const QJsonValue &value, QString &childrenNotificationBody, QString &childrenDocumentationBody)
 {
-    QString propType = getType(value);
     QString notificationBody = "";
     QString documentation = "";
 
-    if (propType.isNull()) {
-        lastError_ = "Property for " + id + " is null";
-        qCCritical(logCategoryControlViewCreator) << lastError_;
-        return;
-    }
-
-    if (propType == "var" && value.isArray() && value.toArray().count() > 0) {
+    if (type == TYPE_ARRAY_STATIC || type == TYPE_OBJECT_STATIC) {
         QString properties = "";
         QString childNotificationBody = "";
         QString childDocumentationBody = "";
@@ -323,92 +329,56 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
 
         // Add object name
-        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"array\"\n";
+        if (type == TYPE_ARRAY_STATIC) {
+            notificationBody += insertTabs(indentLevel + 1) + "objectName: \"array\"\n";
+        } else {
+            notificationBody += insertTabs(indentLevel + 1) + "objectName: \"object\"\n";
+        }
 
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
-        documentation += generateComment("@property " + id + ": " + propType, indentLevel - 1);
+        documentation += generateComment("@property " + id + ": " + type, indentLevel - 1);
 
         // Add the properties to the notification
         for (int i = 0; i < valueArray.count(); ++i) {
             QJsonValue element = valueArray[i];
-            QString childId = "index_" + QString::number(i);
+            QJsonObject elementObject = element.toObject();
+            QJsonValue elementValue = elementObject.value("value");
+            QJsonValue elementTypeValue = elementObject.value("type");
+            QString elementType = elementTypeValue.toString();
+            QString childId;
+            if (type == TYPE_ARRAY_STATIC) {
+                childId = "index_" + QString::number(i);
+            } else {
+                QJsonValue elementNameValue = elementObject.value("name");
+                QString elementName = elementNameValue.toString();
+                childId = "index_" + QString::number(i);
+            }
 
-            generateNotificationProperty(indentLevel + 1, parentId + "_" + id, childId, element, childNotificationBody, childDocumentationBody);
+            generateNotificationProperty(indentLevel + 1, parentId + "_" + id, childId, elementType, elementValue, childNotificationBody, childDocumentationBody);
 
             if (i == 0) {
                 childDocumentationBody = "\n" + childDocumentationBody;
             }
 
-            QString childType = getType(element);
-            if (childType.isNull()) {
-                lastError_ = "Unrecognized type of property for notification " + parentId;
-                qCCritical(logCategoryControlViewCreator) << lastError_;
-                return;
-            }
-
-            if ((element.isArray() && element.toArray().count() > 0) || element.isObject()) {
+            if (elementType == TYPE_ARRAY_STATIC || elementType == TYPE_OBJECT_STATIC) {
                 continue;
+            } else if (elementType == TYPE_ARRAY_DYNAMIC || elementType == TYPE_OBJECT_DYNAMIC) {
+                properties += insertTabs(indentLevel + 1) + "property var " + childId + ": " + getPropertyValue(elementObject, elementType, indentLevel) + "\n";
+            } else {
+                properties += insertTabs(indentLevel + 1) + "property " + elementType + " " + childId + ": " + getPropertyValue(elementObject, elementType, indentLevel) + "\n";
             }
 
-            properties += insertTabs(indentLevel + 1) + "property " + childType + " " + childId + ": " + getPropertyValue(element, childType, indentLevel) + "\n";
             if (lastError_.length() > 0) {
                 qCCritical(logCategoryControlViewCreator) << lastError_;
                 return;
             }
-        }
-
-        notificationBody = childDocumentationBody + notificationBody + properties + childNotificationBody;
-        notificationBody += insertTabs(indentLevel) + "}\n";
-    } else if (propType == "var" && value.isObject()) {
-        QString properties = "";
-        QString childNotificationBody = "";
-        QString childDocumentationBody = "";
-        QJsonObject valueObject = value.toObject();
-
-        // Generate a property for each element in array
-        notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
-
-        // Add object name
-        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"object\"\n";
-
-        // This documentation text will be passed back to parent
-        // This allows us to generate comments above each QtObject for their properties
-        documentation += generateComment("@property " + id + ": " + propType, indentLevel - 1);
-
-        int i = 0;
-        for (QString key : valueObject.keys()) {
-            QJsonValue val = valueObject[key];
-
-            generateNotificationProperty(indentLevel + 1, parentId + "_" + id, key, val, childNotificationBody, childDocumentationBody);
-
-            if (i == 0) {
-                childDocumentationBody = "\n" + childDocumentationBody;
-            }
-
-            QString childType = getType(val);
-            if (childType.isNull()) {
-                lastError_ = "Unrecognized type of property for notificaition " + parentId;
-                qCCritical(logCategoryControlViewCreator) << lastError_;
-                return;
-            }
-
-            if (val.isObject() || (val.isArray() && val.toArray().count() > 0)) {
-                continue;
-            }
-
-            properties += insertTabs(indentLevel + 1) + "property " + childType + " " + key + ": " + getPropertyValue(val, childType, indentLevel) + "\n";
-            if (lastError_.length() > 0) {
-                qCCritical(logCategoryControlViewCreator) << lastError_;
-                return;
-            }
-            i++;
         }
 
         notificationBody = childDocumentationBody + notificationBody + properties + childNotificationBody;
         notificationBody += insertTabs(indentLevel) + "}\n";
     } else {
-        documentation += generateComment("@property " + id + ": " + propType, indentLevel - 1);
+        documentation += generateComment("@property " + id + ": " + type, indentLevel - 1);
     }
 
     childrenNotificationBody += notificationBody;
@@ -439,80 +409,59 @@ QString PlatformInterfaceGenerator::insertTabs(const int num, const int spaces)
     return text;
 }
 
-QString PlatformInterfaceGenerator::getType(const QJsonValue &value)
+QString PlatformInterfaceGenerator::getPropertyValue(const QJsonObject &object, const QString &propertyType, const int indentLevel)
 {
-    if (value.isArray()) {
-        return "var";
-    } else if (value.isString()) {
-        QString str = value.toString();
-        if (str == TYPE_STRING) {
-            return TYPE_STRING;
-        } else if (str == TYPE_INT) {
-            return TYPE_INT;
-        } else if (str == TYPE_DOUBLE) {
-            return TYPE_DOUBLE;
-        } else if (str == TYPE_BOOL) {
-            return TYPE_BOOL;
-        } else if (str == TYPE_ARRAY_DYNAMIC) {
-            return "var";
-        } else if (str == TYPE_OBJECT_DYNAMIC) {
-            return "var";
+    if (propertyType == TYPE_BOOL) {
+        if (object.value("value").toBool() == 1) {
+            return "true";
         } else {
-            lastError_ = "Unknown type " + str;
-            return QString();
+            return "false";
         }
-    } else if (value.isObject()) {
-        return "var";
-    } else {
-        lastError_ = "Unknown type";
-        return QString();
-    }
-}
-
-QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, const QString &propertyType, const int indentLevel)
-{
-    if (propertyType == "var" && value.isArray()) {
+    } else if (propertyType == TYPE_STRING) {
+        return "\"" + object.value("value").toString() + "\"";
+    } else if (propertyType == TYPE_INT) {
+        return QString::number(object.value("value").toInt());
+    } else if (propertyType == TYPE_DOUBLE) {
+        return QString::number(object.value("value").toDouble());
+    } else if (propertyType == TYPE_ARRAY_STATIC) {
         QString returnText = "[";
-        QJsonArray arr = value.toArray();
+        QJsonValue arrayValue = object.value("value");
+        QJsonArray arr = arrayValue.toArray();
 
         for (int i = 0; i < arr.count(); ++i) {
-            returnText += getPropertyValue(arr[i], getType(arr[i]), indentLevel);
-            if (i != arr.count() - 1)
+            QJsonObject child = arr[i].toObject();
+            QString type = child.value("type").toString();
+            returnText += getPropertyValue(child, type, indentLevel);
+            if (i != arr.count() - 1) {
                 returnText += ", ";
+            }
         }
         returnText += "]";
         return returnText;
-    } else if (propertyType == TYPE_BOOL) {
-        return "false";
-    } else if (propertyType == TYPE_STRING) {
-        return "\"\"";
-    } else if (propertyType == TYPE_INT) {
-        return "0";
-    } else if (propertyType == TYPE_DOUBLE) {
-        return "0.0";
-    } else if (propertyType == "var" && value.isObject()) {
+    } else if (propertyType == TYPE_OBJECT_STATIC) {
         QString returnText = "{\n";
-        QJsonObject obj = value.toObject();
-        int i = 0;
-        for (QString key : obj.keys()) {
-            returnText += insertTabs(indentLevel + 1) + "\"" + key + "\": " + getPropertyValue(obj[key], getType(obj[key]), indentLevel + 1);
-            if (i != obj.keys().count()) {
+        QJsonValue objectValue = object.value("value");
+        QJsonArray obj = objectValue.toArray();
+
+        for (int i = 0; i < obj.count(); ++i) {
+            QJsonObject child = obj[i].toObject();
+            QString type = child.value("type").toString();
+            QString name = child.value("name").toString();
+            returnText += insertTabs(indentLevel + 1) + "\"" + name + "\": " + getPropertyValue(child, type, indentLevel + 1);
+            if (i != obj.count() - 1) {
                 returnText += ",";
             }
             returnText += "\n";
-            i++;
         }
         returnText += insertTabs(indentLevel) + "}";
         return returnText;
-    } else if (propertyType == "var") {
-        // Handle array-dynamic and object-dynamic
-        QString type = value.toString();
-        if (type == TYPE_ARRAY_DYNAMIC) {
-            return "[]";
-        } else {
-            return "({})";
-        }
+    } else if (propertyType == TYPE_ARRAY_DYNAMIC) {
+        return "[]";
+    } else if (propertyType == TYPE_OBJECT_DYNAMIC) {
+        return "({})";
     } else {
+        lastError_ = "Unable to get value for unknown type " + propertyType;
+        qCCritical(logCategoryControlViewCreator) << lastError_;
         return "";
     }
 }

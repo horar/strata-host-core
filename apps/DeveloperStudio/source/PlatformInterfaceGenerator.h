@@ -13,7 +13,9 @@ class PlatformInterfaceGenerator : public QObject
     Q_PROPERTY(QString TYPE_DOUBLE MEMBER TYPE_DOUBLE CONSTANT)
     Q_PROPERTY(QString TYPE_STRING MEMBER TYPE_STRING CONSTANT)
     Q_PROPERTY(QString TYPE_BOOL MEMBER TYPE_BOOL CONSTANT)
+    Q_PROPERTY(QString TYPE_ARRAY_STATIC MEMBER TYPE_ARRAY_STATIC CONSTANT)
     Q_PROPERTY(QString TYPE_ARRAY_DYNAMIC MEMBER TYPE_ARRAY_DYNAMIC CONSTANT)
+    Q_PROPERTY(QString TYPE_OBJECT_STATIC MEMBER TYPE_OBJECT_STATIC CONSTANT)
     Q_PROPERTY(QString TYPE_OBJECT_DYNAMIC MEMBER TYPE_OBJECT_DYNAMIC CONSTANT)
 
 public:
@@ -27,8 +29,10 @@ public:
     inline static const QString TYPE_DOUBLE = "double";
     inline static const QString TYPE_STRING = "string";
     inline static const QString TYPE_BOOL = "bool";
-    inline static const QString TYPE_ARRAY_DYNAMIC = "array-dynamic";
-    inline static const QString TYPE_OBJECT_DYNAMIC = "object-dynamic";
+    inline static const QString TYPE_ARRAY_STATIC = "array-static-sized";
+    inline static const QString TYPE_ARRAY_DYNAMIC = "array-dynamic-sized";
+    inline static const QString TYPE_OBJECT_STATIC = "object-known-properties";
+    inline static const QString TYPE_OBJECT_DYNAMIC = "object-unknown-properties";
 
     static QString lastError();
 
@@ -67,12 +71,13 @@ public:
      * @param indentLevel The amount to indent
      * @param parentId The id of the parent
      * @param id The id of this object
+     * @param type The type of this object
      * @param value The QJsonValue for this property
      * @param childrenNotificationBody The notification body for the children of this parent
      * @param childrenDocumentationBody The documentation body for the children of this parent
      * @return
      */
-    static void generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const QJsonValue &value, QString &childrenNotificationBody, QString &childrenDocumentationBody);
+    static void generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const QString &type, const QJsonValue &value, QString &childrenNotificationBody, QString &childrenDocumentationBody);
 
     /**
      * @brief generateComment Generates a single line comment
@@ -101,20 +106,13 @@ private:
     static QString insertTabs(const int num = 1, const int spaces = 4);
 
     /**
-     * @brief getType Gets the string representation of the type for `value`
-     * @param value The item to get the type of
-     * @return Returns the string representation of the type for `value`
-     */
-    static QString getType(const QJsonValue &value);
-
-    /**
      * @brief getPropertyValue Gets the string representation of the value passed in
-     * @param value The QJsonValue to get the string representation of
-     * @param propertyType The type of `value` from getType()
+     * @param object The QJsonObject to get the value from
+     * @param propertyType The type of `value`
      * @param indentLevel The currentIndentLevel
      * @return Returns the string representation of the `value`
      */
-    static QString getPropertyValue(const QJsonValue &value, const QString &propertyType, const int indentLevel);
+    static QString getPropertyValue(const QJsonObject &object, const QString &propertyType, const int indentLevel);
 
     /**
      * @brief removeReservedKeywords Removes reserved keywords from a list of parameters

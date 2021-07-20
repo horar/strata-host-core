@@ -53,9 +53,10 @@ ColumnLayout {
 
         TextField {
             id: propertyKey
-            Layout.preferredWidth: 150
+            Layout.fillWidth: true
             Layout.preferredHeight: 30
             placeholderText: "Key"
+            selectByMouse: true
             validator: RegExpValidator {
                 regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
             }
@@ -77,12 +78,12 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
-                text = model.key
+                text = model.name
                 forceActiveFocus()
             }
 
             onTextChanged: {
-                model.key = text
+                model.name = text
 
                 if (text.length > 0) {
                     model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
@@ -113,8 +114,9 @@ ColumnLayout {
             id: addPropertyToObjectButton
             Layout.preferredHeight: 25
             Layout.preferredWidth: 25
-            hoverEnabled: true
-            visible: modelIndex === parentListModel.count - 1
+            hoverEnabled: enabled
+            enabled: modelIndex === parentListModel.count - 1
+            opacity: enabled ? 1 : 0
 
             icon {
                 source: "qrc:/sgimages/plus.svg"
@@ -136,10 +138,31 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
-                    parentListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                    parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value": "0"})
                     commandsListView.contentY += 40
                 }
             }
+        }
+    }
+
+    Loader {
+        sourceComponent: defaultValue
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
+        active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+        visible: active
+
+        onItemChanged: {
+            if (item) {
+                item.leftMargin = 20 * 2
+                item.rightMargin = 30
+                item.text = model.value
+                item.textChanged.connect(textChanged)
+            }
+        }
+
+        function textChanged() {
+            model.value = item.text
         }
     }
 

@@ -72,18 +72,19 @@ void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
     qCDebug(logCategorySci) << "Device not present in the mock model:" << deviceId;
 }
 
-bool SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByteArray& deviceId)
+QString SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByteArray& deviceId)
 {
     if (scanner_ == nullptr) {
-        return false;
+        return QString("Scanner for mock devices does not exist.");
     }
 
-    if (scanner_->mockDeviceDetected(deviceId, deviceName, false) == true) {
+    QString errorString = scanner_->mockDeviceDetected(deviceId, deviceName, false);
+
+    if (errorString.isEmpty()) {
         ++latestMockIdx_;
-        return true;
     }
 
-    return false;
+    return errorString;
 }
 
 bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
