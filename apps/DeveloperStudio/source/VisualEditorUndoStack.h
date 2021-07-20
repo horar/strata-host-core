@@ -49,11 +49,13 @@ public:
 
     Q_INVOKABLE void removeItem(const QString &file, const QString &uuid, const QString &objectString);
 
-    Q_INVOKABLE QString trimQmlEmptyLines(QString fileContents);
+    Q_INVOKABLE void clearStack(const QString &file);
 
     Q_INVOKABLE bool isUndoPossible(const QString &file);
 
     Q_INVOKABLE bool isRedoPossible(const QString &file);
+
+    Q_INVOKABLE QString trimQmlEmptyLines(QString fileContents);
 
 signals:
     void undoCommand(QString file, QString uuid, QString propertyName, QString value);

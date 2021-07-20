@@ -12,6 +12,8 @@ QtObject {
 
     signal passUUID(string uuid)
 
+    property bool saveRequestedByVE: false
+
     property Timer destructionTimer: Timer {
         interval: 1
 
@@ -48,6 +50,7 @@ QtObject {
     }
 
     function saveFile(fileUrl = file, text = fileContents) {
+        saveRequestedByVE = true
         text = sdsModel.visualEditorUndoStack.trimQmlEmptyLines(text)
         SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text)
         unload(true)
@@ -99,7 +102,7 @@ QtObject {
         unload(false)
         loader.setSource("qrc:/partial-views/SGLoadError.qml")
         if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-            console.log("Visual Editor disabled: file '" + visualEditor.file + "' does not derive from UIBase")
+            console.log("Visual Editor disabled: file '" + SGUtilsCpp.urlToLocalFile(visualEditor.file) + "' does not derive from UIBase")
             loader.item.error_intro = "Unable to display file"
             loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use Visual Editor."
             visualEditor.fileValid = false
@@ -138,7 +141,7 @@ QtObject {
 
         insertTextAtEndOfFile(objectString)
 
-        // UNDO/REDO
+        // undo/redo
         sdsModel.visualEditorUndoStack.addItem(file, uuid, objectString)
 
         if (!layoutDebugMode) {
@@ -163,7 +166,7 @@ QtObject {
         }
         fileContents = fileContents.replace(objectString, "\n")
 
-        // UNDO/REDO
+        // undo/redo
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.removeItem(file, uuid, objectString)
         }
@@ -318,7 +321,7 @@ QtObject {
             newObjectContents = objectContents + getIndentLevel(objectContents) + propertyName + ": " + value + "\n"
         }
 
-        // UNDO/REDO
+        // undo/redo
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.addCommand(file, uuid, propertyName, value, undoValue)
         }
@@ -334,7 +337,7 @@ QtObject {
         fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", newX, "", false)
         fileContents = setObjectProperty(uuid, "layoutInfo.yRows", newY, "", false)
 
-        // UNDO/REDO
+        // undo/redo
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "move", newX, newY, oldX, oldY)
         }
@@ -349,7 +352,7 @@ QtObject {
         fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newX, "", false)
         fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newY, "", false)
 
-        // UNDO/REDO
+        // undo/redo
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newX, newY, oldX, oldY)
         }

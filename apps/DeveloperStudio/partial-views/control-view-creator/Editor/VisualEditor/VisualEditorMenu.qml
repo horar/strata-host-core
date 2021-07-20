@@ -13,8 +13,13 @@ RowLayout {
     id: controls
 
     Component.onCompleted: {
-        undoButton.enabled = sdsModel.visualEditorUndoStack.isUndoPossible(visualEditor.file)
-        redoButton.enabled = sdsModel.visualEditorUndoStack.isRedoPossible(visualEditor.file)
+        if (model.unsavedChanges) {
+            console.log("Visual Editor undo/redo reset: detected local changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+            sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
+        } else {
+            undoButton.enabled = sdsModel.visualEditorUndoStack.isUndoPossible(visualEditor.file)
+            redoButton.enabled = sdsModel.visualEditorUndoStack.isRedoPossible(visualEditor.file)
+        }
     }
 
     MenuButton {

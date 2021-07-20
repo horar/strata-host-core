@@ -127,6 +127,18 @@ void VisualEditorUndoStack::addToHashTable(const QString &file, const UndoComman
     }
 }
 
+void VisualEditorUndoStack::clearStack(const QString &file) {
+    if (!commandTable.contains(file)) {
+        return;
+    }
+    commandTable[file].first.clear();
+    commandTable[file].first.squeeze();
+    commandTable[file].second.clear();
+    commandTable[file].second.squeeze();
+
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
+}
+
 bool VisualEditorUndoStack::isUndoPossible(const QString &file) {
     if (!commandTable.contains(file) || commandTable[file].first.isEmpty()) {
         return false;

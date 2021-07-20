@@ -162,4 +162,28 @@ ColumnLayout {
             }
         }
     }
+
+    Connections {
+        target: fileContainerRoot
+
+        onTextEditorSavedFile: {
+            console.log("Visual Editor undo/redo reset: detected saved changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+            sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
+        }
+    }
+
+    Connections {
+        target: treeModel
+
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                if (visualEditor.functions.saveRequestedByVE) {
+                    visualEditor.functions.saveRequestedByVE = false
+                } else {
+                    console.log("Visual Editor undo/redo reset: detected external changes to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+                    sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
+                }
+            }
+        }
+    }
 }
