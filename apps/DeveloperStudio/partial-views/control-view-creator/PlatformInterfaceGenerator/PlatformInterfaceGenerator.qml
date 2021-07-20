@@ -6,6 +6,8 @@ import QtQuick.Dialogs 1.2
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
+import "../"
+
 Item {
     id: root
 
@@ -297,37 +299,52 @@ Item {
         }
     }
 
-    SGConfirmationDialog {
+    ConfirmClosePopup {
         id: confirmOverwriteDialog
-        acceptButtonText: "Overwrite"
-        rejectButtonText: "Cancel"
-        title: "PlatformInterface.qml already exists"
-        text: "The output destination folder already contains 'PlatformInterface.qml'. Are you sure you want to overwrite this file?"
+        acceptButtonText: "Yes"
+        buttons: [...defaultButtons.slice(0, 1), ...defaultButtons.slice(1)]
+        cancelButtonText: "Cancel"
+        titleText: "PlatformInterface.qml already exists"
+        popupText: "The output destination folder already contains 'PlatformInterface.qml'. Are you sure you want to overwrite this file?"
 
-        onAccepted: {
-            generatePlatformInterface();
+        onPopupClosed: {
+            if (closeReason === cancelCloseReason) {
+                return
+            }
+
+
+            if (closeReason === acceptCloseReason) {
+                generatePlatformInterface();
+            }
         }
     }
 
-    SGConfirmationDialog {
+    ConfirmClosePopup {
         id: confirmDeleteInProgress
-        acceptButtonText: "Ok"
-        rejectButtonText: "Cancel"
-        title: "About to lose in progress work"
-        text: "You currently have unsaved changes. If you continue, you will lose all progress made. Are you sure you want to continue?"
+        acceptButtonText: "Yes"
+        buttons: [...defaultButtons.slice(0, 1), ...defaultButtons.slice(1)]
+        cancelButtonText: "Cancel"
+        titleText: "About to lose in progress work"
+        popupText: "You currently have unsaved changes. If you continue, you will lose all progress made. Are you sure you want to continue?"
 
-        onAccepted: {
-            const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
-            try {
-                const jsonObject = JSON.parse(fileText)
-                createModelFromJson(jsonObject)
-            } catch (e) {
-                console.error(e)
-                alertToast.text = "Failed to parse input JSON file: " + e
-                alertToast.textColor = "white"
-                alertToast.color = "#D10000"
-                alertToast.interval = 0
-                alertToast.show()
+        onPopupClosed: {
+            if (closeReason === cancelCloseReason) {
+                return
+            }
+
+            if (closeReason === acceptCloseReason) {
+                let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
+                try {
+                    const jsonObject = JSON.parse(fileText)
+                    createModelFromJson(jsonObject)
+                } catch (e) {
+                    console.error(e)
+                    alertToast.text = "Failed to parse input JSON file: " + e
+                    alertToast.textColor = "white"
+                    alertToast.color = "#D10000"
+                    alertToast.interval = 0
+                    alertToast.show()
+                }
             }
         }
     }

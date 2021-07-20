@@ -964,7 +964,7 @@ void PlatformOperationsV2Test::flashInvalidValueTest()
     QCOMPARE(flashPartialStatusCount_, 1);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
-    QCOMPARE(recordedMessages.size(), 2);;
+    QCOMPARE(recordedMessages.size(), 2);
 
     expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
     const rapidjson::Value& expectedPayload = expectedDoc["payload"];
