@@ -19,7 +19,7 @@ PlatformController::PlatformController(): platformManager_(false, false, true) {
 }
 
 void PlatformController::initialize() {
-    platformManager_.init(strata::device::Device::Type::SerialDevice);
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
 }
 
 void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
