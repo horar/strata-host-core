@@ -10,13 +10,13 @@ FocusScope {
         id: commoncppModel
 
         ListElement {
-            name: "SGTextHighlighter"
-            page: "ExSGTextHighlighter.qml"
+            name: "SGJsonSyntaxHighlighter"
+            page: "ExSGJsonSyntaxHighlighter.qml"
         }
 
         ListElement {
-            name: "SGJsonSyntaxHighlighter"
-            page: "ExSGJsonSyntaxHighlighter.qml"
+            name: "SGTextHighlighter"
+            page: "ExSGTextHighlighter.qml"
         }
     }
 
