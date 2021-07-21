@@ -13,6 +13,11 @@ FocusScope {
             name: "SGTextHighlighter"
             page: "ExSGTextHighlighter.qml"
         }
+
+        ListElement {
+            name: "SGJsonSyntaxHighlighter"
+            page: "ExSGJsonSyntaxHighlighter.qml"
+        }
     }
 
     Component.onCompleted: {
