@@ -72,6 +72,5 @@ QtObject {
     /*
         Platform Interface update signal
     */
-
     signal platformInterfaceUpdate(var json)
 }
