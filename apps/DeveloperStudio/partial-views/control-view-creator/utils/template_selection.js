@@ -3,7 +3,7 @@
 .import "qrc:/js/template_data.js" as TemplateData
 
 let selectedPath = TemplateData.data[0].path //default to template for the time being
-const debugPath = TemplateData.data[0].debug //DebugMenu.qml
+const debugPath = TemplateData.debugPath //DebugMenu.qml
 let dataModel = null
 
 function createDataModel(objectModel) {

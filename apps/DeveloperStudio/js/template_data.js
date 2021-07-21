@@ -7,12 +7,12 @@ const data = [
                    "name": "Basic Template",
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/basic.jpg",
                    "path": ":/partial-views/control-view-creator/template-views/basic/",
-                   "debug": ":/partial-views/control-view-creator/platformInterface/"
                },
                {
                    "name": "Template",
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/template.jpg",
                    "path": ":/partial-views/control-view-creator/template-views/template/",
-                   "debug": ":/partial-views/control-view-creator/platformInterface/"
                }
            ]
+
+const debugPath = ":/partial-views/control-view-creator/platformInterface/"
