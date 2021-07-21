@@ -125,7 +125,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
             qCWarning(logCategoryStrataDevStudio) << "unknown job status";
         }
 
-    } else if (jobType == "flash_progress") {
+    } else if (jobType == "flash_progress" || jobType == "restore_progress") {
         if (jobStatus == "running") {
             if (payload.contains("total") == false || payload.contains("complete") == false) {
                 qCCritical(logCategoryStrataDevStudio) << "badly formatted json";
