@@ -6,12 +6,12 @@ const data = [
                {
                    "name": "Basic Template",
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/basic.jpg",
-                   "path": ":/partial-views/control-view-creator/template-views/basic/",
+                   "path": ":/partial-views/control-view-creator/template-views/basic/"
                },
                {
                    "name": "Template",
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/template.jpg",
-                   "path": ":/partial-views/control-view-creator/template-views/template/",
+                   "path": ":/partial-views/control-view-creator/template-views/template/"
                }
            ]
 
