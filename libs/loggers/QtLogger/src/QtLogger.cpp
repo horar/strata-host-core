@@ -10,6 +10,9 @@
 
 namespace strata::loggers
 {
+
+bool QtLogger::visualEditorReloading = false;
+
 QtLogger::QtLogger(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QtMsgType>("QtMsgType");
@@ -23,6 +26,12 @@ QtLogger &QtLogger::instance()
 
 void QtLogger::MsgHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    if (visualEditorReloading) {
+        // While the Visual Editor loads, the loaded file can throw reference errors (and others) that should be ignored.
+        // This actively suppresses ALL logs during the reload process.
+        return;
+    }
+
     const QString formattedMsg{qFormatLogMessage(type, context, msg)};
 
     switch (type) {
