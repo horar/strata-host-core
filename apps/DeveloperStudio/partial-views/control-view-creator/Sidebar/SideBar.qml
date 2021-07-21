@@ -31,6 +31,7 @@ Item {
 
         model: treeModel
         backgroundVisible: false
+        frameVisible: false
         alternatingRowColors: false
 
         onRootIndexChanged: {

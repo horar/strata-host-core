@@ -97,6 +97,7 @@ Item {
 
             SGSplitView {
                 anchors.fill: parent
+
                 SideBar {
                     id: sideBar
                     Layout.fillHeight: true
