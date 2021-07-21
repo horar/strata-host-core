@@ -1,52 +1,37 @@
 {
     "commands": [
         {
-            "cmd": "arr",
+            "cmd": "my_cmd_simple",
             "payload": [
                 {
-                    "name": "stat",
-                    "type": "array-static-sized",
-                    "value": [
-                        {
-                            "type": "int",
-                            "value": 123
-                        },
-                        {
-                            "type": "int",
-                            "value": 456
-                        }
-                    ]
+                    "name": "dac",
+                    "type": "double",
+                    "value": 0
                 },
                 {
-                    "name": "dyn",
-                    "type": "array-dynamic-sized",
-                    "value": []
+                    "name": "io",
+                    "type": "bool",
+                    "value": false
                 }
             ]
         },
         {
-            "cmd": "obj",
+            "cmd": "my_cmd_simple_periodic_update",
             "payload": [
                 {
-                    "name": "kno",
-                    "type": "object-known-properties",
-                    "value": [
-                        {
-                            "name": "knoprop",
-                            "type": "int",
-                            "value": 5
-                        },
-                        {
-                            "name": "knoprop2",
-                            "type": "int",
-                            "value": 20
-                        }
-                    ]
+                    "name": "interval",
+                    "type": "int",
+                    "value": 0
                 },
                 {
-                    "name": "unkno",
-                    "type": "object-unknown-properties",
-                    "value": []
+                    "name": "run_count",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "run_state",
+                    "type": "bool",
+                    "value": false
                 }
             ]
         },
@@ -78,82 +63,51 @@
     ],
     "notifications": [
         {
-            "value": "arrays",
+            "value": "my_cmd_simple_periodic",
             "payload": [
                 {
-                    "name": "stat",
+                    "name": "adc_read",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "gauge_ramp",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "io_read",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "random_float",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "random_float_array",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                },
+                {
+                    "name": "random_increment",
                     "type": "array-static-sized",
                     "value": [
                         {
                             "type": "int",
-                            "value": 453
+                            "value": 0
                         },
                         {
-                            "type": "array-static-sized",
-                            "value": [
-                                {
-                                    "type": "array-dynamic-sized",
-                                    "value": []
-                                }
-                            ]
+                            "type": "int",
+                            "value": 0
                         }
                     ]
                 },
                 {
-                    "name": "ddyn",
-                    "type": "array-dynamic-sized",
-                    "value": []
-                }
-            ]
-        },
-        {
-            "value": "obj",
-            "payload": [
-                {
-                    "name": "kno",
-                    "type": "object-known-properties",
-                    "value": [
-                        {
-                            "name": "knoprop1",
-                            "type": "int",
-                            "value": 3
-                        },
-                        {
-                            "name": "knoprop",
-                            "type": "int",
-                            "value": 46546
-                        }
-                    ]
-                },
-                {
-                    "name": "unkno",
-                    "type": "object-unknown-properties",
-                    "value": []
-                }
-            ]
-        },
-        {
-            "value": "allVarTypes",
-            "payload": [
-                {
-                    "name": "integerType",
-                    "type": "int",
-                    "value": 20
-                },
-                {
-                    "name": "doubleType",
-                    "type": "double",
-                    "value": 1.2
-                },
-                {
-                    "name": "stringType",
-                    "type": "string",
-                    "value": "this is a string"
-                },
-                {
-                    "name": "boolType",
+                    "name": "toggle_bool",
                     "type": "bool",
-                    "value": true
+                    "value": false
                 }
             ]
         }
