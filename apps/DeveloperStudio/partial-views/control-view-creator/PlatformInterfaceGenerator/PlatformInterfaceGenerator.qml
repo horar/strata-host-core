@@ -899,7 +899,7 @@ Item {
     }
 
     function searchLevel1(object) {
-        if (object.hasOwnProperty("payload")) {
+        if (object.hasOwnProperty("payload") && object["payload"] !== null) {
             if (!Array.isArray(object["payload"])) {
                 return false
             }
