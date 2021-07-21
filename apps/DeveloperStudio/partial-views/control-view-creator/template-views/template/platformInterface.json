@@ -36,29 +36,8 @@
             ]
         },
         {
-            "cmd": "allVarTypes",
-            "payload": [
-                {
-                    "name": "integerType",
-                    "type": "int",
-                    "value": 8
-                },
-                {
-                    "name": "doubleType",
-                    "type": "double",
-                    "value": 1.2
-                },
-                {
-                    "name": "stringType",
-                    "type": "string",
-                    "value": "this is a string"
-                },
-                {
-                    "name": "boolType",
-                    "type": "bool",
-                    "value": true
-                }
-            ]
+            "cmd": "my_cmd_i2c",
+            "payload": null
         }
     ],
     "notifications": [
