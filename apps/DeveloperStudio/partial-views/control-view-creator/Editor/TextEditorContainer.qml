@@ -380,12 +380,12 @@ ColumnLayout {
 
             source: {
                 switch (viewStack.currentIndex) {
-                case 0:
-                    menuLoaded = false
-                    return ""
-                case 1:
-                    menuLoaded = true
-                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
+                    case 0:
+                        menuLoaded = false
+                        return ""
+                    case 1:
+                        menuLoaded = true
+                        return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
                 }
             }
         }
@@ -427,15 +427,15 @@ ColumnLayout {
 
             onJavaScriptConsoleMessage: {
                 switch (level) {
-                case WebEngineView.InfoMessageLevel:
-                    console.log(message)
-                    break
-                case WebEngineView.WarningMessageLevel:
-                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
-                case WebEngineView.ErrorMessageLevel:
-                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
+                    case WebEngineView.InfoMessageLevel:
+                        console.log(message)
+                        break
+                    case WebEngineView.WarningMessageLevel:
+                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                    case WebEngineView.ErrorMessageLevel:
+                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
                 }
             }
 
