@@ -79,7 +79,7 @@ RowLayout {
                 z: 3
 
                 onClicked: {
-                    var url = "file://" + SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url)
+                    var url = editor.fileTreeModel.url
                     var filename =  SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory)) + ".qrc"
                     var filetype = "qrc"
                     var uid = "qrcUid"
