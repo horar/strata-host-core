@@ -864,18 +864,13 @@ Item {
       * importValidationCheck will check if the incoming JSON file is a valid Platform Interface JSON
      **/
 
-    function importValidationCheck(json) {
-        return searchTopLevel(json)
-    }
-
-    function searchTopLevel(object) {
+    function importValidationCheck(object) {
         if(!object.hasOwnProperty("commands") || !object.hasOwnProperty("notifications")) {
             return false;
         }
 
-        const keys = Object.keys(object)
-        const commands = object[keys[0]]
-        const notifications = object[keys[1]]
+        const commands = object["commands"]
+        const notifications = object["notifications"]
 
         if(!Array.isArray(commands) || !Array.isArray(notifications)) {
             return false;
