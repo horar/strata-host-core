@@ -26,7 +26,15 @@ ColumnLayout {
     property alias functions: functions
 
     Component.onCompleted: {
-        functions.checkFile()
+        offsetCheckFile.start()
+    }
+
+    // Hack to force checkfile to happen asynchronously from Monaco initialization
+    // otherwise debugBar warnings append late and are not captured by sdsModel.qtLogger disable during VE load
+    Timer {
+        id: offsetCheckFile
+        interval: 1
+        onTriggered: functions.checkFile()
     }
 
     Connections {
