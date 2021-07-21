@@ -237,13 +237,6 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
 bool Flasher::prepareForBackup()
 {
     QFileInfo fileInfo(fileName_);
-    if (fileInfo.isRelative()) {
-        QString errStr(QStringLiteral("Cannot use relative path for backup file."));
-        qCCritical(logCategoryFlasher) << platform_ << errStr;
-        finish(Result::Error, errStr);
-        return false;
-    }
-
     QDir fileDir;
     if (fileDir.mkpath(fileInfo.absolutePath()) == false) {
         QString errStr(QStringLiteral("Cannot create path for backup file."));

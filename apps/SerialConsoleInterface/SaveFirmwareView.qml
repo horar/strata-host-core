@@ -231,12 +231,12 @@ FocusScope {
 
          backupProgress = 0
 
-         var ok = model.platform.saveDeviceFirmware(firmwarePath)
-         if (ok) {
+         var errorString = model.platform.saveDeviceFirmware(firmwarePath)
+         if (errorString.length === 0) {
              setupNode.nodeState = StatusNode.Succeed
          } else {
              setupNode.nodeState = StatusNode.Failed
-             setupNode.subText = "Operation cannot start"
+             setupNode.subText = "Operation cannot start: " + errorString
              setFinalState(FlasherConnector.Unsuccess)
          }
      }
