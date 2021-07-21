@@ -126,11 +126,6 @@ Rectangle {
                             }
                         }
                     }
-
-                    DebugPanel {
-                        id: debugPanel
-                        Layout.fillHeight: true
-                    }
                 }
 
                 PlatformInterfaceGenerator {
@@ -146,6 +141,12 @@ Rectangle {
                 visible:  viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
             }
         }
+    }
+
+    DebugPanel {
+        id: debugPanel
+        implicitWidth: 400
+        height: parent.height
     }
 
     ConsoleContainer {
