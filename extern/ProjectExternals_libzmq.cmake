@@ -16,6 +16,37 @@ function(ReadLibzmqSoVersion)
     mark_as_advanced(LIBZMQ_SOVERSION)
 endfunction()
 
+function(InstallPkgConfig)
+    # Use Homebrew to search for pkg-config, install it if not found
+    find_program(BREW_PROGRAM brew)
+    mark_as_advanced(BREW_PROGRAM)
+
+    if(BREW_PROGRAM)
+        find_program(SED_PROGRAM sed)
+        mark_as_advanced(SED_PROGRAM)
+
+        find_program(BASH_PROGRAM bash)
+        mark_as_advanced(BASH_PROGRAM)
+
+        if(BASH_PROGRAM AND SED_PROGRAM)
+            execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
+            string(STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX)
+            unset(PKG_CONFIG_OUTPUT)
+            execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} ls --versions pkg-config" OUTPUT_VARIABLE PKG_CONFIG_OUTPUT)
+            if("${PKG_CONFIG_OUTPUT}" STREQUAL "")
+                # Result is empty -- pkg-config not found
+                # Install pkg-config
+                execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} install pkg-config")
+                message(STATUS "Installed pkg-config through Homebrew.")
+            else()
+                message(STATUS "Found pkg-config installation through Homebrew.")
+            endif()
+        endif()
+    else()
+        message(FATAL_ERROR "Homebrew must be installed to continue compilation.")
+    endif()
+endfunction()
+
 if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib)
@@ -40,6 +71,7 @@ if(NOT LIB_INSTALLED)
         )
     else()
         ReadLibzmqSoVersion()
+        InstallPkgConfig()
         ExternalProject_Add(libzmq
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
