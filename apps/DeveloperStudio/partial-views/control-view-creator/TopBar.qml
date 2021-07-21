@@ -41,6 +41,7 @@ RowLayout {
             }
             highlighted: true
             flat: true
+
             MouseArea {
                 id: fileTreemouseArea
                 anchors.fill: parent
