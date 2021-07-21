@@ -73,26 +73,6 @@ ColumnLayout {
             identification: "c3"
             age: 80
         }
-        ListElement {
-            name: "Maddox"
-            identification: "b30"
-            age: 47
-        }
-        ListElement {
-            name: "Denny"
-            identification: "a13"
-            age: 32
-        }
-        ListElement {
-            name: "Jesse"
-            identification: "a02"
-            age: 57
-        }
-        ListElement {
-            name: "Franky"
-            identification: "a21"
-            age: 73
-        }
     }
 
     CommonCPP.SGSortFilterProxyModel {
@@ -150,25 +130,40 @@ ColumnLayout {
         spacing: 10
         Layout.fillWidth: true
 
-        ListView {
+        Rectangle {
             height: 200
-            Layout.columnSpan: 2
-            model: sortFilterModel
-            delegate: Component {
-                id: fruitDelegate
-                Row {
-                    spacing: 10
-                    Text { text: "<b> name: </b>" + name }
-                    Text { text: "<b> age: </b>" + age }
-                    Text { text: "<b> id: </b>" + identification }
-                }
-            }
-
+            color: "white"
             Layout.fillWidth: true
-            Layout.fillHeight: true
 
-            ScrollBar.vertical: ScrollBar {
-                policy: ScrollBar.AlwaysOn
+            ListView {
+                anchors.fill: parent
+                model: sortFilterModel
+                interactive: false
+                delegate: Component {
+                    Rectangle {
+                        height: childrenRect.height
+                        Row {
+                            spacing: 10
+                            leftPadding: 10
+                            Rectangle { width: 100; height: 16; SGWidgets.SGText {text: name} }
+                            Rectangle { width: 100; height: 16; SGWidgets.SGText {text: age} }
+                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: identification} }
+                        }
+                    }
+                }
+
+                header:  Component {
+                    Rectangle {
+                        height: childrenRect.height
+                        Row {
+                            spacing: 10
+                            leftPadding: 10
+                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: "<b> name </b>"} }
+                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: "<b> age </b>"} }
+                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: "<b> id </b>"} }
+                        }
+                    }
+                }
             }
         }
 
