@@ -111,5 +111,6 @@ var uuid_map = {
     "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators",
     "fda98159-37f0-4e07-9ffe-28f46f80f7b5": "100V-ncp1034",
     "8a757b79-ba44-4830-864b-2bb965552209" : "pixel",
-    "a34fc0ce-a3fc-4f6b-8c0c-b17aaffff5ff" : "ncs32100"
+    "a34fc0ce-a3fc-4f6b-8c0c-b17aaffff5ff" : "ncs32100",
+    "b3743305-a33c-4dda-8120-b28bb7e4ba50": "dms-ir-led"
 }
