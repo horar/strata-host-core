@@ -28,7 +28,7 @@ RowLayout {
     }
 
     Item {
-        Layout.preferredWidth: parent.width/8.5
+        Layout.preferredWidth: fileTreeButton.implicitWidth
         Layout.fillHeight: true
 
         Button {
@@ -56,7 +56,7 @@ RowLayout {
     }
 
     Item {
-        Layout.preferredWidth: parent.width/12
+        Layout.preferredWidth: fileTreeButton.implicitWidth
         Layout.fillHeight: true
 
         Button {
