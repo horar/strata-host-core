@@ -285,17 +285,17 @@ Item {
             try {
                 const jsonObject = JSON.parse(fileText)
                 if (importValidationCheck(jsonObject)) {
-                        if(alertToast.visible) {
-                            alertToast.hide()
-                        }
-                        createModelFromJson(jsonObject)
-                    } else {
-                        alertToast.text = "The JSON file is improperly formatted"
-                        alertToast.textColor = "white"
-                        alertToast.color = "#D10000"
-                        alertToast.interval = 0
-                        alertToast.show()
+                    if (alertToast.visible) {
+                        alertToast.hide()
                     }
+                    createModelFromJson(jsonObject)
+                } else {
+                    alertToast.text = "The JSON file is improperly formatted"
+                    alertToast.textColor = "white"
+                    alertToast.color = "#D10000"
+                    alertToast.interval = 0
+                    alertToast.show()
+                }
             } catch (e) {
                 console.error(e)
                 alertToast.text = "Failed to parse input JSON file: " + e
@@ -587,7 +587,7 @@ Item {
                 try {
                     const jsonObject = JSON.parse(fileText)
                     if (importValidationCheck(jsonObject)) {
-                        if(alertToast.visible) {
+                        if (alertToast.visible) {
                             alertToast.hide()
                         }
                         createModelFromJson(jsonObject)
@@ -879,31 +879,31 @@ Item {
      **/
 
     function importValidationCheck(object) {
-        if(!object.hasOwnProperty("commands") || !object.hasOwnProperty("notifications")) {
-            return false;
+        if (!object.hasOwnProperty("commands") || !object.hasOwnProperty("notifications")) {
+            return false
         }
 
         const commands = object["commands"]
         const notifications = object["notifications"]
 
         if (!Array.isArray(commands) || !Array.isArray(notifications)) {
-            return false;
+            return false
         }
 
         for (var i = 0; i < commands.length; i++) {
             const command = commands[i]
             if (!command.hasOwnProperty("cmd")) {
-                return false;
+                return false
             }
             if (!searchLevel1(command)) {
-                return false;
+                return false
             }
         }
 
         for (var i = 0; i < notifications.length; i++) {
             const notification = notifications[i]
             if (!notification.hasOwnProperty("value")) {
-                return false;
+                return false
             }
             if (!searchLevel1(notification)) {
                 return false
@@ -921,13 +921,13 @@ Item {
             for (var i = 0; i < object["payload"].length; i++) {
                 const payload = object["payload"][i]
                 if (!payload.hasOwnProperty("type") || !payload.hasOwnProperty("value") || !payload.hasOwnProperty("name")) {
-                    return false;
+                    return false
                 }
                 if (payload["type"].includes("array-static") || payload["type"].includes("object-known")) {
                     for (var j = 0; j < payload["value"].length; j++) {
                         const obj = payload["value"][j]
                         if (!searchLevel2Recurse(obj)) {
-                            return false;
+                            return false
                         }
                     }
                 }
@@ -938,7 +938,7 @@ Item {
 
     function searchLevel2Recurse(object) {
         if (!object.hasOwnProperty("type") || !object.hasOwnProperty("value")) {
-            return false;
+            return false
         }
 
         if (object["type"].includes("array-static") || object["type"].includes("object-known")) {
