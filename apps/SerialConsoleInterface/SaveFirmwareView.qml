@@ -237,7 +237,7 @@ FocusScope {
          } else {
              setupNode.nodeState = StatusNode.Failed
              setupNode.subText = "Operation cannot start: " + errorString
-             setFinalState(FlasherConnector.Unsuccess)
+             setFinalState(FlasherConnector.Failed)
          }
      }
 
