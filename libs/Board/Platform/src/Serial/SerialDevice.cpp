@@ -11,15 +11,17 @@
 
 namespace strata::device {
 
-SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name)
+constexpr std::chrono::milliseconds SERIAL_DEVICE_OPEN_RETRY_INTERVAL(1000);
+
+SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, int openRetries)
     : Device(deviceId, name, Type::SerialDevice)
 {
     serialPort_ = std::make_unique<QSerialPort>(name);
 
-    initSerialDevice();
+    initSerialDevice(openRetries);
 }
 
-SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port)
+SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port, int openRetries)
     : Device(deviceId, name, Type::SerialDevice)
 {
     if ((port != nullptr) && (port->portName() == name)) {
@@ -30,7 +32,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
         serialPort_ = std::make_unique<QSerialPort>(name);
     }
 
-    initSerialDevice();
+    initSerialDevice(openRetries);
 }
 
 SerialDevice::~SerialDevice() {
@@ -41,9 +43,10 @@ SerialDevice::~SerialDevice() {
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-void SerialDevice::initSerialDevice() {
+void SerialDevice::initSerialDevice(int openRetries) {
     readBuffer_.reserve(READ_BUFFER_SIZE);
     connected_ = false;
+    openRetries_ = openRetries;
 
     serialPort_->setBaudRate(QSerialPort::Baud115200);
     serialPort_->setDataBits(QSerialPort::Data8);
@@ -53,6 +56,10 @@ void SerialDevice::initSerialDevice() {
 
     connect(serialPort_.get(), &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
     connect(serialPort_.get(), &QSerialPort::readyRead, this, &SerialDevice::readMessage);
+
+    openRetryTimer_.setSingleShot(true);
+    openRetryTimer_.setInterval(SERIAL_DEVICE_OPEN_RETRY_INTERVAL);
+    connect(&openRetryTimer_, &QTimer::timeout, this, &SerialDevice::open);
 
     qCDebug(logCategoryDeviceSerial).nospace().noquote()
         << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
@@ -85,6 +92,9 @@ void SerialDevice::open() {
 }
 
 void SerialDevice::close() {
+    if (openRetryTimer_.isActive()) {
+        openRetryTimer_.stop();
+    }
     if (serialPort_->isOpen()) {
         serialPort_->close();
     }
@@ -164,51 +174,46 @@ void SerialDevice::resetReceiving()
     }
 }
 
-Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
-    switch (error) {
-        case QSerialPort::SerialPortError::NoError :
-            return ErrorCode::NoError;
-        case QSerialPort::SerialPortError::PermissionError :
-            return ErrorCode::DeviceFailedToOpen;
-        case QSerialPort::SerialPortError::ResourceError :
-            return ErrorCode::DeviceDisconnected;
-        case QSerialPort::SerialPortError::DeviceNotFoundError :
-        case QSerialPort::SerialPortError::OpenError :
-        case QSerialPort::SerialPortError::ParityError :
-        case QSerialPort::SerialPortError::FramingError :
-        case QSerialPort::SerialPortError::BreakConditionError :
-        case QSerialPort::SerialPortError::WriteError :
-        case QSerialPort::SerialPortError::ReadError :
-        case QSerialPort::SerialPortError::UnsupportedOperationError :
-        case QSerialPort::SerialPortError::UnknownError :
-        case QSerialPort::SerialPortError::TimeoutError :
-        case QSerialPort::SerialPortError::NotOpenError :
-            return ErrorCode::DeviceError;
-        default:
-            return ErrorCode::DeviceError;
-    }
+void SerialDevice::setOpenRetries(int retries)
+{
+    openRetries_ = retries;
 }
 
 void SerialDevice::handleError(QSerialPort::SerialPortError error) {
     // https://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
-    if (error != QSerialPort::NoError) {  // Do not emit error signal if there is no error.
-        QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_->errorString();
-        switch (error) {
-            case QSerialPort::PermissionError :
-                // QSerialPort::open() has failed
-                qCWarning(logCategoryDeviceSerial) << this << errMsg << ". Unable to open serial port.";
-                connected_ = false;
-                break;
-            case QSerialPort::ResourceError :
-                // board was unconnected from computer (cable was unplugged)
-                qCWarning(logCategoryDeviceSerial) << this << errMsg << " (Probably unexpectedly disconnected device.)";
-                connected_ = false;
-                break;
-            default :
-                qCCritical(logCategoryDeviceSerial) << this << errMsg;
-                break;
-        }
-        emit deviceError(translateQSerialPortError(error), serialPort_->errorString());
+    if (error == QSerialPort::NoError) {
+        return;  // Do not emit error signal if there is no error.
+    }
+
+    QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_->errorString();
+    switch (error) {
+        case QSerialPort::PermissionError :
+            // QSerialPort::open() has failed.
+            qCWarning(logCategoryDeviceSerial) << this << errMsg << ". Unable to open serial port.";
+            connected_ = false;
+            if (openRetries_ == 0) {
+                emit deviceError(ErrorCode::DeviceFailedToOpen, serialPort_->errorString());
+            } else {
+                if (openRetries_ > 0) {  // negative number (-1) = unlimited count of retries
+                    --openRetries_;
+                }
+                qCInfo(logCategoryDeviceSerial) << this << "Another attempt to open the serial port will be in "
+                    << SERIAL_DEVICE_OPEN_RETRY_INTERVAL.count() << " ms.";
+                openRetryTimer_.start();
+
+                emit deviceError(ErrorCode::DeviceFailedToOpenGoingToRetry, serialPort_->errorString());
+            }
+            break;
+        case QSerialPort::ResourceError :
+            // An I/O error occurred when a resource becomes unavailable, e.g. when the device is unexpectedly removed from the system.
+            qCWarning(logCategoryDeviceSerial) << this << errMsg << " (Probably unexpectedly disconnected device.)";
+            connected_ = false;
+            emit deviceError(ErrorCode::DeviceDisconnected, serialPort_->errorString());
+            break;
+        default :
+            qCCritical(logCategoryDeviceSerial) << this << errMsg;
+            emit deviceError(ErrorCode::DeviceError, serialPort_->errorString());
+            break;
     }
 }
 

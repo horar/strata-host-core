@@ -369,8 +369,9 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     switch (errCode) {
     case Device::ErrorCode::NoError: {
     } break;
-    case Device::ErrorCode::DeviceFailedToOpen: {
-        // no need to handle this error code
+    case Device::ErrorCode::DeviceFailedToOpen:
+    case Device::ErrorCode::DeviceFailedToOpenGoingToRetry: {
+        // no need to handle these error codes
         // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << platform->deviceId() << ", code: " << errCode << ", message: " << errStr;
     } break;
     case Device::ErrorCode::DeviceDisconnected: {
@@ -383,7 +384,6 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
         qCCritical(logCategoryPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
         disconnectPlatform(deviceId);
     } break;
-    default: break;
     }
 }
 
