@@ -285,6 +285,9 @@ Item {
             try {
                 const jsonObject = JSON.parse(fileText)
                 if (importValidationCheck(jsonObject)) {
+                        if(alertToast.visible) {
+                            alertToast.hide()
+                        }
                         createModelFromJson(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
@@ -584,6 +587,9 @@ Item {
                 try {
                     const jsonObject = JSON.parse(fileText)
                     if (importValidationCheck(jsonObject)) {
+                        if(alertToast.visible) {
+                            alertToast.hide()
+                        }
                         createModelFromJson(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
