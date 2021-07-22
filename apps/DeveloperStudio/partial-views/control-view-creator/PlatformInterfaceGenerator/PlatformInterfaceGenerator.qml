@@ -284,7 +284,15 @@ Item {
             let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)
-                createModelFromJson(jsonObject)
+                if (importValidationCheck(jsonObject)) {
+                        createModelFromJson(jsonObject)
+                    } else {
+                        alertToast.text = "The JSON file is improperly formatted"
+                        alertToast.textColor = "white"
+                        alertToast.color = "#D10000"
+                        alertToast.interval = 0
+                        alertToast.show()
+                    }
             } catch (e) {
                 console.error(e)
                 alertToast.text = "Failed to parse input JSON file: " + e
