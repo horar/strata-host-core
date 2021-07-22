@@ -329,7 +329,7 @@ void SGSortFilterProxyModel::doSetSortRole()
     }
 
     int role = roleNames().key(sortRole_.toUtf8(), -1);
-    if (role >= 0 && role != QSortFilterProxyModel::filterRole()) {
+    if (role >= 0) {
         QSortFilterProxyModel::setSortRole(role);
     }
 }
@@ -341,7 +341,7 @@ void SGSortFilterProxyModel::doSetFilterRole()
     }
 
     int role = roleNames().key(filterRole_.toUtf8(), -1);
-    if (role >= 0 && role != QSortFilterProxyModel::filterRole()) {
+    if (role >= 0) {
         QSortFilterProxyModel::setFilterRole(role);
     }
 }
