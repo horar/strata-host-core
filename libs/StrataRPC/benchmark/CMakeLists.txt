@@ -5,24 +5,28 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests")
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_executable(${PROJECT_NAME}
-    StrataServerBenchmark.cpp
-    StrataClientBenchmark.cpp
-    main.cpp
-)
+set(CMAKE_AUTOMOC ON)
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE Qt5::Test
-    PRIVATE StrataRPC-StrataServer
-    PRIVATE StrataRPC-StrataClient
-)
+file(GLOB SOURCE_FILES *.cpp)
 
-add_test(NAME ${PROJECT_NAME}
-    COMMAND ${PROJECT_NAME}
-)
+foreach(SOURCE_PATH ${SOURCE_FILES})
 
-set_target_properties(${PROJECT_NAME}
-    PROPERTIES AUTOMOC ON
-)
+    get_filename_component(EXECUTABLE_NAME ${SOURCE_PATH} NAME_WE)
+
+    add_executable(${EXECUTABLE_NAME} ${SOURCE_PATH})
+
+    target_link_libraries(${EXECUTABLE_NAME}
+        PRIVATE Qt5::Test
+        PRIVATE StrataRPC-StrataServer
+        PRIVATE StrataRPC-StrataClient
+    )
+
+    add_test(NAME ${EXECUTABLE_NAME}
+        COMMAND ${EXECUTABLE_NAME}
+    )
+
+endforeach(SOURCE_PATH ${SOURCE_FILES})

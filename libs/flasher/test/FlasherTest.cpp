@@ -20,6 +20,8 @@ namespace operation = strata::platform::operation;
 namespace test_commands = strata::device::test_commands;
 namespace flasher_test_constants = strata::FlasherTestConstants;
 
+QTEST_MAIN(FlasherTest)
+
 FlasherTest::FlasherTest() :
     platformOperations_(false, false),
     fakeFirmware_(QDir(QDir::tempPath()).filePath(QStringLiteral("fake_firmware"))),
