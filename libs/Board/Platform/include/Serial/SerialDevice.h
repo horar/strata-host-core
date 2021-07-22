@@ -57,18 +57,19 @@ public:
     static SerialPortPtr establishPort(const QString& portName);
 
     /**
-     * Create ID for serial device
-     * @param portName system name of serial port
-     * @return ID for serial device
+     * Creates unique hash for serial device, based on port name.
+     * Will be used to generate device ID.
+     * @param portName system name of serial port.
+     * @return unique hash.
      */
-    static QByteArray createDeviceId(const QString& portName);
+    static QByteArray createUniqueHash(const QString& portName);
 
     /**
-     * Send message to serial device. Emits deviceError in case of failure.
+     * Send message to serial device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray& data) override;
+    virtual unsigned sendMessage(const QByteArray& data) override;
 
     /**
      * Check if serial device is connected (communication with it is possible - device

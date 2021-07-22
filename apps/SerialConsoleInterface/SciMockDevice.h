@@ -18,7 +18,6 @@ public:
     Q_PROPERTY(bool isValid READ isValid NOTIFY isValidChanged)
     Q_PROPERTY(bool canReopenMockDevice READ canReopenMockDevice NOTIFY canReopenMockDeviceChanged)
     Q_PROPERTY(bool openEnabled READ mockIsOpenEnabled WRITE mockSetOpenEnabled NOTIFY openEnabledChanged)
-    Q_PROPERTY(bool legacyMode READ mockIsLegacy WRITE mockSetLegacy NOTIFY legacyModeChanged)
     Q_PROPERTY(bool autoResponse READ mockIsAutoResponse WRITE mockSetAutoResponse NOTIFY autoResponseChanged)
     Q_PROPERTY(strata::device::MockCommand mockCommand READ mockGetCommand WRITE mockSetCommand NOTIFY mockCommandChanged)
     Q_PROPERTY(strata::device::MockResponse mockResponse READ mockGetResponse WRITE mockSetResponse NOTIFY mockResponseChanged)
@@ -41,7 +40,6 @@ public:
     bool isValid() const;
     bool canReopenMockDevice() const;
     bool mockIsOpenEnabled() const;
-    bool mockIsLegacy() const;
     bool mockIsAutoResponse() const;
     strata::device::MockCommand mockGetCommand() const;
     strata::device::MockResponse mockGetResponse() const;
@@ -49,17 +47,15 @@ public:
 
     void mockSetDeviceId(const QByteArray& deviceId);
     void mockSetOpenEnabled(bool enabled);
-    void mockSetLegacy(bool isLegacy);
     void mockSetAutoResponse(bool autoResponse);
+    void mockSetVersion(strata::device::MockVersion version);
     void mockSetCommand(strata::device::MockCommand command);
     void mockSetResponse(strata::device::MockResponse response);
-    void mockSetVersion(strata::device::MockVersion version);
 
 signals:
     void isValidChanged();
     void canReopenMockDeviceChanged();
     void openEnabledChanged();
-    void legacyModeChanged();
     void autoResponseChanged();
     void mockCommandChanged();
     void mockResponseChanged();
@@ -72,4 +68,5 @@ private:
     SciMockResponseModel mockResponseModel_;
     SciMockVersionModel mockVersionModel_;
     strata::device::MockDevicePtr mockDevice_;
+    strata::device::MockCommand currentCommand_ = strata::device::MockCommand::Get_firmware_info;
 };

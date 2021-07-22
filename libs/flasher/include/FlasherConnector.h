@@ -114,7 +114,8 @@ public:
         Finished,
         Cancelled,
         Failed,
-        NoFirmware
+        NoFirmware,
+        BadFirmware
     };
     Q_ENUM(State)
 
@@ -180,7 +181,7 @@ private:
     const QString newFirmwareMD5_;
     const QString newFwClassId_;
     QString oldFwClassId_;
-    QTemporaryFile tmpBackupFile_;
+    QString tmpBackupFileName_;
 
     enum class Action {
         None,

@@ -15,6 +15,18 @@ void Connector::addSubscriber(const std::string&)
     assert(false);
 }
 
+bool Connector::hasReadEvent()
+{
+    assert(false);
+    return false;
+}
+
+bool Connector::hasWriteEvent()
+{
+    assert(false);
+    return false;
+}
+
 void Connector::setDealerID(const std::string& id)
 {
     // As a historical note, ZeroMQ v2.2 and earlier use UUIDs as identities.
@@ -62,7 +74,7 @@ std::unique_ptr<Connector> Connector::getConnector(const CONNECTOR_TYPE type)
             return std::make_unique<ZmqResponseConnector>();
         default:
             qCCritical(logCategoryConnector)
-                    << "ConnectorFactory::getConnector, unknown interface:" << (int)type;
+                << "ConnectorFactory::getConnector, unknown interface:" << (int)type;
             break;
     }
     return nullptr;

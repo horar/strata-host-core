@@ -1,10 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>Control.qml</file>
+        <file>PlatformInterface.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
-        <file>control-views/DebugMenu.qml</file>
-        <file>control-views/PlatformInterface.qml</file>
         <file>control-views/images/StrataToBoard.png</file>
         <file>control-views/images/BoardToStrata.png</file>
     </qresource>

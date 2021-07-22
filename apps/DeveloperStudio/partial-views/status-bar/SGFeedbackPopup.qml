@@ -152,6 +152,7 @@ SGStrataPopup {
                         columnSpacing: 3
 
                         Text {
+                            id: nameForm
                             text: "Name:"
 
                             font {
@@ -162,7 +163,11 @@ SGStrataPopup {
 
                         Text {
                             id: nameField
+                            Layout.preferredWidth: feedbackColumn.width - nameForm.width
+                            Layout.preferredHeight: nameForm.height
                             text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
+                            elide: Text.ElideRight
+
                             font {
                                 pixelSize: 15
                                 family: Fonts.franklinGothicBook
@@ -170,6 +175,7 @@ SGStrataPopup {
                         }
 
                         Text {
+                            id: emailForm
                             text: "Email:"
                             font {
                                 pixelSize: 15
@@ -179,7 +185,11 @@ SGStrataPopup {
 
                         Text {
                             id: emailField
+                            Layout.preferredWidth: feedbackColumn.width - emailForm.width
+                            Layout.preferredHeight: emailForm.height
                             text: NavigationControl.context.user_id
+                            elide: Text.ElideRight
+
                             font {
                                 pixelSize: 15
                                 family: Fonts.franklinGothicBook
@@ -222,57 +232,35 @@ SGStrataPopup {
                         }
                     }
 
-                    Rectangle {
-                        id: textEditContainer
-                        color: "white"
-                        border {
-                            width: 1
-                            color: "lightgrey"
-                        }
+                    SGTextArea {
+                        id: commentsQuestionsArea
+                        enabled: !feedbackStatus.visible
+                        contextMenuEnabled: true
+                        // Text Length Limiter
+                        readOnly: feedbackStatus.visible
+                        KeyNavigation.tab: submitButton
+                        KeyNavigation.priority: KeyNavigation.BeforeItem
+                        Accessible.role: Accessible.EditableText
+                        Accessible.name: "FeedbackEdit"
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        clip: true
 
-                        ScrollView {
-                            id: scrollingText
-                            anchors {
-                                fill: textEditContainer
-                                margins: 10
-                            }
+                        property int maximumLength: 1000
+                        property string previousText: text
 
-                            SGTextEdit {
-                                id: textEdit
-                                width: scrollingText.width
-                                wrapMode: TextEdit.Wrap
-                                height: Math.max(scrollingText.height, contentHeight)
-                                enabled: !feedbackStatus.visible
-                                selectByMouse: true
-                                contextMenuEnabled: true
-                                // Text Length Limiter
-                                readOnly: feedbackStatus.visible
-                                KeyNavigation.tab: submitButton
-                                KeyNavigation.priority: KeyNavigation.BeforeItem
-                                Accessible.role: Accessible.EditableText
-                                Accessible.name: "FeedbackEdit"
+                        onTextChanged: {
+                            if(alertToast.visible) alertToast.hide();
 
-                                property int maximumLength: 1000
-                                property string previousText: text
-
-                                onTextChanged: {
-                                    if(alertToast.visible) alertToast.hide();
-
-                                    if (text.length > maximumLength) {
-                                        var cursor = cursorPosition;
-                                        text = previousText;
-                                        if (cursor > text.length) {
-                                            cursorPosition = text.length;
-                                        } else {
-                                            cursorPosition = cursor-1;
-                                        }
-                                    }
-                                    previousText = text
+                            if (text.length > maximumLength) {
+                                var cursor = commentsQuestionsArea.cursorPosition
+                                text = previousText;
+                                if (cursor > text.length) {
+                                    commentsQuestionsArea.cursorPosition = text.length;
+                                } else {
+                                    commentsQuestionsArea.cursorPosition = cursor - 1;
                                 }
                             }
+                            previousText = text
                         }
                     }
 
@@ -281,7 +269,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: textEdit.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: commentsQuestionsArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -304,7 +292,7 @@ SGStrataPopup {
                         Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
-                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
+                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentsQuestionsArea.text, type: feedbackTypeListView.currentItem.typeValue }
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
@@ -316,7 +304,6 @@ SGStrataPopup {
                     }
                 }
             }
-
         }
     }
 
@@ -347,7 +334,7 @@ SGStrataPopup {
     }
 
     function resetForm(){
-        textEdit.text = ""
+        commentsQuestionsArea.text = ""
         feedbackTypeListView.currentIndex = -1
     }
 }

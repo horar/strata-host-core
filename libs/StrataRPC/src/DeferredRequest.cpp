@@ -2,7 +2,7 @@
 
 using namespace strata::strataRPC;
 
-DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id), timer_(this)
+DeferredRequest::DeferredRequest(const int &id, QObject *parent) : QObject(parent), id_(id), timer_(this)
 {
     timer_.setSingleShot(true);
     connect(&timer_, &QTimer::timeout, this, &DeferredRequest::requestTimeoutHandler);

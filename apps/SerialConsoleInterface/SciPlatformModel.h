@@ -78,6 +78,10 @@ private slots:
     void boardDisconnectedHandler(const QByteArray& deviceId);
 
 private:
+    int findPlatform(const QByteArray& deviceId) const;
+    void appendNewPlatform(const QByteArray& deviceId);
+    void clear();
+
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;
 
@@ -88,8 +92,4 @@ private:
     int maxScrollbackCount_ = 99;
     int maxCmdInHistoryCount_ = 99;
     bool condensedAtStartup_ = false;
-
-    int findPlatform(const QByteArray& deviceId) const;
-
-    void appendNewPlatform(const QByteArray& deviceId);
 };

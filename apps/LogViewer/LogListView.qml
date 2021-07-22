@@ -41,6 +41,8 @@ Item {
     property bool showMarks: false
     property bool searchingMode: false
 
+    signal delegateSelected(int index)
+
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
     }
@@ -586,6 +588,7 @@ Item {
                     onPressed: {
                         logViewWrapper.forceActiveFocus()
                         currentIndex = index
+                        delegateSelected(index)
                     }
 
                     onReleased: {

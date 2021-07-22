@@ -203,4 +203,9 @@ Item {
         console.error("Project does not have Control.qml at the top level")
         missingControlQml.open()
     }
+
+    RenameFilePopup {
+        id: renameFilePopup
+        visible: false
+    }
 }

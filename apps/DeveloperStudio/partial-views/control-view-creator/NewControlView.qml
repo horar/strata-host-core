@@ -301,10 +301,9 @@ Item {
     }
 
     function createControlView() {
-        let path = fileOutput.text.trim();
-        if (path.startsWith("file:")) {
-            // type is url
-            path = SGUtilsCpp.urlToLocalFile(path);
+        let path = fileOutput.text.trim()
+        if (!SGUtilsCpp.isFile(path)) {
+            path = SGUtilsCpp.urlToLocalFile(path)
         }
 
         if (!SGUtilsCpp.exists(path)) {

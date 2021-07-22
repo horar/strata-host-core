@@ -7,6 +7,7 @@ using strata::device::Device;
 using strata::device::MockDevice;
 using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::Identify;
+using strata::device::MockVersion;
 
 namespace test_commands = strata::device::test_commands;
 
@@ -25,7 +26,7 @@ void PlatformErrorsTest::cleanupTestCase()
 void PlatformErrorsTest::init()
 {
     platformManager_ = std::make_shared<strata::PlatformManager>(true, false, false);
-    platformManager_->init(Device::Type::MockDevice);
+    platformManager_->addScanner(Device::Type::MockDevice);
 
     auto deviceScanner = platformManager_->getScanner(Device::Type::MockDevice);
     QVERIFY(deviceScanner.get() != nullptr);
@@ -45,7 +46,7 @@ void PlatformErrorsTest::cleanup()
         mockDevice_.reset();
     }
 
-    platformManager_->deinit(Device::Type::MockDevice);
+    platformManager_->removeScanner(Device::Type::MockDevice);
 }
 
 void PlatformErrorsTest::addMockDevice()
@@ -53,7 +54,7 @@ void PlatformErrorsTest::addMockDevice()
     devicesCount_ = platformManager_->getDeviceIds().count();
 
     QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
-    QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", true));
+    QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", true).isEmpty());
     QVERIFY((platformAddedSignal.count() == 1) || (platformAddedSignal.wait(100) == true));
 
     QVERIFY(platformManager_->getDeviceIds().contains(deviceId_));
@@ -61,11 +62,13 @@ void PlatformErrorsTest::addMockDevice()
 
     platform_ = platformManager_->getPlatform(deviceId_);
     QVERIFY(platform_.get() != nullptr);
-    auto device = platform_->getDevice();
+    auto device = mockDeviceScanner_->getMockDevice(platform_->deviceId());
     QVERIFY(device.get() != nullptr);
     mockDevice_ = std::dynamic_pointer_cast<strata::device::MockDevice>(device);
     QVERIFY(mockDevice_.get() != nullptr);
     QVERIFY(platform_->deviceConnected());
+    mockDevice_->mockSetVersion(MockVersion::Version_1);
+    QVERIFY(mockDevice_->mockGetVersion() == MockVersion::Version_1);
 }
 
 void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
@@ -203,9 +206,10 @@ void PlatformErrorsTest::errorDuringOperationTest()
         return;
     }
 
-    mockDevice_->mockSetErrorOnNthMessage(2);
+    mockDevice_->mockSetWriteErrorOnNthMessage(2);
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
+
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
 
@@ -214,7 +218,11 @@ void PlatformErrorsTest::errorDuringOperationTest()
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
     QCOMPARE(platformOperation->isSuccessfullyFinished(), false);
 
-    QVERIFY(platformErrorSignal.count() == 1);
+    // write error is set on 2nd message, exactly 2 messageSent signals are expected
+    QCOMPARE(platformSentSignal.count(), 2);
+    QList<QVariant> arguments = platformSentSignal.takeLast();
+    QVERIFY(arguments.at(2).type() == QVariant::String);
+    QVERIFY(qvariant_cast<QString>(arguments.at(2)).isEmpty() == false);
 }
 
 void PlatformErrorsTest::errorAfterOperationTest()
@@ -295,6 +303,7 @@ void PlatformErrorsTest::multipleOperationsTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
 
     std::unique_ptr<Identify> identifyOperation1 = std::make_unique<Identify>(platform_, true, 1, std::chrono::milliseconds(100));
@@ -303,7 +312,8 @@ void PlatformErrorsTest::multipleOperationsTest()
     identifyOperation1->run();
     identifyOperation2->run();
 
-    QVERIFY(platform_->sendMessage("{}") == false);
+    unsigned msgNumber = platform_->sendMessage("{}");
+    bool signalReceived = false;
 
     QCOMPARE(identifyOperation1->deviceId(), deviceId_);
     QCOMPARE(identifyOperation2->deviceId(), deviceId_);
@@ -321,12 +331,26 @@ void PlatformErrorsTest::multipleOperationsTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
-    QList<QVariant> arguments = platformErrorSignal.takeFirst();
-    QVERIFY(arguments.at(0).type() == QVariant::UserType);
-    QVERIFY(arguments.at(1).type() == QVariant::String);
-    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceBusy);
+    QVERIFY(platformSentSignal.count() > 0);
+    while (platformSentSignal.size() > 0) {
+        QList<QVariant> arguments = platformSentSignal.takeFirst();
+        QVERIFY(arguments.at(1).type() == QVariant::UInt);
+        if (qvariant_cast<unsigned>(arguments.at(1)) == msgNumber) {
+            signalReceived = true;
+            QVERIFY(arguments.at(0).type() == QVariant::ByteArray);
+            QVERIFY(qvariant_cast<QString>(arguments.at(0)) == "{}\n");
+            QVERIFY(arguments.at(2).type() == QVariant::String);
+            QVERIFY(qvariant_cast<QString>(arguments.at(2)).isEmpty() == false);
+            break;
+        }
+    }
+    QCOMPARE(signalReceived, true);
 
-    // DeviceBusy should not terminate the device
+    // Second operation didn't succeed because device was locked by first operation
+    // and messages from second operation could not be sent.
+    // Failure to send messages should not cause a device error.
+    QVERIFY((platformErrorSignal.count() == 0) && (platformErrorSignal.wait(250) == false));
+
+    // unsuccessful operation should not terminate the device
     QVERIFY((platformRemovedSignal.count() == 0) && (platformRemovedSignal.wait(250) == false));
 }

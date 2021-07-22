@@ -1,9 +1,3 @@
-//
-// author: ian
-// date: 25 October 2017
-//
-// Document Manager class to interact with corresponding QML SGDocumentViewer Widget
-//
 #ifndef DOCUMENT_MANAGER_H
 #define DOCUMENT_MANAGER_H
 

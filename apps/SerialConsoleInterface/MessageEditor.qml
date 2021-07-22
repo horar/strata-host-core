@@ -17,6 +17,8 @@ FocusScope {
     property int tabSize: 4
     property alias cursorPosition: edit.cursorPosition
     property alias lineCount: edit.lineCount
+    property alias suggestionOpened: suggestionPopup.opened
+    property alias suggestionParent: suggestionPopup.parent
 
     readonly property var currentCoordinates: resolveCoordinates(edit.cursorPosition, edit.text)
     readonly property int currentLine: currentCoordinates.line
@@ -454,5 +456,15 @@ FocusScope {
         }
 
         return -1
+    }
+
+    function openSuggestionPopup() {
+        if (suggestionPopup.opened === false) {
+            suggestionPopup.open()
+        }
+    }
+
+    function closeSuggestionPopup() {
+        suggestionPopup.close()
     }
 }

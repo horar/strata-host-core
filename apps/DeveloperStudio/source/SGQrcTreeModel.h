@@ -258,7 +258,7 @@ public:
      * @param url The path to the file or directory
      * @return true if file is in pathsInTree_
      */
-    Q_INVOKABLE bool containsPath(const QUrl url);
+    Q_INVOKABLE bool containsPath(const QString url);
 
     /***
      * SIGNALS

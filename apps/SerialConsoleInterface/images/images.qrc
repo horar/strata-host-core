@@ -1,6 +1,5 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource prefix="/images/">
+<RCC>
+    <qresource prefix="/images">
         <file>redo.svg</file>
         <file>side-pane-right-close.svg</file>
         <file>side-pane-right-open.svg</file>
@@ -10,5 +9,6 @@
         <file>return.svg</file>
         <file>question.svg</file>
         <file>hex-view.svg</file>
+        <file>chip-download.svg</file>
     </qresource>
 </RCC>

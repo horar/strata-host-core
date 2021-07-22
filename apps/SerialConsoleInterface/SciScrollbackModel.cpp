@@ -273,7 +273,7 @@ QByteArray SciScrollbackModel::stringify(const ScrollbackModelItem &item) const
     line += " ";
     line += item.type == MessageType::Request ? "request" : "response";
     line += " ";
-    line += SGJsonFormatter::minifyJson(item.message);
+    line += SGJsonFormatter::minifyJson(item.message).toUtf8();
     line += "\n";
 
     return line;

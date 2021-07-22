@@ -38,13 +38,17 @@ FlasherConnector::FlasherConnector(const PlatformPtr& platform,
     filePath_(firmwarePath),
     newFirmwareMD5_(firmwareMD5),
     newFwClassId_(fwClassId),
-    tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))),
     action_(Action::None)
 {
     oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : platform_->firmwareClassId();
 }
 
-FlasherConnector::~FlasherConnector() { }
+FlasherConnector::~FlasherConnector()
+{
+    if (tmpBackupFileName_.isEmpty() == false) {
+        QFile::remove(tmpBackupFileName_);
+    }
+}
 
 bool FlasherConnector::flash(bool backupBeforeFlash) {
     operation_ = Operation::Preparation;
@@ -66,12 +70,15 @@ bool FlasherConnector::flash(bool backupBeforeFlash) {
     }
 
     if (backupBeforeFlash) {
-        if (tmpBackupFile_.open() == false) {
-            processStartupError(QStringLiteral("Cannot create temporary file for firmware backup."));
+        QTemporaryFile tmpBackupFile(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup")));
+        if (tmpBackupFile.open() == false) {
+            processStartupError(QStringLiteral("Cannot create temporary file name for firmware backup."));
             return false;
         }
+        tmpBackupFileName_ = tmpBackupFile.fileName();
+        tmpBackupFile.close();
         qCInfo(logCategoryFlasherConnector) << "Starting to backup current firmware.";
-        qCDebug(logCategoryFlasherConnector).noquote() << "Temporary file for firmware backup:" << tmpBackupFile_.fileName();
+        qCDebug(logCategoryFlasherConnector).noquote() << "Temporary file for firmware backup:" << tmpBackupFileName_;
         action_ = Action::BackupOld;
         backupFirmware(true);
     } else {
@@ -145,7 +152,7 @@ void FlasherConnector::flasherDeleter(Flasher* flasher) {
 void FlasherConnector::flashFirmware(bool flashOld) {
     QString firmwarePath;
     if (flashOld) {
-        firmwarePath = tmpBackupFile_.fileName();
+        firmwarePath = tmpBackupFileName_;
         flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath, QString(), oldFwClassId_), flasherDeleter);
         connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress);
     } else {
@@ -165,7 +172,7 @@ void FlasherConnector::flashFirmware(bool flashOld) {
 void FlasherConnector::backupFirmware(bool backupOld) {
     bool startApp = (backupOld) ? false : true;
 
-    const QString& firmwarePath = (backupOld) ? tmpBackupFile_.fileName() : filePath_;
+    const QString& firmwarePath = (backupOld) ? tmpBackupFileName_ : filePath_;
     flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath), flasherDeleter);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
@@ -188,23 +195,27 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
     flasher_.reset();
 
     QString errorMessage;
-    State result = State::Failed;
+    State state = State::Failed;
 
     switch (flasherResult) {
     case Flasher::Result::Ok :
-        result = State::Finished;
+        state = State::Finished;
         break;
     case Flasher::Result::NoFirmware :
         if (operation_ == Operation::BackupBeforeFlash || operation_ == Operation::Backup) {
-            result = State::NoFirmware;
+            state = State::NoFirmware;
         } else {
-            result = State::Failed;
+            state = State::Failed;
         }
-        errorMessage = QStringLiteral("The board has no valid firmware.");
+        errorMessage = QStringLiteral("Platform has no valid firmware.");
+        break;
+    case Flasher::Result::BadFirmware :
+        state = State::BadFirmware;
+        errorMessage = QStringLiteral("Platform firmware is unable to start.");
         break;
     case Flasher::Result::Error :
     case Flasher::Result::Disconnect :
-        result = State::Failed;
+        state = State::Failed;
         if (errorString.isEmpty()) {
             errorMessage = QStringLiteral("Unknown error");
         } else {
@@ -213,17 +224,17 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         }
         break;
     case Flasher::Result::Timeout :
-        result = State::Failed;
-        errorMessage = QStringLiteral("Timeout. No response from board.");
+        state = State::Failed;
+        errorMessage = QStringLiteral("Timeout. No response from platform.");
         break;
     case Flasher::Result::Cancelled :
-        result = State::Cancelled;
+        state = State::Cancelled;
         qCWarning(logCategoryFlasherConnector) << "Firmware operation was cancelled.";
         break;
     }
 
-    if (result != State::Finished) {
-        emit operationStateChanged(operation_, result, errorMessage);
+    if (state != State::Finished) {
+        emit operationStateChanged(operation_, state, errorMessage);
     }
 
     switch (action_) {
@@ -234,25 +245,42 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         break;
     case Action::Backup :
         action_ = Action::None;
-        emit finished((flasherResult == Flasher::Result::Ok) ? Result::Success : Result::Unsuccess);
+        {
+            Result connectorResult;
+            if (flasherResult == Flasher::Result::Ok) {
+                connectorResult = Result::Success;
+            } else if (flasherResult == Flasher::Result::BadFirmware) {
+                connectorResult = Result::Unsuccess;
+            } else {
+                connectorResult = Result::Failure;
+            }
+            emit finished(connectorResult);
+        }
         break;
     case Action::BackupOld :
-        if (flasherResult == Flasher::Result::Ok) {
+        switch (flasherResult) {
+        case Flasher::Result::BadFirmware :
+            qCInfo(logCategoryFlasherConnector) << "Backed up firmware is bad.";
+            [[fallthrough]];
+        case Flasher::Result::Ok :
             qCInfo(logCategoryFlasherConnector) << "Starting to flash new firmware.";
             action_ = Action::FlashNew;
             flashFirmware(false);
-        } else {
-            if (flasherResult == Flasher::Result::NoFirmware) {
-                qCInfo(logCategoryFlasherConnector) << "Board has no firmware, cannot backup. Going to flash new firmware.";
-                action_ = Action::Flash;
-                flashFirmware(false);
-            } else {
-                if (flasherResult != Flasher::Result::Cancelled) {
-                    qCCritical(logCategoryFlasherConnector) << "Failed to backup original firmware.";
-                }
-                action_ = Action::None;
-                emit finished(Result::Unsuccess);
-            }
+            break;
+        case Flasher::Result::NoFirmware :
+            qCInfo(logCategoryFlasherConnector) << "Platform has no firmware, cannot backup. Going to flash new firmware.";
+            action_ = Action::Flash;
+            flashFirmware(false);
+            break;
+        case Flasher::Result::Error :
+        case Flasher::Result::Disconnect :
+        case Flasher::Result::Timeout :
+            qCCritical(logCategoryFlasherConnector) << "Failed to backup original firmware.";
+            [[fallthrough]];
+        case Flasher::Result::Cancelled :
+            action_ = Action::None;
+            emit finished(Result::Unsuccess);
+            break;
         }
         break;
     case Action::FlashNew :

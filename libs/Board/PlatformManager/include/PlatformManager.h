@@ -37,16 +37,17 @@ namespace strata {
         ~PlatformManager();
 
         /**
-         * Initialize a particular device scanner.
+         * Add a particular device scanner.
          * @param scannerType scanner type
+         * @param flags flags defining properties for scanner
          */
-        void init(device::Device::Type scannerType);
+        void addScanner(device::Device::Type scannerType, quint32 flags = 0);
 
         /**
-         * De-Initialize a particular device scanner.
+         * Remove a particular device scanner.
          * @param scannerType scanner type
          */
-        void deinit(device::Device::Type scannerType);
+        void removeScanner(device::Device::Type scannerType);
 
         /**
          * Disconnect and close the platform.

@@ -21,88 +21,6 @@ Item {
         elide: Text.ElideRight
     }
 
-    TextField {
-        id: itemFilenameEdit
-        width: inQrcIcon.x - x - 10
-        height: parent.height
-        visible: styleData.selected && model.editing
-        anchors.verticalCenter: parent.verticalCenter
-        verticalAlignment: TextInput.AlignVCenter
-        font.pointSize: 10
-        color: "black"
-        selectionColor: "#ACCEF7"
-        text: styleData.value
-        clip: true
-        autoScroll: activeFocus
-        readOnly: false
-
-        Keys.onEscapePressed: {
-            if (model.editing) {
-                model.editing = false
-
-                if (model.filename === "") {
-                    treeModel.removeRows(model.row, 1, styleData.index.parent);
-                    return;
-                }
-
-                text = Qt.binding(() => styleData.value)
-            }
-        }
-
-        onEditingFinished: {
-            if (!model.editing) {
-                return;
-            }
-
-            if (text.indexOf('/') >= 0) {
-                text = Qt.binding(() => styleData.value)
-            }
-
-            let url;
-            // Below handles the case where the parentNode is the .qrc file
-            if (model.parentNode && !model.parentNode.isDir) {
-                url = SGUtilsCpp.joinFilePath(treeModel.projectDirectory, text)
-            } else {
-                url = SGUtilsCpp.joinFilePath(model.parentNode.filepath, text)
-            }
-            let path = SGUtilsCpp.urlToLocalFile(url)
-            let parentDir = SGUtilsCpp.urlToLocalFile(treeModel.parentDirectoryUrl(url))
-
-            treeModel.stopWatchingPath(parentDir);
-            if (text.length > 0 && styleData.value !== text) {
-                // Don't attempt to rename the file if the text is the same as the original filename
-                const success = treeModel.renameFile(styleData.index, text)
-                if (success) {
-                    if (openFilesModel.hasTab(model.uid)) {
-                        openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
-                    } else if (model.isDir) {
-                        handleRenameForOpenFiles(treeModel.getNode(styleData.index))
-                    }
-                } else {
-                    text = Qt.binding(() => styleData.value)
-                }
-            } else {
-                text = Qt.binding(() => styleData.value)
-            }
-
-            model.editing = false
-            treeModel.startWatchingPath(parentDir);
-        }
-
-        onVisibleChanged: {
-            if (visible) {
-                forceActiveFocus();
-            }
-        }
-
-        onActiveFocusChanged: {
-            cursorPosition = activeFocus ? length : 0
-            if (styleData.value !== "") {
-                select(0, styleData.value.replace("." + model.filetype, "").length)
-            }
-        }
-    }
-
     SGIcon {
         id: inQrcIcon
         height: 15
@@ -167,21 +85,6 @@ Item {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    /**
-      * This function handles when directories are renamed.
-      * The purpose is to make sure that all open tabs that are underneath the directory are updated
-     **/
-    function handleRenameForOpenFiles(node) {
-        for (let i = 0; i < node.childCount(); i++) {
-            let childNode = node.childNode(i);
-            if (childNode.isDir) {
-                handleRenameForOpenFiles(childNode)
-            } else if (openFilesModel.hasTab(childNode.uid)) {
-                openFilesModel.updateTab(childNode.uid, childNode.filename, childNode.filepath, childNode.filetype)
             }
         }
     }

@@ -122,7 +122,7 @@ SGStrataPopup {
 
             SGButton {
                 id: createFileButton
-                text: "Create file"
+                text: "Create File"
                 enabled: filenameReqsPopup.filenameValid
 
                 onClicked: {

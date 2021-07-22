@@ -36,7 +36,7 @@ public:
     /**
      * Updates client's API version
      */
-    void UpdateClientApiVersion(ApiVersion newAPIVersion);
+    void UpdateClientApiVersion(const ApiVersion &newAPIVersion);
 
 private:
     QByteArray clientId_;

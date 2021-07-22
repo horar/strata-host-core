@@ -26,10 +26,10 @@ Server::~Server()
 {
 }
 
-bool Server::init()
+void Server::init()
 {
     qCDebug(logCategoryStrataServerSample) << "Initializing Strata Server.";
-    return strataServer_->initializeServer();
+    strataServer_->initialize();
 }
 
 void Server::start()
@@ -47,6 +47,11 @@ void Server::serverErrorHandler(StrataServer::ServerError errorType, const QStri
     qCDebug(logCategoryStrataServerSample) << "Error type:" << errorType;
     qCDebug(logCategoryStrataServerSample) << "Error message:" << errorMessage;
     qCDebug(logCategoryStrataServerSample).noquote() << QString(84, '#');
+
+    if (errorType == StrataServer::ServerError::FailedToInitializeServer) {
+        qCCritical(logCategoryStrataServerSample) << "Failed to initialize the server. Aborting...";
+        emit appDone(-1);
+    }
 }
 
 void Server::closeServerHandler(const Message &message)

@@ -1,7 +1,7 @@
 #include "SciMockVersionModel.h"
 #include "logging/LoggingQtCategories.h"
 
-using strata::device::MockVersion;
+using namespace strata::device;
 
 SciMockVersionModel::SciMockVersionModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -107,6 +107,8 @@ void SciMockVersionModel::setModelRoles()
 void SciMockVersionModel::setModelData()
 {
     versions_.clear();
-    versions_.push_back({MockVersion::Version_1, "Version 1 (non-OTA)"});
-    versions_.push_back({MockVersion::Version_2, "Version 2 (OTA)"});
+    QList<MockVersion> versions = mockSupportedVersions();
+    foreach(auto version, versions) {
+        versions_.push_back({version, mockVersionConvertEnumToString(version)});
+    }
 }

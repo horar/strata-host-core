@@ -29,5 +29,8 @@
         <file>widgets1_0/ExSGContextMenuEditActions.qml</file>
         <file>widgets1_0/ExSGIcon.qml</file>
         <file>widgets1_0/ExSGTag.qml</file>
+        <file>commoncpp1_0/PageSGCommonCppOneZero.qml</file>
+        <file>commoncpp1_0/ExSGTextHighlighter.qml</file>
+        <file>commoncpp1_0/ExSGJsonSyntaxHighlighter.qml</file>
     </qresource>
 </RCC>

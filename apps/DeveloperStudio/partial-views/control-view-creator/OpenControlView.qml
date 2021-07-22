@@ -58,11 +58,10 @@ Item {
 
     function projectFileMissing(filepath, inRecentProjects) {
         let localFile
-        if (filepath.startsWith("file://")) {
-            // type is url
-            localFile = SGUtilsCpp.urlToLocalFile(filepath)
-        } else {
+        if (SGUtilsCpp.isFile(filepath)) {
             localFile = filepath
+        } else {
+            localFile = SGUtilsCpp.urlToLocalFile(filepath)
         }
 
         if (!SGUtilsCpp.exists(localFile)) {
@@ -198,7 +197,7 @@ Item {
 
                     SGText {
                         Layout.fillWidth: true
-                        text: model.url
+                        text: SGUtilsCpp.urlToLocalFile(model.url)
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap

@@ -10,6 +10,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/schema.h>
 
+#include <stdexcept>
+
 namespace strata::platform {
 
 QDebug operator<<(QDebug dbg, const Platform* d) {
@@ -35,7 +37,8 @@ Platform::Platform(const device::DevicePtr& device) :
 
     connect(device_.get(), &device::Device::opened, this, &Platform::openedHandler);
     connect(device_.get(), &device::Device::messageReceived, this, &Platform::messageReceivedHandler);
-    connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler);
+    // 'messageSent' must be connected via queued connection, see comment in 'messageSentHandler'
+    connect(device_.get(), &device::Device::messageSent, this, &Platform::messageSentHandler, Qt::QueuedConnection);
     connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
 
     reconnectTimer_.setSingleShot(true);
@@ -47,10 +50,6 @@ Platform::~Platform() {
     abortReconnect();
 
     // no need to close device here (if close was not called before), will be done in device
-}
-
-device::DevicePtr Platform::getDevice() const {
-    return device_;
 }
 
 const rapidjson::SchemaDocument platformIdChangedSchema(
@@ -95,20 +94,23 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
     }
 }
 
-void Platform::messageSentHandler(QByteArray rawMsg) {
-    emit messageSent(rawMsg);
+void Platform::messageSentHandler(QByteArray rawMsg, unsigned msgNum, QString errStr) {
+    // We need to emit 'messageSent' signal after return from 'sendMessage' method,
+    // (due to error handling), so this slot must be connected via 'Qt::QueuedConnection'
+    // or signal must be emitted via single-shot timer (with duration 0 ms).
+    emit messageSent(rawMsg, msgNum, errStr);
 }
 
-void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errMsg) {
+void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString errStr) {
     if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
-        if (errMsg.isEmpty()) {
-            errMsg = "Unable to open device.";
+        if (errStr.isEmpty()) {
+            errStr = "Unable to open device.";
         }
         if (retryInterval_ != std::chrono::milliseconds::zero()) {
             reconnectTimer_.start(retryInterval_.count());
         }
     }
-    emit deviceError(errCode, errMsg);
+    emit deviceError(errCode, errStr);
 }
 
 void Platform::open(const std::chrono::milliseconds retryInterval) {
@@ -133,13 +135,18 @@ void Platform::terminate(bool close) {
 }
 
 // public method
-bool Platform::sendMessage(const QByteArray& message) {
+unsigned Platform::sendMessage(const QByteArray& message) {
     return sendMessage(message, 0);
 }
 
 // private method
-bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+unsigned Platform::sendMessage(const QByteArray& message, quintptr lockId) {
+    // Strata commands must end with new line character ('\n')
     QByteArray msgToWrite(message);
+    if (msgToWrite.endsWith('\n') == false) {
+        msgToWrite.append('\n');
+    }
+
     bool canWrite = false;
     {
         QMutexLocker lock(&operationMutex_);
@@ -148,17 +155,14 @@ bool Platform::sendMessage(const QByteArray& message, quintptr lockId) {
         }
     }
     if (canWrite) {
-        // Strata commands must end with new line character ('\n')
-        if (msgToWrite.endsWith('\n') == false) {
-            msgToWrite.append('\n');
-        }
         return device_->sendMessage(msgToWrite);
-    } else {
-        QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-        qCWarning(logCategoryPlatform) << this << errMsg;
-        emit deviceError(device::Device::ErrorCode::DeviceBusy, errMsg);
-        return false;
     }
+
+    QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
+    qCWarning(logCategoryPlatform) << this << errMsg;
+    unsigned messageNumber = device_->nextMessageNumber();
+    emit device_->messageSent(msgToWrite, messageNumber, errMsg);
+    return messageNumber;
 }
 
 QString Platform::name() {

@@ -15,7 +15,7 @@ public:
      * DeferredRequest constructor
      * @param [in] id request ID
      */
-    DeferredRequest(int id, QObject *parent = nullptr);
+    DeferredRequest(const int &id, QObject *parent = nullptr);
 
     /**
      * DeferredRequest Destructor
@@ -45,7 +45,7 @@ signals:
      * Signal emitted on timeout.
      * @param [in] requestId request id.
      */
-    void requestTimedout(int requestId);
+    void requestTimedout(const int &requestId);
 
 private slots:
     /**

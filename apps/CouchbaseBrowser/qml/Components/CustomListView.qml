@@ -28,9 +28,9 @@ ListView {
         id: delegate
         Item {
             id: delegateRoot
-            width: parent.width - 20
+            width: ListView.view.width - 20
             height: visible ? 30 : 0
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: ListView.view.horizontalCenter
 
             visible: containsKeyword ? (selected ? displaySelected : displayUnselected) : false
 

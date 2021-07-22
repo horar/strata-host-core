@@ -156,12 +156,26 @@ Rectangle {
                     Layout.alignment: Qt.AlignRight
 
                     SGControlViewIconButton {
+                        id: openWindow
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
+                        source: popupWindow ? "qrc:/sgimages/sign-out.svg" : "qrc:/sgimages/sign-in.svg"
+
+                        onClicked:  {
+                            popupWindow = !popupWindow
+                        }
+                    }
+
+                    SGControlViewIconButton {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
                         source: "qrc:/sgimages/times.svg"
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
+                            if (popupWindow) {
+                                popupWindow = false
+                            }
                             root.clicked()
                         }
                     }

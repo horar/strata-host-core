@@ -66,7 +66,7 @@ Item {
 
         ValidationField {
             id: titleField
-            placeholderText: "Title (Optional)"
+            placeholderText: "Occupation (Optional)"
             Layout.fillWidth: true
             showIcon: false
         }

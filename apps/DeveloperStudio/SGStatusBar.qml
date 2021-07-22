@@ -246,6 +246,7 @@ Rectangle {
                 id: delegate
                 width: platformTabListView.platformTabWidth +
                        (index == (platformTabListView.count - 1) ? platformTabListView.platformTabWidthRemainder : 0)
+                state: platformTabListView.state;
             }
             orientation: ListView.Horizontal
             spacing: 1

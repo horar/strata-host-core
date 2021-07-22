@@ -44,6 +44,9 @@ public:
     bool socketValid() const;
     bool contextValid() const;
 
+    bool hasReadEvent() override;
+    bool hasWriteEvent() override;
+
 private:
     std::unique_ptr<zmq::context_t> context_; // there is 1-N relationship between context-socket
     const int socketType;

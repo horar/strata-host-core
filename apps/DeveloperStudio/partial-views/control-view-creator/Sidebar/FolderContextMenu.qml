@@ -33,7 +33,18 @@ Menu {
         text: "Rename Folder"
         onTriggered: {
             treeView.selectItem(styleData.index)
-            model.editing = true
+            if (!styleData.isExpanded) {
+                treeView.expand(styleData.index)
+            }
+
+            renameFilePopup.renameType = "Folder"
+            renameFilePopup.modelIndex = styleData.index
+            renameFilePopup.uid = model.uid
+            renameFilePopup.fileName = model.filename
+            renameFilePopup.fileExtension = model.filetype
+            renameFilePopup.directoryPath = model.filepath
+            renameFilePopup.open()
+            folderContextMenu.dismiss()
         }
     }
 

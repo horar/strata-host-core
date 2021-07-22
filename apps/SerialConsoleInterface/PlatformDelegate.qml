@@ -54,6 +54,14 @@ FocusScope {
                 "send_message_ret": {"sequence": "Ctrl+Return", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
             }
 
+            Connections {
+                target: model.platform
+                onSendMessageResultReceived: {
+                    messageEditor.messageSendInProgress = false
+                    sendMessageResultHandler(type, data)
+                }
+            }
+
             Keys.onPressed: {
                 var key = event.key + event.modifiers
 
@@ -105,11 +113,16 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            if (scrollbackView.currentIndex < 0) {
+                            if (scrollbackView.currentIndex < 0 || scrollbackView.count === 0) {
                                 return ""
                             }
 
-                            return platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            var selectedMsg = platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            if (selectedMsg === undefined) {
+                                return ""
+                            } else {
+                                return selectedMsg
+                            }
                         }
                     }
                 }
@@ -201,32 +214,16 @@ FocusScope {
                         onClicked: mainPage.toggleExpand()
                     }
 
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
                     SGWidgets.SGIconButton {
                         text: "Filter"
                         hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
-                    }
-
-                    VerticalDivider {
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Export"
-                        hintText: qsTr("Export to file")
-                        icon.source: "qrc:/sgimages/file-export.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showExportView()
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Program"
-                        hintText: qsTr("Program device with new firmware")
-                        icon.source: "qrc:/sgimages/chip-flash.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showProgramView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -245,6 +242,34 @@ FocusScope {
                             property: "checked"
                             value: platformDelegate.hexViewShown
                         }
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Export"
+                        hintText: qsTr("Export to file")
+                        icon.source: "qrc:/sgimages/file-export.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showExportView()
+                    }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Program"
+                        hintText: qsTr("Program device with new firmware")
+                        icon.source: "qrc:/sgimages/chip-flash.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showProgramView()
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Save"
+                        hintText: qsTr("Save device firmware into file")
+                        icon.source: "qrc:/images/chip-download.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showSaveFirmwareView()
                     }
 
                     VerticalDivider {
@@ -393,6 +418,8 @@ FocusScope {
                     color: TangoTheme.palette.scarletRed1
                     textColor: "white"
                     font.bold: true
+                    mask: "A"
+                    sizeByMask: text.length === 0
                 }
 
                 MessageEditor {
@@ -406,17 +433,21 @@ FocusScope {
                         rightMargin: 6
                     }
 
-                    enabled: model.platform.status === Sci.SciPlatform.Ready
-                             || model.platform.status === Sci.SciPlatform.NotRecognized
+                    enabled: messageSendInProgress === false
+                             && (model.platform.status === Sci.SciPlatform.Ready
+                             || model.platform.status === Sci.SciPlatform.NotRecognized)
 
                     focus: true
 
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
+                    suggestionParent: messageHistoryButton
 
                     onTextChanged: {
                         model.platform.errorString = "";
                     }
+
+                    property bool messageSendInProgress: false
                 }
 
                 Row {
@@ -472,6 +503,23 @@ FocusScope {
                             messageEditor.clear()
                         }
                     }
+
+                    SGWidgets.SGIconButton {
+                        id: messageHistoryButton
+                        anchors.verticalCenter: parent.verticalCenter
+                        hintText: "Message history"
+                        icon.source: "qrc:/sgimages/history.svg"
+
+                        onClicked: {
+                            messageEditor.forceActiveFocus()
+
+                            if (messageEditor.suggestionOpened) {
+                                messageEditor.closeSuggestionPopup()
+                            } else {
+                                messageEditor.openSuggestionPopup()
+                            }
+                        }
+                    }
                 }
 
                 SGWidgets.SGCheckBox {
@@ -519,20 +567,28 @@ FocusScope {
             }
 
             function sendMessageInputTextAsComand() {
-                var result = model.platform.sendMessage(messageEditor.text, validateCheckBox.checked)
+                if (messageEditor.enabled === false) {
+                    return
+                }
 
-                if (result.error === "no_error") {
+                messageEditor.messageSendInProgress = true
+                model.platform.sendMessage(messageEditor.text, validateCheckBox.checked)
+            }
+
+            function sendMessageResultHandler(type, data) {
+                if (type === Sci.SciPlatform.NoError) {
                     model.platform.errorString = ""
                     messageEditor.clear()
-                } else if (result.error === "not_connected") {
-                    model.platform.errorString = "Platfrom not connected"
-                } else if (result.error === "json_error") {
-                    var pos = messageEditor.resolveCoordinates(result.offset, messageEditor.text)
-                    model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) +  "- " + result.message;
-                } else if (result.error === "send_error") {
-                    model.platform.errorString = "Could not send message"
+                } else if (type === Sci.SciPlatform.NotConnectedError) {
+                    model.platform.errorString = "Device not connected"
+                } else if (type === Sci.SciPlatform.JsonError) {
+                    var pos = messageEditor.resolveCoordinates(data.offset, messageEditor.text)
+                    model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) + " - " + data.message;
+                } else if (type === Sci.SciPlatform.PlatformError) {
+                    model.platform.errorString = data.error_string
                 } else {
                     model.platform.errorString = "Unknown error"
+                    console.error("unknown message send error", type, data)
                 }
             }
 
@@ -623,6 +679,13 @@ FocusScope {
     }
 
     Component {
+        id: saveFirmwareComponent
+
+        SaveFirmwareView {
+        }
+    }
+
+    Component {
         id: exportComponent
 
         ExportView {
@@ -638,6 +701,10 @@ FocusScope {
 
     function showProgramView() {
         stackView.push(programDeviceComponent)
+    }
+
+    function showSaveFirmwareView() {
+        stackView.push(saveFirmwareComponent)
     }
 
     function showExportView() {

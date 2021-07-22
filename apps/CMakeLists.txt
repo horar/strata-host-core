@@ -55,10 +55,6 @@ cmake_dependent_option(APPS_TOOLBOX_WG "Build 'Widget Gallery'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Widget Gallery")
 
-add_feature_info(APPS_TOOLBOX_PIG APPS_TOOLBOX_PIG "Platform Interface Generator")
-cmake_dependent_option(APPS_TOOLBOX_PIG "Build 'Platform Interface Generator'" ON
-                        "APPS_TOOLBOX" OFF)
-
 if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)
 endif()
@@ -100,8 +96,4 @@ endif()
 
 if (APPS_TOOLBOX_WG)
     add_subdirectory(WidgetGallery)
-endif()
-
-if (APPS_TOOLBOX_PIG)
-    add_subdirectory(PlatformInterfaceGenerator)
 endif()
