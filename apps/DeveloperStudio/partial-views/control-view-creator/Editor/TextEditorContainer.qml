@@ -321,7 +321,7 @@ ColumnLayout {
 
                 background: Rectangle {
                     radius: 0
-                   color: enabled === false ? "transparent" : hovered ? "#eee" : "#fff"
+                    color: enabled === false ? "transparent" : hovered ? "#eee" : "#fff"
                 }
 
                 SGIcon {
