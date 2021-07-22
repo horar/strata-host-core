@@ -23,13 +23,13 @@ Item {
     });
 
     readonly property var templateNotification: ({
-         "type": "value",
-         "name": "",
-         "valid": false,
-         "payload": [
-             templatePayload
-         ],
-         "editing": false
+        "type": "value",
+        "name": "",
+        "valid": false,
+        "payload": [
+            templatePayload
+        ],
+        "editing": false
      });
 
     readonly property var templatePayload: ({
@@ -308,7 +308,6 @@ Item {
             text: "Platform Interface Generator"
             Layout.alignment: Qt.AlignHCenter
             padding: 0
-
             font {
                 bold: true
                 pointSize: 24
@@ -489,7 +488,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.maximumWidth: 600
-            Layout.minimumHeight: 40
+            Layout.preferredHeight: 30
             Layout.alignment: Qt.AlignHCenter
 
             text: "Generate"
