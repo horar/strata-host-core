@@ -387,7 +387,7 @@ Item {
                 source: "qrc:/images/loading.gif"
 
                 Text {
-                    text: qsTr(`Loading: ${(webEngine.loadProgress/100) * 100}%`)
+                    text: qsTr(`Loading: ${webEngine.loadProgress}%`)
                     anchors {
                         bottom: indicator.top
                         bottomMargin: 10
