@@ -27,26 +27,6 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-/*
- Notes for future:
- * If you want to add serial device scanner with disabled automatic scanning do:
-
-    #include <Serial/SerialDeviceScanner.h>
-    using strata::device::scanner::SerialDeviceScanner;
-    ...
-    platformManager_.addScanner(strata::device::Device::Type::SerialDevice, SerialDeviceScanner::DisableAutomaticScan);
-
- * For enabling automatic scan do:
-
-    #include <Serial/SerialDeviceScanner.h>
-    using strata::device::scanner::SerialDeviceScanner;
-    ...
-    auto serialScanner = std::dynamic_pointer_cast<SerialDeviceScanner>(platformManager_.getScanner(strata::device::Device::Type::SerialDevice));
-    if (serialScanner) {
-        serialScanner->unsetProperties(SerialDeviceScanner::DisableAutomaticScan);
-    }
-*/
-
     platformManager_.addScanner(strata::device::Device::Type::SerialDevice, SerialDeviceScanner::DisableAutomaticScan);
 
     connect(&platformManager_, &strata::PlatformManager::platformRecognized, this, &PrtModel::deviceInfoChangeHandler);
