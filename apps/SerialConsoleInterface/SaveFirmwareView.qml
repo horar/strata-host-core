@@ -128,6 +128,8 @@ FocusScope {
             function inputValidationErrorMsg() {
                 if (filePath.length === 0) {
                     return qsTr("Path for firmware binary file is required")
+                } else if (CommonCpp.SGUtilsCpp.isRelative(filePath)) {
+                    return qsTr("Absolute path for firmware binary file is required")
                 } else if (CommonCpp.SGUtilsCpp.isFile(filePath)) {
                     return qsTr("Selected file exists, it will be overwritten")
                 }
