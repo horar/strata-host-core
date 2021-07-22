@@ -42,7 +42,6 @@ RowLayout {
         text: nameOfProject
         font.pointSize: 12
         font.bold: true
-        font.capitalization: Font.AllUppercase
         color: "white"
         elide: Text.ElideRight
     }
@@ -99,7 +98,7 @@ RowLayout {
 
                 onClicked: {
                     var url = "file://" + SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url)
-                    var filename = nameOfProject + ".qrc"
+                    var filename =  SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory)) + ".qrc"
                     var filetype = "qrc"
                     var uid = "qrcUid"
                     editQRCEnabled = false
