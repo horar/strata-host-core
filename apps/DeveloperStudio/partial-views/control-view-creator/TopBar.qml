@@ -15,11 +15,31 @@ RowLayout {
     spacing: 10
 
     property color buttonColor: "#777"
+    
+    property var nameOfProject: SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+    Connections {
+        target: treeModel
+        onProjectDirectoryChanged: {
+            let cMakeFile = treeModel.projectDirectory
+            cMakeFile = SGUtilsCpp.urlToLocalFile(cMakeFile)
+            cMakeFile = SGUtilsCpp.joinFilePath(cMakeFile, "CMakeLists.txt")
+            if (SGUtilsCpp.isFile(cMakeFile) === true) {
+                let content = SGUtilsCpp.readTextFileContent(cMakeFile)
+                // Regex will parse the project name from CMakeLists.txt; "project(<project name to be captured>"
+                let splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*/ 
+                let cMakeArr = content.match(splitCondition)
+                nameOfProject = cMakeArr[1]
+                if (nameOfProject === null) {
+                    nameOfProject = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+                }
+            }
+        }
+    }
 
     Text {
         leftPadding: 5
         verticalAlignment: Text.AlignVCenter
-        text: SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+        text: nameOfProject
         font.pointSize: 12
         font.bold: true
         font.capitalization: Font.AllUppercase
@@ -79,7 +99,7 @@ RowLayout {
 
                 onClicked: {
                     var url = "file://" + SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url)
-                    var filename =  SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory)) + ".qrc"
+                    var filename = nameOfProject + ".qrc"
                     var filetype = "qrc"
                     var uid = "qrcUid"
                     editQRCEnabled = false
