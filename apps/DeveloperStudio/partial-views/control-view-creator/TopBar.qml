@@ -16,30 +16,36 @@ RowLayout {
 
     property color buttonColor: "#777"
     
-    property var nameOfProject: SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
     Connections {
         target: treeModel
         onProjectDirectoryChanged: {
             let cMakeFile = treeModel.projectDirectory
             cMakeFile = SGUtilsCpp.urlToLocalFile(cMakeFile)
             cMakeFile = SGUtilsCpp.joinFilePath(cMakeFile, "CMakeLists.txt")
+
             if (SGUtilsCpp.isFile(cMakeFile) === true) {
                 let content = SGUtilsCpp.readTextFileContent(cMakeFile)
                 // Regex will parse the project name from CMakeLists.txt; "project(<project name to be captured>"
-                let splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*/ 
+                let splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m 
                 let cMakeArr = content.match(splitCondition)
-                nameOfProject = cMakeArr[1]
-                if (nameOfProject === null) {
-                    nameOfProject = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+                
+                if (cMakeArr === null || cMakeArr.length < 2) {
+                    console.warn("Could not determine project name from CMakeLists.txt")
+                    nameField.text = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+                } else {
+                    nameField.text = cMakeArr[1]
                 }
+            } else {
+                console.warn("Unable to open CMakeLists.txt")
+                nameField.text = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
             }
         }
     }
 
     Text {
+        id: nameField
         leftPadding: 5
         verticalAlignment: Text.AlignVCenter
-        text: nameOfProject
         font.pointSize: 12
         font.bold: true
         color: "white"
