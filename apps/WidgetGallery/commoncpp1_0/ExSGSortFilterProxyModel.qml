@@ -139,29 +139,51 @@ ColumnLayout {
                 anchors.fill: parent
                 model: sortFilterModel
                 interactive: false
-                delegate: Component {
-                    Rectangle {
-                        height: childrenRect.height
-                        Row {
-                            spacing: 10
-                            leftPadding: 10
-                            Rectangle { width: 100; height: 16; SGWidgets.SGText {text: name} }
-                            Rectangle { width: 100; height: 16; SGWidgets.SGText {text: age} }
-                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: identification} }
+                delegate: Item {
+                    height: childrenRect.height
+                    width: childrenRect.width
+                    SGWidgets.SGText {
+                        id: nameText
+                        leftPadding: 10
+                        text: name
+                    }
+                    SGWidgets.SGText {
+                        anchors {
+                            left: nameText.left
+                            leftMargin: 100
                         }
+                        text: age
+                    }
+                    SGWidgets.SGText {
+                        anchors {
+                            left: nameText.left
+                            leftMargin: 200
+                        }
+                        text: identification
                     }
                 }
 
-                header:  Component {
-                    Rectangle {
-                        height: childrenRect.height
-                        Row {
-                            spacing: 10
-                            leftPadding: 10
-                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: "<b> name </b>"} }
-                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: "<b> age </b>"} }
-                            Rectangle { width: 100; height: 16; SGWidgets.SGText { text: "<b> id </b>"} }
+                header: Item {
+                    height: childrenRect.height
+                    width: childrenRect.width
+                    SGWidgets.SGText {
+                        id: headerName
+                        leftPadding: 10
+                        text: "<b> name </b>"
+                    }
+                    SGWidgets.SGText {
+                        anchors {
+                            left: headerName.left
+                            leftMargin: 100
                         }
+                        text: "<b> age </b>"
+                    }
+                    SGWidgets.SGText {
+                        anchors {
+                            left: headerName.left
+                            leftMargin: 200
+                        }
+                        text: "<b> id </b>"
                     }
                 }
             }
