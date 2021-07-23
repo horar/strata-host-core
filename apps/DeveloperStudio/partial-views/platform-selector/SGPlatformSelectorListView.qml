@@ -12,6 +12,7 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: platformSelectorListView
@@ -575,6 +576,27 @@ Item {
                             segmentFilters.opened ? segmentFilters.close() : segmentFilters.open()
                         }
                         enabled: Filters.filterModel.count > 0
+                    }
+
+                    SGWidgets09.SGToolTipPopup {
+                        color: Qt.lighter(Theme.palette.green, 1.15)
+                        content: Text {
+                            text: "Click here to view all our platform categories!"
+                            color: "white"
+                        }
+                        showOn: listview.count > 0
+                        anchors.bottom: parent.top
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        MouseArea {
+                            anchors {
+                                fill: parent
+                            }
+
+                            onClicked:  {
+                                parent.showOn = false
+                            }
+                        }
                     }
 
                     Popup {
