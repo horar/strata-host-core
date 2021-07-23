@@ -96,6 +96,12 @@ bool SGUtilsCpp::isExecutable(const QString &file)
     return info.isExecutable();
 }
 
+bool SGUtilsCpp::isRelative(const QString &file)
+{
+    QFileInfo info(file);
+    return info.isRelative();
+}
+
 QString SGUtilsCpp::fileName(const QString &file)
 {
     QFileInfo fi(file);
