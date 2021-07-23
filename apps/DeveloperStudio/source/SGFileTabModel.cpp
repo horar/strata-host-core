@@ -227,11 +227,24 @@ Qt::ItemFlags SGFileTabModel::flags(const QModelIndex &index) const
 
 // CUSTOM FUNCTIONS BEGIN
 
-bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id)
+void SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id)
 {
     if (hasTab(id)) {
         setCurrentId(id);
-        return false;
+        return;
+    }
+
+    if (id == "") {
+        console.error("File id is empty");
+        return;
+    } else if (filepath == "") {
+        console.error("File path is empty");
+        return;
+    }
+
+    if (SGUtilsCpp.isFile(filepath) == false) {
+        console.error("File does not exist in file path");
+        return;
     }
 
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
@@ -242,7 +255,6 @@ bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
     setCurrentIndex(data_.count() - 1);
     emit countChanged();
     emit tabOpened(filepath);
-    return true;
 }
 
 bool SGFileTabModel::closeTab(const QString &id)
