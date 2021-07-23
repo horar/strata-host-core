@@ -8,8 +8,6 @@ import tech.strata.commoncpp 1.0
 RowLayout {
     spacing: 10
 
-    property color buttonColor: "#777"
-
     Text {
         id: nameField
         Layout.leftMargin: 5
@@ -25,11 +23,11 @@ RowLayout {
                 cMakeFile = SGUtilsCpp.urlToLocalFile(cMakeFile)
                 cMakeFile = SGUtilsCpp.joinFilePath(cMakeFile, "CMakeLists.txt")
 
-                if (SGUtilsCpp.isFile(cMakeFile) === true) {
-                    let content = SGUtilsCpp.readTextFileContent(cMakeFile)
+                if (SGUtilsCpp.isFile(cMakeFile)) {
+                    const content = SGUtilsCpp.readTextFileContent(cMakeFile)
                     // Regex will parse the project name from CMakeLists.txt; "project(<project name to be captured>"
-                    let splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m 
-                    let cMakeArr = content.match(splitCondition)
+                    const splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m 
+                    const cMakeArr = content.match(splitCondition)
                     
                     if (cMakeArr === null || cMakeArr.length < 2) {
                         console.warn("Could not determine project name from CMakeLists.txt")
