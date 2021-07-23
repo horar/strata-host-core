@@ -1,91 +1,74 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.SGQrcTreeModel 1.0
-import tech.strata.SGFileTabModel 1.0
 
 RowLayout {
-    id: root
-    anchors {
-        fill: parent
-    }
     spacing: 10
 
-    property color buttonColor: "#777"
-
     Text {
-        leftPadding: 5
-        verticalAlignment: Text.AlignVCenter
+        Layout.leftMargin: 5
         text: SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
-        font.pointSize: 12
         font.bold: true
-        font.capitalization: Font.AllUppercase
         color: "white"
         elide: Text.ElideRight
+        Layout.maximumWidth: 300
     }
 
-    Item {
-        Layout.preferredWidth: fileTreeButton.implicitWidth
+    Rectangle {
+        // divider
+        color: "#999"
+        Layout.leftMargin: 5
+        implicitWidth: 1
+        implicitHeight: parent.height - 4
+    }
+
+    Button {
         Layout.fillHeight: true
+        text: "Toggle File Tree"
+        highlighted: true
+        flat: true
+        background: Rectangle {
+            color: fileTreemouseArea.containsMouse ? "#888": "transparent"
+        }
 
-        Button {
-            id: fileTreeButton
+        MouseArea {
+            id: fileTreemouseArea
             anchors.fill: parent
-            text: "Toggle File Tree"
-            background: Rectangle {
-                radius: 1.5
-                color: fileTreemouseArea.containsMouse ? "lightgray": root.buttonColor
-            }
-            highlighted: true
-            flat: true
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
 
-            MouseArea {
-                id: fileTreemouseArea
-                anchors.fill: parent
-                enabled: parent.enabled
-                hoverEnabled: true
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    sideBar.visible = !sideBar.visible
-                }
+            onClicked: {
+                sideBar.visible = !sideBar.visible
             }
         }
     }
 
-    Item {
-        Layout.preferredWidth: fileTreeButton.implicitWidth
+    Button {
         Layout.fillHeight: true
+        text: "Edit QRC"
+        highlighted: true
+        flat: true
+        enabled: editQRCEnabled
+        background: Rectangle {
+            color: enabled && editMouseArea.containsMouse ? "#888": "transparent"
+        }
 
-        Button {
+        MouseArea {
+            id: editMouseArea
             anchors.fill: parent
-            text: "Edit QRC"
-            background: Rectangle {
-                radius: 1.5
-                color: enabled && editMouseArea.containsMouse ? "lightgray": root.buttonColor
-            }
-            highlighted: true
-            flat: true
-            enabled: editQRCEnabled
+            hoverEnabled: enabled
+            cursorShape: Qt.PointingHandCursor
 
-            MouseArea {
-                id: editMouseArea
-                anchors.fill: parent
-                enabled: parent.enabled
-                hoverEnabled: enabled
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                z: 3
-
-                onClicked: {
-                    var url = editor.fileTreeModel.url
-                    var filename =  SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory)) + ".qrc"
-                    var filetype = "qrc"
-                    var uid = "qrcUid"
-                    editQRCEnabled = false
-                    openFilesModel.addTab(filename, url, filetype, uid)
-                }
+            onClicked: {
+                let url = editor.fileTreeModel.url
+                let filename = SGUtilsCpp.fileName(editor.fileTreeModel.url)
+                let filetype = "qrc"
+                let uid = "qrcUid"
+                editQRCEnabled = false
+                openFilesModel.addTab(filename, url, filetype, uid)
             }
         }
     }
@@ -98,22 +81,20 @@ RowLayout {
 
     SGComboBox {
         Layout.fillHeight: true
-        Layout.topMargin: 0
         Layout.preferredWidth: 350
-
         model: connectedPlatforms
         placeholderText: "Select a platform to connect to..."
         enabled: model.count > 0
         textRole: "verbose_name"
-        boxColor: root.buttonColor
+        boxColor: "transparent"
         textColor: "white"
 
         onCurrentIndexChanged: {
-            let platform = connectedPlatforms.get(currentIndex);
+            let platform = connectedPlatforms.get(currentIndex)
             controlViewCreatorRoot.debugPlatform = {
                 deviceId: platform.device_id,
                 classId: platform.class_id
-            };
+            }
         }
     }
 }
