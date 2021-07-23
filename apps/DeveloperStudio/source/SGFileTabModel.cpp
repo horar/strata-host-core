@@ -1,5 +1,6 @@
 #include "SGFileTabModel.h"
 #include "logging/LoggingQtCategories.h"
+#include "SGUtilsCpp.h"
 
 /*******************************************************************
  * class SGFileTabItem
@@ -227,24 +228,29 @@ Qt::ItemFlags SGFileTabModel::flags(const QModelIndex &index) const
 
 // CUSTOM FUNCTIONS BEGIN
 
-void SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id)
+bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id)
 {
     if (hasTab(id)) {
         setCurrentId(id);
-        return;
+        return false;
     }
 
-    if (id == "") {
-        console.error("File id is empty");
-        return;
-    } else if (filepath == "") {
-        console.error("File path is empty");
-        return;
+    if (id.isEmpty()) {
+        qCCritical(logCategoryControlViewCreator) << "File id is empty";
+        return false;
+    } else if (filename.isEmpty()) {
+        qCCritical(logCategoryControlViewCreator) << "File name is empty";
+        return false;
+    } else if (filetype.isEmpty()) {
+        qCCritical(logCategoryControlViewCreator) << "File type is empty";
+        return false;
     }
 
-    if (SGUtilsCpp.isFile(filepath) == false) {
-        console.error("File does not exist in file path");
-        return;
+    SGUtilsCpp utils;
+    QString path = utils.urlToLocalFile(filepath);
+    if (utils.exists(path) == false) {
+        qCCritical(logCategoryControlViewCreator) << "File does not exist in file path";
+        return false;
     }
 
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
@@ -255,6 +261,7 @@ void SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
     setCurrentIndex(data_.count() - 1);
     emit countChanged();
     emit tabOpened(filepath);
+    return true;
 }
 
 bool SGFileTabModel::closeTab(const QString &id)
