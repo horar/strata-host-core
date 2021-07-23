@@ -300,7 +300,7 @@ ColumnLayout {
             Layout.preferredHeight: menuRow.height - 6
             Layout.preferredWidth: 1
             color: "grey"
-            visible: menuLoader.active ? false : true
+            visible: !menuLoader.active
         }
 
         Repeater {
@@ -321,7 +321,7 @@ ColumnLayout {
 
                 background: Rectangle {
                     radius: 0
-                    color: "white"
+                    color: enabled === false ? "transparent" : hovered ? "#eee" : "#fff"
                 }
 
                 SGIcon {
@@ -348,15 +348,15 @@ ColumnLayout {
 
                     onClicked: {
                         switch (modelData.buttonType) {
-                        case "save":
-                            saveClicked()
-                            break
-                        case "undo":
-                            undoClicked()
-                            break
-                        case "redo":
-                            redoClicked()
-                            break
+                            case "save":
+                                saveClicked()
+                                break
+                            case "undo":
+                                undoClicked()
+                                break
+                            case "redo":
+                                redoClicked()
+                                break
                         }
                     }
                 }
