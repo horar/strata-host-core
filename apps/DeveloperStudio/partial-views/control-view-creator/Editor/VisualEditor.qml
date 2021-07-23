@@ -118,12 +118,10 @@ ColumnLayout {
                 var overLayObject = overlayComponent.createObject(overlayContainer)
 
                 // overlay's object name is equivalent to the id of the item since id's are not accessible at runtime
-                overLayObject.objectName = functions.getObjectPropertyValue(item.layoutInfo.uuid, "id")
-                overLayObject.type = functions.getType(item.layoutInfo.uuid)
-                if (overLayObject.objectName === null || overLayObject.type === null) {
-                    overLayObject.destroy()
-                    return
-                }
+                // these will be fetched when moused over for the first time
+                overLayObject.objectName = ""
+                overLayObject.type = ""
+
                 overLayObject.layoutInfo.uuid = item.layoutInfo.uuid
                 overLayObject.layoutInfo.columnsWide = item.layoutInfo.columnsWide
                 overLayObject.layoutInfo.rowsTall = item.layoutInfo.rowsTall
