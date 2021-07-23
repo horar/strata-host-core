@@ -31,6 +31,7 @@ Item {
 
         model: treeModel
         backgroundVisible: false
+        frameVisible: false
         alternatingRowColors: false
 
         onRootIndexChanged: {
@@ -84,25 +85,7 @@ Item {
             model: treeView.model
         }
 
-        headerDelegate: Rectangle {
-            height: 25
-            color: "#777"
-
-            Text {
-                width: parent.width
-                height: parent.height
-                anchors.verticalCenter: parent.verticalCenter
-                leftPadding: 5
-                verticalAlignment: Text.AlignVCenter
-
-                text: SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
-                font.pointSize: 12
-                font.bold: true
-                font.capitalization: Font.AllUppercase
-                color: "white"
-                elide: Text.ElideRight
-            }
-        }
+        headerDelegate: Item { }
 
         rowDelegate: Rectangle {
             height: 30
@@ -113,7 +96,6 @@ Item {
 
         QtQC1.TableViewColumn {
             id: mainTreeColumn
-            title: treeModel.root ? treeModel.root.filename : "Project Files"
             role: "filename"
             width: treeView.width - 2
             resizable: false
