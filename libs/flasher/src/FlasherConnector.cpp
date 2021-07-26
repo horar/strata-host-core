@@ -38,13 +38,17 @@ FlasherConnector::FlasherConnector(const PlatformPtr& platform,
     filePath_(firmwarePath),
     newFirmwareMD5_(firmwareMD5),
     newFwClassId_(fwClassId),
-    tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))),
     action_(Action::None)
 {
     oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : platform_->firmwareClassId();
 }
 
-FlasherConnector::~FlasherConnector() { }
+FlasherConnector::~FlasherConnector()
+{
+    if (tmpBackupFileName_.isEmpty() == false) {
+        QFile::remove(tmpBackupFileName_);
+    }
+}
 
 bool FlasherConnector::flash(bool backupBeforeFlash) {
     operation_ = Operation::Preparation;
@@ -66,12 +70,15 @@ bool FlasherConnector::flash(bool backupBeforeFlash) {
     }
 
     if (backupBeforeFlash) {
-        if (tmpBackupFile_.open() == false) {
-            processStartupError(QStringLiteral("Cannot create temporary file for firmware backup."));
+        QTemporaryFile tmpBackupFile(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup")));
+        if (tmpBackupFile.open() == false) {
+            processStartupError(QStringLiteral("Cannot create temporary file name for firmware backup."));
             return false;
         }
+        tmpBackupFileName_ = tmpBackupFile.fileName();
+        tmpBackupFile.close();
         qCInfo(logCategoryFlasherConnector) << "Starting to backup current firmware.";
-        qCDebug(logCategoryFlasherConnector).noquote() << "Temporary file for firmware backup:" << tmpBackupFile_.fileName();
+        qCDebug(logCategoryFlasherConnector).noquote() << "Temporary file for firmware backup:" << tmpBackupFileName_;
         action_ = Action::BackupOld;
         backupFirmware(true);
     } else {
@@ -145,7 +152,7 @@ void FlasherConnector::flasherDeleter(Flasher* flasher) {
 void FlasherConnector::flashFirmware(bool flashOld) {
     QString firmwarePath;
     if (flashOld) {
-        firmwarePath = tmpBackupFile_.fileName();
+        firmwarePath = tmpBackupFileName_;
         flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath, QString(), oldFwClassId_), flasherDeleter);
         connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress);
     } else {
@@ -165,7 +172,7 @@ void FlasherConnector::flashFirmware(bool flashOld) {
 void FlasherConnector::backupFirmware(bool backupOld) {
     bool startApp = (backupOld) ? false : true;
 
-    const QString& firmwarePath = (backupOld) ? tmpBackupFile_.fileName() : filePath_;
+    const QString& firmwarePath = (backupOld) ? tmpBackupFileName_ : filePath_;
     flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath), flasherDeleter);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
