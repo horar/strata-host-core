@@ -130,14 +130,6 @@ QtObject {
         }
     }
 
-    function addControlWithPremadeObjectString(objectString) {
-        insertTextAtEndOfFile(objectString)
-
-        if (!layoutDebugMode) {
-            layoutDebugMode = true
-        }
-    }
-
     function addControl(controlPath) {
         const uuid = create_UUID()
         let objectString = readFileContents(controlPath)

@@ -26,9 +26,12 @@ LayoutContainer {
             Drag.hotSpot.y: height/2
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             hoverEnabled: true
-            onWheel: wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
 
             property point startPoint
+
+            onWheel: {
+                wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
+            }
 
             onPressedChanged: {
                 if (pressed) {

@@ -154,5 +154,5 @@ bool VisualEditorUndoStack::isRedoPossible(const QString &file) {
 }
 
 QString VisualEditorUndoStack::trimQmlEmptyLines(QString fileContents) {
-    return fileContents.replace(QString("\n\n\n"), QString("\n"));
+    return fileContents.replace(QString("\n\n\n"), QString("\n\n"));
 }

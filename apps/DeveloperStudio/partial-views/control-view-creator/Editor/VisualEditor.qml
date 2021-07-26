@@ -164,7 +164,7 @@ ColumnLayout {
 
         onUndoItemDeleted: {
             if (visualEditor.file == file) {
-                functions.addControlWithPremadeObjectString(objectString)
+                functions.insertTextAtEndOfFile(objectString)
             }
         }
 
