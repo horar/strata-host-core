@@ -38,7 +38,7 @@ public:
 
     /**
      * @brief generate The main function that starts the generation of a PlatformInterface.qml file
-     * @param pathToJson Path to the input JSON file
+     * @param jsonObject The global json object
      * @param outputPath Path to the output directory
      * @return Returns True if successfully created the file, else False
      */
