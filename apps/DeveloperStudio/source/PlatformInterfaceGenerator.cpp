@@ -108,10 +108,8 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     for (QJsonValue vNotification : notificationsList.toArray()) {
         QJsonObject notification = vNotification.toObject();
-        if (notification.contains("payload") && notification["payload"].isNull()) {
-            continue;
-        }
         outputStream << generateNotification(notification, indentLevel);
+
         if (lastError_.length() > 0) {
             return false;
         }

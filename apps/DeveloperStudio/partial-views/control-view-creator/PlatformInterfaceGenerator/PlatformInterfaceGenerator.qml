@@ -26,9 +26,7 @@ Item {
         "type": "value",
         "name": "",
         "valid": false,
-        "payload": [
-            templatePayload
-        ],
+        "payload": [],
         "editing": false
     });
 
