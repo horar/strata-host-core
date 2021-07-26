@@ -30,7 +30,7 @@ Item {
             templatePayload
         ],
         "editing": false
-     });
+	});
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
@@ -504,7 +504,7 @@ Item {
                 anchors.fill: parent
                 color: {
                     if (!generateButton.enabled) {
-                        return "lightGrey"
+                        return "lightgrey"
                     } else {
                         return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                     }
@@ -513,6 +513,7 @@ Item {
 
             contentItem: Text {
                 text: "Generate"
+                color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
