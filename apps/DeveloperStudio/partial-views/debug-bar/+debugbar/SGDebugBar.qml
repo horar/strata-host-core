@@ -43,6 +43,10 @@ Item {
             RowLayout {
                 id: comboboxRow
 
+                onXChanged: {
+                    viewDebugPopup.updatePos()
+                }
+
                 Label {
                     text: qsTr("View:")
                     leftPadding: 10
@@ -52,6 +56,7 @@ Item {
                     id: viewCombobox
                     delegate: viewButtonDelegate
                     model: viewFolderModel
+                    popup: viewDebugPopup
                     textRole: "fileName"
 
                     onCurrentIndexChanged: {
@@ -63,6 +68,33 @@ Item {
                             }
                         } else {
                             displayText = currentText.replace("views-", "").slice(0, -4)
+                        }
+                    }
+
+                    Popup {
+                        id: viewDebugPopup                      
+                        width: commandBar.width
+                        y: viewCombobox.height
+                        padding: 0
+                        background: Rectangle {
+                            color: "lightgrey"
+                        }
+
+                        onVisibleChanged: {
+                            updatePos()
+                        }
+
+                        function updatePos() {
+                            let pos = viewCombobox.mapToItem(commandBar, 0, 0)
+                            x = -pos.x
+                        }
+
+                        contentItem: GridView {
+                            cellHeight: 25
+                            cellWidth: Math.floor(commandBar.width / 7)
+                            implicitHeight: contentHeight
+                            model: viewCombobox.popup.visible ? viewCombobox.delegateModel : null
+                            currentIndex: viewCombobox.highlightedIndex
                         }
                     }
 
@@ -91,8 +123,8 @@ Item {
 
                         Button {
                             id: selectButton
-                            width: viewCombobox.width
-                            height: 20
+                            width: viewDebugPopup.contentItem.cellWidth
+                            height: viewDebugPopup.contentItem.cellHeight
                             // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
                             text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
