@@ -23,7 +23,7 @@ QString PlatformInterfaceGenerator::lastError()
 
 bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QString &outputPath)
 {
-    lastError_ = ""
+    lastError_ = "";
     QJsonObject platInterfaceData = jsonObject.toObject();
 
     QDir outputDir(outputPath);
