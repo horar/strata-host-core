@@ -66,7 +66,7 @@ Item {
                 alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
                 alertToast.color = "green"
-                alertToast.interval = 4000
+                alertToast.interval = 8000
                 alertToast.show()
             }
             platformInterfaceGeneratorSeen = true
@@ -411,6 +411,7 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
+                            alertToast.hide()
                             inputFileDialog.open()
                         }
                     }
