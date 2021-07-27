@@ -15,9 +15,6 @@ Rectangle {
     property int expandWidth: minimumExpandWidth
     property alias mainContainer: mainContainer
 
-    signal expand()
-    signal collapse()
-
     Rectangle {
         id: mainContainer
         width: parent.width
@@ -51,11 +48,11 @@ Rectangle {
         to: root.expandWidth
     }
 
-    onExpand: {
+    function expand() {
         expandAnimation.start()
     }
 
-    onCollapse: {
+    function collapse() {
         collapseAnimation.start()
     }
 }
