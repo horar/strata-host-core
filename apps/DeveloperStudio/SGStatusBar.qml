@@ -394,27 +394,29 @@ Rectangle {
         }
 
         Rectangle {
-            id: profileIcon
-            anchors {
-                centerIn: profileIconContainer
-            }
-            height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
+            id: barIconRect
+            height: profileIconContainer.height
             width: height
-            radius: height / 2
-            color: Theme.palette.green
-
-            Text {
-                id: profileInitial
-                text: first_name.charAt(0)
-                color: "white"
-                anchors {
-                    centerIn: profileIcon
-                }
-                font {
-                    family: Fonts.franklinGothicBold
-                    pixelSize: profileIconHover.containsMouse ? 24 : 20
+            radius: 10
+            color: "white"
+            opacity: {
+                if (profileIconHover.containsMouse || profileMenu.visible) {
+                    return 0.5
+                } else {
+                    return 0.0
                 }
             }
+        }
+
+        SGIcon {
+            id: barIcon
+            height: parent.height - 20
+            width: height
+            anchors {
+                centerIn: parent
+            }
+            source: "qrc:/sgimages/bars.svg"
+            iconColor: Theme.palette.white
         }
 
         Rectangle {
