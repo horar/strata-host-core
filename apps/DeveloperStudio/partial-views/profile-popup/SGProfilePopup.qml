@@ -5,6 +5,7 @@ import Qt.labs.settings 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
+import tech.strata.commoncpp 1.0
 
 import '../'
 import '../login/registration'
@@ -19,7 +20,7 @@ import "qrc:/js/constants.js" as Constants
 SGStrataPopup {
     id: root
 
-    headerText: NavigationControl.context.first_name[0].toUpperCase() + fitLine(NavigationControl.context.first_name, 20).slice(1) + "'s Profile"
+    headerText: NavigationControl.context.first_name[0].toUpperCase() + headerMetrics.elidedText(NavigationControl.context.first_name, Qt.ElideRight, 100).slice(1) + "'s Profile"
     modal: true
     visible: true
     closePolicy: Popup.CloseOnEscape
@@ -33,6 +34,7 @@ SGStrataPopup {
     property string lastName: NavigationControl.context.last_name
     property string company: "N/A"
     property string jobTitle: "N/A"
+    property int offset: 50
 
     onOpened: {
         basicInfoControls.editing = false
@@ -70,10 +72,14 @@ SGStrataPopup {
     onJobTitleChanged: jobTitleColumn.plainText.text = jobTitle
 
 
+    FontMetrics {
+        id: headerMetrics
+    }
+
     contentItem: Column {
         id: wrapperContainer
 
-        width: mainGrid.width + 50
+        width: mainGrid.width + offset
         anchors.horizontalCenter: parent.horizontalCenter
 
         SGConfirmationPopup {
@@ -195,7 +201,7 @@ SGStrataPopup {
 
                 plainText.text: root.firstName
                 placeHolderText: "First Name"
-                plainText.width: root.width - firstNameLabel.width - 50
+                plainText.width: root.width - firstNameLabel.width - offset
 
             }
 
@@ -209,7 +215,7 @@ SGStrataPopup {
 
                 plainText.text: root.lastName
                 placeHolderText: "Last Name"
-                plainText.width: root.width - lastNameLabel.width - 50
+                plainText.width: root.width - lastNameLabel.width - offset
             }
 
             ProfileSectionHeader {
@@ -266,7 +272,7 @@ SGStrataPopup {
 
                 plainText.text: root.company
                 placeHolderText: "Company"
-                plainText.width: root.width - companyLabel.width - 50
+                plainText.width: root.width - companyLabel.width - offset
             }
 
             SubSectionLabel {
@@ -281,7 +287,7 @@ SGStrataPopup {
                 placeHolderText: "Occupation"
                 validationCheck: true
                 showValidIcon: false
-                plainText.width: root.width - occupationLabel.width - 50
+                plainText.width: root.width - occupationLabel.width - offset
             }
 
             Popup {
@@ -599,7 +605,7 @@ SGStrataPopup {
                             case "firstname":
                                 NavigationControl.context.first_name = value
                                 authSettings.setValue("first_name", value)
-                                root.headerText = value[0].toUpperCase() + fitLine(value, 20).slice(1) + "'s Profile"
+                                root.headerText = value[0].toUpperCase() + headerMetrics.elidedText(value, Qt.ElideRight, 100).slice(1) + "'s Profile"
                                 root.firstName = value
                                 break;
                             case "lastname":
@@ -672,7 +678,7 @@ SGStrataPopup {
                     if (result === "Success") {
                         NavigationControl.context.first_name = user.firstname
                         authSettings.setValue("first_name", user.firstname)
-                        root.headerText = user.firstname[0].toUpperCase() + fitLine(user.firstname, 20).slice(1) + "'s Profile"
+                        root.headerText = user.firstname[0].toUpperCase() + headerMetrics.elidedText(user.firstname, Qt.ElideRight, 100).slice(1) + "'s Profile"
                         root.firstName = user.firstname
 
                         NavigationControl.context.last_name = user.lastname
@@ -740,14 +746,6 @@ SGStrataPopup {
         if (!newPasswordRow.editable) {
             passwordField.text = ""
             confirmPasswordField.text = ""
-        }
-    }
-
-    function fitLine (line, len) {
-        if (line.length > len) {
-            return line.substring(0, len) + "..."
-        } else {
-            return line
         }
     }
 }
