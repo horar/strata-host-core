@@ -14,3 +14,5 @@ const data = [
                    "path": ":/partial-views/control-view-creator/template-views/template/"
                }
            ]
+
+const debugPath = ":/partial-views/control-view-creator/platformInterface/"
