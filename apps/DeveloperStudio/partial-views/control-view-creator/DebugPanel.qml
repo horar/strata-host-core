@@ -33,11 +33,6 @@ Rectangle {
         Loader {
             anchors.fill: parent
             source: root.debugMenuSource
-
-            onLoaded: {
-                let jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(root.debugMenuSource.toString().split("DebugMenu.qml")[0]+"platformInterface.json")))
-                Signals.platformInterfaceUpdate(jsonObject)
-            }
         }
     }
 

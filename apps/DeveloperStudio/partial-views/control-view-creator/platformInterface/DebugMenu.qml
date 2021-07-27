@@ -5,6 +5,7 @@ import QtQuick.Window 2.12
 import "qrc:/js/constants.js" as Constants
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: root
@@ -19,6 +20,11 @@ Rectangle {
         }
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
+    }
+
+    Component.onCompleted: {
+        const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.debugMenuSource.toString().split("DebugMenu.qml")[0]+"platformInterface.json")))
+        createBaseModel(jsonObject)
     }
 
     ListModel {
