@@ -285,17 +285,21 @@ Item {
             try {
                 const jsonObject = JSON.parse(fileText)
                 const result = importValidationCheck(jsonObject)
-                console.log("Colin - " + result)
-                if (result == "newAPI") {
+                if (result === "APIv1") {
                     if (alertToast.visible) {
                         alertToast.hide()
                     }
                     createModelFromJson(jsonObject)
-                } else if (result == "oldAPI") {
+                } else if (result === "APIv0") {
                     if (alertToast.visible) {
                         alertToast.hide()
                     }
-                    createModelFromJsonOld(jsonObject)
+                    alertToast.text = "The imported JSON file uses a deprecated API. If you 'generate' your code will be updated to the new API."
+                    alertToast.textColor = "white"
+                    alertToast.color = "goldenrod"
+                    alertToast.interval = 0
+                    alertToast.show()
+                    createModelFromJsonAPIv0(jsonObject)
                 } else {
                     alertToast.text = "The JSON file is improperly formatted"
                     alertToast.textColor = "white"
@@ -594,22 +598,21 @@ Item {
                 try {
                     const jsonObject = JSON.parse(fileText)
                     const result = importValidationCheck(jsonObject)
-                    console.log("Colin - " + result)
-                    if (result == "newAPI") {
+                    if (result === "APIv1") {
                         if (alertToast.visible) {
                             alertToast.hide()
                         }
                         createModelFromJson(jsonObject)
-                    } else if (result == "oldAPI") {
+                    } else if (result === "APIv0") {
                         if (alertToast.visible) {
                             alertToast.hide()
                         }
-                        alertToast.text = "The JSON file uses old PIG API model"
+                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'generate' your code will be updated to the new API."
                         alertToast.textColor = "white"
-                        alertToast.color = "#D10000"
+                        alertToast.color = "goldenrod"
                         alertToast.interval = 0
                         alertToast.show()
-                        createModelFromJsonOld(jsonObject)
+                        createModelFromJsonAPIv0(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
                         alertToast.textColor = "white"
@@ -720,99 +723,6 @@ Item {
         }
 
         finishedModel.modelReset()
-    }
-
-    /**
-      * This function creates the model from a JSON object (used when importing a JSON file)
-      * This uses the old API model
-     **/
-    function createModelFromJsonOld(jsonObject) {
-        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
-
-        finishedModel.modelAboutToBeReset()
-        finishedModel.clear();
-
-        for (let i = 0; i < topLevelKeys.length; i++) {
-            const topLevelType = topLevelKeys[i];
-            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
-            let listOfCommandsOrNotifications = {
-                "name": topLevelType, // "commands" / "notifications"
-                "data": []
-            }
-
-            finishedModel.append(listOfCommandsOrNotifications);
-
-            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                let commandsModel = finishedModel.get(i).data;
-
-                let cmd = arrayOfCommandsOrNotifications[j];
-                let commandName;
-                let commandType;
-                let commandObject = {};
-
-                if (topLevelType === "commands") {
-                    // If we are dealing with commands, then look for the "cmd" key
-                    commandName = cmd["cmd"];
-                    commandType = "cmd";
-                } else {
-                    commandName = cmd["value"];
-                    commandType = "value";
-                }
-
-                commandObject["type"] = commandType;
-                commandObject["name"] = commandName;
-                commandObject["valid"] = true;
-                commandObject["payload"] = [];
-                commandObject["editing"] = false;
-
-                commandsModel.append(commandObject);
-
-                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
-                let payloadPropertiesArray = [];
-
-                if (payload) {
-                    let payloadProperties = Object.keys(payload);
-                    let payloadModel = commandsModel.get(j).payload;
-                    for (let k = 0; k < payloadProperties.length; k++) {
-
-                        const key = payloadProperties[k];
-                        const type = getType(payload[key]);
-                        let payloadPropObject = Object.assign({}, templatePayload);
-                        payloadPropObject["name"] = key;
-                        payloadPropObject["type"] = type;
-                        payloadPropObject["valid"] = true;
-                        payloadPropObject["indexSelected"] = -1;
-
-                        payloadModel.append(payloadPropObject);
-
-                        let propertyArray = [];
-                        let propertyObject = [];
-
-                        if (type === "array") {
-                            generateArrayModel(payload[key], payloadModel.get(k).array);
-                        } else if (type === "object") {
-                            generateObjectModel(payload[key], payloadModel.get(k).object);
-                        }
-                    }
-                }
-            }
-        }
-
-        finishedModel.modelReset()
-    }
-
-
-    /**
-      * getType function used for old API, called from createModelFromJsonOld()
-     **/
-    function getType(item) {
-        if (Array.isArray(item)) {
-            return "array";
-        } else if (typeof item === "object") {
-            return "object";
-        } else {
-            return item;
-        }
     }
 
     /**
@@ -991,7 +901,10 @@ Item {
      **/
 
     function importValidationCheck(object) {
-        if (!object.hasOwnProperty("commands") || !object.hasOwnProperty("notifications")) {
+        if (!object.hasOwnProperty("commands") || 
+            !object.hasOwnProperty("notifications") ||
+            Object.keys(object).length !== 2) {
+            // must contain only commands and notifications
             return false
         }
 
@@ -1010,7 +923,7 @@ Item {
             const result = searchLevel1(command)
             if (!result) {
                 return false
-            } else if (result == "oldAPI") {
+            } else if (result == "APIv0") {
                 return result
             }
         }
@@ -1025,15 +938,14 @@ Item {
                 return false
             }
         }
-        return "newAPI"
+        return "APIv1"
     }
 
     function searchLevel1(object) {
         if (object.hasOwnProperty("payload") && object["payload"] !== null) {
             if (!Array.isArray(object["payload"])) {
-                console.log("Colin - in not array")
-                if (typeof object["payload"] == "object" && object["payload"] != null) {
-                    return "oldAPI"
+                if (typeof object["payload"] === "object" && object["payload"] !== null) {
+                    return "APIv0"
                 }
                 return false
             }
@@ -1053,7 +965,7 @@ Item {
                 }
             }
         }
-        return "newAPI"
+        return true
     }
 
     function searchLevel2Recurse(object) {
@@ -1068,5 +980,174 @@ Item {
             }
         }
         return true
+    }
+
+    /********************************************************************************************
+      * All functions below this mark are for the old API. 
+      * This allows deprecated PI.json to function as expected
+    /********************************************************************************************
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function creates the model from a JSON object (used when importing a JSON file)
+     **/
+    function createModelFromJsonAPIv0(jsonObject) {
+        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+
+        finishedModel.modelAboutToBeReset()
+        finishedModel.clear();
+
+        for (let i = 0; i < topLevelKeys.length; i++) {
+            const topLevelType = topLevelKeys[i];
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
+            let listOfCommandsOrNotifications = {
+                "name": topLevelType, // "commands" / "notifications"
+                "data": []
+            }
+
+            finishedModel.append(listOfCommandsOrNotifications);
+
+            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+                let commandsModel = finishedModel.get(i).data;
+
+                let cmd = arrayOfCommandsOrNotifications[j];
+                let commandName;
+                let commandType;
+                let commandObject = {};
+
+                if (topLevelType === "commands") {
+                    // If we are dealing with commands, then look for the "cmd" key
+                    commandName = cmd["cmd"];
+                    commandType = "cmd";
+                } else {
+                    commandName = cmd["value"];
+                    commandType = "value";
+                }
+
+                commandObject["type"] = commandType;
+                commandObject["name"] = commandName;
+                commandObject["valid"] = true;
+                commandObject["payload"] = [];
+                commandObject["editing"] = false;
+
+                commandsModel.append(commandObject);
+
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
+                let payloadPropertiesArray = [];
+
+                if (payload) {
+                    let payloadProperties = Object.keys(payload);
+                    let payloadModel = commandsModel.get(j).payload;
+                    for (let k = 0; k < payloadProperties.length; k++) {
+
+                        const key = payloadProperties[k];
+                        let type = getType(payload[key]);
+                        let payloadPropObject = Object.assign({}, templatePayload);
+                        payloadPropObject["name"] = key;
+                        payloadPropObject["type"] = type;
+                        payloadPropObject["valid"] = true;
+                        payloadPropObject["indexSelected"] = -1;
+
+                        if (type === "int") {
+                            payloadPropObject["value"] = "0"
+                        } else if (type === "double") {
+                            payloadPropObject["value"] = "0"
+                        } else if (type === "bool") {
+                            payloadPropObject["value"] = "false"
+                        } else if (type === "string") {
+                            payloadPropObject["value"] = ""
+                        }
+
+                        payloadModel.append(payloadPropObject);
+
+                        let propertyArray = [];
+                        let propertyObject = [];
+
+                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            generateArrayModelAPIv0(payload[key], payloadModel.get(k).array);
+                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            generateObjectModelAPIv0(payload[key], payloadModel.get(k).object);
+                        }
+                    }
+                }
+            }
+        }
+        finishedModel.modelReset()
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * getType called from createModelFromJsonAPIv0(); returns the sdsModel type
+     **/
+    function getType(item) {
+        if (Array.isArray(item)) {
+            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
+        } else if (item === "array-dynamic") {
+            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC
+        } else if (typeof item === "object") {
+            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
+        } else if (item === "object-dynamic") {
+            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC
+        } else {
+            return item;
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function takes an Array and transforms it into an array readable by our delegates
+     **/
+    function generateArrayModelAPIv0(arr, parentListModel) {
+        for (let i = 0; i < arr.length; i++) {
+            let type = getType(arr[i])
+
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""};
+            
+            if (type === "int") {
+                obj["value"] = "0"
+            } else if (type === "double") {
+                obj["value"] = "0"
+            } else if (type === "bool") {
+                obj["value"] = "false"
+            }
+            
+            parentListModel.append(obj);
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
+            }
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function takes an Object and transforms it into an array readable by our delegates
+     **/
+    function generateObjectModelAPIv0(object, parentListModel) {
+        let keys = Object.keys(object);
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
+            let type = getType(object[key]);
+            
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""};
+            
+            if (type === "int") {
+                obj["value"] = "0"
+            } else if (type === "double") {
+                obj["value"] = "0"
+            } else if (type === "bool") {
+                obj["value"] = "false"
+            }
+            
+            parentListModel.append(obj);
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
+            }
+        }
     }
 }
