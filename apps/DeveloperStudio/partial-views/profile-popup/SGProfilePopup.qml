@@ -19,7 +19,7 @@ import "qrc:/js/constants.js" as Constants
 SGStrataPopup {
     id: root
 
-    headerText: NavigationControl.context.first_name[0].toUpperCase() + NavigationControl.context.first_name.slice(1) + "'s Profile"
+    headerText: NavigationControl.context.first_name[0].toUpperCase() + fitLine(NavigationControl.context.first_name, 20).slice(1) + "'s Profile"
     modal: true
     visible: true
     closePolicy: Popup.CloseOnEscape
@@ -186,6 +186,7 @@ SGStrataPopup {
             ProfileSectionDivider {}
 
             SubSectionLabel {
+                id: firstNameLabel
                 text: "First Name"
             }
 
@@ -194,10 +195,12 @@ SGStrataPopup {
 
                 plainText.text: root.firstName
                 placeHolderText: "First Name"
+                plainText.width: root.width - firstNameLabel.width - 50
 
             }
 
             SubSectionLabel {
+                id: lastNameLabel
                 text: "Last Name"
             }
 
@@ -206,6 +209,7 @@ SGStrataPopup {
 
                 plainText.text: root.lastName
                 placeHolderText: "Last Name"
+                plainText.width: root.width - lastNameLabel.width - 50
             }
 
             ProfileSectionHeader {
@@ -253,6 +257,7 @@ SGStrataPopup {
             ProfileSectionDivider {}
 
             SubSectionLabel {
+                id: companyLabel
                 text: "Company"
             }
 
@@ -261,10 +266,11 @@ SGStrataPopup {
 
                 plainText.text: root.company
                 placeHolderText: "Company"
+                plainText.width: root.width - companyLabel.width - 50
             }
 
             SubSectionLabel {
-                id: titleText
+                id: occupationLabel
                 text: "Occupation"
             }
 
@@ -275,6 +281,7 @@ SGStrataPopup {
                 placeHolderText: "Occupation"
                 validationCheck: true
                 showValidIcon: false
+                plainText.width: root.width - occupationLabel.width - 50
             }
 
             Popup {
@@ -592,7 +599,7 @@ SGStrataPopup {
                             case "firstname":
                                 NavigationControl.context.first_name = value
                                 authSettings.setValue("first_name", value)
-                                root.headerText = value[0].toUpperCase() + value.slice(1) + "'s Profile"
+                                root.headerText = value[0].toUpperCase() + fitLine(value, 20).slice(1) + "'s Profile"
                                 root.firstName = value
                                 break;
                             case "lastname":
@@ -665,7 +672,7 @@ SGStrataPopup {
                     if (result === "Success") {
                         NavigationControl.context.first_name = user.firstname
                         authSettings.setValue("first_name", user.firstname)
-                        root.headerText = user.firstname[0].toUpperCase() + user.firstname.slice(1) + "'s Profile"
+                        root.headerText = user.firstname[0].toUpperCase() + fitLine(user.firstname, 20).slice(1) + "'s Profile"
                         root.firstName = user.firstname
 
                         NavigationControl.context.last_name = user.lastname
@@ -733,6 +740,14 @@ SGStrataPopup {
         if (!newPasswordRow.editable) {
             passwordField.text = ""
             confirmPasswordField.text = ""
+        }
+    }
+
+    function fitLine (line, len) {
+        if (line.length > len) {
+            return line.substring(0, len) + "..."
+        } else {
+            return line
         }
     }
 }
