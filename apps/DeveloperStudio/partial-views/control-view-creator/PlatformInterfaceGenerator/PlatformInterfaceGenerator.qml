@@ -284,11 +284,18 @@ Item {
             let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)
-                if (importValidationCheck(jsonObject)) {
+                const result = importValidationCheck(jsonObject)
+                console.log("Colin - " + result)
+                if (result == "newAPI") {
                     if (alertToast.visible) {
                         alertToast.hide()
                     }
                     createModelFromJson(jsonObject)
+                } else if (result == "oldAPI") {
+                    if (alertToast.visible) {
+                        alertToast.hide()
+                    }
+                    createModelFromJsonOld(jsonObject)
                 } else {
                     alertToast.text = "The JSON file is improperly formatted"
                     alertToast.textColor = "white"
@@ -586,11 +593,23 @@ Item {
                 let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
                 try {
                     const jsonObject = JSON.parse(fileText)
-                    if (importValidationCheck(jsonObject)) {
+                    const result = importValidationCheck(jsonObject)
+                    console.log("Colin - " + result)
+                    if (result == "newAPI") {
                         if (alertToast.visible) {
                             alertToast.hide()
                         }
                         createModelFromJson(jsonObject)
+                    } else if (result == "oldAPI") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        alertToast.text = "The JSON file uses old PIG API model"
+                        alertToast.textColor = "white"
+                        alertToast.color = "#D10000"
+                        alertToast.interval = 0
+                        alertToast.show()
+                        createModelFromJsonOld(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
                         alertToast.textColor = "white"
@@ -701,6 +720,99 @@ Item {
         }
 
         finishedModel.modelReset()
+    }
+
+    /**
+      * This function creates the model from a JSON object (used when importing a JSON file)
+      * This uses the old API model
+     **/
+    function createModelFromJsonOld(jsonObject) {
+        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+
+        finishedModel.modelAboutToBeReset()
+        finishedModel.clear();
+
+        for (let i = 0; i < topLevelKeys.length; i++) {
+            const topLevelType = topLevelKeys[i];
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
+            let listOfCommandsOrNotifications = {
+                "name": topLevelType, // "commands" / "notifications"
+                "data": []
+            }
+
+            finishedModel.append(listOfCommandsOrNotifications);
+
+            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+                let commandsModel = finishedModel.get(i).data;
+
+                let cmd = arrayOfCommandsOrNotifications[j];
+                let commandName;
+                let commandType;
+                let commandObject = {};
+
+                if (topLevelType === "commands") {
+                    // If we are dealing with commands, then look for the "cmd" key
+                    commandName = cmd["cmd"];
+                    commandType = "cmd";
+                } else {
+                    commandName = cmd["value"];
+                    commandType = "value";
+                }
+
+                commandObject["type"] = commandType;
+                commandObject["name"] = commandName;
+                commandObject["valid"] = true;
+                commandObject["payload"] = [];
+                commandObject["editing"] = false;
+
+                commandsModel.append(commandObject);
+
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
+                let payloadPropertiesArray = [];
+
+                if (payload) {
+                    let payloadProperties = Object.keys(payload);
+                    let payloadModel = commandsModel.get(j).payload;
+                    for (let k = 0; k < payloadProperties.length; k++) {
+
+                        const key = payloadProperties[k];
+                        const type = getType(payload[key]);
+                        let payloadPropObject = Object.assign({}, templatePayload);
+                        payloadPropObject["name"] = key;
+                        payloadPropObject["type"] = type;
+                        payloadPropObject["valid"] = true;
+                        payloadPropObject["indexSelected"] = -1;
+
+                        payloadModel.append(payloadPropObject);
+
+                        let propertyArray = [];
+                        let propertyObject = [];
+
+                        if (type === "array") {
+                            generateArrayModel(payload[key], payloadModel.get(k).array);
+                        } else if (type === "object") {
+                            generateObjectModel(payload[key], payloadModel.get(k).object);
+                        }
+                    }
+                }
+            }
+        }
+
+        finishedModel.modelReset()
+    }
+
+
+    /**
+      * getType function used for old API, called from createModelFromJsonOld()
+     **/
+    function getType(item) {
+        if (Array.isArray(item)) {
+            return "array";
+        } else if (typeof item === "object") {
+            return "object";
+        } else {
+            return item;
+        }
     }
 
     /**
@@ -895,8 +1007,11 @@ Item {
             if (!command.hasOwnProperty("cmd")) {
                 return false
             }
-            if (!searchLevel1(command)) {
+            const result = searchLevel1(command)
+            if (!result) {
                 return false
+            } else if (result == "oldAPI") {
+                return result
             }
         }
 
@@ -905,16 +1020,21 @@ Item {
             if (!notification.hasOwnProperty("value")) {
                 return false
             }
-            if (!searchLevel1(notification)) {
+            const result = searchLevel1(notification)
+            if (!result) {
                 return false
             }
         }
-        return true
+        return "newAPI"
     }
 
     function searchLevel1(object) {
         if (object.hasOwnProperty("payload") && object["payload"] !== null) {
             if (!Array.isArray(object["payload"])) {
+                console.log("Colin - in not array")
+                if (typeof object["payload"] == "object" && object["payload"] != null) {
+                    return "oldAPI"
+                }
                 return false
             }
 
@@ -933,7 +1053,7 @@ Item {
                 }
             }
         }
-        return true
+        return "newAPI"
     }
 
     function searchLevel2Recurse(object) {
