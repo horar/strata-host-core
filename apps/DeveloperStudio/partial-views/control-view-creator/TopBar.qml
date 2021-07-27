@@ -93,8 +93,7 @@ RowLayout {
                 let filename = SGUtilsCpp.fileName(editor.fileTreeModel.url)
                 let filetype = "qrc"
                 let uid = "qrcUid"
-                editQRCEnabled = false
-                openFilesModel.addTab(filename, url, filetype, uid)
+                editQRCEnabled = !(openFilesModel.addTab(filename, url, filetype, uid))
             }
         }
     }
