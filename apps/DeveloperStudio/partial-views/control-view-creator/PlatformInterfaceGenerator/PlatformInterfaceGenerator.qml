@@ -763,7 +763,7 @@ Item {
                 commandObj[command.type] = command.name
 
                 if (command.payload.count === 0) {
-                    commandObj["payload"] = null
+                    // don't add a payload key if the payload is empty
                     commands.push(commandObj)
                     continue
                 } else {
@@ -911,7 +911,7 @@ Item {
     }
 
     function searchLevel1(object) {
-        if (object.hasOwnProperty("payload") && object["payload"] !== null) {
+        if (object.hasOwnProperty("payload")) {
             if (!Array.isArray(object["payload"])) {
                 return false
             }
