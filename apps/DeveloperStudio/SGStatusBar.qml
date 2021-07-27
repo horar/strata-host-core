@@ -471,6 +471,7 @@ Rectangle {
             padding: 0
             topPadding: 10
             width: 140
+            closePolicy: Popup.CloseOnPressOutsideParent
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -491,8 +492,6 @@ Rectangle {
                     context.fill();
                 }
             }
-
-            closePolicy: Popup.CloseOnPressOutsideParent
 
             contentItem: Column {
                 id: profileColumn
