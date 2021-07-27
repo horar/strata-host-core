@@ -382,9 +382,10 @@ Rectangle {
         }
     }
 
-    Item {
+    Rectangle {
         id: profileIconContainer
         width: height
+        radius: 5
 
         anchors {
             right: container.right
@@ -393,18 +394,13 @@ Rectangle {
             bottom: container.bottom
         }
 
-        Rectangle {
-            id: barIconRect
-            height: profileIconContainer.height
-            width: height
-            radius: 10
-            color: "white"
-            opacity: {
-                if (profileIconHover.containsMouse || profileMenu.visible) {
-                    return 0.5
-                } else {
-                    return 0.0
-                }
+        color: {
+            if (profileMenu.visible) {
+                return "grey"
+            } else if (profileIconHover.containsMouse) {
+                return "dimgrey"
+            } else {
+                return "transparent"
             }
         }
 
@@ -460,7 +456,11 @@ Rectangle {
             onPressed: pressAction()
 
             function pressAction() {
-                profileMenu.open()
+                if (profileMenu.visible) {
+                    profileMenu.close()
+                } else {
+                    profileMenu.open()
+                }
             }
         }
 
@@ -491,6 +491,8 @@ Rectangle {
                     context.fill();
                 }
             }
+
+            closePolicy: Popup.CloseOnPressOutsideParent
 
             contentItem: Column {
                 id: profileColumn
