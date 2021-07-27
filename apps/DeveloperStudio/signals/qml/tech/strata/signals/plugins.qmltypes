@@ -25,6 +25,7 @@ Module {
         Signal { name: "serverChanged" }
         Signal { name: "feedbackResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "loadCVC"}
+        Signal { name: "platformInterfaceUpdate"; Parameter {name: "json"; type: "var"}}
     }
 }
 
