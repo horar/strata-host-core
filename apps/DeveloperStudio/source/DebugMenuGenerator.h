@@ -23,7 +23,7 @@ public:
      * @param inputJSONFile The path to the JSON file to read
      * @param outputDirPath The output directory path
      */
-    Q_INVOKABLE void generate(const QString &inputJSONFile, const QString &outputDirPath);
+    Q_INVOKABLE void generate(const QJsonValue &inputJSON, const QString &outputDirPath);
 
     /**
      * @brief generateImports Generates the imports needed for the debug menu

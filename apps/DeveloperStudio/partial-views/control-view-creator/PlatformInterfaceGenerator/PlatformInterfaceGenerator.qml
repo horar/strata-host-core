@@ -30,7 +30,7 @@ Item {
             templatePayload
         ],
         "editing": false
-    });
+	});
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
@@ -316,8 +316,8 @@ Item {
         }
 
         Text {
-            Layout.alignment: Qt.AlignHCenter
             text: "Platform Interface Generator"
+            Layout.alignment: Qt.AlignHCenter
             padding: 0
             font {
                 bold: true
@@ -491,7 +491,6 @@ Item {
                         Layout.fillHeight: true
                     }
                 }
-
             }
         }
 
@@ -847,11 +846,8 @@ Item {
       * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
      **/
     function generatePlatformInterface() {
-        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json")
-        let jsonObject = createJsonObject()
-        SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
-
-        let result = sdsModel.platformInterfaceGenerator.generate(jsonInputFilePath, outputFileText.text)
+        const jsonObject = createJsonObject();
+        let result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text);
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
@@ -863,13 +859,13 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text)
+            sdsModel.debugMenuGenerator.generate(jsonObject, outputFileText.text);
         } else {
             alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.color = "green"
             alertToast.interval = 4000
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text)
+            sdsModel.debugMenuGenerator.generate(jsonObject, outputFileText.text);
         }
         alertToast.show()
     }

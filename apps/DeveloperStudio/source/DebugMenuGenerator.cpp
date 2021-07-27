@@ -110,16 +110,11 @@ void DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     indentLevel_ = 0;
 }
 
-void DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &outputDirPath)
+void DebugMenuGenerator::generate(const QJsonValue &inputJSON, const QString &outputDirPath)
 {
-    QFile file(inputJSONFile);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    QByteArray jsonString = file.readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(jsonString);
-
     QList<QVariantMap> notifications, commands;
-    QJsonArray notificationJsonArray = doc["notifications"].toArray();
-    QJsonArray commandJsonArray = doc["commands"].toArray();
+    QJsonArray notificationJsonArray = inputJSON["notifications"].toArray();
+    QJsonArray commandJsonArray = inputJSON["commands"].toArray();
 
     for (QJsonValue val : notificationJsonArray) {
         QVariantMap notif = QVariant::fromValue(val).toMap();
@@ -130,8 +125,6 @@ void DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &o
         QVariantMap cmd = QVariant::fromValue(val).toMap();
         commands.append(cmd);
     }
-
-    file.close();
 
     generate(outputDirPath, notifications, commands);
 }

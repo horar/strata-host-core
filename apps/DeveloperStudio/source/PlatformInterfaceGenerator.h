@@ -38,11 +38,11 @@ public:
 
     /**
      * @brief generate The main function that starts the generation of a PlatformInterface.qml file
-     * @param pathToJson Path to the input JSON file
+     * @param jsonObject The global json object
      * @param outputPath Path to the output directory
      * @return Returns True if successfully created the file, else False
      */
-    Q_INVOKABLE static bool generate(const QString &pathToJson, const QString &outputPath);
+    Q_INVOKABLE static bool generate(const QJsonValue &jsonObject, const QString &outputPath);
 
     /**
      * @brief generateImports Generates the import section of the QML file
