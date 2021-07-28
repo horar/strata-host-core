@@ -17,7 +17,6 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
-    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -167,47 +166,6 @@ Item {
             Divider {
                 visible: markIconVisible
                 color: "transparent"
-            }
-
-            Item {
-                id: indexHeader
-                Layout.preferredHeight: indexHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: textMetricsIndex.boundingRect.width + cellWidthSpacer
-                Layout.minimumWidth: textMetricsIndex.boundingRect.width
-                Layout.maximumWidth: logListView.width/2
-                Layout.leftMargin: handleSpacer
-                Layout.fillWidth: true
-
-                visible: indexColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (indexDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
-
-                SGWidgets.SGText {
-                    id: indexHeaderText
-                    anchors {
-                        left: indexHeader.left
-                        verticalCenter: parent.verticalCenter
-                    }
-                    font.family: "monospace"
-                    text: qsTr("Index")
-                    elide: Text.ElideRight
-                }
-            }
-
-            Divider {
-                id: indexDivider
-                Layout.fillHeight: true
-                visible: indexColumnVisible
-                clickable: true
-
-                mouseArea.onMouseXChanged: {
-                    indexHeader.width = indexHeader.width + mouseX
-                }
             }
 
             Item {
@@ -631,38 +589,6 @@ Item {
                             delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
                         }
                     }
-                }
-
-                SGWidgets.SGText {
-                    id: indexText
-                    width: indexHeader.width
-                    text: {
-                        //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
-                        var hackVariable = markedModel.sourceModel.count
-                        var sourceIndex = logSortFilterModel.mapIndexToSource(model.index)
-                        if (showMarks) {
-                            if (markedModel.mapIndexToSource(sourceIndex) + 1 < 0) {
-                                console.error(Logger.logviewerCategory, "Index out of scope.")
-                                return ""
-                            }
-                            return markedModel.mapIndexToSource(sourceIndex) + 1
-                        } else {
-                            if (searchingMode) {
-                                if (searchResultModel.mapIndexToSource(sourceIndex) + 1 < 0) {
-                                    console.error(Logger.logviewerCategory, "Index out of scope.")
-                                    return ""
-                                }
-                                return searchResultModel.mapIndexToSource(sourceIndex) + 1
-                            }
-                            return sourceIndex + 1
-                        }
-                    }
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    visible: indexColumnVisible
-
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                 }
 
                 SGWidgets.SGText {
