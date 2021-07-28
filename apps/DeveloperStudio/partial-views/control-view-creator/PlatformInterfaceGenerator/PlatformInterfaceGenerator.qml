@@ -294,7 +294,7 @@ Item {
                     if (alertToast.visible) {
                         alertToast.hide()
                     }
-                    alertToast.text = "The imported JSON file uses a deprecated API. If you 'generate' your code will be updated to the new API."
+                    alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
                     alertToast.textColor = "white"
                     alertToast.color = "goldenrod"
                     alertToast.interval = 0
@@ -607,7 +607,7 @@ Item {
                         if (alertToast.visible) {
                             alertToast.hide()
                         }
-                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'generate' your code will be updated to the new API."
+                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
                         alertToast.textColor = "white"
                         alertToast.color = "goldenrod"
                         alertToast.interval = 0
@@ -983,8 +983,9 @@ Item {
     }
 
     /********************************************************************************************
-      * All functions below this mark are for the old API. 
+      * All functions below this mark are for APIv0. 
       * This allows deprecated PI.json to function as expected
+      * When the user generates again, their PI.json file be updated to APIv1
     /********************************************************************************************
 
     /**
