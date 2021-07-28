@@ -721,24 +721,6 @@ Item {
         nameFilters: ["*.json"]
 
         onAccepted: {
-            inputFilePath = SGUtilsCpp.urlToLocalFile(fileUrl)
-            if (!unsavedChanges) {
-                let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
-                try {
-                    const jsonObject = JSON.parse(fileText)
-                    createModelFromJson(jsonObject)
-                } catch (e) {
-                    console.error(e)
-                    alertToast.text = "Failed to parse input JSON file: " + e
-                    alertToast.textColor = "white"
-                    alertToast.color = "#D10000"
-                    alertToast.interval = 0
-                    alertToast.show()
-                }
-                unsavedChanges = false
-            } else {
-                confirmDeleteInProgress.open()
-            }
             loadJsonFile(fileUrl)
         }
     }
@@ -835,7 +817,7 @@ Item {
     }
 
     /**
-      * This function checks to see if either the commands or notifications has been populated
+      * modelPopulated checks to see if either the commands or notifications has been populated
      **/
     function modelPopulated() {
         for (let i = 0; i < finishedModel.count; i++) {
