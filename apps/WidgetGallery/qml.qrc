@@ -32,5 +32,6 @@
         <file>commoncpp1_0/PageSGCommonCppOneZero.qml</file>
         <file>commoncpp1_0/ExSGTextHighlighter.qml</file>
         <file>commoncpp1_0/ExSGJsonSyntaxHighlighter.qml</file>
+        <file>commoncpp1_0/ExSGSortFilterProxyModel.qml</file>
     </qresource>
 </RCC>

@@ -84,6 +84,22 @@ FocusScope {
         }
     }
 
+    /* We cannot connect to 'enabled' property of loader.item in Connections directly
+       because Connections has this property. */
+    property bool editorEnabled: {
+        if (loader.status === Loader.Ready) {
+            return loader.item.enabled
+        }
+
+        return false
+    }
+
+    onEditorEnabledChanged: {
+        if (inputValidation) {
+            delegate.validate()
+        }
+    }
+
     function validate(focusChanged) {
         if (loader.item.enabled) {
             if (focusChanged) {
@@ -109,10 +125,6 @@ FocusScope {
         } else if (error.length === 0) {
             setIsValid()
         }
-    }
-
-    onEnabledChanged: {
-        delegate.validate()
     }
 
     SGText {

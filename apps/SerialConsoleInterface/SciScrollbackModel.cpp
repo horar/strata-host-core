@@ -194,8 +194,16 @@ void SciScrollbackModel::clearAutoExportError()
 QString SciScrollbackModel::exportToFile(QString filePath)
 {
     if (filePath.isEmpty()) {
-        qCCritical(logCategorySci) << "No file name specified";
-        return "No file name specified";
+        QString errorString(QStringLiteral("No file name specified"));
+        qCCritical(logCategorySci) << errorString;
+        return errorString;
+    }
+
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        QString errorString(QStringLiteral("Cannot use relative path for export"));
+        qCCritical(logCategorySci) << errorString;
+        return errorString;
     }
 
     QSaveFile file(filePath);
@@ -237,6 +245,14 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
 
     if (filePath.isEmpty()) {
         errorString = "No file name specified";
+        qCCritical(logCategorySci) << errorString;
+        setAutoExportErrorString(errorString);
+        return false;
+    }
+
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        errorString = "Cannot use relative path for export";
         qCCritical(logCategorySci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
