@@ -37,6 +37,8 @@ ColumnLayout {
     signal undoClicked()
     signal redoClicked()
 
+    signal textEditorSavedFile(string file)
+
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath))
 
@@ -90,6 +92,9 @@ ColumnLayout {
             savedVersionId = currentVersionId
             model.unsavedChanges = false
             externalChanges = false
+
+            textEditorSavedFile(model.filepath)
+
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
             } else {

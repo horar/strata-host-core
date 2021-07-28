@@ -144,4 +144,62 @@ ColumnLayout {
             }
         }
     }
+
+    Connections {
+        target: sdsModel.visualEditorUndoStack
+
+        onUndoCommand: {
+            if (visualEditor.file == file) {
+                functions.setObjectPropertyAndSave(uuid, propertyName, value, false)
+            }
+        }
+
+        onUndoItemAdded: {
+            if (visualEditor.file == file) {
+                functions.removeControl(uuid, false)
+            }
+        }
+
+        onUndoItemDeleted: {
+            if (visualEditor.file == file) {
+                functions.insertTextAtEndOfFile(objectString)
+            }
+        }
+
+        onUndoItemMoved: {
+            if (visualEditor.file == file) {
+                functions.moveItem(uuid, x, y, false)
+            }
+        }
+
+        onUndoItemResized: {
+            if (visualEditor.file == file) {
+                functions.resizeItem(uuid, x, y, false)
+            }
+        }
+    }
+
+    Connections {
+        target: fileContainerRoot
+
+        onTextEditorSavedFile: {
+            console.log("Visual Editor undo/redo reset: detected saved changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+            sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
+        }
+    }
+
+    Connections {
+        target: treeModel
+
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                if (visualEditor.functions.saveRequestedByVE) {
+                    visualEditor.functions.saveRequestedByVE = false
+                } else {
+                    console.log("Visual Editor undo/redo reset: detected external changes to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+                    sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
+                }
+            }
+        }
+    }
 }
