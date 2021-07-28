@@ -59,9 +59,7 @@ Rectangle {
             tooltipDescription: "View/use control view"
 
             onClicked: {
-                if (viewStack.currentIndex !== 2) {
-                    viewStack.currentIndex = 2
-                }
+                viewStack.currentIndex = 2
             }
         }
 
@@ -105,7 +103,7 @@ Rectangle {
         }
 
         SGSideNavItem {
-            iconText: "Platform Interface Generator"
+            iconText: "Platform Interface Generator" + (platformInterfaceGenerator.unsavedChanges ? "*" : "")
             iconSource: "qrc:/partial-views/control-view-creator/components/PlatformInterfaceGeneratorIcon.svg"
             selected: viewStack.currentIndex === 3
             enabled: true
@@ -130,4 +128,3 @@ Rectangle {
         }
     }
 }
-

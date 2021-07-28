@@ -143,13 +143,13 @@ Rectangle {
                 Layout.minimumHeight: 30
                 implicitHeight: 200
                 Layout.fillWidth: true
-                visible:  viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
+                visible: viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
             }
         }
     }
 
     ConsoleContainer {
-        id:consoleContainer
+        id: consoleContainer
         parent: {
             if (popupWindow) {
                 return newWindowLoader.item.consoleLogParent
@@ -215,10 +215,46 @@ Rectangle {
 
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
-                controlViewCreator.openFilesModel.closeAll()
-                callbackFunc()
+                if (platformInterfaceGenerator.unsavedChanges) {
+                    pigConfirmClosePopup.callbackFunc = callbackFunc
+                    pigConfirmClosePopup.open()
+                } else {
+                    controlViewCreator.openFilesModel.closeAll()
+                    callbackFunc()
+                }
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
+
+                if (platformInterfaceGenerator.unsavedChanges) {
+                    pigConfirmClosePopup.callbackFunc = callbackFunc
+                    pigConfirmClosePopup.open()
+                } else {
+                    controlViewCreator.openFilesModel.closeAll()
+                    callbackFunc()
+                }
+            }
+
+            isConfirmCloseOpen = false
+        }
+    }
+
+    SGConfirmationPopup {
+        id: pigConfirmClosePopup
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        titleText: "You have unsaved changes in the Platform Interface Generator"
+        popupText: "Platform Interface Generator:\nYour changes will be lost if you choose to not save them."
+        acceptButtonColor: Theme.palette.red
+        acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
+        acceptButtonText: "Continue without Saving"
+        cancelButtonText: "Cancel"
+
+        property var callbackFunc
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.acceptCloseReason) {
                 callbackFunc()
             }
 
@@ -302,15 +338,13 @@ Rectangle {
     }
 
     function registerAndSetRecompiledRccFile (compiledRccFile) {
-        let uniquePrefix = new Date().getTime().valueOf()
-        uniquePrefix = "/" + uniquePrefix
-
         // Unregister previous (cached) resource
         if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
             sdsModel.resourceLoader.unregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, controlViewLoader, false)
         }
 
         // Register new control view resource
+        const uniquePrefix = "/" + new Date().getTime().valueOf()
         if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
             console.error("Failed to register resource")
             return
@@ -323,19 +357,26 @@ Rectangle {
         NavigationControl.context.class_id = debugPlatform.classId
         NavigationControl.context.device_id = debugPlatform.deviceId
 
-        const qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
+        const controlPath = "qrc:" + uniquePrefix + "/Control.qml"
+        controlViewLoader.setSource(controlPath, Object.assign({}, NavigationControl.context))
     }
 
     function blockWindowClose(callback) {
-        let unsavedCount = editor.openFilesModel.getUnsavedCount();
+        let unsavedCount = editor.openFilesModel.getUnsavedCount()
         if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
-            confirmClosePopup.unsavedFileCount = unsavedCount;
-            confirmClosePopup.open();
+            confirmClosePopup.unsavedFileCount = unsavedCount
             confirmClosePopup.callbackFunc = callback
-            controlViewCreatorRoot.isConfirmCloseOpen = true;
+            confirmClosePopup.open()
+            controlViewCreatorRoot.isConfirmCloseOpen = true
             return true
         }
+        if (platformInterfaceGenerator.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
+            pigConfirmClosePopup.callbackFunc = callback
+            pigConfirmClosePopup.open()
+            controlViewCreatorRoot.isConfirmCloseOpen = true
+            return true
+        }
+
         return false
     }
 
@@ -382,7 +423,7 @@ Rectangle {
                 openViewOnBuild: openViewOnBuild
             }
 
-            writeFile("cvc-settings.json",settings)
+            writeFile("cvc-settings.json", settings)
         }
     }
 }

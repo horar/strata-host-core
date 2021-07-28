@@ -11,6 +11,8 @@ import "../"
 Item {
     id: root
 
+    property bool unsavedChanges: false
+
     readonly property var baseModel: ({
         "commands": [],
         "notifications": []
@@ -275,7 +277,6 @@ Item {
                 return
             }
 
-
             if (closeReason === acceptCloseReason) {
                 generatePlatformInterface();
             }
@@ -308,6 +309,7 @@ Item {
                     alertToast.interval = 0
                     alertToast.show()
                 }
+                unsavedChanges = false
             }
         }
     }
@@ -332,7 +334,6 @@ Item {
         }
 
         Rectangle {
-            id: hLine
             Layout.preferredHeight: 1
             Layout.fillWidth: true
             Layout.bottomMargin: 20
@@ -394,8 +395,8 @@ Item {
                     id: selectOutFolderMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
-
                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
                     onClicked: {
                         outputFileDialog.open()
                     }
@@ -496,8 +497,20 @@ Item {
                         Layout.fillHeight: true
                     }
                 }
-
             }
+        }
+
+        Text {
+            Layout.alignment: Qt.AlignHCenter
+            text: "Unsaved changes detected"
+            padding: 0
+            visible: unsavedChanges
+            color: "grey"
+            font {
+                bold: true
+                pointSize: 10
+            }
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Button {
@@ -522,9 +535,8 @@ Item {
                 color: {
                     if (!generateButton.enabled) {
                         return "lightgrey"
-                    } else {
-                        return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                     }
+                    return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                 }
             }
 
@@ -587,7 +599,7 @@ Item {
 
         onAccepted: {
             inputFilePath = SGUtilsCpp.urlToLocalFile(fileUrl)
-            if (!hasMadeChanges()) {
+            if (!unsavedChanges) {
                 let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
                 try {
                     const jsonObject = JSON.parse(fileText)
@@ -600,23 +612,11 @@ Item {
                     alertToast.interval = 0
                     alertToast.show()
                 }
+                unsavedChanges = false
             } else {
                 confirmDeleteInProgress.open()
             }
         }
-    }
-
-    /**
-      * This function checks to see if either the commands or notifications has been populated
-     **/
-    function hasMadeChanges() {
-        for (let i = 0; i < finishedModel.count; i++) {
-            if (finishedModel.get(i).data.count > 0) {
-                return true
-            }
-        }
-
-        return false
     }
 
     /**
@@ -845,6 +845,8 @@ Item {
             alertToast.interval = 4000
             sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         }
-        alertToast.show();
+        alertToast.show()
+
+        unsavedChanges = false
     }
 }
