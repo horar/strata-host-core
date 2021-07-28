@@ -39,12 +39,14 @@ Item {
             layoutDirection: Qt.RightToLeft
             spacing: 2
 
-            // starta view debug button chooser
+            // strata view debug button chooser
             RowLayout {
                 id: comboboxRow
 
                 onXChanged: {
-                    viewDebugPopup.updatePos()
+                    if (visible) {
+                        viewDebugPopup.updatePos()
+                    }
                 }
 
                 Label {
