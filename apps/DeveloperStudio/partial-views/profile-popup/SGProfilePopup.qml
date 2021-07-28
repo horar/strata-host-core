@@ -20,7 +20,7 @@ import "qrc:/js/constants.js" as Constants
 SGStrataPopup {
     id: root
 
-    headerText: NavigationControl.context.first_name[0].toUpperCase() + headerMetrics.elidedText(NavigationControl.context.first_name, Qt.ElideRight, 100).slice(1) + "'s Profile"
+    headerText: fitHeader(NavigationControl.context.first_name) + "'s Profile"
     modal: true
     visible: true
     closePolicy: Popup.CloseOnEscape
@@ -605,7 +605,7 @@ SGStrataPopup {
                             case "firstname":
                                 NavigationControl.context.first_name = value
                                 authSettings.setValue("first_name", value)
-                                root.headerText = value[0].toUpperCase() + headerMetrics.elidedText(value, Qt.ElideRight, 100).slice(1) + "'s Profile"
+                                root.headerText = fitHeader(value) + "'s Profile"
                                 root.firstName = value
                                 break;
                             case "lastname":
@@ -678,7 +678,7 @@ SGStrataPopup {
                     if (result === "Success") {
                         NavigationControl.context.first_name = user.firstname
                         authSettings.setValue("first_name", user.firstname)
-                        root.headerText = user.firstname[0].toUpperCase() + headerMetrics.elidedText(user.firstname, Qt.ElideRight, 100).slice(1) + "'s Profile"
+                        root.headerText = fitHeader(user.firstname) + "'s Profile"
                         root.firstName = user.firstname
 
                         NavigationControl.context.last_name = user.lastname
@@ -747,5 +747,9 @@ SGStrataPopup {
             passwordField.text = ""
             confirmPasswordField.text = ""
         }
+    }
+
+    function fitHeader(firstName) {
+        return headerMetrics.elidedText(firstName[0].toUpperCase() + firstName.slice(1), Qt.ElideMiddle, 100)
     }
 }
