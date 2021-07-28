@@ -15,6 +15,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGSortFilterProxyModel"
+            page: "ExSGSortFilterProxyModel.qml"
+        }
+
+        ListElement {
             name: "SGTextHighlighter"
             page: "ExSGTextHighlighter.qml"
         }
