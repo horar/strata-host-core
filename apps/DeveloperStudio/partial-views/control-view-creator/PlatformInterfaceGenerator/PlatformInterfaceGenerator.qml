@@ -12,6 +12,12 @@ Item {
     id: root
 
     property bool unsavedChanges: false
+    property string inputFilePath
+    property string currentCvcProjectQrcUrl
+    property string currentCvcProjectJsonUrl
+    property bool platformInterfaceGeneratorSeen
+
+    readonly property string jsonFileName: "platformInterface.json"
 
     readonly property var baseModel: ({
         "commands": [],
@@ -45,7 +51,33 @@ Item {
         "object": []
     });
 
-    property string inputFilePath
+    onVisibleChanged: {
+        if (editor.fileTreeModel.url == "") {
+            return
+        }
+
+        if (currentCvcProjectQrcUrl == editor.fileTreeModel.url) {
+            return
+        }
+
+        currentCvcProjectQrcUrl = editor.fileTreeModel.url
+
+        if (visible) {
+            if (!platformInterfaceGeneratorSeen && findPlatformInterfaceJsonInProject() != "") {
+                alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
+                alertToast.textColor = "white"
+                alertToast.color = "green"
+                alertToast.interval = 8000
+                alertToast.show()
+            }
+            platformInterfaceGeneratorSeen = true
+        }
+    }
+
+    onCurrentCvcProjectQrcUrlChanged: {
+        currentCvcProjectJsonUrl = findPlatformInterfaceJsonInProject()
+        platformInterfaceGeneratorSeen = false
+    }
 
     ListModel {
         id: finishedModel
@@ -64,7 +96,7 @@ Item {
         }
 
         /**
-          * This function checks if all fields are valid
+          * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
          **/
         function checkForAllValid() {
             // First loop through each command / notification and make sure there are no duplicate commands / notification names
@@ -96,7 +128,7 @@ Item {
         }
 
         /**
-          * This function checks for valid and duplicate property names in a command / notification
+          * checkForDuplicatePropertyNames checks for valid and duplicate property names in a command / notification
          **/
         function checkForDuplicatePropertyNames(typeIndex, commandIndex, shortCircuit = false) {
             let commands = get(typeIndex).data;
@@ -165,7 +197,7 @@ Item {
         }
 
         /**
-          * This function checks for duplicate keys in a give payload property that is of 'object' type
+          * checkForDuplicateObjectPropertyNames checks for duplicate keys in a given payload property that is of 'object' type
          **/
         function checkForDuplicateObjectPropertyNames(objectPropertiesModel, index) {
             let key = objectPropertiesModel.get(index).key
@@ -223,6 +255,9 @@ Item {
             return true;
         }
 
+        /**
+          * checkForArrayValid checks if array/object is valid
+         **/
         function checkForArrayValid(arrayModel) {
             for (let i = 0; i < arrayModel.count; i++) {
                 if (arrayModel.get(i).type === "array") {
@@ -243,7 +278,8 @@ Item {
         }
 
         /**
-          * This function checks for duplicate ids in either the "commands" or "notifications" array. Note that there can be duplicates between the commands and notifications. E.g.) Commands can have a cmd with name "test" and so can the notifications
+          * checkForDuplicateIds checks for duplicate ids in either the "commands" or "notifications" array. Note that there can be duplicates between the commands and notifications.
+          * E.g.: Commands can have a cmd with name "test" and so can the notifications
          **/
         function checkForDuplicateIds(index) {
             let commands = get(index).data;
@@ -343,72 +379,160 @@ Item {
         RowLayout {
             Layout.fillWidth: true
             Layout.maximumWidth: 900
-            Layout.preferredHeight: 30
+            Layout.preferredHeight: 60
             Layout.bottomMargin: 15
             Layout.alignment: Qt.AlignHCenter
-            spacing: 5
+            spacing: 50
 
-            Button {
-                id: importJsonFileButton
-                Layout.preferredHeight: 30
+            RowLayout {
+                Button {
+                    id: importJsonFileButton
+                    Layout.preferredHeight: 30
 
-                icon {
-                    source: "qrc:/sgimages/file-import.svg"
-                    color: importJsonMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
-                    name: "Import JSON file"
-                }
+                    icon {
+                        source: "qrc:/sgimages/file-import.svg"
+                        color: importJsonMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
+                        name: "Import JSON file"
+                    }
 
-                text: "Import"
-                display: Button.TextBesideIcon
-                hoverEnabled: true
-
-                Accessible.name: "Open file dialog for importing a JSON file"
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    importJsonMouseArea.clicked()
-                }
-
-                MouseArea {
-                    id: importJsonMouseArea
-                    anchors.fill: parent
+                    text: "Import"
+                    display: Button.TextBesideIcon
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        inputFileDialog.open()
+
+                    Accessible.name: "Open file dialog for importing a JSON file"
+                    Accessible.role: Accessible.Button
+                    Accessible.onPressAction: {
+                        importJsonMouseArea.clicked()
+                    }
+
+                    MouseArea {
+                        id: importJsonMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            alertToast.hide()
+                            inputFileDialog.open()
+                        }
+                    }
+                }
+
+                Item {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 200
+
+                    Button {
+                        id: importJsonFileFromProjectButton
+                        enabled: currentCvcProjectJsonUrl != ""
+                        anchors.fill: parent
+
+                        icon {
+                            source: "qrc:/sgimages/file-import.svg"
+                            color: importFromProjectMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
+                            name: "Import JSON file from Project"
+                        }
+
+                        text: "Import from Project"
+                        display: Button.TextBesideIcon
+                        hoverEnabled: true
+
+                        Accessible.name: "Import JSON file from Project"
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            importFromProjectMouseArea.clicked()
+                        }
+                    }
+
+                    MouseArea {
+                        id: importFromProjectMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: importJsonFileFromProjectButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        onClicked: {
+                            if (currentCvcProjectJsonUrl != "") {
+                                loadJsonFile(currentCvcProjectJsonUrl)
+                            }
+                        }
+
+                        ToolTip {
+                            text: "A project must be open and contain " + jsonFileName + " in its root directory"
+                            visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
+                        }
                     }
                 }
             }
 
-            Button {
-                id: selectOutFolderButton
-                text: "Select Output Folder"
-                Layout.preferredWidth: 200
-                Layout.preferredHeight: 30
+            ColumnLayout {
+                RowLayout {
+                    Layout.preferredWidth: outputFileText.width
 
-                Accessible.name: selectOutFolderButton.text
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    selectOutFolderMouseArea.clicked()
-                }
+                    Button {
+                        id: selectOutFolderButton
+                        text: "Select Output Directory"
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: (outputFileText.width - spacing)/2
 
-                MouseArea {
-                    id: selectOutFolderMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        Accessible.name: selectOutFolderButton.text
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            selectOutFolderMouseArea.clicked()
+                        }
 
-                    onClicked: {
-                        outputFileDialog.open()
+                        MouseArea {
+                            id: selectOutFolderMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+
+                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: {
+                                outputFileDialog.open()
+                            }
+                        }
+                    }
+
+                    Item {
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: selectOutFolderButton.width
+
+                        Button {
+                            id: useProjectOutFolder
+                            text: "Use Project Directory for Output"
+
+                            anchors.fill: parent
+                            enabled: currentCvcProjectQrcUrl != ""
+
+                            Accessible.name: selectOutFolderButton.text
+                            Accessible.role: Accessible.Button
+                            Accessible.onPressAction: {
+                                selectOutFolderMouseArea.clicked()
+                            }
+                        }
+
+                        MouseArea {
+                            id: useProjectOutFolderMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: useProjectOutFolder.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: {
+                                outputFileText.text = findProjectRootDir()
+                            }
+
+                            ToolTip {
+                                text: "A project must be open"
+                                visible: !useProjectOutFolder.enabled && useProjectOutFolderMouseArea.containsMouse
+                            }
+                        }
                     }
                 }
-            }
 
-            SGTextField {
-                id: outputFileText
-                Layout.fillWidth: true
-                Layout.preferredHeight: 30
-                placeholderText: "Output Folder Location"
-                contextMenuEnabled: true
+                SGTextField {
+                    id: outputFileText
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 500
+                    placeholderText: "Output Folder Location"
+                    contextMenuEnabled: true
+                    readOnly: true
+                }
             }
         }
 
@@ -559,7 +683,6 @@ Item {
                     if (!valid) {
                         alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique."
                         alertToast.textColor = "white"
-
                         alertToast.color = "#D10000"
                         alertToast.interval = 0
                         alertToast.show()
@@ -616,6 +739,7 @@ Item {
             } else {
                 confirmDeleteInProgress.open()
             }
+            loadJsonFile(fileUrl)
         }
     }
 
@@ -694,11 +818,36 @@ Item {
             }
         }
 
+        alertToast.hide()
+        alertToast.text = "Successfully imported JSON model." + (modelPopulated() ? "" : " Note: imported list of commands/notifications is empty.")
+        alertToast.textColor = "white"
+        alertToast.color = "green"
+        alertToast.interval = 4000
+        alertToast.show()
+
         finishedModel.modelReset()
+
+        if (inputFilePath == currentCvcProjectJsonUrl) {
+            outputFileText.text = findProjectRootDir()
+        } else {
+            outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
+        }
     }
 
     /**
-      * This function takes an Array and transforms it into an array readable by our delegates
+      * This function checks to see if either the commands or notifications has been populated
+     **/
+    function modelPopulated() {
+        for (let i = 0; i < finishedModel.count; i++) {
+            if (finishedModel.get(i).data.count > 0) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+      * generateArrayModel takes an Array and transforms it into an array readable by our delegates
      **/
     function generateArrayModel(arr, parentListModel) {
         for (let i = 0; i < arr.length; i++) {
@@ -716,7 +865,7 @@ Item {
     }
 
     /**
-      * This function takes an Object and transforms it into an array readable by our delegates
+      * generateObjectModel takes an Object and transforms it into an array readable by our delegates
      **/
     function generateObjectModel(object, parentListModel) {
         let keys = Object.keys(object);
@@ -736,7 +885,7 @@ Item {
     }
 
     /**
-      * This function returns the type of an item
+      * getType returns the type of an item
      **/
     function getType(item) {
         if (Array.isArray(item)) {
@@ -749,7 +898,7 @@ Item {
     }
 
     /**
-      * This function creates the JSON object to output
+      * createJsonObject creates the JSON object to output
      **/
     function createJsonObject() {
         let obj = {};
@@ -820,16 +969,18 @@ Item {
         return outputObj;
     }
 
+    /**
+      * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
+     **/
     function generatePlatformInterface() {
-        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
-
+        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, jsonFileName);
         let jsonObject = createJsonObject();
-        let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+        SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+
         let result = sdsModel.platformInterfaceGenerator.generate(jsonInputFilePath, outputFileText.text);
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
-
             alertToast.color = "#D10000"
             alertToast.interval = 0
         } else if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
@@ -839,8 +990,8 @@ Item {
             alertToast.interval = 0
             sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         } else {
-            alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
+            alertToast.textColor = "white"
             alertToast.color = "green"
             alertToast.interval = 4000
             sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
@@ -848,5 +999,59 @@ Item {
         alertToast.show()
 
         unsavedChanges = false
+    }
+
+    /**
+      * loadJsonFile read JSON file and import object
+     **/
+    function loadJsonFile(url) {
+        if (SGUtilsCpp.isFile(url)) {
+            inputFilePath = url
+        } else {
+            inputFilePath = SGUtilsCpp.urlToLocalFile(url)
+        }
+
+        if (!SGUtilsCpp.isValidFile(inputFilePath)) {
+            console.error("Invalid JSON file: " + inputFilePath)
+            return
+        }
+
+        if (!unsavedChanges) {
+            const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
+            try {
+                const jsonObject = JSON.parse(fileText)
+                createModelFromJson(jsonObject)
+            } catch (e) {
+                console.error(e)
+                alertToast.text = "Failed to parse input JSON file: " + e
+                alertToast.textColor = "white"
+                alertToast.color = "#D10000"
+                alertToast.interval = 0
+                alertToast.show()
+                return
+            }
+        } else {
+            confirmDeleteInProgress.open()
+        }
+    }
+
+    /**
+      * findProjectRootDir find project root directory given root Qrc file url
+     **/
+    function findProjectRootDir() {
+        return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
+    }
+
+    /**
+      * findPlatformInterfaceJsonInProject find platform interface JSON given root Qrc file url
+      * return the JSON filepath or empty if does not exist
+     **/
+    function findPlatformInterfaceJsonInProject() {
+        const projectRootDir = findProjectRootDir()
+        const platformInterfaceJsonFilepath = SGUtilsCpp.joinFilePath(projectRootDir, jsonFileName)
+        if (SGUtilsCpp.isFile(platformInterfaceJsonFilepath)) {
+            return platformInterfaceJsonFilepath
+        }
+        return ""
     }
 }
