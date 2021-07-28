@@ -115,7 +115,7 @@ RowLayout {
 
     Button {
         id: undoButton
-        Layout.fillHeight: true
+        Layout.preferredHeight: 25
         Layout.preferredWidth: height
 
         enabled: false
@@ -146,7 +146,7 @@ RowLayout {
 
     Button {
         id: redoButton
-        Layout.fillHeight: true
+        Layout.preferredHeight: 25
         Layout.preferredWidth: height
 
         enabled: false
