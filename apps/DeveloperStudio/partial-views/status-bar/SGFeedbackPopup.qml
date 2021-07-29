@@ -265,6 +265,20 @@ SGStrataPopup {
                         }
                     }
 
+                    SGText {
+                        id: charactersRemainingText
+                        Layout.alignment: Qt.AlignLeft
+                        opacity: charactersRemaining === 0 ? 1 : 0.4
+                        text: charactersRemaining + " characters remaining"
+                        font {
+                            pixelSize: 15
+                            family: Fonts.franklinGothicBook
+                        }
+                        color: charactersRemaining === 0 ? "red" : "black"
+
+                        property int charactersRemaining: commentsQuestionsArea.maximumLength - commentsQuestionsArea.text.length
+                    }
+
                     Button {
                         id: submitButton
                         text: "Submit"
