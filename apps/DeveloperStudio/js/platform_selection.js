@@ -506,9 +506,7 @@ function disconnectPlatform(platform) {
 
     selector_listing.connected = false
 
-    if (selector_listing.view_open === false) {
-        resetListing(selector_listing)
-    }
+    resetListing(selector_listing)
 
     notifyConnectedState(false,classMap[class_id_string].original_listing.verbose_name)
 

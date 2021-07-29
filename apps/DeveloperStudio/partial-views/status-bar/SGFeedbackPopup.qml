@@ -152,6 +152,7 @@ SGStrataPopup {
                         columnSpacing: 3
 
                         Text {
+                            id: nameForm
                             text: "Name:"
 
                             font {
@@ -162,7 +163,11 @@ SGStrataPopup {
 
                         Text {
                             id: nameField
+                            Layout.preferredWidth: feedbackColumn.width - nameForm.width
+                            Layout.preferredHeight: nameForm.height
                             text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
+                            elide: Text.ElideRight
+
                             font {
                                 pixelSize: 15
                                 family: Fonts.franklinGothicBook
@@ -170,6 +175,7 @@ SGStrataPopup {
                         }
 
                         Text {
+                            id: emailForm
                             text: "Email:"
                             font {
                                 pixelSize: 15
@@ -179,7 +185,11 @@ SGStrataPopup {
 
                         Text {
                             id: emailField
+                            Layout.preferredWidth: feedbackColumn.width - emailForm.width
+                            Layout.preferredHeight: emailForm.height
                             text: NavigationControl.context.user_id
+                            elide: Text.ElideRight
+
                             font {
                                 pixelSize: 15
                                 family: Fonts.franklinGothicBook
@@ -224,8 +234,6 @@ SGStrataPopup {
 
                     SGTextArea {
                         id: commentsQuestionsArea
-                        width: parent.width
-                        height: Math.max(parent.height, contentHeight)
                         enabled: !feedbackStatus.visible
                         contextMenuEnabled: true
                         // Text Length Limiter

@@ -1,4 +1,5 @@
 #include "SciMockDevice.h"
+#include <Mock/MockDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
 using strata::PlatformManager;
@@ -55,7 +56,13 @@ bool SciMockDevice::reopenMockDevice()
         return false;
     }
 
-    DevicePtr device = platform->getDevice();
+    auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
+    if (mockScanner == nullptr) {
+        qCCritical(logCategorySci) << "Cannot get scanner for mock devices.";
+        return false;
+    }
+
+    DevicePtr device = mockScanner->getMockDevice(deviceId_);
     if (device == nullptr) {
         qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId_;
         return false;
@@ -90,7 +97,13 @@ bool SciMockDevice::canReopenMockDevice() const {
         return false;
     }
 
-    const DevicePtr device = platform->getDevice();
+    auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
+    if (mockScanner == nullptr) {
+        qCCritical(logCategorySci) << "Cannot get scanner for mock devices.";
+        return false;
+    }
+
+    const DevicePtr device = mockScanner->getMockDevice(deviceId_);
     if (device == nullptr) {
         qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId_;
         return false;

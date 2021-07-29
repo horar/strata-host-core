@@ -34,7 +34,7 @@ public:
 
     ~BluetoothLowEnergyScanner() override;
 
-    virtual void init() override;
+    virtual void init(quint32 flags = 0) override;
     virtual void deinit() override;
 
     void startDiscovery();

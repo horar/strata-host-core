@@ -33,15 +33,34 @@ PlatformManager::~PlatformManager() {
     // stop all operations here to avoid capturing signals later which could crash
     platformOperations_.stopAllOperations();
 
-    QList<Device::Type> scannerTypes = scanners_.keys();
-    foreach(auto scannerType, scannerTypes) {
-        deinit(scannerType);
+    // forcibly terminate all scanners, do not wait for signals
+    foreach(DeviceScannerPtr scanner, scanners_) {
+        disconnect(scanner.get(), nullptr, this, nullptr);
+        scanner->deinit();
     }
+    scanners_.clear();
+
+    // forcibly terminate all devices, do not wait for signals
+    foreach(PlatformPtr platform, closedPlatforms_) {
+        disconnect(platform.get(), nullptr, this, nullptr);
+        platform->terminate(false);
+    }
+    closedPlatforms_.clear();
+
+    foreach(PlatformPtr platform, openedPlatforms_) {
+        disconnect(platform.get(), nullptr, this, nullptr);
+        const QByteArray deviceId = platform->deviceId();
+        emit platformAboutToClose(deviceId);
+        platform->terminate(true);
+        emit platformRemoved(deviceId);
+        qCDebug(logCategoryPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
+    }
+    openedPlatforms_.clear();
 }
 
-void PlatformManager::init(Device::Type scannerType) {
+void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     if (scanners_.contains(scannerType)) {
-        return; // already initialized
+        return; // already added
     }
 
     DeviceScannerPtr scanner;
@@ -81,18 +100,21 @@ void PlatformManager::init(Device::Type scannerType) {
     connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected);
     connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost);
 
-    scanner->init();
+    scanner->init(flags);
 }
 
-void PlatformManager::deinit(Device::Type scannerType) {
+void PlatformManager::removeScanner(Device::Type scannerType) {
     auto iter = scanners_.find(scannerType);
     if (iter == scanners_.end()) {
         return; // scanner not found
     }
 
-    iter.value()->deinit(); // all devices will be reported as lost
-
+    DeviceScannerPtr scanner = iter.value();
     scanners_.erase(iter);
+
+    scanner->deinit(); // all devices will be reported as lost
+
+    disconnect(scanner.get(), nullptr, this, nullptr); // in case someone held the scanner pointer
 
     qCDebug(logCategoryPlatformManager) << "Erased DeviceScanner with type:" << scannerType;
 }
