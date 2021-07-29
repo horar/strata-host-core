@@ -870,11 +870,11 @@ Item {
      **/
     function generatePlatformInterface() {
         const jsonObject = createJsonObject()
-        let result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
+        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
+        const result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
-
             alertToast.color = "#D10000"
             alertToast.interval = 0
         } else if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
@@ -882,12 +882,14 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
             Signals.platformInterfaceUpdate(jsonObject)
         } else {
             alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.color = "green"
             alertToast.interval = 4000
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
             Signals.platformInterfaceUpdate(jsonObject)
         }
         alertToast.show()
