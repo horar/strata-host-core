@@ -634,16 +634,20 @@ Rectangle {
         classId: "general-settings"
         user: NavigationControl.context.user_id
 
+        property bool firstLogin: true
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
-        // updated this so we can mitigate undefined variables
+
         function loadSettings() {
             const settings = readFile("general-settings.json")
 
+            if (settings.hasOwnProperty("firstLogin")) {
+                firstLogin = settings.firstLogin
+            }
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
             }
@@ -667,6 +671,7 @@ Rectangle {
 
         function saveSettings() {
             const settings = {
+                firstLogin: firstLogin,
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
