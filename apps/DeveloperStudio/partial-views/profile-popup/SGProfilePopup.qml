@@ -290,28 +290,6 @@ SGStrataPopup {
                 plainText.width: root.width - occupationLabel.width - offset
             }
 
-            Popup {
-                id: passReqsPopup
-
-                x: newPasswordRow.x
-                y: newPasswordRow.y + passwordField.height + 5
-                width: newPasswordRow.Layout.preferredWidth
-                height: passReqs.height
-
-                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid && newPasswordRow.editable
-                padding: 0
-                background: Item {}
-                closePolicy: Popup.NoAutoClose
-
-                PasswordRequirements {
-                    id: passReqs
-                    width: passReqsPopup.width
-                    onClicked: {
-                        passwordField.focus = confirmPasswordField.focus = false
-                    }
-                }
-            }
-
             ProfileSectionHeader {
                 text: "Password"
             }
@@ -430,6 +408,9 @@ SGStrataPopup {
 
                 onEditableChanged: {
                     passwordField.visible = confirmPasswordField.visible = editable
+                    if (editable === false) {
+                        passReqsPopup.close()
+                    }
                 }
 
                 ValidationField {
@@ -458,7 +439,7 @@ SGStrataPopup {
                             id: showPassword
                             anchors.fill: showPasswordIcon
                             hoverEnabled: true
-                            onClicked: {
+                            onPressedChanged: {
                                 if(alertRect.visible) alertRect.hide();
                                 if (passwordField.echoMode === TextInput.Password) {
                                     passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
@@ -468,6 +449,10 @@ SGStrataPopup {
                             }
                             cursorShape: Qt.PointingHandCursor
                         }
+                    }
+
+                    onPressed: {
+                        passReqsPopup.openPopup()
                     }
                 }
 
@@ -481,10 +466,58 @@ SGStrataPopup {
 
                     placeholderText: "Confirm password"
                     echoMode: TextInput.Password
-                    showIcon: false
+                    valid: passReqs.passwordValid
                     width: 250
 
                     visible: newPasswordRow.editable
+
+                    onPressed: {
+                        passReqsPopup.openPopup()
+                    }
+
+                    onValidChanged: {
+                        if (valid) {
+                            passReqsPopup.close()
+                        } else {
+                            passReqsPopup.openPopup()
+                        }
+                    }
+                }
+
+                Popup {
+                    id: passReqsPopup
+
+                    y: passwordField.height + 5
+                    width: passwordField.width + confirmPasswordField.width + 10
+                    height: passReqs.height
+
+                    padding: 0
+                    background: Item {}
+                    closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnEscape
+
+                    property bool acquiredFocus: passwordField.focus || confirmPasswordField.focus
+
+                    PasswordRequirements {
+                        id: passReqs
+                        width: passReqsPopup.width
+                        onClicked: {
+                            passReqsPopup.close()
+                        }
+                    }
+
+                    onAcquiredFocusChanged: {
+                        if (acquiredFocus) {
+                            passReqsPopup.openPopup()
+                        } else {
+                            passReqsPopup.close()
+                        }
+                    }
+
+                    function openPopup() {
+                        if ((passReqsPopup.opened === false) && (passReqs.passwordValid === false)) {
+                            passReqsPopup.open()
+                        }
+                    }
                 }
             }
 
