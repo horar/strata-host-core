@@ -605,7 +605,7 @@ Item {
 
                         Component.onCompleted: {
                             if (NavigationControl.userSettings.firstLogin) {
-                                categoryHighlightPopup.showOn = Qt.binding( ()=> (listview.count > 0))
+                                categoryHighlightPopup.showOn = Qt.binding(() => (listview.count > 0))
                                 NavigationControl.userSettings.firstLogin = false
                             }
                         }
