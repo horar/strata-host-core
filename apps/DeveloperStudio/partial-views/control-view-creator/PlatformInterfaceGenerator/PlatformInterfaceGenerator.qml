@@ -13,7 +13,7 @@ Item {
     readonly property var baseModel: ({
         "commands": [],
         "notifications": []
-    });
+    })
 
     readonly property var templateCommand: ({
         "type": "cmd",
@@ -21,7 +21,7 @@ Item {
         "valid": false,
         "payload": [],
         "editing": false
-    });
+    })
 
     readonly property var templateNotification: ({
         "type": "value",
@@ -31,7 +31,7 @@ Item {
             templatePayload
         ],
         "editing": false
-	});
+	})
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
@@ -41,7 +41,7 @@ Item {
         "array": [], // This is only filled if the type == "array"
         "object": [],
         "value": "0"
-    });
+    })
 
     property string inputFilePath
 
@@ -174,7 +174,7 @@ Item {
 
             for (let i = 0; i < objectPropertiesModel.count; i++) {
                 if (i !== index) {
-                    let item = objectPropertiesModel.get(i);
+                    let item = objectPropertiesModel.get(i)
                     if (item.name === key) {
                         return false
                     }
@@ -840,7 +840,7 @@ Item {
             } else {
                 object.value = getTypedValue(arrayElement.type, arrayElement.value)
             }
-            outputArr.push(object)
+            outputArr.push(object)            
         }
         return outputArr
     }
@@ -869,8 +869,8 @@ Item {
       * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
      **/
     function generatePlatformInterface() {
-        const jsonObject = createJsonObject();
-        let result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text);
+        const jsonObject = createJsonObject()
+        let result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
@@ -993,58 +993,60 @@ Item {
         let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
 
         finishedModel.modelAboutToBeReset()
-        finishedModel.clear();
+        finishedModel.clear()
 
         for (let i = 0; i < topLevelKeys.length; i++) {
-            const topLevelType = topLevelKeys[i];
-            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
+            const topLevelType = topLevelKeys[i]
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
             let listOfCommandsOrNotifications = {
                 "name": topLevelType, // "commands" / "notifications"
                 "data": []
             }
 
-            finishedModel.append(listOfCommandsOrNotifications);
+            finishedModel.append(listOfCommandsOrNotifications)
 
             for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                let commandsModel = finishedModel.get(i).data;
+                let commandsModel = finishedModel.get(i).data
 
-                let cmd = arrayOfCommandsOrNotifications[j];
-                let commandName;
-                let commandType;
-                let commandObject = {};
+                let cmd = arrayOfCommandsOrNotifications[j]
+                let commandName
+                let commandType
+                let commandObject = {}
 
                 if (topLevelType === "commands") {
                     // If we are dealing with commands, then look for the "cmd" key
-                    commandName = cmd["cmd"];
-                    commandType = "cmd";
+                    commandName = cmd["cmd"]
+                    commandType = "cmd"
                 } else {
-                    commandName = cmd["value"];
-                    commandType = "value";
+                    commandName = cmd["value"]
+                    commandType = "value"
                 }
 
-                commandObject["type"] = commandType;
-                commandObject["name"] = commandName;
-                commandObject["valid"] = true;
-                commandObject["payload"] = [];
-                commandObject["editing"] = false;
+                commandObject["type"] = commandType
+                commandObject["name"] = commandName
+                commandObject["valid"] = true
+                commandObject["payload"] = []
+                commandObject["editing"] = false
 
-                commandsModel.append(commandObject);
+                commandsModel.append(commandObject)
 
-                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
-                let payloadPropertiesArray = [];
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
+                let payloadPropertiesArray = []
 
                 if (payload) {
-                    let payloadProperties = Object.keys(payload);
-                    let payloadModel = commandsModel.get(j).payload;
+                    let payloadProperties = Object.keys(payload)
+                    // sorting pi.json file so the generated files, pi.json & pi.qml, will function as intented prior to APIv1
+                    payloadProperties = payloadProperties.sort(); 
+                    let payloadModel = commandsModel.get(j).payload
                     for (let k = 0; k < payloadProperties.length; k++) {
 
-                        const key = payloadProperties[k];
-                        let type = getType(payload[key]);
-                        let payloadPropObject = Object.assign({}, templatePayload);
-                        payloadPropObject["name"] = key;
-                        payloadPropObject["type"] = type;
-                        payloadPropObject["valid"] = true;
-                        payloadPropObject["indexSelected"] = -1;
+                        const key = payloadProperties[k]
+                        let type = getType(payload[key])
+                        let payloadPropObject = Object.assign({}, templatePayload)
+                        payloadPropObject["name"] = key
+                        payloadPropObject["type"] = type
+                        payloadPropObject["valid"] = true
+                        payloadPropObject["indexSelected"] = -1
 
                         if (type === "int") {
                             payloadPropObject["value"] = "0"
@@ -1056,15 +1058,15 @@ Item {
                             payloadPropObject["value"] = ""
                         }
 
-                        payloadModel.append(payloadPropObject);
+                        payloadModel.append(payloadPropObject)
 
-                        let propertyArray = [];
-                        let propertyObject = [];
+                        let propertyArray = []
+                        let propertyObject = []
 
                         if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                            generateArrayModelAPIv0(payload[key], payloadModel.get(k).array);
+                            generateArrayModelAPIv0(payload[key], payloadModel.get(k).array)
                         } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                            generateObjectModelAPIv0(payload[key], payloadModel.get(k).object);
+                            generateObjectModelAPIv0(payload[key], payloadModel.get(k).object)
                         }
                     }
                 }
@@ -1087,7 +1089,7 @@ Item {
         } else if (item === "object-dynamic") {
             return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC
         } else {
-            return item;
+            return item
         }
     }
 
@@ -1099,7 +1101,7 @@ Item {
         for (let i = 0; i < arr.length; i++) {
             let type = getType(arr[i])
 
-            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""};
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
             
             if (type === "int") {
                 obj["value"] = "0"
@@ -1109,7 +1111,7 @@ Item {
                 obj["value"] = "false"
             }
             
-            parentListModel.append(obj);
+            parentListModel.append(obj)
 
             if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                 generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
@@ -1124,12 +1126,12 @@ Item {
       * This function takes an Object and transforms it into an array readable by our delegates
      **/
     function generateObjectModelAPIv0(object, parentListModel) {
-        let keys = Object.keys(object);
+        let keys = Object.keys(object)
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i]
-            let type = getType(object[key]);
+            let type = getType(object[key])
             
-            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""};
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
             
             if (type === "int") {
                 obj["value"] = "0"
@@ -1139,7 +1141,7 @@ Item {
                 obj["value"] = "false"
             }
             
-            parentListModel.append(obj);
+            parentListModel.append(obj)
 
             if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                 generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
