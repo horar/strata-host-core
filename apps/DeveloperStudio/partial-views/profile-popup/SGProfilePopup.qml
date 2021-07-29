@@ -426,7 +426,7 @@ SGStrataPopup {
                             id: showPassword
                             anchors.fill: showPasswordIcon
                             hoverEnabled: true
-                            onClicked: {
+                            onPressedChanged: {
                                 if(alertRect.visible) alertRect.hide();
                                 if (passwordField.echoMode === TextInput.Password) {
                                     passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
