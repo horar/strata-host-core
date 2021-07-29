@@ -35,13 +35,12 @@ Item {
         }
     }
 
-    Rectangle {
+    Item {
         id: topWall
         y: 0
         width: 4
         height: parent.height + 5
         z:3
-        color: "red"
 
         Binding {
             target: topWall

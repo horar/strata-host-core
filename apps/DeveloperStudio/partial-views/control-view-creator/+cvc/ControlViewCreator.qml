@@ -152,6 +152,7 @@ Rectangle {
         id: debugPanel
         implicitWidth: 400
         height: parent.height
+        visible: viewStack.currentIndex === 2
     }
 
 
