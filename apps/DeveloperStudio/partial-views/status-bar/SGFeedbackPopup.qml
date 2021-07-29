@@ -10,6 +10,7 @@ import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 SGStrataPopup {
     id: root
@@ -274,7 +275,13 @@ SGStrataPopup {
                             pixelSize: 15
                             family: Fonts.franklinGothicBook
                         }
-                        color: charactersRemaining === 0 ? "red" : "black"
+                        color: {
+                            if (charactersRemaining === 0) {
+                                return Theme.palette.red
+                            } else {
+                                return Theme.palette.black
+                            }
+                        }
 
                         property int charactersRemaining: commentsQuestionsArea.maximumLength - commentsQuestionsArea.text.length
                     }
