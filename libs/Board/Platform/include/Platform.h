@@ -62,12 +62,6 @@ namespace strata::platform {
         virtual ~Platform();
 
         /**
-         * Get stored device pointer.
-         * @return device pointer
-         */
-        device::DevicePtr getDevice() const;
-
-        /**
          * Open device communication channel.
          * Emits opened() signal in case of success.
          * Emits deviceError signal in case of failure.

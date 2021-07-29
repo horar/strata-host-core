@@ -20,8 +20,8 @@ PlatformController::PlatformController(): platformManager_(false, false, true) {
 }
 
 void PlatformController::initialize() {
-    platformManager_.init(strata::device::Device::Type::SerialDevice);
-    platformManager_.init(strata::device::Device::Type::BLEDevice);
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
+    platformManager_.addScanner(strata::device::Device::Type::BLEDevice);
 
     strata::device::scanner::BluetoothLowEnergyScannerPtr bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));

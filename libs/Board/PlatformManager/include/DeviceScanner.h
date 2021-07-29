@@ -27,8 +27,9 @@ public:
     /**
      * Start scanning for new devices.
      * @return true if scanning was started, otherwise false
+     * @param flags flags defining properties for scanner (by default are all flags are unset)
      */
-    virtual void init() = 0;
+    virtual void init(quint32 flags = 0) = 0;
 
     /**
      * Stop scanning for new devices. Will close all open devices.

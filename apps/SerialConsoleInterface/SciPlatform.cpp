@@ -1,6 +1,8 @@
 #include "SciPlatform.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <Mock/MockDeviceScanner.h>
+
 #include <SGUtilsCpp.h>
 #include <SGJsonFormatter.h>
 
@@ -18,8 +20,9 @@ SciPlatform::SciPlatform(
 {
     verboseName_ = "Unknown Board";
     status_ = PlatformStatus::Disconnected;
+    platformManager_ = platformManager;
 
-    mockDevice_ = new SciMockDevice(platformManager);
+    mockDevice_ = new SciMockDevice(platformManager_);
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
@@ -69,7 +72,13 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
         setDeviceType(platform_->deviceType());
         mockDevice_->mockSetDeviceId(deviceId_);
         if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
-            strata::device::DevicePtr device = platform_->getDevice();
+            auto scanner = platformManager_->getScanner(strata::device::Device::Type::MockDevice);
+            auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(scanner);
+            if (mockScanner == nullptr) {
+                qCCritical(logCategorySci) << "cannot get scanner for mock devices";
+                return;
+            }
+            strata::device::DevicePtr device = mockScanner->getMockDevice(deviceId_);
             mockDevice_->setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
         }
 
@@ -267,15 +276,30 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     return true;
 }
 
-bool SciPlatform::saveDeviceFirmware(QString filePath) {
+QString SciPlatform::saveDeviceFirmware(QString filePath) {
     if (status_ != PlatformStatus::Ready) {
-        qCWarning(logCategorySci) << "platform not ready";
-        return false;
+        QString errorString(QStringLiteral("platform not ready"));
+        qCWarning(logCategorySci) << platform_ << errorString;
+        return errorString;
     }
 
     if (flasherConnector_.isNull() == false) {
-        qCWarning(logCategorySci) << "flasherConnector already exists";
-        return false;
+        QString errorString(QStringLiteral("flasherConnector already exists"));
+        qCWarning(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    if (filePath.isEmpty()) {
+        QString errorString(QStringLiteral("no file name specified"));
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        QString errorString(QStringLiteral("cannot use relative path for backup file"));
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
     }
 
     flasherConnector_ = new strata::FlasherConnector(platform_, filePath, this);
@@ -288,7 +312,7 @@ bool SciPlatform::saveDeviceFirmware(QString filePath) {
     flasherConnector_->backup();
     setProgramInProgress(true);
 
-    return true;
+    return QString();
 }
 
 void SciPlatform::storeCommandHistory(const QStringList &list)

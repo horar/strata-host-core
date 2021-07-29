@@ -26,7 +26,7 @@ void PlatformErrorsTest::cleanupTestCase()
 void PlatformErrorsTest::init()
 {
     platformManager_ = std::make_shared<strata::PlatformManager>(true, false, false);
-    platformManager_->init(Device::Type::MockDevice);
+    platformManager_->addScanner(Device::Type::MockDevice);
 
     auto deviceScanner = platformManager_->getScanner(Device::Type::MockDevice);
     QVERIFY(deviceScanner.get() != nullptr);
@@ -46,7 +46,7 @@ void PlatformErrorsTest::cleanup()
         mockDevice_.reset();
     }
 
-    platformManager_->deinit(Device::Type::MockDevice);
+    platformManager_->removeScanner(Device::Type::MockDevice);
 }
 
 void PlatformErrorsTest::addMockDevice()
@@ -54,7 +54,7 @@ void PlatformErrorsTest::addMockDevice()
     devicesCount_ = platformManager_->getDeviceIds().count();
 
     QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
-    QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", true));
+    QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", true).isEmpty());
     QVERIFY((platformAddedSignal.count() == 1) || (platformAddedSignal.wait(100) == true));
 
     QVERIFY(platformManager_->getDeviceIds().contains(deviceId_));
@@ -62,7 +62,7 @@ void PlatformErrorsTest::addMockDevice()
 
     platform_ = platformManager_->getPlatform(deviceId_);
     QVERIFY(platform_.get() != nullptr);
-    auto device = platform_->getDevice();
+    auto device = mockDeviceScanner_->getMockDevice(platform_->deviceId());
     QVERIFY(device.get() != nullptr);
     mockDevice_ = std::dynamic_pointer_cast<strata::device::MockDevice>(device);
     QVERIFY(mockDevice_.get() != nullptr);

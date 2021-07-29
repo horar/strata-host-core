@@ -18,8 +18,9 @@ BluetoothLowEnergyScanner::~BluetoothLowEnergyScanner()
 {
 }
 
-void BluetoothLowEnergyScanner::init()
+void BluetoothLowEnergyScanner::init(quint32 flags)
 {
+    Q_UNUSED(flags)
 }
 
 void BluetoothLowEnergyScanner::deinit()
