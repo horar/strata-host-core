@@ -2,6 +2,11 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
+
+import "components/"
+
 Item {
     id: root
 
@@ -14,11 +19,10 @@ Item {
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
     property int expandWidth: minimumExpandWidth
     property alias mainContainer: mainContainer
+    property real rectWidth: 400
 
     anchors.top: parent.top
     anchors.right: parent.right
-    property real rectWidth: 400
-
 
     Rectangle {
         id: mainContainer
@@ -29,8 +33,50 @@ Item {
         visible: width > 0
         clip: true
 
+        Rectangle {
+            id: topBar
+            width: parent.width
+            height: 30
+            anchors.top: parent.top
+            color: "#444"
+
+            RowLayout {
+                anchors.fill: parent
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+
+                SGControlViewIconButton {
+                    id: openWindow
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    source:  "qrc:/sgimages/sign-in.svg"
+
+                    onClicked:  {
+                        debugMenuWindow = !debugMenuWindow
+                        root.parent = newWindowDebugMenuLoader.item.consoleLogParent
+                    }
+                }
+
+                SGControlViewIconButton {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    source: "qrc:/sgimages/times.svg"
+                    Layout.alignment: Qt.AlignRight
+
+                    onClicked:  {
+                        debugPanel.collapse()
+                    }
+                }
+            }
+        }
+
         Loader {
-            anchors.fill: parent
+            anchors.top: topBar.bottom
+            width: parent.width
+            height: parent.height - topBar.height
             source: root.debugMenuSource
         }
     }
@@ -55,6 +101,7 @@ Item {
             }
         }
     }
+
     MouseArea {
         id: mouseArea
         anchors.fill: topWall

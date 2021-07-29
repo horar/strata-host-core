@@ -71,6 +71,9 @@ Rectangle {
             enabled: viewStack.currentIndex === 2 && debugPanel.visible
             selected: debugPanel.expanded
             tooltipDescription: "Toggle debug panel"
+            onEnabledChanged: {
+                console.log(enabled)
+            }
 
             onClicked: {
                 if (debugPanel.expanded) {

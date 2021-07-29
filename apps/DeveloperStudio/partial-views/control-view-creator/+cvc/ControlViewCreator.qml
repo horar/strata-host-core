@@ -21,6 +21,7 @@ Rectangle {
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
     property bool popupWindow: false
+    property bool debugMenuWindow: false
     property bool recompileRequested: false
     property bool projectInitialization: false
     property string previousCompiledRccFilePath: ""
@@ -143,16 +144,35 @@ Rectangle {
                 Layout.minimumHeight: 30
                 implicitHeight: 200
                 Layout.fillWidth: true
-                visible:  viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
+                visible: viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
             }
         }
     }
+
+    //    Item {
+    //        id: test
+    //        implicitWidth: 400
+    //        height: parent.height
+    //        visible: viewStack.currentIndex === 2 && debugMenuWindow === false && debugPanel.debugMenuSource.toString() !== ""
+    //        anchors.top: parent.top
+    //        anchors.right: parent.right
+    //    }
 
     DebugPanel {
         id: debugPanel
         implicitWidth: 400
         height: parent.height
         visible: viewStack.currentIndex === 2
+
+        //        parent: {
+        //            if (debugMenuWindow) {
+        //                return newWindowDebugMenuLoader.item.consoleLogParent
+        //            }
+        //            else {
+        //                return test
+        //            }
+        //        }
+
     }
 
 
@@ -184,6 +204,12 @@ Rectangle {
         id: newWindowLoader
         active: popupWindow
         source: "Console/NewWindowConsoleLog.qml"
+    }
+
+    Loader {
+        id: newWindowDebugMenuLoader
+        active: debugMenuWindow
+        source: "Console/NewWindowDebugMenu.qml"
     }
 
     ConfirmClosePopup {
