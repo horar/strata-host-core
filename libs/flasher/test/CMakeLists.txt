@@ -11,7 +11,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
 
-file(GLOB SOURCE_FILES *.cpp)
+set(SOURCE_FILES
+    FlasherTest.cpp
+)
 
 foreach(SOURCE_PATH ${SOURCE_FILES})
 

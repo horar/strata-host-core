@@ -12,9 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 function(prepareTestExecutable)
-    list (GET ARGV 0 MAIN_SOURCE_FILE)
-
-    get_filename_component(EXECUTABLE_NAME ${MAIN_SOURCE_FILE} NAME_WE)
+    get_filename_component(EXECUTABLE_NAME ${ARGV0} NAME_WE)
 
     add_executable(${EXECUTABLE_NAME} ${ARGV})
 
