@@ -126,6 +126,11 @@ Rectangle {
                             }
                         }
                     }
+
+                    //                    DebugPanel {
+                    //                        id: debugPanel
+                    //                        Layout.fillHeight: true
+                    //                    }
                 }
 
                 PlatformInterfaceGenerator {
@@ -148,6 +153,7 @@ Rectangle {
         implicitWidth: 400
         height: parent.height
     }
+
 
     ConsoleContainer {
         id:consoleContainer

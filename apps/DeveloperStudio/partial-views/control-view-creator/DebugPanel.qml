@@ -1,33 +1,24 @@
 import QtQuick 2.12
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.12
-
-import tech.strata.sgwidgets 1.0
-import tech.strata.theme 1.0
-import QtQml 2.0
-
+import QtQuick.Layouts 1.12
 
 Item {
     id: root
 
-    // width: 0
-    //  visible: debugMenuSource.toString() !== ""
+    width: 0
+    visible: debugMenuSource.toString() !== ""
 
-//    readonly property bool expanded: width > 0 && visible
-//    readonly property int minimumExpandWidth: 400
-
+    readonly property bool expanded: width > 0 && visible
+    readonly property int minimumExpandWidth: 400
 
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-//    property int expandWidth: minimumExpandWidth
-//    property alias mainContainer: mainContainer
+    property int expandWidth: minimumExpandWidth
+    property alias mainContainer: mainContainer
 
     anchors.top: parent.top
     anchors.right: parent.right
-
-    visible: false
-
     property real rectWidth: 400
+
 
     Rectangle {
         id: mainContainer
@@ -35,8 +26,8 @@ Item {
         height: parent.height
         anchors.right: parent.right
         color: "lightgrey"
-        // visible: width > 0
-        //clip: true
+        visible: width > 0
+        clip: true
 
         Loader {
             anchors.fill: parent
@@ -65,7 +56,6 @@ Item {
             }
         }
     }
-
     MouseArea {
         id: mouseArea
         anchors.fill: topWall
@@ -77,30 +67,29 @@ Item {
         cursorShape: Qt.SplitHCursor
     }
 
+    NumberAnimation {
+        id: collapseAnimation
+        target: root
+        property: "width"
+        duration: 200
+        easing.type: Easing.InOutQuad
+        to: 0
+    }
 
-    //    NumberAnimation {
-    //        id: collapseAnimation
-    //        target: root
-    //        property: "width"
-    //        duration: 200
-    //        easing.type: Easing.InOutQuad
-    //        to: 0
-    //    }
+    NumberAnimation {
+        id: expandAnimation
+        target: root
+        property: "width"
+        duration: 200
+        easing.type: Easing.InOutQuad
+        to: root.expandWidth
+    }
 
-    //    NumberAnimation {
-    //        id: expandAnimation
-    //        target: root
-    //        property: "width"
-    //        duration: 200
-    //        easing.type: Easing.InOutQuad
-    //        to: root.expandWidth
-    //    }
+    function expand() {
+        expandAnimation.start()
+    }
 
-    //    function expand() {
-    //        expandAnimation.start()
-    //    }
-
-    //    function collapse() {
-    //        collapseAnimation.start()
-    //    }
+    function collapse() {
+        collapseAnimation.start()
+    }
 }
