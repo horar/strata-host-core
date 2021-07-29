@@ -25,7 +25,7 @@ ColumnLayout {
             Layout.preferredWidth: 15
             padding: 0
             hoverEnabled: true
-            enabled: parentListModel.count > 1
+            visible: parentListModel.count > 1
 
             icon {
                 source: "qrc:/sgimages/times.svg"

@@ -26,7 +26,7 @@ ColumnLayout {
             Layout.preferredWidth: 15
             padding: 0
             hoverEnabled: true
-            enabled: parentListModel.count > 1
+            visible: parentListModel.count > 1
 
             icon {
                 source: "qrc:/sgimages/times.svg"
@@ -124,7 +124,7 @@ ColumnLayout {
         id: addPropertyButton
         text: "Add Item To Array"
         Layout.alignment: Qt.AlignHCenter
-         visible: modelIndex === parentListModel.count - 1
+        visible: modelIndex === parentListModel.count - 1
 
         Accessible.name: addPropertyButton.text
         Accessible.role: Accessible.Button
