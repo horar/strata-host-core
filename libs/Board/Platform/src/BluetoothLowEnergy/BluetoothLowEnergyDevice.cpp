@@ -25,7 +25,7 @@ BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, c
         << "Created new BLE device, ID: " << deviceId_
         << ", name: '" << deviceName_ << "'"
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
-    openingTimer_.setInterval(10000); //connect timer, 10s
+    openingTimer_.setInterval(std::chrono::seconds(60)); //connect timer, 60s
     openingTimer_.setSingleShot(true);
     connect(&openingTimer_, &QTimer::timeout, this, &BluetoothLowEnergyDevice::openingTimeoutHandler);
 }
