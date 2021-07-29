@@ -444,3 +444,18 @@ void ResourceLoader::setLastLoggedError(QString &error_str) {
 QString ResourceLoader::getLastLoggedError() {
     return lastLoggedError_;
 }
+
+void ResourceLoader::trimComponentCache(QObject *parent) {
+    QQmlEngine *eng = qmlEngine(parent);
+    eng->collectGarbage();
+    eng->trimComponentCache();
+}
+
+QList<QString> ResourceLoader::getQrcPaths(QString path) {
+    QList<QString> pathList;
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        pathList.append(it.next());
+    }
+    return pathList;
+}

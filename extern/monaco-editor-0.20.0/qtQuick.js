@@ -22,8 +22,15 @@ var bottomOfFile = null;
 var topOfFile = null;
 var fullRange = null;
 
-var qtImports = [];
+var err_flag = false
+var err_msg = ""
+const ERROR_TYPES = {
+    UUID_ERROR: "The uuid search failed to find and select specified widget",
+    PARENT_ERROR: "This parent is not recognized, either it needs to be imported or defined",
+    GENERIC_ERROR: "There is an error within the monaco editor that is causing a failure in suggestions"
+}
 
+var qtImports = [];
 var propRange = {};
 
 var matchingBrackets = []
@@ -645,8 +652,10 @@ function registerQmlAsLanguage() {
             for (var j = 0; j < qtObjectSuggestions[key].properties.length; j++) {
                 arr.push(qtObjectSuggestions[key].properties[j])
             }
+            var uuid = create_UUID()
+            var insertWidget = key !== "UIBase" ? `${key} { // start_${uuid}\n\tlayoutInfo.uuid: "${uuid}"\n\tlayoutInfo.columnsWide: 1\n\tlayoutInfo.rowsTall: 1\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n} // end_${uuid}` : `${key} { // start_uibase \n\tcolumnCount: 20\n\trowCount: 20\n \n} // end_uibase`
             arr = removeDuplicates(arr)
-            createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
+            createQtObjectValPairs(key, { label: key, insertText: qtTypeJson["sources"][key].isVisualWidget ? insertWidget : key, properties: arr, flag: false, isId: false })
         }
         for (const key in qtTypeJson) {
             if (key === "property") {
@@ -1063,4 +1072,31 @@ function registerQmlAsLanguage() {
             }
         }
     })
+}
+
+/*
+    External facing functions that will be used in conjunction with the Visual Editor
+*/
+function searchForUUID(uuid){
+    const model = editor.getModel()
+    const range = model.getFullModelRange()
+    const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
+    const endUUidMatch = model.findNextMatch(`end_${uuid}`,{lineNumber: range.startLineNumber, column: range.startColumn})
+    if (uuidMatch !== null && endUUidMatch !== null) {
+        editor.revealLineInCenter(uuidMatch.range.startLineNumber)
+        editor.setSelection({startLineNumber: uuidMatch.range.startLineNumber, startColumn: 0, endColumn: endUUidMatch.range.endColumn, endLineNumber: endUUidMatch.range.startLineNumber})
+    } else {
+        err_flag = true
+        err_msg = ERROR_TYPES.UUID_ERROR
+    }
+}
+
+function create_UUID(){
+    var dt = new Date().getTime();
+    var uuid = 'xxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c =='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+    return uuid;
 }

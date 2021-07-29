@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Control.qml</file>
+        <file>Warning.qml</file>
+        <file>Example.qml</file>
+        <file>BlankSandbox.qml</file>
+        <file>PlatformInterface.qml</file>
+    </qresource>
+</RCC>

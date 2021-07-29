@@ -331,6 +331,7 @@ void SGFileTabModel::clear(bool emitSignals)
 
     qDeleteAll(data_.begin(), data_.end());
     data_.clear();
+    tabIds_.clear();
 
     if (emitSignals) {
         emit countChanged();
