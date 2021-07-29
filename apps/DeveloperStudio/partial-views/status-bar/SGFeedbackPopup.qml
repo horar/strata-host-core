@@ -269,7 +269,7 @@ SGStrataPopup {
                         id: charactersRemainingText
                         Layout.alignment: Qt.AlignLeft
                         opacity: charactersRemaining === 0 ? 1 : 0.4
-                        text: charactersRemaining + " characters remaining"
+                        text: charactersRemaining === 1 ? charactersRemaining + " character remaining" : charactersRemaining + " characters remaining"
                         font {
                             pixelSize: 15
                             family: Fonts.franklinGothicBook
