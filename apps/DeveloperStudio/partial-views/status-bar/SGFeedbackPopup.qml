@@ -167,6 +167,7 @@ SGStrataPopup {
                             Layout.preferredHeight: nameForm.height
                             text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
                             elide: Text.ElideRight
+                            textFormat: Text.PlainText
 
                             font {
                                 pixelSize: 15

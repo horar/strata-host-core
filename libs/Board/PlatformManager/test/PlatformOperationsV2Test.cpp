@@ -23,6 +23,8 @@ namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
+QTEST_MAIN(PlatformOperationsV2Test)
+
 PlatformOperationsV2Test::PlatformOperationsV2Test() : platformOperations_(false, false) {
 
 }

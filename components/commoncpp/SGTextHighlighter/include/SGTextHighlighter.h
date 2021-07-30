@@ -11,6 +11,8 @@ class SGTextHighlighter: public QSyntaxHighlighter
     Q_OBJECT
     Q_DISABLE_COPY(SGTextHighlighter);
 
+    // bug https://jira.onsemi.com/browse/CS-2128: when highlighting text, on macOS Big Sur 11.5 text moves it's caused by the deafult font `.AppleSystemUIFont`
+    // workaround is to explicitly set font (such as: "monochrome", "helvetica", ect..) for TextEdit where text is being highlighted
     Q_PROPERTY(QQuickTextDocument* textDocument READ textDocument WRITE setTextDocument NOTIFY textDocumentChanged)
     Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
     Q_PROPERTY(FilterSyntax filterPatternSyntax READ filterPatternSyntax WRITE setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
