@@ -116,4 +116,8 @@ var uuid_map = {
     "d64c7dea-4509-45c6-8f99-02bf6e091366": "MDK-UCB",
     "334aeac5-129f-4f31-83f1-461a5cfd7377": "MDK-UCB",
     "a715b4d6-b9a3-4fdf-a1da-bcf629146232": "SiC-SSDC-INV-UCB",
+    "abc1cf67-bfb4-4e08-8c67-e6a78f9b9adb":"mv-mdk",
+    "c7069a8a-0dd9-40cf-ac89-29aafabb02a2":"mv-mdk",
+    "b1133641-5b46-4d11-9b96-9126b9d2a109":"mv-mdk",
+    "1917934f-3b79-4e8b-b37a-b1bd92d2afd5":"mv-mdk"
 }
