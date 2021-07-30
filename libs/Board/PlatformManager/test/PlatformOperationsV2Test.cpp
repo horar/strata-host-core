@@ -23,6 +23,8 @@ namespace test_commands = strata::device::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
+QTEST_MAIN(PlatformOperationsV2Test)
+
 PlatformOperationsV2Test::PlatformOperationsV2Test() : platformOperations_(false, false) {
 
 }
@@ -964,7 +966,7 @@ void PlatformOperationsV2Test::flashInvalidValueTest()
     QCOMPARE(flashPartialStatusCount_, 1);
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
-    QCOMPARE(recordedMessages.size(), 2);;
+    QCOMPARE(recordedMessages.size(), 2);
 
     expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
     const rapidjson::Value& expectedPayload = expectedDoc["payload"];

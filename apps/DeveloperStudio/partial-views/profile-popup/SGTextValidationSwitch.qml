@@ -29,7 +29,9 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter
         fontSizeMultiplier: 0.9
+        textFormat: Text.PlainText
         visible: true
+        elide: Text.ElideRight
     }
 
     ValidationField {
@@ -41,5 +43,4 @@ Item {
         valid: text.match(/\S/)
         visible: false
     }
-
 }

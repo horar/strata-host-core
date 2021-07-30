@@ -86,7 +86,7 @@ private:
 
     QTemporaryFile fakeFirmware_;
     QTemporaryFile fakeBootloader_;
-    QTemporaryFile fakeFirmwareBackup_;
+    QString fakeFirmwareBackupName_;
 
     QString expectedMd5_;
     int expectedChunksCount_ = 0;
