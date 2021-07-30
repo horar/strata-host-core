@@ -1,3 +1,5 @@
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests")
+
 add_executable(database-test
     main.cpp
     couchbase-database-test.cpp

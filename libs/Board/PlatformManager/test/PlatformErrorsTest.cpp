@@ -11,6 +11,8 @@ using strata::device::MockVersion;
 
 namespace test_commands = strata::device::test_commands;
 
+QTEST_MAIN(PlatformErrorsTest)
+
 PlatformErrorsTest::PlatformErrorsTest() : platformOperations_(false, false) {
     qRegisterMetaType<strata::device::Device::ErrorCode>("device::Device::ErrorCode");
 }
