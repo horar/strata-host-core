@@ -8,6 +8,8 @@ using strata::PlatformManager;
 using strata::device::Device;
 using strata::device::scanner::MockDeviceScanner;
 
+QTEST_MAIN(PlatformManagerTest)
+
 PlatformManagerTest::PlatformManagerTest()
 {
 }

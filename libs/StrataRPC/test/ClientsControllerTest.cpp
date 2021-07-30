@@ -1,5 +1,7 @@
 #include "ClientsControllerTest.h"
 
+QTEST_MAIN(ClientsControllerTest)
+
 void ClientsControllerTest::notifyClientMock(const Client &client, const QString &handlerName,
                                              const QJsonObject &payload)
 {

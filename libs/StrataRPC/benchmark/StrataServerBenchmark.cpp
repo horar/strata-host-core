@@ -2,6 +2,8 @@
 
 #include <QMetaObject>
 
+QTEST_MAIN(StrataServerBenchmark)
+
 void StrataServerBenchmark::benchmarkLargeNumberOfHandlers()
 {
     int totalNumberOfHandlers = 10000;
