@@ -7,7 +7,7 @@ Item {
     Layout.fillWidth: true
 
     Image {
-        source: model.filepath.toString().includes("file://") ? model.filepath : "file://" + model.filepath
+        source: model.filepath.toString().includes("file:/") ? model.filepath : "file:/" + model.filepath
 
         anchors.fill: parent
         horizontalAlignment: Image.AlignHCenter
