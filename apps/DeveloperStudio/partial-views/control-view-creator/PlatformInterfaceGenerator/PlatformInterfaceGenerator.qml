@@ -840,7 +840,7 @@ Item {
             } else {
                 object.value = getTypedValue(arrayElement.type, arrayElement.value)
             }
-            outputArr.push(object)            
+            outputArr.push(object)
         }
         return outputArr
     }
@@ -922,7 +922,7 @@ Item {
             const result = searchLevel1(command)
             if (!result) {
                 return false
-            } else if (result == "APIv0") {
+            } else if (result === "APIv0") {
                 return result
             }
         }
@@ -943,7 +943,7 @@ Item {
     function searchLevel1(object) {
         if (object.hasOwnProperty("payload") && object["payload"] !== null) {
             if (!Array.isArray(object["payload"])) {
-                if (typeof object["payload"] === "object" && object["payload"] !== null) {
+                if (typeof object["payload"] === "object") {
                     return "APIv0"
                 }
                 return false
@@ -964,7 +964,7 @@ Item {
                 }
             }
         }
-        return true
+        return "APIv1"
     }
 
     function searchLevel2Recurse(object) {
@@ -978,7 +978,7 @@ Item {
                 return searchLevel2Recurse(obj)
             }
         }
-        return true
+        return "APIv1"
     }
 
     /********************************************************************************************
