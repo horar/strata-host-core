@@ -348,9 +348,9 @@ private:
     // String literal for creating a base QML file
     const QString baseQMLFile_ = R"baseQMLFile(import QtQuick 2.12
 
-Item { // start_top
+Item {
 
-} // end_top
+}
 )baseQMLFile";
 
     // String literal for creating a VE-enabled QML file

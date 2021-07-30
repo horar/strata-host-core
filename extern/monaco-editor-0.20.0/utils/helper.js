@@ -1,8 +1,5 @@
-
-
 // return an object from a string with definable properties
 function createDynamicSuggestion(suggestion, type, params_name = [""]) {
-    const uuid = randomUUID()
     switch (type) {
         case "property":
             return {
@@ -70,6 +67,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
             }
     }
 }
+
 // filter out duplicate lines
 function removeDuplicates(propertySuggestions) {
     return propertySuggestions.sort().filter(function (itm, idx, arr) {
@@ -148,7 +146,6 @@ function addInheritedItems(masterItem, item) {
 
     return object;
 }
-
 
 function getImportedItemList() {
     const itemList = []
