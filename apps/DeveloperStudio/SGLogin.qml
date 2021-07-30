@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
 import "qrc:/js/utilities.js" as Utility
-import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 
 import tech.strata.fonts 1.0
@@ -237,14 +236,8 @@ Item {
             margins: 30
         }
         height: testServerWarning.height + 30
-        visible: Rest.url !== sdsModel.urls.authServer
-
-        Connections {
-            target: Signals
-            onServerChanged: {
-                testServerWarningContainer.visible = ( Rest.url !== sdsModel.urls.authServer )
-            }
-        }
+        visible: sdsModel.urls.authServer !== "https://strata.onsemi.com/"
+        // Checks if the authServer is set to Non-Production server
 
         Text {
             id: testServerWarning
