@@ -40,7 +40,6 @@ Item {
     MouseArea {
         id: containMouseArea
         anchors.fill: root
-        z: 0
 
         onClicked: {
             forceActiveFocus()
@@ -280,7 +279,6 @@ Item {
                         left: parent.left
                         leftMargin: 10
                     }
-                    z:2
                 }
             }
 

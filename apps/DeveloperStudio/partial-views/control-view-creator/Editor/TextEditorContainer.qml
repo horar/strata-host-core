@@ -231,7 +231,6 @@ Item {
             id: alertToast
             Layout.fillWidth: true
             interval: 0
-            z: 100
             color: "red"
         }
     }

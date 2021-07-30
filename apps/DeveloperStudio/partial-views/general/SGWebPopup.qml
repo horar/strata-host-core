@@ -26,7 +26,6 @@ Popup {
         samples: 30
         color: "#cc000000"
         source: webPopup.background
-        z: -1
         cached: true
     }
 
