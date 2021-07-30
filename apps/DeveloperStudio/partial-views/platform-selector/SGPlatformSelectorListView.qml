@@ -37,6 +37,8 @@ Item {
     }
 
     SGSortFilterProxyModel {
+        // QTBUG-46487: calling invalidate() on this model can cause warning in logs, i.e. "DelegateModel::cancel: index out range 5 4"
+        // TODO: verify if problem persists once the QTBUG is fixed and close the related ticket (CS-1920)
         id: filteredPlatformSelectorModel
         sourceModel: PlatformSelection.platformSelectorModel
         sortEnabled: true

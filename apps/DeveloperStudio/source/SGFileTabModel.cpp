@@ -1,5 +1,6 @@
 #include "SGFileTabModel.h"
 #include "logging/LoggingQtCategories.h"
+#include "SGUtilsCpp.h"
 
 /*******************************************************************
  * class SGFileTabItem
@@ -231,6 +232,24 @@ bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
 {
     if (hasTab(id)) {
         setCurrentId(id);
+        return false;
+    }
+
+    if (id.isEmpty()) {
+        qCCritical(logCategoryControlViewCreator) << "File id is empty";
+        return false;
+    } else if (filename.isEmpty()) {
+        qCCritical(logCategoryControlViewCreator) << "File name is empty";
+        return false;
+    } else if (filetype.isEmpty()) {
+        qCCritical(logCategoryControlViewCreator) << "File type is empty";
+        return false;
+    }
+
+    SGUtilsCpp utils;
+    QString path = utils.urlToLocalFile(filepath);
+    if (!utils.exists(path)) {
+        qCCritical(logCategoryControlViewCreator) << "File does not exist in file path";
         return false;
     }
 

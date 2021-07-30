@@ -121,6 +121,14 @@ Item {
         ProgramDeviceWizard {
             focus: true
             prtModel: prtMain.prtModel
+
+            StackView.onActivated: {
+                prtModel.startDeviceScan()
+            }
+
+            StackView.onDeactivated: {
+                prtModel.stopDeviceScan()
+            }
         }
     }
 
