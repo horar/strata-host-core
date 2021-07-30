@@ -26,7 +26,25 @@ ColumnLayout {
     property alias functions: functions
 
     Component.onCompleted: {
-        functions.checkFile()
+        offsetCheckFile.start()
+    }
+
+    // Hack to force checkfile to happen asynchronously from Monaco initialization
+    // otherwise debugBar warnings append late and are not captured by sdsModel.qtLogger disable during VE load
+    Timer {
+        id: offsetCheckFile
+        interval: 1
+        onTriggered: functions.checkFile()
+    }
+
+    Connections {
+        target: treeModel
+        enabled: cvcUserSettings.reloadViewExternalChanges
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                functions.unload(true)
+            }
+        }
     }
 
     onVisibleChanged: {
@@ -100,12 +118,10 @@ ColumnLayout {
                 var overLayObject = overlayComponent.createObject(overlayContainer)
 
                 // overlay's object name is equivalent to the id of the item since id's are not accessible at runtime
-                overLayObject.objectName = functions.getObjectPropertyValue(item.layoutInfo.uuid, "id")
-                overLayObject.type = functions.getType(item.layoutInfo.uuid)
-                if (overLayObject.objectName === null || overLayObject.type === null) {
-                    overLayObject.destroy()
-                    return
-                }
+                // these will be fetched when moused over for the first time
+                overLayObject.objectName = ""
+                overLayObject.type = ""
+
                 overLayObject.layoutInfo.uuid = item.layoutInfo.uuid
                 overLayObject.layoutInfo.columnsWide = item.layoutInfo.columnsWide
                 overLayObject.layoutInfo.rowsTall = item.layoutInfo.rowsTall
@@ -124,6 +140,64 @@ ColumnLayout {
                     property int rowCount: overlayContainer.rowCount
                     property real columnSize: overlayContainer.columnSize
                     property real rowSize: overlayContainer.rowSize
+                }
+            }
+        }
+    }
+
+    Connections {
+        target: sdsModel.visualEditorUndoStack
+
+        onUndoCommand: {
+            if (visualEditor.file == file) {
+                functions.setObjectPropertyAndSave(uuid, propertyName, value, false)
+            }
+        }
+
+        onUndoItemAdded: {
+            if (visualEditor.file == file) {
+                functions.removeControl(uuid, false)
+            }
+        }
+
+        onUndoItemDeleted: {
+            if (visualEditor.file == file) {
+                functions.insertTextAtEndOfFile(objectString)
+            }
+        }
+
+        onUndoItemMoved: {
+            if (visualEditor.file == file) {
+                functions.moveItem(uuid, x, y, false)
+            }
+        }
+
+        onUndoItemResized: {
+            if (visualEditor.file == file) {
+                functions.resizeItem(uuid, x, y, false)
+            }
+        }
+    }
+
+    Connections {
+        target: fileContainerRoot
+
+        onTextEditorSavedFile: {
+            console.log("Visual Editor undo/redo reset: detected saved changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+            sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
+        }
+    }
+
+    Connections {
+        target: treeModel
+
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                if (visualEditor.functions.saveRequestedByVE) {
+                    visualEditor.functions.saveRequestedByVE = false
+                } else {
+                    console.log("Visual Editor undo/redo reset: detected external changes to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
+                    sdsModel.visualEditorUndoStack.clearStack(visualEditor.file)
                 }
             }
         }

@@ -276,15 +276,30 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     return true;
 }
 
-bool SciPlatform::saveDeviceFirmware(QString filePath) {
+QString SciPlatform::saveDeviceFirmware(QString filePath) {
     if (status_ != PlatformStatus::Ready) {
-        qCWarning(logCategorySci) << "platform not ready";
-        return false;
+        QString errorString(QStringLiteral("platform not ready"));
+        qCWarning(logCategorySci) << platform_ << errorString;
+        return errorString;
     }
 
     if (flasherConnector_.isNull() == false) {
-        qCWarning(logCategorySci) << "flasherConnector already exists";
-        return false;
+        QString errorString(QStringLiteral("flasherConnector already exists"));
+        qCWarning(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    if (filePath.isEmpty()) {
+        QString errorString(QStringLiteral("no file name specified"));
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        QString errorString(QStringLiteral("cannot use relative path for backup file"));
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
     }
 
     flasherConnector_ = new strata::FlasherConnector(platform_, filePath, this);
@@ -297,7 +312,7 @@ bool SciPlatform::saveDeviceFirmware(QString filePath) {
     flasherConnector_->backup();
     setProgramInProgress(true);
 
-    return true;
+    return QString();
 }
 
 void SciPlatform::storeCommandHistory(const QStringList &list)

@@ -31,6 +31,13 @@ ColumnLayout {
     property int savedVersionId
     property int currentVersionId
     property bool externalChanges: false
+    property bool internalChanges: model.unsavedChanges
+
+    signal saveClicked()
+    signal undoClicked()
+    signal redoClicked()
+
+    signal textEditorSavedFile(string file)
 
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath))
@@ -85,6 +92,9 @@ ColumnLayout {
             savedVersionId = currentVersionId
             model.unsavedChanges = false
             externalChanges = false
+
+            textEditorSavedFile(model.filepath)
+
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
             } else {
@@ -96,6 +106,7 @@ ColumnLayout {
             console.error("Unable to save file", model.filepath)
         }
     }
+
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
@@ -130,7 +141,7 @@ ColumnLayout {
     }
 
     Connections {
-        target: editor.editorToolBar
+        target: fileContainerRoot
 
         onSaveClicked: {
             if (modelIndex === openFilesModel.currentIndex) {
@@ -294,6 +305,74 @@ ColumnLayout {
             Layout.preferredHeight: menuRow.height - 6
             Layout.preferredWidth: 1
             color: "grey"
+            visible: !menuLoader.active
+        }
+
+        Repeater {
+            id: mainButtons
+
+            model: [
+                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: menuLoader.active ? false : true, enabled: internalChanges },
+                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true, enabled: true },
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true, enabled: true }
+            ]
+
+            delegate: Button {
+                Layout.preferredHeight: 25
+                Layout.preferredWidth: height
+
+                enabled: openFilesModel.count > 0 && modelData.enabled
+                visible: modelData.visible
+
+                background: Rectangle {
+                    radius: 0
+                    color: enabled === false ? "transparent" : hovered ? "#eee" : "#fff"
+                }
+
+                SGIcon {
+                    id: icon
+                    anchors.fill: parent
+                    anchors.margins: 4
+                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "light gray"
+                    source: modelData.iconSource
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: parent.enabled
+                    hoverEnabled: true
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onPressed: {
+                        icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                    }
+
+                    onReleased: {
+                        icon.iconColor = Qt.rgba(255, 255, 255, 0.4)
+                    }
+
+                    onClicked: {
+                        switch (modelData.buttonType) {
+                            case "save":
+                                saveClicked()
+                                break
+                            case "undo":
+                                undoClicked()
+                                break
+                            case "redo":
+                                redoClicked()
+                                break
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            // divider
+            Layout.preferredHeight: menuRow.height - 6
+            Layout.preferredWidth: 1
+            color: "grey"
             visible: menuLoader.active
         }
 
@@ -340,7 +419,7 @@ ColumnLayout {
             id: webEngine
             webChannel: channel
             url: "qrc:///tech/strata/monaco/minified/editor.html"
-            
+
             settings.localContentCanAccessRemoteUrls: false
             settings.localContentCanAccessFileUrls: true
             settings.localStorageEnabled: false
@@ -398,7 +477,7 @@ ColumnLayout {
                         "error_intro": "Control View Creator Error:",
                         "error_message": "Monaco text editor component failed to load or was not found"
                     }
-                    
+
                     fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
                 }
             }
@@ -478,7 +557,7 @@ ColumnLayout {
 
         function checkForErrors(flag,log) {
             if (flag) {
-            	console.error(log)
+                console.error(log)
             }
         }
 
@@ -494,8 +573,9 @@ ColumnLayout {
             if (!savedVersionId || reset) {
                 savedVersionId = version
 
-                if (reset)
+                if (reset) {
                     reset = false
+                }
             }
 
             currentVersionId = version

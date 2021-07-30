@@ -16,7 +16,7 @@ public:
     virtual ~SciMockDeviceModel() override;
     void init();
 
-    Q_INVOKABLE bool connectMockDevice(const QString& deviceName, const QByteArray& deviceId);
+    Q_INVOKABLE QString connectMockDevice(const QString& deviceName, const QByteArray& deviceId);
     Q_INVOKABLE bool disconnectMockDevice(const QByteArray& deviceId);
     Q_INVOKABLE void disconnectAllMockDevices();
     Q_INVOKABLE QString getLatestMockDeviceName() const;

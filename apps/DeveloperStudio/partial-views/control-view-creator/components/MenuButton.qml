@@ -34,9 +34,6 @@ Button {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
-
-        onPressed:  mouse.accepted = false
+        onPressed: mouse.accepted = false
     }
 }
-
-

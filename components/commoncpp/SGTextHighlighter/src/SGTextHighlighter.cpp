@@ -84,7 +84,7 @@ void SGTextHighlighter::highlightBlock(const QString &text)
     int pos = 0;
     while (pos != -1) {
         int substringStart = regularExpression_.indexIn(text, pos);
-        if (substringStart == -1) {
+        if (substringStart == -1 || regularExpression_.matchedLength() == 0) {
             break;
         }
 

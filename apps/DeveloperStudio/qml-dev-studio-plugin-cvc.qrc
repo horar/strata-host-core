@@ -5,6 +5,7 @@
     </qresource>
     <qresource prefix="/partial-views/control-view-creator">
         <file alias="Editor.qml">partial-views/control-view-creator/Editor.qml</file>
+        <file alias="TopBar.qml">partial-views/control-view-creator/TopBar.qml</file>
         <file alias="NewControlView.qml">partial-views/control-view-creator/NewControlView.qml</file>
         <file alias="OpenControlView.qml">partial-views/control-view-creator/OpenControlView.qml</file>
         <file alias="Start.qml">partial-views/control-view-creator/Start.qml</file>
