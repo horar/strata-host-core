@@ -6,13 +6,9 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    property int modelIndex: index
-    property string file: model.filename
-
     Image {
-        id: imageView
+        source: model.filepath.toString().includes("file://") ? model.filepath : "file://" + model.filepath
 
-        source: model.filepath
         anchors.fill: parent
         horizontalAlignment: Image.AlignHCenter
         verticalAlignment: Image.AlignVCenter
@@ -27,7 +23,7 @@ Item {
 
         onStatusChanged: {
             if (status === Image.Error) {
-                imageView.source = "../ImageLoadError.svg"
+                source = "../ImageLoadError.svg"
                 console.error("Error loading image in Image container")
             }
         }
