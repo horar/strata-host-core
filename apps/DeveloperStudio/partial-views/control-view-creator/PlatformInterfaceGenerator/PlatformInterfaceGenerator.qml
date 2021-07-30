@@ -337,7 +337,6 @@ Item {
                 let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
                 try {
                     const jsonObject = JSON.parse(fileText)
-                    createModelFromJson(jsonObject)
                     if (importValidationCheck(jsonObject)) {
                         if (alertToast.visible) {
                             alertToast.hide()
