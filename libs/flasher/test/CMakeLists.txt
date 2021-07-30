@@ -5,24 +5,31 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests")
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
 
-add_executable(${PROJECT_NAME}-test
+set(SOURCE_FILES
     FlasherTest.cpp
-    FlasherTestConstants.h
-    main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}-test
-    PRIVATE Qt5::Test
-    PRIVATE Flasher
-    PRIVATE strata::base64
-    PRIVATE strata::crc16
-)
+foreach(SOURCE_PATH ${SOURCE_FILES})
 
-add_test(NAME ${PROJECT_NAME}-test
-    COMMAND ${PROJECT_NAME}-test
-)
+    get_filename_component(EXECUTABLE_NAME ${SOURCE_PATH} NAME_WE)
 
+    add_executable(${EXECUTABLE_NAME} ${SOURCE_PATH})
+
+    target_link_libraries(${EXECUTABLE_NAME}
+        PRIVATE Qt5::Test
+        PRIVATE Flasher
+        PRIVATE strata::base64
+        PRIVATE strata::crc16
+    )
+
+    add_test(NAME ${EXECUTABLE_NAME}
+        COMMAND ${EXECUTABLE_NAME}
+    )
+
+endforeach(SOURCE_PATH ${SOURCE_FILES})

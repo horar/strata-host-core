@@ -70,6 +70,9 @@ public:
     Q_INVOKABLE void clearBinaries();
     Q_INVOKABLE void abortDownload();
 
+    Q_INVOKABLE void startDeviceScan();
+    Q_INVOKABLE void stopDeviceScan();
+
 signals:
     void deviceInfoChanged(QByteArray deviceId);
     void boardDisconnected(QByteArray deviceId);
