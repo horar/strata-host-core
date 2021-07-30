@@ -236,7 +236,7 @@ Item {
             margins: 30
         }
         height: testServerWarning.height + 30
-        visible: sdsModel.urls.authServer !== "https://strata.onsemi.com/"
+        visible: sdsModel.urls.serverType !== "production"
         // Checks if the authServer is set to Non-Production server
 
         Text {
