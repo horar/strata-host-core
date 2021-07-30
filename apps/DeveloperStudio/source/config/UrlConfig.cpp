@@ -45,13 +45,6 @@ bool UrlConfig::parseUrl()
             return false;
     }
 
-    if (value[QLatin1String("test_auth_server")] != QJsonValue::Undefined) {
-        if (setUrlValue(value[QLatin1String("test_auth_server")], &testAuthServer_) == false) {
-            qCCritical(logCategoryStrataDevStudioConfig) << " non-production server was not set";
-                return false;
-        }
-    }
-
     value = loadDoc[QLatin1String("static_website")];
     if (value == QJsonValue::Undefined) {
         qCCritical(logCategoryStrataDevStudioConfig) << "missing 'static website' key";
@@ -101,10 +94,6 @@ QString UrlConfig::getPrivacyPolicyUrl() const {
 
 QString UrlConfig::getAuthServer() const {
     return authServer_;
-}
-
-QString UrlConfig::getTestAuthServer() const {
-    return testAuthServer_;
 }
 
 QString UrlConfig::getMouserUrl() const {
