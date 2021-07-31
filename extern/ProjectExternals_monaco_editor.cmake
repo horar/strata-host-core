@@ -30,7 +30,6 @@ ExternalProject_Add(monaco-editor-${MONACO_TAG}
     BUILD_ALWAYS ON
     URL https://registry.npmjs.org/monaco-editor/-/monaco-editor-${MONACO_TAG}.tgz
     URL_HASH SHA1=5d5009343a550124426cb4d965a4d27a348b4dea
-    PATCH_COMMAND git apply --verbose --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/monaco-editor-0.20.0/min-add-qml.patch ${CMAKE_CURRENT_SOURCE_DIR}/patches/monaco-editor-0.20.0/monaco-editor-add-qml.patch
     CONFIGURE_COMMAND ""
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/monaco.d.ts ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/monaco.d.ts
     COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/min/vs ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/min/vs
