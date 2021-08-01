@@ -11,6 +11,13 @@ var qtProperties = null;
 var qtIds = null;
 
 var qtQuickModel = null;
+
+const ERROR_TYPES = {
+    UUID_ERROR: "The uuid search failed to find and select specified widget",
+    PARENT_ERROR: "This parent is not recognized, either it needs to be imported or defined",
+    GENERIC_ERROR: "There is an error within the monaco editor that is causing a failure in suggestions"
+}
+var err_flag = false;
 /*
     This the global registration for the monaco editor this creates the syntax and linguistics of the qml language, as well as defining the theme of the qml language
 */
@@ -34,6 +41,7 @@ function registerQmlProvider() {
     editor.getModel().onDidChangeContent((event) => {
         window.link.fileText = editor.getValue();
         window.link.setVersionId(editor.getModel().getAlternativeVersionId());
+        window.link.setFinished(true)
     })
 
     // Component will unmount
@@ -270,4 +278,20 @@ function initEditor() {
     qtQuickModel = new QtQuickModel()
     qtSearch = new QtSearch()
     qtSuggestions = new QtSuggestions()
+}
+/*
+    External facing functions that will be used in conjunction with the Visual Editor
+*/
+function searchForUUID(uuid){
+    const model = editor.getModel()
+    const range = model.getFullModelRange()
+    const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
+    const endUUidMatch = model.findNextMatch(`end_${uuid}`,{lineNumber: range.startLineNumber, column: range.startColumn})
+    if (uuidMatch !== null && endUUidMatch !== null) {
+        editor.revealLineInCenter(uuidMatch.range.startLineNumber)
+        editor.setSelection({startLineNumber: uuidMatch.range.startLineNumber, startColumn: 0, endColumn: endUUidMatch.range.endColumn, endLineNumber: endUUidMatch.range.startLineNumber})
+    } else {
+        err_flag = true
+        err_msg = ERROR_TYPES.UUID_ERROR
+    }
 }

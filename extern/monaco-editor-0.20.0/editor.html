@@ -38,6 +38,7 @@
             window.link = link;
 
             link.setValue.connect(function (value) {
+                window.link.setFinished(false)
                 editor.setValue(value);
             });
 
@@ -50,6 +51,12 @@
                 document.getElementById("container").setAttribute("style", `width:${width}px`);
                 editor.layout()
             });
+
+            link.goToUUID.connect(function (uuid){
+                searchForUUID(uuid)
+                link.checkForErrors(err_flag,err_msg)
+                err_flag = false
+            })
 
             link.undo.connect(function () {
                 editor.trigger('undoClicked', 'undo');

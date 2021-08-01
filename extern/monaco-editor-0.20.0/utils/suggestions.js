@@ -101,7 +101,11 @@ class QtSuggestions {
                     this.suggestions.push(createDynamicSuggestion(arr[i], type))
                 }
             } else {
-                this.suggestions.push(createDynamicSuggestion(arr[i], type))
+                if (type === "item" && qtTypeJson["sources"][arr[i]]["isVisualWidget"] && arr[i] !== "UIBase") {
+                    this.suggestions.push(createDynamicSuggestion(arr[i], "visual-widget"))
+                } else {
+                    this.suggestions.push(createDynamicSuggestion(arr[i], type))
+                }
             }
         }
     }
