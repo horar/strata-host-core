@@ -7,18 +7,18 @@ import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
-    Text {
-        id: header
-        text: "Debug Commands and Notifications"
-        font.bold: true
-        font.pointSize: 18
-        anchors {
-            top: parent.top
-            bottomMargin: 20
-        }
-        width: parent.width
-        horizontalAlignment: Text.AlignHCenter
-    }
+//    Text {
+//        id: header
+//        text: "Debug Commands and Notifications"
+//        font.bold: true
+//        font.pointSize: 18
+//        anchors {
+//            top: parent.top
+//            bottomMargin: 20
+//        }
+//        width: parent.width
+//        horizontalAlignment: Text.AlignHCenter
+//    }
 
     ListModel {
         id: mainModel

@@ -20,6 +20,7 @@ Rectangle {
 
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
+    property bool isDebugMenuOpen: false
     property bool popupWindow: false
     property bool debugMenuWindow: false
     property bool recompileRequested: false
@@ -89,15 +90,15 @@ Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    onResizingChanged: {
-                        if (!resizing) {
-                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                                debugPanel.expandWidth = debugPanel.width
-                            } else {
-                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
-                            }
-                        }
-                    }
+                    //                    onResizingChanged: {
+                    //                        if (!resizing) {
+                    //                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
+                    //                                debugPanel.expandWidth = debugPanel.width
+                    //                            } else {
+                    //                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
+                    //                            }
+                    //                        }
+                    //                    }
 
                     Loader {
                         id: controlViewLoader
@@ -149,32 +150,27 @@ Rectangle {
         }
     }
 
-    //    Item {
-    //        id: test
-    //        implicitWidth: 400
-    //        height: parent.height
-    //        visible: viewStack.currentIndex === 2 && debugMenuWindow === false && debugPanel.debugMenuSource.toString() !== ""
-    //        anchors.top: parent.top
-    //        anchors.right: parent.right
-    //    }
+    Item {
+        id: test
+        width: parent.width - navigationBar.width
+        height: parent.height
+        anchors.top: parent.top
+        anchors.right: parent.right
+        visible: viewStack.currentIndex === 2 && isDebugMenuOpen === true && debugMenuWindow === false
+    }
 
     DebugPanel {
         id: debugPanel
-        implicitWidth: 400
-        height: parent.height
-        visible: viewStack.currentIndex === 2
-
-        //        parent: {
-        //            if (debugMenuWindow) {
-        //                return newWindowDebugMenuLoader.item.consoleLogParent
-        //            }
-        //            else {
-        //                return test
-        //            }
-        //        }
+        parent: {
+            if (debugMenuWindow) {
+                return newWindowDebugMenuLoader.item.consoleLogParent
+            }
+            else {
+                return test
+            }
+        }
 
     }
-
 
     ConsoleContainer {
         id:consoleContainer

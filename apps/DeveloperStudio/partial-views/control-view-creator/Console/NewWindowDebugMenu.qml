@@ -3,10 +3,10 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
     id: root
-    width: 400
+    width: 450
     height: 1000
     minimumHeight: 121
-    minimumWidth: 426
+    minimumWidth: 450
 
     visible: true
     property alias consoleLogParent: newWindowContainer
@@ -15,7 +15,7 @@ ApplicationWindow {
         if (debugMenuWindow) {
             debugMenuWindow = false
         }
-       // isConsoleLogOpen = false
+        isDebugMenuOpen = false
     }
 
     Item {

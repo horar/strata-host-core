@@ -39,7 +39,7 @@ Item {
         }
 
         onUrlChanged: {
-            debugPanel.collapse()
+            isDebugMenuOpen = false
         }
     }
 

@@ -10,19 +10,14 @@ import "components/"
 Item {
     id: root
 
-    width: 0
-    visible: debugMenuSource.toString() !== ""
-
-    readonly property bool expanded: width > 0 && visible
-    readonly property int minimumExpandWidth: 400
+    property var debugVisible: false
+    property alias mainContainer: mainContainer
+    property real rectWidth: 450
 
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-    property int expandWidth: minimumExpandWidth
-    property alias mainContainer: mainContainer
-    property real rectWidth: 400
+    onDebugMenuSourceChanged: debugMenuSource.toString() ? debugVisible = true : debugVisible = false
 
-    anchors.top: parent.top
-    anchors.right: parent.right
+    anchors.fill: parent
 
     Rectangle {
         id: mainContainer
@@ -30,7 +25,6 @@ Item {
         height: parent.height
         anchors.right: parent.right
         color: "lightgrey"
-        visible: width > 0
         clip: true
 
         Rectangle {
@@ -46,6 +40,13 @@ Item {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    SGText {
+                        id: header
+                        text: "Debug Commands and Notifications"
+
+                        fontSizeMultiplier: 1.15
+                        leftPadding: 5
+                    }
                 }
 
                 SGControlViewIconButton {
@@ -56,7 +57,6 @@ Item {
 
                     onClicked:  {
                         debugMenuWindow = !debugMenuWindow
-                        root.parent = newWindowDebugMenuLoader.item.consoleLogParent
                     }
                 }
 
@@ -67,7 +67,10 @@ Item {
                     Layout.alignment: Qt.AlignRight
 
                     onClicked:  {
-                        debugPanel.collapse()
+                        if (debugMenuWindow) {
+                            debugMenuWindow = false
+                        }
+                        isDebugMenuOpen = false
                     }
                 }
             }
@@ -111,31 +114,5 @@ Item {
         drag.minimumX: 0
         drag.maximumX: (parent.width - 30)
         cursorShape: Qt.SplitHCursor
-    }
-
-    NumberAnimation {
-        id: collapseAnimation
-        target: root
-        property: "width"
-        duration: 200
-        easing.type: Easing.InOutQuad
-        to: 0
-    }
-
-    NumberAnimation {
-        id: expandAnimation
-        target: root
-        property: "width"
-        duration: 200
-        easing.type: Easing.InOutQuad
-        to: root.expandWidth
-    }
-
-    function expand() {
-        expandAnimation.start()
-    }
-
-    function collapse() {
-        collapseAnimation.start()
     }
 }

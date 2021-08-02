@@ -68,19 +68,12 @@ Rectangle {
         SGSideNavItem {
             iconText: "Debug"
             iconSource: "qrc:/sgimages/tools.svg"
-            enabled: viewStack.currentIndex === 2 && debugPanel.visible
-            selected: debugPanel.expanded
+            enabled: viewStack.currentIndex === 2 && debugPanel.debugVisible
+            selected: isDebugMenuOpen
             tooltipDescription: "Toggle debug panel"
-            onEnabledChanged: {
-                console.log(enabled)
-            }
 
             onClicked: {
-                if (debugPanel.expanded) {
-                    debugPanel.collapse()
-                } else {
-                    debugPanel.expand()
-                }
+                isDebugMenuOpen = !isDebugMenuOpen
             }
         }
 
