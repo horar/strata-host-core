@@ -92,7 +92,7 @@ var uuid_map = {
     "76a518b4-37bc-4fee-ad5b-92c381dea0c2": "zigbee",
     "0d674fd9-3770-4ee7-ab0c-1f5f5de710fc": "usb-pd-pps",
     "bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor",
-    "36c48ce4-3794-4ba7-a9f4-07fc6e45a8aa" : "hello-strata-rsl10",
+    "36c48ce4-3794-4ba7-a9f4-07fc6e45a8aa": "hello-strata-rsl10",
     "4a1c2e5f-d0b0-4970-8c93-70a9234d195c": "led-tail-light", // STR-NCV7685-AUTO-LED-GEVB
     "ecd43c02-3e7c-4d5e-9231-aabc149c8772": "led-tail-light",  // STR-NCV7684-AUTO-LED-GEVB
     "15411d3f-829f-4b65-b607-13e8dec840aa": "rsl10-dcdc",
@@ -106,14 +106,15 @@ var uuid_map = {
     "cce0f32e-ee1e-44aa-81a3-0801a71048ce": "rsl10-dcdc",
     "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
-    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators",
+    "7bdcea96-0fb8-41de-9822-dec20ae1032a": "level-translators",
     "fda98159-37f0-4e07-9ffe-28f46f80f7b5": "100V-ncp1034",
-    "8a757b79-ba44-4830-864b-2bb965552209" : "pixel",
-    "a34fc0ce-a3fc-4f6b-8c0c-b17aaffff5ff" : "ncs32100",
+    "8a757b79-ba44-4830-864b-2bb965552209": "pixel",
+    "a34fc0ce-a3fc-4f6b-8c0c-b17aaffff5ff": "ncs32100",
     "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-pmbus",
     "d4937f24-219a-4648-a711-2f6e902b6f1c": "rsl10-pmbus",
     "a4e20d30-af03-43cf-98cf-b10cc5c7aa28": "MDK-UCB",
     "d64c7dea-4509-45c6-8f99-02bf6e091366": "MDK-UCB",
     "334aeac5-129f-4f31-83f1-461a5cfd7377": "MDK-UCB",
     "a715b4d6-b9a3-4fdf-a1da-bcf629146232": "SiC-SSDC-INV-UCB",
+    "b3743305-a33c-4dda-8120-b28bb7e4ba50": "dms-ir-led",
 }
