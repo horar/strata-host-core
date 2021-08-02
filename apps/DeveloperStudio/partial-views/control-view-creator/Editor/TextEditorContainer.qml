@@ -415,6 +415,7 @@ ColumnLayout {
             }
         }
         Item {
+
             WebEngineView {
                 id: webEngine
                 webChannel: channel
@@ -484,7 +485,7 @@ ColumnLayout {
                 }
             }
             Rectangle {
-                id: barContainer
+               	id: barContainer
                 color: "white"
                 anchors {
                     fill: parent
