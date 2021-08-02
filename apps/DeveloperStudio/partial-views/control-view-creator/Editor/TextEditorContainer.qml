@@ -10,14 +10,15 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
-import "../../general"
-import "../"
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-Item {
+import "../../general"
+import "../"
+import "../components"
+
+ColumnLayout {
     id: fileContainerRoot
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+    spacing: 0
 
     onVisibleChanged: {
         if (visible) {
@@ -30,6 +31,13 @@ Item {
     property int savedVersionId
     property int currentVersionId
     property bool externalChanges: false
+    property bool internalChanges: model.unsavedChanges
+
+    signal saveClicked()
+    signal undoClicked()
+    signal redoClicked()
+
+    signal textEditorSavedFile(string file)
 
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath))
@@ -84,8 +92,13 @@ Item {
             savedVersionId = currentVersionId
             model.unsavedChanges = false
             externalChanges = false
+
+            textEditorSavedFile(model.filepath)
+
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
+            } else {
+                visualEditor.functions.checkFile()
             }
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
@@ -97,12 +110,6 @@ Item {
     Keys.onReleased: {
         if (event.matches(StandardKey.Close)) {
             closeFileTab(index, model)
-        }
-    }
-
-    Keys.onPressed: {
-        if (event.matches(StandardKey.Save)) {
-            saveFile()
         }
     }
 
@@ -134,7 +141,7 @@ Item {
     }
 
     Connections {
-        target: editor.editorToolBar
+        target: fileContainerRoot
 
         onSaveClicked: {
             if (modelIndex === openFilesModel.currentIndex) {
@@ -218,21 +225,298 @@ Item {
                     openFilesModel.closeTabAt(modelIndex)
                 }
             }
-
         }
     }
 
+    SGNotificationToast {
+        id: alertToast
+        Layout.fillWidth: true
+        interval: 0
+        z: 100
+        color: "red"
+    }
+
     RowLayout {
-        id: alertRow
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width * 0.7
-        SGNotificationToast {
-            id: alertToast
+        id: menuRow
+        Layout.fillHeight: false
+        Layout.preferredHeight: 40
+        Layout.leftMargin: spacing
+
+        ButtonGroup {
+            id: buttonGroup
+            exclusive: true
+        }
+
+        MenuButton {
+            id: textEditorButton
+            text: "Text Editor"
+            checkable: true
+            checked: viewStack.currentIndex === 0
+
+            implicitHeight: menuRow.height - 10
+
+            Component.onCompleted: buttonGroup.addButton(this)
+
+            onCheckedChanged: {
+                if (checked) {
+                    viewStack.currentIndex = 0
+                }
+            }
+        }
+
+        Item {
+            implicitHeight: visualEditorButton.implicitHeight
+            implicitWidth: visualEditorButton.implicitWidth
+
+            MenuButton {
+                id: visualEditorButton
+                text: "Visual Editor"
+                checkable: true
+                implicitHeight: menuRow.height - 10
+                enabled: visualEditor.fileValid
+                checked: viewStack.currentIndex === 1
+
+                Component.onCompleted: buttonGroup.addButton(this)
+
+                onCheckedChanged: {
+                    if (checked) {
+                        viewStack.currentIndex = 1
+                    }
+                }
+            }
+
+            MouseArea {
+                id: toolTipMouse
+                anchors {
+                    fill: parent
+                }
+                hoverEnabled: enabled
+                enabled: !visualEditorButton.enabled
+
+                ToolTip {
+                    visible: toolTipMouse.containsMouse
+                    text: visualEditor.error
+                }
+            }
+        }
+
+        Rectangle {
+            // divider
+            Layout.preferredHeight: menuRow.height - 6
+            Layout.preferredWidth: 1
+            color: "grey"
+            visible: !menuLoader.active
+        }
+
+        Repeater {
+            id: mainButtons
+
+            model: [
+                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: menuLoader.active ? false : true, enabled: internalChanges },
+                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true, enabled: true },
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true, enabled: true }
+            ]
+
+            delegate: Button {
+                Layout.preferredHeight: 25
+                Layout.preferredWidth: height
+
+                enabled: openFilesModel.count > 0 && modelData.enabled
+                visible: modelData.visible
+
+                background: Rectangle {
+                    radius: 0
+                    color: enabled === false ? "transparent" : hovered ? "#eee" : "#fff"
+                }
+
+                SGIcon {
+                    id: icon
+                    anchors.fill: parent
+                    anchors.margins: 4
+                    iconColor: parent.enabled ? Qt.rgba(255, 255, 255, 0.4) : "light gray"
+                    source: modelData.iconSource
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: parent.enabled
+                    hoverEnabled: true
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onPressed: {
+                        icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                    }
+
+                    onReleased: {
+                        icon.iconColor = Qt.rgba(255, 255, 255, 0.4)
+                    }
+
+                    onClicked: {
+                        switch (modelData.buttonType) {
+                            case "save":
+                                saveClicked()
+                                break
+                            case "undo":
+                                undoClicked()
+                                break
+                            case "redo":
+                                redoClicked()
+                                break
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            // divider
+            Layout.preferredHeight: menuRow.height - 6
+            Layout.preferredWidth: 1
+            color: "grey"
+            visible: menuLoader.active
+        }
+
+        Loader {
+            id: menuLoader
+            active: menuLoaded
             Layout.fillWidth: true
-            interval: 0
-            z: 100
-            color: "red"
+
+            property bool menuLoaded: false
+
+            source: {
+                switch (viewStack.currentIndex) {
+                    case 0:
+                        menuLoaded = false
+                        return ""
+                    case 1:
+                        menuLoaded = true
+                        return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        // divider
+        Layout.fillWidth: true
+        implicitHeight: 1
+        color: "gray"
+    }
+
+    StackLayout {
+        id: viewStack
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        currentIndex: 0
+
+        Keys.onPressed: {
+            if (event.matches(StandardKey.Save)) {
+                saveFile()
+            }
+        }
+
+        WebEngineView {
+            id: webEngine
+            webChannel: channel
+            url: "qrc:///tech/strata/monaco/minified/editor.html"
+
+            settings.localContentCanAccessRemoteUrls: false
+            settings.localContentCanAccessFileUrls: true
+            settings.localStorageEnabled: true
+            settings.errorPageEnabled: false
+            settings.javascriptCanOpenWindows: false
+            settings.javascriptEnabled: true
+            settings.javascriptCanAccessClipboard: true
+            settings.pluginsEnabled: true
+            settings.showScrollBars: false
+
+            onJavaScriptConsoleMessage: {
+                switch (level) {
+                    case WebEngineView.InfoMessageLevel:
+                        console.log(message)
+                        break
+                    case WebEngineView.WarningMessageLevel:
+                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                    case WebEngineView.ErrorMessageLevel:
+                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                        break
+                }
+            }
+
+            onHeightChanged: {
+                var htmlHeight = height - 16
+                channelObject.setContainerHeight(htmlHeight.toString())
+            }
+
+            onWidthChanged: {
+                var htmlWidth = width - 16
+                channelObject.setContainerWidth(htmlWidth.toString())
+            }
+
+            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
+            // the visibilty changed is called when the window is resized from signals outside of the app
+            Connections {
+                target: mainWindow
+
+                onVisibilityChanged: {
+                    var htmlHeight = webEngine.height - 16
+                    var htmlWidth = webEngine.width - 16
+                    channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
+                }
+            }
+
+            onLoadingChanged: {
+                if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                    channelObject.setContainerHeight((webEngine.height - 16).toString())
+                    let fileText = openFile(model.filepath)
+                    channelObject.setHtml(fileText)
+                    channelObject.fileText = fileText
+                } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
+                    let errorProperties = {
+                        "error_intro": "Control View Creator Error:",
+                        "error_message": "Monaco text editor component failed to load or was not found"
+                    }
+
+                    fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
+                }
+            }
+
+            Rectangle {
+                id: barContainer
+                color: "white"
+                anchors {
+                    fill: webEngine
+                }
+                visible: progressBar.value !== 100
+
+                ProgressBar {
+                    id: progressBar
+                    anchors {
+                        centerIn: barContainer
+                        verticalCenterOffset: 10
+                    }
+                    height: 10
+                    width: webEngine.width/2
+                    from: 0
+                    to: 100
+                    value: webEngine.loadProgress
+
+                    Text {
+                        text: qsTr("Loading...")
+                        anchors {
+                            bottom: progressBar.top
+                            bottomMargin: 10
+                            horizontalCenter: progressBar.horizontalCenter
+                        }
+                    }
+                }
+            }
+        }
+
+        VisualEditor {
+            id: visualEditor
+            file: model.filepath
         }
     }
 
@@ -253,11 +537,18 @@ Item {
         signal setContainerHeight(string height)
         signal setContainerWidth(string width)
         signal resetContainer(string height, string width)
-        signal undo()
-        signal redo()
+        signal undo();
+        signal redo();
+        signal goToUUID(string uuid)
 
         function setHtml(value) {
             setValue(value)
+        }
+
+        function checkForErrors(flag,log) {
+            if (flag) {
+                console.error(log)
+            }
         }
 
         function refreshEditorWithExternalChanges() {
@@ -282,109 +573,12 @@ Item {
         }
     }
 
-    WebEngineView {
-        id: webEngine
-        webChannel: channel
-        url: "qrc:///tech/strata/monaco/minified/editor.html"
+    Connections {
+        target: visualEditor.functions
 
-        settings.localContentCanAccessRemoteUrls: false
-        settings.localContentCanAccessFileUrls: true
-        settings.localStorageEnabled: true
-
-        settings.errorPageEnabled: false
-        settings.javascriptCanOpenWindows: false
-        settings.javascriptEnabled: true
-        settings.javascriptCanAccessClipboard: true
-        settings.pluginsEnabled: true
-        settings.showScrollBars: false
-
-        anchors {
-            top: alertRow.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-
-        onJavaScriptConsoleMessage: {
-            switch (level) {
-                case WebEngineView.InfoMessageLevel:
-                    console.log(message)
-                    break
-                case WebEngineView.WarningMessageLevel:
-                    console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
-                case WebEngineView.ErrorMessageLevel:
-                    console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                    break
-            }
-        }
-
-        onHeightChanged: {
-            var htmlHeight = height - 16
-            channelObject.setContainerHeight(htmlHeight.toString())
-        }
-
-        onWidthChanged: {
-            var htmlWidth = width - 16
-            channelObject.setContainerWidth(htmlWidth.toString())
-        }
-
-        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
-        // the visibilty changed is called when the window is resized from signals outside of the app
-        Connections {
-            target: mainWindow
-
-            onVisibilityChanged: {
-                var htmlHeight = webEngine.height - 16
-                var htmlWidth = webEngine.width - 16
-                channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
-            }
-        }
-
-        onLoadingChanged: {
-            if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                channelObject.setContainerHeight((webEngine.height - 16).toString())
-                let fileText = openFile(model.filepath)
-                channelObject.setHtml(fileText)
-                channelObject.fileText = fileText
-            } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-                let errorProperties = {
-                    "error_message": "Monaco text editor component failed to load or was not found"
-                }
-
-                fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties)
-            }
-        }
-
-        Rectangle {
-            id: barContainer
-            color: "white"
-            anchors {
-                fill: webEngine
-            }
-            visible: progressBar.value !== 100
-
-            ProgressBar {
-                id: progressBar
-                anchors {
-                    centerIn: barContainer
-                    verticalCenterOffset: 10
-                }
-                height: 10
-                width: webEngine.width/2
-                from: 0
-                to: 100
-                value: webEngine.loadProgress
-
-                Text {
-                    text: qsTr("Loading...")
-                    anchors {
-                        bottom: progressBar.top
-                        bottomMargin: 10
-                        horizontalCenter: progressBar.horizontalCenter
-                    }
-                }
-            }
+        onPassUUID: {
+            viewStack.currentIndex = 0
+            channelObject.goToUUID(uuid)
         }
     }
 }
