@@ -24,9 +24,9 @@ var uuid_map = {
     "SEC.2018.018.1.0": "logic-gate", // Beta Board
     "SEC.2018.001.0.0": "usb-hub",
     "TEST.2018.002.0.0": "motor-vortex",
-    "entice_rgb" : "entice_rgb",
+    "entice_rgb": "entice_rgb",
     "template": "template",
-    "core-test-ui":"core-test-ui",
+    "core-test-ui": "core-test-ui",
 
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
@@ -55,17 +55,17 @@ var uuid_map = {
     "222": "subGHz",
     "225": "smart-speaker",
     "226": "hello-strata",
-    "227" : "eFuse",
-    "228" : "eFuse",
-    "229" : "eFuse",
-    "230" : "eFuse",
+    "227": "eFuse",
+    "228": "eFuse",
+    "229": "eFuse",
+    "230": "eFuse",
     "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
     "233": "sar-adc",
-    "234" : "Adj-LDO",
-    "235" : "Adj-LDO",
-    "236" : "Adj-LDO",
-    "237" : "Adj-LDO",
+    "234": "Adj-LDO",
+    "235": "Adj-LDO",
+    "236": "Adj-LDO",
+    "237": "Adj-LDO",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",
@@ -74,7 +74,7 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
-    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78":"template",
+    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78": "template",
 
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)
@@ -117,8 +117,8 @@ var uuid_map = {
     "334aeac5-129f-4f31-83f1-461a5cfd7377": "MDK-UCB",
     "a715b4d6-b9a3-4fdf-a1da-bcf629146232": "SiC-SSDC-INV-UCB",
     "b3743305-a33c-4dda-8120-b28bb7e4ba50": "dms-ir-led",
-    "abc1cf67-bfb4-4e08-8c67-e6a78f9b9adb":"mv-mdk",
-    "c7069a8a-0dd9-40cf-ac89-29aafabb02a2":"mv-mdk",
-    "b1133641-5b46-4d11-9b96-9126b9d2a109":"mv-mdk",
-    "1917934f-3b79-4e8b-b37a-b1bd92d2afd5":"mv-mdk"
+    "abc1cf67-bfb4-4e08-8c67-e6a78f9b9adb": "mv-mdk",
+    "c7069a8a-0dd9-40cf-ac89-29aafabb02a2": "mv-mdk",
+    "b1133641-5b46-4d11-9b96-9126b9d2a109": "mv-mdk",
+    "1917934f-3b79-4e8b-b37a-b1bd92d2afd5": "mv-mdk"
 }
