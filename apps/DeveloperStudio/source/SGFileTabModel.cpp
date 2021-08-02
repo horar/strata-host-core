@@ -111,7 +111,7 @@ bool SGFileTabItem::setExists(const bool &exists)
 SGFileTabModel::SGFileTabModel(QObject *parent) : QAbstractListModel(parent)
 {
     currentIndex_ = 0;
-    currentId_ = -1;
+    currentId_ = "-1";
 }
 
 SGFileTabModel::~SGFileTabModel()
