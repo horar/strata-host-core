@@ -9,12 +9,14 @@ FocusScope {
     clip: true
     implicitHeight: row.implicitHeight
     implicitWidth: row.implicitWidth
+
     property color textColor: "black"
     property color invalidTextColor: "red"
     property real fontSizeMultiplier: 1.0
     property color boxBorderColor: "#CCCCCC"
     property real boxBorderWidth: 1
     property bool contextMenuEnabled: false
+
     property alias text: infoText.text
     property alias horizontalAlignment: infoText.horizontalAlignment
     property alias placeholderText: placeholder.text
@@ -33,13 +35,16 @@ FocusScope {
     property alias mouseAreaObject: mouseArea
     property alias placeholderObject: placeholder
     property alias unitObject: unit
+
     signal accepted(string text)
     signal editingFinished(string text)
+
     RowLayout {
         id: row
         anchors {
             fill: parent
         }
+
         Rectangle {
             id: box
             Layout.preferredHeight: 26 * fontSizeMultiplier
@@ -53,6 +58,7 @@ FocusScope {
                 width: root.boxBorderWidth
             }
             clip: true
+
             TextInput {
                 id: infoText
                 padding: font.pixelSize * 0.5
@@ -77,15 +83,18 @@ FocusScope {
                 onAccepted: root.accepted(infoText.text)
                 onEditingFinished: root.editingFinished(infoText.text)
                 persistentSelection: root.contextMenuEnabled
+
                 onActiveFocusChanged: {
                     if ((root.contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopup.visible === false)) {
                         infoText.deselect()
                     }
                 }
+
                 SGContextMenuEditActions {
                     id: contextMenuPopup
                     textEditor: infoText
                 }
+
                 MouseArea {
                     id: mouseArea
                     anchors {
@@ -93,15 +102,18 @@ FocusScope {
                     }
                     cursorShape: Qt.IBeamCursor
                     acceptedButtons: root.contextMenuEnabled ? Qt.RightButton : Qt.NoButton
+
                     onReleased: {
                         if (containsMouse) {
                             contextMenuPopup.popup(null)
                         }
                     }
+
                     onClicked: {
                         infoText.forceActiveFocus()
                     }
                 }
+
                 Text {
                     id: placeholder
                     anchors {
@@ -120,6 +132,7 @@ FocusScope {
                 }
             }
         }
+
         SGText {
             id: unit
             visible: text !== ""
@@ -132,6 +145,7 @@ FocusScope {
             property real overrideWidth: -1
         }
     }
+
     function selectAll() {
         infoText.selectAll()
     }
