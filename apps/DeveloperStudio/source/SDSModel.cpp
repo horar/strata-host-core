@@ -6,6 +6,7 @@
 #include "ResourceLoader.h"
 #include "DebugMenuGenerator.h"
 #include "PlatformInterfaceGenerator.h"
+#include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -29,6 +30,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       newControlView_(new SGNewControlView(this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       debugMenuGenerator_(new DebugMenuGenerator(this)),
+      visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this))
 {
@@ -47,6 +49,7 @@ SDSModel::~SDSModel()
     delete newControlView_;
     delete platformInterfaceGenerator_;
     delete debugMenuGenerator_;
+    delete visualEditorUndoStack_;
     delete remoteHcsNode_;
     delete urlConfig_;
 }
@@ -188,6 +191,11 @@ PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
 DebugMenuGenerator *SDSModel::debugMenuGenerator() const
 {
     return debugMenuGenerator_;
+}
+
+VisualEditorUndoStack *SDSModel::visualEditorUndoStack() const
+{
+    return visualEditorUndoStack_;
 }
 
 strata::sds::config::UrlConfig *SDSModel::urls() const
