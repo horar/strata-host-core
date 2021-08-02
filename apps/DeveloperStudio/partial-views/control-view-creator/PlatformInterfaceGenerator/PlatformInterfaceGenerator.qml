@@ -16,6 +16,7 @@ Item {
     property string currentCvcProjectQrcUrl
     property string currentCvcProjectJsonUrl
     property bool platformInterfaceGeneratorSeen
+    property string apiVersion: ""
 
     readonly property string jsonFileName: "platformInterface.json"
 
@@ -337,22 +338,23 @@ Item {
                 let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
                 try {
                     const jsonObject = JSON.parse(fileText)
-                    const result = importValidationCheck(jsonObject)
-                    if (result === "APIv1") {
-                        if (alertToast.visible) {
-                            alertToast.hide()
+                    if (importValidationCheck(jsonObject)) {
+                        if (apiVersion === "APIv1") {
+                            if (alertToast.visible) {
+                                alertToast.hide()
+                            }
+                            createModelFromJson(jsonObject)
+                        } else if (apiVersion === "APIv0") {
+                            if (alertToast.visible) {
+                                alertToast.hide()
+                            }
+                            alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
+                            alertToast.textColor = "white"
+                            alertToast.color = "goldenrod"
+                            alertToast.interval = 0
+                            alertToast.show()
+                            createModelFromJsonAPIv0(jsonObject)
                         }
-                        createModelFromJson(jsonObject)
-                    } else if (result === "APIv0") {
-                        if (alertToast.visible) {
-                            alertToast.hide()
-                        }
-                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
-                        alertToast.textColor = "white"
-                        alertToast.color = "goldenrod"
-                        alertToast.interval = 0
-                        alertToast.show()
-                        createModelFromJsonAPIv0(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
                         alertToast.textColor = "white"
@@ -985,7 +987,7 @@ Item {
      **/
     function generatePlatformInterface() {
         const jsonObject = createJsonObject()
-        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
+        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json")
         const result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
@@ -997,14 +999,14 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
-            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
             Signals.platformInterfaceUpdate(jsonObject)
         } else {
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.textColor = "white"
             alertToast.color = "green"
             alertToast.interval = 4000
-            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
             Signals.platformInterfaceUpdate(jsonObject)
         }
         alertToast.show()
@@ -1034,12 +1036,19 @@ Item {
             if (!command.hasOwnProperty("cmd")) {
                 return false
             }
-            const result = searchLevel1(command)
-            if (!result) {
-                return false
-            } else if (result === "APIv0") {
-                return result
+
+            if (command.hasOwnProperty("payload") && command["payload"] !== null) {
+                if (!Array.isArray(command["payload"])) {
+                    if (typeof command["payload"] === "object") {
+                        apiVersion = "APIv0"
+                        return true
+                    }
+                }
             }
+
+            if (!searchLevel1(command)) {
+                return false
+            } 
         }
 
         for (var i = 0; i < notifications.length; i++) {
@@ -1047,20 +1056,18 @@ Item {
             if (!notification.hasOwnProperty("value")) {
                 return false
             }
-            const result = searchLevel1(notification)
-            if (!result) {
+
+            if (!searchLevel1(notification)) {
                 return false
             }
         }
-        return "APIv1"
+        apiVersion = "APIv1"
+        return true
     }
 
     function searchLevel1(object) {
         if (object.hasOwnProperty("payload") && object["payload"] !== null) {
             if (!Array.isArray(object["payload"])) {
-                if (typeof object["payload"] === "object") {
-                    return "APIv0"
-                }
                 return false
             }
 
@@ -1079,7 +1086,7 @@ Item {
                 }
             }
         }
-        return "APIv1"
+        return true
     }
 
     function searchLevel2Recurse(object) {
@@ -1093,7 +1100,84 @@ Item {
                 return searchLevel2Recurse(obj)
             }
         }
-        return "APIv1"
+        return true
+    }
+
+    /**
+      * loadJsonFile read JSON file and import object
+     **/
+    function loadJsonFile(url) {
+        if (SGUtilsCpp.isFile(url)) {
+            inputFilePath = url
+        } else {
+            inputFilePath = SGUtilsCpp.urlToLocalFile(url)
+        }
+
+        if (!SGUtilsCpp.isValidFile(inputFilePath)) {
+            console.error("Invalid JSON file: " + inputFilePath)
+            return
+        }
+
+        if (!hasMadeChanges()) {
+            const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
+            try {
+                const jsonObject = JSON.parse(fileText)
+                if (importValidationCheck(jsonObject)) {
+                    if (apiVersion === "APIv1") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        createModelFromJson(jsonObject)
+                    } else if (apiVersion === "APIv0") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
+                        alertToast.textColor = "white"
+                        alertToast.color = "goldenrod"
+                        alertToast.interval = 0
+                        alertToast.show()
+                        createModelFromJsonAPIv0(jsonObject)
+                    }
+                } else {
+                    alertToast.text = "The JSON file is improperly formatted"
+                    alertToast.textColor = "white"
+                    alertToast.color = "#D10000"
+                    alertToast.interval = 0
+                    alertToast.show()
+                }
+            } catch (e) {
+                console.error(e)
+                alertToast.text = "Failed to parse input JSON file: " + e
+                alertToast.textColor = "white"
+                alertToast.color = "#D10000"
+                alertToast.interval = 0
+                alertToast.show()
+                return
+            }
+        } else {
+            confirmDeleteInProgress.open()
+        }
+    }
+
+    /**
+      * findProjectRootDir find project root directory given root Qrc file url
+     **/
+    function findProjectRootDir() {
+        return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
+    }
+
+    /**
+      * findPlatformInterfaceJsonInProject find platform interface JSON given root Qrc file url
+      * return the JSON filepath or empty if does not exist
+     **/
+    function findPlatformInterfaceJsonInProject() {
+        const projectRootDir = findProjectRootDir()
+        const platformInterfaceJsonFilepath = SGUtilsCpp.joinFilePath(projectRootDir, jsonFileName)
+        if (SGUtilsCpp.isFile(platformInterfaceJsonFilepath)) {
+            return platformInterfaceJsonFilepath
+        }
+        return ""
     }
 
     /********************************************************************************************
@@ -1105,7 +1189,7 @@ Item {
     /**
       * DEPRECATED - APIv0 Model
       * This function creates the model from a JSON object (used when importing a JSON file)
-     **/
+    **/
     function createModelFromJsonAPIv0(jsonObject) {
         let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
 
@@ -1195,7 +1279,7 @@ Item {
     /**
       * DEPRECATED - APIv0 Model
       * getType called from createModelFromJsonAPIv0(); returns the sdsModel type
-     **/
+    **/
     function getType(item) {
         if (Array.isArray(item)) {
             return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
@@ -1213,7 +1297,7 @@ Item {
     /**
       * DEPRECATED - APIv0 Model
       * This function takes an Array and transforms it into an array readable by our delegates
-     **/
+    **/
     function generateArrayModelAPIv0(arr, parentListModel) {
         for (let i = 0; i < arr.length; i++) {
             let type = getType(arr[i])
@@ -1241,7 +1325,7 @@ Item {
     /**
       * DEPRECATED - APIv0 Model
       * This function takes an Object and transforms it into an array readable by our delegates
-     **/
+    **/
     function generateObjectModelAPIv0(object, parentListModel) {
         let keys = Object.keys(object)
         for (let i = 0; i < keys.length; i++) {
@@ -1266,81 +1350,5 @@ Item {
                 generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
             }
         }
-    }
-
-    /**
-      * loadJsonFile read JSON file and import object
-     **/
-    function loadJsonFile(url) {
-        if (SGUtilsCpp.isFile(url)) {
-            inputFilePath = url
-        } else {
-            inputFilePath = SGUtilsCpp.urlToLocalFile(url)
-        }
-
-        if (!SGUtilsCpp.isValidFile(inputFilePath)) {
-            console.error("Invalid JSON file: " + inputFilePath)
-            return
-        }
-
-        if (!hasMadeChanges()) {
-            const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
-            try {
-                const jsonObject = JSON.parse(fileText)
-                const result = importValidationCheck(jsonObject)
-                if (result === "APIv1") {
-                    if (alertToast.visible) {
-                        alertToast.hide()
-                    }
-                    createModelFromJson(jsonObject)
-                } else if (result === "APIv0") {
-                    if (alertToast.visible) {
-                        alertToast.hide()
-                    }
-                    alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
-                    alertToast.textColor = "white"
-                    alertToast.color = "goldenrod"
-                    alertToast.interval = 0
-                    alertToast.show()
-                    createModelFromJsonAPIv0(jsonObject)
-                } else {
-                    alertToast.text = "The JSON file is improperly formatted"
-                    alertToast.textColor = "white"
-                    alertToast.color = "#D10000"
-                    alertToast.interval = 0
-                    alertToast.show()
-                }
-            } catch (e) {
-                console.error(e)
-                alertToast.text = "Failed to parse input JSON file: " + e
-                alertToast.textColor = "white"
-                alertToast.color = "#D10000"
-                alertToast.interval = 0
-                alertToast.show()
-                return
-            }
-        } else {
-            confirmDeleteInProgress.open()
-        }
-    }
-
-    /**
-      * findProjectRootDir find project root directory given root Qrc file url
-     **/
-    function findProjectRootDir() {
-        return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
-    }
-
-    /**
-      * findPlatformInterfaceJsonInProject find platform interface JSON given root Qrc file url
-      * return the JSON filepath or empty if does not exist
-     **/
-    function findPlatformInterfaceJsonInProject() {
-        const projectRootDir = findProjectRootDir()
-        const platformInterfaceJsonFilepath = SGUtilsCpp.joinFilePath(projectRootDir, jsonFileName)
-        if (SGUtilsCpp.isFile(platformInterfaceJsonFilepath)) {
-            return platformInterfaceJsonFilepath
-        }
-        return ""
     }
 }
