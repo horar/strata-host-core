@@ -26,7 +26,7 @@ ColumnLayout {
             // Object with known properties
             if (objectListModel.count === 0) {
                 arrayListModel.clear()
-                objectListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
+                objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
             }
         } else {
             arrayListModel.clear()
