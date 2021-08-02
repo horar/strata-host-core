@@ -67,7 +67,6 @@ Rectangle {
                 samples: 30
                 color: "#cc000000"
                 source: popup.background
-                z: -1
                 cached: true
             }
 
@@ -116,7 +115,6 @@ Rectangle {
             anchors {
                 fill: parent
             }
-            z: 20
             visible: !webEngine.enabled && !progress.visible && !notAvailableCoverUp.visible
         }
 
@@ -126,7 +124,6 @@ Rectangle {
             anchors {
                 centerIn: disabledCoverUp
             }
-            z: disabledCoverUp.z
             visible: disabledCoverUp.visible
         }
 
@@ -137,7 +134,6 @@ Rectangle {
             anchors {
                 fill: parent
             }
-            z: 20
             visible: root.url === "datasheet-unavailable"
         }
 
@@ -153,7 +149,6 @@ Rectangle {
                 centerIn: notAvailableCoverUp
             }
             horizontalAlignment: Text.AlignHCenter
-            z: notAvailableCoverUp.z
             visible: notAvailableCoverUp.visible
         }
     }
