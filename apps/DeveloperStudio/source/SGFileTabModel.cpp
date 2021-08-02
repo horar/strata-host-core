@@ -111,7 +111,6 @@ bool SGFileTabItem::setExists(const bool &exists)
 SGFileTabModel::SGFileTabModel(QObject *parent) : QAbstractListModel(parent)
 {
     currentIndex_ = 0;
-    currentId_ = "-1";
 }
 
 SGFileTabModel::~SGFileTabModel()
@@ -441,7 +440,7 @@ void SGFileTabModel::setCurrentIndex(const int index)
         currentId_ = data_[index]->id();
         emit currentIndexChanged();
     } else if (data_.count() == 0) {
-        currentId_ = "";
+        currentId_.clear();
         emit currentIndexChanged();
     } else if (currentId_ != data_[currentIndex_]->id()) {
         currentId_ = data_[index]->id();
