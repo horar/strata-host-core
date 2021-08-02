@@ -4,6 +4,8 @@
 #include <QMetaObject>
 #include <QSignalSpy>
 
+QTEST_MAIN(StrataServerTest)
+
 void StrataServerTest::testValidApiVer2Message()
 {
     StrataServer server(address_, false);

@@ -25,7 +25,6 @@ FocusScope {
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
     property int buttonPadding: 6
-    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -1069,7 +1068,6 @@ FocusScope {
                     visible: fileLoaded && showMarks === false
                     focus: true
 
-                    indexColumnVisible: false
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
                     tidColumnVisible: checkBoxTid.checked
@@ -1106,7 +1104,6 @@ FocusScope {
                         anchors.margins: 2
                         model: searchResultModel
 
-                        indexColumnVisible: false
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked

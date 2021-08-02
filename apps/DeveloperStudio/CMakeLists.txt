@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/RunGuard.cpp
     source/PlatformInterfaceGenerator.cpp
     source/DebugMenuGenerator.cpp
+    source/VisualEditorUndoStack.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
