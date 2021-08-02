@@ -2,6 +2,8 @@
 
 using strata::strataRPC::Message;
 
+QTEST_MAIN(StrataClientServerIntegrationTest)
+
 void StrataClientServerIntegrationTest::waitForZmqMessages(int delay)
 {
     QTimer timer;

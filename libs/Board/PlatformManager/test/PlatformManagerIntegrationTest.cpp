@@ -3,6 +3,8 @@
 
 #include "PlatformManagerIntegrationTest.h"
 
+QTEST_MAIN(PlatformManagerIntegrationTest)
+
 PlatformManagerIntegrationTest::PlatformManagerIntegrationTest()
 {
 }

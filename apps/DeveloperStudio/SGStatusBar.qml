@@ -386,9 +386,10 @@ Rectangle {
         }
     }
 
-    Item {
+    Rectangle {
         id: profileIconContainer
         width: height
+        radius: 5
 
         anchors {
             right: container.right
@@ -397,28 +398,25 @@ Rectangle {
             bottom: container.bottom
         }
 
-        Rectangle {
-            id: profileIcon
-            anchors {
-                centerIn: profileIconContainer
+        color: {
+            if (profileMenu.visible) {
+                return "grey"
+            } else if (profileIconHover.containsMouse) {
+                return "dimgrey"
+            } else {
+                return "transparent"
             }
-            height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
-            width: height
-            radius: height / 2
-            color: Theme.palette.green
+        }
 
-            Text {
-                id: profileInitial
-                text: first_name.charAt(0)
-                color: "white"
-                anchors {
-                    centerIn: profileIcon
-                }
-                font {
-                    family: Fonts.franklinGothicBold
-                    pixelSize: profileIconHover.containsMouse ? 24 : 20
-                }
+        SGIcon {
+            id: barIcon
+            height: parent.height - 20
+            width: height
+            anchors {
+                centerIn: parent
             }
+            source: "qrc:/sgimages/bars.svg"
+            iconColor: Theme.palette.white
         }
 
         Rectangle {
@@ -466,7 +464,11 @@ Rectangle {
             onPressed: pressAction()
 
             function pressAction() {
-                profileMenu.open()
+                if (profileMenu.visible) {
+                    profileMenu.close()
+                } else {
+                    profileMenu.open()
+                }
             }
         }
 
@@ -477,6 +479,7 @@ Rectangle {
             padding: 0
             topPadding: 10
             width: 140
+            closePolicy: Popup.CloseOnPressOutsideParent
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
