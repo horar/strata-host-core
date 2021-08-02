@@ -414,6 +414,7 @@ ColumnLayout {
                 saveFile()
             }
         }
+
         Item {
 
             WebEngineView {
@@ -484,6 +485,7 @@ ColumnLayout {
                     }
                 }
             }
+
             Rectangle {
                	id: barContainer
                 color: "white"
