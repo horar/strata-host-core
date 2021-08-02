@@ -483,7 +483,7 @@ ColumnLayout {
             }
 
             Rectangle {
-               id: barContainer
+               	id: barContainer
                 color: "white"
                 anchors {
                     fill: webEngine
