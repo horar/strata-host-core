@@ -90,15 +90,6 @@ Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
-                    //                    onResizingChanged: {
-                    //                        if (!resizing) {
-                    //                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                    //                                debugPanel.expandWidth = debugPanel.width
-                    //                            } else {
-                    //                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
-                    //                            }
-                    //                        }
-                    //                    }
 
                     Loader {
                         id: controlViewLoader
@@ -128,11 +119,6 @@ Rectangle {
                             }
                         }
                     }
-
-                    //                    DebugPanel {
-                    //                        id: debugPanel
-                    //                        Layout.fillHeight: true
-                    //                    }
                 }
 
                 PlatformInterfaceGenerator {
@@ -151,8 +137,8 @@ Rectangle {
     }
 
     Item {
-        id: test
-        width: parent.width - navigationBar.width
+        id: debugMenuContainer
+        width: parent.width - navigationBar.width - 10
         height: parent.height
         anchors.top: parent.top
         anchors.right: parent.right
@@ -166,10 +152,9 @@ Rectangle {
                 return newWindowDebugMenuLoader.item.consoleLogParent
             }
             else {
-                return test
+                return debugMenuContainer
             }
         }
-
     }
 
     ConsoleContainer {

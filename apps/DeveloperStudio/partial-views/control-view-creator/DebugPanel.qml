@@ -12,6 +12,7 @@ Item {
 
     property var debugVisible: false
     property alias mainContainer: mainContainer
+    property alias sideWall: topWall
     property real rectWidth: 450
 
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
@@ -43,7 +44,8 @@ Item {
                     SGText {
                         id: header
                         text: "Debug Commands and Notifications"
-
+                        Layout.alignment: Qt.AlignCenter
+                        color: "white"
                         fontSizeMultiplier: 1.15
                         leftPadding: 5
                     }
@@ -89,7 +91,7 @@ Item {
         y: 0
         width: 4
         height: parent.height + 5
-        z:3
+        enabled: true
 
         Binding {
             target: topWall
@@ -112,7 +114,7 @@ Item {
         drag.minimumY: 0
         drag.maximumY: 0
         drag.minimumX: 0
-        drag.maximumX: (parent.width - 30)
+        drag.maximumX: (parent.width - 60)
         cursorShape: Qt.SplitHCursor
     }
 }
