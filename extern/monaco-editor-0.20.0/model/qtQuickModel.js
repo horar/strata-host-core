@@ -33,8 +33,4 @@ class QtQuickModel {
     fetchItem(lineNumber) {
         return this.model[lineNumber]
     }
-
-    get currentImports() {
-       return this.currentImports
-    }
 }
