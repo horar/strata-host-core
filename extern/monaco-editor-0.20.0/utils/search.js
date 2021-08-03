@@ -125,7 +125,7 @@ class QtSearch {
     }
 
     findNextEndUUID(position, uuid) {
-        return this.model.findPreviousMatch(`end_${uuid}`, position)
+        return this.model.findNextMatch(`end_${uuid}`, position)
     }
 
     findPreviousMetaPropertyParent(position) {
