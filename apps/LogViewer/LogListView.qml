@@ -402,6 +402,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.bottomMargin: horizontalScrollbar.visible ? horizontalScrollbar.height : 0
         flickableDirection: Flickable.HorizontalAndVerticalFlick
         boundsMovement: Flickable.StopAtBounds
         boundsBehavior: Flickable.DragAndOvershootBounds
@@ -410,14 +411,31 @@ Item {
         clip: true
 
         ScrollBar.vertical: ScrollBar {
-            minimumSize: 0.1
+            id: verticalScrollbar
+            anchors {
+                right: logListView.right
+                rightMargin: 0
+            }
+            width: 8
+
             policy: ScrollBar.AlwaysOn
+            minimumSize: 0.1
+            visible: logListView.height < logListView.contentHeight
         }
 
         ScrollBar.horizontal: ScrollBar {
             id: horizontalScrollbar
+            parent: logListView.parent
+            anchors {
+                top: logListView.bottom
+                left: logListView.left
+                right: logListView.right
+            }
+            height: 8
+
+            policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
-            policy: ScrollBar.AsNeeded
+            visible: logListView.width < logListView.contentWidth
         }
 
         onContentYChanged: {
