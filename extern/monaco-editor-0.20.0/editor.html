@@ -30,8 +30,9 @@
             // all published objects are available in channel.objects under
             // the identifier set in their attached WebChannel.id property
             var link = channel.objects.valueLink;
-
+            window.link = link
             link.setValue.connect(function (value) {
+                window.link.setFinished(false)
                 editor.setValue(value);
             });
 
