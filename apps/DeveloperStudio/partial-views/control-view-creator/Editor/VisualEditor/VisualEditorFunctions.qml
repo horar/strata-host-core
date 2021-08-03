@@ -428,6 +428,12 @@ QtObject {
         return uuid;
     }
 
+    // returns all strings in the current file that contain object ID's
+    function getAllObjectIds() {
+        const idRegex = new RegExp("(^\\s*id:\\s*)([a-zA-Z0-9_]*)", "gm")
+        return fileContents.match(idRegex)
+    }
+
     function formatPropertyNameForRegex(propertyName) {
         return propertyName.replace(".", "\\.") // escape property names with "." for regex (e.g. layoutInfo.rowCount)
     }
