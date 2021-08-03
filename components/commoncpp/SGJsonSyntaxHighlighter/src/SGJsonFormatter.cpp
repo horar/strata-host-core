@@ -128,27 +128,27 @@ void SGJsonFormatter::resolveNextToken(
                 nextToken.startIndex = i;
                 nextToken.length = 1;
                 return;
-            } else if (c == ":") {
+            } else if (c == ':') {
                 nextToken.type = TokenType::Colon;
                 nextToken.startIndex = i;
                 nextToken.length = 1;
                 return;
-            } else if (c == "{") {
+            } else if (c == '{') {
                 nextToken.type = TokenType::LeftBracket;
                 nextToken.startIndex = i;
                 nextToken.length = 1;
                 return;
-            } else if (c == "}") {
+            } else if (c == '}') {
                 nextToken.type = TokenType::RightBracket;
                 nextToken.startIndex = i;
                 nextToken.length = 1;
                 return;
-            } else if (c == "[") {
+            } else if (c == '[') {
                 nextToken.type = TokenType::LeftSquareBracket;
                 nextToken.startIndex = i;
                 nextToken.length = 1;
                 return;
-            } else if (c == "]") {
+            } else if (c == ']') {
                 nextToken.type = TokenType::RightSquareBracket;
                 nextToken.startIndex = i;
                 nextToken.length = 1;
@@ -170,7 +170,7 @@ void SGJsonFormatter::resolveNextToken(
         case ScannerState::Integer:
             if (c.isDigit()) {
                 ;
-            } else if (c == ".") {
+            } else if (c == '.') {
                 state = ScannerState::MaybeReal;
             } else if (c == 'e' || c == 'E') {
                 state = ScannerState::MaybeExpReal;
@@ -248,7 +248,7 @@ void SGJsonFormatter::resolveNextToken(
                 ;
             } else if (isCorrectRightChar(c)) {
                 QString word = text.mid(nextToken.startIndex, i - nextToken.startIndex).toLower();
-                if (word == "true" || word == false) {
+                if (word == "true" || word == "false") {
                     nextToken.type = TokenType::Bool;
                 } else if (word == "null") {
                     nextToken.type = TokenType::Null;
