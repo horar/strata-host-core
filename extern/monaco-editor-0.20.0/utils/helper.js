@@ -1,6 +1,5 @@
 // return an object from a string with definable properties
 function createDynamicSuggestion(suggestion, type, params_name = [""]) {
-    const uuid = randomUUID()
     switch (type) {
         case "property":
             return {
@@ -59,6 +58,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 range: null
             }
         case "visual-widget": 
+        const uuid = randomUUID()
             return {
                 label: suggestion,
                 kind: monaco.languages.CompletionItemKind.Class,
