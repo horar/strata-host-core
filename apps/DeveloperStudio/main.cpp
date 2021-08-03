@@ -34,6 +34,7 @@
 #include "ProgramControllerManager.h"
 #include "PlatformInterfaceGenerator.h"
 #include "DebugMenuGenerator.h"
+#include "VisualEditorUndoStack.h"
 
 #include "AppUi.h"
 #include "config/AppConfig.h"
@@ -149,6 +150,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<PlatformInterfaceGenerator>("tech.strata.PlatformInterfaceGenerator", 1, 0, "PlatformInterfaceGenerator", "You can't instantiate PlatformInterfaceGenerator in QML");
     qmlRegisterUncreatableType<DebugMenuGenerator>("tech.strata.DebugMenuGenerator", 1, 0, "DebugMenuGenerator", "You can't instantiate DebugMenuGenerator in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
+    qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
     qmlRegisterUncreatableType<ProgramControllerManager>("tech.strata.ProgramControllerManager", 1, 0, "ProgramControllerManager", "You can't instantiate ProgramControllerManager in QML");
 

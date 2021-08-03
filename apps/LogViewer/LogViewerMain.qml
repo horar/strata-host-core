@@ -428,6 +428,7 @@ FocusScope {
             focus: false
             leftIconSource: "qrc:/sgimages/zoom.svg"
             contextMenuEnabled: true
+            showClearButton: true
 
             onTextChanged: {
                 searchingMode = true
