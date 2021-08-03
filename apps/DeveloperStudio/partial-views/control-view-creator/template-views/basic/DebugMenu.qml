@@ -28,7 +28,7 @@ Rectangle {
             ],
             "notifications": [
             ]
-          })
+        })
 
         Component.onCompleted: {
             let topLevelKeys = Object.keys(baseModel); // This contains "commands" / "notifications" arrays
@@ -99,7 +99,6 @@ Rectangle {
             mainModel.modelReset()
         }
     }
-
     ColumnLayout {
         id: columnContainer
         anchors {

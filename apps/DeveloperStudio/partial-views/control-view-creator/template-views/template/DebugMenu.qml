@@ -109,7 +109,7 @@ Rectangle {
             left: parent.left
             right: parent.right
             bottom: parent.bottom
-            top: parent.top
+            top: header.bottom
             margins: 5
         }
 
