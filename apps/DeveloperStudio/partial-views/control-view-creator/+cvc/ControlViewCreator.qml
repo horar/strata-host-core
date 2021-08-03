@@ -138,7 +138,7 @@ Rectangle {
 
     Item {
         id: debugMenuContainer
-        width: parent.width - navigationBar.width - 10
+        width: parent.width - navigationBar.width
         height: parent.height
         anchors.top: parent.top
         anchors.right: parent.right
@@ -190,7 +190,7 @@ Rectangle {
     Loader {
         id: newWindowDebugMenuLoader
         active: debugMenuWindow
-        source: "Console/NewWindowDebugMenu.qml"
+        source: "NewWindowDebugMenu.qml"
     }
 
     ConfirmClosePopup {

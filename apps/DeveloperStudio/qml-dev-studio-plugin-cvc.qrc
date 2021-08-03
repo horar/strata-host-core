@@ -10,6 +10,7 @@
         <file alias="OpenControlView.qml">partial-views/control-view-creator/OpenControlView.qml</file>
         <file alias="Start.qml">partial-views/control-view-creator/Start.qml</file>
         <file alias="Sidebar/SideBar.qml">partial-views/control-view-creator/Sidebar/SideBar.qml</file>
+        <file alias="NewWindowDebugMenu.qml">partial-views/control-view-creator/NewWindowDebugMenu.qml</file>
         <file alias="ImageLoadError.svg">partial-views/control-view-creator/ImageLoadError.svg</file>
         <file alias="Editor/TextEditorContainer.qml">partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
         <file alias="Editor/NoActiveFile.qml">partial-views/control-view-creator/Editor/NoActiveFile.qml</file>
@@ -30,7 +31,6 @@
         <file alias="Console/ConsoleContainer.qml">partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
         <file alias="Console/ViewConsoleContainer.qml">partial-views/control-view-creator/Console/ViewConsoleContainer.qml</file>
         <file alias="Console/NewWindowConsoleLog.qml">partial-views/control-view-creator/Console/NewWindowConsoleLog.qml</file>
-        <file alias="Console/NewWindowDebugMenu.qml">partial-views/control-view-creator/Console/NewWindowDebugMenu.qml</file>
         <file alias="components/SGControlViewButton.qml">partial-views/control-view-creator/components/SGControlViewButton.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleMessage.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleMessage.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleTime.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTime.qml</file>

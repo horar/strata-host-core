@@ -18,11 +18,11 @@ Item {
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
     onDebugMenuSourceChanged: debugMenuSource.toString() ? debugVisible = true : debugVisible = false
 
-    anchors.fill: parent
+    //anchors.fill: parent
 
     Rectangle {
         id: mainContainer
-        width: Math.min(parent.width, rectWidth)
+        width: Math.min(root.width, rectWidth)
         height: parent.height
         anchors.right: parent.right
         color: "lightgrey"
@@ -37,18 +37,18 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
+                spacing: 10
 
-                Item {
+                Text {
+                    id: header
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    SGText {
-                        id: header
-                        text: "Debug Commands and Notifications"
-                        Layout.alignment: Qt.AlignCenter
-                        color: "white"
-                        fontSizeMultiplier: 1.15
-                        leftPadding: 5
-                    }
+                    Layout.leftMargin: 5
+                    text: "Debug Commands and Notifications"
+                    Layout.alignment: Qt.AlignHCenter
+                    color: "white"
+                    elide: Text.ElideRight
+                    font.pointSize: 20
                 }
 
                 SGControlViewIconButton {
@@ -63,10 +63,10 @@ Item {
                 }
 
                 SGControlViewIconButton {
+                    id: closeWindow
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
                     source: "qrc:/sgimages/times.svg"
-                    Layout.alignment: Qt.AlignRight
 
                     onClicked:  {
                         if (debugMenuWindow) {
@@ -80,6 +80,7 @@ Item {
 
         Loader {
             anchors.top: topBar.bottom
+            anchors.right: parent.right
             width: parent.width
             height: parent.height - topBar.height
             source: root.debugMenuSource
@@ -114,7 +115,7 @@ Item {
         drag.minimumY: 0
         drag.maximumY: 0
         drag.minimumX: 0
-        drag.maximumX: (parent.width - 60)
+        drag.maximumX: (parent.width - 250)
         cursorShape: Qt.SplitHCursor
     }
 }

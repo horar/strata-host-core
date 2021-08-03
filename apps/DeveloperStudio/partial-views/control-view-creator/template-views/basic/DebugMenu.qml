@@ -7,7 +7,6 @@ import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
-
     Text {
         id: header
         text: "Debug Commands and Notifications"
@@ -25,11 +24,11 @@ Rectangle {
         id: mainModel
 
         property var baseModel: ({
-                                     "commands": [
-                                     ],
-                                     "notifications": [
-                                     ]
-                                 })
+           "commands": [
+            ],
+            "notifications": [
+            ]
+         })
 
         Component.onCompleted: {
             let topLevelKeys = Object.keys(baseModel); // This contains "commands" / "notifications" arrays
@@ -100,6 +99,7 @@ Rectangle {
             mainModel.modelReset()
         }
     }
+
     ColumnLayout {
         id: columnContainer
         anchors {
