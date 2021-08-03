@@ -3,26 +3,22 @@
     detailed in the properties
 */
 
-var isInitialized = false
-var editor = null
-var qtSuggestions = null;
-var qtSearch = null;
-var qtProperties = null;
-var qtIds = null;
-
-var qtQuickModel = null;
+let isInitialized = false
+let editor = null
+const qtQuickModel = new QtQuickModel()
+const qtSearch = new QtSearch()
+const qtSuggestions = new QtSuggestions()
 
 const ERROR_TYPES = {
     UUID_ERROR: "The uuid search failed to find and select specified widget",
     PARENT_ERROR: "This parent is not recognized, either it needs to be imported or defined",
     GENERIC_ERROR: "There is an error within the monaco editor that is causing a failure in suggestions"
 }
-var err_flag = false;
+let err_flag = false;
 /*
     This the global registration for the monaco editor this creates the syntax and linguistics of the qml language, as well as defining the theme of the qml language
 */
 function registerQmlProvider() {
-
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
@@ -52,6 +48,7 @@ function registerQmlProvider() {
 
 // Initialize
 function initEditor() {
+    
     monaco.languages.register({ id: 'qml' })
     monaco.languages.setLanguageConfiguration("qml", {
         wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
@@ -273,11 +270,6 @@ function initEditor() {
             editor.getAction('editor.action.commentLine').run()
         }
     })
-
-    // base class
-    qtQuickModel = new QtQuickModel()
-    qtSearch = new QtSearch()
-    qtSuggestions = new QtSuggestions()
 }
 /*
     External facing functions that will be used in conjunction with the Visual Editor
