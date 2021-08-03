@@ -36,8 +36,7 @@
             ]
         },
         {
-            "cmd": "my_cmd_i2c",
-            "payload": null
+            "cmd": "my_cmd_i2c"
         }
     ],
     "notifications": [

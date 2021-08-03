@@ -37,9 +37,7 @@ Item {
         "type": "value",
         "name": "",
         "valid": false,
-        "payload": [
-            templatePayload
-        ],
+        "payload": [],
         "editing": false
 	})
 
@@ -904,7 +902,7 @@ Item {
                 commandObj[command.type] = command.name
 
                 if (command.payload.count === 0) {
-                    commandObj["payload"] = null
+                    // don't add a payload key if the payload is empty
                     commands.push(commandObj)
                     continue
                 } else {
