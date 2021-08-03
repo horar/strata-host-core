@@ -12,7 +12,12 @@ const data = [
                    "name": "Template",
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/template.jpg",
                    "path": ":/partial-views/control-view-creator/template-views/template/"
-               }
+               },
+               {
+                   "name": "Visual Editor Example",
+                   "image": "qrc:/partial-views/control-view-creator/template-views/images/visual-editor.jpg",
+                   "path": ":/partial-views/control-view-creator/template-views/visual-editor/"
+               },
            ]
 
 const debugPath = ":/partial-views/control-view-creator/platformInterface/"

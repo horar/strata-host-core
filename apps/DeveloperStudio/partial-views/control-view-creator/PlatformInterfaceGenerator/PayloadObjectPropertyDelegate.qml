@@ -177,7 +177,7 @@ ColumnLayout {
 
     Button {
         id: addPropertyButton
-        text: "Add Item To Array"
+        text: "Add Property To Object"
         Layout.alignment: Qt.AlignHCenter
         visible: modelIndex === parentListModel.count - 1
 
@@ -194,7 +194,7 @@ ColumnLayout {
             cursorShape: Qt.PointingHandCursor
 
             onClicked: {
-                parentListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value":"0"})
                 commandsListView.contentY += 40
             }
         }

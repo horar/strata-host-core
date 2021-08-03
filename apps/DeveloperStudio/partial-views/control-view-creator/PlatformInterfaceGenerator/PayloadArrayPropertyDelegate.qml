@@ -160,7 +160,7 @@ ColumnLayout {
             cursorShape: Qt.PointingHandCursor
 
             onClicked: {
-                parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value": "0"})
                 commandsListView.contentY += 40
             }
         }
