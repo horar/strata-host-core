@@ -485,7 +485,6 @@ ColumnLayout {
                     }
                 }
             }
-
             Rectangle {
                	id: barContainer
                 color: "white"
