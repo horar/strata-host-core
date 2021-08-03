@@ -16,6 +16,8 @@ GenericPopup {
     property bool isString: true
     property bool mustNotBeEmpty: false
 
+    // Only used/modified when popup is "Set ID" (textPopup.sourceProperty == "id")
+    // Used to disallow certain specific text inputs (duplicated object ID's)
     property var invalidInputs: []
     property bool validInput: true
 
@@ -70,7 +72,9 @@ GenericPopup {
             }
 
             onTextChanged: {
-                validInput = !invalidInputs.includes(text)
+                if (textPopup.sourceProperty == "id") {
+                    textPopup.validInput = !textPopup.invalidInputs.includes(text)
+                }
             }
         }
 
