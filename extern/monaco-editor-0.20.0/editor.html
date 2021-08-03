@@ -32,7 +32,6 @@
             var link = channel.objects.valueLink;
             window.link = link
             link.setValue.connect(function (value) {
-                window.link.setFinished(false)
                 editor.setValue(value);
             });
 
