@@ -18,7 +18,7 @@ Item {
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
     onDebugMenuSourceChanged: debugMenuSource.toString() ? debugVisible = true : debugVisible = false
 
-    //anchors.fill: parent
+    anchors.fill: parent
 
     Rectangle {
         id: mainContainer
