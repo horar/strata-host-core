@@ -424,7 +424,7 @@ class QtSearch {
                 if (checkNext.range.startLineNumber <= position.lineNumber) {
                     break;
                 }
-                position = { lineNumber: newItem.range.startLineNumber, column: newItem.range.endColumn }
+                position = { lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn }
 
             } catch (error) {
                 console.log(`(search.js) function -> getItems: ${error}`)
