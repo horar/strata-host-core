@@ -16,7 +16,7 @@ Item {
     property string currentCvcProjectQrcUrl
     property string currentCvcProjectJsonUrl
     property bool platformInterfaceGeneratorSeen
-    property string apiVersion: ""
+    property string apiVersion
 
     readonly property string jsonFileName: "platformInterface.json"
 
@@ -1037,18 +1037,16 @@ Item {
                 return false
             }
 
-            if (command.hasOwnProperty("payload") && command["payload"] !== null) {
-                if (!Array.isArray(command["payload"])) {
-                    if (typeof command["payload"] === "object") {
-                        apiVersion = "APIv0"
-                        return true
-                    }
+            if (command.hasOwnProperty("payload") && !Array.isArray(command["payload"])) {
+                if (typeof command["payload"] === "object") {
+                    apiVersion = "APIv0"
+                    return true
                 }
             }
 
             if (!searchLevel1(command)) {
                 return false
-            } 
+            }
         }
 
         for (var i = 0; i < notifications.length; i++) {
@@ -1066,7 +1064,7 @@ Item {
     }
 
     function searchLevel1(object) {
-        if (object.hasOwnProperty("payload") && object["payload"] !== null) {
+        if (object.hasOwnProperty("payload")) {
             if (!Array.isArray(object["payload"])) {
                 return false
             }
