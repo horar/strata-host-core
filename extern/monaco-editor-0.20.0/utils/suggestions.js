@@ -198,5 +198,18 @@ class QtSuggestions {
                 break;
             }
         }
+
+        for (const key of Object.keys(qtTypeJson["sources"])) {
+            if(key === checkSub) {
+                const item = qtTypeJson["sources"][key]
+                const properties = Object.keys(item.properties)
+                const signals = Object.keys(item.signals)
+                const functions = Object.keys(item.functions)
+                this.createSuggestions(properties, "property")
+                this.createSuggestions(functions, "property")
+                this.createSuggestions(signals, "property")
+                break;
+            }
+        }
     }
 }
