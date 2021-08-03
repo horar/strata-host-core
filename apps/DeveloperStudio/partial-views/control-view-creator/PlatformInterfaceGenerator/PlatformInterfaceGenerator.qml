@@ -985,7 +985,7 @@ Item {
      **/
     function generatePlatformInterface() {
         const jsonObject = createJsonObject()
-        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json")
+        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, jsonFileName)
         const result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
