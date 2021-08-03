@@ -110,10 +110,6 @@ class QtSuggestions {
         }
     }
 
-    get currentSuggestions() {
-        return this.suggestions
-    }
-
     determineSuggestions(position) {
         if (position.lineNumber > qtSearch.topOfFile.range.startLineNumber) {
             const checkLine = qtSearch.model.getLineContent(position.lineNumber)
@@ -184,6 +180,7 @@ class QtSuggestions {
                 this.createSuggestions(item.properties, "property")
                 return;
             }
+
             for (const property of item.properties) {
                 if (item.metaPropMap.hasOwnProperty(property) && item.metaPropMap[property]["meta_properties"].length !== 0 && checkSub === property) {
                     this.createSuggestions(item.metaPropMap[property]["meta_properties"], "property")

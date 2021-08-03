@@ -20,18 +20,6 @@ class QtSearch {
         this.createQtModel()
     }
 
-    get currentFullRange() {
-        return this.fullRange
-    }
-
-    get currentTopOfFile() {
-        return this.topOfFile
-    }
-
-    get currentBottomOfFile() {
-        return this.bottomOfFile
-    }
-
     getNextCloseBracket(position) {
         return this.model.findNextMatch("}", position)
     }
@@ -46,14 +34,6 @@ class QtSearch {
 
     getPrevCloseBracket(position) {
         return this.model.findPreviousMatch("}", position)
-    }
-
-    comparePositions(pos1, pos2) {
-        if (isEqual(pos1, pos2)) {
-            return true
-        } else {
-            return false
-        }
     }
 
     findPreviousQtItem(position) {
@@ -149,6 +129,7 @@ class QtSearch {
         const getItem = this.model.getLineContent(itemLine.range.startLineNumber).trim().split(/[\s*\{|\s+]/)[0].trim()
         return { item: getItem, range: itemLine.range }
     }
+
     getPrevQtItem(position) {
         const itemLine = this.findPreviousQtItem(position)
         const getItem = this.model.getLineContent(itemLine.range.startLineNumber).trim().split(/[\s*\{|\s+]/)[0].trim()
@@ -285,7 +266,6 @@ class QtSearch {
         return false;
     }
 
-
     isInItem(position) {
         const checkItem = this.getPrevQtItem(position)
         const getItem = qtQuickModel.fetchItem(checkItem.range.startLineNumber)
@@ -385,7 +365,6 @@ class QtSearch {
 
         return false;
     }
-
 
     createQtModel() {
         try {
@@ -560,7 +539,6 @@ class QtSearch {
             endColumn: nextCloseBracket.range.startColumn
         }
     }
-
 
     fetchParentItem(origPosition, newPosition) {
         const checkItem = this.getPrevQtItem(newPosition)

@@ -29,18 +29,10 @@ class QtItemModel {
         }
     }
 
-    get currentFunctions() {
-        return this.functions
-    }
-
     updateId(newId) {
         if(this.id !== newId){
             this.id = newId
         }
-    }
-
-    get currentId() {
-        return this.id;
     }
 
     updateProperties(newProperty, newPropObj = {}) {
@@ -50,19 +42,11 @@ class QtItemModel {
         }
     }
 
-    get currentProperties() {
-        return this.properties
-    }
-
     updateSignals(newSignal, newSignalObj = {}) {
         if(newSignal.length !== 0) {
             this.signals.push(newSignal)
             this.metaSignalMap = Object.assign(this.metaSignalMap, newSignalObj)
         }
-    }
-
-    get currentSignals() {
-        return this.signals
     }
 
     updateValue(newValue) {
@@ -91,13 +75,5 @@ class QtItemModel {
                 this.metaFuncMap = qtTypeJson.sources[this.value].functions
             }
         }
-    }
-
-    get currentValue() {
-        return this.value
-    }
-
-    get currentMetaPropertyMap() {
-        return this.metaPropMap
     }
 }

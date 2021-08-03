@@ -11,18 +11,8 @@ class QtQuickModel {
         this.model[lineNumber] = obj
     }
 
-    deleteModelMember(lineNumber) {
-        if(this.model[lineNumber] !== undefined) {
-            delete this.model[lineNumber]
-        }
-    }
-
     updateImports(newImports) {
         this.imports.push(newImports)
-    }
-
-    get currentQtModel() {
-        return this.model
     }
 
     resetModel() {
