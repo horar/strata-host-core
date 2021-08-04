@@ -21,8 +21,9 @@ Item {
         width: debugMenuWindow ? parent.width : Math.min(root.width, rectWidth)
         height: parent.height
         anchors.right: parent.right
-        color: "lightgrey"
+        color: "#eee"
         clip: true
+
 
         Rectangle {
             id: topBar
@@ -51,7 +52,7 @@ Item {
                     id: openWindow
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
-                    source:  "qrc:/sgimages/sign-in.svg"
+                    source: "qrc:/sgimages/sign-in.svg"
 
                     onClicked:  {
                         debugMenuWindow = !debugMenuWindow
@@ -98,7 +99,7 @@ Item {
 
         }
         onXChanged: {
-            if(mouseArea.drag.active) {
+            if (mouseArea.drag.active) {
                 rectWidth = parent.width - x
             }
         }
