@@ -591,7 +591,7 @@ Item {
                             horizontalCenter: parent.horizontalCenter
                         }
                         content: Text {
-                            text: "Click here to view all our platform categories!"
+                            text: "Click here to view all of our platform categories!"
                             color: "white"
                         }
 
