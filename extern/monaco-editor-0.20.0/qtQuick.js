@@ -22,7 +22,7 @@ function registerQmlProvider() {
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
-            triggerCharacters: ['.', ':', '\v'],
+            triggerCharacters: ['.', ':'],
             provideCompletionItems: (model, position) => {
                 qtSearch.update(model)
                 qtSuggestions.update(position)

@@ -3776,7 +3776,7 @@ const qtTypeJson = {
                     "params_name": []
                 },
             },
-            "inherits": "item",
+            "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
             "isVisualWidget": false,
@@ -6290,7 +6290,7 @@ const qtTypeJson = {
                     "params_name": ["event"]
                 },
             },
-            "inherits": "TextInputs",
+            "inherits": "TextInput",
             "source": "Controls",
             "nonInstantiable": false,
             "isVisualWidget": false,

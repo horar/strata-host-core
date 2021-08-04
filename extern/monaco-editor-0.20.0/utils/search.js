@@ -37,11 +37,11 @@ class QtSearch {
     }
 
     findPreviousQtItem(position) {
-        return this.model.findPreviousMatch(/([a-zA-Z0-9_]+)[\.]*([A-Z]+[a-zA-Z0-9_]*)*\s*(\{\n*)/, position, true, true)
+        return this.model.findPreviousMatch(/([A-Z][a-zA-Z0-9_]+)[\.]*([A-Z]+[a-zA-Z0-9_]*)*\s*(\{\n*)/, position, true, true)
     }
 
     findNextQtItem(position) {
-        return this.model.findNextMatch(/([a-zA-Z0-9_]+)[\.]*([a-zA-Z0-9_]+)*\s*(\{\n*)/, position, true, true)
+        return this.model.findNextMatch(/([A-Z][a-zA-Z0-9_]+)[\.]*([a-zA-Z0-9_]+)*\s*(\{\n*)/, position, true, true)
     }
 
     findNextFunction(position) {
@@ -126,14 +126,18 @@ class QtSearch {
 
     getNextQtItem(position) {
         const itemLine = this.findNextQtItem(position)
-        const getItem = this.model.getLineContent(itemLine.range.startLineNumber).trim().split(/[\s*\{|\s+]/)[0].trim()
-        return { item: getItem, range: itemLine.range }
+        const getItem = this.model.getValueInRange(itemLine.range).trim().split(/[\s*\{|\s+]/)[0].trim()
+        const getLine = this.model.getLineContent(itemLine.range.startLineNumber).trim()
+        const getItemRange = this.model.findPreviousMatch(getLine, {lineNumber: itemLine.range.startLineNumber, column: itemLine.range.endColumn})
+        return { item: getItem, range: { startLineNumber: getItemRange.range.startLineNumber, startColumn: getItemRange.range.startColumn, endLineNumber: itemLine.range.endLineNumber, endColumn: itemLine.range.endColumn} }
     }
 
     getPrevQtItem(position) {
         const itemLine = this.findPreviousQtItem(position)
-        const getItem = this.model.getLineContent(itemLine.range.startLineNumber).trim().split(/[\s*\{|\s+]/)[0].trim()
-        return { item: getItem, range: itemLine.range }
+        const getItem = this.model.getValueInRange(itemLine.range).trim().split(/[\s*\{|\s+]/)[0].trim()
+        const getLine = this.model.getLineContent(itemLine.range.startLineNumber).trim()
+        const getItemRange = this.model.findPreviousMatch(getLine, {lineNumber: itemLine.range.startLineNumber, column: itemLine.range.endColumn})
+        return { item: getItem, range: { startLineNumber: getItemRange.range.startLineNumber, startColumn: getItemRange.range.startColumn, endLineNumber: itemLine.range.endLineNumber, endColumn: itemLine.range.endColumn} }
     }
 
     getNextIdName(position) {
@@ -146,6 +150,9 @@ class QtSearch {
 
     getPrevIdName(position) {
         const idLine = this.findPreviousId(position)
+        if (idLine === null) {
+            return "this";
+        }
         return this.model.getLineContent(idLine.range.startLineNumber).trim().split("id:")[1].trim()
     }
 
@@ -383,19 +390,19 @@ class QtSearch {
 
     getItems(initialPosition) {
         let position = initialPosition
-
         while (position.lineNumber < this.bottomOfFile.range.startLineNumber) {
             const newItem = this.getNextQtItem(position)
+            if(qtQuickModel.model.hasOwnProperty(newItem.range.startLineNumber)) {
+                break;
+            }
             try {
                 const itemModel = new QtItemModel();
-                if (/[A-Z]/.test(newItem.item)) {
-                    itemModel.updateValue(newItem.item);
-                    const itemRange = this.findMatchingBracket({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
-                    const nextId = this.getNextIdName({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
-                    itemModel.updateId(nextId)
-                    itemModel.updateRange(itemRange)
-                    qtQuickModel.updateQtModel(newItem.range.startLineNumber, itemModel)
-                }
+                itemModel.updateValue(newItem.item);
+                const itemRange = this.findMatchingBracket({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
+                const nextId = this.getNextIdName({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
+                itemModel.updateId(nextId)
+                itemModel.updateRange(itemRange)
+                qtQuickModel.updateQtModel(newItem.range.startLineNumber, itemModel)
                 const checkNext = this.findNextQtItem(position)
                 if (checkNext.range === null) {
                     break
@@ -403,7 +410,7 @@ class QtSearch {
                 if (checkNext.range.startLineNumber <= position.lineNumber) {
                     break;
                 }
-                position = { lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn }
+                position = { lineNumber: checkNext.range.startLineNumber, column: checkNext.range.endColumn }
 
             } catch (error) {
                 console.log(`(search.js) function -> getItems: ${error}`)
@@ -535,7 +542,7 @@ class QtSearch {
         return {
             startLineNumber: position.lineNumber,
             startColumn: position.column,
-            endLineNumber: nextCloseBracket.range.startLineNumber - 1,
+            endLineNumber: nextCloseBracket.range.startLineNumber,
             endColumn: nextCloseBracket.range.startColumn
         }
     }
@@ -544,6 +551,14 @@ class QtSearch {
         const checkItem = this.getPrevQtItem(newPosition)
         const getCurrentItem = qtQuickModel.fetchItem(checkItem.range.startLineNumber)
         if (getCurrentItem === null) {
+            return;
+        }
+
+        if(getCurrentItem.range.startLineNumber === this.topOfFile.range.startLineNumber) {
+            return checkItem
+        }
+
+        if (getCurrentItem === undefined) {
             return;
         }
 

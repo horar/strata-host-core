@@ -51,12 +51,12 @@ class QtItemModel {
 
     updateValue(newValue) {
         this.value = newValue
-        this.properties = []
-        this.signals = []
-        this.metaPropMap = {}
-        this.metaFuncMap = {}
-        this.functions = []
-        this.metaSignalMap = {}
+        this.properties = Object.keys(qtTypeJson.sources["Item"].properties)
+        this.signals = Object.keys(qtTypeJson.sources["Item"].signals)
+        this.metaPropMap = qtTypeJson.sources["Item"].properties
+        this.metaSignalMap = qtTypeJson.sources["Item"].signals
+        this.metaFuncMap = qtTypeJson.sources["Item"].functions
+        this.functions = Object.keys(qtTypeJson.sources["Item"].functions)
         if(qtTypeJson.sources[this.value] !== undefined) {
             if(qtTypeJson.sources[this.value].inherits !== "") {
                 const inheritObject = addInheritedItems(this.value, qtTypeJson.sources[this.value].inherits)
