@@ -73,7 +73,11 @@ Rectangle {
             tooltipDescription: "Toggle debug panel"
 
             onClicked: {
-                isDebugMenuOpen = !isDebugMenuOpen
+                if (debugMenuWindow) {
+                    newWindowDebugMenuLoader.item.raise()
+                } else {
+                    isDebugMenuOpen = !isDebugMenuOpen
+                }
             }
         }
 
