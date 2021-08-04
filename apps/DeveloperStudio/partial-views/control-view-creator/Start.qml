@@ -63,7 +63,6 @@ Rectangle {
                     height: width
                     iconColor: openMouseArea.containsMouse || stack.state === "open" ? "#444" : "#aaa"
                     anchors.horizontalCenter: parent.horizontalCenter
-
                 }
 
                 SGText {
@@ -94,8 +93,9 @@ Rectangle {
                 MouseArea {
                     id: openMouseArea
                     anchors.fill: openArea
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
+                    enabled: stack.state !== "open"
 
                     onClicked: {
                         stack.state = "open"
@@ -145,11 +145,12 @@ Rectangle {
                 MouseArea {
                     id: createMouseArea
                     anchors.fill: createArea
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
+                    enabled: stack.state !== "create"
 
                     onClicked: {
-                       stack.state = "create"
+                        stack.state = "create"
                     }
                 }
             }
