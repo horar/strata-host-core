@@ -5,8 +5,8 @@ ApplicationWindow {
     id: root
     width: 900
     height: 200
-    minimumHeight: 121
-    minimumWidth: 400
+    minimumHeight: 130
+    minimumWidth: 500
 
     visible: true
     property alias consoleLogParent: newWindowContainer

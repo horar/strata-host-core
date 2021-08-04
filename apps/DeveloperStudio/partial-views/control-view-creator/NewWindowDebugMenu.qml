@@ -5,7 +5,7 @@ ApplicationWindow {
     id: root
     width: 450
     height: 1000
-    minimumHeight: 121
+    minimumHeight: 200
     minimumWidth: 450
 
     visible: true
