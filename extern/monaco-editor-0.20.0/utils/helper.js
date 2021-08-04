@@ -63,7 +63,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 label: suggestion,
                 kind: monaco.languages.CompletionItemKind.Class,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `${suggestion} { // start_${uuid}\n id: visual_${uuid}\n\tlayoutInfo.uuid: "${uuid}"\n\tlayoutInfo.columnsWide: 1\n\tlayoutInfo.rowsTall: 1\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n} // end_${uuid}`,
+                insertText: `${suggestion} { // start_${uuid}\n\tid: visual_${uuid}\n\tlayoutInfo.uuid: "${uuid}"\n\tlayoutInfo.columnsWide: 1\n\tlayoutInfo.rowsTall: 1\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n} // end_${uuid}`,
                 range: null
             }
     }
