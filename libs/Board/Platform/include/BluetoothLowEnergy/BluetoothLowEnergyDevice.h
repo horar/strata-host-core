@@ -9,13 +9,27 @@
 namespace strata::device
 {
 
+namespace ble
+{
+static constexpr quint16 MANUFACTURER_ID_ON_SEMICONDICTOR = 0x0362;
+static const QBluetoothUuid STRATA_ID_SERVICE(QString("00010000-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_TYPE(QString("00010001-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_PLATFORM_ID(QString("00010002-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CLASS_ID(QString("00010003-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_BOARD_COUNT(QString("00010004-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_BOARD_CONNECTED(QString("00010005-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_PLATFORM_ID(QString("00010006-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_CLASS_ID(QString("00010007-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT(QString("00010008-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_FW_CLASS_ID(QString("00010009-297d-4dd5-baf7-5da63e41c884"));
+}
+
 class BluetoothLowEnergyDevice : public Device
 {
     Q_OBJECT
     Q_DISABLE_COPY(BluetoothLowEnergyDevice)
 
 public:
-    constexpr static quint16 MANUFACTURER_ID_ON_SEMICONDICTOR = 0x0362;
 
     /**
      * BluetoothLowEnergyDevice constructor

@@ -158,6 +158,7 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
             qCDebug(logCategoryDeviceScanner) << "deviceUuid" << info.deviceUuid().toString(QBluetoothUuid::WithoutBraces);
             qCDebug(logCategoryDeviceScanner) << "rssi" << infoItem.rssi;
             qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
+            qCDebug(logCategoryDeviceScanner) << "service UUIDs" << info.serviceUuids();
             qCDebug(logCategoryDeviceScanner) << "is Strata" << infoItem.isStrata;
             qCDebug(logCategoryDeviceScanner) << "";
         }
@@ -175,6 +176,7 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
         qCDebug(logCategoryDeviceScanner) << "device address" << infoItem.address;
         qCDebug(logCategoryDeviceScanner) << "rssi" << infoItem.rssi;
         qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
+        qCDebug(logCategoryDeviceScanner) << "service UUIDs" << (*it).second.serviceUuids();
         qCDebug(logCategoryDeviceScanner) << "is Strata" << infoItem.isStrata;
         qCDebug(logCategoryDeviceScanner) << "";
     }
@@ -190,7 +192,7 @@ BlootoothLowEnergyInfo BluetoothLowEnergyScanner::convertBlootoothLowEnergyInfo(
     infoItem.address = getDeviceAddress(info);
     infoItem.rssi = info.rssi();
     infoItem.manufacturerIds = info.manufacturerIds();
-    infoItem.isStrata = infoItem.manufacturerIds.contains(BluetoothLowEnergyDevice::MANUFACTURER_ID_ON_SEMICONDICTOR); // TODO!!! replace by real detection once the service+detection design is final
+    infoItem.isStrata = info.serviceUuids().contains(ble::STRATA_ID_SERVICE);
     return infoItem;
 }
 
