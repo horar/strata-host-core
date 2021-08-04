@@ -6290,7 +6290,7 @@ const qtTypeJson = {
                     "params_name": ["event"]
                 },
             },
-            "inherits": "TextInputs",
+            "inherits": "TextInput",
             "source": "Controls",
             "nonInstantiable": false,
             "isVisualWidget": false,
