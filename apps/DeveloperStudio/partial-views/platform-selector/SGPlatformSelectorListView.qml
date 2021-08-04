@@ -586,12 +586,14 @@ Item {
                     SGWidgets09.SGToolTipPopup {
                         id: categoryHighlightPopup
                         color: Qt.lighter(Theme.palette.green, 1.15)
+                        anchors {
+                            bottom: parent.top
+                            horizontalCenter: parent.horizontalCenter
+                        }
                         content: Text {
                             text: "Click here to view all our platform categories!"
                             color: "white"
                         }
-                        anchors.bottom: parent.top
-                        anchors.horizontalCenter: parent.horizontalCenter
 
                         MouseArea {
                             anchors {
