@@ -16,13 +16,14 @@ Item {
     property string currentCvcProjectQrcUrl
     property string currentCvcProjectJsonUrl
     property bool platformInterfaceGeneratorSeen
+    property string apiVersion
 
     readonly property string jsonFileName: "platformInterface.json"
 
     readonly property var baseModel: ({
         "commands": [],
         "notifications": []
-    });
+    })
 
     readonly property var templateCommand: ({
         "type": "cmd",
@@ -30,7 +31,7 @@ Item {
         "valid": false,
         "payload": [],
         "editing": false
-    });
+    })
 
     readonly property var templateNotification: ({
         "type": "value",
@@ -38,7 +39,7 @@ Item {
         "valid": false,
         "payload": [],
         "editing": false
-	});
+	})
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
@@ -48,7 +49,7 @@ Item {
         "array": [], // This is only filled if the type == "array"
         "object": [],
         "value": "0"
-    });
+    })
 
     onVisibleChanged: {
         if (editor.fileTreeModel.url == "") {
@@ -207,7 +208,7 @@ Item {
 
             for (let i = 0; i < objectPropertiesModel.count; i++) {
                 if (i !== index) {
-                    let item = objectPropertiesModel.get(i);
+                    let item = objectPropertiesModel.get(i)
                     if (item.name === key) {
                         return false
                     }
@@ -336,10 +337,22 @@ Item {
                 try {
                     const jsonObject = JSON.parse(fileText)
                     if (importValidationCheck(jsonObject)) {
-                        if (alertToast.visible) {
-                            alertToast.hide()
+                        if (apiVersion === "APIv1") {
+                            if (alertToast.visible) {
+                                alertToast.hide()
+                            }
+                            createModelFromJson(jsonObject)
+                        } else if (apiVersion === "APIv0") {
+                            if (alertToast.visible) {
+                                alertToast.hide()
+                            }
+                            alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
+                            alertToast.textColor = "white"
+                            alertToast.color = "goldenrod"
+                            alertToast.interval = 0
+                            alertToast.show()
+                            createModelFromJsonAPIv0(jsonObject)
                         }
-                        createModelFromJson(jsonObject)
                     } else {
                         alertToast.text = "The JSON file is improperly formatted"
                         alertToast.textColor = "white"
@@ -971,8 +984,9 @@ Item {
       * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
      **/
     function generatePlatformInterface() {
-        const jsonObject = createJsonObject();
-        let result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text);
+        const jsonObject = createJsonObject()
+        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, jsonFileName)
+        const result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
@@ -983,12 +997,14 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
             Signals.platformInterfaceUpdate(jsonObject)
         } else {
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.textColor = "white"
             alertToast.color = "green"
             alertToast.interval = 4000
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
             Signals.platformInterfaceUpdate(jsonObject)
         }
         alertToast.show()
@@ -999,7 +1015,10 @@ Item {
      **/
 
     function importValidationCheck(object) {
-        if (!object.hasOwnProperty("commands") || !object.hasOwnProperty("notifications")) {
+        if (!object.hasOwnProperty("commands") || 
+            !object.hasOwnProperty("notifications") ||
+            Object.keys(object).length !== 2) {
+            // must contain only commands and notifications
             return false
         }
 
@@ -1015,6 +1034,14 @@ Item {
             if (!command.hasOwnProperty("cmd")) {
                 return false
             }
+
+            if (command.hasOwnProperty("payload") && !Array.isArray(command["payload"])) {
+                if (typeof command["payload"] === "object") {
+                    apiVersion = "APIv0"
+                    return true
+                }
+            }
+
             if (!searchLevel1(command)) {
                 return false
             }
@@ -1025,10 +1052,12 @@ Item {
             if (!notification.hasOwnProperty("value")) {
                 return false
             }
+
             if (!searchLevel1(notification)) {
                 return false
             }
         }
+        apiVersion = "APIv1"
         return true
     }
 
@@ -1090,10 +1119,22 @@ Item {
             try {
                 const jsonObject = JSON.parse(fileText)
                 if (importValidationCheck(jsonObject)) {
-                    if (alertToast.visible) {
-                        alertToast.hide()
+                    if (apiVersion === "APIv1") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        createModelFromJson(jsonObject)
+                    } else if (apiVersion === "APIv0") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
+                        alertToast.textColor = "white"
+                        alertToast.color = "goldenrod"
+                        alertToast.interval = 0
+                        alertToast.show()
+                        createModelFromJsonAPIv0(jsonObject)
                     }
-                    createModelFromJson(jsonObject)
                 } else {
                     alertToast.text = "The JSON file is improperly formatted"
                     alertToast.textColor = "white"
@@ -1133,5 +1174,177 @@ Item {
             return platformInterfaceJsonFilepath
         }
         return ""
+    }
+
+    /********************************************************************************************
+      * All functions below this mark are for APIv0. 
+      * This allows deprecated PI.json to function as expected
+      * When the user generates again, their PI.json file be updated to APIv1
+    /********************************************************************************************
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function creates the model from a JSON object (used when importing a JSON file)
+    **/
+    function createModelFromJsonAPIv0(jsonObject) {
+        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+
+        finishedModel.modelAboutToBeReset()
+        finishedModel.clear()
+
+        for (let i = 0; i < topLevelKeys.length; i++) {
+            const topLevelType = topLevelKeys[i]
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
+            let listOfCommandsOrNotifications = {
+                "name": topLevelType, // "commands" / "notifications"
+                "data": []
+            }
+
+            finishedModel.append(listOfCommandsOrNotifications)
+
+            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+                let commandsModel = finishedModel.get(i).data
+
+                let cmd = arrayOfCommandsOrNotifications[j]
+                let commandName
+                let commandType
+                let commandObject = {}
+
+                if (topLevelType === "commands") {
+                    // If we are dealing with commands, then look for the "cmd" key
+                    commandName = cmd["cmd"]
+                    commandType = "cmd"
+                } else {
+                    commandName = cmd["value"]
+                    commandType = "value"
+                }
+
+                commandObject["type"] = commandType
+                commandObject["name"] = commandName
+                commandObject["valid"] = true
+                commandObject["payload"] = []
+                commandObject["editing"] = false
+
+                commandsModel.append(commandObject)
+
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
+                let payloadPropertiesArray = []
+
+                if (payload) {
+                    let payloadProperties = Object.keys(payload)
+                    // sorting pi.json file so the generated files, pi.json & pi.qml, will function as intented prior to APIv1
+                    payloadProperties = payloadProperties.sort(); 
+                    let payloadModel = commandsModel.get(j).payload
+                    for (let k = 0; k < payloadProperties.length; k++) {
+
+                        const key = payloadProperties[k]
+                        let type = getType(payload[key])
+                        let payloadPropObject = Object.assign({}, templatePayload)
+                        payloadPropObject["name"] = key
+                        payloadPropObject["type"] = type
+                        payloadPropObject["valid"] = true
+                        payloadPropObject["indexSelected"] = -1
+
+                        if (type === "int") {
+                            payloadPropObject["value"] = "0"
+                        } else if (type === "double") {
+                            payloadPropObject["value"] = "0"
+                        } else if (type === "bool") {
+                            payloadPropObject["value"] = "false"
+                        } else if (type === "string") {
+                            payloadPropObject["value"] = ""
+                        }
+
+                        payloadModel.append(payloadPropObject)
+
+                        let propertyArray = []
+                        let propertyObject = []
+
+                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            generateArrayModelAPIv0(payload[key], payloadModel.get(k).array)
+                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            generateObjectModelAPIv0(payload[key], payloadModel.get(k).object)
+                        }
+                    }
+                }
+            }
+        }
+        finishedModel.modelReset()
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * getType called from createModelFromJsonAPIv0(); returns the sdsModel type
+    **/
+    function getType(item) {
+        if (Array.isArray(item)) {
+            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
+        } else if (item === "array-dynamic") {
+            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC
+        } else if (typeof item === "object") {
+            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
+        } else if (item === "object-dynamic") {
+            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC
+        } else {
+            return item
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function takes an Array and transforms it into an array readable by our delegates
+    **/
+    function generateArrayModelAPIv0(arr, parentListModel) {
+        for (let i = 0; i < arr.length; i++) {
+            let type = getType(arr[i])
+
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
+            
+            if (type === "int") {
+                obj["value"] = "0"
+            } else if (type === "double") {
+                obj["value"] = "0"
+            } else if (type === "bool") {
+                obj["value"] = "false"
+            }
+            
+            parentListModel.append(obj)
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
+            }
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function takes an Object and transforms it into an array readable by our delegates
+    **/
+    function generateObjectModelAPIv0(object, parentListModel) {
+        let keys = Object.keys(object)
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
+            let type = getType(object[key])
+            
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
+            
+            if (type === "int") {
+                obj["value"] = "0"
+            } else if (type === "double") {
+                obj["value"] = "0"
+            } else if (type === "bool") {
+                obj["value"] = "false"
+            }
+            
+            parentListModel.append(obj)
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
+            }
+        }
     }
 }
