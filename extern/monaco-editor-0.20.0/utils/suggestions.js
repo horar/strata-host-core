@@ -199,12 +199,25 @@ class QtSuggestions {
         for (const key of Object.keys(qtTypeJson["sources"])) {
             if(key === checkSub) {
                 const item = qtTypeJson["sources"][key]
-                const properties = Object.keys(item.properties)
-                const signals = Object.keys(item.signals)
+                const properties =  removeDefaults(Object.keys(item.properties), "property")
+                const signals = removeDefaults(Object.keys(item.signals), "signal")
                 const functions = Object.keys(item.functions)
+                const signalSlots = []
+                const propSlots = []
+                for(let i = 0; i < signals.length; i++) {
+                    const slot = signals[i].charAt(0).toUpperCase() + signals[i].slice(1)
+                    signalSlots.push(`on${slot}:`)
+                }
+
+                for(let i = 0; i < properties.length; i++) {
+                    const slot = properties[i].charAt(0).toUpperCase() + properties[i].slice(1);
+                    propSlots.push(`on${slot}Changed:`)
+                }
                 this.createSuggestions(properties, "property")
                 this.createSuggestions(functions, "property")
                 this.createSuggestions(signals, "property")
+                this.createSuggestions(removeDuplicates(signalSlots), "slot")
+                this.createSuggestions(removeDuplicates(propSlots), "slot")
                 break;
             }
         }
