@@ -409,13 +409,13 @@ ColumnLayout {
         Layout.fillWidth: true
         currentIndex: 0
 
-        Keys.onPressed: {
-            if (event.matches(StandardKey.Save)) {
-                saveFile()
-            }
-        }
-
         Item {
+
+            Keys.onPressed: {
+                if (event.matches(StandardKey.Save)) {
+                    saveFile()
+                }
+            }
 
             WebEngineView {
                 id: webEngine
