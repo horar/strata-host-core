@@ -24,7 +24,6 @@ Item {
         color: "#eee"
         clip: true
 
-
         Rectangle {
             id: topBar
             width: parent.width

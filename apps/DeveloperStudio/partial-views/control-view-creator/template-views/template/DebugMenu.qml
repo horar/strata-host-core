@@ -7,6 +7,10 @@ import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
+
+    border.color: "black"
+    border.width: 1
+
     Text {
         id: header
         text: "Debug Commands and Notifications"
