@@ -21,7 +21,6 @@ Item {
     visible: false
     implicitHeight: container.implicitHeight
     implicitWidth: container.implicitWidth
-    z: 50
 
     Component.onCompleted: {
         updateAlignment()

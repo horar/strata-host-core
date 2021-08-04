@@ -147,21 +147,9 @@ GridLayout {
             radius: (Math.min(height, width))/ 2
             color: slider.grooveColor
 
-            Rectangle {
-                id: grooveFill
-                width: slider.horizontal ? handle.x + handle.width / 2: groove.width
-                height: slider.horizontal ? groove.height : groove.height - handle.y - handle.height / 2
-                anchors {
-                    bottom: groove.bottom
-                }
-                color: slider.fillColor
-                radius: groove.radius
-            }
-
             Grid {
                 id: tickmarkRow
                 visible: false
-                z: -1
                 x: {
                     if (slider.horizontal) {
                         return (handle.width / 2) - 1
@@ -205,6 +193,17 @@ GridLayout {
                         height: tickmarkRepeater.tickmarkHeight
                     }
                 }
+            }
+
+            Rectangle {
+                id: grooveFill
+                width: slider.horizontal ? handle.x + handle.width / 2: groove.width
+                height: slider.horizontal ? groove.height : groove.height - handle.y - handle.height / 2
+                anchors {
+                    bottom: groove.bottom
+                }
+                color: slider.fillColor
+                radius: groove.radius
             }
         }
 

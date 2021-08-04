@@ -75,7 +75,7 @@ Item {
             }
             width: progressBar.width + 40
             height: progressBar.height + 60
-            z: webEngine.z+1
+            z: webEngine.z + 1
             visible: progressBar.visible
 
             ProgressBar {
@@ -110,7 +110,6 @@ Item {
             anchors {
                 fill: parent
             }
-            z: 20
             visible: !webEngine.enabled && !progressBar.visible && !notAvailableCoverUp.visible
 
             Text {
@@ -130,7 +129,6 @@ Item {
             anchors {
                 fill: parent
             }
-            z: 20
             visible: root.url === "datasheet-unavailable"
 
             Text {
@@ -158,7 +156,7 @@ Item {
             opacity: 0.7
             height: 1.3 * inputField.height
             radius: height / 3
-            z: parent.z + 1
+            z: webEngine.z + 1
 
             anchors {
                 bottom: parent.bottom

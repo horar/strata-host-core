@@ -5,5 +5,5 @@ Rectangle {
     color: "#ddd"
     width: parent.width
     height: 1
-    z:10
+    z:1
 }

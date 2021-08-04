@@ -232,7 +232,7 @@ ColumnLayout {
         id: alertToast
         Layout.fillWidth: true
         interval: 0
-        z: 100
+        z: 1
         color: "red"
     }
 
