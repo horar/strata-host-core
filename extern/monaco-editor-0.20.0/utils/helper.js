@@ -152,11 +152,15 @@ function getImportedItemList() {
     const itemList = []
     const imports = qtQuickModel.imports
     for (qtObjects in qtTypeJson["sources"]) {
-        for (var i = 0; i < imports.length; i++) {
-            if ((qtTypeJson["sources"][qtObjects].source === "" || imports[i].includes(qtTypeJson["sources"][qtObjects].source)) && !qtTypeJson["sources"][qtObjects].nonInstantiable) {
-                itemList.push(qtObjects)
-                break;
+        if(!imports.includes("tech.strata.sglayout 1.0")) {
+            for (var i = 0; i < imports.length; i++) {
+                if ((qtTypeJson["sources"][qtObjects].source === "" || imports[i].includes(qtTypeJson["sources"][qtObjects].source)) && !qtTypeJson["sources"][qtObjects].nonInstantiable) {
+                    itemList.push(qtObjects)
+                    break;
+                }
             }
+        } else if (qtTypeJson["sources"][qtObjects].source === "tech.strata.sglayout 1.0" && !qtTypeJson["sources"][qtObjects].nonInstantiable) {  
+            itemList.push(qtObjects)
         }
     }
 
