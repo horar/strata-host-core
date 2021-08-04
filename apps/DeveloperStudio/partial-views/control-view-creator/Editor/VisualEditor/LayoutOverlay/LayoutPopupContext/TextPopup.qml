@@ -68,7 +68,9 @@ GenericPopup {
             implicitWidth: 400
 
             onAccepted: {
-                okButton.clicked()
+                if (okButton.enabled) {
+                    okButton.clicked()
+                }
             }
 
             onTextChanged: {
@@ -95,6 +97,7 @@ GenericPopup {
                         return false
                     }
                 }
+
                 onClicked: {
                     if (isString) {
                         let newString = textPopup.text
@@ -109,6 +112,7 @@ GenericPopup {
 
             Button {
                 text: "Cancel"
+
                 onClicked: {
                     textPopup.text = ""
                     textPopup.close()
