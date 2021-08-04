@@ -21,7 +21,7 @@ Item {
 
     Rectangle {
         id: mainContainer
-        width: debugMenuWindow ? parent.width :  Math.min(root.width, rectWidth)
+        width: debugMenuWindow ? parent.width : Math.min(root.width, rectWidth)
         height: parent.height
         anchors.right: parent.right
         color: "lightgrey"
