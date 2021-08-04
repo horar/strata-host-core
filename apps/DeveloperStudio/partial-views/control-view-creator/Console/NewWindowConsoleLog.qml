@@ -3,10 +3,10 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
     id: root
-    width: 1000
+    width: 900
     height: 200
     minimumHeight: 121
-    minimumWidth: 426
+    minimumWidth: 400
 
     visible: true
     property alias consoleLogParent: newWindowContainer

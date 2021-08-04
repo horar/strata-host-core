@@ -12,7 +12,6 @@ Item {
 
     property var debugVisible: false
     property alias mainContainer: mainContainer
-    property alias sideWall: topWall
     property real rectWidth: 450
 
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
@@ -22,7 +21,7 @@ Item {
 
     Rectangle {
         id: mainContainer
-        width: Math.min(root.width, rectWidth)
+        width: debugMenuWindow ? parent.width :  Math.min(root.width, rectWidth)
         height: parent.height
         anchors.right: parent.right
         color: "lightgrey"
@@ -88,16 +87,16 @@ Item {
     }
 
     Item {
-        id: topWall
+        id: sideWall
         y: 0
         width: 4
         height: parent.height + 5
         enabled: true
 
         Binding {
-            target: topWall
+            target: sideWall
             property: "x"
-            value: root.width - mainContainer.width - topWall.width
+            value: root.width - mainContainer.width - sideWall.width
             when: mouseArea.drag.active === false
 
         }
@@ -110,12 +109,12 @@ Item {
 
     MouseArea {
         id: mouseArea
-        anchors.fill: topWall
-        drag.target: topWall
+        anchors.fill: sideWall
+        drag.target: sideWall
         drag.minimumY: 0
         drag.maximumY: 0
         drag.minimumX: 0
-        drag.maximumX: (parent.width - 250)
+        drag.maximumX: (parent.width - 100)
         cursorShape: Qt.SplitHCursor
     }
 }
