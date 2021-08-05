@@ -8,7 +8,7 @@ ApplicationWindow {
     minimumHeight: 200
     minimumWidth: 450
 
-    visible: true
+    visible: viewStack.currentIndex === 2 ? true : false
     property alias consoleLogParent: newWindowContainer
 
     onClosing: {

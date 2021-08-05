@@ -39,6 +39,9 @@ Item {
         }
 
         onUrlChanged: {
+            if (debugMenuWindow) {
+                debugMenuWindow = false
+            }
             isDebugMenuOpen = false
         }
     }
