@@ -66,6 +66,12 @@ SGStrataPopup {
                 readOnly: false
                 enabled: true
                 contextMenuEnabled: true
+
+                onAccepted: {
+                    if (renameFileButton.enabled) {
+                        renameFileButton.clicked()
+                    }
+                }
             }
         }
 
