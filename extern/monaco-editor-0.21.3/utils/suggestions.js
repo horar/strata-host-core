@@ -37,7 +37,7 @@ class QtSuggestions {
         }
 
         for (var i = 0; i < itemSignals.length; i++) {
-            const slot = itemSignals[i].charAt(0).toUpperCase() + itemSignals[i].slice(1).split("(")[0].trim();
+            const slot = itemSignals[i].charAt(0).toUpperCase() + itemSignals[i].slice(1).trim()
             slotSignalArr.push(`on${slot}:`)
         }
 
@@ -45,6 +45,8 @@ class QtSuggestions {
         this.createSuggestions(metaPropArr, "meta-parent")
         this.createSuggestions(removeDuplicates(slotPropArr), "slot")
         this.createSuggestions(removeDuplicates(slotSignalArr), "slot")
+        this.createSuggestions(["property"],"custom-property")
+        this.createSuggestions(["signal"], "custom-signal")
     }
 
     getMetaPropertySuggestions(startLineNumber, propertyName) {
@@ -56,7 +58,7 @@ class QtSuggestions {
     }
 
     getFunctionGlobalSuggestions(startLineNumber, which, value) {
-        const idKeys = []
+        const idKeys = ["parent"]
         let map = {}
         for (const key of Object.keys(qtQuickModel.model)) {
             const item = qtQuickModel.fetchItem(key)
@@ -121,6 +123,9 @@ class QtSuggestions {
             if (checkLine.includes(".")) {
                 const checkSub = checkLine.split(".")[0].trim()
                 this.determineSubProperties(checkSub)
+                return;
+            } else if(checkLine.includes(":")) {
+                this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber,"slot","N/A")
                 return;
             }
             if (checkProperty || checkFunction || checkSlot || checkExpanded) {

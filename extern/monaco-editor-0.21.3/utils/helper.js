@@ -4,7 +4,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
         case "property":
             return {
                 label: suggestion,
-                kind: monaco.languages.CompletionItemKind.Keyword,
+                kind: monaco.languages.CompletionItemKind.Property,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                 insertText: suggestion,
                 range: null
@@ -22,7 +22,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 label: suggestion,
                 kind: monaco.languages.CompletionItemKind.Class,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `${suggestion} {\n \n}`,
+                insertText: `${suggestion} {\n\t$0  \n}`,
                 range: null
             }
         case "meta-sub":
@@ -36,23 +36,23 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
         case "meta-parent":
             return {
                 label: suggestion,
-                kind: monaco.languages.CompletionItemKind.Keyword,
+                kind: monaco.languages.CompletionItemKind.Interface,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `${suggestion} {\n \n}`,
+                insertText: `${suggestion} {\n\t$0 \n}`,
                 range: null
             }
         case "slot":
             return {
                 label: suggestion,
-                kind: monaco.languages.CompletionItemKind.Keyword,
+                kind: monaco.languages.CompletionItemKind.Method,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `${suggestion} {\n \n}`,
+                insertText: `${suggestion} {\n\t$0 \n}`,
                 range: null
             }
         case "parameter": 
             return  {
                 label: suggestion,
-                kind: monaco.languages.CompletionItemKind.Property,
+                kind: monaco.languages.CompletionItemKind.TypeParameter,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                 insertText: suggestion,
                 range: null
@@ -63,7 +63,23 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 label: suggestion,
                 kind: monaco.languages.CompletionItemKind.Class,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `${suggestion} { // start_${uuid}\n\tid: visual_${uuid}\n\tlayoutInfo.uuid: "${uuid}"\n\tlayoutInfo.columnsWide: 1\n\tlayoutInfo.rowsTall: 1\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n} // end_${uuid}`,
+                insertText: `${suggestion} { // start_${uuid}\n\tid: visual_${uuid}\n\tlayoutInfo.uuid: "${uuid}"\n\tlayoutInfo.columnsWide: 1\n\tlayoutInfo.rowsTall: 1\n\tlayoutInfo.xColumns: 0\n\tlayoutInfo.yRows: 0\n\t$1\n} // end_${uuid}`,
+                range: null
+            }
+        case "custom-property":
+            return {
+                label: "property",
+                kind: monaco.languages.CompletionItemKind.Field,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                insertText: `property $1 $2`,
+                range: null
+            }
+        case "custom-signal": 
+            return {
+                label: "signal",
+                kind: monaco.languages.CompletionItemKind.Field,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                insertText: `signal $1($2)`,
                 range: null
             }
     }

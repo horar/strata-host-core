@@ -124,6 +124,10 @@ class QtSearch {
         return this.model.findNextMatch(/([a-z]+\s*\:\s*\{)/, position, true)
     }
 
+    findAllQtItems() {
+        return this.model.findMatches(/([A-Z][a-zA-Z0-9_]+)[\.]*([a-zA-Z0-9_]+)*\s*(\{\n*)/, this.fullRange, true, true)
+    }
+
     getNextQtItem(position) {
         const itemLine = this.findNextQtItem(position)
         const getItem = this.model.getValueInRange(itemLine.range).trim().split(/[\s*\{|\s+]/)[0].trim()
@@ -145,7 +149,7 @@ class QtSearch {
         if (idLine === null) {
             return "this";
         }
-        return this.model.getLineContent(idLine.range.startLineNumber).trim().split("id:")[1].trim()
+        return {"id": this.model.getLineContent(idLine.range.startLineNumber).trim().split("id:")[1].trim(), "lineNumber": idLine.range.startLineNumber}
     }
 
     getPrevIdName(position) {
@@ -153,7 +157,7 @@ class QtSearch {
         if (idLine === null) {
             return "this";
         }
-        return this.model.getLineContent(idLine.range.startLineNumber).trim().split("id:")[1].trim()
+        return {"id": this.model.getLineContent(idLine.range.startLineNumber).trim().split("id:")[1].trim(), "lineNumber": idLine.range.startLineNumber}
     }
 
     getPropertyName(lineNumber) {
@@ -377,7 +381,7 @@ class QtSearch {
         try {
             if (this.topOfFile !== null && this.bottomOfFile !== null) {
                 const position = { lineNumber: this.topOfFile.range.startLineNumber - 1, column: this.topOfFile.range.startColumn }
-                this.getItems(position)
+                this.getQtItems()
                 this.addProperty(position)
                 this.addSignal(position)
                 this.addFunction(position)
@@ -388,34 +392,22 @@ class QtSearch {
         }
     }
 
-    getItems(initialPosition) {
-        let position = initialPosition
-        while (position.lineNumber < this.bottomOfFile.range.startLineNumber) {
-            const newItem = this.getNextQtItem(position)
-            if(qtQuickModel.model.hasOwnProperty(newItem.range.startLineNumber)) {
-                break;
+    getQtItems() {
+        const getAllItems = this.findAllQtItems()
+        for (let i = 0; i < getAllItems.length; i++) {
+            const itemLine = getAllItems[i]
+            const itemModel = new QtItemModel();
+            const getItem = this.model.getValueInRange(itemLine.range).trim().split(/[\s*\{|\s+]/)[0].trim()
+            itemModel.updateValue(getItem);
+            const itemRange = this.findMatchingBracket({ lineNumber: itemLine.range.startLineNumber, column: itemLine.range.startColumn })
+            const nextId = this.getNextIdName({ lineNumber: itemLine.range.startLineNumber, column: itemLine.range.startColumn })
+            if(nextId.lineNumber >= itemRange.startLineNumber && nextId.lineNumber <= itemRange.endLineNumber) {
+                itemModel.updateId(nextId.id)
+            } else {
+                itemModel.updateId("this")
             }
-            try {
-                const itemModel = new QtItemModel();
-                itemModel.updateValue(newItem.item);
-                const itemRange = this.findMatchingBracket({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
-                const nextId = this.getNextIdName({ lineNumber: newItem.range.startLineNumber, column: newItem.range.startColumn })
-                itemModel.updateId(nextId)
-                itemModel.updateRange(itemRange)
-                qtQuickModel.updateQtModel(newItem.range.startLineNumber, itemModel)
-                const checkNext = this.findNextQtItem(position)
-                if (checkNext.range === null) {
-                    break
-                }
-                if (checkNext.range.startLineNumber <= position.lineNumber) {
-                    break;
-                }
-                position = { lineNumber: checkNext.range.startLineNumber, column: checkNext.range.endColumn }
-
-            } catch (error) {
-                console.log(`(search.js) function -> getItems: ${error}`)
-                break;
-            }
+            itemModel.updateRange(itemRange)
+            qtQuickModel.updateQtModel(itemLine.range.startLineNumber, itemModel)
         }
     }
 

@@ -48,7 +48,6 @@ function registerQmlProvider() {
 
 // Initialize
 function initEditor() {
-    
     monaco.languages.register({ id: 'qml' })
     monaco.languages.setLanguageConfiguration("qml", {
         wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
