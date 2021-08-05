@@ -12,9 +12,16 @@ Item {
     property real rectWidth: 450
 
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-    onDebugMenuSourceChanged: debugMenuSource.toString() ? debugVisible = true : debugVisible = false
 
     anchors.fill: parent
+
+    onDebugMenuSourceChanged: {
+        if (debugMenuSource) {
+            debugVisible = true
+        } else {
+            debugVisible = false
+        }
+    }
 
     Rectangle {
         id: mainContainer
