@@ -114,7 +114,6 @@ SGStrataPopup {
         visible: newFilenameInfobox.focus && !filenameValid && renameFilePopup.visible
         closePolicy: Popup.NoAutoClose
         y: newFilenameRow.height - 1
-        z: 1
         background: Rectangle {
             border.color: "#cccccc"
             color: "#eee"

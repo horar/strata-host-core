@@ -146,46 +146,44 @@ Rectangle{
         }
     }
 
-    SGIcon {
-        id: helpIcon
+    Rectangle {
         anchors {
             right: container.right
             bottom: container.bottom
             margins: 20
         }
-        source: "qrc:/sgimages/question-circle.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
-        width: 40
-        Accessible.role: Accessible.Button
-        Accessible.name: "Help Icon"
-        Accessible.description: "Help tour button."
-        Accessible.onPressAction: clickAction()
-
-        function clickAction() {
-            Help.startHelpTour("selectorHelp", "strataMain")
-        }
-
-        Rectangle {
-            // white icon backround fill
+        height: 42
+        width: height
+        radius: width / 2
+        
+        SGIcon {
+            id: helpIcon
             anchors {
                 centerIn: parent
             }
-            width: parent.width + 2
-            height: width
-            radius: width/2
-            z:-1
-        }
+            source: "qrc:/sgimages/question-circle.svg"
+            iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+            height: parent.height - 2
+            width: height
+            Accessible.role: Accessible.Button
+            Accessible.name: "Help Icon"
+            Accessible.description: "Help tour button."
+            Accessible.onPressAction: clickAction()
 
-        MouseArea {
-            id: helpMouse
-            hoverEnabled: true
-            anchors {
-                fill: helpIcon
+            function clickAction() {
+                Help.startHelpTour("selectorHelp", "strataMain")
             }
-            cursorShape: Qt.PointingHandCursor
 
-            onClicked: helpIcon.clickAction()
+            MouseArea {
+                id: helpMouse
+                hoverEnabled: true
+                anchors {
+                    fill: helpIcon
+                }
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: helpIcon.clickAction()
+            }
         }
     }
 }

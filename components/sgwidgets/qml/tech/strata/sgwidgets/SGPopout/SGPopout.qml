@@ -38,7 +38,7 @@ Rectangle {
             anchors {
                 fill: popout
             }
-            z:20
+            z:1
         }
 
         states: [

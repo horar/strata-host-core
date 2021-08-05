@@ -353,7 +353,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     }
 
     qrcFilePath.replace("file://", "");
-    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+    if ((QDir::separator() != '/') && qrcFilePath.startsWith('/')) {
         qrcFilePath.remove(0, 1);
     }
 

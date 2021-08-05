@@ -6,6 +6,6 @@ Rectangle {
     anchors {
         fill: parent
     }
-    z:20
+    z:1
     visible: false
 }
