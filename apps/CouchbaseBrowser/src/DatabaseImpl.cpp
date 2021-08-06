@@ -33,7 +33,7 @@ void DatabaseImpl::openDB(const QString &file_path)
     file_path_.replace("file://","");
     qCInfo(cb_browser_) << "Attempting to open database with file path " << file_path_;
 
-    if (file_path_.at(0) == "/" && file_path_.at(0) != QDir::separator()) {
+    if ((QDir::separator() != '/') && file_path_.startsWith('/')) {
         file_path_.remove(0, 1);
     }
 
@@ -224,7 +224,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     folder_path.replace("file://","");
     qCInfo(cb_browser_) << "Attempting to create new database '" << db_name << "' with folder path " << folder_path;
 
-    if (folder_path.at(0) == "/" && folder_path.at(0) != QDir::separator()) {
+    if ((QDir::separator() != '/') && folder_path.startsWith('/')) {
         folder_path.remove(0, 1);
     }
 
@@ -672,7 +672,7 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
     path.replace("file://","");
     qCInfo(cb_browser_) << "Attempting to save database '" << getDBName() << "' to path " << path << " and name '" << db_name << "'.";
 
-    if (path.at(0) == "/" && path.at(0) != QDir::separator()) {
+    if ((QDir::separator() != '/') && path.startsWith('/')) {
         path.remove(0, 1);
     }
 
