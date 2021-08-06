@@ -37,11 +37,11 @@ class QtSearch {
     }
 
     findPreviousQtItem(position) {
-        return this.model.findPreviousMatch(/([A-Z][a-zA-Z0-9_]+)[\.]*([A-Z]+[a-zA-Z0-9_]*)*\s*(\{\n*)/, position, true, true)
+        return this.model.findPreviousMatch(/[A-Z][a-zA-Z0-9_]+\s*\{\n*/, position, true, true)
     }
 
     findNextQtItem(position) {
-        return this.model.findNextMatch(/([A-Z][a-zA-Z0-9_]+)[\.]*([a-zA-Z0-9_]+)*\s*(\{\n*)/, position, true, true)
+        return this.model.findNextMatch(/[A-Z][a-zA-Z0-9_]+\s*\{\n*/, position, true, true)
     }
 
     findNextFunction(position) {
@@ -125,7 +125,7 @@ class QtSearch {
     }
 
     findAllQtItems() {
-        return this.model.findMatches(/([A-Z][a-zA-Z0-9_]+)[\.]*([a-zA-Z0-9_]+)*\s*(\{\n*)/, this.fullRange, true, true)
+        return this.model.findMatches(/[A-Z][a-zA-Z0-9_]+\s*\{\n*/, this.fullRange, true, true)
     }
 
     getNextQtItem(position) {
