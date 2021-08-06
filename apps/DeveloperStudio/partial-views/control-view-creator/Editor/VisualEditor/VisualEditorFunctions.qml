@@ -167,7 +167,7 @@ QtObject {
             sdsModel.visualEditorUndoStack.removeItem(file, uuid, objectString)
         }
 
-        saveFile(file, fileContents)
+        saveFile()
     }
 
     function duplicateControl(uuid) {
@@ -256,7 +256,7 @@ QtObject {
             console.warn("No match for " + propertyName + " found in object " + uuid +", may be malformed")
             value = null
         }
-        return value;
+        return value
     }
 
     function getObjectFromString(uuid, string = fileContents) {
@@ -267,7 +267,7 @@ QtObject {
             objectString = null
             console.warn("No match for " + uuid + " found, object start/end tags may be malformed or does not exist")
         }
-        return objectString;
+        return objectString
     }
 
     function setObjectPropertyAndSave(uuid, propertyName, value, addToUndoCommandStack = true) {
@@ -326,7 +326,7 @@ QtObject {
         return string.replace(objectString, newObjectString)
     }
 
-    function moveItem(uuid, newX, newY, addToUndoCommandStack = true) {
+    function moveItem(uuid, newX, newY, addToUndoCommandStack = true, save = true) {
         const oldX = getObjectPropertyValue(uuid, "layoutInfo.xColumns")
         const oldY = getObjectPropertyValue(uuid, "layoutInfo.yRows")
 
@@ -337,8 +337,40 @@ QtObject {
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "move", newX, newY, oldX, oldY)
         }
+        if (save) {
+            visualEditor.functions.saveFile(file, fileContents)
+        }
+    }
 
-        visualEditor.functions.saveFile(file, fileContents)
+    function moveGroup(offsetX, offsetY) {
+        visualEditor.selectedMultiObjects = []
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                visualEditor.selectedMultiObjects.push(obj)
+            }
+
+            if (obj.layoutInfo.xColumns + offsetX < 0) {
+                offsetX = -obj.layoutInfo.xColumns
+            } else if (obj.layoutInfo.xColumns + offsetX + obj.layoutInfo.columnsWide > overlayContainer.columnCount) {
+                offsetX = overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide
+            }
+
+            if (obj.layoutInfo.yRows + offsetY < 0) {
+                offsetY = -obj.layoutInfo.yRows
+            } else if (obj.layoutInfo.yRows + offsetY + obj.layoutInfo.rowsTall > overlayContainer.rowCount) {
+                offsetY = overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall
+            }
+        }
+
+        for (let i = 0; i < visualEditor.selectedMultiObjects.length; ++i) {
+            const obj = visualEditor.selectedMultiObjects[i]
+            const finalX = obj.layoutInfo.xColumns + offsetX
+            const finalY = obj.layoutInfo.yRows + offsetY
+
+            moveItem(obj.layoutInfo.uuid, finalX, finalY, true, false)
+        }
+        saveFile()
     }
 
     function resizeItem(uuid, newX, newY, addToUndoCommandStack = true) {
@@ -449,5 +481,22 @@ QtObject {
     function endOfObjectRegexString(uuid = uuidRegex()) {
         // matches "   } // end_<uuid> "
         return "[^\S\r\n]*\\}\\s*\\/\\/\\s*end_" + uuid + ".*"
+    }
+
+    function isUuidSelected(uuid) {
+        return visualEditor.selectedMultiObjectsUuid.includes(uuid)
+    }
+
+    function addUuidToMultiObjectSelection(uuid) {
+        if (!visualEditor.selectedMultiObjectsUuid.includes(uuid)) {
+            visualEditor.selectedMultiObjectsUuid.push(uuid)
+        }
+    }
+
+    function removeUuidFromMultiObjectSelection(uuid) {
+        const index = visualEditor.selectedMultiObjectsUuid.indexOf(uuid)
+        if (index > -1) {
+            visualEditor.selectedMultiObjectsUuid.splice(index, 1)
+        }
     }
 }

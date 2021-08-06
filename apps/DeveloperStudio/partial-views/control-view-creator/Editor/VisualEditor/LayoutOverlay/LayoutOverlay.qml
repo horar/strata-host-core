@@ -14,16 +14,33 @@ LayoutContainer {
     property string type: ""
     property var sourceItem // Item that this overlay represents
 
-    contentItem: Item {
+    property bool isSelected: false
 
+    onSourceItemChanged: {
+        if (visualEditor.multiObjects && layoutOverlayRoot.sourceItem && visualEditor.functions.isUuidSelected(layoutOverlayRoot.sourceItem.layoutInfo.uuid)) {
+            layoutOverlayRoot.isSelected = true
+        }
+    }
+
+    Connections {
+        target: visualEditor
+
+        onMultiObjectsSelected: {
+            if (!selected) {
+                layoutOverlayRoot.isSelected = false
+            }
+        }
+    }
+
+    contentItem: Item {
         MouseArea {
             id: dragMouseArea
             width: parent.width
             height: parent.height
             drag.target: this // determines which object will be moved in a drag
             Drag.active: drag.active
-            Drag.hotSpot.x: width/2
-            Drag.hotSpot.y: height/2
+            Drag.hotSpot.x: width / 2
+            Drag.hotSpot.y: height / 2
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             hoverEnabled: true
 
@@ -65,24 +82,45 @@ LayoutContainer {
                 // todo: invalid placement can be achieved outside layout
 
                 // if moved, edit file
-                let position = dragMouseArea.mapToItem(layoutOverlayRoot, x, y)
+                const position = dragMouseArea.mapToItem(layoutOverlayRoot, x, y)
                 if (position.x !== 0 || position.y !== 0) {
-                    let newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
-                    let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
+                    const newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
+                    const colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
 
-                    visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
-                    console.log("Moved:", layoutOverlayRoot.objectName)
+                    if (visualEditor.multiObjects && layoutOverlayRoot.isSelected) {
+                        const xOffset = colRow.x - layoutOverlayRoot.layoutInfo.xColumns
+                        const yOffset = colRow.y - layoutOverlayRoot.layoutInfo.yRows
+                        visualEditor.functions.moveGroup(xOffset, yOffset)
+                        console.log("Moved selected group by (" + xOffset + "," + yOffset + ")")
+                    } else {
+                        visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
+                        console.log("Moved:", layoutOverlayRoot.objectName)
+                    }
+                // if not moved, select/deselect objects if multiObjects is enabled
+                } else if (visualEditor.multiObjects) {
+                    if (layoutOverlayRoot.isSelected) {
+                        layoutOverlayRoot.isSelected = false
+                        visualEditor.functions.removeUuidFromMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                    } else {
+                        layoutOverlayRoot.isSelected = true
+                        visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                    }
                 }
             }
 
             onPositionChanged: {
                 if (pressed) {
                     // determine mouse pointer position within mouseArea and how it relates to the overlayContainer, converted to row/column API
-                    let newPoint = dragMouseArea.mapToItem(overlayContainer, mouse.x-startPoint.x, mouse.y-startPoint.y)
-                    let newX = Math.round(newPoint.x/overlayContainer.columnSize) * overlayContainer.columnSize
-                    let newY = Math.round(newPoint.y/overlayContainer.rowSize) * overlayContainer.rowSize
-                    newX = Math.max(0, newX) // constrain positional movement to only rows/columns >=0
+                    let newPoint = dragMouseArea.mapToItem(overlayContainer, mouse.x - startPoint.x, mouse.y - startPoint.y)
+                    let newX = Math.round(newPoint.x / overlayContainer.columnSize) * overlayContainer.columnSize
+                    let newY = Math.round(newPoint.y / overlayContainer.rowSize) * overlayContainer.rowSize
+
+                    // constrain positional movement to only rows/columns >=0
+                    newX = Math.max(0, newX)
                     newY = Math.max(0, newY)
+                    // constrain positional movement to only rows/columns <= total container height/width - object's height/width
+                    newX = Math.min(newX, (overlayContainer.columnCount - layoutOverlayRoot.layoutInfo.columnsWide) * overlayContainer.columnSize)
+                    newY = Math.min(newY, (overlayContainer.rowCount - layoutOverlayRoot.layoutInfo.rowsTall) * overlayContainer.rowSize)
 
                     let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
                     rect.x = newPosition.x
@@ -95,8 +133,8 @@ LayoutContainer {
                     // fetch type and id of object when mousing over
                     // overlay's object name is equivalent to the id of the item since id's are not accessible at runtime
                     if (layoutOverlayRoot.objectName === "") {
-                        layoutOverlayRoot.objectName = functions.getObjectPropertyValue(layoutOverlayRoot.sourceItem.layoutInfo.uuid, "id")
-                        layoutOverlayRoot.type = functions.getType(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                        layoutOverlayRoot.objectName = visualEditor.functions.getObjectPropertyValue(layoutOverlayRoot.sourceItem.layoutInfo.uuid, "id")
+                        layoutOverlayRoot.type = visualEditor.functions.getType(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
                     }
                 }
             }
@@ -117,6 +155,16 @@ LayoutContainer {
             border.width: 2
             border.color: "#00A6CC"
             visible: dragMouseArea.containsMouse && (dragMouseArea.drag.active || resizeMouseArea.drag.active) === false
+            width: parent.width
+            height: parent.height
+        }
+
+        Rectangle {
+            id: selectedBorder
+            color: "transparent"
+            border.width: 8
+            border.color: "red"
+            visible: layoutOverlayRoot.isSelected
             width: parent.width
             height: parent.height
         }
@@ -183,9 +231,9 @@ LayoutContainer {
                 }
 
                 onReleased: {
-                    let newPoint = resizeMouseArea.mapToItem(overlayContainer, mouse.x-startPoint.x, mouse.y-startPoint.y)
-                    let newX = Math.round(newPoint.x/overlayContainer.columnSize) * overlayContainer.columnSize
-                    let newY = Math.round(newPoint.y/overlayContainer.rowSize) * overlayContainer.rowSize
+                    let newPoint = resizeMouseArea.mapToItem(overlayContainer, mouse.x - startPoint.x, mouse.y - startPoint.y)
+                    let newX = Math.round(newPoint.x / overlayContainer.columnSize) * overlayContainer.columnSize
+                    let newY = Math.round(newPoint.y / overlayContainer.rowSize) * overlayContainer.rowSize
                     let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
 
                     let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
@@ -204,9 +252,9 @@ LayoutContainer {
 
                 onPositionChanged: {
                     if (pressed) {
-                        let newPoint = resizeMouseArea.mapToItem(overlayContainer, mouse.x-startPoint.x, mouse.y-startPoint.y)
-                        let newX = Math.round(newPoint.x/overlayContainer.columnSize) * overlayContainer.columnSize
-                        let newY = Math.round(newPoint.y/overlayContainer.rowSize) * overlayContainer.rowSize
+                        let newPoint = resizeMouseArea.mapToItem(overlayContainer, mouse.x - startPoint.x, mouse.y - startPoint.y)
+                        let newX = Math.round(newPoint.x / overlayContainer.columnSize) * overlayContainer.columnSize
+                        let newY = Math.round(newPoint.y / overlayContainer.rowSize) * overlayContainer.rowSize
                         let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
 
                         rect.width = Math.max(newPosition.x, overlayContainer.columnSize) // size must be >= one column, 1 row. no 0x0 or negative sizes

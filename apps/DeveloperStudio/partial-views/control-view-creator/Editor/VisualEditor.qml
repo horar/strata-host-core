@@ -22,11 +22,23 @@ ColumnLayout {
     property string file: ""
     property string fileContents: ""
 
+    property bool multiObjects: false
+    property var selectedMultiObjects: []
+    property var selectedMultiObjectsUuid: []
+    signal multiObjectsSelected(bool selected)
+
     property alias loader: loader
     property alias functions: functions
 
     Component.onCompleted: {
         offsetCheckFile.start()
+    }
+
+    onMultiObjectsChanged: {
+        multiObjectsSelected(multiObjects)
+        if (!multiObjects) {
+            selectedMultiObjectsUuid = []
+        }
     }
 
     // Hack to force checkfile to happen asynchronously from Monaco initialization
