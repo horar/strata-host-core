@@ -319,7 +319,7 @@ const qtTypeJson = {
                 },
             },
             "inherits": "AbstractButton",
-            "source": "",
+            "source": "Controls",
             "nonInstantiable": false,
             "isVisualWidget": false,
         },
