@@ -2,12 +2,14 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.sgwidgets 1.0
+
 import "components/"
 
 Item {
     id: root
 
-    property var debugVisible: false
+    property bool debugVisible: false
     property alias mainContainer: mainContainer
     property real rectWidth: 450
 
@@ -23,13 +25,17 @@ Item {
         }
     }
 
-    Rectangle {
+    MouseArea {
         id: mainContainer
         width: debugMenuWindow ? parent.width : Math.min(root.width, rectWidth)
         height: parent.height
         anchors.right: parent.right
-        color: "#eee"
         clip: true
+
+        onClicked: {
+            // capture all clicks so they don't propagate onto the control views below
+            mouse.accepted = true
+        }
 
         Rectangle {
             id: topBar
@@ -40,18 +46,15 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
-                spacing: 10
+                spacing: 5
 
-                Text {
-                    id: header
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.leftMargin: 5
+                SGText {
                     text: "Debug Commands and Notifications"
-                    Layout.alignment: Qt.AlignHCenter
-                    color: "white"
+                    alternativeColorEnabled: true
+                    fontSizeMultiplier: 1.15
+                    leftPadding: 5
+                    Layout.fillWidth: true
                     elide: Text.ElideRight
-                    font.pointSize: 20
                 }
 
                 SGControlViewIconButton {
@@ -88,6 +91,18 @@ Item {
             height: parent.height - topBar.height
             source: root.debugMenuSource
         }
+
+        Rectangle {
+            // divider
+            color: "black"
+            width: 1
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: parent.left
+            }
+            visible: debugMenuWindow === false
+        }
     }
 
     Item {
@@ -102,8 +117,8 @@ Item {
             property: "x"
             value: root.width - mainContainer.width - sideWall.width
             when: mouseArea.drag.active === false
-
         }
+
         onXChanged: {
             if (mouseArea.drag.active) {
                 rectWidth = parent.width - x
