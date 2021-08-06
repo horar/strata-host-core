@@ -998,14 +998,12 @@ Item {
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
             SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
-            Signals.platformInterfaceUpdate(jsonObject)
         } else {
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.textColor = "white"
             alertToast.color = "green"
             alertToast.interval = 4000
             SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
-            Signals.platformInterfaceUpdate(jsonObject)
         }
         alertToast.show()
     }

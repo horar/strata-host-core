@@ -25,6 +25,5 @@
         <file>template-views/visual-editor/platformInterface.json</file>
         <file>template-views/template/platformInterface.json</file>
         <file>template-views/template/PlatformInterface.qml</file>
-        <file>platformInterface/DebugMenu.qml</file>
     </qresource>
 </RCC>

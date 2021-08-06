@@ -16,9 +16,9 @@ SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 
 /***
  * This creates a new project in a folder of your choosing
- * @param projectName @param newProjectPath @param templatePath @param debugPath
+ * @param projectName @param newProjectPath @param templatePath
  ***/
-QUrl SGNewControlView::createNewProject(const QString &projectName, const QUrl &newProjectPath, const QString &templatePath, const QString &debugPath) {
+QUrl SGNewControlView::createNewProject(const QString &projectName, const QUrl &newProjectPath, const QString &templatePath) {
     QString newProjectPathStr = SGUtilsCpp::urlToLocalFile(newProjectPath);
     // Updating the new path to ensure that this file path always has a separator at the end
     if (!newProjectPathStr.endsWith(QDir::separator())) {
@@ -44,10 +44,7 @@ QUrl SGNewControlView::createNewProject(const QString &projectName, const QUrl &
 
     // Copy files from templates selection
     QFileInfo templateSource(templatePath);
-    QFileInfo debugSource(debugPath);
     QDir templateDir(templateSource.absoluteFilePath());
-    QDir debugDir(debugSource.absoluteFilePath());
-    copyFiles(debugDir, newProjectDir, false);
     copyFiles(templateDir, newProjectDir, false);
     return QUrl::fromLocalFile(qrcPath_);
 }

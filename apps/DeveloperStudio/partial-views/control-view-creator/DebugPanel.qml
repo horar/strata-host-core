@@ -6,12 +6,11 @@ Rectangle {
     id: root
 
     width: 0
-    visible: debugMenuSource.toString() !== ""
+    visible: editor.fileTreeModel.debugMenuSource.toString() !== ""
 
     readonly property bool expanded: width > 0 && visible
     readonly property int minimumExpandWidth: 400
 
-    property url debugMenuSource: editor.fileTreeModel.debugMenuSource
     property int expandWidth: minimumExpandWidth
     property alias mainContainer: mainContainer
 
@@ -26,7 +25,14 @@ Rectangle {
 
         Loader {
             anchors.fill: parent
-            source: root.debugMenuSource
+
+            onVisibleChanged: {
+                if (visible) {
+                    setSource("qrc:/partial-views/control-view-creator/DebugMenu.qml", {source: editor.fileTreeModel.debugMenuSource})
+                } else {
+                    setSource("")
+                }
+            }
         }
     }
 

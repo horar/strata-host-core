@@ -9,6 +9,25 @@ import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: root
+
+    property url source
+
+    Component.onCompleted: {
+        init()
+    }
+
+    function init() {
+        if (source !== "") {
+            try {
+                const localFile = SGUtilsCpp.urlToLocalFile(source)
+                const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
+                createBaseModel(jsonObject)
+            } catch (e) {
+                console.error("DebugMenu error: platformInterface.json could not be parsed")
+            }
+        }
+    }
+
     Text {
         id: header
         text: "Debug Commands and Notifications"
@@ -20,11 +39,6 @@ Rectangle {
         }
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
-    }
-
-    Component.onCompleted: {
-        const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.debugMenuSource.toString().split("DebugMenu.qml")[0]+"platformInterface.json")))
-        createBaseModel(jsonObject)
     }
 
     ListModel {
@@ -626,13 +640,5 @@ Rectangle {
         }
 
         mainModel.modelReset()
-    }
-
-    Connections {
-        target: Signals
-
-        onPlatformInterfaceUpdate: {
-            createBaseModel(json)
-        }
     }
 }
