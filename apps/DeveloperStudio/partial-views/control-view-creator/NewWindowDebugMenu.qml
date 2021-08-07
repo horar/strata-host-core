@@ -4,11 +4,11 @@ import QtQuick.Controls 1.2
 ApplicationWindow {
     id: root
     width: 450
-    height: 1000
+    height: mainWindow.height
     minimumHeight: 200
     minimumWidth: 450
 
-    visible: viewStack.currentIndex === 2 ? true : false
+    visible: true
     property alias consoleLogParent: newWindowContainer
 
     onClosing: {

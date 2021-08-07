@@ -85,38 +85,31 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
-                SGSplitView {
-                    id: controlViewContainer
+                Loader {
+                    id: controlViewLoader
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.minimumWidth: 600
 
+                    asynchronous: true
 
-                    Loader {
-                        id: controlViewLoader
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        Layout.minimumWidth: 600
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
 
-                        asynchronous: true
+                            recompileRequested = false
+                        } else if (status === Loader.Error) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
 
-                        onStatusChanged: {
-                            if (status === Loader.Ready) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                            } else if (status === Loader.Error) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                                console.error("Error while loading control view")
-                                setSource(NavigationControl.screens.LOAD_ERROR,
-                                          { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
-                                          );
-                            }
+                            recompileRequested = false
+                            console.error("Error while loading control view")
+                            setSource(NavigationControl.screens.LOAD_ERROR,
+                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                      );
                         }
                     }
                 }
@@ -150,8 +143,7 @@ Rectangle {
         parent: {
             if (debugMenuWindow) {
                 return newWindowDebugMenuLoader.item.consoleLogParent
-            }
-            else {
+            } else {
                 return debugMenuContainer
             }
         }

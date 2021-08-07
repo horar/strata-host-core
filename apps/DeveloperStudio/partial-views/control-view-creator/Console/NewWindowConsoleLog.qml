@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
     id: root
-    width: 900
+    width: mainWindow.width
     height: 200
     minimumHeight: 130
     minimumWidth: 500
