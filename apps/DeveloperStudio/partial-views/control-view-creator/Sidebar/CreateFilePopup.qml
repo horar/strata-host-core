@@ -95,7 +95,7 @@ SGStrataPopup {
                     contextMenuEnabled: true
                     placeholderText: "File Name"
 
-                    onAccepted:  {
+                    onAccepted: {
                         if (createFileButton.enabled) {
                             createFileButton.clicked()
                         }
