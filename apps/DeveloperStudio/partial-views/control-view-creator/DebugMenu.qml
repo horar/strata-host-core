@@ -28,19 +28,6 @@ Rectangle {
         }
     }
 
-    Text {
-        id: header
-        text: "Debug Commands and Notifications"
-        font.bold: true
-        font.pointSize: 18
-        anchors {
-            top: parent.top
-            bottomMargin: 20
-        }
-        width: parent.width
-        horizontalAlignment: Text.AlignHCenter
-    }
-
     ListModel {
         id: mainModel
     }
@@ -48,10 +35,7 @@ Rectangle {
     ColumnLayout {
         id: columnContainer
         anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-            top: header.bottom
+            fill: parent
             margins: 5
         }
 
