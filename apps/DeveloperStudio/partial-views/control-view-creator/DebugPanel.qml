@@ -8,7 +8,6 @@ import "components/"
 Item {
     id: root
 
-    property int expandWidth: minimumExpandWidth
     property bool debugVisible: false
     property alias mainContainer: mainContainer
     property real rectWidth: 450
