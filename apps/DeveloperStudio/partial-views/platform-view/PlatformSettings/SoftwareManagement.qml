@@ -200,21 +200,17 @@ ColumnLayout {
                 spacing: 15
                 Layout.leftMargin: 10
 
-                SGIcon {
-                    iconColor: "lime"
-                    source: "qrc:/sgimages/exclamation-circle.svg"
-                    Layout.preferredHeight: 30
-                    Layout.preferredWidth: 30
+                Rectangle {
+                    color: "white"
+                    width: 20
+                    height: 20
+                    radius: 10
 
-                    Rectangle {
-                        color: "white"
-                        width: 20
-                        height: 20
-                        radius: 10
-                        anchors {
-                            centerIn: parent
-                        }
-                        z:-1
+                    SGIcon {
+                        iconColor: "lime"
+                        source: "qrc:/sgimages/exclamation-circle.svg"
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
                     }
                 }
 

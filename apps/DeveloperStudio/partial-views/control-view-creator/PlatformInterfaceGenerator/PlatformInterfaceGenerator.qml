@@ -11,6 +11,7 @@ import "../"
 Item {
     id: root
 
+    property bool unsavedChanges: false
     property string inputFilePath
     property string currentCvcProjectQrcUrl
     property string currentCvcProjectJsonUrl
@@ -312,7 +313,6 @@ Item {
                 return
             }
 
-
             if (closeReason === acceptCloseReason) {
                 generatePlatformInterface();
             }
@@ -345,6 +345,7 @@ Item {
                     alertToast.interval = 0
                     alertToast.show()
                 }
+                unsavedChanges = false
             }
         }
     }
@@ -369,7 +370,6 @@ Item {
         }
 
         Rectangle {
-            id: hLine
             Layout.preferredHeight: 1
             Layout.fillWidth: true
             Layout.bottomMargin: 20
@@ -624,6 +624,19 @@ Item {
             }
         }
 
+        Text {
+            Layout.alignment: Qt.AlignHCenter
+            text: "Unsaved changes detected"
+            padding: 0
+            visible: unsavedChanges
+            color: "grey"
+            font {
+                bold: true
+                pointSize: 10
+            }
+            horizontalAlignment: Text.AlignHCenter
+        }
+
         Button {
             id: generateButton
 
@@ -646,9 +659,8 @@ Item {
                 color: {
                     if (!generateButton.enabled) {
                         return "lightgrey"
-                    } else {
-                        return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                     }
+                    return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                 }
             }
 
@@ -711,19 +723,6 @@ Item {
         onAccepted: {
             loadJsonFile(fileUrl)
         }
-    }
-
-    /**
-      * hasMadeChanges checks to see if either the commands or notifications has been populated
-     **/
-    function hasMadeChanges() {
-        for (let i = 0; i < finishedModel.count; i++) {
-            if (finishedModel.get(i).data.count > 0) {
-                return true
-            }
-        }
-
-        return false
     }
 
     /**
@@ -802,7 +801,7 @@ Item {
         }
 
         alertToast.hide()
-        alertToast.text = "Successfully imported JSON model." + (hasMadeChanges() ? "" : " Note: imported list of commands/notifications is empty.")
+        alertToast.text = "Successfully imported JSON model." + (modelPopulated() ? "" : " Note: imported list of commands/notifications is empty.")
         alertToast.textColor = "white"
         alertToast.color = "green"
         alertToast.interval = 4000
@@ -815,6 +814,18 @@ Item {
         } else {
             outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
         }
+    }
+
+    /**
+      * modelPopulated checks to see if either the commands or notifications has been populated
+     **/
+    function modelPopulated() {
+        for (let i = 0; i < finishedModel.count; i++) {
+            if (finishedModel.get(i).data.count > 0) {
+                return true
+            }
+        }
+        return false
     }
 
     /**
@@ -967,7 +978,9 @@ Item {
             alertToast.interval = 4000
             sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         }
-        alertToast.show();
+        alertToast.show()
+
+        unsavedChanges = false
     }
 
     /**
@@ -985,7 +998,7 @@ Item {
             return
         }
 
-        if (!hasMadeChanges()) {
+        if (!unsavedChanges) {
             const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)

@@ -35,7 +35,6 @@ Item {
             id: alertMessage
             Layout.preferredWidth: parent.width * 0.7
             interval: 0
-            z: 100
             color: "red"
         }
 

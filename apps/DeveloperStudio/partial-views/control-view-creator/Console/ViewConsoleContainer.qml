@@ -34,7 +34,6 @@ Item {
         x: 0
         width: parent.width + 5
         height: 4
-        z:3
 
         Binding {
             target: topWall

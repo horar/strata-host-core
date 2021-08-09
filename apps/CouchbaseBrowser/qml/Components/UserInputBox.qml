@@ -6,7 +6,7 @@ import tech.strata.sgwidgets 1.0
 
 ColumnLayout {
     id: root
-    z: 5
+    z: 1
 
     spacing: 2
 
