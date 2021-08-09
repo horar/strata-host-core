@@ -107,49 +107,49 @@ Rectangle {
                 root.error()
             }
         }
+    }
 
-        Rectangle {
-            id: disabledCoverUp
-            color: "black"
-            opacity: 0.6
-            anchors {
-                fill: parent
-            }
-            visible: !webEngine.enabled && !progress.visible && !notAvailableCoverUp.visible
+    Rectangle {
+        id: disabledCoverUp
+        color: "black"
+        opacity: 0.6
+        anchors {
+            fill: parent
         }
+        visible: !webEngine.enabled && !progress.visible && !notAvailableCoverUp.visible
+    }
 
-        Text {
-            text: "No Document Loaded"
-            color: "white"
-            anchors {
-                centerIn: disabledCoverUp
-            }
-            visible: disabledCoverUp.visible
+    Text {
+        text: "No Document Loaded"
+        color: "white"
+        anchors {
+            centerIn: disabledCoverUp
         }
+        visible: disabledCoverUp.visible
+    }
 
-        Rectangle {
-            id: notAvailableCoverUp
-            color: "black"
-            opacity: 0.6
-            anchors {
-                fill: parent
-            }
-            visible: root.url === "datasheet-unavailable"
+    Rectangle {
+        id: notAvailableCoverUp
+        color: "black"
+        opacity: 0.6
+        anchors {
+            fill: parent
         }
+        visible: root.url === "datasheet-unavailable"
+    }
 
-        Text {
-            text: "Datasheet Unavailable<br><br>Please contact your local sales representative"
-            color: "white"
-            font {
-                pixelSize: 20
-            }
-            wrapMode: Text.Wrap
-            width: notAvailableCoverUp.width
-            anchors {
-                centerIn: notAvailableCoverUp
-            }
-            horizontalAlignment: Text.AlignHCenter
-            visible: notAvailableCoverUp.visible
+    Text {
+        text: "Datasheet Unavailable<br><br>Please contact your local sales representative"
+        color: "white"
+        font {
+            pixelSize: 20
         }
+        wrapMode: Text.Wrap
+        width: notAvailableCoverUp.width
+        anchors {
+            centerIn: notAvailableCoverUp
+        }
+        horizontalAlignment: Text.AlignHCenter
+        visible: notAvailableCoverUp.visible
     }
 }

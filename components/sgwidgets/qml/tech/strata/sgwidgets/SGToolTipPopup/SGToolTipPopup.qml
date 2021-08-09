@@ -21,6 +21,7 @@ Item {
     visible: false
     implicitHeight: container.implicitHeight
     implicitWidth: container.implicitWidth
+    z: 1 // to show above siblings when instantiated
 
     Component.onCompleted: {
         updateAlignment()

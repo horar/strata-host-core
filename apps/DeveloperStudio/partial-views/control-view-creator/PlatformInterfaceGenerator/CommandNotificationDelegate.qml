@@ -41,6 +41,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (cmdNotifName.text !== "") {
+                        unsavedChanges = true
+                    }
                     commandColumn.commandModel.remove(index)
                 }
             }
@@ -80,8 +83,12 @@ ColumnLayout {
             }
 
             onTextChanged: {
-                model.name = text
+                if (model.name === text) {
+                    return
+                }
+                unsavedChanges = true
 
+                model.name = text
                 if (text.length > 0) {
                     finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
                 } else {
