@@ -405,7 +405,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
             QString childType = getType(val);
             if (childType.isNull()) {
-                lastError_ = "Unrecognized type of property for notificaition " + parentId;
+                lastError_ = "Unrecognized type of property for notification " + parentId;
                 qCCritical(logCategoryControlViewCreator) << lastError_;
                 return;
             }
