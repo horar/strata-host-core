@@ -50,12 +50,12 @@ Item {
         enabled: url !== ""
 
         onLoadingChanged: {
-        //            console.log(" ====> LCH " + JSON.stringify(loadRequest))
+//            console.log(" ====> LCH " + JSON.stringify(loadRequest))
             if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-        //                root.url = "datasheet-unavailable"
+//                root.url = "datasheet-unavailable"
 
                 console.error("loading request fails: " + loadRequest.errorString + "; domain: " + loadRequest.errorDomain)
-        //                var html = loadRequest.errorString;
+//                var html = loadRequest.errorString;
                 // TODO [lC]:implement our own error pages and load them qrc via 'loadHtml(html);'
             }
         }
