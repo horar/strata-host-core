@@ -3,6 +3,8 @@
 
 using strata::platform::PlatformMessage;
 
+QTEST_MAIN(PlatformMessageTest)
+
 PlatformMessageTest::PlatformMessageTest()
 {
 }

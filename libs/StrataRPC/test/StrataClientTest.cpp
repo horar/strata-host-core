@@ -3,6 +3,8 @@
 
 #include <QSignalSpy>
 
+QTEST_MAIN(StrataClientTest)
+
 void StrataClientTest::waitForZmqMessages(int delay)
 {
     QTimer timer;

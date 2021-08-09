@@ -353,7 +353,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     }
 
     qrcFilePath.replace("file://", "");
-    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+    if ((QDir::separator() != '/') && qrcFilePath.startsWith('/')) {
         qrcFilePath.remove(0, 1);
     }
 
@@ -443,4 +443,19 @@ void ResourceLoader::setLastLoggedError(QString &error_str) {
 
 QString ResourceLoader::getLastLoggedError() {
     return lastLoggedError_;
+}
+
+void ResourceLoader::trimComponentCache(QObject *parent) {
+    QQmlEngine *eng = qmlEngine(parent);
+    eng->collectGarbage();
+    eng->trimComponentCache();
+}
+
+QList<QString> ResourceLoader::getQrcPaths(QString path) {
+    QList<QString> pathList;
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        pathList.append(it.next());
+    }
+    return pathList;
 }

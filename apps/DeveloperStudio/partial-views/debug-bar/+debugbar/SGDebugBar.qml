@@ -39,9 +39,15 @@ Item {
             layoutDirection: Qt.RightToLeft
             spacing: 2
 
-            // starta view debug button chooser
+            // strata view debug button chooser
             RowLayout {
                 id: comboboxRow
+
+                onXChanged: {
+                    if (visible) {
+                        viewDebugPopup.updatePos()
+                    }
+                }
 
                 Label {
                     text: qsTr("View:")
@@ -52,6 +58,7 @@ Item {
                     id: viewCombobox
                     delegate: viewButtonDelegate
                     model: viewFolderModel
+                    popup: viewDebugPopup
                     textRole: "fileName"
 
                     onCurrentIndexChanged: {
@@ -63,6 +70,33 @@ Item {
                             }
                         } else {
                             displayText = currentText.replace("views-", "").slice(0, -4)
+                        }
+                    }
+
+                    Popup {
+                        id: viewDebugPopup                      
+                        width: commandBar.width
+                        y: viewCombobox.height
+                        padding: 0
+                        background: Rectangle {
+                            color: "dimgrey"
+                        }
+
+                        onVisibleChanged: {
+                            updatePos()
+                        }
+
+                        function updatePos() {
+                            let pos = viewCombobox.mapToItem(commandBar, 0, 0)
+                            x = -pos.x
+                        }
+
+                        contentItem: GridView {
+                            cellHeight: 25
+                            cellWidth: (commandBar.width / 7) - 0.1
+                            implicitHeight: contentHeight
+                            model: viewCombobox.popup.visible ? viewCombobox.delegateModel : null
+                            currentIndex: viewCombobox.highlightedIndex
                         }
                     }
 
@@ -91,8 +125,8 @@ Item {
 
                         Button {
                             id: selectButton
-                            width: viewCombobox.width
-                            height: 20
+                            width: viewDebugPopup.contentItem.cellWidth - 1
+                            height: viewDebugPopup.contentItem.cellHeight - 1
                             // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
                             text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
@@ -322,7 +356,9 @@ Item {
         Connections {
             target: sdsModel
             onNotifyQmlError: {
-                qmlErrorModel.append({"data" : notifyQmlError})
+                if (sdsModel.qtLogger.visualEditorReloading === false) {
+                    qmlErrorModel.append({"data" : notifyQmlError})
+                }
             }
         }
     }

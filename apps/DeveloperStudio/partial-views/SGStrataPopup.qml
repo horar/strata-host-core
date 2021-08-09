@@ -56,6 +56,7 @@ Dialog {
                 text: dialog.headerText
                 color: "white"
                 fontSizeMultiplier: 1.25
+                textFormat: Text.PlainText
             }
 
             Rectangle {

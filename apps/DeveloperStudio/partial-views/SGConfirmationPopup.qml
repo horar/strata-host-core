@@ -57,7 +57,6 @@ Popup {
         samples: 30
         color: "#cc000000"
         source: root.background
-        z: -1
         cached: true
     }
 

@@ -37,7 +37,7 @@ Item {
                 left: menuItem.left
                 verticalCenter: menuItem.verticalCenter
             }
-            z:50
+            z:1
             opacity: 0
             width: 10
             height: 20

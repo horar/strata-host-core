@@ -7,11 +7,13 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: platformSelectorListView
@@ -37,6 +39,8 @@ Item {
     }
 
     SGSortFilterProxyModel {
+        // QTBUG-46487: calling invalidate() on this model can cause warning in logs, i.e. "DelegateModel::cancel: index out range 5 4"
+        // TODO: verify if problem persists once the QTBUG is fixed and close the related ticket (CS-1920)
         id: filteredPlatformSelectorModel
         sourceModel: PlatformSelection.platformSelectorModel
         sortEnabled: true
@@ -568,13 +572,47 @@ Item {
                         id: segmentFilterMouse
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        enabled: Filters.filterModel.count > 0
                         anchors {
                             fill: segmentFilterContainer
                         }
+
                         onPressed: {
                             segmentFilters.opened ? segmentFilters.close() : segmentFilters.open()
+                            categoryHighlightPopup.showOn = false
                         }
-                        enabled: Filters.filterModel.count > 0
+                    }
+
+                    // popup occurs once; on every user's first login
+                    // intended to demonstrate that we have many categories
+                    SGWidgets09.SGToolTipPopup {
+                        id: categoryHighlightPopup
+                        color: Qt.lighter(Theme.palette.green, 1.15)
+                        anchors {
+                            bottom: parent.top
+                            horizontalCenter: parent.horizontalCenter
+                        }
+                        content: Text {
+                            text: "Click here to view all of our platform categories!"
+                            color: "white"
+                        }
+
+                        MouseArea {
+                            anchors {
+                                fill: parent
+                            }
+
+                            onClicked:  {
+                                parent.showOn = false
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            if (NavigationControl.userSettings.firstLogin) {
+                                categoryHighlightPopup.showOn = Qt.binding(() => (listview.count > 0))
+                                NavigationControl.userSettings.firstLogin = false
+                            }
+                        }
                     }
 
                     Popup {

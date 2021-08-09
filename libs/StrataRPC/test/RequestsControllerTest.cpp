@@ -4,6 +4,8 @@
 
 using namespace strata::strataRPC;
 
+QTEST_MAIN(RequestsControllerTest)
+
 void RequestsControllerTest::testAddRequest()
 {
     RequestsController rc;

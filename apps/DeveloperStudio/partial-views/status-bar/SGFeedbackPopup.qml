@@ -10,6 +10,7 @@ import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 SGStrataPopup {
     id: root
@@ -152,6 +153,7 @@ SGStrataPopup {
                         columnSpacing: 3
 
                         Text {
+                            id: nameForm
                             text: "Name:"
 
                             font {
@@ -162,7 +164,12 @@ SGStrataPopup {
 
                         Text {
                             id: nameField
+                            Layout.preferredWidth: feedbackColumn.width - nameForm.width
+                            Layout.preferredHeight: nameForm.height
                             text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
+                            elide: Text.ElideRight
+                            textFormat: Text.PlainText
+
                             font {
                                 pixelSize: 15
                                 family: Fonts.franklinGothicBook
@@ -170,6 +177,7 @@ SGStrataPopup {
                         }
 
                         Text {
+                            id: emailForm
                             text: "Email:"
                             font {
                                 pixelSize: 15
@@ -179,7 +187,11 @@ SGStrataPopup {
 
                         Text {
                             id: emailField
+                            Layout.preferredWidth: feedbackColumn.width - emailForm.width
+                            Layout.preferredHeight: emailForm.height
                             text: NavigationControl.context.user_id
+                            elide: Text.ElideRight
+
                             font {
                                 pixelSize: 15
                                 family: Fonts.franklinGothicBook
@@ -224,8 +236,6 @@ SGStrataPopup {
 
                     SGTextArea {
                         id: commentsQuestionsArea
-                        width: parent.width
-                        height: Math.max(parent.height, contentHeight)
                         enabled: !feedbackStatus.visible
                         contextMenuEnabled: true
                         // Text Length Limiter
@@ -254,6 +264,26 @@ SGStrataPopup {
                             }
                             previousText = text
                         }
+                    }
+
+                    SGText {
+                        id: charactersRemainingText
+                        Layout.alignment: Qt.AlignLeft
+                        opacity: charactersRemaining === 0 ? 1 : 0.4
+                        text: charactersRemaining === 1 ? charactersRemaining + " character remaining" : charactersRemaining + " characters remaining"
+                        font {
+                            pixelSize: 15
+                            family: Fonts.franklinGothicBook
+                        }
+                        color: {
+                            if (charactersRemaining === 0) {
+                                return Theme.palette.red
+                            } else {
+                                return Theme.palette.black
+                            }
+                        }
+
+                        property int charactersRemaining: commentsQuestionsArea.maximumLength - commentsQuestionsArea.text.length
                     }
 
                     Button {

@@ -24,6 +24,9 @@ TEST_F(SGUtilsCppTest, testFileUtils)
     }
     EXPECT_TRUE(utils.isFile(tempFile.fileName()));
     EXPECT_FALSE(utils.isFile("non-existent-file.xyz"));
+    EXPECT_TRUE(utils.isRelative("non-existent-file.xyz"));
+    EXPECT_TRUE(utils.isRelative("tmp/non-existent-file.xyz"));
+    EXPECT_FALSE(utils.isRelative("/tmp/non-existent-file.xyz"));
     EXPECT_EQ(utils.fileName("/path/to/test.txt").toStdString(), "test.txt");
     EXPECT_EQ(utils.dirName("/this/is/a/test"), "test");
     QUrl url("/path/to/something/on/disk/test.html");

@@ -25,7 +25,7 @@ void SerialDeviceScanner::init(quint32 flags) {
 }
 
 void SerialDeviceScanner::deinit() {
-    timer_.stop();
+    stopAutomaticScan();
 
     for (const auto& deviceId : deviceIds_) {
         emit deviceLost(deviceId);
@@ -49,17 +49,19 @@ void SerialDeviceScanner::unsetProperties(quint32 flags) {
 
 void SerialDeviceScanner::startAutomaticScan() {
     if (timer_.isActive()) {
-        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
+        qCWarning(logCategoryDeviceScanner) << "Device scan is already running.";
     } else {
+        qCDebug(logCategoryDeviceScanner) << "Starting device scan.";
         timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
     }
 }
 
 void SerialDeviceScanner::stopAutomaticScan() {
     if (timer_.isActive()) {
+        qCDebug(logCategoryDeviceScanner) << "Stopping device scan.";
         timer_.stop();
     } else {
-        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
+        qCWarning(logCategoryDeviceScanner) << "Device scan is already stopped.";
     }
 }
 

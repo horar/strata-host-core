@@ -7,7 +7,7 @@ RowLayout {
         bottom: parent.bottom
         left: parent.left
         bottomMargin: 20
-        leftMargin: 20
+        leftMargin: controlViewCreatorLoader.active ? 80 : 20
     }
     spacing: 1
 
@@ -38,5 +38,3 @@ RowLayout {
         running: button.checked === false
     }
 }
-
-

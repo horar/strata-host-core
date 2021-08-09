@@ -20,14 +20,16 @@ Item {
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
     property alias sideBar: sideBar
+    property bool editQRCEnabled: true
 
     SGQrcTreeModel {
         id: treeModel
 
         onModelAboutToBeReset: {
-            openFilesModel.clear()
+            openFilesModel.closeAll()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
+            editor.editQRCEnabled = true
         }
 
         onErrorParsing: {
@@ -37,7 +39,10 @@ Item {
         }
 
         onUrlChanged: {
-            debugPanel.collapse()
+            if (debugMenuWindow) {
+                debugMenuWindow = false
+            }
+            isDebugMenuOpen = false
         }
     }
 
@@ -63,341 +68,257 @@ Item {
         }
     }
 
-    SGSplitView {
+    ColumnLayout {
         anchors.fill: parent
+        spacing: 0
 
         Shortcut {
             sequence: "Ctrl+R"
             onActivated: {
                 if (cvcUserSettings.openViewOnBuild) {
-                   viewStack.currentIndex = 2
+                    viewStack.currentIndex = 2
                 }
                 recompileControlViewQrc()
             }
         }
 
-        SideBar {
-            id: sideBar
-            Layout.fillHeight: true
-            Layout.minimumWidth: 250
-            Layout.maximumWidth: parent.width * 0.75
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 26
+            Layout.maximumHeight: 26
+            color:  "#777"
+
+            TopBar {
+                id: editorToolBar
+                anchors.fill: parent
+            }
         }
 
-        ColumnLayout {
+        Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            spacing: 0
 
-            Rectangle {
-                color: editorToolBar.buttonColor
-                Layout.fillWidth: true
-                Layout.preferredHeight: 26
-                Layout.maximumHeight: 26
+            SGSplitView {
+                anchors.fill: parent
 
-                RowLayout {
-                    id: editorToolBar
-                    anchors {
-                        fill: parent
-                    }
+                SideBar {
+                    id: sideBar
+                    Layout.fillHeight: true
+                    implicitWidth: 200
+                    Layout.minimumWidth: 25
+                }
+
+                ColumnLayout {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: parent.width * 0.5
                     spacing: 0
 
-                    property color buttonColor: "#777"
-
-                    signal saveClicked()
-                    signal undoClicked()
-                    signal redoClicked()
-
-                    Repeater {
-                        id: mainButtons
-
-                        model: [
-                            { buttonType: "save", iconSource: "qrc:/sgimages/save.svg" },
-                            { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg" },
-                            { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
-                        ]
-
-                        delegate: Button {
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: height
-
-                            enabled: openFilesModel.count > 0
-
-                            background: Rectangle {
-                                radius: 0
-                                color: editorToolBar.buttonColor
-                            }
-
-                            SGIcon {
-                                id: icon
-                                anchors.fill: parent
-                                anchors.margins: 4
-                                iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
-                                source: modelData.iconSource
-                                fillMode: Image.PreserveAspectFit
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                enabled: parent.enabled
-                                hoverEnabled: true
-                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                onPressed: {
-                                    icon.iconColor = Qt.darker(icon.iconColor, 1.5)
-                                }
-
-                                onReleased: {
-                                    icon.iconColor = "white"
-                                }
-
-                                onClicked: {
-                                    switch (modelData.buttonType) {
-                                        case "save":
-                                            editorToolBar.saveClicked()
-                                            break
-                                        case "undo":
-                                            editorToolBar.undoClicked()
-                                            break
-                                        case "redo":
-                                            editorToolBar.redoClicked()
-                                            break
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Item {
-                        // space filler
+                    Rectangle {
+                        id: fileTree
+                        Layout.preferredHeight: 45
+                        Layout.minimumHeight: 45
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
+                        x: 2.5
+                        color: "#ccc"
 
-                    SGComboBox {
-                        Layout.fillHeight: true
-                        Layout.topMargin: 0
-                        Layout.preferredWidth: 350
+                        ListView {
+                            id: fileTabRepeater
+                            model: openFilesModel
+                            anchors.fill: parent
+                            clip: true
+                            orientation: ListView.Horizontal
+                            layoutDirection: Qt.LeftToRight
+                            spacing: 1
+                            currentIndex: openFilesModel.currentIndex
 
-                        model: connectedPlatforms
-                        placeholderText: "Select a platform to connect to..."
-                        enabled: model.count > 0
-                        textRole: "verbose_name"
-                        boxColor: editorToolBar.buttonColor
-                        textColor: "white"
+                            delegate: Button {
+                                id: fileTab
+                                hoverEnabled: true
 
-                        onCurrentIndexChanged: {
-                            let platform = connectedPlatforms.get(currentIndex);
-                            controlViewCreatorRoot.debugPlatform = {
-                                deviceId: platform.device_id,
-                                classId: platform.class_id
-                            };
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.preferredHeight: 45
-                Layout.minimumHeight: 45
-                Layout.fillWidth: true
-                x: 2.5
-                color: "#ccc"
-
-                ListView {
-                    id: fileTabRepeater
-                    model: openFilesModel
-
-                    anchors.fill: parent
-
-                    clip: true
-                    orientation: ListView.Horizontal
-                    layoutDirection: Qt.LeftToRight
-                    spacing: 1
-                    currentIndex: openFilesModel.currentIndex
-
-                    delegate: Button {
-                        id: fileTab
-                        hoverEnabled: true
-
-                        property color color: "#aaaaaa"
-                        property int modelIndex: index
-
-                        MouseArea {
-                            anchors.fill: fileTab
-                            acceptedButtons: Qt.MiddleButton
-
-                            onClicked: {
-                                 closeFileTab(index, model)
-                            }
-                        }
-
-                        onClicked: {
-                            openFilesModel.currentIndex = index
-                        }
-
-                        background: Rectangle {
-                            implicitHeight: 45
-                            color: fileTab.ListView.isCurrentItem ? "white" : fileTab.color
-                        }
-
-                        contentItem: Item {
-                            implicitWidth: tabText.paintedWidth + tabText.anchors.leftMargin + 3 + closeFileIcon.implicitWidth + closeFileIcon.anchors.rightMargin
-                            anchors.verticalCenter: parent.verticalCenter
-
-                            SGText {
-                                id: tabText
-                                text: model.filename + (!model.exists ? " <font color='red'>(deleted)</font>" : "")
-                                color: "black"
-                                anchors {
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: 5
-                                }
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
-                                textFormat: Text.RichText
-                            }
-
-                            SGIcon {
-                                id: closeFileIcon
-                                source: "qrc:/sgimages/times-circle.svg"
-                                height: tabText.paintedHeight
-                                width: height
-                                implicitWidth: height
-                                visible: fileTab.hovered
-                                iconColor: "black"
-                                anchors {
-                                    left: tabText.right
-                                    leftMargin: 4
-                                    right: parent.right
-                                    verticalCenter: parent.verticalCenter
-                                    rightMargin: 2
-                                }
-                                verticalAlignment: Qt.AlignVCenter
+                                property color color: "#aaaaaa"
+                                property int modelIndex: index
 
                                 MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    onEntered: {
-                                        cursorShape = Qt.PointingHandCursor
-                                    }
+                                    anchors.fill: fileTab
+                                    acceptedButtons: Qt.MiddleButton
 
                                     onClicked: {
                                         closeFileTab(index, model)
                                     }
                                 }
-                            }
 
-                            SGIcon {
-                                id: unsavedChangesIcon
-                                source: "qrc:/sgimages/asterisk.svg"
-                                height: tabText.paintedHeight * .75
-                                width: height
-                                implicitWidth: height
-                                iconColor: "black"
-                                visible: !closeFileIcon.visible && model.unsavedChanges
-                                anchors {
-                                    left: tabText.right
-                                    leftMargin: 4
-                                    right: parent.right
-                                    verticalCenter: parent.verticalCenter
-                                    rightMargin: 2
+                                onClicked: {
+                                    openFilesModel.currentIndex = index
                                 }
-                                verticalAlignment: Qt.AlignVCenter
-                            }
-                        }
-                    }
-                }
-            }
 
-            Rectangle {
-                id: parsingErrorRect
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "#666"
-                visible: false
+                                background: Rectangle {
+                                    implicitHeight: 45
+                                    color: fileTab.ListView.isCurrentItem ? "white" : fileTab.color
+                                }
 
-                property string errorMessage: ""
+                                contentItem: Item {
+                                    implicitWidth: tabText.paintedWidth + tabText.anchors.leftMargin + 3 + closeFileIcon.implicitWidth + closeFileIcon.anchors.rightMargin
+                                    anchors.verticalCenter: parent.verticalCenter
 
-                SGText {
-                    id: errorText
+                                    SGText {
+                                        id: tabText
+                                        text: model.filename + (!model.exists ? " <font color='red'>(deleted)</font>" : "")
+                                        color: "black"
+                                        anchors {
+                                            left: parent.left
+                                            verticalCenter: parent.verticalCenter
+                                            leftMargin: 5
+                                        }
+                                        verticalAlignment: Text.AlignVCenter
+                                        elide: Text.ElideRight
+                                        textFormat: Text.RichText
+                                    }
 
-                    anchors {
-                        centerIn: parent
-                    }
+                                    SGIcon {
+                                        id: closeFileIcon
+                                        source: "qrc:/sgimages/times-circle.svg"
+                                        height: tabText.paintedHeight
+                                        width: height
+                                        implicitWidth: height
+                                        visible: fileTab.hovered
+                                        iconColor: "black"
+                                        anchors {
+                                            left: tabText.right
+                                            leftMargin: 4
+                                            right: parent.right
+                                            verticalCenter: parent.verticalCenter
+                                            rightMargin: 2
+                                        }
+                                        verticalAlignment: Qt.AlignVCenter
 
-                    color: "white"
-                    font.bold: true
-                    fontSizeMultiplier: 2
-                    text: "Error: " + parsingErrorRect.errorMessage
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onEntered: {
+                                                cursorShape = Qt.PointingHandCursor
+                                            }
 
-            ConfirmClosePopup {
-                id: confirmClosePopup
-                parent: controlViewCreatorRoot
-                x: (parent.width - width) / 2
-                y: (parent.height - height) / 2
+                                            onClicked: {
+                                                closeFileTab(index, model)
+                                            }
+                                        }
+                                    }
 
-                titleText: "Do you want to save the changes made to " + filename + (!exists ? " (deleted)?" : "?")
-
-                property string filename: ""
-                property int index
-                property bool exists
-
-                onPopupClosed: {
-                    if (closeReason === confirmClosePopup.closeFilesReason) {
-                        openFilesModel.closeTabAt(index)
-                    } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                        openFilesModel.saveFileAt(index, true)
-                    }
-                    controlViewCreatorRoot.isConfirmCloseOpen = false
-                }
-            }
-
-            StackLayout {
-                id: fileStack
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                currentIndex: openFilesModel.currentIndex
-                visible: !parsingErrorRect.visible
-
-                Repeater {
-                    id: fileEditorRepeater
-                    model: openFilesModel
-
-                    delegate: Component {
-                        Loader {
-                            id: fileLoader
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            source: {
-                                switch (model.filetype) {
-                                    case "svg":
-                                    case "jpg":
-                                    case "jpeg":
-                                    case "png":
-                                    case "gif":
-                                        return "./Editor/ImageContainer.qml"
-                                    case "qml":
-                                    case "csv":
-                                    case "html":
-                                    case "txt":
-                                    case "json":
-                                    case "ts":
-                                        return "./Editor/TextEditorContainer.qml"
-                                    default:
-                                        return "./Editor/UnsupportedFileType.qml"
+                                    SGIcon {
+                                        id: unsavedChangesIcon
+                                        source: "qrc:/sgimages/asterisk.svg"
+                                        height: tabText.paintedHeight * .75
+                                        width: height
+                                        implicitWidth: height
+                                        iconColor: "black"
+                                        visible: !closeFileIcon.visible && model.unsavedChanges
+                                        anchors {
+                                            left: tabText.right
+                                            leftMargin: 4
+                                            right: parent.right
+                                            verticalCenter: parent.verticalCenter
+                                            rightMargin: 2
+                                        }
+                                        verticalAlignment: Qt.AlignVCenter
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                NoActiveFile {
-                    id: noActiveFile
+                    Rectangle {
+                        id: parsingErrorRect
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "#666"
+                        visible: false
+
+                        property string errorMessage: ""
+
+                        SGText {
+                            id: errorText
+
+                            anchors {
+                                centerIn: parent
+                            }
+
+                            color: "white"
+                            font.bold: true
+                            fontSizeMultiplier: 2
+                            text: "Error: " + parsingErrorRect.errorMessage
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+
+                    ConfirmClosePopup {
+                        id: confirmClosePopup
+                        parent: controlViewCreatorRoot
+                        x: (parent.width - width) / 2
+                        y: (parent.height - height) / 2
+
+                        titleText: "Do you want to save the changes made to " + filename + (!exists ? " (deleted)?" : "?")
+
+                        property string filename: ""
+                        property int index
+                        property bool exists
+
+                        onPopupClosed: {
+                            if (closeReason === confirmClosePopup.closeFilesReason) {
+                                openFilesModel.closeTabAt(index)
+                            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                                openFilesModel.saveFileAt(index, true)
+                            }
+                            controlViewCreatorRoot.isConfirmCloseOpen = false
+                        }
+                    }
+
+                    StackLayout {
+                        id: fileStack
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        currentIndex: openFilesModel.currentIndex
+                        visible: !parsingErrorRect.visible
+
+                        Repeater {
+                            id: fileEditorRepeater
+                            model: openFilesModel
+
+                            delegate: Component {
+                                Loader {
+                                    id: fileLoader
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    source: {
+                                        switch (model.filetype) {
+                                        case "svg":
+                                        case "jpg":
+                                        case "jpeg":
+                                        case "png":
+                                        case "gif":
+                                            return "./Editor/ImageContainer.qml"
+                                        case "qml":
+                                        case "csv":
+                                        case "html":
+                                        case "txt":
+                                        case "json":
+                                        case "qrc":
+                                        case "ts":
+                                            return "./Editor/TextEditorContainer.qml"
+                                        default:
+                                            return "./Editor/UnsupportedFileType.qml"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        NoActiveFile {
+                            id: noActiveFile
+                        }
+                    }
                 }
             }
         }
@@ -411,6 +332,9 @@ Item {
             confirmClosePopup.open()
             controlViewCreatorRoot.isConfirmCloseOpen = true
         } else {
+            if(model.filetype === "qrc") {
+                editQRCEnabled = true
+            }
             openFilesModel.closeTabAt(index);
         }
     }

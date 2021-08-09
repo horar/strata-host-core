@@ -7,7 +7,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 Popup {
     id: root
     closePolicy: Popup.NoAutoClose
-    z: 50
 
     property bool arrowOnTop: false
     property string horizontalAlignment: "center"
@@ -80,7 +79,6 @@ Popup {
             color: "#88000000"
             source: colorRect
             visible: root.visible
-            z: -1
         }
 
         MouseArea {
