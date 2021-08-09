@@ -11,20 +11,28 @@ Rectangle {
     id: root
 
     property url source
+    property string errorString
 
     Component.onCompleted: {
         init()
     }
 
     function init() {
+        errorString = ""
         if (source !== "") {
             try {
                 const localFile = SGUtilsCpp.urlToLocalFile(source)
                 const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
+                checkAPI(jsonObject)
+                if (errorString !== "") {
+                    return
+                }
                 createBaseModel(jsonObject)
             } catch (e) {
-                console.error("DebugMenu error: platformInterface.json could not be parsed")
+                errorString = "platformInterface.json contains invalid JSON and could not be parsed"
             }
+        } else {
+            errorString = "No platformInterface.json detected in project"
         }
     }
 
@@ -225,6 +233,18 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    Text {
+        id: errorText
+        width: parent.width
+        wrapMode: Text.Wrap
+        visible: text !== ""
+        text: errorString
+        horizontalAlignment: Text.AlignHCenter
+        anchors {
+            centerIn: parent
         }
     }
 
@@ -549,11 +569,35 @@ Rectangle {
         }
     }
 
+    function checkAPI(jsonObject) {
+        errorString = ""
+        if (jsonObject.hasOwnProperty("commands") && jsonObject.commands.length > 0) {
+            for (let i = 0; i < jsonObject.commands.length; i++) {
+                if (jsonObject.commands[i].hasOwnProperty("payload")) {
+                    if (Array.isArray(jsonObject.commands[i].payload) === false) {
+                        errorString = "Deprecated platformInterface.json API detected, import to PIG tool and regenerate to update API"
+                    }
+                    return
+                }
+            }
+        }
+
+        if (jsonObject.hasOwnProperty("notifications") && jsonObject.notifications.length > 0) {
+            for (let j = 0; j < jsonObject.notifications.length; j++) {
+                if (jsonObject.notifications[j].hasOwnProperty("payload")) {
+                    if (Array.isArray(jsonObject.notifications[j].payload) === false) {
+                        errorString = "Deprecated platformInterface.json API detected, import to PIG tool and regenerate to update API"
+                    }
+                    return
+                }
+            }
+        }
+        errorString = "Could not parse platformInterface.json - must contain notifications or commands"
+    }
 
     function createBaseModel(jsonObject) {
         let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
 
-        mainModel.modelAboutToBeReset()
         mainModel.clear();
 
         for (let i = 0; i < topLevelKeys.length; i++) {
@@ -622,7 +666,5 @@ Rectangle {
                 }
             }
         }
-
-        mainModel.modelReset()
     }
 }
