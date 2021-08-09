@@ -68,6 +68,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (propertyKey.text !== "") {
+                        unsavedChanges = true
+                    }
                     payloadModel.remove(index)
                 }
             }
@@ -107,8 +110,12 @@ ColumnLayout {
             }
 
             onTextChanged: {
-                model.name = text
+                if (model.name === text) {
+                    return
+                }
+                unsavedChanges = true
 
+                model.name = text
                 if (text.length > 0) {
                     finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
                 } else {
@@ -154,6 +161,11 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
             }

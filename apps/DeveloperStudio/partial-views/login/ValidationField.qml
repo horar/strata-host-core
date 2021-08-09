@@ -47,6 +47,7 @@ TextField {
         id: contextMenuPopup
         textEditor: field
         copyEnabled: field.echoMode !== TextField.Password
+        z: 1 // to appear above Password Requirement popup in Register screen
     }
 
     background: Rectangle {
