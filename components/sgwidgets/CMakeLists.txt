@@ -8,4 +8,5 @@ if(BUILD_EXAMPLES)
 
     add_subdirectory(qml/tech/strata/sgwidgets)
     add_subdirectory(qml/tech/strata/sgwidgets.1.0)
+    add_subdirectory(qml/tech/strata/sglayout.1.0)
 endif()

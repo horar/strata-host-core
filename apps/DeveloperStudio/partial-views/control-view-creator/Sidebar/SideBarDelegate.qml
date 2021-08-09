@@ -97,7 +97,7 @@ Item {
                 treeView.selectItem(styleData.index);
             }
 
-            if (openFilesModel.currentId === "" && treeView.selection.currentIndex.valid) {
+            if (openFilesModel.currentId.length === 0 && treeView.selection.currentIndex.valid) {
                 // No files are selected
                 treeView.selection.clearCurrentIndex()
             }

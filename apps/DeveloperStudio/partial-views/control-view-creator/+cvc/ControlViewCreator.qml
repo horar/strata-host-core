@@ -20,7 +20,9 @@ Rectangle {
 
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
+    property bool isDebugMenuOpen: false
     property bool popupWindow: false
+    property bool debugMenuWindow: false
     property bool recompileRequested: false
     property bool projectInitialization: false
     property string previousCompiledRccFilePath: ""
@@ -83,53 +85,32 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
-                SGSplitView {
-                    id: controlViewContainer
+                Loader {
+                    id: controlViewLoader
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.minimumWidth: 600
 
-                    onResizingChanged: {
-                        if (!resizing) {
-                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                                debugPanel.expandWidth = debugPanel.width
-                            } else {
-                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
-                            }
+                    asynchronous: true
+
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
+
+                            recompileRequested = false
+                        } else if (status === Loader.Error) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
+
+                            recompileRequested = false
+                            console.error("Error while loading control view")
+                            setSource(NavigationControl.screens.LOAD_ERROR,
+                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                      );
                         }
-                    }
-
-                    Loader {
-                        id: controlViewLoader
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        Layout.minimumWidth: 600
-
-                        asynchronous: true
-
-                        onStatusChanged: {
-                            if (status === Loader.Ready) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                            } else if (status === Loader.Error) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                                console.error("Error while loading control view")
-                                setSource(NavigationControl.screens.LOAD_ERROR,
-                                          { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
-                                          );
-                            }
-                        }
-                    }
-
-                    DebugPanel {
-                        id: debugPanel
-                        Layout.fillHeight: true
                     }
                 }
 
@@ -144,6 +125,26 @@ Rectangle {
                 implicitHeight: 200
                 Layout.fillWidth: true
                 visible: viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
+            }
+        }
+    }
+
+    Item {
+        id: debugMenuContainer
+        width: parent.width - navigationBar.width
+        height: parent.height
+        anchors.top: parent.top
+        anchors.right: parent.right
+        visible: viewStack.currentIndex === 2 && isDebugMenuOpen === true && debugMenuWindow === false
+    }
+
+    DebugPanel {
+        id: debugPanel
+        parent: {
+            if (debugMenuWindow) {
+                return newWindowDebugMenuLoader.item.consoleLogParent
+            } else {
+                return debugMenuContainer
             }
         }
     }
@@ -176,6 +177,12 @@ Rectangle {
         id: newWindowLoader
         active: popupWindow
         source: "Console/NewWindowConsoleLog.qml"
+    }
+
+    Loader {
+        id: newWindowDebugMenuLoader
+        active: debugMenuWindow
+        source: "NewWindowDebugMenu.qml"
     }
 
     ConfirmClosePopup {
@@ -409,6 +416,7 @@ Rectangle {
         user: NavigationControl.context.user_id
 
         property bool openViewOnBuild: false
+        property bool reloadViewExternalChanges: true
 
         function loadSettings() {
             const settings = readFile("cvc-settings.json")
@@ -416,11 +424,15 @@ Rectangle {
             if (settings.hasOwnProperty("openViewOnBuild")) {
                 openViewOnBuild = settings.openViewOnBuild
             }
+            if (settings.hasOwnProperty("reloadViewExternalChanges")) {
+                openViewOnBuild = settings.reloadViewExternalChanges
+            }
         }
 
         function saveSettings() {
             const settings = {
-                openViewOnBuild: openViewOnBuild
+                openViewOnBuild: openViewOnBuild,
+                reloadViewExternalChanges: reloadViewExternalChanges
             }
 
             writeFile("cvc-settings.json", settings)

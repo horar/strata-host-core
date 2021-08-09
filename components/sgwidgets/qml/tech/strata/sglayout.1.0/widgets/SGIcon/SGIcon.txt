@@ -1,0 +1,10 @@
+    LayoutSGIcon { // start_%1
+        id: sgicon_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 2
+        layoutInfo.rowsTall: 2
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        source: "qrc:/sgimages/exclamation-circle.svg"
+    } // end_%1
