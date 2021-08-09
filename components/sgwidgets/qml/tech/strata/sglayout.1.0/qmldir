@@ -15,6 +15,7 @@ LayoutSGSlider 1.0 widgets/Slider/LayoutSGSlider.qml
 LayoutSGButtonStrip 1.0 widgets/ButtonStrip/LayoutSGButtonStrip.qml
 LayoutRadioButtons 1.0 widgets/RadioButtons/LayoutRadioButtons.qml
 LayoutSGStatusLogBox 1.0 widgets/StatusLogBox/LayoutSGStatusLogBox.qml
+LayoutItem 1.0 widgets/Item/LayoutItem.qml
 
 LayoutContainer 1.0 LayoutContainer.qml
 LayoutInfo 1.0 LayoutInfo.qml
