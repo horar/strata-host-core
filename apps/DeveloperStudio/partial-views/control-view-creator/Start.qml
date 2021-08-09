@@ -69,7 +69,7 @@ Rectangle {
                     id: openText
                     text: "Open"
                     fontSizeMode: Text.Fit
-                    color: openMouseArea.containsMouse || stack.state === "open" ? "#444" : "#aaa"
+                    color: openIcon.iconColor
                     anchors {
                         top: openIcon.bottom
                         horizontalCenter: openIcon.horizontalCenter
@@ -78,7 +78,7 @@ Rectangle {
                 }
 
                 Rectangle {
-                   color:  stack.state === "open" ? "#444" : "#aaa"
+                   color: "#444"
                    radius: 5
                    height: 4
                    width: openArea.width
@@ -94,7 +94,7 @@ Rectangle {
                     id: openMouseArea
                     anchors.fill: openArea
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    hoverEnabled: true
+                    hoverEnabled: enabled
                     enabled: stack.state !== "open"
 
                     onClicked: {
@@ -120,7 +120,7 @@ Rectangle {
                 SGText {
                     id: createText
                     text: "Create"
-                    color: createMouseArea.containsMouse || stack.state === "create"  ? "#444" : "#aaa"
+                    color: createIcon.iconColor
                     fontSizeMode: Text.Fit
                     anchors {
                         top: createIcon.bottom
@@ -130,7 +130,7 @@ Rectangle {
                 }
 
                 Rectangle {
-                   color:  stack.state === "create" ? "#444" : "#aaa"
+                   color: "#444"
                    radius: 5
                    height: 4
                    width: createArea.width
@@ -146,7 +146,7 @@ Rectangle {
                     id: createMouseArea
                     anchors.fill: createArea
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    hoverEnabled: true
+                    hoverEnabled: enabled
                     enabled: stack.state !== "create"
 
                     onClicked: {
