@@ -430,7 +430,7 @@ QtObject {
 
     // returns all strings in the current file that contain object ID's
     function getAllObjectIds() {
-        const idRegex = new RegExp("(^\\s*id:\\s*)([a-zA-Z0-9_]*)", "gm")
+        const idRegex = new RegExp("^\\s*id:\\s*[a-zA-Z0-9_]*", "gm")
         return fileContents.match(idRegex)
     }
 
