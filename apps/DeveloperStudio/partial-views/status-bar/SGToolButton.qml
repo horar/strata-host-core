@@ -27,7 +27,6 @@ Rectangle {
         id: toolItem
         implicitWidth: parent.width
         height: 14
-        z: -1
     }
 
     Accessible.name: model.text

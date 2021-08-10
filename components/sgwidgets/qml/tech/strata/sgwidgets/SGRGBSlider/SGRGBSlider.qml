@@ -72,7 +72,6 @@ Item {
             height: sliderHeight
 
             Canvas {
-                z:50
                 visible: true
                 implicitWidth: handle.width
                 implicitHeight: handle.height

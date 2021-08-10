@@ -14,7 +14,11 @@ LayoutContainer {
     property alias orientation: buttonStripObject.orientation
     property alias checkedIndices: buttonStripObject.checkedIndices
 
-    signal clicked ()
+    signal clicked (int index)
+
+    function isChecked(index) {
+        return buttonStripObject.isChecked(index)
+    }
 
     function color(button) {
         if (button.checked) {
@@ -51,7 +55,7 @@ LayoutContainer {
     contentItem: SGButtonStrip {
         id: buttonStripObject
         onClicked: {
-            parent.clicked()
+            parent.clicked(index)
         }
     }
 }

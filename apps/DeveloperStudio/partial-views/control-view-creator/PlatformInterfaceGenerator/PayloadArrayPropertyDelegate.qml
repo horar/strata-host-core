@@ -48,13 +48,16 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (cmdNotifName.text !== "") {
+                        unsavedChanges = true
+                    }
                     parentListModel.remove(modelIndex)
                 }
             }
         }
 
         Text {
-            text: "[Index " + modelIndex  + "] Element type: "
+            text: "[Index " + modelIndex + "] Element type: "
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredWidth: 150
             verticalAlignment: Text.AlignVCenter
@@ -72,6 +75,11 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
             }
@@ -145,4 +153,3 @@ ColumnLayout {
         }
     }
 }
-

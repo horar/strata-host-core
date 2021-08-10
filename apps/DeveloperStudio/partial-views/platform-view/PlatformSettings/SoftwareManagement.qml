@@ -227,7 +227,7 @@ ColumnLayout {
                         anchors {
                             centerIn: parent
                         }
-                        z:-1
+                        z: -1 // place white background behind icon
                     }
                 }
 

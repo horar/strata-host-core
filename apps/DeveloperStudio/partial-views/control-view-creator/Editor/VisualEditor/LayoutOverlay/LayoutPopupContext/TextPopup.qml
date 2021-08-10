@@ -16,6 +16,11 @@ GenericPopup {
     property bool isString: true
     property bool mustNotBeEmpty: false
 
+    // Only used/modified when popup is "Set ID" (textPopup.sourceProperty == "id")
+    // Used to disallow certain specific text inputs (duplicated object ID's)
+    property var invalidInputs: []
+    property bool validInput: true
+
     onVisibleChanged: {
         if (visible) {
             textField.selectAll()
@@ -47,11 +52,31 @@ GenericPopup {
             wrapMode: Text.Wrap
         }
 
+        Text {
+            id: invalidIdLabel
+            text: "Error: ID '" + textField.text + "' is not unique."
+            Layout.fillWidth: true
+            Layout.maximumWidth: textField.implicitWidth
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
+            color: "red"
+            visible: !textPopup.validInput
+        }
+
         TextField {
             id: textField
             implicitWidth: 400
+
             onAccepted: {
-                okButton.clicked()
+                if (okButton.enabled) {
+                    okButton.clicked()
+                }
+            }
+
+            onTextChanged: {
+                if (textPopup.sourceProperty == "id") {
+                    textPopup.validInput = !textPopup.invalidInputs.includes(text)
+                }
             }
         }
 
@@ -62,19 +87,24 @@ GenericPopup {
                 id: okButton
                 text: "OK"
                 enabled: {
-                    if (mustNotBeEmpty) {
-                        return textField.text !== ""
+                    if (validInput) {
+                        if (mustNotBeEmpty) {
+                            return textField.text !== ""
+                        } else {
+                            return true
+                        }
                     } else {
-                        return true
+                        return false
                     }
                 }
+
                 onClicked: {
                     if (isString) {
                         let newString = textPopup.text
                         newString = newString.replace(/[\""]/g, '\\"') // escape any quotes in the string to avoid string errors
-                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , '"' + newString + '"')
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty, '"' + newString + '"')
                     } else {
-                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty , textPopup.text)
+                        visualEditor.functions.setObjectPropertyAndSave(layoutOverlayRoot.layoutInfo.uuid, sourceProperty, textPopup.text)
                     }
                     textPopup.close()
                 }
@@ -82,6 +112,7 @@ GenericPopup {
 
             Button {
                 text: "Cancel"
+
                 onClicked: {
                     textPopup.text = ""
                     textPopup.close()

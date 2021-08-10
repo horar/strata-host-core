@@ -89,8 +89,8 @@ Rectangle {
         clip: true
         model: filterModel
 
-        ScrollBar.vertical: ScrollBar { z: 1 }
-        ScrollBar.horizontal: ScrollBar { z: 1 }
+        ScrollBar.vertical: ScrollBar {}
+        ScrollBar.horizontal: ScrollBar {}
 
         delegate: Rectangle {
             id: delegatecontainer

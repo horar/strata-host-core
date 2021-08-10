@@ -232,7 +232,6 @@ ColumnLayout {
         id: alertToast
         Layout.fillWidth: true
         interval: 0
-        z: 100
         color: "red"
     }
 
@@ -409,105 +408,105 @@ ColumnLayout {
         Layout.fillWidth: true
         currentIndex: 0
 
-        Keys.onPressed: {
-            if (event.matches(StandardKey.Save)) {
-                saveFile()
-            }
-        }
+        Item {
 
-        WebEngineView {
-            id: webEngine
-            webChannel: channel
-            url: "qrc:///tech/strata/monaco/minified/editor.html"
-
-            settings.localContentCanAccessRemoteUrls: false
-            settings.localContentCanAccessFileUrls: true
-            settings.localStorageEnabled: true
-            settings.errorPageEnabled: false
-            settings.javascriptCanOpenWindows: false
-            settings.javascriptEnabled: true
-            settings.javascriptCanAccessClipboard: true
-            settings.pluginsEnabled: true
-            settings.showScrollBars: false
-
-            onJavaScriptConsoleMessage: {
-                switch (level) {
-                    case WebEngineView.InfoMessageLevel:
-                        console.log(message)
-                        break
-                    case WebEngineView.WarningMessageLevel:
-                        console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
-                        break
-                    case WebEngineView.ErrorMessageLevel:
-                        console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
-                        break
+            Keys.onPressed: {
+                if (event.matches(StandardKey.Save)) {
+                    saveFile()
                 }
             }
 
-            onHeightChanged: {
-                var htmlHeight = height - 16
-                channelObject.setContainerHeight(htmlHeight.toString())
-            }
+            WebEngineView {
+                id: webEngine
+                webChannel: channel
+                url: "qrc:///tech/strata/monaco/minified/editor.html"
+                anchors.fill: parent
 
-            onWidthChanged: {
-                var htmlWidth = width - 16
-                channelObject.setContainerWidth(htmlWidth.toString())
-            }
+                settings.localContentCanAccessRemoteUrls: false
+                settings.localContentCanAccessFileUrls: true
+                settings.localStorageEnabled: true
+                settings.errorPageEnabled: false
+                settings.javascriptCanOpenWindows: false
+                settings.javascriptEnabled: true
+                settings.javascriptCanAccessClipboard: true
+                settings.pluginsEnabled: true
+                settings.showScrollBars: false
 
-            // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
-            // the visibilty changed is called when the window is resized from signals outside of the app
-            Connections {
-                target: mainWindow
-
-                onVisibilityChanged: {
-                    var htmlHeight = webEngine.height - 16
-                    var htmlWidth = webEngine.width - 16
-                    channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
-                }
-            }
-
-            onLoadingChanged: {
-                if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                    channelObject.setContainerHeight((webEngine.height - 16).toString())
-                    let fileText = openFile(model.filepath)
-                    channelObject.setHtml(fileText)
-                    channelObject.fileText = fileText
-                } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
-                    let errorProperties = {
-                        "error_intro": "Control View Creator Error:",
-                        "error_message": "Monaco text editor component failed to load or was not found"
+                onJavaScriptConsoleMessage: {
+                    switch (level) {
+                        case WebEngineView.InfoMessageLevel:
+                            console.log(message)
+                            break
+                        case WebEngineView.WarningMessageLevel:
+                            console.warn(`In ${sourceID} on ${lineNumber}: ${message}`)
+                            break
+                        case WebEngineView.ErrorMessageLevel:
+                            console.error(`In ${sourceID} on ${lineNumber}: ${message}`)
+                            break
                     }
+                }
 
-                    fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
+                onHeightChanged: {
+                    var htmlHeight = height - 16
+                    channelObject.setContainerHeight(htmlHeight.toString())
+                }
+
+                onWidthChanged: {
+                    var htmlWidth = width - 16
+                    channelObject.setContainerWidth(htmlWidth.toString())
+                }
+
+                // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
+                // the visibilty changed is called when the window is resized from signals outside of the app
+                Connections {
+                    target: mainWindow
+
+                    onVisibilityChanged: {
+                        var htmlHeight = webEngine.height - 16
+                        var htmlWidth = webEngine.width - 16
+                        channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
+                    }
+                }
+
+                onLoadingChanged: {
+                    if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                        channelObject.setContainerHeight((webEngine.height - 16).toString())
+                        let fileText = openFile(model.filepath)
+                        channelObject.setHtml(fileText)
+                        channelObject.fileText = fileText
+                    } else if (loadRequest.status === WebEngineLoadRequest.LoadFailedStatus) {
+                        let errorProperties = {
+                            "error_intro": "Control View Creator Error:",
+                            "error_message": "Monaco text editor component failed to load or was not found"
+                        }
+
+                        fileLoader.setSource(NavigationControl.screens.LOAD_ERROR, errorProperties);
+                    }
                 }
             }
 
             Rectangle {
-                id: barContainer
+               	id: barContainer
                 color: "white"
                 anchors {
-                    fill: webEngine
+                    fill: parent
                 }
-                visible: progressBar.value !== 100
+                visible: webEngine.loadProgress !== 100
 
-                ProgressBar {
-                    id: progressBar
+                AnimatedImage {
+                    id: indicator
                     anchors {
                         centerIn: barContainer
                         verticalCenterOffset: 10
                     }
-                    height: 10
-                    width: webEngine.width/2
-                    from: 0
-                    to: 100
-                    value: webEngine.loadProgress
+                    source: "qrc:/images/loading.gif"
 
                     Text {
-                        text: qsTr("Loading...")
+                        text: qsTr(`Loading: ${webEngine.loadProgress}%`)
                         anchors {
-                            bottom: progressBar.top
+                            bottom: indicator.top
                             bottomMargin: 10
-                            horizontalCenter: progressBar.horizontalCenter
+                            horizontalCenter: indicator.horizontalCenter
                         }
                     }
                 }

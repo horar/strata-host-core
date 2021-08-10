@@ -36,5 +36,7 @@
         <file>widgets/RadioButtons/SGRadioButtons.txt</file>
         <file>widgets/StatusLogBox/LayoutSGStatusLogBox.qml</file>
         <file>widgets/StatusLogBox/SGStatusLogBox.txt</file>
+        <file>widgets/Item/Item.txt</file>
+        <file>widgets/Item/LayoutItem.qml</file>
     </qresource>
 </RCC>

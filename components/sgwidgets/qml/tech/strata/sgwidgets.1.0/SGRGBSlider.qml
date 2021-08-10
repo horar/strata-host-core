@@ -44,7 +44,6 @@ Slider {
         height: root.height
 
         Canvas {
-            z:50
             visible: true
             implicitWidth: handle.width
             implicitHeight: handle.height

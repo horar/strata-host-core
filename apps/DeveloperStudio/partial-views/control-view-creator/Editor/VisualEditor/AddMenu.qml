@@ -89,6 +89,11 @@ Popup {
                     text: "Text"
                     controlUrl: ":/tech/strata/sglayout.1.0/widgets/Text/Text.txt"
                 }
+
+                ListElement {
+                    text: "Item"
+                    controlUrl: ":/tech/strata/sglayout.1.0/widgets/Item/Item.txt"
+                }
             }
 
             delegate: Button {

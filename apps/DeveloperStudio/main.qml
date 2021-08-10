@@ -152,7 +152,7 @@ SGWidgets.SGMainWindow {
                                                      "all",
                                                      {
                                                          "singleton": true,
-                                                         "timeout":0
+                                                         "timeout": 0
                                                      })
                     hcsReconnecting = false
                 }
