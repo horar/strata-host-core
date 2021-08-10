@@ -19,5 +19,3 @@ const data = [
                    "path": ":/partial-views/control-view-creator/template-views/visual-editor/"
                },
            ]
-
-const debugPath = ":/partial-views/control-view-creator/platformInterface/"

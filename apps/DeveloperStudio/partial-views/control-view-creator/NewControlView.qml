@@ -326,7 +326,7 @@ Item {
             return
         }
 
-        const qrcUrl = sdsModel.newControlView.createNewProject(projectName.text, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath, TemplateSelection.debugPath)
+        const qrcUrl = sdsModel.newControlView.createNewProject(projectName.text, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath)
         openProjectContainer.url = qrcUrl
         openProjectContainer.addToTheProjectList(qrcUrl.toString())
         viewStack.currentIndex = 1

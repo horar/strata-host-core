@@ -9,22 +9,31 @@ import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: root
-    Text {
-        id: header
-        text: "Debug Commands and Notifications"
-        font.bold: true
-        font.pointSize: 18
-        anchors {
-            top: parent.top
-            bottomMargin: 20
-        }
-        width: parent.width
-        horizontalAlignment: Text.AlignHCenter
-    }
+
+    property url source
+    property string errorString
 
     Component.onCompleted: {
-        const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.debugMenuSource.toString().split("DebugMenu.qml")[0]+"platformInterface.json")))
-        createBaseModel(jsonObject)
+        init()
+    }
+
+    function init() {
+        errorString = ""
+        if (source !== "") {
+            try {
+                const localFile = SGUtilsCpp.urlToLocalFile(source)
+                const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
+                checkAPI(jsonObject)
+                if (errorString !== "") {
+                    return
+                }
+                createBaseModel(jsonObject)
+            } catch (e) {
+                errorString = "platformInterface.json contains invalid JSON and could not be parsed"
+            }
+        } else {
+            errorString = "No platformInterface.json detected in project"
+        }
     }
 
     ListModel {
@@ -34,10 +43,7 @@ Rectangle {
     ColumnLayout {
         id: columnContainer
         anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-            top: header.bottom
+            fill: parent
             margins: 5
         }
 
@@ -227,6 +233,18 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    Text {
+        id: errorText
+        width: parent.width
+        wrapMode: Text.Wrap
+        visible: text !== ""
+        text: errorString
+        horizontalAlignment: Text.AlignHCenter
+        anchors {
+            centerIn: parent
         }
     }
 
@@ -551,11 +569,35 @@ Rectangle {
         }
     }
 
+    function checkAPI(jsonObject) {
+        errorString = ""
+        if (jsonObject.hasOwnProperty("commands") && jsonObject.commands.length > 0) {
+            for (let i = 0; i < jsonObject.commands.length; i++) {
+                if (jsonObject.commands[i].hasOwnProperty("payload")) {
+                    if (Array.isArray(jsonObject.commands[i].payload) === false) {
+                        errorString = "Deprecated platformInterface.json API detected, import to PIG tool and regenerate to update API"
+                    }
+                    return
+                }
+            }
+        }
+
+        if (jsonObject.hasOwnProperty("notifications") && jsonObject.notifications.length > 0) {
+            for (let j = 0; j < jsonObject.notifications.length; j++) {
+                if (jsonObject.notifications[j].hasOwnProperty("payload")) {
+                    if (Array.isArray(jsonObject.notifications[j].payload) === false) {
+                        errorString = "Deprecated platformInterface.json API detected, import to PIG tool and regenerate to update API"
+                    }
+                    return
+                }
+            }
+        }
+        errorString = "Could not parse platformInterface.json - must contain notifications or commands"
+    }
 
     function createBaseModel(jsonObject) {
         let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
 
-        mainModel.modelAboutToBeReset()
         mainModel.clear();
 
         for (let i = 0; i < topLevelKeys.length; i++) {
@@ -623,16 +665,6 @@ Rectangle {
                     }
                 }
             }
-        }
-
-        mainModel.modelReset()
-    }
-
-    Connections {
-        target: Signals
-
-        onPlatformInterfaceUpdate: {
-            createBaseModel(json)
         }
     }
 }

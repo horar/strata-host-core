@@ -15,7 +15,7 @@ Item {
     property bool unsavedChanges: false
     property string inputFilePath
     property string currentCvcProjectQrcUrl
-    property string currentCvcProjectJsonUrl
+    property string currentCvcProjectJsonUrl: editor.fileTreeModel.debugMenuSource
     property bool platformInterfaceGeneratorSeen
     property string apiVersion
 
@@ -64,8 +64,8 @@ Item {
         currentCvcProjectQrcUrl = editor.fileTreeModel.url
 
         if (visible) {
-            if (!platformInterfaceGeneratorSeen && findPlatformInterfaceJsonInProject() != "") {
-                alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
+            if (!platformInterfaceGeneratorSeen && currentCvcProjectJsonUrl != "") {
+                alertToast.text = "Detected " + jsonFileName + " in the project. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
                 alertToast.color = "green"
                 alertToast.interval = 8000
@@ -76,7 +76,6 @@ Item {
     }
 
     onCurrentCvcProjectQrcUrlChanged: {
-        currentCvcProjectJsonUrl = findPlatformInterfaceJsonInProject()
         platformInterfaceGeneratorSeen = false
     }
 
@@ -479,7 +478,7 @@ Item {
                         }
 
                         ToolTip {
-                            text: "A project must be open and contain " + jsonFileName + " in its root directory"
+                            text: "A project must be open and contain " + jsonFileName + " in its directory structure"
                             visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
                         }
                     }
@@ -1010,14 +1009,12 @@ Item {
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
             SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
-            Signals.platformInterfaceUpdate(jsonObject)
         } else {
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.textColor = "white"
             alertToast.color = "green"
             alertToast.interval = 4000
             SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
-            Signals.platformInterfaceUpdate(jsonObject)
         }
         alertToast.show()
         
@@ -1175,19 +1172,6 @@ Item {
      **/
     function findProjectRootDir() {
         return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
-    }
-
-    /**
-      * findPlatformInterfaceJsonInProject find platform interface JSON given root Qrc file url
-      * return the JSON filepath or empty if does not exist
-     **/
-    function findPlatformInterfaceJsonInProject() {
-        const projectRootDir = findProjectRootDir()
-        const platformInterfaceJsonFilepath = SGUtilsCpp.joinFilePath(projectRootDir, jsonFileName)
-        if (SGUtilsCpp.isFile(platformInterfaceJsonFilepath)) {
-            return platformInterfaceJsonFilepath
-        }
-        return ""
     }
 
     /********************************************************************************************
