@@ -1284,6 +1284,12 @@ Item {
             }
         }
         finishedModel.modelReset()
+
+        if (inputFilePath == currentCvcProjectJsonUrl) {
+            outputFileText.text = findProjectRootDir()
+        } else {
+            outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
+        }
     }
 
     /**
