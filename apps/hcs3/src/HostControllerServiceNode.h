@@ -11,7 +11,7 @@ class HostControllerServiceNode final : public HostControllerServiceSource
     Q_DISABLE_COPY(HostControllerServiceNode)
 
 public:
-    explicit HostControllerServiceNode(QObject* parent = nullptr);
+    explicit HostControllerServiceNode(unsigned hcsIdentifier, QObject* parent = nullptr);
     ~HostControllerServiceNode();
 
     void start(const QUrl& hostUrl);
@@ -22,9 +22,10 @@ public:
 
 public slots:
     // HostControllerServiceSource interface
-    virtual void shutdown_cb() override;
+    virtual void shutdown_cb(unsigned hcsIdentifier) override;
 
 protected:
 private:
     QRemoteObjectHost srcNode_;
+    const unsigned hcsIdentifier_;
 };
