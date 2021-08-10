@@ -35,7 +35,8 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
     initSerialDevice(openRetries);
 }
 
-SerialDevice::~SerialDevice() {
+SerialDevice::~SerialDevice()
+{
     SerialDevice::close();
     serialPort_.reset();
     qCDebug(logCategoryDeviceSerial).nospace().noquote()
@@ -43,7 +44,8 @@ SerialDevice::~SerialDevice() {
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-void SerialDevice::initSerialDevice(int openRetries) {
+void SerialDevice::initSerialDevice(int openRetries)
+{
     readBuffer_.reserve(READ_BUFFER_SIZE);
     connected_ = false;
     openRetries_ = openRetries;
@@ -66,7 +68,8 @@ void SerialDevice::initSerialDevice(int openRetries) {
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
-void SerialDevice::open() {
+void SerialDevice::open()
+{
     bool opened = false;
 
     if (serialPort_->isOpen()) {
@@ -91,7 +94,8 @@ void SerialDevice::open() {
     // is 'false' because this error signal is already emmited from 'handleError()' method.
 }
 
-void SerialDevice::close() {
+void SerialDevice::close()
+{
     if (openRetryTimer_.isActive()) {
         openRetryTimer_.stop();
     }
@@ -101,7 +105,8 @@ void SerialDevice::close() {
     connected_ = false;
 }
 
-SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName) {
+SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
+{
     SerialPortPtr serialPort = std::make_unique<QSerialPort>(portName);
     serialPort->setBaudRate(QSerialPort::Baud115200);
     serialPort->setDataBits(QSerialPort::Data8);
@@ -121,7 +126,8 @@ QByteArray SerialDevice::createUniqueHash(const QString& portName)
     return QByteArray(QByteArray::number(qHash(portName), 16));
 }
 
-void SerialDevice::readMessage() {
+void SerialDevice::readMessage()
+{
     const QByteArray data = serialPort_->readAll();
 
     // messages from Strata boards ends with new line character
@@ -143,7 +149,8 @@ void SerialDevice::readMessage() {
     }
 }
 
-unsigned SerialDevice::sendMessage(const QByteArray& data) {
+unsigned SerialDevice::sendMessage(const QByteArray& data)
+{
     // Data cannot be written to serial port from another thread as
     // in which this SerialDevice object was created. Otherwise error
     // "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occurs.
@@ -179,7 +186,8 @@ void SerialDevice::setOpenRetries(int retries)
     openRetries_ = retries;
 }
 
-void SerialDevice::handleError(QSerialPort::SerialPortError error) {
+void SerialDevice::handleError(QSerialPort::SerialPortError error)
+{
     // https://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
     if (error == QSerialPort::NoError) {
         return;  // Do not emit error signal if there is no error.
@@ -218,4 +226,3 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
 }
 
 }  // namespace
-
