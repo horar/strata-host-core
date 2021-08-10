@@ -118,7 +118,7 @@ bool PlatformManager::disconnectPlatform(const QByteArray& deviceId, std::chrono
     if (it != openedPlatforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: "
             << deviceId << ", duration: " << disconnectDuration.count() << " ms";
-        it.value()->close(disconnectDuration, DEVICE_CHECK_INTERVAL);
+        it.value()->close(disconnectDuration);
         return true;
     }
     return false;
@@ -128,7 +128,7 @@ bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
     auto it = closedPlatforms_.constFind(deviceId);
     if (it != closedPlatforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote() << "Going to reconnect platform, deviceId:" << deviceId;
-        it.value()->open(DEVICE_CHECK_INTERVAL);
+        it.value()->open();
         return true;
     }
     return false;
@@ -204,7 +204,7 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
         connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
         connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError, Qt::QueuedConnection);
 
-        platform->open(DEVICE_CHECK_INTERVAL);
+        platform->open();
     } else {
         qCCritical(logCategoryPlatformManager) << "Unable to add platform to maps, device Id already exists";
     }
