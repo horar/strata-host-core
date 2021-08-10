@@ -16,6 +16,7 @@ LayoutContainer {
     property alias currentText: comboBoxObject.currentText
     property alias placeholderText: comboBoxObject.placeholderText
     property alias fontSizeMultiplier: comboBoxObject.fontSizeMultiplier
+    property alias textRole: comboBoxObject.textRole
 
     // private members for advanced customization
     property alias iconImage: comboBoxObject.iconImage
