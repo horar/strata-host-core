@@ -65,7 +65,7 @@ Item {
 
         if (visible) {
             if (!platformInterfaceGeneratorSeen && currentCvcProjectJsonUrl != "") {
-                alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
+                alertToast.text = "Detected " + jsonFileName + " in the project. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
                 alertToast.color = "green"
                 alertToast.interval = 8000
@@ -478,7 +478,7 @@ Item {
                         }
 
                         ToolTip {
-                            text: "A project must be open and contain " + jsonFileName + " in its root directory"
+                            text: "A project must be open and contain " + jsonFileName + " in its directory structure"
                             visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
                         }
                     }
