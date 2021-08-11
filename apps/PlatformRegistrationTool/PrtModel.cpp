@@ -37,6 +37,8 @@ PrtModel::PrtModel(QObject *parent)
 
 PrtModel::~PrtModel()
 {
+    // do not listen to platformManager_ signals when going to destroy it
+    disconnect(&platformManager_, nullptr, this, nullptr);
 }
 
 int PrtModel::deviceCount() const
