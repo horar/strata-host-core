@@ -7,6 +7,8 @@ import tech.strata.sgwidgets 1.0
 ColumnLayout {
     id: controlViewRoot
 
+    property string class_id // automatically populated for use when the control view is created with a connected board
+
     PlatformInterface {
         id: platformInterface
     }
