@@ -16,8 +16,12 @@ LayoutContainer {
 
     property bool isSelected: false
 
+    property var prevX
+    property var prevY
+    property var rectLimits: []
+
     onSourceItemChanged: {
-        if (visualEditor.multiObjects && layoutOverlayRoot.sourceItem && visualEditor.functions.isUuidSelected(layoutOverlayRoot.sourceItem.layoutInfo.uuid)) {
+        if (layoutOverlayRoot.sourceItem && visualEditor.functions.isUuidSelected(layoutOverlayRoot.sourceItem.layoutInfo.uuid)) {
             layoutOverlayRoot.isSelected = true
         }
     }
@@ -25,9 +29,15 @@ LayoutContainer {
     Connections {
         target: visualEditor
 
-        onMultiObjectsSelected: {
-            if (!selected) {
-                layoutOverlayRoot.isSelected = false
+        onMultiObjectsDeselectAll: {
+            layoutOverlayRoot.isSelected = false
+        }
+
+        onMultiObjectsDragged: {
+            if (layoutOverlayRoot.isSelected && objectInitiated != layoutOverlayRoot.objectName) {
+                rect.color = "red"
+                rect.x += x
+                rect.y += y
             }
         }
     }
@@ -53,6 +63,12 @@ LayoutContainer {
             onPressedChanged: {
                 if (pressed) {
                     startPoint = Qt.point(mouseX, mouseY)
+
+                    if (visualEditor.selectedMultiObjectsUuid.length > 0) {
+                        layoutOverlayRoot.prevX = rect.x
+                        layoutOverlayRoot.prevY = rect.y
+                        rectLimits = visualEditor.functions.getRect()
+                    }
                 }
             }
 
@@ -74,6 +90,14 @@ LayoutContainer {
                     }
 
                     contextLoader.item.open()
+                } else if (mouse.button == Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier) {
+                    if (layoutOverlayRoot.isSelected) {
+                        layoutOverlayRoot.isSelected = false
+                        visualEditor.functions.removeUuidFromMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                    } else {
+                        layoutOverlayRoot.isSelected = true
+                        visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                    }
                 }
             }
 
@@ -87,23 +111,16 @@ LayoutContainer {
                     const newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     const colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
 
-                    if (visualEditor.multiObjects && layoutOverlayRoot.isSelected) {
+                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
                         const xOffset = colRow.x - layoutOverlayRoot.layoutInfo.xColumns
                         const yOffset = colRow.y - layoutOverlayRoot.layoutInfo.yRows
-                        visualEditor.functions.moveGroup(xOffset, yOffset)
-                        console.log("Moved selected group by (" + xOffset + "," + yOffset + ")")
+                        if (xOffset !== 0 || yOffset !== 0) {
+                            visualEditor.functions.moveGroup(xOffset, yOffset)
+                            console.log("Moved selected " + visualEditor.selectedMultiObjectsUuid.length + " items by (" + xOffset + "," + yOffset + ")")
+                        }
                     } else {
                         visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
                         console.log("Moved:", layoutOverlayRoot.objectName)
-                    }
-                // if not moved, select/deselect objects if multiObjects is enabled
-                } else if (visualEditor.multiObjects) {
-                    if (layoutOverlayRoot.isSelected) {
-                        layoutOverlayRoot.isSelected = false
-                        visualEditor.functions.removeUuidFromMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
-                    } else {
-                        layoutOverlayRoot.isSelected = true
-                        visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
                     }
                 }
             }
@@ -125,6 +142,26 @@ LayoutContainer {
                     let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
                     rect.x = newPosition.x
                     rect.y = newPosition.y
+
+                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                        const leftLimit = rectLimits[0] * overlayContainer.columnSize
+                        rect.x = Math.max(rect.x, -leftLimit)
+                        const rightLimit = rectLimits[1] * overlayContainer.columnSize
+                        rect.x = Math.min(rect.x, rightLimit)
+                        const topLimit = rectLimits[2] * overlayContainer.rowSize
+                        rect.y = Math.max(rect.y, -topLimit)
+                        const bottomLimit = rectLimits[3] * overlayContainer.rowSize
+                        rect.y = Math.min(rect.y, bottomLimit)
+
+                        const xOffset = rect.x - layoutOverlayRoot.prevX
+                        const yOffset = rect.y - layoutOverlayRoot.prevY
+                        if (Math.round(xOffset) !== 0 || Math.round(yOffset) !== 0) {
+                            visualEditor.functions.dragGroup(layoutOverlayRoot.objectName, xOffset, yOffset)
+                        }
+
+                        layoutOverlayRoot.prevX = rect.x
+                        layoutOverlayRoot.prevY = rect.y
+                    }
                 }
             }
 
@@ -143,7 +180,7 @@ LayoutContainer {
         Rectangle {
             id: rect
             opacity: .25
-            color: dragMouseArea.drag.active || resizeMouseArea.drag.active ? "red" : "white"
+            color: dragMouseArea.drag.active || resizeMouseArea.drag.active ? "red" : "transparent"
             border.width: 1
             width: parent.width
             height: parent.height
@@ -162,8 +199,8 @@ LayoutContainer {
         Rectangle {
             id: selectedBorder
             color: "transparent"
-            border.width: 8
-            border.color: "red"
+            border.width: 3
+            border.color: "#0087A6"
             visible: layoutOverlayRoot.isSelected
             width: parent.width
             height: parent.height
@@ -225,7 +262,7 @@ LayoutContainer {
                 property point startPoint
 
                 onPressedChanged: {
-                    if (pressed){
+                    if (pressed) {
                         startPoint = Qt.point(mouseX, mouseY)
                     }
                 }

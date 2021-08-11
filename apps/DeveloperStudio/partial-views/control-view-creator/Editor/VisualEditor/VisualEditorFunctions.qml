@@ -343,32 +343,12 @@ QtObject {
     }
 
     function moveGroup(offsetX, offsetY) {
-        visualEditor.selectedMultiObjects = []
         for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
             const obj = visualEditor.overlayObjects[i]
-            if (visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
-                visualEditor.selectedMultiObjects.push(obj)
+            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                continue
             }
-
-            if (obj.layoutInfo.xColumns + offsetX < 0) {
-                offsetX = -obj.layoutInfo.xColumns
-            } else if (obj.layoutInfo.xColumns + offsetX + obj.layoutInfo.columnsWide > overlayContainer.columnCount) {
-                offsetX = overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide
-            }
-
-            if (obj.layoutInfo.yRows + offsetY < 0) {
-                offsetY = -obj.layoutInfo.yRows
-            } else if (obj.layoutInfo.yRows + offsetY + obj.layoutInfo.rowsTall > overlayContainer.rowCount) {
-                offsetY = overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall
-            }
-        }
-
-        for (let i = 0; i < visualEditor.selectedMultiObjects.length; ++i) {
-            const obj = visualEditor.selectedMultiObjects[i]
-            const finalX = obj.layoutInfo.xColumns + offsetX
-            const finalY = obj.layoutInfo.yRows + offsetY
-
-            moveItem(obj.layoutInfo.uuid, finalX, finalY, true, false)
+            moveItem(obj.layoutInfo.uuid, obj.layoutInfo.xColumns + offsetX, obj.layoutInfo.yRows + offsetY, true, false)
         }
         saveFile()
     }
@@ -498,5 +478,29 @@ QtObject {
         if (index > -1) {
             visualEditor.selectedMultiObjectsUuid.splice(index, 1)
         }
+    }
+
+    function dragGroup(objectInitiated, x, y) {
+        visualEditor.multiObjectsDragged(objectInitiated, x, y)
+    }
+
+    function getRect() {
+        var minX = overlayContainer.columnCount
+        var maxX = overlayContainer.columnCount
+        var minY = overlayContainer.rowCount
+        var maxY = overlayContainer.rowCount
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                continue
+            }
+            maxX = Math.min(maxX, obj.layoutInfo.xColumns)
+            minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
+            maxY = Math.min(maxY, obj.layoutInfo.yRows)
+            minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
+        }
+
+        return [maxX, minX, maxY, minY]
     }
 }

@@ -22,10 +22,9 @@ ColumnLayout {
     property string file: ""
     property string fileContents: ""
 
-    property bool multiObjects: false
-    property var selectedMultiObjects: []
     property var selectedMultiObjectsUuid: []
-    signal multiObjectsSelected(bool selected)
+    signal multiObjectsDragged(string objectInitiated, var x, var y)
+    signal multiObjectsDeselectAll()
 
     property alias loader: loader
     property alias functions: functions
@@ -34,29 +33,12 @@ ColumnLayout {
         offsetCheckFile.start()
     }
 
-    onMultiObjectsChanged: {
-        multiObjectsSelected(multiObjects)
-        if (!multiObjects) {
-            selectedMultiObjectsUuid = []
-        }
-    }
-
     // Hack to force checkfile to happen asynchronously from Monaco initialization
     // otherwise debugBar warnings append late and are not captured by sdsModel.qtLogger disable during VE load
     Timer {
         id: offsetCheckFile
         interval: 1
         onTriggered: functions.checkFile()
-    }
-
-    Connections {
-        target: treeModel
-        enabled: cvcUserSettings.reloadViewExternalChanges
-        onFileChanged: {
-            if (path == visualEditor.file) {
-                functions.unload(true)
-            }
-        }
     }
 
     onVisibleChanged: {
@@ -71,10 +53,15 @@ ColumnLayout {
         id: functions
     }
 
-    Item {
+    MouseArea {
         id: loaderContainer
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        onClicked: {
+            multiObjectsDeselectAll()
+            selectedMultiObjectsUuid = []
+        }
 
         Loader {
             id: loader
@@ -153,6 +140,17 @@ ColumnLayout {
                     property real columnSize: overlayContainer.columnSize
                     property real rowSize: overlayContainer.rowSize
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: treeModel
+        enabled: cvcUserSettings.reloadViewExternalChanges
+
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                functions.unload(true)
             }
         }
     }

@@ -175,19 +175,6 @@ RowLayout {
         }
     }
 
-    MenuButton {
-        text: "Multi-Objects"
-        checkable: true
-        checked: false
-        implicitHeight: menuRow.height - 10
-        implicitWidth: implicitContentWidth + 10
-        padding: 0
-
-        onCheckedChanged: {
-            visualEditor.multiObjects = checked
-        }
-    }
-
     Item {
         //filler
         Layout.fillHeight: true
