@@ -602,58 +602,57 @@ Item {
             }
         }
 
-        SGWidgets.SGGraph {
-            id: valueHoverGraph
-            width: 400
-            height: 150
-            title: "Graph with hover value tool tip"
-            xMin: 1
-            xMax: 100
-            yMin: 1
-            yMax: 100
-            xTitle: "X Axis"
-            yTitle: "Y Axis"
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
+                id: pointGraph
+                width: 400
+                height: 300
+                title: "Graph with tooltip on data points"
+                xMin: 0
+                xMax: 10
+                yMin: 0
+                yMax: 10
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
 
-            Item {
-                id: crosshair
-                x: valueHoverGraph.mouseArea.mouseX
-                y: valueHoverGraph.mouseArea.mouseY - 3
+                Item {
+                    id: mouseCrosshair
+                    x: pointGraph.mouseArea.mouseX
+                    y: pointGraph.mouseArea.mouseY - 3
+
+                    property point temp
+
+                    onXChanged: {
+                        temp = pointGraph.curve(0).nearestPoint(closestValue.mouseValue)
+                    }
+                }
 
                 ToolTip {
-                    id: toolTip
-                    visible: valueHoverGraph.mouseArea.containsMouse
+                    id: closestValue
+                    x: pos.x
+                    y: pos.y
+                    visible: pointGraph.mouseArea.containsMouse
                     closePolicy: Popup.NoAutoClose
-                    text: "(" + mouseValue.x.toFixed(decimalsX) + "," + mouseValue.y.toFixed(decimalsY) + ")"
+                    text: "(" + mouseCrosshair.temp.x.toFixed(decimalsX) + "," + mouseCrosshair.temp.y.toFixed(decimalsY) + ")"
 
-                    property point mouseValue: valueHoverGraph.mapToValue(Qt.point(crosshair.x, crosshair.y))
-                    property int decimalsX: 0
-                    property int decimalsY: 0
+                    property point mouseValue: pointGraph.mapToValue(Qt.point(mouseCrosshair.x, mouseCrosshair.y))
+                    property int decimalsX: 1
+                    property int decimalsY: 1
+                    property point pos: pointGraph.mapToPosition(mouseCrosshair.temp)
 
-                    Component.onCompleted: generateDecimals()
+                }
 
-                    // show an appropriate number of digits based on the range of the graph
-                    function generateDecimals() {
-                        generateXDecimals()
-                        generateYDecimals()
+                Component.onCompleted: {
+                    let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                    curve.color = sgGraphExample.randomColor()
+
+                    let dataArray = []
+                    for (let i = 0; i <= 10; i++) {
+                        dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
                     }
-
-                    function generateXDecimals() {
-                        let range = (valueHoverGraph.xMax - valueHoverGraph.xMin)
-                        if (range < 1 && range > -1){
-                            decimalsX = (valueHoverGraph.xMax - valueHoverGraph.xMin).toString().split(".")[1].length
-                        } else {
-                            decimalsX =  0
-                        }
-                    }
-
-                    function generateYDecimals() {
-                        let range = (valueHoverGraph.yMax - valueHoverGraph.yMin)
-                        if (range < 1 && range > -1){
-                            decimalsY = (valueHoverGraph.yMax - valueHoverGraph.yMin).toString().split(".")[1].length
-                        } else {
-                            decimalsY = 0
-                        }
-                    }
+                    curve.appendList(dataArray)
+                    curve.setSymbol(2,"gray", 0 , 7)
                 }
             }
         }

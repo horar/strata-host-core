@@ -1,6 +1,8 @@
 #include "SGQWTPlot.h"
 #include "logging/LoggingQtCategories.h"
 
+const double MAX_DIFF = 1.0e10; // large double value
+
 SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -904,6 +906,24 @@ void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int 
         update();
     }
     return;
+}
+
+QPointF SGQWTPlotCurve::nearestPoint(QPointF point) 
+{
+     double smallDiff = MAX_DIFF;
+     double diff;
+     QPointF temp = QPointF(0,0);
+     QPointF closest = temp;
+
+     for (int i = 0; i < curveData_.count(); i++) {
+         temp = curveData_.at(i);
+         diff = abs(temp.x() - point.x());
+         if (diff < smallDiff) {
+             smallDiff = diff;
+             closest = temp;
+         }
+     }
+     return closest;
 }
 
 /*-----------------------

@@ -218,6 +218,7 @@ public:
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
     Q_INVOKABLE void setSymbol(int newStyle , QColor color ,  int penStyle , int size);
+    Q_INVOKABLE QPointF nearestPoint(QPointF point);
 
 
 protected:
