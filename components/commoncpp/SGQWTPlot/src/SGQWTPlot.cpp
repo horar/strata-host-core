@@ -1,8 +1,6 @@
 #include "SGQWTPlot.h"
 #include "logging/LoggingQtCategories.h"
 
-const double MAX_DIFF = 1.0e10; // large double value
-
 SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -908,22 +906,45 @@ void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int 
     return;
 }
 
-QPointF SGQWTPlotCurve::nearestPoint(QPointF point) 
+int SGQWTPlotCurve::nearestPointIndex(QPointF point)
 {
-     double smallDiff = MAX_DIFF;
      double diff;
-     QPointF temp = QPointF(0,0);
-     QPointF closest = temp;
+     QPointF currentPoint = QPointF(0,0);
 
-     for (int i = 0; i < curveData_.count(); i++) {
-         temp = curveData_.at(i);
-         diff = abs(temp.x() - point.x());
-         if (diff < smallDiff) {
-             smallDiff = diff;
-             closest = temp;
+     // error check to ensure there is a curve with points
+     if (curveData_.count() == 0) {
+         return -1;
+     }
+
+     int right = curveData_.count() - 1;
+     int left = 0;
+     int mid = 0;
+
+     // loop until there are only two points remaining
+     while (right - left > 1) {
+         mid = (left + right) / 2;
+         currentPoint = curveData_.at(mid);
+         diff = (currentPoint.x() - point.x());
+         if (diff == 0) {
+             return mid;
+         } else if (diff < 0) {
+             left = mid;
+         } else {
+             right = mid;
          }
      }
-     return closest;
+
+     // once only two points remain, determines which is the mouse closer to
+     QPointF leftVal = curveData_.at(left);
+     QPointF rightVal = curveData_.at(right);
+     double lDiff = abs(leftVal.x() - point.x());
+     double rDiff = abs(rightVal.x() - point.x());
+
+     if (lDiff < rDiff) {
+         return left;
+     } else {
+         return right;
+     }
 }
 
 /*-----------------------

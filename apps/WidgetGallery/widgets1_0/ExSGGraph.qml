@@ -622,9 +622,15 @@ Item {
                     y: pointGraph.mouseArea.mouseY - 3
 
                     property point temp
+                    property int index
 
                     onXChanged: {
-                        temp = pointGraph.curve(0).nearestPoint(closestValue.mouseValue)
+                        // index is found using binary search
+                        // then the point data is stored in temp using that index
+                        index = pointGraph.curve(0).nearestPointIndex(closestValue.mouseValue)
+                        if (index !== -1) {
+                            temp = pointGraph.curve(0).at(index)
+                        }
                     }
                 }
 
