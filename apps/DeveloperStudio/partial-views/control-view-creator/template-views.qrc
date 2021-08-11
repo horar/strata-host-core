@@ -8,6 +8,9 @@
         <file>template-views/template/qml.qrc</file>
         <file>template-views/template/control-views/AdvancedControl.qml</file>
         <file>template-views/template/control-views/BasicControl.qml</file>
+        <file>template-views/template/control-views/CommandSimple.qml</file>
+        <file>template-views/template/control-views/PeriodicNotification.qml</file>
+        <file>template-views/template/control-views/ConfigPeriodicNotification.qml</file>
         <file>template-views/images/basic.jpg</file>
         <file>template-views/images/template.jpg</file>
         <file>template-views/template/control-views/images/StrataToBoard.png</file>

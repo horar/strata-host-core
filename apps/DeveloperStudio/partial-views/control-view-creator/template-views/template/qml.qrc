@@ -2,9 +2,12 @@
     <qresource prefix="/">
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
-        <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
+        <file>control-views/AdvancedControl.qml</file>
         <file>control-views/images/StrataToBoard.png</file>
         <file>control-views/images/BoardToStrata.png</file>
+        <file>control-views/CommandSimple.qml</file>
+        <file>control-views/PeriodicNotification.qml</file>
+        <file>control-views/ConfigPeriodicNotification.qml</file>
     </qresource>
 </RCC>
