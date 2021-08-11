@@ -285,7 +285,7 @@ Rectangle {
                                     let wrapper = { "device_id": Constants.NULL_DEVICE_ID, "message": JSON.stringify(notification) }
                                     coreInterface.notification(JSON.stringify(wrapper))
                                 } else {
-                                    let command = { "cmd": model.name, "device_id": controlViewCreatorRoot.debugPlatform.deviceId }
+                                    let command = { "cmd": model.name, "device_id": controlViewCreatorRoot.debugPlatform.device_id }
                                     if (payload) {
                                         command["payload"] = payload;
                                     }
