@@ -47,6 +47,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (propertyKey.text !== "") {
+                        unsavedChanges = true
+                    }
                     parentListModel.remove(modelIndex)
                 }
             }
@@ -83,8 +86,12 @@ ColumnLayout {
             }
 
             onTextChanged: {
-                model.key = text
+                if (model.key === text) {
+                    return
+                }
+                unsavedChanges = true
 
+                model.key = text
                 if (text.length > 0) {
                     model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
                 } else {
@@ -105,6 +112,11 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
             }
@@ -178,4 +190,3 @@ ColumnLayout {
         }
     }
 }
-

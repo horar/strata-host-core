@@ -50,8 +50,32 @@ Item {
             }
         }
 
+        Text {
+            id: gaugeValue
+            text: root.value.toFixed(0)
+            color: root.centerColor
+            anchors { centerIn: gauge }
+            font.family: Fonts.digitalseven
+            font.pixelSize: Math.min(gauge.width / 3, gauge.width/Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length)) // Scale the gauge font based on what the largest or smallest number that might be displayed
+            renderType: Text.NativeRendering
+        }
+        Text {
+            id: gaugeLabel
+            text: unitLabel
+            color: root.centerColor
+            anchors {
+                top: gaugeValue.bottom
+                topMargin: - gauge.width / 25.6
+                horizontalCenter: gaugeValue.horizontalCenter
+
+            }
+            font.pixelSize: gauge.width / 21.3
+            font.italic: true
+        }
+
         CircularGauge {
             id: ticksBackground
+            z: -1 // to have tickmarks appear behind the gauge
             width: gauge.width
             height: gauge.height
             anchors {
@@ -83,29 +107,6 @@ Item {
                     antialiasing: true
                 }
             }
-        }
-
-        Text {
-            id: gaugeValue
-            text: root.value.toFixed(0)
-            color: root.centerColor
-            anchors { centerIn: gauge }
-            font.family: Fonts.digitalseven
-            font.pixelSize: Math.min(gauge.width / 3, gauge.width/Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length)) // Scale the gauge font based on what the largest or smallest number that might be displayed
-            renderType: Text.NativeRendering
-        }
-        Text {
-            id: gaugeLabel
-            text: unitLabel
-            color: root.centerColor
-            anchors {
-                top: gaugeValue.bottom
-                topMargin: - gauge.width / 25.6
-                horizontalCenter: gaugeValue.horizontalCenter
-
-            }
-            font.pixelSize: gauge.width / 21.3
-            font.italic: true
         }
     }
 
