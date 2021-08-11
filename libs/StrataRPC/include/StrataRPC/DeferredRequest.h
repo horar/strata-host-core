@@ -41,18 +41,6 @@ signals:
      */
     void finishedWithError(const QJsonObject &jsonPayload);
 
-    /**
-     * Signal emitted on timeout.
-     * @param [in] requestId request id.
-     */
-    void requestTimedout(const int &requestId);
-
-private slots:
-    /**
-     * Handles timeout signal from QTimer
-     */
-    void requestTimeoutHandler();
-
 private:
     friend class StrataClient;
 
@@ -68,18 +56,6 @@ private:
      */
     void callErrorCallback(const QJsonObject &jsonPayload);
 
-    /**
-     * Starts timer for timeout.
-     */
-    void startTimer();
-
-    /**
-     * Stops timer for timeout.
-     */
-    void stopTimer();
-
     int id_;
-    QTimer timer_;
-    static constexpr std::chrono::milliseconds REQUEST_TIMEOUT{500};
 };
 }  // namespace strata::strataRPC

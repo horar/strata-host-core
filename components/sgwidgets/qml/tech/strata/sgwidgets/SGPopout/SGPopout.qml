@@ -31,16 +31,6 @@ Rectangle {
             color: "#ccc"
         }
 
-        // TODO - Faller : remove this overlay that is just to highlight each popout box by color
-        Rectangle {
-            color: root.overlaycolor
-            opacity: .05
-            anchors {
-                fill: popout
-            }
-            z:20
-        }
-
         states: [
             State {
                 name: "unpopped"
@@ -234,6 +224,15 @@ Rectangle {
                 anchors {
                     fill: popoutContent
                 }
+            }
+        }
+
+        // TODO - Faller : remove this overlay that is just to highlight each popout box by color
+        Rectangle {
+            color: root.overlaycolor
+            opacity: .05
+            anchors {
+                fill: popout
             }
         }
     }

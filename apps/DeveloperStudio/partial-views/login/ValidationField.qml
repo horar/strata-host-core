@@ -47,7 +47,7 @@ TextField {
         id: contextMenuPopup
         textEditor: field
         copyEnabled: field.echoMode !== TextField.Password
-        z: 1 // to appear above Password Requirements popup in Register screen
+        z: 1 // to appear above Password Requirement popup in Register screen
     }
 
     background: Rectangle {
@@ -60,7 +60,6 @@ TextField {
             id: background
             anchors.fill: backgroundContainer
             visible: false
-            z: -1
         }
 
         DropShadow {
@@ -70,7 +69,6 @@ TextField {
             verticalOffset: 2
             radius: 5.0
             samples: 10
-            z: -1
             color: "#40000000"
         }
 

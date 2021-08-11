@@ -72,18 +72,16 @@ void SerialDevice::open() {
 
     if (opened == false) {
         opened = serialPort_->open(QIODevice::ReadWrite);
-    }
-
-    if (opened) {
-        serialPort_->clear(QSerialPort::AllDirections);
+        // if 'open' fails 'QSerialPort::errorOccurred' signal is emitted
     }
     connected_ = opened;
 
     if (opened) {
+        serialPort_->clear(QSerialPort::AllDirections);
         emit Device::opened();
-    } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open serial port.");
     }
+    // There is no need to emit 'deviceError(ErrorCode::DeviceFailedToOpen)' when 'opened'
+    // is 'false' because this error signal is already emmited from 'handleError()' method.
 }
 
 void SerialDevice::close() {
@@ -170,10 +168,11 @@ Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPor
     switch (error) {
         case QSerialPort::SerialPortError::NoError :
             return ErrorCode::NoError;
+        case QSerialPort::SerialPortError::PermissionError :
+            return ErrorCode::DeviceFailedToOpen;
         case QSerialPort::SerialPortError::ResourceError :
             return ErrorCode::DeviceDisconnected;
         case QSerialPort::SerialPortError::DeviceNotFoundError :
-        case QSerialPort::SerialPortError::PermissionError :
         case QSerialPort::SerialPortError::OpenError :
         case QSerialPort::SerialPortError::ParityError :
         case QSerialPort::SerialPortError::FramingError :
@@ -194,12 +193,20 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
     // https://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
     if (error != QSerialPort::NoError) {  // Do not emit error signal if there is no error.
         QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_->errorString();
-        if (error == QSerialPort::ResourceError) {
-            // board was unconnected from computer (cable was unplugged)
-            qCWarning(logCategoryDeviceSerial) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
-            connected_ = false;
-        } else {
-            qCCritical(logCategoryDeviceSerial) << this << errMsg;
+        switch (error) {
+            case QSerialPort::PermissionError :
+                // QSerialPort::open() has failed
+                qCWarning(logCategoryDeviceSerial) << this << errMsg << ". Unable to open serial port.";
+                connected_ = false;
+                break;
+            case QSerialPort::ResourceError :
+                // board was unconnected from computer (cable was unplugged)
+                qCWarning(logCategoryDeviceSerial) << this << errMsg << " (Probably unexpectedly disconnected device.)";
+                connected_ = false;
+                break;
+            default :
+                qCCritical(logCategoryDeviceSerial) << this << errMsg;
+                break;
         }
         emit deviceError(translateQSerialPortError(error), serialPort_->errorString());
     }

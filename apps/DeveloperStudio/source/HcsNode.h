@@ -21,7 +21,7 @@ public slots:
     void hcsAppInfo(AppInfoPod appInfoPod);
     void connectionChanged(QRemoteObjectReplica::State state, QRemoteObjectReplica::State oldState);
 
-    void shutdownService();
+    void shutdownService(unsigned hcsIdentifier);
 
 
 signals:

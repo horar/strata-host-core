@@ -8,7 +8,7 @@ Rectangle {
     color: "#ddd"
     width: 1
     height: 1
-    z:10
+    z:1
 
     Component.onCompleted: {
         switch (position) {

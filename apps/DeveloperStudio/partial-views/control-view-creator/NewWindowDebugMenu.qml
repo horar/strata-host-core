@@ -3,19 +3,19 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
     id: root
-    width: mainWindow.width
-    height: 200
-    minimumHeight: 130
-    minimumWidth: 500
+    width: 450
+    height: mainWindow.height
+    minimumHeight: 200
+    minimumWidth: 450
 
     visible: true
     property alias consoleLogParent: newWindowContainer
 
     onClosing: {
-        if (popupWindow) {
-            popupWindow = false
+        if (debugMenuWindow) {
+            debugMenuWindow = false
         }
-        isConsoleLogOpen = false
+        isDebugMenuOpen = false
     }
 
     Item {
