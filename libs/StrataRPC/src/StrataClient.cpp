@@ -38,6 +38,8 @@ StrataClient::StrataClient(const QString &serverAddress, const QByteArray &deale
                      &StrataClient::clientInitializedHandler);
     QObject::connect(connector_.get(), &ClientConnector::disconnected, this,
                      [this]() { emit disconnected(); });
+    QObject::connect(requestController_.get(), &RequestsController::requestTimedout, this,
+                     &StrataClient::requestTimeoutHandler, Qt::QueuedConnection);
 
     connectorThread_->start();
 }
@@ -83,7 +85,6 @@ void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
     }
 
     if (deferredRequest != nullptr) {
-        deferredRequest->stopTimer();
         if (serverMessage.messageType == Message::MessageType::Error) {
             qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
             deferredRequest->callErrorCallback(serverMessage.payload);
@@ -142,10 +143,6 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
     }
 
     emit sendMessage(message);
-
-    QObject::connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-                     &StrataClient::requestTimeoutHandler);
-    deferredRequest->startTimer();
 
     return deferredRequest;
 }
