@@ -130,10 +130,17 @@ private:
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
+    void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
+    void processCmdLoadDocuments(const strata::strataRPC::Message &message);
+    void processCmdDownloadFiles(const strata::strataRPC::Message &message);
+    void processCmdDynamicPlatformList(const strata::strataRPC::Message &message);
+    void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
+    void processCmdDownlodView(const strata::strataRPC::Message &message);
+
     void processCmdRequestHcsStatus(const QByteArray &clientId);
-    void processCmdClientUnregister(const QByteArray &clientId);
+    void processCmdClientUnregister(const QByteArray &clientId); // this is built in command
     void processCmdLoadDocuments(const QJsonObject &payload, const QByteArray &clientId);
-    void processCmdHostUnregister(const QByteArray &clientId);
+    void processCmdHostUnregister(const QByteArray &clientId); // this is built in command
     void processCmdDownloadFiles(const QJsonObject &payload, const QByteArray &clientId);
     void processCmdDynamicPlatformList(const QByteArray &clientId);
     void processCmdUpdateFirmware(const QJsonObject &payload, const QByteArray &clientId);

@@ -706,6 +706,47 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
     }
 }
 
+void HostControllerService::processCmdRequestHcsStatus(const strata::strataRPC::Message &message)
+{
+    strataServer_->notifyClient(message, QJsonObject{{"status", "hcs_active"}},
+                                strata::strataRPC::ResponseType::Response);
+}
+
+void HostControllerService::processCmdLoadDocuments(const strata::strataRPC::Message &message)
+{
+    qCCritical(logCategoryHcs) << "Handler not implemented yet";
+    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
+                                strata::strataRPC::ResponseType::Error);
+}
+
+void HostControllerService::processCmdDownloadFiles(const strata::strataRPC::Message &message) 
+{
+    qCCritical(logCategoryHcs) << "Handler not implemented yet";
+    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
+                                strata::strataRPC::ResponseType::Error);
+}
+
+void HostControllerService::processCmdDynamicPlatformList(const strata::strataRPC::Message &message) 
+{
+    qCCritical(logCategoryHcs) << "Handler not implemented yet";
+    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
+                                strata::strataRPC::ResponseType::Error);
+}
+
+void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Message &message) 
+{
+    qCCritical(logCategoryHcs) << "Handler not implemented yet";
+    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
+                                strata::strataRPC::ResponseType::Error);
+}
+
+void HostControllerService::processCmdDownlodView(const strata::strataRPC::Message &message) 
+{
+    qCCritical(logCategoryHcs) << "Handler not implemented yet";
+    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
+                                strata::strataRPC::ResponseType::Error);
+}
+
 void HostControllerService::callHandlerForTypeCmd(
         const QString &cmdName,
         const QJsonObject &payload,
