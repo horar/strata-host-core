@@ -21,7 +21,7 @@
 #include "StorageManager.h"
 
 #include <DownloadManager.h>
-
+#include <StrataRPC/StrataServer.h>
 
 struct DispatcherMessage;
 
@@ -173,4 +173,5 @@ private:
     Client* current_client_;
 
     rapidjson::Document config_;
+    std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;
 };

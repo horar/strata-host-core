@@ -36,6 +36,15 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
+    // TODO: update config_ to use use QJson instead.
+    rapidjson::Value& hcs_cfg = config_["host_controller_service"];
+
+    if (hcs_cfg.HasMember("subscriber_address") == false) {
+        return false;
+    }
+
+    strataServer_ = std::make_shared<strata::strataRPC::StrataServer>(hcs_cfg["subscriber_address"].GetString(), true, this);
+
     dispatcher_->setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
@@ -66,24 +75,24 @@ bool HostControllerService::initialize(const QString& config)
     //db_.addReplChannel("platform_list");
 
     //To process requests in the main thread. Not in dispatcher's thread.
-    connect(this, &HostControllerService::newMessageFromClient, this, &HostControllerService::parseMessageFromClient, Qt::QueuedConnection);
+    // connect(this, &HostControllerService::newMessageFromClient, this, &HostControllerService::parseMessageFromClient, Qt::QueuedConnection);
 
-    connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
-    connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
-    connect(&storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
-    connect(&storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
-    connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
-    connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
-    connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
-    connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
-    connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
-    connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
+    // connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
+    // connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
+    // connect(&storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
+    // connect(&storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
+    // connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    // connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
+    // connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
+    // connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
+    // connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
+    // connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
 
-    connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
-    connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
-    connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
+    // connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
+    // connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
+    // connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
 
-    connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
+    // connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
     QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
 
@@ -110,9 +119,10 @@ bool HostControllerService::initialize(const QString& config)
 
     updateController_.initialize(&platformController_, &downloadManager_);
 
-    rapidjson::Value& hcs_cfg = config_["host_controller_service"];
+    // rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
-    clients_.initialize(dispatcher_, hcs_cfg);
+    // clients_.initialize(dispatcher_, hcs_cfg);
+    strataServer_->initialize(); // on failure, this will emit an error signal
     return true;
 }
 

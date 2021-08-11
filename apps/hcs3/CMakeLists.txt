@@ -127,6 +127,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::Database
     strata::QtLogger
     strata::CbLogger
+    strata::StrataRPC-StrataServer
     rapidjson::rapidjson
 )
 
