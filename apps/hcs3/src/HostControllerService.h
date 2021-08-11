@@ -13,8 +13,6 @@
 #include <QJsonArray>
 #include <QNetworkAccessManager>
 
-#include "Dispatcher.h"
-#include "ClientsController.h"
 #include "Database.h"
 #include "PlatformController.h"
 #include "FirmwareUpdateController.h"
@@ -122,7 +120,7 @@ public slots:
     void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
 private:
-    void handleMessage(const DispatcherMessage& msg);
+    // void handleMessage(const DispatcherMessage& msg);
 
     void sendMessageToClients(const QString &platformId, const QString& message);
 
@@ -166,15 +164,15 @@ private:
             const QByteArray &clientId);
 
     PlatformController platformController_;
-    ClientsController clients_;     //UI or other clients
+    // ClientsController clients_;     //UI or other clients
     Database db_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    std::shared_ptr<HCS_Dispatcher> dispatcher_;
-    std::thread dispatcherThread_;
+    // std::shared_ptr<HCS_Dispatcher> dispatcher_;
+    // std::thread dispatcherThread_;
 
     std::list<Client*> clientList_;
     Client* current_client_;

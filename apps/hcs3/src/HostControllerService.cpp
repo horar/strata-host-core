@@ -20,8 +20,8 @@
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
       downloadManager_(&networkManager_),
-      storageManager_(&downloadManager_),
-      dispatcher_{std::make_shared<HCS_Dispatcher>()}
+      storageManager_(&downloadManager_)
+    //   dispatcher_{std::make_shared<HCS_Dispatcher>()}
 {
 }
 
@@ -45,7 +45,7 @@ bool HostControllerService::initialize(const QString& config)
 
     strataServer_ = std::make_shared<strata::strataRPC::StrataServer>(hcs_cfg["subscriber_address"].GetString(), true, this);
 
-    dispatcher_->setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
+    // dispatcher_->setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (config_.HasMember("stage")) {
@@ -122,35 +122,36 @@ bool HostControllerService::initialize(const QString& config)
     // rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
     // clients_.initialize(dispatcher_, hcs_cfg);
-    strataServer_->initialize(); // on failure, this will emit an error signal
+    // strataServer_->initialize(); // on failure, this will emit an error signal
     return true;
 }
 
 void HostControllerService::start()
 {
-    if (dispatcherThread_.get_id() != std::thread::id()) {
-        return;
-    }
+    // if (dispatcherThread_.get_id() != std::thread::id()) {
+    //     return;
+    // }
 
-    dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, dispatcher_.get());
+    // dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, dispatcher_.get());
 
+    strataServer_->initialize();
     qCInfo(logCategoryHcs) << "Host controller service started.";
 }
 
 void HostControllerService::stop()
 {
-    clients_.stop();        // first stop "clients controller" and then stop "dispatcher" (dispatcher receives data from clients controller)
+    // clients_.stop();        // first stop "clients controller" and then stop "dispatcher" (dispatcher receives data from clients controller)
 
-    bool stop_dispatcher = (dispatcherThread_.get_id() != std::thread::id());
-    if (stop_dispatcher) {
-        dispatcher_->stop();
-        dispatcherThread_.join();
-    }
+    // bool stop_dispatcher = (dispatcherThread_.get_id() != std::thread::id());
+    // if (stop_dispatcher) {
+    //     dispatcher_->stop();
+    //     dispatcherThread_.join();
+    // }
 
     db_.stop();             // db should be stopped last for it receives requests from dispatcher
 
-    if (stop_dispatcher)    // log only once and at the very end
-        qCInfo(logCategoryHcs) << "Host controller service stoped.";
+    // if (stop_dispatcher)    // log only once and at the very end
+        // qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
 void HostControllerService::onAboutToQuit()
@@ -175,7 +176,7 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
@@ -197,7 +198,7 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
@@ -217,7 +218,7 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId, const QString &errorString)
@@ -235,7 +236,7 @@ void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByte
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendPlatformListMessage(
@@ -252,7 +253,7 @@ void HostControllerService::sendPlatformListMessage(
     message.insert("hcs::notification", payload);
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendPlatformDocumentsProgressMessage(
@@ -273,7 +274,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
     message.insert("cloud::notification", payload);
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendControlViewDownloadProgressMessage(
@@ -297,7 +298,7 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList, const QString &error)
@@ -319,7 +320,7 @@ void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, con
     message.insert("hcs::notification", payload);
 
     doc.setObject(message);
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendPlatformDocumentsMessage(
@@ -346,7 +347,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     message.insert("cloud::notification", payload);
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadControlViewFinishedMessage(
@@ -368,7 +369,7 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(
 
     QJsonDocument doc(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 bool HostControllerService::parseConfig(const QString& config)
@@ -405,10 +406,10 @@ bool HostControllerService::parseConfig(const QString& config)
     return true;
 }
 
-void HostControllerService::handleMessage(const DispatcherMessage& msg)
-{
-    emit newMessageFromClient(msg.message, msg.from_client);
-}
+// void HostControllerService::handleMessage(const DispatcherMessage& msg)
+// {
+//     emit newMessageFromClient(msg.message, msg.from_client);
+// }
 
 void HostControllerService::platformConnected(const QByteArray& deviceId)
 {
@@ -431,7 +432,7 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
     Q_UNUSED(platformId)
     Client* client = getSenderClient();
     if (client != nullptr) {
-        clients_.sendMessage(client->getClientId(), message);
+        // clients_.sendMessage(client->getClientId(), message);
     }
 }
 
@@ -447,14 +448,14 @@ void HostControllerService::processCmdRequestHcsStatus(const QByteArray &clientI
 
     QString message = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
 
-    clients_.sendMessage(clientId, message);
+    // clients_.sendMessage(clientId, message);
 }
 
 void HostControllerService::processCmdDynamicPlatformList(const QByteArray &clientId)
 {
     storageManager_.requestPlatformList(clientId);
 
-    clients_.sendMessage(clientId, platformController_.createPlatformsList());
+    // clients_.sendMessage(clientId, platformController_.createPlatformsList());
 }
 
 void HostControllerService::processCmdClientUnregister(const QByteArray &clientId)
@@ -632,7 +633,7 @@ bool HostControllerService::broadcastMessage(const QString& message)
     qCInfo(logCategoryHcs).noquote().nospace() << "broadcast msg: '" << message << "'";
     for(auto item : clientList_) {
         const QByteArray clientId = item->getClientId();
-        clients_.sendMessage(clientId, message);
+        // clients_.sendMessage(clientId, message);
     }
 
     return false;
@@ -696,7 +697,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
     message.insert("hcs::notification", payload);
     doc.setObject(message);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
