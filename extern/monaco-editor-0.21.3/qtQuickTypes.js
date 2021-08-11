@@ -6789,7 +6789,7 @@ const qtTypeJson = {
                     "param_names:": []
                 }
             },
-            "inherits": "",
+            "inherits": "Item",
             "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,

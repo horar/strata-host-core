@@ -127,6 +127,8 @@ class QtSuggestions {
             } else if(checkLine.includes(":")) {
                 this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber,"slot","N/A")
                 return;
+            } else if(checkLine.trim().startsWith("property")) {
+                return;
             }
             if (checkProperty || checkFunction || checkSlot || checkExpanded) {
                 if (checkProperty) {
