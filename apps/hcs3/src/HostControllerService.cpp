@@ -312,13 +312,13 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
     // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
-void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList, const QString &error)
+void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId,
+                                                 const QJsonArray &controlViewList,
+                                                 const QJsonArray &firmwareList,
+                                                 const QString &error)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "platform_meta_data");
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
@@ -328,10 +328,8 @@ void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, con
         payload.insert("error", error);
     }
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "platform_meta_data", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformDocumentsMessage(
@@ -341,11 +339,8 @@ void HostControllerService::sendPlatformDocumentsMessage(
         const QJsonArray &documentList,
         const QString &error)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "document");
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
@@ -355,10 +350,8 @@ void HostControllerService::sendPlatformDocumentsMessage(
         payload.insert("error", error);
     }
 
-    message.insert("cloud::notification", payload);
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "documents", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadControlViewFinishedMessage(
@@ -726,9 +719,18 @@ void HostControllerService::handleRequestHcsStatus(const strata::strataRPC::Mess
 
 void HostControllerService::handleLoadDocuments(const strata::strataRPC::Message &message)
 {
-    qCCritical(logCategoryHcs) << "Handler not implemented yet";
-    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
-                                strata::strataRPC::ResponseType::Error);
+    QString classId = message.payload.value("class_id").toString();
+    if (classId.isEmpty()) {
+        qCWarning(logCategoryHcs) << "class_id attribute is empty or has bad format";
+        strataServer_->notifyClient(message, QJsonObject{{"message", "Invalid request."}},
+                                    strata::strataRPC::ResponseType::Error);
+        return;
+    }
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "load documents requested."}},
+                                strata::strataRPC::ResponseType::Response);
+
+    storageManager_.requestPlatformDocuments(message.clientID, classId);
 }
 
 void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message &message) 
