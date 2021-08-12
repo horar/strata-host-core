@@ -87,22 +87,22 @@ bool HostControllerService::initialize(const QString& config)
     //To process requests in the main thread. Not in dispatcher's thread.
     // connect(this, &HostControllerService::newMessageFromClient, this, &HostControllerService::parseMessageFromClient, Qt::QueuedConnection);
 
-    // connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
-    // connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
-    // connect(&storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
-    // connect(&storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
-    // connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
-    // connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
-    // connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
-    // connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
-    // connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
-    // connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
+    connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
+    connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
+    connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
+    connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
+    connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
+    connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
 
-    // connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
-    // connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
-    // connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
+    connect(&platformController_, &PlatformController::platformConnected, this, &HostControllerService::platformConnected);
+    connect(&platformController_, &PlatformController::platformDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&platformController_, &PlatformController::platformMessage, this, &HostControllerService::sendMessageToClients);
 
-    // connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
+    connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
     QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
 
@@ -257,12 +257,13 @@ void HostControllerService::sendPlatformListMessage(
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "all_platforms");
+    //payload.insert("type", "all_platforms");
     payload.insert("list", platformList);
 
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
+    // message.insert("hcs::notification", payload);
+    // doc.setObject(message);
 
+    strataServer_->notifyClient(clientId, "all_platforms", payload, strata::strataRPC::ResponseType::Notification);
     // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
@@ -426,7 +427,7 @@ void HostControllerService::platformConnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastMessage(platformController_.createPlatformsList());
+    // broadcastMessage(platformController_.createPlatformsList());
 }
 
 void HostControllerService::platformDisconnected(const QByteArray& deviceId)
@@ -434,7 +435,7 @@ void HostControllerService::platformDisconnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastMessage(platformController_.createPlatformsList());
+    // broadcastMessage(platformController_.createPlatformsList());
 }
 
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
@@ -713,7 +714,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
         // If firmware was updated broadcast new platforms list
         // to indicate the firmware version has changed.
-        broadcastMessage(platformController_.createPlatformsList());
+        //broadcastMessage(platformController_.createPlatformsList());
     }
 }
 
@@ -737,11 +738,17 @@ void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::handleDynamicPlatformList(const strata::strataRPC::Message &message) 
+void HostControllerService::handleDynamicPlatformList(const strata::strataRPC::Message &message)
 {
-    qCCritical(logCategoryHcs) << "Handler not implemented yet";
-    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
-                                strata::strataRPC::ResponseType::Error);
+    strataServer_->notifyClient(message,
+                                QJsonObject{{"message", "Dynamic platform list requested."}},
+                                strata::strataRPC::ResponseType::Response);
+
+    storageManager_.requestPlatformList(message.clientID);
+
+    strataServer_->notifyClient(message.clientID, "connected_platforms",
+                                platformController_.createPlatformsList(),
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::handleUpdateFirmware(const strata::strataRPC::Message &message) 

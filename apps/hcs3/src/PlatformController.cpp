@@ -127,7 +127,7 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
     }
 }
 
-QString PlatformController::createPlatformsList() {
+QJsonObject PlatformController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = platforms_.constBegin(); it != platforms_.constEnd(); ++it) {
         Platform::ControllerType controllerType = it.value()->controllerType();
@@ -146,14 +146,17 @@ QString PlatformController::createPlatformsList() {
         }
         arr.append(item);
     }
-    QJsonObject notif {
-        { JSON_LIST, arr },
-        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
-    };
-    QJsonObject msg {
-        { JSON_HCS_NOTIFICATION, notif }
-    };
-    QJsonDocument doc(msg);
 
-    return doc.toJson(QJsonDocument::Compact);
+    return QJsonObject{{JSON_LIST, arr}};
+
+    // QJsonObject notif {
+    //     { JSON_LIST, arr },
+    //     { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
+    // };
+    // QJsonObject msg {
+    //     { JSON_HCS_NOTIFICATION, notif }
+    // };
+    // QJsonDocument doc(msg);
+
+    // return doc.toJson(QJsonDocument::Compact);
 }
