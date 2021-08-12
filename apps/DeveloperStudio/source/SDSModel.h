@@ -83,7 +83,7 @@ private:
     HcsNode *remoteHcsNode_{nullptr};
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
     QPointer<QProcess> hcsProcess_;
-    bool externalHcsConnected_{false};
+    const unsigned hcsIdentifier_;
 
     void setHcsConnected(bool hcsConnected);
 };
