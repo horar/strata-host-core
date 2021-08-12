@@ -350,7 +350,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
         payload.insert("error", error);
     }
 
-    strataServer_->notifyClient(clientId, "documents", payload,
+    strataServer_->notifyClient(clientId, "document", payload,
                                 strata::strataRPC::ResponseType::Notification);
 }
 
