@@ -273,14 +273,15 @@ Item {
                 text: "Browse"
 
                 onClicked: {
-                    // Grabs the most recent project from the listModel
+                    // Grabs the most recent project from the fileUrl array
                     // goes up two directories in order to be in the directory the project was created in
                     // if there are no recent projects, the home folder is used
-                    let projectDir = SGUtilsCpp.urlToLocalFile(listModelForUrl.get(0).url)
-                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                    projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
+                    let projectDir = previousFileURL.projects[0]
                     if (SGUtilsCpp.isValidFile(projectDir)) {
+                        projectDir = SGUtilsCpp.urlToLocalFile(projectDir)
+                        projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                        projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                        projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
                         fileDialog.folder = projectDir
                     } else {
                         fileDialog.folder = fileDialog.shortcuts.home

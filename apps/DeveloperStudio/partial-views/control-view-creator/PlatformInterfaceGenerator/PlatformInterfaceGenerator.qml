@@ -413,12 +413,19 @@ Item {
                         onClicked: {
                             alertToast.hide()
                             // checks if the user has recently opened a file and uses that path
+                            // then, if there projects in the recent projects model and uses that dir path
                             // else, the user's home directory is opened
                             let path = currentCvcProjectJsonUrl
+                            let projectDir = startContainer.openControlView.projectContainer.previousFileURL.projects[0]
                             if (SGUtilsCpp.isValidFile(path)) {
                                 path = SGUtilsCpp.parentDirectoryPath(path)
                                 path = SGUtilsCpp.pathToUrl(path)
                                 inputFileDialog.folder = path
+                            } else if (SGUtilsCpp.isValidFile(projectDir)) {
+                                projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                                projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                                projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
+                                inputFileDialog.folder = projectDir
                             } else {
                                 inputFileDialog.folder = inputFileDialog.shortcuts.home
                             }
@@ -496,12 +503,19 @@ Item {
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
                                 // checks if the user has recently opened a file and uses that path
+                                // then, if there projects in the recent projects model and uses that dir path
                                 // else, the user's home directory is opened
                                 let path = currentCvcProjectJsonUrl
+                                let projectDir = startContainer.openControlView.projectContainer.previousFileURL.projects[0]
                                 if (SGUtilsCpp.isValidFile(path)) {
                                     path = SGUtilsCpp.parentDirectoryPath(path)
                                     path = SGUtilsCpp.pathToUrl(path)
                                     outputFileDialog.folder = path
+                                } else if (SGUtilsCpp.isValidFile(projectDir)) {
+                                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                                    projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
+                                    outputFileDialog.folder = projectDir
                                 } else {
                                     outputFileDialog.folder = outputFileDialog.shortcuts.home
                                 }
