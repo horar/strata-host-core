@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/tech/strata/monaco">
         <file>minified/editor.html</file>
-        <file>minified/min/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf</file>
         <file>minified/min/vs/base/browser/ui/codicons/codicon/codicon.ttf</file>
         <file>minified/min/vs/base/worker/workerMain.js</file>
         <file>minified/min/vs/basic-languages/cpp/cpp.js</file>
