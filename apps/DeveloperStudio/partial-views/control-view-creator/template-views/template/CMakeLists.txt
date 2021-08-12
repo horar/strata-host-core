@@ -1,4 +1,4 @@
-project(Template
+project(template
     LANGUAGES NONE
 )
 
