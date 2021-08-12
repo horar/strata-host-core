@@ -59,7 +59,7 @@
             })
 
             link.undo.connect(function () {
-                editor.trigger('undoClicked', 'undo');
+                editor.getModel().undo()
             });
 
             link.resetContainer.connect(function (height, width) {
@@ -69,7 +69,7 @@
             })
 
             link.redo.connect(function () {
-                editor.trigger('redoClicked', 'redo');
+                editor.getModel().redo()
             });
         });
     </script>

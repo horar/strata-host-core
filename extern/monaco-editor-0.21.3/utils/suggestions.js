@@ -113,70 +113,74 @@ class QtSuggestions {
     }
 
     determineSuggestions(position) {
-        if (position.lineNumber > qtSearch.topOfFile.range.startLineNumber) {
-            const checkLine = qtSearch.model.getLineContent(position.lineNumber)
-            const checkProperty = qtSearch.isInMetaProperty(position)
-            const checkFunction = qtSearch.isInFunction(position)
-            const checkSlot = qtSearch.isInSlot(position)
-            const checkExpanded = qtSearch.isInExpandedProperty(position)
-            const itemCheck = qtSearch.fetchParentItem(position, position)
-            if (checkLine.includes(".")) {
-                const checkSub = checkLine.split(".")[0].trim()
-                this.determineSubProperties(checkSub)
-                return;
-            } else if(checkLine.includes(":")) {
-                this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber,"slot","N/A")
-                return;
-            } else if(checkLine.trim().startsWith("property")) {
-                return;
-            }
-            if (checkProperty || checkFunction || checkSlot || checkExpanded) {
-                if (checkProperty) {
-                    const propertyLineNumber = qtSearch.findPreviousMetaPropertyParent(position)
-                    const propertyName = qtSearch.getMetaPropertyParent(propertyLineNumber.range.startLineNumber)
-                    this.getMetaPropertySuggestions(itemCheck.range.startLineNumber, propertyName)
-                } else if (checkFunction || checkSlot) {
-                    if (checkSlot) {
-                        const slot = qtSearch.findPreviousSlot(position)
-                        const slotName = qtSearch.getSlotName(slot.range.startLineNumber)
-                        this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber, "slot", slotName)
-                    } else {
-                        const func = qtSearch.findPreviousFunction(position)
-                        const funcName = qtSearch.getFunc(func.range.startLineNumber)
-                        this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber, "func", funcName.name)
-                    }
-                } else if(checkExpanded) {
+        try {
+            if (position.lineNumber > qtSearch.topOfFile.range.startLineNumber) {
+                const checkLine = qtSearch.model.getLineContent(position.lineNumber)
+                const checkProperty = qtSearch.isInMetaProperty(position)
+                const checkFunction = qtSearch.isInFunction(position)
+                const checkSlot = qtSearch.isInSlot(position)
+                const checkExpanded = qtSearch.isInExpandedProperty(position)
+                const itemCheck = qtSearch.fetchParentItem(position, position)
+                if (checkLine.includes(".")) {
+                    const checkSub = checkLine.split(".")[0].trim()
+                    this.determineSubProperties(checkSub)
+                    return;
+                } else if(checkLine.includes(":")) {
                     this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber,"slot","N/A")
+                    return;
+                } else if(checkLine.trim().startsWith("property")) {
+                    return;
                 }
-                return;
-            }
-            this.getQtItemGlobalSuggestions(itemCheck.range.startLineNumber)
-        } else {
-            this.createSuggestions(["import"], "property")
-            const checkLine = qtSearch.model.getLineContent(position.lineNumber)
-            const importStatements = []
-            if (checkLine.includes("import")) {
-                for (const key in qtTypeJson["import_statements"]) {
-                    if (qtTypeJson["import_statements"][key].hasOwnProperty("ver")) {
-                        const vers = qtTypeJson["import_statements"][key]["ver"]
-                        for (var i = 0; i < vers.length; i++) {
-                            importStatements.push(`${key} ${vers[i]}`)
+                if (checkProperty || checkFunction || checkSlot || checkExpanded) {
+                    if (checkProperty) {
+                        const propertyLineNumber = qtSearch.findPreviousMetaPropertyParent(position)
+                        const propertyName = qtSearch.getMetaPropertyParent(propertyLineNumber.range.startLineNumber)
+                        this.getMetaPropertySuggestions(itemCheck.range.startLineNumber, propertyName)
+                    } else if (checkFunction || checkSlot) {
+                        if (checkSlot) {
+                            const slot = qtSearch.findPreviousSlot(position)
+                            const slotName = qtSearch.getSlotName(slot.range.startLineNumber)
+                            this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber, "slot", slotName)
+                        } else {
+                            const func = qtSearch.findPreviousFunction(position)
+                            const funcName = qtSearch.getFunc(func.range.startLineNumber)
+                            this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber, "func", funcName.name)
                         }
+                    } else if(checkExpanded) {
+                        this.getFunctionGlobalSuggestions(itemCheck.range.startLineNumber,"slot","N/A")
                     }
-                    if (qtTypeJson["import_statements"][key].hasOwnProperty("subTypes")) {
-                        const subTypes = qtTypeJson["import_statements"][key]["subTypes"]
-                        for (const type in subTypes) {
-                            if (qtTypeJson["import_statements"][key]["subTypes"][type].hasOwnProperty("ver")) {
-                                const vers_ = qtTypeJson["import_statements"][key]["subTypes"][type]["ver"]
-                                for (var i = 0; i < vers_.length; i++) {
-                                    importStatements.push(`${key}.${type} ${vers_[i]}`)
+                    return;
+                }
+                this.getQtItemGlobalSuggestions(itemCheck.range.startLineNumber)
+            } else {
+                this.createSuggestions(["import"], "property")
+                const checkLine = qtSearch.model.getLineContent(position.lineNumber)
+                const importStatements = []
+                if (checkLine.includes("import")) {
+                    for (const key in qtTypeJson["import_statements"]) {
+                        if (qtTypeJson["import_statements"][key].hasOwnProperty("ver")) {
+                            const vers = qtTypeJson["import_statements"][key]["ver"]
+                            for (var i = 0; i < vers.length; i++) {
+                                importStatements.push(`${key} ${vers[i]}`)
+                            }
+                        }
+                        if (qtTypeJson["import_statements"][key].hasOwnProperty("subTypes")) {
+                            const subTypes = qtTypeJson["import_statements"][key]["subTypes"]
+                            for (const type in subTypes) {
+                                if (qtTypeJson["import_statements"][key]["subTypes"][type].hasOwnProperty("ver")) {
+                                    const vers_ = qtTypeJson["import_statements"][key]["subTypes"][type]["ver"]
+                                    for (var i = 0; i < vers_.length; i++) {
+                                        importStatements.push(`${key}.${type} ${vers_[i]}`)
+                                    }
                                 }
                             }
                         }
                     }
+                    this.createSuggestions(importStatements, "property")
                 }
-                this.createSuggestions(importStatements, "property")
             }
+        } catch (error) {
+            return;
         }
     }
 
