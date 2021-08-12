@@ -92,20 +92,20 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
 
     const QByteArray deviceId = platform->deviceId();
 
-    QJsonObject wrapper {
+    QJsonObject payload {
         { JSON_MESSAGE, QString(message.raw()) },
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 
-    QJsonObject notification {
-        { JSON_NOTIFICATION, wrapper }
-    };
-    QJsonDocument wrapperDoc(notification);
-    QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
+    // QJsonObject notification {
+    //     { JSON_NOTIFICATION, wrapper }
+    // };
+    // QJsonDocument wrapperDoc(notification);
+    // QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
 
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
-    emit platformMessage(platform->platformId(), wrapperStrJson);
+    emit platformMessage(platform->platformId(), payload);
 }
 
 void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString)

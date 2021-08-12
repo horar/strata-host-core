@@ -60,7 +60,7 @@ public:
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
-    void platformMessage(QString platformId, QString message);
+    void platformMessage(QString platformId, QJsonObject message);
 
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);

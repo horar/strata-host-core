@@ -118,7 +118,7 @@ public slots:
             const QString &error);
 
 private:
-    void sendMessageToClients(const QString &platformId, const QString& message); // send message from platfrom to client
+    void sendMessageToClients(const QString &platformId, const QJsonObject& payload); // send message from platfrom to client
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
@@ -128,6 +128,7 @@ private:
     void processCmdDynamicPlatformList(const strata::strataRPC::Message &message);
     void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
     void processCmdDownlodView(const strata::strataRPC::Message &message);
+    void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
 
     void platformConnected(const QByteArray& deviceId);
     void platformDisconnected(const QByteArray& deviceId);

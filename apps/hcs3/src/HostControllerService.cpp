@@ -50,6 +50,7 @@ bool HostControllerService::initialize(const QString& config)
     strataServer_->registerHandler("dynamic_platform_list", std::bind(&HostControllerService::processCmdDynamicPlatformList, this, std::placeholders::_1));
     strataServer_->registerHandler("update_firmware", std::bind(&HostControllerService::processCmdUpdateFirmware, this, std::placeholders::_1));
     strataServer_->registerHandler("download_view", std::bind(&HostControllerService::processCmdDownlodView, this, std::placeholders::_1));
+    strataServer_->registerHandler("platform_message", std::bind(&HostControllerService::processCmdSendPlatformMessage, this, std::placeholders::_1));
 
     // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
@@ -131,7 +132,7 @@ void HostControllerService::start()
 
 void HostControllerService::stop()
 {
-    db_.stop();             // db should be stopped last for it receives requests from dispatcher
+    db_.stop();             // db should be stopped last for it receives requests from dispatcher. still applicable? no dispatcher anymore 
 }
 
 void HostControllerService::onAboutToQuit()
@@ -341,7 +342,6 @@ void HostControllerService::platformConnected(const QByteArray& deviceId)
 {
     Q_UNUSED(deviceId)
 
-    //send update to all clients
     strataServer_->notifyAllClients("connected_platforms", platformController_.createPlatformsList());
 }
 
@@ -349,19 +349,15 @@ void HostControllerService::platformDisconnected(const QByteArray& deviceId)
 {
     Q_UNUSED(deviceId)
 
-    //send update to all clients
     strataServer_->notifyAllClients("connected_platforms", platformController_.createPlatformsList());
 }
 
-void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
+void HostControllerService::sendMessageToClients(const QString &platformId, const QJsonObject &payload)
 {
     Q_UNUSED(platformId)
-    // this forward message from the platfrom to the client, uses the only client, as a result this needs to be improved!
 
-    // Client* client = getSenderClient();
-    // if (client != nullptr) {
-    //     // clients_.sendMessage(client->getClientId(), message);
-    // }
+    // TODO: map each device to a client and update this functionality 
+    strataServer_->notifyAllClients("platform_message", payload);
 }
 
 void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress)
@@ -524,4 +520,10 @@ void HostControllerService::processCmdDownlodView(const strata::strataRPC::Messa
     }
 
     storageManager_.requestDownloadControlView(message.clientID, url, md5, classId);
+}
+
+void HostControllerService::processCmdSendPlatformMessage(const strata::strataRPC::Message &message) 
+{
+    platformController_.sendMessage(message.payload.value("device_id").toString().toUtf8(),
+                                    message.payload.value("message").toString().toUtf8());
 }
