@@ -129,10 +129,6 @@ bool HostControllerService::initialize(const QString& config)
 
     updateController_.initialize(&platformController_, &downloadManager_);
 
-    // rapidjson::Value& hcs_cfg = config_["host_controller_service"];
-
-    // clients_.initialize(dispatcher_, hcs_cfg);
-    // strataServer_->initialize(); // on failure, this will emit an error signal
     return true;
 }
 
@@ -150,18 +146,7 @@ void HostControllerService::start()
 
 void HostControllerService::stop()
 {
-    // clients_.stop();        // first stop "clients controller" and then stop "dispatcher" (dispatcher receives data from clients controller)
-
-    // bool stop_dispatcher = (dispatcherThread_.get_id() != std::thread::id());
-    // if (stop_dispatcher) {
-    //     dispatcher_->stop();
-    //     dispatcherThread_.join();
-    // }
-
     db_.stop();             // db should be stopped last for it receives requests from dispatcher
-
-    // if (stop_dispatcher)    // log only once and at the very end
-        // qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
 void HostControllerService::onAboutToQuit()
@@ -170,23 +155,15 @@ void HostControllerService::onAboutToQuit()
 }
 
 void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
-        const QByteArray &clientId,
-        const QString &originalFilePath,
-        const QString &effectiveFilePath)
+    const QByteArray &clientId, const QString &originalFilePath, const QString &effectiveFilePath)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_platform_filepath_changed");
     payload.insert("original_filepath", originalFilePath);
     payload.insert("effective_filepath", effectiveFilePath);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "download_platform_filepath_changed", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
@@ -195,20 +172,14 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
         qint64 bytesReceived,
         qint64 bytesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_platform_single_file_progress");
     payload.insert("filepath", filePath);
     payload.insert("bytes_received", bytesReceived);
     payload.insert("bytes_total", bytesTotal);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "download_platform_single_file_progress", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
@@ -216,25 +187,18 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
         const QString &filePath,
         const QString &errorString)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_platform_single_file_finished");
     payload.insert("filepath", filePath);
     payload.insert("error_string", errorString);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "download_platform_single_file_finished", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
-void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId, const QString &errorString)
+void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId,
+                                                                     const QString &errorString)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
     payload.insert("type", "download_platform_files_finished");
@@ -242,29 +206,20 @@ void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByte
         payload.insert("error_string", errorString);
     }
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "download_platform_files_finished", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformListMessage(
         const QByteArray &clientId,
         const QJsonArray &platformList)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    //payload.insert("type", "all_platforms");
     payload.insert("list", platformList);
 
-    // message.insert("hcs::notification", payload);
-    // doc.setObject(message);
-
-    strataServer_->notifyClient(clientId, "all_platforms", payload, strata::strataRPC::ResponseType::Notification);
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "all_platforms", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformDocumentsProgressMessage(
@@ -273,19 +228,14 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
         int filesCompleted,
         int filesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "document_progress");
     payload.insert("class_id", classId);
     payload.insert("files_completed", filesCompleted);
     payload.insert("files_total", filesTotal);
 
-    message.insert("cloud::notification", payload);
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "document_progress", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendControlViewDownloadProgressMessage(
@@ -295,21 +245,15 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
         qint64 bytesReceived,
         qint64 bytesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "control_view_download_progress");
     payload.insert("url", partialUri);
     payload.insert("filepath", filePath);
     payload.insert("bytes_received", bytesReceived);
     payload.insert("bytes_total", bytesTotal);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "control_view_download_progress", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId,
@@ -361,19 +305,13 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(
         const QString &errorString)
 {
     QJsonObject payload {
-        {"type", "download_view_finished"},
         {"url", partialUri},
         {"filepath", filePath},
         {"error_string", errorString}
     };
 
-    QJsonObject message {
-        {"hcs::notification", payload}
-    };
-
-    QJsonDocument doc(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "download_view_finished", payload,
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 bool HostControllerService::parseConfig(const QString& config)
@@ -420,7 +358,7 @@ void HostControllerService::platformConnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    // broadcastMessage(platformController_.createPlatformsList());
+    strataServer_->notifyAllClients("connected_platforms", platformController_.createPlatformsList());
 }
 
 void HostControllerService::platformDisconnected(const QByteArray& deviceId)
@@ -428,12 +366,13 @@ void HostControllerService::platformDisconnected(const QByteArray& deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    // broadcastMessage(platformController_.createPlatformsList());
+    strataServer_->notifyAllClients("connected_platforms", platformController_.createPlatformsList());
 }
 
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
     Q_UNUSED(platformId)
+    // this forward message from the platfrom to the client, uses the only client, as a result this needs to be improved!
     Client* client = getSenderClient();
     if (client != nullptr) {
         // clients_.sendMessage(client->getClientId(), message);
@@ -459,7 +398,9 @@ void HostControllerService::processCmdDynamicPlatformList(const QByteArray &clie
 {
     storageManager_.requestPlatformList(clientId);
 
-    // clients_.sendMessage(clientId, platformController_.createPlatformsList());
+    strataServer_->notifyClient(clientId, "connected_platforms",
+                                platformController_.createPlatformsList(),
+                                strata::strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::processCmdClientUnregister(const QByteArray &clientId)
@@ -684,7 +625,6 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
     }
 
     QJsonObject payload;
-    payload.insert("type", "firmware_update");
     payload.insert("device_id", QLatin1String(deviceId));
     payload.insert("operation", operation);
     payload.insert("status", status);
@@ -696,18 +636,13 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
     payload.insert("flash_error", progress.flashError);
     payload.insert("restore_error", progress.restoreError);
 
-    QJsonDocument doc;
-    QJsonObject message;
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
-
-    // clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    strataServer_->notifyClient(clientId, "firmware_update", payload, strata::strataRPC::ResponseType::Notification);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
         // If firmware was updated broadcast new platforms list
         // to indicate the firmware version has changed.
-        //broadcastMessage(platformController_.createPlatformsList());
+        strataServer_->notifyAllClients("connected_platforms", platformController_.createPlatformsList());
     }
 }
 
@@ -733,11 +668,39 @@ void HostControllerService::handleLoadDocuments(const strata::strataRPC::Message
     storageManager_.requestPlatformDocuments(message.clientID, classId);
 }
 
-void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message &message) 
+void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message &message)
 {
-    qCCritical(logCategoryHcs) << "Handler not implemented yet";
-    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
-                                strata::strataRPC::ResponseType::Error);
+    QStringList partialUriList;
+    QString destinationDir = message.payload.value("destination_dir").toString();
+    if (destinationDir.isEmpty()) {
+        strataServer_->notifyClient(
+            message,
+            QJsonObject{{"message", "destinationDir attribute is empty or has bad format"}},
+            strata::strataRPC::ResponseType::Error);
+        qCWarning(logCategoryHcs) << "destinationDir attribute is empty or has bad format";
+        return;
+    }
+
+    QJsonValue filesValue = message.payload.value("files");
+    if (filesValue.isArray() == false) {
+        strataServer_->notifyClient(message,
+                                    QJsonObject{{"message", "files attribute is not an array"}},
+                                    strata::strataRPC::ResponseType::Error);
+        qCWarning(logCategoryHcs) << "files attribute is not an array";
+        return;
+    }
+
+    QJsonArray files = filesValue.toArray();
+    for (const QJsonValueRef value : files) {
+        if (value.isString()) {
+            partialUriList << value.toString();
+        }
+    }
+
+    storageManager_.requestDownloadPlatformFiles(message.clientID, partialUriList, destinationDir);
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "File download requested."}},
+                                strata::strataRPC::ResponseType::Response);
 }
 
 void HostControllerService::handleDynamicPlatformList(const strata::strataRPC::Message &message)
