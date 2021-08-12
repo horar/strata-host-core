@@ -3,10 +3,6 @@
 #include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
 
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
-
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -37,41 +33,15 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    // TODO: update config_ to use use QJson instead.
-    rapidjson::Value& hcs_cfg = config_["host_controller_service"];
+    // strataServer_ setup
+    QJsonObject hcs_cfg = config_.value("host_controller_service").toObject();
 
-    if (hcs_cfg.HasMember("subscriber_address") == false) {
+    if (false == hcs_cfg.contains("subscriber_address") && true == hcs_cfg.value("subscriber_address").isString()) {
+        qCCritical(logCategoryHcs) << "Invalid subscriber_address.";
         return false;
     }
 
-    strataServer_ = std::make_shared<strata::strataRPC::StrataServer>(hcs_cfg["subscriber_address"].GetString(), true, this);
-
-    QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
-    if (config_.HasMember("stage")) {
-        rapidjson::Value &devStage = config_["stage"];
-        if (devStage.IsString()) {
-            std::string stage(devStage.GetString(), devStage.GetStringLength());
-            std::transform(stage.begin(), stage.end(), stage.begin(), ::toupper);
-            qCInfo(logCategoryHcs, "Running in %s setup", qUtf8Printable(stage.data()));
-            baseFolder += QString("/%1").arg(qUtf8Printable(stage.data()));
-            QDir baseFolderDir{baseFolder};
-            if (baseFolderDir.exists() == false) {
-                qCDebug(logCategoryHcs) << "Creating base folder" << baseFolder << "-" << baseFolderDir.mkpath(baseFolder);
-            }
-        }
-    }
-
-    storageManager_.setBaseFolder(baseFolder);
-
-    rapidjson::Value& db_cfg = config_["database"];
-
-    if (db_.open(baseFolder, "strata_db") == false) {
-        qCCritical(logCategoryHcs) << "Failed to open database.";
-        return false;
-    }
-
-    // TODO: Will resolved in SCT-517
-    //db_.addReplChannel("platform_list");
+    strataServer_ = std::make_shared<strata::strataRPC::StrataServer>(hcs_cfg.value("subscriber_address").toString(), true, this);
 
     // Register handlers in strataServer_
     strataServer_->registerHandler("request_hcs_status", std::bind(&HostControllerService::processCmdRequestHcsStatus, this, std::placeholders::_1));
@@ -81,6 +51,7 @@ bool HostControllerService::initialize(const QString& config)
     strataServer_->registerHandler("update_firmware", std::bind(&HostControllerService::processCmdUpdateFirmware, this, std::placeholders::_1));
     strataServer_->registerHandler("download_view", std::bind(&HostControllerService::processCmdDownlodView, this, std::placeholders::_1));
 
+    // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
@@ -98,7 +69,33 @@ bool HostControllerService::initialize(const QString& config)
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
-    QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
+    // create base folder
+    QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+    if (true == config_.contains("stage") && true == config_.value("stage").isString()) {
+        QString stage = config_.value("stage").toString().toUpper();
+        qCInfo(logCategoryHcs) << "Running in" << stage << "setup";
+        baseFolder += QString("/%1").arg(stage);
+        QDir baseFolderDir{baseFolder};
+        if (baseFolderDir.exists() == false) {
+            qCDebug(logCategoryHcs)
+                << "Creating base folder" << baseFolder << "-" << baseFolderDir.mkpath(baseFolder);
+        }
+    }
+
+    storageManager_.setBaseFolder(baseFolder);
+
+    // Data base configuration
+    QJsonObject db_cfg = config_.value("database").toObject();
+
+    if (db_.open(baseFolder, "strata_db") == false) {
+        qCCritical(logCategoryHcs) << "Failed to open database.";
+        return false;
+    }
+
+    // TODO: Will resolved in SCT-517
+    //db_.addReplChannel("platform_list");
+
+    QUrl baseUrl = db_cfg.value("file_server").toString();
 
     qCInfo(logCategoryHcs) << "file_server url:" << baseUrl.toString();
 
@@ -115,7 +112,7 @@ bool HostControllerService::initialize(const QString& config)
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
 
-    db_.initReplicator(db_cfg["gateway_sync"].GetString(), 
+    db_.initReplicator(db_cfg.value("gateway_sync").toString().toStdString(), 
         std::string(ReplicatorCredentials::replicator_username).c_str(),
         std::string(ReplicatorCredentials::replicator_password).c_str());
 
@@ -321,19 +318,22 @@ bool HostControllerService::parseConfig(const QString& config)
     QByteArray data = file.readAll();
     file.close();
 
-    // TODO: use QJson
-    rapidjson::Document configuration;
-    if (configuration.Parse<rapidjson::kParseCommentsFlag>(data.data()).HasParseError()) {
-        qCCritical(logCategoryHcs) << "Parse error on config file!";
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &jsonParseError);
+
+    if (jsonParseError.error != QJsonParseError::NoError) {
+        qCCritical(logCategoryHcs) << "Unable to parse config file." << jsonParseError.errorString();
+        qCCritical(logCategoryHcs) << data;
         return false;
     }
 
-    if ( ! configuration.HasMember("host_controller_service") ) {
+    if (false == jsonDocument.object().contains("host_controller_service")) {
         qCCritical(logCategoryHcs) << "ERROR: No Host Controller Configuration parameters.";
         return false;
     }
 
-    config_ = std::move(configuration);
+    config_ = jsonDocument.object();
+
     return true;
 }
 

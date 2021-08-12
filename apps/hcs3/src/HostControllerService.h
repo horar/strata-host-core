@@ -154,6 +154,6 @@ private:
     std::list<Client*> clientList_;
     Client* current_client_;
 
-    rapidjson::Document config_;
+    QJsonObject config_;
     std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;
 };
