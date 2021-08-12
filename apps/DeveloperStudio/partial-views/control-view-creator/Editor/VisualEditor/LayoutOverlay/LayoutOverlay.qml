@@ -16,9 +16,9 @@ LayoutContainer {
 
     property bool isSelected: false
 
-    property var prevX
-    property var prevY
-    property var rectLimits: []
+    property var multiItemTargetPrevX
+    property var multiItemTargetPrevY
+    property var multiItemTargetRectLimits: []
 
     onSourceItemChanged: {
         if (layoutOverlayRoot.sourceItem && visualEditor.functions.isUuidSelected(layoutOverlayRoot.sourceItem.layoutInfo.uuid)) {
@@ -65,9 +65,9 @@ LayoutContainer {
                     startPoint = Qt.point(mouseX, mouseY)
 
                     if (visualEditor.selectedMultiObjectsUuid.length > 0) {
-                        layoutOverlayRoot.prevX = rect.x
-                        layoutOverlayRoot.prevY = rect.y
-                        rectLimits = visualEditor.functions.getRect()
+                        layoutOverlayRoot.multiItemTargetPrevX = rect.x
+                        layoutOverlayRoot.multiItemTargetPrevY = rect.y
+                        multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
                     }
                 }
             }
@@ -144,23 +144,23 @@ LayoutContainer {
                     rect.y = newPosition.y
 
                     if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
-                        const leftLimit = rectLimits[0] * overlayContainer.columnSize
+                        const leftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
                         rect.x = Math.max(rect.x, -leftLimit)
-                        const rightLimit = rectLimits[1] * overlayContainer.columnSize
+                        const rightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
                         rect.x = Math.min(rect.x, rightLimit)
-                        const topLimit = rectLimits[2] * overlayContainer.rowSize
+                        const topLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
                         rect.y = Math.max(rect.y, -topLimit)
-                        const bottomLimit = rectLimits[3] * overlayContainer.rowSize
+                        const bottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                         rect.y = Math.min(rect.y, bottomLimit)
 
-                        const xOffset = rect.x - layoutOverlayRoot.prevX
-                        const yOffset = rect.y - layoutOverlayRoot.prevY
+                        const xOffset = rect.x - layoutOverlayRoot.multiItemTargetPrevX
+                        const yOffset = rect.y - layoutOverlayRoot.multiItemTargetPrevY
                         if (Math.round(xOffset) !== 0 || Math.round(yOffset) !== 0) {
                             visualEditor.functions.dragGroup(layoutOverlayRoot.objectName, xOffset, yOffset)
                         }
 
-                        layoutOverlayRoot.prevX = rect.x
-                        layoutOverlayRoot.prevY = rect.y
+                        layoutOverlayRoot.multiItemTargetPrevX = rect.x
+                        layoutOverlayRoot.multiItemTargetPrevY = rect.y
                     }
                 }
             }

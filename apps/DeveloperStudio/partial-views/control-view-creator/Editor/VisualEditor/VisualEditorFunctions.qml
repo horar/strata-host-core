@@ -469,16 +469,19 @@ QtObject {
         return "[^\S\r\n]*\\}\\s*\\/\\/\\s*end_" + uuid + ".*"
     }
 
+    // returns whether object uuid is part of multi-item selection
     function isUuidSelected(uuid) {
         return visualEditor.selectedMultiObjectsUuid.includes(uuid)
     }
 
+    // adds object uuid to multi-item selection
     function addUuidToMultiObjectSelection(uuid) {
         if (!visualEditor.selectedMultiObjectsUuid.includes(uuid)) {
             visualEditor.selectedMultiObjectsUuid.push(uuid)
         }
     }
 
+    // removes object uuid from multi-item selection
     function removeUuidFromMultiObjectSelection(uuid) {
         const index = visualEditor.selectedMultiObjectsUuid.indexOf(uuid)
         if (index > -1) {
@@ -486,11 +489,13 @@ QtObject {
         }
     }
 
+    // emits multiObjectsDragged signal to all layout items
     function dragGroup(objectInitiated, x, y) {
         visualEditor.multiObjectsDragged(objectInitiated, x, y)
     }
 
-    function getRect() {
+    // calculates maximum offsets for multi-item target rectangle
+    function getMultiItemTargetRectLimits() {
         var minX = overlayContainer.columnCount
         var maxX = overlayContainer.columnCount
         var minY = overlayContainer.rowCount
