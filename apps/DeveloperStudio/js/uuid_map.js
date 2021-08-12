@@ -24,9 +24,9 @@ var uuid_map = {
     "SEC.2018.018.1.0": "logic-gate", // Beta Board
     "SEC.2018.001.0.0": "usb-hub",
     "TEST.2018.002.0.0": "motor-vortex",
-    "entice_rgb" : "entice_rgb",
+    "entice_rgb": "entice_rgb",
     "template": "template",
-    "core-test-ui":"core-test-ui",
+    "core-test-ui": "core-test-ui",
 
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
@@ -55,17 +55,17 @@ var uuid_map = {
     "222": "subGHz",
     "225": "smart-speaker",
     "226": "hello-strata",
-    "227" : "eFuse",
-    "228" : "eFuse",
-    "229" : "eFuse",
-    "230" : "eFuse",
+    "227": "eFuse",
+    "228": "eFuse",
+    "229": "eFuse",
+    "230": "eFuse",
     "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
     "233": "sar-adc",
-    "234" : "Adj-LDO",
-    "235" : "Adj-LDO",
-    "236" : "Adj-LDO",
-    "237" : "Adj-LDO",
+    "234": "Adj-LDO",
+    "235": "Adj-LDO",
+    "236": "Adj-LDO",
+    "237": "Adj-LDO",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",
@@ -74,7 +74,7 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
-    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78":"template",
+    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78": "template",
 
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)
@@ -92,7 +92,7 @@ var uuid_map = {
     "76a518b4-37bc-4fee-ad5b-92c381dea0c2": "zigbee",
     "0d674fd9-3770-4ee7-ab0c-1f5f5de710fc": "usb-pd-pps",
     "bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor",
-    "36c48ce4-3794-4ba7-a9f4-07fc6e45a8aa" : "hello-strata-rsl10",
+    "36c48ce4-3794-4ba7-a9f4-07fc6e45a8aa": "hello-strata-rsl10",
     "4a1c2e5f-d0b0-4970-8c93-70a9234d195c": "led-tail-light", // STR-NCV7685-AUTO-LED-GEVB
     "ecd43c02-3e7c-4d5e-9231-aabc149c8772": "led-tail-light",  // STR-NCV7684-AUTO-LED-GEVB
     "15411d3f-829f-4b65-b607-13e8dec840aa": "rsl10-dcdc",
@@ -101,16 +101,25 @@ var uuid_map = {
     "3ea08e05-0bcd-4a4a-86ec-79a1ca9750cd": "rsl10-dcdc",
     "abd65a0b-3229-44a4-a97c-38ea3c24f990": "rsl10-dcdc",
     "266f22e5-dc05-4819-b565-e5fb8035984e": "rsl10-dcdc",
-    "d4937f24-219a-4648-a711-2f6e902b6f1c": "rsl10-dcdc",
     "b519cdcb-5068-4483-b88e-155813fae915": "rsl10-dcdc",
     "26ebc2ba-9bab-4bdd-97b6-09b5b8cbdf9e": "rsl10-dcdc",
     "cce0f32e-ee1e-44aa-81a3-0801a71048ce": "rsl10-dcdc",
     "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
-    "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
-    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators",
+    "7bdcea96-0fb8-41de-9822-dec20ae1032a": "level-translators",
     "fda98159-37f0-4e07-9ffe-28f46f80f7b5": "100V-ncp1034",
-    "8a757b79-ba44-4830-864b-2bb965552209" : "pixel",
-    "a34fc0ce-a3fc-4f6b-8c0c-b17aaffff5ff" : "ncs32100",
-    "d5029d50-9f39-4e44-8c35-589686b511cb" : "lighting-kit-demo"
+    "8a757b79-ba44-4830-864b-2bb965552209": "pixel",
+    "a34fc0ce-a3fc-4f6b-8c0c-b17aaffff5ff": "ncs32100",
+    "d5029d50-9f39-4e44-8c35-589686b511cb": "lighting-kit-demo",
+    "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-pmbus",
+    "d4937f24-219a-4648-a711-2f6e902b6f1c": "rsl10-pmbus",
+    "a4e20d30-af03-43cf-98cf-b10cc5c7aa28": "MDK-UCB",
+    "d64c7dea-4509-45c6-8f99-02bf6e091366": "MDK-UCB",
+    "334aeac5-129f-4f31-83f1-461a5cfd7377": "MDK-UCB",
+    "a715b4d6-b9a3-4fdf-a1da-bcf629146232": "SiC-SSDC-INV-UCB",
+    "b3743305-a33c-4dda-8120-b28bb7e4ba50": "dms-ir-led",
+    "abc1cf67-bfb4-4e08-8c67-e6a78f9b9adb": "mv-mdk",
+    "c7069a8a-0dd9-40cf-ac89-29aafabb02a2": "mv-mdk",
+    "b1133641-5b46-4d11-9b96-9126b9d2a109": "mv-mdk",
+    "1917934f-3b79-4e8b-b37a-b1bd92d2afd5": "mv-mdk"
 }

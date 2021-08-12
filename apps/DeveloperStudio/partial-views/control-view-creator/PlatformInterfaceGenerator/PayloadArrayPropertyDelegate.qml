@@ -26,6 +26,7 @@ ColumnLayout {
             Layout.preferredWidth: 15
             padding: 0
             hoverEnabled: true
+            visible: parentListModel.count > 1
 
             icon {
                 source: "qrc:/sgimages/times.svg"
@@ -47,13 +48,16 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (cmdNotifName.text !== "") {
+                        unsavedChanges = true
+                    }
                     parentListModel.remove(modelIndex)
                 }
             }
         }
 
         Text {
-            text: "[Index " + modelIndex  + "] Element type: "
+            text: "[Index " + modelIndex + "] Element type: "
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredWidth: 150
             verticalAlignment: Text.AlignVCenter
@@ -71,41 +75,13 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
-            }
-        }
-
-        RoundButton {
-            id: addItemToArrayButton
-            Layout.preferredHeight: 25
-            Layout.preferredWidth: 25
-            hoverEnabled: true
-            visible: modelIndex === parentListModel.count - 1
-
-            icon {
-                source: "qrc:/sgimages/plus.svg"
-                color: addItemToArrayMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
-                height: 20
-                width: 20
-                name: "add"
-            }
-
-            Accessible.name: "Add item to array"
-            Accessible.role: Accessible.Button
-            Accessible.onPressAction: {
-                addItemToArrayMouseArea.clicked()
-            }
-
-            MouseArea {
-                id: addItemToArrayMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
-                    commandsListView.contentY += 40
-                }
             }
         }
     }
@@ -151,5 +127,29 @@ ColumnLayout {
             }
         }
     }
-}
 
+    Button {
+        id: addPropertyButton
+        text: "Add Item To Array"
+        Layout.alignment: Qt.AlignHCenter
+        visible: modelIndex === parentListModel.count - 1
+
+        Accessible.name: addPropertyButton.text
+        Accessible.role: Accessible.Button
+        Accessible.onPressAction: {
+            addPropertyButtonMouseArea.clicked()
+        }
+
+        MouseArea {
+            id: addPropertyButtonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked: {
+                parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                commandsListView.contentY += 40
+            }
+        }
+    }
+}

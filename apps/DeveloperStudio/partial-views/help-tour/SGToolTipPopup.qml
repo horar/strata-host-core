@@ -80,7 +80,6 @@ Popup {
             color: "#88000000"
             source: colorRect
             visible: root.visible
-            z: -1
         }
 
         MouseArea {

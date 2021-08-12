@@ -103,6 +103,15 @@ public:
 
     Q_INVOKABLE QString getLastLoggedError();
 
+    Q_INVOKABLE void trimComponentCache(QObject *parent);
+
+    /**
+     * @brief getQrcPaths Returns list of paths found under a QRC resource path, including subdirectories
+     * @param path The path to the QRC directory to find children.
+     * @return QList List of child paths.
+     */
+    Q_INVOKABLE  QList<QString> getQrcPaths(QString path);
+
 signals:
     void finishedRecompiling(QString filepath);
 

@@ -3,6 +3,8 @@
 #include <QSignalSpy>
 #include <QVector>
 
+QTEST_MAIN(ConnectorsTest)
+
 void ConnectorsTest::waitForZmqMessages(int delay)
 {
     QTimer timer;

@@ -396,47 +396,48 @@ Rectangle {
             bottom: profileIconContainer.bottom
         }
 
-      Rectangle {
-          height: bleIconHover.containsMouse ? bleIconContainer.height : bleIconContainer.height - 6
-          width: height
-          anchors.centerIn: bleIconContainer
+        Rectangle {
+            height: bleIconHover.containsMouse ? bleIconContainer.height : bleIconContainer.height - 6
+            width: height
+            anchors.centerIn: bleIconContainer
 
-          radius: height / 2
-          color: Theme.palette.green
+            radius: height / 2
+            color: Theme.palette.green
 
-          SGIcon {
-              height: bleIconHover.containsMouse ? 26 : 22
-              width: height
-              anchors {
-                  centerIn: parent
-              }
+            SGIcon {
+                height: bleIconHover.containsMouse ? 26 : 22
+                width: height
+                anchors {
+                    centerIn: parent
+                }
 
-              source: "qrc:/sgimages/bluetooth-b.svg"
-              iconColor: "white"
-          }
-      }
+                source: "qrc:/sgimages/bluetooth-b.svg"
+                iconColor: "white"
+            }
+        }
 
-      MouseArea {
-          id: bleIconHover
-          anchors.fill: bleIconContainer
+        MouseArea {
+            id: bleIconHover
+            anchors.fill: bleIconContainer
 
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          Accessible.role: Accessible.Button
-          Accessible.name: "User Icon"
-          Accessible.description: "User menu button."
-          Accessible.onPressAction: pressAction()
-          onPressed: pressAction()
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: pressAction()
+            onPressed: pressAction()
 
-          function pressAction() {
-              showConnectBleDeviceDialog()
-          }
-      }
+            function pressAction() {
+                showConnectBleDeviceDialog()
+            }
+        }
     }
 
-    Item {
+    Rectangle {
         id: profileIconContainer
         width: height
+        radius: 5
 
         anchors {
             right: container.right
@@ -445,28 +446,25 @@ Rectangle {
             bottom: container.bottom
         }
 
-        Rectangle {
-            id: profileIcon
-            anchors {
-                centerIn: profileIconContainer
+        color: {
+            if (profileMenu.visible) {
+                return "grey"
+            } else if (profileIconHover.containsMouse) {
+                return "dimgrey"
+            } else {
+                return "transparent"
             }
-            height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
-            width: height
-            radius: height / 2
-            color: Theme.palette.green
+        }
 
-            Text {
-                id: profileInitial
-                text: first_name.charAt(0)
-                color: "white"
-                anchors {
-                    centerIn: profileIcon
-                }
-                font {
-                    family: Fonts.franklinGothicBold
-                    pixelSize: profileIconHover.containsMouse ? 24 : 20
-                }
+        SGIcon {
+            id: barIcon
+            height: parent.height - 20
+            width: height
+            anchors {
+                centerIn: parent
             }
+            source: "qrc:/sgimages/bars.svg"
+            iconColor: Theme.palette.white
         }
 
         Rectangle {
@@ -514,7 +512,11 @@ Rectangle {
             onPressed: pressAction()
 
             function pressAction() {
-                profileMenu.open()
+                if (profileMenu.visible) {
+                    profileMenu.close()
+                } else {
+                    profileMenu.open()
+                }
             }
         }
 
@@ -525,6 +527,7 @@ Rectangle {
             padding: 0
             topPadding: 10
             width: 140
+            closePolicy: Popup.CloseOnPressOutsideParent
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -706,16 +709,20 @@ Rectangle {
         classId: "general-settings"
         user: NavigationControl.context.user_id
 
+        property bool firstLogin: true
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
-        // updated this so we can mitigate undefined variables
+
         function loadSettings() {
             const settings = readFile("general-settings.json")
 
+            if (settings.hasOwnProperty("firstLogin")) {
+                firstLogin = settings.firstLogin
+            }
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
             }
@@ -739,6 +746,7 @@ Rectangle {
 
         function saveSettings() {
             const settings = {
+                firstLogin: firstLogin,
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,

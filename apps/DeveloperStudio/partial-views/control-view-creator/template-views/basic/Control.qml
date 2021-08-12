@@ -13,6 +13,8 @@ Item {
         fill: parent
     }
 
+    property string class_id // automatically populated for use when the control view is created with a connected board
+
     Rectangle {
         // background color
         color: "salmon"

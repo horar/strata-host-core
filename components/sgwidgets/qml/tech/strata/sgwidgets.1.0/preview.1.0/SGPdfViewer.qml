@@ -61,185 +61,180 @@ Item {
         }
 
         onJavaScriptConsoleMessage: {
-//            console.log("onJavaScriptConsoleMessage: " + " L:"+ level + " line: " + lineNumber + " " + JSON.stringify(message))
+        //            console.log("onJavaScriptConsoleMessage: " + " L:"+ level + " line: " + lineNumber + " " + JSON.stringify(message))
             if (JSON.stringify(message) === "\"Uncaught (in promise) undefined\"" || JSON.stringify(message) === "\"Uncaught Error: Assertion faile\"") {
                 root.error()
             }
         }
+    }
 
-        Rectangle {
-            id: barContainer
+    Rectangle {
+        id: barContainer
+        color: "white"
+        anchors {
+            centerIn: webEngine
+        }
+        width: progressBar.width + 40
+        height: progressBar.height + 60
+        visible: progressBar.visible
+
+        ProgressBar {
+            id: progressBar
+            anchors {
+                centerIn: barContainer
+                verticalCenterOffset: 10
+            }
+            height: 10
+            width: webEngine.width/2
+            visible: value !== 100
+            from: 0
+            to: 100
+            value: webEngine.loadProgress
+
+            Text {
+                text: qsTr("Loading PDF Viewer...")
+                anchors {
+                    bottom: progressBar.top
+                    bottomMargin: 10
+                    horizontalCenter: progressBar.horizontalCenter
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: disabledCoverUp
+        color: "black"
+        opacity: 0.6
+        anchors {
+            fill: parent
+        }
+        visible: !webEngine.enabled && !progressBar.visible && !notAvailableCoverUp.visible
+
+        Text {
+            text: qsTr("No Document Loaded")
             color: "white"
             anchors {
-                centerIn: webEngine
+                centerIn: disabledCoverUp
             }
-            width: progressBar.width + 40
-            height: progressBar.height + 60
-            z: webEngine.z+1
-            visible: progressBar.visible
+            visible: disabledCoverUp.visible
+        }
+    }
 
-            ProgressBar {
-                id: progressBar
-                anchors {
-                    centerIn: barContainer
-                    verticalCenterOffset: 10
-                }
-                height: 10
-                width: webEngine.width/2
-                z: webEngine.z + 2
-                visible: value !== 100
-                from: 0
-                to: 100
-                value: webEngine.loadProgress
+    Rectangle {
+        id: notAvailableCoverUp
+        color: "black"
+        opacity: 0.6
+        anchors {
+            fill: parent
+        }
+        visible: root.url === "datasheet-unavailable"
 
-                Text {
-                    text: qsTr("Loading PDF Viewer...")
-                    anchors {
-                        bottom: progressBar.top
-                        bottomMargin: 10
-                        horizontalCenter: progressBar.horizontalCenter
-                    }
-                }
+        Text {
+            text: "Datasheet Unavailable<br><br>Please contact your local sales representative"
+            color: "white"
+            font {
+                pixelSize: 20
+            }
+            wrapMode: Text.Wrap
+            width: notAvailableCoverUp.width
+            anchors {
+                centerIn: notAvailableCoverUp
+            }
+            horizontalAlignment: Text.AlignHCenter
+            visible: notAvailableCoverUp.visible
+        }
+    }
+
+    // FIXME: [LC] move into standalone component and improve UI/UX this ugly rectangle
+    Rectangle {
+        id: findPanel
+
+        visible: false
+        color: "lightgray"
+        opacity: 0.7
+        height: 1.3 * inputField.height
+        radius: height / 3
+
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: findRow.height // FIXME: [LC] debug bar height hack
+            left: parent.left
+            right: parent.right
+            margins: 2 * inputField.height
+        }
+
+
+        Shortcut {
+            sequence: StandardKey.Cancel
+
+            onActivated: {
+                findPanel.visible = false
+                inputField.text = ""
             }
         }
 
-        Rectangle {
-            id: disabledCoverUp
-            color: "black"
-            opacity: 0.6
-            anchors {
-                fill: parent
-            }
-            z: 20
-            visible: !webEngine.enabled && !progressBar.visible && !notAvailableCoverUp.visible
+        RowLayout {
+            id: findRow
 
-            Text {
-                text: qsTr("No Document Loaded")
-                color: "white"
-                anchors {
-                    centerIn: disabledCoverUp
-                }
-                visible: disabledCoverUp.visible
-            }
-        }
+            property int findCounter: 0
 
-        Rectangle {
-            id: notAvailableCoverUp
-            color: "black"
-            opacity: 0.6
-            anchors {
-                fill: parent
-            }
-            z: 20
-            visible: root.url === "datasheet-unavailable"
+            anchors.fill: parent
+            anchors.margins: 5
 
-            Text {
-                text: "Datasheet Unavailable<br><br>Please contact your local sales representative"
-                color: "white"
-                font {
-                    pixelSize: 20
-                }
-                wrapMode: Text.Wrap
-                width: notAvailableCoverUp.width
-                anchors {
-                    centerIn: notAvailableCoverUp
-                }
-                horizontalAlignment: Text.AlignHCenter
-                visible: notAvailableCoverUp.visible
-            }
-        }
+            Label {
+                id: findLabel
 
-        // FIXME: [LC] move into standalone component and improve UI/UX this ugly rectangle
-        Rectangle {
-            id: findPanel
-
-            visible: false
-            color: "lightgray"
-            opacity: 0.7
-            height: 1.3 * inputField.height
-            radius: height / 3
-            z: parent.z + 1
-
-            anchors {
-                bottom: parent.bottom
-                bottomMargin: findRow.height // FIXME: [LC] debug bar height hack
-                left: parent.left
-                right: parent.right
-                margins: 2 * inputField.height
+                text: qsTr("Find:")
             }
 
+            TextField {
+                id: inputField
 
-            Shortcut {
-                sequence: StandardKey.Cancel
+                placeholderText: qsTr("Enter a text to find")
 
-                onActivated: {
-                    findPanel.visible = false
-                    inputField.text = ""
-                }
-            }
+                Layout.fillWidth: true
 
-            RowLayout {
-                id: findRow
-
-                property int findCounter: 0
-
-                anchors.fill: parent
-                anchors.margins: 5
+                onAccepted: findNext.clicked()
+                onTextChanged: findNext.clicked()
 
                 Label {
-                    id: findLabel
+                    id: findCounterLabel
 
-                    text: qsTr("Find:")
-                }
+                    visible: inputField.text !== ""
+                    text: findRow.findCounter
 
-                TextField {
-                    id: inputField
-
-                    placeholderText: qsTr("Enter a text to find")
-
-                    Layout.fillWidth: true
-
-                    onAccepted: findNext.clicked()
-                    onTextChanged: findNext.clicked()
-
-                    Label {
-                        id: findCounterLabel
-
-                        visible: inputField.text !== ""
-                        text: findRow.findCounter
-
-                        anchors {
-                            verticalCenter: parent.verticalCenter
-                            right: parent.right
-                            rightMargin: parent.height / 2
-                        }
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                        rightMargin: parent.height / 2
                     }
                 }
+            }
 
-                ToolButton {
-                    id: findPrev
+            ToolButton {
+                id: findPrev
 
-                    text: qsTr("<")
-                    enabled: inputField.text !== ""
+                text: qsTr("<")
+                enabled: inputField.text !== ""
 
-                    onClicked: {
-                        webEngine.findText(inputField.text, WebEngineView.FindBackward | WebEngineView.FindCaseSensitively, function(matchCount) {
-                            findRow.findCounter = matchCount
-                        });
-                    }
+                onClicked: {
+                    webEngine.findText(inputField.text, WebEngineView.FindBackward | WebEngineView.FindCaseSensitively, function(matchCount) {
+                        findRow.findCounter = matchCount
+                    });
                 }
+            }
 
-                ToolButton {
-                    id: findNext
+            ToolButton {
+                id: findNext
 
-                    text: qsTr(">")
-                    enabled: inputField.text !== ""
+                text: qsTr(">")
+                enabled: inputField.text !== ""
 
-                    onClicked: {
-                        webEngine.findText(inputField.text, WebEngineView.FindCaseSensitively, function(matchCount) {
-                            findRow.findCounter = matchCount
-                        });
-                    }
+                onClicked: {
+                    webEngine.findText(inputField.text, WebEngineView.FindCaseSensitively, function(matchCount) {
+                        findRow.findCounter = matchCount
+                    });
                 }
             }
         }

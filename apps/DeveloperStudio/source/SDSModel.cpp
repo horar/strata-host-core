@@ -6,6 +6,7 @@
 #include "ResourceLoader.h"
 #include "DebugMenuGenerator.h"
 #include "PlatformInterfaceGenerator.h"
+#include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
 #include "ProgramControllerManager.h"
 #include "BleDeviceModel.h"
@@ -15,6 +16,7 @@
 #include <QThread>
 
 #include <QStandardPaths>
+#include <QRandomGenerator>
 
 #include <memory>
 
@@ -32,9 +34,11 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       programControllerManager_(new ProgramControllerManager(coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       debugMenuGenerator_(new DebugMenuGenerator(this)),
+      visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
-      bleDeviceModel_(new BleDeviceModel(coreInterface_, this))
+      bleDeviceModel_(new BleDeviceModel(coreInterface_, this)),
+      hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
     if (urlConfig_->parseUrl() == false) {
@@ -51,6 +55,7 @@ SDSModel::~SDSModel()
     delete newControlView_;
     delete platformInterfaceGenerator_;
     delete debugMenuGenerator_;
+    delete visualEditorUndoStack_;
     delete remoteHcsNode_;
     delete programControllerManager_;
     delete urlConfig_;
@@ -110,8 +115,9 @@ bool SDSModel::startHcs()
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
+        arguments << "-i" << QString::number(hcsIdentifier_);
 
-        qCDebug(logCategoryStrataDevStudio) << "Starting HCS: " << hcsPath << "(" << hcsConfigPath << ")";
+        qCDebug(logCategoryStrataDevStudio) << "Starting HCS:" << hcsPath << "(" << hcsConfigPath << "), identifier:" << hcsIdentifier_;
 
         hcsProcess_->start(hcsPath, arguments, QIODevice::ReadWrite);
         if (hcsProcess_->waitForStarted() == false) {
@@ -200,6 +206,11 @@ DebugMenuGenerator *SDSModel::debugMenuGenerator() const
     return debugMenuGenerator_;
 }
 
+VisualEditorUndoStack *SDSModel::visualEditorUndoStack() const
+{
+    return visualEditorUndoStack_;
+}
+
 strata::sds::config::UrlConfig *SDSModel::urls() const
 {
     return urlConfig_;
@@ -217,12 +228,7 @@ BleDeviceModel *SDSModel::bleDeviceModel() const
 
 void SDSModel::shutdownService()
 {
-    if (externalHcsConnected_) {
-        qCDebug(logCategoryStrataDevStudio) << "connected to externally started HCS; skipping shutdown request";
-        return;
-    }
-
-    remoteHcsNode_->shutdownService();
+    remoteHcsNode_->shutdownService(hcsIdentifier_);
 }
 
 void SDSModel::startedProcess()
@@ -241,11 +247,9 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
     hcsProcess_->deleteLater();
     hcsProcess_.clear();
 
-    if (exitStatus == QProcess::NormalExit && exitCode == (EXIT_FAILURE + 1))
-    {
+    if (exitStatus == QProcess::NormalExit && exitCode == (EXIT_FAILURE + 1)) {
         // LC: todo; there was another HCS instance; new one is going down
         qCDebug(logCategoryStrataDevStudio) << "Quitting - another HCS instance was running";
-        externalHcsConnected_ = true;
         return;
     }
 

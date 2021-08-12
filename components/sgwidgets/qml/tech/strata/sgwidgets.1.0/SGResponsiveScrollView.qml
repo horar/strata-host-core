@@ -30,7 +30,6 @@ Item {
         ScrollBar.vertical: ScrollBar {
             visible: contentItem.height !== scrollView.height
             interactive: visible
-            z: 100
             parent: scrollView
             anchors {
                 right: scrollView.right
@@ -48,7 +47,6 @@ Item {
         ScrollBar.horizontal: ScrollBar {
             visible: contentItem.width !== scrollView.width
             interactive: visible
-            z: 100
             parent: scrollView
             anchors {
                 bottom: scrollView.bottom

@@ -89,8 +89,8 @@ Rectangle {
         clip: true
         model: filterModel
 
-        ScrollBar.vertical: ScrollBar { z: 1 }
-        ScrollBar.horizontal: ScrollBar { z: 1 }
+        ScrollBar.vertical: ScrollBar {}
+        ScrollBar.horizontal: ScrollBar {}
 
         delegate: Rectangle {
             id: delegatecontainer
@@ -100,12 +100,8 @@ Rectangle {
             SGText {
                 id: delegateText
 
-                text: { return (
-                            root.showMessageIds ?
-                                model.id + ": " + model.message :
-                                model.message
-                            )}
-
+                text: root.showMessageIds ? `${model.id}: ${model.message}` : model.message
+                            
                 fontSizeMultiplier: root.fontSizeMultiplier
                 color: root.statusTextColor
                 wrapMode: Text.WrapAnywhere
@@ -208,7 +204,7 @@ Rectangle {
                 }
 
                 function contains_text(item) {
-                    if (filterBox.text !== ""){
+                    if (filterBox.text !== "") {
                         var keywords = item[root.filterRole]
                         if (keywords.toLowerCase().includes(filterBox.lowerCaseText)) {
                             return true
@@ -304,8 +300,9 @@ Rectangle {
     Shortcut {
         id: findShortcut
         sequence: StandardKey.Find
+        enabled: visible
         onActivated: {
-            if ( filterContainer.height === 0 ){
+            if (filterContainer.height === 0) {
                 openFilter.start()
             }
             filterBox.forceActiveFocus()
@@ -314,9 +311,9 @@ Rectangle {
 
     Shortcut {
         sequence: StandardKey.Cancel
-        enabled: filterEnabled
+        enabled: filterEnabled && visible
         onActivated: {
-            if ( filterContainer.height === filterContainer.openHeight ){
+            if (filterContainer.height === filterContainer.openHeight) {
                 closeFilter.start()
             }
             filterBox.text = ""
@@ -327,6 +324,7 @@ Rectangle {
     Shortcut {
         id: copyShortcut
         sequence: StandardKey.Copy
+        enabled: visible
         onActivated: {
             var stringToCopy = ""
             for (var i = 0; i<listView.model.count; i++) {
