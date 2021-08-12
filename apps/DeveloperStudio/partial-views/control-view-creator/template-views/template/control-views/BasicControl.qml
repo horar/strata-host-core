@@ -1,15 +1,41 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
+import QtQml 2.12
 
+import tech.strata.sgwidgets 1.0
 import tech.strata.sglayout 1.0
 
+import "qrc:/js/help_layout_manager.js" as Help
+
 UIBase { // start_uibase
+    id: root
     columnCount: 40
     rowCount: 42
 
-    property var intervalState: 2000
-    property var run_count: -1 // Placeholder for valid value of run_count (-1 or the last value)
-    property var run_countInfo: 10 // Placeholder for valid value of infobox of run_count
+    property int intervalState: 2000
+    property int run_count: -1 // Placeholder for valid value of run_count (-1 or the last value)
+    property int run_countInfo: 10 // Placeholder for valid value of infobox of run_count
     property alias clearGraph: periodicNotificationGraph.clearGraph
+
+    Component.onCompleted: {
+        Help.registerTarget(controlViewRoot.tabBar, "These tabs contain different user interface functionality of the Strata evaluation board. Take the idea of walking the user into evaluating the board by ensuring the board is instantly functional when powered on and then dive into more complex tabs and features. These tabs are not required but contains in the template for illustration.", 0, "BasicControlHelp")
+        Help.registerTarget(ioOutSwitch, "Toggle the state of a single IO output pin on the microcontroller. The IO Input control will reflect the state of the IO Output when the next Periodic Notification" + " \"" + "my_cmd_simple_periodic" + "\" "  + "is sent from the firmware to Strata.", 1, "BasicControlHelp")
+        Help.registerTarget(dacOutSlider, "Sets the Digital to Analog Converter (DAC) pin of the microcontroller between 0 and full scale.", 2, "BasicControlHelp")
+        Help.registerTarget(grayBoxHelpContainer, "These boxes indicate the command or notification communication between Strata and the board's firmware. The communication direction is indicated by the image in the top right corner of these boxes. The Serial Console Interface (SCI) should be used during firmware development to debug notifications and commands before connecting to the user interface.", 3, "BasicControlHelp")
+        Help.registerTarget(periodNotiContainer, "This is a visualization of the data being sent as a notification to Strata using various user interface elements such as boolean indicators, live graphing, and gauges. The periodic notification is configured in the firmware to send the" + " \"" + "my_cmd_simple_periodic"+ "\" "  + "notification at a certain interval - indefinitely or with a certain run count configured in the Configure Periodic Notification section.", 4, "BasicControlHelp")
+        Help.registerTarget(configPeriodNotiHelp, "Configures the periodic notification" + " \"" + "my_cmd_simple_periodic" + "\" "+ "with a certain interval - indefinitely or with a certain run count. The Run State will turn on/off the notification and will need to be toggled to enable the notification when the Run Count expires.", 5, "BasicControlHelp")
+    }
+
+    Item {
+        id: grayBoxHelpContainer
+        width: cmdSimpleContainer.width + 10
+        height: root.height
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 0
+    }
 
     property var my_cmd_simple_periodic_text: {
         "notification" : {
@@ -118,7 +144,7 @@ UIBase { // start_uibase
         layoutInfo.xColumns: 12
         layoutInfo.yRows: 5
 
-        checked: true
+        checked: false
         checkedLabel: "on"
         uncheckedLabel: "off"
         labelsInside: true
@@ -345,7 +371,7 @@ UIBase { // start_uibase
         property var random_float_array_curve: periodicNotificationGraph.createCurve("movingCurve1")
         property var adc_read_curve: periodicNotificationGraph.createCurve("movingCurve2")
 
-        property var firstNotification: 1 //Count number of notification
+        property int firstNotification: 1 //Count number of notification
         property bool clearGraph: false
 
         Connections {
@@ -481,6 +507,14 @@ UIBase { // start_uibase
 
         color: "lightgrey"
     } // end_a944d
+
+    LayoutItem {
+        id: configPeriodNotiHelp
+        layoutInfo.columnsWide: 40
+        layoutInfo.rowsTall: 11
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 31
+    }
 
     LayoutText { // start_17037
         id: configPeriodicNotification

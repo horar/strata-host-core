@@ -1,13 +1,23 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
+import QtQml 2.12
 
+import tech.strata.sgwidgets 1.0
 import tech.strata.sglayout 1.0
+
+import "qrc:/js/help_layout_manager.js" as Help
 
 UIBase { // start_uibase
     columnCount: 40
     rowCount: 40
 
+    Component.onCompleted: {
+        Help.registerTarget(advText, "Place holder for Advanced control view help messages", 0, "AdvanceControlHelp")
+    }
+
     LayoutText { // start_7232e
-        id: text_7232e
+        id: advText
         layoutInfo.uuid: "7232e"
         layoutInfo.columnsWide: 38
         layoutInfo.rowsTall: 9
