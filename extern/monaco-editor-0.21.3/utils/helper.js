@@ -71,7 +71,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 label: "property",
                 kind: monaco.languages.CompletionItemKind.Field,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `property $1 $2`,
+                insertText: "property ${1:type} ${2:name}",
                 range: null
             }
         case "custom-signal": 
@@ -79,7 +79,7 @@ function createDynamicSuggestion(suggestion, type, params_name = [""]) {
                 label: "signal",
                 kind: monaco.languages.CompletionItemKind.Field,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: `signal $1($2)`,
+                insertText: "signal ${1:name}(${2:params})",
                 range: null
             }
     }
