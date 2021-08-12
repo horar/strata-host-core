@@ -152,8 +152,7 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    std::list<Client*> clientList_;
-    Client* current_client_;
+    QByteArray currentClient_ = "";   // remove this when platforms are mapped to connected clients.
 
     QJsonObject config_;
     std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;

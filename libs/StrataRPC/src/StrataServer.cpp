@@ -210,7 +210,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
     if ((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
         // Check if this command is meant to be sent to a platform
         if (true == jsonObject.contains("device_id") &&
-            true == jsonObject.value("device_id").isDouble()) {
+            true == jsonObject.value("device_id").isString()) {
             clientMessage->handlerName = "platform_message";
             isPlatformMessage = true;
         } else {

@@ -357,7 +357,7 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
     Q_UNUSED(platformId)
 
     // TODO: map each device to a client and update this functionality 
-    strataServer_->notifyAllClients("platform_message", payload);
+    strataServer_->notifyClient(currentClient_, "platform_message", payload, strata::strataRPC::ResponseType::PlatformMessage);
 }
 
 void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress)
@@ -490,6 +490,8 @@ void HostControllerService::processCmdDynamicPlatformList(const strata::strataRP
     strataServer_->notifyClient(message.clientID, "connected_platforms",
                                 platformController_.createPlatformsList(),
                                 strata::strataRPC::ResponseType::Notification);
+
+    currentClient_ = message.clientID; // Remove this when platfroms are mapped to their clients.
 }
 
 void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Message &message) 
