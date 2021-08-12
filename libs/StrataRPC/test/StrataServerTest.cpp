@@ -456,8 +456,9 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
 
     server.registerHandler("platform_message", [&handlerCalled, &currentCommandName](
                                                    const strata::strataRPC::Message &message) {
-        QCOMPARE_(message.payload.value("message").toObject().value("cmd").toString(),
-                  currentCommandName);
+        QJsonObject platformCommand =
+            QJsonDocument::fromJson(message.payload.value("message").toString().toUtf8()).object();
+        QCOMPARE_(platformCommand.value("cmd").toString(), currentCommandName);
         handlerCalled = true;
     });
 

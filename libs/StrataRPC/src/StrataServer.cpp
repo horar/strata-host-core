@@ -232,7 +232,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
     QJsonObject payloadJsonObject{};
 
     if (true == isPlatformMessage) {
-        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toDouble());
+        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toString());
         QJsonObject messageJsonObject;
         messageJsonObject.insert("cmd", jsonObject.value("cmd"));
         if (true == hasPayload) {
@@ -240,7 +240,9 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
         } else {
             messageJsonObject.insert("payload", QJsonObject{});
         }
-        payloadJsonObject.insert("message", messageJsonObject);
+        payloadJsonObject.insert(
+            "message",
+            QString(QJsonDocument(messageJsonObject).toJson(QJsonDocument::JsonFormat::Compact)));
     } else {
         if (true == hasPayload) {
             payloadJsonObject = jsonObject.value("payload").toObject();
