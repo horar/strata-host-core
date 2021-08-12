@@ -33,6 +33,11 @@ public:
     PlatformController();
 
     /**
+     * PlatformController destructor
+     */
+    virtual ~PlatformController();
+
+    /**
      * Initializes the platform controller
      */
     void initialize();

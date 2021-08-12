@@ -18,6 +18,11 @@ PlatformController::PlatformController(): platformManager_(false, false, true) {
     connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &PlatformController::closeConnection);
 }
 
+PlatformController::~PlatformController() {
+    // do not listen to platformManager_ signals when going to destroy it
+    disconnect(&platformManager_, nullptr, this, nullptr);
+}
+
 void PlatformController::initialize() {
     platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
 }
