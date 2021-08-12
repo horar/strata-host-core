@@ -113,12 +113,10 @@ Item {
     }
 
     function addToTheProjectList (fileUrl) {
-        let inList = false
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
             if (previousFileURL.projects[i] === fileUrl) {
                 listModelForUrl.remove(i)
                 previousFileURL.projects.splice(i,1)
-                inList = true
                 break
             }
         }
@@ -130,7 +128,6 @@ Item {
         previousFileURL.projects.unshift(fileUrl)
         listModelForUrl.insert(0,{ url: fileUrl })
         saveSettings()
-        return inList
     }
 
     function removeFromProjectList(fileUrl) {
