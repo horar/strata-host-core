@@ -16,6 +16,8 @@
 #include <QDir>
 #include <QDebug>
 
+#include <functional>
+
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
@@ -73,6 +75,14 @@ bool HostControllerService::initialize(const QString& config)
 
     // TODO: Will resolved in SCT-517
     //db_.addReplChannel("platform_list");
+
+    // Register handlers in strataServer_
+    strataServer_->registerHandler("request_hcs_status", std::bind(&HostControllerService::handleRequestHcsStatus, this, std::placeholders::_1));
+    strataServer_->registerHandler("load_documents", std::bind(&HostControllerService::handleLoadDocuments, this, std::placeholders::_1));
+    strataServer_->registerHandler("download_files", std::bind(&HostControllerService::handleDownloadFiles, this, std::placeholders::_1));
+    strataServer_->registerHandler("dynamic_platform_list", std::bind(&HostControllerService::handleDynamicPlatformList, this, std::placeholders::_1));
+    strataServer_->registerHandler("update_firmware", std::bind(&HostControllerService::handleUpdateFirmware, this, std::placeholders::_1));
+    strataServer_->registerHandler("download_view", std::bind(&HostControllerService::handleDownloadView, this, std::placeholders::_1));
 
     //To process requests in the main thread. Not in dispatcher's thread.
     // connect(this, &HostControllerService::newMessageFromClient, this, &HostControllerService::parseMessageFromClient, Qt::QueuedConnection);
@@ -707,41 +717,41 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
     }
 }
 
-void HostControllerService::processCmdRequestHcsStatus(const strata::strataRPC::Message &message)
+void HostControllerService::handleRequestHcsStatus(const strata::strataRPC::Message &message)
 {
     strataServer_->notifyClient(message, QJsonObject{{"status", "hcs_active"}},
                                 strata::strataRPC::ResponseType::Response);
 }
 
-void HostControllerService::processCmdLoadDocuments(const strata::strataRPC::Message &message)
+void HostControllerService::handleLoadDocuments(const strata::strataRPC::Message &message)
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::processCmdDownloadFiles(const strata::strataRPC::Message &message) 
+void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message &message) 
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::processCmdDynamicPlatformList(const strata::strataRPC::Message &message) 
+void HostControllerService::handleDynamicPlatformList(const strata::strataRPC::Message &message) 
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Message &message) 
+void HostControllerService::handleUpdateFirmware(const strata::strataRPC::Message &message) 
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::processCmdDownlodView(const strata::strataRPC::Message &message) 
+void HostControllerService::handleDownloadView(const strata::strataRPC::Message &message) 
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
