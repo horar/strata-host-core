@@ -90,7 +90,13 @@ void BluetoothLowEnergyDevice::notifyOpenFailure()
 void BluetoothLowEnergyDevice::close()
 {
     openingTimer_.stop();
-    deinit();
+    if (lowEnergyController_ != nullptr) {
+        if (lowEnergyController_->state() != QLowEnergyController::UnconnectedState) {
+            lowEnergyController_->disconnectFromDevice(); // attempt gracefull close, will deinit later
+        } else {
+            deinit();   // nothing is open, just deinit directly
+        }
+    }
 }
 
 unsigned BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
