@@ -117,8 +117,6 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
-    void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
-
 private:
     void sendMessageToClients(const QString &platformId, const QString& message); // send message from platfrom to client
 

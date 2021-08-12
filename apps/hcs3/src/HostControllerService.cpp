@@ -503,9 +503,25 @@ void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Me
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::processCmdRequestHcsStatus(const strata::strataRPC::Message &message) 
+void HostControllerService::processCmdDownlodView(const strata::strataRPC::Message &message)
 {
-    qCCritical(logCategoryHcs) << "Handler not implemented yet";
-    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
-                                strata::strataRPC::ResponseType::Error);
+    QString url = message.payload.value("url").toString();
+    if (url.isEmpty()) {
+        qCWarning(logCategoryHcs) << "url attribute is empty or has bad format";
+        return;
+    }
+
+    QString md5 = message.payload.value("md5").toString();
+    if (md5.isEmpty()) {
+        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
+        return;
+    }
+
+    QString classId = message.payload.value("class_id").toString();
+    if (classId.isEmpty()) {
+        qCWarning(logCategoryHcs) << "class_id attribute is empty or has bad format";
+        return;
+    }
+
+    storageManager_.requestDownloadControlView(message.clientID, url, md5, classId);
 }
