@@ -44,9 +44,6 @@ qt5_generate_repc(NODE_RO_SRCS ./src/HostControllerService.rep SOURCE)
 add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
     src/PlatformController.cpp
-    src/Dispatcher.cpp
-    src/Client.cpp
-    src/ClientsController.cpp
     src/Database.cpp
     src/StorageManager.cpp
     src/StorageInfo.cpp
@@ -121,8 +118,6 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
 
     strata::PlatformManager
     strata::FlasherConnector
-    strata::connector
-    strata::EventsMgr
     strata::DownloadManager
     strata::Database
     strata::QtLogger
