@@ -45,10 +45,9 @@ Item {
             return
         }
 
+        addToTheProjectList(path)
+
         openProjectContainer.url = path
-        if (inRecentProjects === false) {
-            addToTheProjectList(path)
-        }
         viewStack.currentIndex = 1 // switch to edit view
         controlViewCreatorRoot.projectInitialization = true
         controlViewCreatorRoot.recompileControlViewQrc();
@@ -114,9 +113,13 @@ Item {
     }
 
     function addToTheProjectList (fileUrl) {
+        let inList = false
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
             if (previousFileURL.projects[i] === fileUrl) {
-                return
+                listModelForUrl.remove(i)
+                previousFileURL.projects.splice(i,1)
+                inList = true
+                break
             }
         }
 
@@ -127,6 +130,7 @@ Item {
         previousFileURL.projects.unshift(fileUrl)
         listModelForUrl.insert(0,{ url: fileUrl })
         saveSettings()
+        return inList
     }
 
     function removeFromProjectList(fileUrl) {
@@ -269,6 +273,18 @@ Item {
                 text: "Browse"
 
                 onClicked: {
+                    // Grabs the most recent project from the listModel
+                    // goes up two directories in order to be in the directory the project was created in
+                    // if there are no recent projects, the home folder is used
+                    let projectDir = SGUtilsCpp.urlToLocalFile(listModelForUrl.get(0).url)
+                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                    projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
+                    if (SGUtilsCpp.isValidFile(projectDir)) {
+                        fileDialog.folder = projectDir
+                    } else {
+                        fileDialog.folder = fileDialog.shortcuts.home
+                    }
                     fileDialog.open()
                 }
             }

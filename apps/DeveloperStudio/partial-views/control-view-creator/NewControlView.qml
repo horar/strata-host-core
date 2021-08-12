@@ -78,6 +78,15 @@ Item {
                 text: "Browse"
 
                 onClicked: {
+                    let projectDir = SGUtilsCpp.urlToLocalFile(openProjectContainer.previousFileURL.projects[0])
+                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+                    projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
+                    if (SGUtilsCpp.isValidFile(projectDir)) {
+                        fileDialog.folder = projectDir
+                    } else {
+                        fileDialog.folder = fileDialog.shortcuts.home
+                    }
                     fileDialog.open()
                 }
             }

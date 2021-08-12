@@ -52,18 +52,18 @@ Item {
     });
 
     onVisibleChanged: {
-        if (editor.fileTreeModel.url == "") {
+        if (editor.fileTreeModel.url === "") {
             return
         }
 
-        if (currentCvcProjectQrcUrl == editor.fileTreeModel.url) {
+        if (currentCvcProjectQrcUrl === editor.fileTreeModel.url) {
             return
         }
 
         currentCvcProjectQrcUrl = editor.fileTreeModel.url
 
         if (visible) {
-            if (!platformInterfaceGeneratorSeen && findPlatformInterfaceJsonInProject() != "") {
+            if (!platformInterfaceGeneratorSeen && findPlatformInterfaceJsonInProject() !== "") {
                 alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
                 alertToast.color = "green"
@@ -412,6 +412,16 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             alertToast.hide()
+                            // checks if the user has recently opened a file and uses that path
+                            // else, the user's home directory is opened
+                            let path = currentCvcProjectJsonUrl
+                            if (SGUtilsCpp.isValidFile(path)) {
+                                path = SGUtilsCpp.parentDirectoryPath(path)
+                                path = SGUtilsCpp.pathToUrl(path)
+                                inputFileDialog.folder = path
+                            } else {
+                                inputFileDialog.folder = inputFileDialog.shortcuts.home
+                            }
                             inputFileDialog.open()
                         }
                     }
@@ -485,6 +495,16 @@ Item {
 
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
+                                // checks if the user has recently opened a file and uses that path
+                                // else, the user's home directory is opened
+                                let path = currentCvcProjectJsonUrl
+                                if (SGUtilsCpp.isValidFile(path)) {
+                                    path = SGUtilsCpp.parentDirectoryPath(path)
+                                    path = SGUtilsCpp.pathToUrl(path)
+                                    outputFileDialog.folder = path
+                                } else {
+                                    outputFileDialog.folder = outputFileDialog.shortcuts.home
+                                }
                                 outputFileDialog.open()
                             }
                         }
