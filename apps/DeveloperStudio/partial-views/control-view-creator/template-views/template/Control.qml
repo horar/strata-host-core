@@ -9,13 +9,14 @@ import tech.strata.fonts 1.0
 Item {
     id: controlViewRoot
     anchors.fill: parent
+
     property alias tabBar: tabBar
+    property string class_id // automatically populated for use when the control view is created with a connected board
 
     ColumnLayout {
         anchors.fill: parent
         Layout.fillWidth: true
         Layout.fillHeight: true
-        property alias tabBar: tabBar
 
         PlatformInterface {
             id: platformInterface
