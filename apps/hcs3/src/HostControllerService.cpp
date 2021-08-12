@@ -23,7 +23,6 @@ HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
-    //   dispatcher_{std::make_shared<HCS_Dispatcher>()}
 {
 }
 
@@ -46,8 +45,6 @@ bool HostControllerService::initialize(const QString& config)
     }
 
     strataServer_ = std::make_shared<strata::strataRPC::StrataServer>(hcs_cfg["subscriber_address"].GetString(), true, this);
-
-    // dispatcher_->setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (config_.HasMember("stage")) {
@@ -77,15 +74,12 @@ bool HostControllerService::initialize(const QString& config)
     //db_.addReplChannel("platform_list");
 
     // Register handlers in strataServer_
-    strataServer_->registerHandler("request_hcs_status", std::bind(&HostControllerService::handleRequestHcsStatus, this, std::placeholders::_1));
-    strataServer_->registerHandler("load_documents", std::bind(&HostControllerService::handleLoadDocuments, this, std::placeholders::_1));
-    strataServer_->registerHandler("download_files", std::bind(&HostControllerService::handleDownloadFiles, this, std::placeholders::_1));
-    strataServer_->registerHandler("dynamic_platform_list", std::bind(&HostControllerService::handleDynamicPlatformList, this, std::placeholders::_1));
-    strataServer_->registerHandler("update_firmware", std::bind(&HostControllerService::handleUpdateFirmware, this, std::placeholders::_1));
-    strataServer_->registerHandler("download_view", std::bind(&HostControllerService::handleDownloadView, this, std::placeholders::_1));
-
-    //To process requests in the main thread. Not in dispatcher's thread.
-    // connect(this, &HostControllerService::newMessageFromClient, this, &HostControllerService::parseMessageFromClient, Qt::QueuedConnection);
+    strataServer_->registerHandler("request_hcs_status", std::bind(&HostControllerService::processCmdRequestHcsStatus, this, std::placeholders::_1));
+    strataServer_->registerHandler("load_documents", std::bind(&HostControllerService::processCmdLoadDocuments, this, std::placeholders::_1));
+    strataServer_->registerHandler("download_files", std::bind(&HostControllerService::processCmdDownloadFiles, this, std::placeholders::_1));
+    strataServer_->registerHandler("dynamic_platform_list", std::bind(&HostControllerService::processCmdDynamicPlatformList, this, std::placeholders::_1));
+    strataServer_->registerHandler("update_firmware", std::bind(&HostControllerService::processCmdUpdateFirmware, this, std::placeholders::_1));
+    strataServer_->registerHandler("download_view", std::bind(&HostControllerService::processCmdDownlodView, this, std::placeholders::_1));
 
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
@@ -134,13 +128,7 @@ bool HostControllerService::initialize(const QString& config)
 
 void HostControllerService::start()
 {
-    // if (dispatcherThread_.get_id() != std::thread::id()) {
-    //     return;
-    // }
-
-    // dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, dispatcher_.get());
-
-    strataServer_->initialize();
+    strataServer_->initialize();    // TODO: handle failure signal!
     qCInfo(logCategoryHcs) << "Host controller service started.";
 }
 
@@ -333,6 +321,7 @@ bool HostControllerService::parseConfig(const QString& config)
     QByteArray data = file.readAll();
     file.close();
 
+    // TODO: use QJson
     rapidjson::Document configuration;
     if (configuration.Parse<rapidjson::kParseCommentsFlag>(data.data()).HasParseError()) {
         qCCritical(logCategoryHcs) << "Parse error on config file!";
@@ -347,11 +336,6 @@ bool HostControllerService::parseConfig(const QString& config)
     config_ = std::move(configuration);
     return true;
 }
-
-// void HostControllerService::handleMessage(const DispatcherMessage& msg)
-// {
-//     emit newMessageFromClient(msg.message, msg.from_client);
-// }
 
 void HostControllerService::platformConnected(const QByteArray& deviceId)
 {
@@ -373,215 +357,11 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
 {
     Q_UNUSED(platformId)
     // this forward message from the platfrom to the client, uses the only client, as a result this needs to be improved!
-    Client* client = getSenderClient();
-    if (client != nullptr) {
-        // clients_.sendMessage(client->getClientId(), message);
-    }
-}
 
-// clients handler...
-
-void HostControllerService::processCmdRequestHcsStatus(const QByteArray &clientId)
-{
-    QJsonDocument doc;
-    QJsonObject object;
-
-    object.insert("hcs::notification", "hcs_active");
-    doc.setObject(object);
-
-    QString message = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
-
-    // clients_.sendMessage(clientId, message);
-}
-
-void HostControllerService::processCmdDynamicPlatformList(const QByteArray &clientId)
-{
-    storageManager_.requestPlatformList(clientId);
-
-    strataServer_->notifyClient(clientId, "connected_platforms",
-                                platformController_.createPlatformsList(),
-                                strata::strataRPC::ResponseType::Notification);
-}
-
-void HostControllerService::processCmdClientUnregister(const QByteArray &clientId)
-{
-    qCWarning(logCategoryHcs) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
-    processCmdHostUnregister(clientId);
-}
-
-void HostControllerService::processCmdLoadDocuments(const QJsonObject &payload, const QByteArray &clientId)
-{
-    QString classId = payload.value("class_id").toString();
-    if (classId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "class_id attribute is empty or has bad format";
-        return;
-    }
-
-    storageManager_.requestPlatformDocuments(clientId, classId);
-}
-
-void HostControllerService::processCmdHostUnregister(const QByteArray &clientId)
-{
-    Client* client = getSenderClient();
-
-    storageManager_.requestCancelAllDownloads(clientId);
-
-    // Remove the client from the mapping
-    current_client_ = nullptr;
-    clientList_.remove(client);
-    qCInfo(logCategoryHcs).nospace().noquote() << "Client unregistered: 0x" << clientId.toHex();
-}
-
-void HostControllerService::processCmdDownloadFiles(const QJsonObject &payload, const QByteArray &clientId)
-{
-    QStringList partialUriList;
-    QString destinationDir = payload.value("destination_dir").toString();
-    if (destinationDir.isEmpty()) {
-        qCWarning(logCategoryHcs) << "destinationDir attribute is empty or has bad format";
-        return;
-    }
-
-    QJsonValue filesValue = payload.value("files");
-    if (filesValue.isArray() == false) {
-        qCWarning(logCategoryHcs) << "files attribute is not an array";
-        return;
-    }
-
-    QJsonArray files = filesValue.toArray();
-    for (const QJsonValueRef value : files) {
-        if (value.isString()) {
-            partialUriList << value.toString();
-        }
-    }
-
-    storageManager_.requestDownloadPlatformFiles(clientId, partialUriList, destinationDir);
-}
-
-void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload, const QByteArray &clientId)
-{
-    QByteArray deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (deviceId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
-        return;
-    }
-
-    QString path = payload.value("path").toString();
-    if (path.isEmpty()) {
-        qCWarning(logCategoryHcs) << "path attribute is empty or has bad format";
-        return;
-    }
-
-    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
-
-    QString firmwareMD5 = payload.value("md5").toString();
-    if (firmwareMD5.isEmpty()) {
-        // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be verified.
-        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
-    }
-
-    updateController_.updateFirmware(clientId, deviceId, firmwareUrl, firmwareMD5);
-}
-
-void HostControllerService::processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId)
-{
-    QString url = payload.value("url").toString();
-    if (url.isEmpty()) {
-        qCWarning(logCategoryHcs) << "url attribute is empty or has bad format";
-        return;
-    }
-
-    QString md5 = payload.value("md5").toString();
-    if (md5.isEmpty()) {
-        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
-        return;
-    }
-
-    QString classId = payload.value("class_id").toString();
-    if (classId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "class_id attribute is empty or has bad format";
-        return;
-    }
-
-    storageManager_.requestDownloadControlView(clientId, url, md5, classId);
-}
-
-Client* HostControllerService::getClientById(const QByteArray& clientId)
-{
-    auto findIt = std::find_if(clientList_.begin(), clientList_.end(),
-                               [&](Client* val) { return clientId == val->getClientId(); }  );
-
-    return (findIt != clientList_.end()) ? *findIt : nullptr;
-}
-
-
-void HostControllerService::parseMessageFromClient(const QByteArray &message, const QByteArray &clientId)
-{
-    //check the client's ID (dealer_id) is in list
-    Client* client = getClientById(clientId);
-    if (client == nullptr) {
-        qCInfo(logCategoryHcs).nospace().noquote() << "new Client: 0x" << clientId.toHex();
-
-        client = new Client(clientId);
-        clientList_.push_back(client);
-    }
-
-    current_client_ = client;
-
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
-    if (parseError.error != QJsonParseError::NoError) {
-        qCWarning(logCategoryHcs).nospace().noquote()
-                << "invalid json from client 0x" << clientId.toHex()
-                << ", error:" << parseError.errorString();
-        return;
-    }
-
-    if (doc.isObject() == false) {
-        qCWarning(logCategoryHcs).nospace().noquote()
-                << "invalid json from client 0x" << clientId.toHex()
-                << ", error: document is not an object";
-        return;
-    }
-
-    QJsonObject rootObject = doc.object();
-
-    //forward message to device
-    if (rootObject.contains("device_id")) {
-        QByteArray deviceId = rootObject.value("device_id").toVariant().toByteArray();
-        if (deviceId.isEmpty()) {
-            qCCritical(logCategoryHcs) << "bad format of device_id";
-            return;
-        }
-
-        platformController_.sendMessage(deviceId, message);
-        return;
-    }
-
-    //process message in HCS
-    QJsonObject payload = rootObject.value("payload").toObject();
-
-    if (rootObject.contains("hcs::cmd")) {
-        QString cmdName = rootObject.value("hcs::cmd").toString();
-        callHandlerForTypeHcsCmd(cmdName, payload, clientId);
-    } else if (rootObject.contains("cmd")) {
-        QString cmdName = rootObject.value("cmd").toString();
-        callHandlerForTypeCmd(cmdName, payload, clientId);
-    } else {
-        qCWarning(logCategoryHcs).nospace().noquote()
-                << "unhandled command from client: 0x" << clientId.toHex();
-        return;
-    }
-}
-
-bool HostControllerService::broadcastMessage(const QString& message)
-{
-    qCInfo(logCategoryHcs).noquote().nospace() << "broadcast msg: '" << message << "'";
-    for(auto item : clientList_) {
-        const QByteArray clientId = item->getClientId();
-        // clients_.sendMessage(clientId, message);
-    }
-
-    return false;
+    // Client* client = getSenderClient();
+    // if (client != nullptr) {
+    //     // clients_.sendMessage(client->getClientId(), message);
+    // }
 }
 
 void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress)
@@ -646,13 +426,13 @@ void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, con
     }
 }
 
-void HostControllerService::handleRequestHcsStatus(const strata::strataRPC::Message &message)
+void HostControllerService::processCmdRequestHcsStatus(const strata::strataRPC::Message &message)
 {
     strataServer_->notifyClient(message, QJsonObject{{"status", "hcs_active"}},
                                 strata::strataRPC::ResponseType::Response);
 }
 
-void HostControllerService::handleLoadDocuments(const strata::strataRPC::Message &message)
+void HostControllerService::processCmdLoadDocuments(const strata::strataRPC::Message &message)
 {
     QString classId = message.payload.value("class_id").toString();
     if (classId.isEmpty()) {
@@ -668,7 +448,7 @@ void HostControllerService::handleLoadDocuments(const strata::strataRPC::Message
     storageManager_.requestPlatformDocuments(message.clientID, classId);
 }
 
-void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message &message)
+void HostControllerService::processCmdDownloadFiles(const strata::strataRPC::Message &message)
 {
     QStringList partialUriList;
     QString destinationDir = message.payload.value("destination_dir").toString();
@@ -703,7 +483,7 @@ void HostControllerService::handleDownloadFiles(const strata::strataRPC::Message
                                 strata::strataRPC::ResponseType::Response);
 }
 
-void HostControllerService::handleDynamicPlatformList(const strata::strataRPC::Message &message)
+void HostControllerService::processCmdDynamicPlatformList(const strata::strataRPC::Message &message)
 {
     strataServer_->notifyClient(message,
                                 QJsonObject{{"message", "Dynamic platform list requested."}},
@@ -716,56 +496,16 @@ void HostControllerService::handleDynamicPlatformList(const strata::strataRPC::M
                                 strata::strataRPC::ResponseType::Notification);
 }
 
-void HostControllerService::handleUpdateFirmware(const strata::strataRPC::Message &message) 
+void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Message &message) 
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
                                 strata::strataRPC::ResponseType::Error);
 }
 
-void HostControllerService::handleDownloadView(const strata::strataRPC::Message &message) 
+void HostControllerService::processCmdRequestHcsStatus(const strata::strataRPC::Message &message) 
 {
     qCCritical(logCategoryHcs) << "Handler not implemented yet";
     strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
                                 strata::strataRPC::ResponseType::Error);
-}
-
-void HostControllerService::callHandlerForTypeCmd(
-        const QString &cmdName,
-        const QJsonObject &payload,
-        const QByteArray &clientId)
-{
-    if (cmdName == "request_hcs_status") {
-        processCmdRequestHcsStatus(clientId);
-    } else if (cmdName == "unregister") {
-        processCmdClientUnregister(clientId);
-    } else if (cmdName == "load_documents") {
-        processCmdLoadDocuments(payload, clientId);
-    } else {
-        qCWarning(logCategoryHcs).nospace().noquote()
-                << "unhandled command from client: 0x" << clientId.toHex()
-                << " " << cmdName;
-    }
-}
-
-void HostControllerService::callHandlerForTypeHcsCmd(
-        const QString &cmdName,
-        const QJsonObject &payload,
-        const QByteArray &clientId)
-{
-    if (cmdName == "download_files") {
-        processCmdDownloadFiles(payload, clientId);
-    } else if (cmdName == "dynamic_platform_list") {
-        processCmdDynamicPlatformList(clientId);
-    } else if (cmdName == "update_firmware") {
-        processCmdUpdateFirmware(payload, clientId);
-    } else if (cmdName == "download_view") {
-        processCmdDownlodView(payload, clientId);
-    } else if (cmdName == "unregister") {
-        processCmdHostUnregister(clientId);
-    } else {
-        qCWarning(logCategoryHcs).nospace().noquote()
-                << "unhandled command from client: 0x" << clientId.toHex()
-                << " " << cmdName;
-    }
 }
