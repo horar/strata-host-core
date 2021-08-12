@@ -430,10 +430,10 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
         case ResponseType::Notification:
         case ResponseType::Response:
             // determine the notification type
-            // "load_documents" --> "cloud::notification"
+            // "document" --> "cloud::notification"
             // "platform" message --> "notification"
             // all others       --> "hcs::notification"
-            if (clientMessage.handlerName == "load_documents") {
+            if (clientMessage.handlerName == "document") {
                 notificationType = "cloud::notification";
             } else {
                 notificationType = "hcs::notification";
