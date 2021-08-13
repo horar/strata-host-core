@@ -4,7 +4,6 @@
 #include <QLatin1String>
 
 #include "PlatformController.h"
-#include "Dispatcher.h"
 #include "logging/LoggingQtCategories.h"
 #include "JsonStrings.h"
 
