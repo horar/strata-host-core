@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: sgGraphExample
@@ -621,32 +622,47 @@ Item {
                     x: pointGraph.mouseArea.mouseX
                     y: pointGraph.mouseArea.mouseY - 3
 
-                    property point temp
-                    property int index
+                    property point closestPoint
 
                     onXChanged: {
-                        // index is found using binary search
-                        // then the point data is stored in temp using that index
-                        index = pointGraph.curve(0).nearestPointIndex(closestValue.mouseValue)
-                        if (index !== -1) {
-                            temp = pointGraph.curve(0).at(index)
+                        // index and points array to store different curve points near the mouse
+                        let index = []
+                        let curvePoints = []
+                        let diff = 1e10 // large default value
+                        let closestIndex = 0
+                        // loop over all the curves and use binary search to find the closest points by the X axis
+                        for (let i = 0; i < pointGraph.count; i++) {
+                            index[i] = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
+                            if (index[i] !== -1) {
+                                // using the index, store that point in the curvePoints array
+                                curvePoints[i] = pointGraph.curve(i).at(index[i])
+                                let distance = Math.abs(closestValue.mouseValue.y - curvePoints[i].y)
+                                // distance is used to determine which of all the curves is closest to the mouse
+                                if (distance < diff) {
+                                    diff = distance
+                                    closestIndex = i
+                                }
+                            }
                         }
+                        closestPoint = curvePoints[closestIndex] // closest point by X, to the mouse
                     }
                 }
 
-                ToolTip {
+                SGWidgets09.SGToolTipPopup {
+                    // popup to display the point's coordinates and hovers over that location
                     id: closestValue
-                    x: pos.x
-                    y: pos.y
-                    visible: pointGraph.mouseArea.containsMouse
-                    closePolicy: Popup.NoAutoClose
-                    text: "(" + mouseCrosshair.temp.x.toFixed(decimalsX) + "," + mouseCrosshair.temp.y.toFixed(decimalsY) + ")"
-
+                    x: pos.x - width / 2 - 7
+                    y: pos.y - height
+                    color: "white"
+                    showOn: pointGraph.mouseArea.containsMouse
+                    enabled: false // disables internal mouse area
+                    content: Text {
+                        text: "(" + mouseCrosshair.closestPoint.x.toFixed(closestValue.decimalsX) + "," + mouseCrosshair.closestPoint.y.toFixed(closestValue.decimalsY) + ")"
+                    }
                     property point mouseValue: pointGraph.mapToValue(Qt.point(mouseCrosshair.x, mouseCrosshair.y))
-                    property int decimalsX: 1
+                    property int decimalsX: 1 // determines how many decimal points to show
                     property int decimalsY: 1
-                    property point pos: pointGraph.mapToPosition(mouseCrosshair.temp)
-
+                    property point pos: pointGraph.mapToPosition(mouseCrosshair.closestPoint)
                 }
 
                 Component.onCompleted: {
@@ -654,14 +670,77 @@ Item {
                     curve.color = sgGraphExample.randomColor()
 
                     let dataArray = []
-                    for (let i = 0; i <= 10; i++) {
+                    let i = 0
+                    for (i = 0; i <= 10; i++) {
                         dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
                     }
                     curve.appendList(dataArray)
-                    curve.setSymbol(2,"gray", 0 , 7)
+                }
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Button {
+                    id: singleCurveButton
+                    text: "Single Curve"
+                    enabled: false
+                    onClicked: {
+                        pointGraph.yMin = 0
+                        singleCurveButton.enabled = false
+                        manyCurveButton.enabled = true
+                        pointGraph.removeCurve("graphCurve0") // removes the two sine waves
+                        pointGraph.removeCurve("graphCurve1")
+
+                        let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+
+                        let dataArray = []
+                        for (let i = 0; i <= 10; i++) {
+                            dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
+                        }
+                        curve.appendList(dataArray)
+                    }
+                }
+                Button {
+                    id: manyCurveButton
+                    text: "Multiple Curves"
+                    enabled: true
+                    onClicked: {
+                        pointGraph.yMin = -10
+                        singleCurveButton.enabled = true
+                        manyCurveButton.enabled = false
+                        pointGraph.removeCurve("graphCurve0") // remove the other curve
+
+                        let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+
+                        let dataArray = []
+                        let i = 0
+                        for (i = 0; i <= 100; i++) {
+                            dataArray.push({"x":i/10, "y":sgGraphExample.multipleCurveValues(i/10)*10})
+                        }
+                        curve.appendList(dataArray)
+
+                        curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+
+                        dataArray = []
+                        for (i = 0; i <= 100; i++) {
+                            dataArray.push({"x":i/10, "y":sgGraphExample.multipleCurveValues(i/10 - 10)*10})
+                        }
+                        curve.appendList(dataArray)
+                    }
                 }
             }
         }
+    }
+
+    function multipleCurveValues(value) {
+        return Math.sin(value)
     }
 
     function yourDataValueHere() {

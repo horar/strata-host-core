@@ -906,14 +906,14 @@ void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int 
     return;
 }
 
-int SGQWTPlotCurve::nearestPointIndex(QPointF point)
-{
+// pass the X value of a point to this function and recieve the index of that point in the curve
+int SGQWTPlotCurve::closestXAxisPointIndex(double xVal) {
      double diff;
      QPointF currentPoint = QPointF(0,0);
 
      // error check to ensure there is a curve with points
      if (curveData_.count() == 0) {
-         return -1;
+         return -1; // return -1 if there is no curve
      }
 
      int right = curveData_.count() - 1;
@@ -921,10 +921,11 @@ int SGQWTPlotCurve::nearestPointIndex(QPointF point)
      int mid = 0;
 
      // loop until there are only two points remaining
+     // binary search
      while (right - left > 1) {
          mid = (left + right) / 2;
          currentPoint = curveData_.at(mid);
-         diff = (currentPoint.x() - point.x());
+         diff = (currentPoint.x() - xVal);
          if (diff == 0) {
              return mid;
          } else if (diff < 0) {
@@ -937,8 +938,8 @@ int SGQWTPlotCurve::nearestPointIndex(QPointF point)
      // once only two points remain, determines which is the mouse closer to
      QPointF leftVal = curveData_.at(left);
      QPointF rightVal = curveData_.at(right);
-     double lDiff = abs(leftVal.x() - point.x());
-     double rDiff = abs(rightVal.x() - point.x());
+     double lDiff = abs(leftVal.x() - xVal);
+     double rDiff = abs(rightVal.x() - xVal);
 
      if (lDiff < rDiff) {
          return left;
