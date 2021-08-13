@@ -45,6 +45,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGExportCsvFile"
+            page: "ExSGExportCsvFile.qml"
+        }
+
+        ListElement {
             name: "SGGraph"
             page: "ExSGGraph.qml"
         }

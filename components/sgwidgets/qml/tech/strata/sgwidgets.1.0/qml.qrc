@@ -12,6 +12,7 @@
         <file>SGCircularGauge.qml</file>
         <file>SGComboBox.qml</file>
         <file>SGContextMenuEditActions.qml</file>
+        <file>SGExportCsvFile.qml</file>
         <file>SGFilePicker.qml</file>
         <file>SGGraph.qml</file>
         <file>SGHueSlider.qml</file>

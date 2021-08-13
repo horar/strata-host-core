@@ -6,6 +6,7 @@
 #include "SGQWTPlot.h"
 #include "SGUserSettings.h"
 #include "SGVersionUtils.h"
+#include "SGCSVTableUtils.h"
 #include "mqtt/SGMqttClient.h"
 #include "mqtt/SGSslConfiguration.h"
 #include "SGJsonSyntaxHighlighter.h"
@@ -36,6 +37,7 @@ void CommonCppPlugin::registerTypes(const char *uri)
 
     qmlRegisterType<SGJLinkConnector>(uri, 1, 0, "SGJLinkConnector");
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
+    qmlRegisterType<SGCSVTableUtils>(uri, 1, 0, "SGCSVTableUtils");
     qmlRegisterType<SGQWTPlot>(uri, 1, 0, "SGQWTPlot");
     qmlRegisterType<SGQWTPlotCurve>(uri, 1, 0, "SGQWTPlotCurve");
     qmlRegisterType<SGUserSettings>(uri, 1, 0, "SGUserSettings");

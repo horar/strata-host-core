@@ -405,6 +405,36 @@ Module {
         }
     }
     Component {
+        name: "SGCSVTableUtils"
+        prototype: "QAbstractTableModel"
+        exports: ["tech.strata.commoncpp/SGCSVTableUtils 1.0"]
+        exportMetaObjectRevisions: [0]
+        Property {name: "headers"; type: "QStringList"}
+        Property {name: "cmdName"; type: "string"}
+        Enum {
+            name: "CSVTableRole"
+            values: {
+                "KeyRole": 1,
+                "ValueRole": 2
+            }
+        }
+        Method {
+            name: "updateMap"
+            Parameter {name: "name"; type: "string"}
+            Parameter {name: "data"; type: "QVariant"}
+        }
+        Method {
+            name: "writeToPath"
+             Parameter {name: "folderPath"; type: "string"}
+        }
+        Signal {
+            name: "headersChanged"
+        }
+        Signal {
+            name: "cmdNameChanged"
+        }
+    }
+    Component {
         name: "SGConversion"
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGConversion 1.0"]
