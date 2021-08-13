@@ -494,11 +494,39 @@ void HostControllerService::processCmdDynamicPlatformList(const strata::strataRP
     currentClient_ = message.clientID; // Remove this when platfroms are mapped to their clients.
 }
 
-void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Message &message) 
+void HostControllerService::processCmdUpdateFirmware(const strata::strataRPC::Message &message)
 {
-    qCCritical(logCategoryHcs) << "Handler not implemented yet";
-    strataServer_->notifyClient(message, QJsonObject{{"message", "not implemented yet"}},
-                                strata::strataRPC::ResponseType::Error);
+    QByteArray deviceId = message.payload.value("device_id").toVariant().toByteArray();
+    if (deviceId.isEmpty()) {
+        qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
+        strataServer_->notifyClient(
+            message, QJsonObject{{"message", "device_id attribute is empty or has bad format"}},
+            strata::strataRPC::ResponseType::Error);
+        return;
+    }
+
+    QString path = message.payload.value("path").toString();
+    if (path.isEmpty()) {
+        qCWarning(logCategoryHcs) << "path attribute is empty or has bad format";
+        strataServer_->notifyClient(
+            message, QJsonObject{{"message", "path attribute is empty or has bad format"}},
+            strata::strataRPC::ResponseType::Error);
+        return;
+    }
+
+    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
+
+    QString firmwareMD5 = message.payload.value("md5").toString();
+    if (firmwareMD5.isEmpty()) {
+        // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be
+        // verified.
+        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
+    }
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "Firmware update requested."}},
+                                strata::strataRPC::ResponseType::Response);
+
+    updateController_.updateFirmware(message.clientID, deviceId, firmwareUrl, firmwareMD5);
 }
 
 void HostControllerService::processCmdDownlodView(const strata::strataRPC::Message &message)
