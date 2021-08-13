@@ -51,8 +51,9 @@ Flasher::~Flasher()
     qCDebug(logCategoryFlasher) << platform_ << "Flasher deleted (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
-void Flasher::flashFirmware(bool startApplication)
+void Flasher::flashFirmware(FinalAction finalAction)
 {
+    finalAction_ = finalAction;
     constexpr bool flashingFw = true;
 
     if (startActionCheck(QStringLiteral("Cannot flash firmware")) == false) {
@@ -77,10 +78,18 @@ void Flasher::flashFirmware(bool startApplication)
         addSetFwClassIdOperation(false);   // set fw_class_id
     }
 
-    if (startApplication) {
+    switch (finalAction_) {
+    case FinalAction::StartApplication :
         addStartApplicationOperation();    // start application
-    } else {
+        break;
+    case FinalAction::StayInBootloader :
         addIdentifyOperation(flashingFw);  // identify board
+        break;
+    case FinalAction::PreservePlatformState :
+        // Do nothing here, right operation will be added to 'operationList_' later
+        // in 'startBootloaderFinished()' operation when platform will be identified.
+        // It can be added later because it is added to the end of the 'operationList_'.
+        break;
     }
 
     currentOperation_ = operationList_.begin();
@@ -115,8 +124,10 @@ void Flasher::flashBootloader()
     runFlasherOperation();
 }
 
-void Flasher::backupFirmware(bool startApplication)
+void Flasher::backupFirmware(FinalAction finalAction)
 {
+    finalAction_ = finalAction;
+
     if (startActionCheck(QStringLiteral("Cannot backup firmware")) == false) {
         return;
     }
@@ -131,17 +142,22 @@ void Flasher::backupFirmware(bool startApplication)
 
     addBackupFirmwareOperation();        // backup firmware
 
-    if (startApplication) {
+    if (finalAction_ == FinalAction::StartApplication) {
         addStartApplicationOperation();  // start application
     }
+    // If 'finalAction_' is 'PreservePlatformState', operation for start application
+    // can be added later in 'startBootloaderFinished()' when platform will be identified.
+    // It can be added later because it is added to the end of the 'operationList_'.
 
     currentOperation_ = operationList_.begin();
 
     runFlasherOperation();
 }
 
-void Flasher::setFwClassId(bool startApplication)
+void Flasher::setFwClassId(FinalAction finalAction)
 {
+    finalAction_ = finalAction;
+
     if (startActionCheck(QStringLiteral("Cannot set firmware class ID")) == false) {
         return;
     }
@@ -159,9 +175,12 @@ void Flasher::setFwClassId(bool startApplication)
 
     addSetFwClassIdOperation(false);     // set fw_class_id
 
-    if (startApplication) {
+    if (finalAction_ == FinalAction::StartApplication) {
         addStartApplicationOperation();  // start application
     }
+    // If 'finalAction_' is 'PreservePlatformState', operation for start application
+    // can be added later in 'startBootloaderFinished()' when platform will be identified.
+    // It can be added later because it is added to the end of the 'operationList_'.
 
     currentOperation_ = operationList_.begin();
 
@@ -382,6 +401,13 @@ void Flasher::startBootloaderFinished(int status)
     if (status == operation::DEFAULT_STATUS) {
         // Operation SwitchToBootloader has status set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
         // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
+
+        if (finalAction_ == FinalAction::PreservePlatformState) {
+            // Platform had booted application and 'finalAction_' is 'PreservePlatformState'
+            // so add operation for start application.
+            addStartApplicationOperation();
+        }
+
         emit devicePropertiesChanged();
     }
 

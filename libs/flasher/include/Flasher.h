@@ -55,6 +55,17 @@ class Flasher : public QObject
         Q_ENUM(State)
 
         /*!
+         * The FinalAction enum for Flasher methods.
+         */
+        enum class FinalAction {
+            StartApplication,  // start application
+            StayInBootloader,  // stay in bootloader mode
+            PreservePlatformState,  // preserve initial platform state:
+                                    //  start application if it was running before
+                                    //  or otherwise stay in bootloader mode
+        };
+
+        /*!
          * Flasher constructor.
          * \param platform platform which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
@@ -85,9 +96,9 @@ class Flasher : public QObject
 
         /*!
          * Flash firmware.
-         * \param startApplication if set to true start application after flashing
+         * \param finalAction value from FinalAction enum, defines what to do after flash
          */
-        void flashFirmware(bool startApplication = true);
+        void flashFirmware(FinalAction finalAction);
 
         /*!
          * Flash bootloader.
@@ -96,15 +107,15 @@ class Flasher : public QObject
 
         /*!
          * Backup firmware.
-         * \param startApplication if set to true start application after backup
+         * \param finalAction value from FinalAction enum, defines what to do after backup
          */
-        void backupFirmware(bool startApplication = true);
+        void backupFirmware(FinalAction finalAction);
 
         /*!
          * Set firmware class ID (without flashing firmware).
-         * \param startApplication if set to true start application after setting firmware class ID
+         * \param finalAction value from FinalAction enum, defines what to do after setting firmware class ID
          */
-        void setFwClassId(bool startApplication = true);
+        void setFwClassId(FinalAction finalAction);
 
         /*!
          * Cancel flash firmware operation.
@@ -223,6 +234,8 @@ class Flasher : public QObject
         std::vector<FlasherOperation>::iterator currentOperation_;
 
         platform::PlatformPtr platform_;
+
+        FinalAction finalAction_;
 
         const QString fileName_;
         QFile sourceFile_;

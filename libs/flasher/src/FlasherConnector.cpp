@@ -134,7 +134,7 @@ bool FlasherConnector::setFwClassId() {
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
-    flasher_->setFwClassId();
+    flasher_->setFwClassId(Flasher::FinalAction::StartApplication);
 
     return true;
 }
@@ -166,11 +166,13 @@ void FlasherConnector::flashFirmware(bool flashOld) {
 
     qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 }
 
 void FlasherConnector::backupFirmware(bool backupOld) {
-    bool startApp = (backupOld) ? false : true;
+    Flasher::FinalAction action = (backupOld)
+                                  ? Flasher::FinalAction::StayInBootloader
+                                  : Flasher::FinalAction::StartApplication;
 
     const QString& firmwarePath = (backupOld) ? tmpBackupFileName_ : filePath_;
     flasher_ = FlasherPtr(new Flasher(platform_, firmwarePath), flasherDeleter);
@@ -180,7 +182,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
-    flasher_->backupFirmware(startApp);
+    flasher_->backupFirmware(action);
 }
 
 void FlasherConnector::processStartupError(const QString& errorString) {

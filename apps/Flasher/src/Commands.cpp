@@ -152,13 +152,13 @@ void FlasherCommand::handlePlatformOpened() {
 
     switch (command_) {
     case CmdType::FlashFirmware :
-        flasher_->flashFirmware();
+        flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
         break;
     case CmdType::FlashBootloader :
         flasher_->flashBootloader();
         break;
     case CmdType::BackupFirmware :
-        flasher_->backupFirmware();
+        flasher_->backupFirmware(Flasher::FinalAction::PreservePlatformState);
         break;
     }
 }
