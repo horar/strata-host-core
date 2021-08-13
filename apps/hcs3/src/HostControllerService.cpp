@@ -126,13 +126,14 @@ bool HostControllerService::initialize(const QString& config)
 
 void HostControllerService::start()
 {
-    strataServer_->initialize();    // TODO: handle failure signal!
-    qCInfo(logCategoryHcs) << "Host controller service started.";
+    connect(strataServer_.get(), &strataRPC::StrataServer::initialized, this,
+            []() { qCInfo(logCategoryHcs) << "Host controller service started."; });
+    strataServer_->initialize();
 }
 
 void HostControllerService::stop()
 {
-    db_.stop();             // db should be stopped last for it receives requests from dispatcher. still applicable? no dispatcher anymore 
+    db_.stop();
 }
 
 void HostControllerService::onAboutToQuit()
