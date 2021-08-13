@@ -114,7 +114,7 @@ public slots:
             const QString &error);
 
 private:
-    void sendMessageToClients(const QString &platformId, const QJsonObject& payload); // send message from platfrom to client
+    void sendPlatformMessageToClients(const QString &platformId, const QJsonObject& payload);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
