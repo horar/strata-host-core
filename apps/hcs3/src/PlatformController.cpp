@@ -102,12 +102,6 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 
-    // QJsonObject notification {
-    //     { JSON_NOTIFICATION, wrapper }
-    // };
-    // QJsonDocument wrapperDoc(notification);
-    // QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
-
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
     emit platformMessage(platform->platformId(), payload);
@@ -153,15 +147,4 @@ QJsonObject PlatformController::createPlatformsList() {
     }
 
     return QJsonObject{{JSON_LIST, arr}};
-
-    // QJsonObject notif {
-    //     { JSON_LIST, arr },
-    //     { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
-    // };
-    // QJsonObject msg {
-    //     { JSON_HCS_NOTIFICATION, notif }
-    // };
-    // QJsonDocument doc(msg);
-
-    // return doc.toJson(QJsonDocument::Compact);
 }
