@@ -77,5 +77,11 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml</file>
         <file alias="components/SGConsoleLogNavigationIcon.qml">partial-views/control-view-creator/components/SGConsoleLogNavigationIcon.qml</file>
         <file alias="components/SGControlViewCreatorSettingsPopup.qml">partial-views/control-view-creator/components/SGControlViewCreatorSettingsPopup.qml</file>
+        <file alias="DebugMenu/PayloadInput.qml">partial-views/control-view-creator/DebugMenu/PayloadInput.qml</file>
+        <file alias="DebugMenu/PayloadSwitch.qml">partial-views/control-view-creator/DebugMenu/PayloadSwitch.qml</file>
+        <file alias="DebugMenu/DebugDelegate.qml">partial-views/control-view-creator/DebugMenu/DebugDelegate.qml</file>
+        <file alias="DebugMenu/PayloadStaticObjectArray.qml">partial-views/control-view-creator/DebugMenu/PayloadStaticObjectArray.qml</file>
+        <file alias="DebugMenu/PayloadDynamicObjectArray.qml">partial-views/control-view-creator/DebugMenu/PayloadDynamicObjectArray.qml</file>
+        <file alias="DebugMenu/PayloadDelegate.qml">partial-views/control-view-creator/DebugMenu/PayloadDelegate.qml</file>
     </qresource>
 </RCC>
