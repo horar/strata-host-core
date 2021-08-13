@@ -29,7 +29,7 @@ UIBase { // start_uibase
 
     Item {
         id: grayBoxHelpContainer
-        width: cmdSimpleContainer.width + 10
+        width: simpleCmdHandle.width + 10
         height: root.height
         anchors.right: parent.right
         anchors.rightMargin: 20
@@ -78,8 +78,6 @@ UIBase { // start_uibase
             "dac": parseFloat(dacOutSlider.value.toFixed(2))
         }
     }
-
-
 
     LayoutRectangle { // start_dadc0
         id: textRect1
@@ -199,18 +197,6 @@ UIBase { // start_uibase
         color: "lightgrey"
     } // end_870e3
 
-    LayoutContainer { // start_xxz1
-        id: cmdSimpleContainer
-        layoutInfo.uuid: "xxz1"
-        layoutInfo.columnsWide: 11
-        layoutInfo.rowsTall: 8
-        layoutInfo.xColumns: 28
-        layoutInfo.yRows: 4
-        contentItem: CommandSimple {
-            id: cmdSimple
-        }
-    } // end_xxz1
-
     LayoutRectangle { // start_4a3f7
         id: textRect2
         layoutInfo.uuid: "4a3f7"
@@ -300,7 +286,7 @@ UIBase { // start_uibase
                 periodicNotificationGraph.visible = true
                 adcInText.visible = true
                 randomText.visible = true
-            } else { 
+            } else {
                 periodicNotificationGraph.visible = false
                 adcInText.visible = false
                 randomText.visible = false
@@ -485,18 +471,6 @@ UIBase { // start_uibase
         color: "lightgrey"
     } // end_06848
 
-    LayoutContainer { // start_xxz2
-        id: periodNotiContainer
-        layoutInfo.uuid: "xxz2"
-        layoutInfo.columnsWide: 11
-        layoutInfo.rowsTall: 14
-        layoutInfo.xColumns: 28
-        layoutInfo.yRows: 16
-        contentItem: PeriodicNotification {
-            id: periodNoti
-        }
-    } // end_xxz2
-
     LayoutRectangle { // start_a944d
         id: textRect3
         layoutInfo.uuid: "a944d"
@@ -507,32 +481,6 @@ UIBase { // start_uibase
 
         color: "lightgrey"
     } // end_a944d
-
-    LayoutItem {
-        id: configPeriodNotiHelp
-        layoutInfo.columnsWide: 40
-        layoutInfo.rowsTall: 11
-        layoutInfo.xColumns: 0
-        layoutInfo.yRows: 31
-    }
-
-    LayoutText { // start_17037
-        id: configPeriodicNotification
-        layoutInfo.uuid: "17037"
-        layoutInfo.columnsWide: 40
-        layoutInfo.rowsTall: 2
-        layoutInfo.xColumns: 0
-        layoutInfo.yRows: 31
-
-        text: "Configure Periodic Notification"
-        fontSizeMode: Text.Fit
-        font.pixelSize: 40
-        anchors {
-            left: parent.left
-            leftMargin: 10
-        }
-        verticalAlignment: Text.AlignVCenter
-    } // end_17037
 
     LayoutSGIcon { // start_360d3
         id: strataToBoard1
@@ -734,15 +682,66 @@ UIBase { // start_uibase
         color: "lightgrey"
     } // end_e0518
 
-    LayoutContainer { // start_xxz3
-        id: configPeriodNotiContainer
-        layoutInfo.uuid: "xxz3"
+    LayoutContainer { // start_76037
+        id: simpleCmdHandle
+        layoutInfo.uuid: "76037"
+        layoutInfo.columnsWide: 11
+        layoutInfo.rowsTall: 8
+        layoutInfo.xColumns: 28
+        layoutInfo.yRows: 4
+        contentItem: CommandSimple {
+            id: cmdSimple_83e3e
+        }
+    } // end_76037
+
+    LayoutContainer { // start_64a34
+        id: periodNotiContainer
+        layoutInfo.uuid: "64a34"
+        layoutInfo.columnsWide: 11
+        layoutInfo.rowsTall: 14
+        layoutInfo.xColumns: 28
+        layoutInfo.yRows: 16
+        contentItem: PeriodicNotification {
+            id: periodNoti_3b7a6
+        }
+    } // end_64a34
+
+    LayoutItem { // start_aff41
+        id: configPeriodNotiHelp
+        layoutInfo.uuid: "aff41"
+        layoutInfo.columnsWide: 40
+        layoutInfo.rowsTall: 11
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 31
+    } // end_aff41
+
+    LayoutText { // start_17037
+        id: configPeriodicNotification
+        layoutInfo.uuid: "17037"
+        layoutInfo.columnsWide: 40
+        layoutInfo.rowsTall: 2
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 31
+
+        text: "Configure Periodic Notification"
+        fontSizeMode: Text.Fit
+        font.pixelSize: 40
+        anchors {
+            left: parent.left
+            leftMargin: 10
+        }
+        verticalAlignment: Text.AlignVCenter
+    } // end_17037
+
+    LayoutContainer { // start_a20d8
+        id: configPeriodNoti
+        layoutInfo.uuid: "a20d8"
         layoutInfo.columnsWide: 11
         layoutInfo.rowsTall: 7
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 34
         contentItem: ConfigPeriodicNotification {
-            id: configPeriodNoti
+            id: configPeriodNoti_6551b
         }
-    } // end_xxz3
+    } // end_a20d8
 } // end_uibase
