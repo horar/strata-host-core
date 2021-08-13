@@ -199,7 +199,7 @@ UIBase { // start_uibase
         color: "lightgrey"
     } // end_870e3
 
-    LayoutContainer {
+    LayoutContainer { // start_xxz1
         id: cmdSimpleContainer
         layoutInfo.uuid: "xxz1"
         layoutInfo.columnsWide: 11
@@ -209,7 +209,7 @@ UIBase { // start_uibase
         contentItem: CommandSimple {
             id: cmdSimple
         }
-    }
+    } // end_xxz1
 
     LayoutRectangle { // start_4a3f7
         id: textRect2
@@ -485,7 +485,7 @@ UIBase { // start_uibase
         color: "lightgrey"
     } // end_06848
 
-    LayoutContainer {
+    LayoutContainer { // start_xxz2
         id: periodNotiContainer
         layoutInfo.uuid: "xxz2"
         layoutInfo.columnsWide: 11
@@ -495,7 +495,7 @@ UIBase { // start_uibase
         contentItem: PeriodicNotification {
             id: periodNoti
         }
-    }
+    } // end_xxz2
 
     LayoutRectangle { // start_a944d
         id: textRect3
@@ -734,7 +734,7 @@ UIBase { // start_uibase
         color: "lightgrey"
     } // end_e0518
 
-    LayoutContainer {
+    LayoutContainer { // start_xxz3
         id: configPeriodNotiContainer
         layoutInfo.uuid: "xxz3"
         layoutInfo.columnsWide: 11
@@ -744,5 +744,5 @@ UIBase { // start_uibase
         contentItem: ConfigPeriodicNotification {
             id: configPeriodNoti
         }
-    }
+    } // end_xxz3
 } // end_uibase
