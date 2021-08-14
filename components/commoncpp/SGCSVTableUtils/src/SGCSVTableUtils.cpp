@@ -102,3 +102,16 @@ void SGCSVTableUtils::writeToPath(QString folderPath)
     QString path = _utils.urlToLocalFile(url);
     _utils.atomicWrite(path, exportModelToCSV());
 }
+
+void SGCSVTableUtils::importTableFromFile(QString folderPath)
+{
+    SGUtilsCpp _utils;
+    QStringList fileContent = _utils.readTextFileContent(folderPath).split("\n");
+    for (int i = 0; i < fileContent.length(); i++) {
+        QStringList lineContent = fileContent.at(i).split(";");
+        for (int j = 0; j < lineContent.length(); j++) {
+            _dataMap.insert(j,lineContent.at(j));
+        }
+        _map.insert(i, _dataMap);
+    }
+}
