@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
-
 import "components/"
 
 Item {
@@ -85,11 +84,20 @@ Item {
         }
 
         Loader {
-            anchors.top: topBar.bottom
-            anchors.right: parent.right
-            width: parent.width
-            height: parent.height - topBar.height
-            source: root.debugMenuSource
+            anchors {
+                top: topBar.bottom
+                right: parent.right
+                left: parent.left
+                bottom: parent.bottom
+            } 
+
+            onVisibleChanged: {
+                if (visible) {
+                    setSource("qrc:/partial-views/control-view-creator/DebugMenu.qml", {source: editor.fileTreeModel.debugMenuSource})
+                } else {
+                    setSource("")
+                }
+            }
         }
 
         Rectangle {

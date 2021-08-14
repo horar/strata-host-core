@@ -840,7 +840,7 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
                 continue;
             }
 
-            if (info.fileName() == "DebugMenu.qml") {
+            if (info.fileName() == "platformInterface.json") {
                 setDebugMenuSource(QUrl::fromLocalFile(info.filePath()));
             }
 

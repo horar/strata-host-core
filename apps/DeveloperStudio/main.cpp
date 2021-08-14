@@ -31,7 +31,6 @@
 #include "HcsNode.h"
 #include "RunGuard.h"
 #include "PlatformInterfaceGenerator.h"
-#include "DebugMenuGenerator.h"
 #include "VisualEditorUndoStack.h"
 
 #include "AppUi.h"
@@ -148,7 +147,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<strata::loggers::QtLogger>("tech.strata.QtLogger",1,0,"QtLogger", "You can't instantiate QtLogger in QML");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<PlatformInterfaceGenerator>("tech.strata.PlatformInterfaceGenerator", 1, 0, "PlatformInterfaceGenerator", "You can't instantiate PlatformInterfaceGenerator in QML");
-    qmlRegisterUncreatableType<DebugMenuGenerator>("tech.strata.DebugMenuGenerator", 1, 0, "DebugMenuGenerator", "You can't instantiate DebugMenuGenerator in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
 
