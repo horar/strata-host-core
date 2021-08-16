@@ -34,6 +34,9 @@
                     "value": false
                 }
             ]
+        },
+        {
+            "cmd": "my_cmd_i2c"
         }
     ],
     "notifications": [
@@ -75,7 +78,7 @@
                         },
                         {
                             "type": "int",
-                            "value": 5
+                            "value": 0
                         }
                     ]
                 },

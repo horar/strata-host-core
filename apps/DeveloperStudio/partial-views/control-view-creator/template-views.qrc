@@ -15,7 +15,6 @@
         <file>template-views/images/template.jpg</file>
         <file>template-views/template/control-views/images/StrataToBoard.png</file>
         <file>template-views/template/control-views/images/BoardToStrata.png</file>
-        <file>template-views/basic/DebugMenu.qml</file>
         <file>template-views/basic/CMakeLists.txt</file>
         <file>template-views/basic/platformInterface.json</file>
         <file>template-views/visual-editor/BlankSandbox.qml</file>
@@ -27,7 +26,6 @@
         <file>template-views/images/visual-editor.jpg</file>
         <file>template-views/visual-editor/PlatformInterface.qml</file>
         <file>template-views/visual-editor/platformInterface.json</file>
-        <file>template-views/template/DebugMenu.qml</file>
         <file>template-views/template/platformInterface.json</file>
         <file>template-views/template/PlatformInterface.qml</file>
     </qresource>

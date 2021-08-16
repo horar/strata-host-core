@@ -17,7 +17,7 @@ class UrlConfig : public QObject{
     Q_PROPERTY(QString privacyPolicyUrl READ getPrivacyPolicyUrl CONSTANT);
     Q_PROPERTY(QString licenseUrl READ getLicenseUrl CONSTANT);
     Q_PROPERTY(QString authServer READ getAuthServer CONSTANT);
-    Q_PROPERTY(QString testAuthServer READ getTestAuthServer CONSTANT);
+    Q_PROPERTY(QString serverType READ getServerType CONSTANT);
 
 public:
     explicit UrlConfig(const QString &fileName, QObject *parent = nullptr);
@@ -29,7 +29,7 @@ public:
     QString getMouserUrl() const;
     QString getDigiKeyUrl() const;
     QString getAvnetUrl() const;
-    QString getTestAuthServer() const;
+    QString getServerType() const;
     virtual ~UrlConfig();
 
 
@@ -39,15 +39,15 @@ private:
     QString fileName_;
 
     QString authServer_;
-    QString testAuthServer_;
     QString salesPopupUrl_;
     QString licenseUrl_;
     QString privacyPolicyUrl_;
     QString mouserUrl_;
     QString digiKeyUrl_;
     QString avnetUrl_;
+    QString serverType_;
 
-    bool setUrlValue(QJsonValue val, QString *url);
+    bool setValue(QJsonValue val, QString *url);
 };
 
 }
