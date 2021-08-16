@@ -346,7 +346,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
             } else {
                 QJsonValue elementNameValue = elementObject.value("name");
                 QString elementName = elementNameValue.toString();
-                childId = "index_" + QString::number(i);
+                childId = elementName;
             }
 
             generateNotificationProperty(indentLevel + 1, parentId + "_" + id, childId, elementType, elementValue, childNotificationBody, childDocumentationBody);
