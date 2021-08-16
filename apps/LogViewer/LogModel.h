@@ -74,6 +74,9 @@ private:
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
     QDateTime previousTimestamp_;
+    QString previousPid_;
+    QString previousTid_;
+    LogModel::LogLevel previousLevel_;
     QList<LogItem*> data_;
     QVector<qint64> lastPositions_;
     LogItem* parseLine(const QString &line);

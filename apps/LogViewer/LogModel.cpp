@@ -254,7 +254,9 @@ LogItem* LogModel::parseLine(const QString &line)
         item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
         previousTimestamp_ = item->timestamp;
         item->pid = splitIt.takeFirst().replace("PID:","");
+        previousPid_ = item->pid;
         item->tid = splitIt.takeFirst().replace("TID:","");
+        previousTid_ = item->tid;
         QString level = splitIt.takeFirst();
 
         if (level == "[D]") {
@@ -266,16 +268,17 @@ LogItem* LogModel::parseLine(const QString &line)
         } else if (level == "[E]") {
             item->level = LevelError;
         }
+        previousLevel_ = item->level;
         item->message = splitIt.join('\t');
     } else {
         item->message = line;
     }
 
-    if (line.isEmpty()) {
+    if (line.isEmpty() || item->timestamp.isNull()) {
         item->timestamp = previousTimestamp_;
-    }
-    if (item->timestamp.isNull()) {
-        item->timestamp = previousTimestamp_;
+        item->pid = previousPid_;
+        item->tid = previousTid_;
+        item->level = previousLevel_;
     }
     return item;
 }
