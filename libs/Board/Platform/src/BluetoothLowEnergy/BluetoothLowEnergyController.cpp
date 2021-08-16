@@ -139,9 +139,12 @@ void BluetoothLowEnergyController::checkServiceDetailsDiscovery()
             case QLowEnergyService::InvalidService:
                 break;
             case QLowEnergyService::DiscoveryRequired:
-                qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";;
-                service.second->discoverDetails();
-                allDiscovered = false;
+                // TODO: decide what to do when discovery fails
+                if (deleteLater_ == false) {    // if discovery fails, it returns to DiscoveryRequired, which can loop here
+                    qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";
+                    service.second->discoverDetails();
+                    allDiscovered = false;
+                }
                 break;
             case QLowEnergyService::DiscoveringServices:
                 allDiscovered = false;
