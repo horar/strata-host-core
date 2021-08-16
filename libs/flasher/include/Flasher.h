@@ -219,6 +219,14 @@ class Flasher : public QObject
 
         typedef std::unique_ptr<platform::operation::BasePlatformOperation, void(*)(platform::operation::BasePlatformOperation*)> OperationPtr;
 
+        enum class FlasherActivity {
+            FlashFirmware,
+            FlashBootloader,
+            BackupFirmware,
+            SetFwClassId
+        };
+        FlasherActivity activity_;
+
         struct FlasherOperation {
             FlasherOperation(OperationPtr&& platformOperation,
                              State stateOfFlasher,

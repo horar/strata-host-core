@@ -53,6 +53,7 @@ Flasher::~Flasher()
 
 void Flasher::flashFirmware(FinalAction finalAction)
 {
+    activity_ = FlasherActivity::FlashFirmware;
     finalAction_ = finalAction;
     constexpr bool flashingFw = true;
 
@@ -99,6 +100,7 @@ void Flasher::flashFirmware(FinalAction finalAction)
 
 void Flasher::flashBootloader()
 {
+    activity_ = FlasherActivity::FlashBootloader;
     constexpr bool flashingFw = false;
     std::chrono::milliseconds identifyDelay = (platform_->deviceType() == device::Device::Type::MockDevice) ? IDENTIFY_OPERATION_MOCK_DELAY : IDENTIFY_OPERATION_DELAY;
 
@@ -126,6 +128,7 @@ void Flasher::flashBootloader()
 
 void Flasher::backupFirmware(FinalAction finalAction)
 {
+    activity_ = FlasherActivity::BackupFirmware;
     finalAction_ = finalAction;
 
     if (startActionCheck(QStringLiteral("Cannot backup firmware")) == false) {
@@ -156,6 +159,7 @@ void Flasher::backupFirmware(FinalAction finalAction)
 
 void Flasher::setFwClassId(FinalAction finalAction)
 {
+    activity_ = FlasherActivity::SetFwClassId;
     finalAction_ = finalAction;
 
     if (startActionCheck(QStringLiteral("Cannot set firmware class ID")) == false) {
@@ -398,17 +402,20 @@ void Flasher::startBootloaderFinished(int status)
     qCInfo(logCategoryFlasher) << platform_ << "Switched to bootloader (version '"
                                << platform_->bootloaderVer() << "').";
 
+    // Operation SwitchToBootloader has status set to ALREADY_IN_BOOTLOADER (1) if board was
+    // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
     if (status == operation::DEFAULT_STATUS) {
-        // Operation SwitchToBootloader has status set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
-        // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
-
         if (finalAction_ == FinalAction::PreservePlatformState) {
-            // Platform had booted application and 'finalAction_' is 'PreservePlatformState'
+            // Platform had been booted into application before and 'finalAction_' is 'PreservePlatformState'
             // so add operation for start application.
             addStartApplicationOperation();
         }
 
         emit devicePropertiesChanged();
+    } else if (status == operation::ALREADY_IN_BOOTLOADER) {
+        if (activity_ == FlasherActivity::FlashFirmware && finalAction_ == FinalAction::PreservePlatformState) {
+            addIdentifyOperation(true);
+        }
     }
 
     runNextOperation();
