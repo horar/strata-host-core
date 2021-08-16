@@ -51,7 +51,7 @@ Item {
     }
 
     function copyToClipboard(textElement) {
-        CommonCPP.SGUtilsCpp.copyToClipboard(textElement.text)
+        CommonCPP.SGUtilsCpp.copyToClipboard(textElement)
     }
 
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
@@ -528,7 +528,13 @@ Item {
                         id: copyAction
                         text: qsTr("Copy")
                         onTriggered: {
-                            copyToClipboard(msg)
+                            var spacer = "  "
+                            var timestamp = ts.visible ? ts.text + spacer : ""
+                            var pidnumber = pid.visible ? pid.text + spacer : ""
+                            var tidnumber = tid.visible ? tid.text + spacer : ""
+                            var loglevel = level.visible ? level.text + spacer : ""
+
+                            copyToClipboard(timestamp + pidnumber + tidnumber + loglevel + msg.text)
                         }
                     }
 
