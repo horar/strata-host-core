@@ -185,6 +185,10 @@ Item {
                     consoleLogs.selectInBetween(index)
                 }
 
+//                onExited: {
+//                    console.log(consoleMessage.selectedText)
+//                }
+
                 onPositionChanged: {
                     end = consoleMessage.positionAt(drag.x, drag.y)
                     consoleMessage.select(start, end)
@@ -218,6 +222,7 @@ Item {
             onPressed:{
                 consoleLogs.deselectAll()
                 var clickedDelegate = consoleLogs.itemAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
+
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)
                 } else {
@@ -344,10 +349,10 @@ Item {
 
     function getMsgType(type) {
         switch (type) {
-        	case 0: return "debug"
-        	case 1: return "warning"
-        	case 2: return "error"
-        	case 4: return "info"
+        case 0: return "debug"
+        case 1: return "warning"
+        case 2: return "error"
+        case 4: return "info"
         }
     }
 

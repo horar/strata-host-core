@@ -551,6 +551,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
+
                     property ListModel commandModel: model.data
                     property bool isCommand: index === 0
 
@@ -607,7 +608,7 @@ Item {
                             onClicked: {
                                 if (commandColumn.isCommand) {
                                     commandColumn.commandModel.append(templateCommand)
-                                    commandsListView.contentY += 110
+                                     commandsListView.contentY += 210
                                 } else {
                                     commandColumn.commandModel.append(templateNotification)
                                 }

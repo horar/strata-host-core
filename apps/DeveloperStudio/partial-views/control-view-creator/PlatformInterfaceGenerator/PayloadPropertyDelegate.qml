@@ -11,9 +11,10 @@ Rectangle {
     Layout.preferredWidth: payloadContainer.implicitWidth
 
     Layout.leftMargin: 20
+
     property var indexIs: 0
 
-    color: (indexIs === 4) || (indexIs === 6) ? "light grey" : "#F8F8F8"
+    color: ((indexIs === 4) || (indexIs === 6)) ?  "light grey" : "transparent"
 
     ColumnLayout {
         id: payloadContainer
@@ -179,6 +180,8 @@ Rectangle {
 
                     type = payloadContainer.changePropertyType(index, payloadContainer.subObjectListModel, payloadContainer.subArrayListModel)
                     indexSelected = index
+
+                    console.log(indexIs, index)
                 }
             }
         }

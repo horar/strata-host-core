@@ -3,18 +3,20 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Rectangle {
-    Layout.preferredHeight: objectPropertyContainer.implicitHeight
-    Layout.preferredWidth: objectPropertyContainer.implicitWidth
+
+    implicitHeight: objectPropertyContainer.implicitHeight
+    implicitWidth: objectPropertyContainer.implicitWidth
     Layout.leftMargin: 20
-    property var indexIs: 0
-    color: "pink"
+
 
     property int modelIndex
+    property int indexNum
+    color: (indexNum === 6) ? "white" : "transparent"
 
     ColumnLayout {
         id: objectPropertyContainer
 
-       // anchors.fill: parent
+        // anchors.fill: parent
         //Layout.leftMargin: 20
         spacing: 5
 
@@ -24,10 +26,8 @@ Rectangle {
 
         RowLayout {
             id: objectRowLayout
-            // anchors.fill: parent
             Layout.preferredHeight: 30
             Layout.leftMargin: 20
-            //Layout.fillHeight: true
             spacing: 5
 
             RoundButton {
@@ -119,6 +119,7 @@ Rectangle {
                     } else {
                         currentIndex = indexSelected
                     }
+                    indexNum = currentIndex
                 }
 
                 onActivated: {
@@ -129,7 +130,7 @@ Rectangle {
 
                     type = payloadContainer.changePropertyType(index, objectPropertyContainer.subObjectListModel, objectPropertyContainer.subArrayListModel)
                     indexSelected = index
-                   // indexIs = index
+                    indexNum = indexSelected
 
                 }
             }
@@ -182,7 +183,7 @@ Rectangle {
             id: addPropertyButton
             text: "Add Item To Object"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === parentListModel.count - 1
+            visible: modelIndex === objectPropertyContainer.parentListModel.count - 1
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button

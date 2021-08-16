@@ -5,10 +5,10 @@ import tech.strata.sgwidgets 1.0
 
 
 Rectangle {
-    width: ListView.view.width
+    width:  ListView.view.width
     height: commandsColumn.height
+
     color: "#F8F8F8"
-    z:3
 
     property ListModel payloadModel: commandsColumn.payloadModel
 
@@ -19,7 +19,6 @@ Rectangle {
 
         property ListModel payloadModel: model.payload
         property var modelIndex: index
-
 
         RowLayout {
             Layout.fillWidth: true

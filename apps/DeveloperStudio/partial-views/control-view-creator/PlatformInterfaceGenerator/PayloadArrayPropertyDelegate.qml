@@ -4,37 +4,23 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
 
-    Layout.preferredHeight:commandsListView.implicitHeight
-    Layout.preferredWidth: commandsListView.implicitWidth
+    //    Layout.preferredHeight: 10
+    //    Layout.preferredWidth: 10
+    //    Layout.preferredHeight:arrayPropertyContainer.implicitHeight
+    //    Layout.preferredWidth: arrayPropertyContainer.implicitWidth
+
+    implicitHeight: arrayPropertyContainer.implicitHeight
+    implicitWidth: arrayPropertyContainer.implicitWidth
     Layout.leftMargin: 20
+    Layout.rightMargin: 20
 
-
-    property var currentIndex: 0
-    //    onCurrentIndexChanged: {
-    //        if(currentIndex === 4) {
-    //            return color = "green"
-    //        }
-    //        else return color = "light grey"
-    //    }
-
-    color: currentIndex === 4 ? "green" : "light grey"
-
-    //color: (currentIndex === 4) ? "green" : "light grey"
-
-    //    property ListModel parentListModel: arrayPropertyContainer.parentListModel
-    //    property ListModel subArrayListModel: arrayPropertyContainer.subArrayListModel
-    //    property ListModel subObjectListModel: arrayPropertyContainer.subObjectListModel
-
+    property int indexNum
     property int modelIndex
+
+    color: (indexNum === 4) ? "white" : "transparent"
 
     ColumnLayout {
         id: arrayPropertyContainer
-        onHeightChanged: {
-            console.log(height)
-        }
-
-        //        anchors.fill: parent
-        //Layout.leftMargin: 20
         spacing: 5
 
         property ListModel parentListModel: model.parent
@@ -46,7 +32,7 @@ Rectangle {
             // anchors.fill: parent
             Layout.preferredHeight: 30
             Layout.leftMargin: 20
-            //Layout.fillHeight: true
+            Layout.fillHeight: true
             spacing: 5
 
             RoundButton {
@@ -100,6 +86,7 @@ Rectangle {
                     } else {
                         currentIndex = indexSelected
                     }
+                    indexNum = currentIndex
                 }
 
                 onActivated: {
@@ -110,11 +97,9 @@ Rectangle {
 
                     type = payloadContainer.changePropertyType(index, arrayPropertyContainer.subObjectListModel, arrayPropertyContainer.subArrayListModel)
                     indexSelected = index
-                    currentIndex = indexSelected
-                    console.log(currentIndex,indexSelected)
+                    indexNum = indexSelected
                 }
             }
-            //}
         }
 
         /*****************************************
@@ -127,8 +112,6 @@ Rectangle {
             delegate: Component {
                 Loader {
                     Layout.leftMargin: 20
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
 
                     source: "./PayloadArrayPropertyDelegate.qml"
                     onStatusChanged: {
