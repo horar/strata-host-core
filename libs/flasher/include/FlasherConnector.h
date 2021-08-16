@@ -64,21 +64,21 @@ public:
      * \param finalAction what to do after flash: start application, stay in bootloader or do not change state of borad's binary
      * \return true if flash process has started, otherwise false
      */
-    bool flash(bool backupBeforeFlash = true, Flasher::FinalAction finalAction = Flasher::FinalAction::StartApplication);
+    bool flash(bool backupBeforeFlash, Flasher::FinalAction finalAction);
 
     /*!
      * Backup firmware.
      * \param finalAction what to do after backup: start application, stay in bootloader or do not change state of borad's binary
      * \return true if backup process has started, otherwise false
      */
-    bool backup(Flasher::FinalAction finalAction = Flasher::FinalAction::StartApplication);
+    bool backup(Flasher::FinalAction finalAction);
 
     /*!
      * Set Firmware Class ID (without flashing firmware)
      * finalAction what to do after set FW clas ID: start application, stay in bootloader or do not change state of borad's binary
      * \return true if set process has started, otherwise false
      */
-    bool setFwClassId(Flasher::FinalAction finalAction = Flasher::FinalAction::StartApplication);
+    bool setFwClassId(Flasher::FinalAction finalAction);
 
     /*!
      * Stop flash/backup firmware operation.
