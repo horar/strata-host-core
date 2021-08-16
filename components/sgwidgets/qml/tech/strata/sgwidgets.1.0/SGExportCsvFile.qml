@@ -35,8 +35,6 @@ Popup {
             Layout.fillHeight: true
             model: csvModel
 
-
-
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AlwaysOn
             }
@@ -170,6 +168,83 @@ Popup {
                 }
             }
         }
+
+        RowLayout {
+            id: rowForImport
+            Layout.fillWidth: true
+            Layout.maximumHeight: 50
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
+
+            RowLayout {
+                id: folderImportPathRow
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 0
+
+                Rectangle {
+                    id: folderImportOpenRect
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 50
+                    border {
+                        color: "black"
+                        width: 1
+                    }
+
+                    SGWidgets.SGIcon {
+                        id: importIconButton
+                        height: 35
+                        width: 35
+                        anchors.centerIn: folderImportOpenRect
+                        source: "qrc:/sgimages/folder-open-solid.svg"
+                        iconColor: "black"
+                    }
+
+                    MouseArea {
+                        anchors.fill: folderImportOpenRect
+
+                        onClicked: {
+                            importPath.open()
+                        }
+                    }
+                }
+
+                SGWidgets.SGTextField {
+                    id: importFolderPath
+                    Layout.preferredHeight: 50
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                }
+            }
+
+            Rectangle {
+                id: importButtonRect
+                width: 50
+                height: 50
+                border {
+                    color: "black"
+                    width: 1
+                }
+
+                SGWidgets.SGIcon {
+                    id: importButton
+                    width: 35
+                    height: 35
+                    anchors.centerIn: importButtonRect
+                    source: "qrc:/sgimages/file-import.svg"
+                }
+
+                MouseArea {
+                    anchors.fill: importButtonRect
+                    enabled: importPath.text.length > 0
+                    hoverEnabled: true;
+
+                    onClicked: {
+                        importFile(importPath.fileUrl)
+                    }
+                }
+            }
+        }
     }
 
     FileDialog {
@@ -184,11 +259,31 @@ Popup {
         }
     }
 
+    FileDialog {
+        id: importPath
+        selectMultiple: false
+        folder: filePath.folder
+
+        onAccepted: {
+            importFolderPath.text = importPath.fileUrl
+        }
+    }
+
     SGCSVTableUtils {
         id: csvModel
+
+       onClearBackingModel: {
+           csvView.update();
+       }
     }
 
     function updateMap(name, data) {
         csvModel.updateMap(name, data)
+    }
+
+
+    function importFile(filePath) {
+        const path = SGUtilsCpp.urlToLocalFile(filePath)
+        csvModel.importTableFromFile(path);
     }
 }

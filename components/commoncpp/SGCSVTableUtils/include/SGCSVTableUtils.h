@@ -56,9 +56,12 @@ public:
     Q_INVOKABLE void updateMap(QString name, QVariant data);
     QString exportModelToCSV();
     Q_INVOKABLE void writeToPath(QString folderPath);
+    Q_INVOKABLE void importTableFromFile(QString folderPath);
 signals:
     void headersChanged();
     void cmdNameChanged();
+    void clearBackingModel();
+
 private:
     QMap<int,QMap<int,QString>> _map;
     QMap<int,QString> _dataMap;

@@ -427,11 +427,19 @@ Module {
             name: "writeToPath"
              Parameter {name: "folderPath"; type: "string"}
         }
+        Method {
+            name: "importTableFromFile"
+            Parameter {name: "folderPath"; type: "string"}
+        }
+
         Signal {
             name: "headersChanged"
         }
         Signal {
             name: "cmdNameChanged"
+        }
+        Signal {
+            name: "clearBackingModel"
         }
     }
     Component {

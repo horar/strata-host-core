@@ -4,7 +4,6 @@
 
 SGCSVTableUtils::SGCSVTableUtils(QObject *parent): QAbstractTableModel(parent)
 {
-
 }
 
 QString SGCSVTableUtils::exportModelToCSV()
@@ -105,6 +104,12 @@ void SGCSVTableUtils::writeToPath(QString folderPath)
 
 void SGCSVTableUtils::importTableFromFile(QString folderPath)
 {
+    qDebug() << "called";
+    clearBackingModel();
+    beginResetModel();
+    _map.clear();
+    _dataMap.clear();
+    endResetModel();
     SGUtilsCpp _utils;
     QStringList fileContent = _utils.readTextFileContent(folderPath).split("\n");
     for (int i = 0; i < fileContent.length(); i++) {
