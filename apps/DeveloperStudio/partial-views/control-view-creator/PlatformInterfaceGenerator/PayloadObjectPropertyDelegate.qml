@@ -11,7 +11,7 @@ Rectangle {
 
     property int modelIndex
     property int indexNum
-    color: (indexNum === 6) ? "white" : "transparent"
+    color: (indexNum === 6) || (indexNum === 4)? "white" : "transparent"
 
     ColumnLayout {
         id: objectPropertyContainer

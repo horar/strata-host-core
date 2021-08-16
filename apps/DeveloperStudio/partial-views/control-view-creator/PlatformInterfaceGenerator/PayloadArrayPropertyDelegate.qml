@@ -17,7 +17,7 @@ Rectangle {
     property int indexNum
     property int modelIndex
 
-    color: (indexNum === 4) ? "white" : "transparent"
+    color: (indexNum === 6) || (indexNum === 4) ? "white" : "transparent"
 
     ColumnLayout {
         id: arrayPropertyContainer
@@ -98,6 +98,7 @@ Rectangle {
                     type = payloadContainer.changePropertyType(index, arrayPropertyContainer.subObjectListModel, arrayPropertyContainer.subArrayListModel)
                     indexSelected = index
                     indexNum = indexSelected
+
                 }
             }
         }
@@ -165,6 +166,7 @@ Rectangle {
                 onClicked: {
                     arrayPropertyContainer.parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.parentListModel})
                     commandsListView.contentY += 40
+                    console.log("test", indexIs, index)
                 }
             }
         }

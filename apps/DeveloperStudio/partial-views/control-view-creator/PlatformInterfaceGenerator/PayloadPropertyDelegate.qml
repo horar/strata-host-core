@@ -14,7 +14,7 @@ Rectangle {
 
     property var indexIs: 0
 
-    color: ((indexIs === 4) || (indexIs === 6)) ?  "light grey" : "transparent"
+    color: (indexIs === 4) || (indexIs === 6) ?  "light grey" : "transparent"
 
     ColumnLayout {
         id: payloadContainer
