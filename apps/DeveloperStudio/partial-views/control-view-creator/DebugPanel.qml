@@ -2,19 +2,18 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0
 import "components/"
 
 Item {
     id: root
+    anchors.fill: parent
 
     property bool debugVisible: false
-    property alias mainContainer: mainContainer
     property real rectWidth: 450
-
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-
-    anchors.fill: parent
+    property alias mainContainer: mainContainer
 
     onDebugMenuSourceChanged: {
         if (debugMenuSource) {
@@ -91,11 +90,16 @@ Item {
                 bottom: parent.bottom
             } 
 
+            property bool firstLoad: true
+
             onVisibleChanged: {
-                if (visible) {
-                    setSource("qrc:/partial-views/control-view-creator/DebugMenu.qml", {source: editor.fileTreeModel.debugMenuSource})
-                } else {
-                    setSource("")
+                if (visible && firstLoad) {
+                    firstLoad = false
+                    setSource("qrc:/partial-views/control-view-creator/DebugMenu.qml", {source: debugMenuSource})
+                    if (debugMenuSource !== "") {
+                        // Listen for changes to platformInterface.json in order to update DebugMenu.qml
+                        editor.fileTreeModel.startWatchingPath(SGUtilsCpp.urlToLocalFile(debugMenuSource))
+                    }
                 }
             }
         }

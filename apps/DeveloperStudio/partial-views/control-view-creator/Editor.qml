@@ -54,7 +54,10 @@ Item {
         }
 
         onTabClosed: {
-            treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+            // always listen for debugMenuSource changes in order to update DebugMenu.qml
+            if (filepath !== fileTreeModel.debugMenuSource) {
+                treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+            }
         }
     }
 

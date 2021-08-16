@@ -41,6 +41,16 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: editor.fileTreeModel
+
+        onFileChanged: {
+            if (source === path) {
+                init()
+            }
+        }
+    }
+
     ColumnLayout {
         anchors {
             margins: 10
