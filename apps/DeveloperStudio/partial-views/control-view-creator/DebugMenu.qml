@@ -221,7 +221,7 @@ Rectangle {
                                     console.log("NOTIFICATION", JSON.stringify(notification, null, 2))
                                     coreInterface.notification(JSON.stringify(wrapper))
                                 } else {
-                                    let command = { "cmd": model.name, "device_id": controlViewCreatorRoot.debugPlatform.deviceId }
+                                    let command = { "cmd": model.name, "device_id": controlViewCreatorRoot.debugPlatform.device_id }
                                     if (payload) {
                                         command["payload"] = payload;
                                     }

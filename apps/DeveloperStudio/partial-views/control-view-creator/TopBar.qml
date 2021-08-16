@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import "qrc:/js/constants.js" as Constants
 
 RowLayout {
     spacing: 10
@@ -115,10 +116,17 @@ RowLayout {
         textColor: "white"
 
         onCurrentIndexChanged: {
-            let platform = connectedPlatforms.get(currentIndex)
-            controlViewCreatorRoot.debugPlatform = {
-                deviceId: platform.device_id,
-                classId: platform.class_id
+            if (currentIndex === -1) {
+                controlViewCreatorRoot.debugPlatform = {
+                    device_id: Constants.NULL_DEVICE_ID,
+                    class_id: ""
+                }
+            } else {
+                let platform = connectedPlatforms.get(currentIndex)
+                controlViewCreatorRoot.debugPlatform = {
+                    device_id: platform.device_id,
+                    class_id: platform.class_id
+                }
             }
         }
     }
