@@ -5,6 +5,7 @@
 #include <QUrl>
 #include <QVariant>
 #include <QAbstractTableModel>
+#include <QJsonValue>
 
 class SGCSVTableUtils: public QAbstractTableModel
 {
@@ -53,7 +54,6 @@ public:
         {
             _headers = headers;
             _map.clear();
-            _dataMap.clear();
             createheaders(_headers);
             emit headersChanged();
         }
@@ -65,10 +65,10 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     void createheaders(QStringList headers);
     QString exportModelToCSV();
-    Q_INVOKABLE void updateTableFromControlView(QMap<int, QString> data, bool exportOnAdd);
+    Q_INVOKABLE void updateTableFromControlView(QJsonValue data, bool exportOnAdd);
     Q_INVOKABLE void writeToPath();
     Q_INVOKABLE void importTableFromFile(QString folderPath);
-    Q_INVOKABLE void writeLineToTable(QMap<int, QString> data);
+    void writeLineToFile(QMap<int, QString> data);
 signals:
     void headersChanged();
     void cmdNameChanged();
@@ -77,7 +77,6 @@ signals:
 
 private:
     QMap<int,QMap<int,QString>> _map;
-    QMap<int,QString> _dataMap;
     QStringList _headers;
     QString _cmdName;
     QString _folderPath;

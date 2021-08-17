@@ -422,7 +422,7 @@ Module {
         }
         Method {
             name: "updateTableFromControlView"
-            Parameter {name: "data"; type: "QMap<int,string>"}
+            Parameter {name: "data"; type: "QJsonValue"}
             Parameter {name: "exportOnAdd"; type: "bool"}
         }
         Method {
@@ -432,11 +432,6 @@ Module {
         Method {
             name: "importTableFromFile"
             Parameter {name: "folderPath"; type: "string"}
-        }
-
-        Method {
-            name: "writeLineToTable"
-            Parameter {name: "data"; type: "QMap<int,string>"
         }
 
         Signal {

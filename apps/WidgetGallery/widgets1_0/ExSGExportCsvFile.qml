@@ -29,6 +29,7 @@ ColumnLayout {
                 onClicked: {
                     sgExportCsv.cmdName = rowButton.cmdName
                     sgExportCsv.headers = Object.keys(rowButton.payload)
+                    sgExportCsv.folderPath = "file:///Users/zbb69r/CSVFolder"
                     for (var i = 0; i < 100; i++) {
                         if (i % 2 === 0) {
                             rowButton.payload["io"] = true
@@ -37,9 +38,7 @@ ColumnLayout {
                         }
                         rowButton.payload["dac"] = Math.random(i).toFixed(2)
                         rowButton.payload["pwm"] = Math.random(rowButton.payload["dac"]).toFixed(2)
-                        sgExportCsv.updateMap("io", rowButton.payload["io"])
-                        sgExportCsv.updateMap("dac", rowButton.payload["dac"])
-                        sgExportCsv.updateMap("pwm", rowButton.payload["pwm"])
+                        sgExportCsv.updateTableFromView(rowButton.payload, true)
                     }
 
                     sgExportCsv.open()

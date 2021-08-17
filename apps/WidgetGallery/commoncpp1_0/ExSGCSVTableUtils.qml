@@ -29,7 +29,8 @@ ColumnLayout {
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
                     sgExportCSV.headers = Object.keys(rowButton.payload)
-                    sgExportCSV.cmdName = rowButton.cmdName
+                    sgExportCSV.cmdName = `${rowButton.cmdName}_${Date.now()}`
+                    sgExportCSV.folderPath = "file:///Users/zbb69r/CSVFolder"
                     for (var i = 0; i < 100; i++) {
                         if (i % 2 === 0) {
                             rowButton.payload["io"] = true
@@ -38,11 +39,8 @@ ColumnLayout {
                         }
                         rowButton.payload["dac"] = Math.random(i).toFixed(2)
                         rowButton.payload["pwm"] = Math.random(rowButton.payload["dac"]).toFixed(2)
-                        sgExportCSV.updateMap("io", rowButton.payload["io"])
-                        sgExportCSV.updateMap("dac", rowButton.payload["dac"])
-                        sgExportCSV.updateMap("pwm", rowButton.payload["pwm"])
+                        sgExportCSV.updateTableFromControlView(rowButton.payload, true)
                     }
-                    sgExportCSV.writeToPath('file:///Users/zbb69r/CSVFolder')
                 }
             }
         }

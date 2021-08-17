@@ -15,6 +15,7 @@ Popup {
 
     property alias headers: csvModel.headers
     property alias cmdName: csvModel.cmdName
+    property alias folderPath: folderPath.text
 
     contentItem: ColumnLayout {
         id: column
@@ -138,6 +139,7 @@ Popup {
                     Layout.preferredHeight: 50
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
+                    text: filePath.shortcuts.home
                 }
             }
 
@@ -236,7 +238,7 @@ Popup {
 
                 MouseArea {
                     anchors.fill: importButtonRect
-                    enabled: importPath.text.length > 0
+                    enabled: importPath.accepted
                     hoverEnabled: true;
 
                     onClicked: {
@@ -272,6 +274,7 @@ Popup {
 
     SGCSVTableUtils {
         id: csvModel
+        folderPath: folderPath.text
 
        onClearBackingModel: {
            csvView.update();
