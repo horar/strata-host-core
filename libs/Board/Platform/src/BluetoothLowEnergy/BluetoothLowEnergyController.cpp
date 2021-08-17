@@ -59,7 +59,7 @@ void BluetoothLowEnergyController::close()
 
 #ifdef Q_OS_WIN
     // only for windows, leave the connecting running until it finishes
-    if (allDiscovered_ == false) {
+    if ((allDiscovered_ == false) && (lowEnergyController_->state() == QLowEnergyController::DiscoveringState)) {
         deleteLater_ = true;
         return;
     }
