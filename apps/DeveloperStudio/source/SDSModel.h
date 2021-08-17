@@ -14,6 +14,7 @@ class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
 class ProgramControllerManager;
+class FirmwareManager;
 class PlatformInterfaceGenerator;
 class DebugMenuGenerator;
 class VisualEditorUndoStack;
@@ -29,6 +30,7 @@ class SDSModel: public QObject
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
     Q_PROPERTY(ProgramControllerManager* programControllerManager READ programControllerManager CONSTANT)
+    Q_PROPERTY(FirmwareManager* firmwareManager READ firmwareManager CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
     Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
     Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
@@ -48,6 +50,7 @@ public:
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
     ProgramControllerManager* programControllerManager() const;
+    FirmwareManager* firmwareManager() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
     DebugMenuGenerator* debugMenuGenerator() const;
     VisualEditorUndoStack* visualEditorUndoStack() const;
@@ -77,6 +80,7 @@ private:
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
     ProgramControllerManager *programControllerManager_{nullptr};
+    FirmwareManager *firmwareManager_{nullptr};
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
     DebugMenuGenerator *debugMenuGenerator_{nullptr};
     VisualEditorUndoStack *visualEditorUndoStack_{nullptr};

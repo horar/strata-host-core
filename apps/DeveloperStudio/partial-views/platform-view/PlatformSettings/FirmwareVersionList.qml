@@ -56,6 +56,9 @@ ColumnLayout {
         Repeater {
             id: firmwareRepeater
             model: []
+
+            signal resetDescriptions()
+
             delegate: Rectangle {
                 id: firmwareRow
                 Layout.preferredHeight: column.height
@@ -105,7 +108,7 @@ ColumnLayout {
                             horizontalAlignment: Text.AlignRight
                             text: defaultText
 
-                            property string defaultText: !model.installed && installMouse.enabled ? "Download and flash firmware" : ""
+                            property string defaultText: installMouse.enabled ? "Download and flash firmware" : ""
                         }
 
                         Item {
@@ -140,19 +143,19 @@ ColumnLayout {
                                     onClicked: {
                                         if (platformStack.firmware_version !== "") {
                                             if (SGVersionUtils.greaterThan(model.version, platformStack.firmware_version)) {
-                                                flashStatus.startFlash()
+                                                flashStatus.startFlash(false)
                                                 return
                                             }
 
                                             warningPop.callback = this
                                             warningPop.open()
                                         } else {
-                                            flashStatus.startFlash()
+                                            flashStatus.startFlash(false)
                                         }
                                     }
 
                                     function callback() {
-                                        flashStatus.startFlash()
+                                        flashStatus.startFlash(false)
                                     }
                                 }
                             }
@@ -182,160 +185,60 @@ ColumnLayout {
                         Layout.preferredHeight: statusColumn.height
                         visible: false
 
+                        Component.onCompleted: {
+                            if (firmwareColumn.flashingInProgress === false) {
+                                let payload = sdsModel.firmwareManager.acquireUpdateFirmwareData(platformStack.device_id, model.uri, model.md5)
+                                if((payload.status !== undefined) && (payload.progress !== undefined)) {
+                                    startFlash(true)
+                                    processUpdateFirmwareJobProgress(payload.status, payload.progress)
+                                }
+                            }
+                        }
+
                         function resetState() {
                             statusText.text = "Initializing..."
                             fillBar.width = 0
                             fillBar.color = "lime"
                             flashStatus.visible = false
+                        }
+
+                        function resetDescription() {
                             description.text = Qt.binding(() => description.defaultText)
+                            firmwareRepeater.resetDescriptions.disconnect(resetDescription)
                         }
 
-                        function startFlash() {
+                        function startFlash(already_started) {
                             if (firmwareColumn.flashingInProgress === false) {
-                                flashingInProgress = true
-                                flashStatus.resetState()
-                                firmwareColumn.clearDescriptions()
-                                description.text = "Do not unplug your board during this process"
+                                firmwareRepeater.resetDescriptions()
 
-                                let updateFirmwareCommand = {
-                                    "hcs::cmd": "update_firmware",
-                                    "payload": {
-                                        "device_id": platformStack.device_id,
-                                        "path": model.uri,
-                                        "md5": model.md5
-                                    }
+                                if (already_started ||
+                                    (sdsModel.firmwareManager.updateFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
+                                    flashingInProgress = true
+                                    description.text = "Do not unplug your board during this process"
+                                    flashStatus.visible = true
+                                    activeFirmware = flashStatus
+                                } else {
+                                    let error_string = "Unable to start flashing"
+                                    processUpdateFirmwareJobFinished(firmwareRow.updateFirmwareJobId, "Update Firmware failed: " + error_string, error_string)
                                 }
-                                coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
-                                flashStatus.visible = true
-                                activeFirmware = flashStatus
                             }
                         }
 
-                        function initUpdateFirmwareJob(payload) {
-                            if (payload.hasOwnProperty("job_id")) {
-                                firmwareRow.updateFirmwareJobId = payload.job_id
-
-                            } else {
-                                statusText.text = "Download failed: " + payload.error_string
-                                flashingInProgress = false
-                            }
+                        function processUpdateFirmwareJobProgress(status, progress) {
+                            statusText.text = status
+                            fillBar.width = Qt.binding(() => barBackground.width * progress) // must be bound in case of resize
                         }
 
-                        function processUpdateFirmwareJobUpdate(payload) {
-                            if (payload.job_id !== firmwareRow.updateFirmwareJobId) {
-                                return
+                        function processUpdateFirmwareJobFinished(status, error_string) {
+                            if (error_string.length !== 0) {
+                                notifyFwUpdateFailed(error_string)
                             }
 
-                            switch (payload.job_type) {
-                            case "download_progress":
-                                switch (payload.job_status) {
-                                case "running":
-                                    switch (payload.total) {
-                                    case -1:
-                                        statusText.text = "Downloading... " + payload.complete + "bytes downloaded"
-                                        fillBar.width = (barBackground.width * .25) * (payload.complete / 121528)
-                                        break
-                                    default:
-                                        if (payload.total > 0) {
-                                            var progress = payload.complete / payload.total
-                                        } else {
-                                            progress = 0;
-                                        }
-
-                                        statusText.text = "Downloading... " + (100 * (progress)).toFixed(0) + "% complete"
-                                        fillBar.width = (barBackground.width * .25) * (progress)
-                                        break
-                                    }
-                                    break;
-                                case "failure":
-                                    statusText.text = "Download failed: " + payload.error_string
-                                    break;
-                                }
-                                break;
-                            case "prepare":
-                                switch (payload.job_status) {
-                                case "running":
-                                    statusText.text = "Preparing..."
-                                    fillBar.width = barBackground.width * .25
-                                    break;
-                                case "failure":
-                                    statusText.text = "Preparation failed: " + payload.error_string
-                                    break;
-                                }
-                                break;
-                            case "backup_progress":
-                                switch (payload.job_status) {
-                                case "running":
-                                    statusText.text = "Backing up firmware... "
-                                    switch (payload.total) {
-                                    case -1:
-                                        if (payload.complete > -1 ) {
-                                            statusText.text += payload.complete + " chunks complete"
-                                        }
-                                        fillBar.width = barBackground.width * .5
-                                        break
-                                    default:
-                                        statusText.text += (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
-                                        fillBar.width = (barBackground.width * .5) + (barBackground.width * .25) * (payload.complete / payload.total)
-                                        break
-                                    }
-                                    break;
-                                case "failure":
-                                    statusText.text = "Preparation failed: " + payload.error_string
-                                    break;
-                                }
-                                break;
-                            case "flash_progress":
-                                switch (payload.job_status) {
-                                case "running":
-                                    statusText.text = "Flashing firmware... "
-                                    if (payload.total > -1) {
-                                        statusText.text += "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
-                                        fillBar.width = (barBackground.width * .75) + (barBackground.width * .25) * (payload.complete / payload.total)
-                                    } else {
-                                        fillBar.width = barBackground.width * .75
-                                    }
-                                    break;
-                                case "failure":
-                                    statusText.text = "Flashing failed: " + payload.error_string
-                                    break;
-                                }
-                                break;
-                            case "restore_progress":
-                                switch (payload.job_status) {
-                                case "running":
-                                    statusText.text = "Restoring firmware... "
-                                    if (payload.total > -1) {
-                                        statusText.text += "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
-                                        fillBar.width = (barBackground.width * .75) + (barBackground.width * .25) * (payload.complete / payload.total)
-                                    } else {
-                                        fillBar.width = barBackground.width * .75
-                                    }
-                                    break;
-                                case "failure":
-                                    statusText.text = "Restoration failed: " + payload.error_string
-                                    break;
-                                }
-                                break;
-                            case "finished":
-                                switch (payload.job_status) {
-                                case "unsuccess":
-                                case "failure":
-                                    notifyFwUpdateFailed(payload.error_string)
-                                    resetState()
-                                    description.text = "Firmware installation failed: " + payload.error_string
-                                    flashingInProgress = false
-                                    break
-                                case "success":
-                                    resetState()
-                                    description.text = "Firmware installation succeeded"
-                                    flashingInProgress = false
-                                    break
-                                }
-                                break;
-                            default:
-                                break;
-                            }
+                            resetState()
+                            description.text = status
+                            flashingInProgress = false
+                            activeFirmware = null
+                            firmwareRepeater.resetDescriptions.connect(resetDescription)
                         }
 
                         ColumnLayout {
