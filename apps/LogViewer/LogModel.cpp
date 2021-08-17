@@ -274,12 +274,19 @@ LogItem* LogModel::parseLine(const QString &line)
         item->message = line;
     }
 
-    if (line.isEmpty() || item->timestamp.isNull()) {
+    if (item->timestamp.isNull()) {
         item->timestamp = previousTimestamp_;
+    }
+    if (item->pid.isNull()) {
         item->pid = previousPid_;
+    }
+    if (item->tid.isNull()) {
         item->tid = previousTid_;
+    }
+    if (item->level == LogLevel::LevelUnknown) {
         item->level = previousLevel_;
     }
+
     return item;
 }
 
