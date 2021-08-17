@@ -128,31 +128,20 @@ void BluetoothLowEnergyController::discoverServiceDetails()
     for (const QBluetoothUuid &serviceUuid : services) {
         addDiscoveredService(serviceUuid);
     }
-    checkServiceDetailsDiscovery();
+    for (const auto &service : discoveredServices_) {
+        if (service.second->state() == QLowEnergyService::DiscoveryRequired) {
+            qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";
+            service.second->discoverDetails();
+        }
+    }
 }
 
 void BluetoothLowEnergyController::checkServiceDetailsDiscovery()
 {
     bool allDiscovered = true;
     for (const auto &service : discoveredServices_) {
-        switch (service.second->state()) {
-            case QLowEnergyService::InvalidService:
-                break;
-            case QLowEnergyService::DiscoveryRequired:
-                // TODO: decide what to do when discovery fails
-                if (deleteLater_ == false) {    // if discovery fails, it returns to DiscoveryRequired, which can loop here
-                    qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";
-                    service.second->discoverDetails();
-                    allDiscovered = false;
-                }
-                break;
-            case QLowEnergyService::DiscoveringServices:
-                allDiscovered = false;
-                break;
-            case QLowEnergyService::ServiceDiscovered:
-                break;
-            case QLowEnergyService::LocalService:
-                break;
+        if (service.second->state() == QLowEnergyService::DiscoveringServices) {
+            allDiscovered = false;
         }
     }
     if (allDiscovered && allDiscovered_ == false) {
