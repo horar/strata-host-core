@@ -402,21 +402,38 @@ void Flasher::startBootloaderFinished(int status)
     qCInfo(logCategoryFlasher) << platform_ << "Switched to bootloader (version '"
                                << platform_->bootloaderVer() << "').";
 
-    // Operation SwitchToBootloader has status set to ALREADY_IN_BOOTLOADER (1) if board was
-    // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
+    // Operation 'SwitchToBootloader' has status set to 'ALREADY_IN_BOOTLOADER' (1) if platform was
+    // already in bootloader mode, otherwise status has default value 'DEFAULT_STATUS' (INT_MIN).
     if (status == operation::DEFAULT_STATUS) {
         if (finalAction_ == FinalAction::PreservePlatformState) {
-            // Platform had been booted into application before and 'finalAction_' is 'PreservePlatformState'
-            // so add operation for start application.
-            addStartApplicationOperation();
+            // Platform had been booted into application before and 'finalAction_' is
+            // 'PreservePlatformState' so add operation for start application.
+            switch (activity_) {
+            case FlasherActivity::FlashFirmware :
+            case FlasherActivity::BackupFirmware :
+            case FlasherActivity::SetFwClassId :
+                addStartApplicationOperation();
+                break;
+            case FlasherActivity::FlashBootloader :
+                // Do nothing (platform has no application and this 'activity_' already contains 'Identify' operation).
+                break;
+            }
         }
-
         emit devicePropertiesChanged();
     } else if (status == operation::ALREADY_IN_BOOTLOADER) {
-        if (activity_ == FlasherActivity::FlashFirmware && finalAction_ == FinalAction::PreservePlatformState) {
-            addIdentifyOperation(true);
+        if (finalAction_ == FinalAction::PreservePlatformState) {
+            switch (activity_) {
+            case FlasherActivity::FlashFirmware :
+                addIdentifyOperation(true);
+                break;
+            case FlasherActivity::FlashBootloader :
+            case FlasherActivity::BackupFirmware :
+            case FlasherActivity::SetFwClassId :
+                // Do nothing - firmware won't be changed (and 'FlashBootloader' already contains 'Identify' operation).
+                break;
+            }
         }
-    }
+    }    
 
     runNextOperation();
 }
