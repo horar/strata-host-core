@@ -11,7 +11,6 @@ import tech.strata.signals 1.0
 import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -244,38 +243,6 @@ Item {
                             Notifications.currentUser = Constants.GUEST_USER_ID
                             NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                         }
-                    }
-                }
-            }
-
-            Button {
-                id: serverChange
-                enabled: sdsModel.urls.testAuthServer !== ""
-                onClicked: {
-                    if (Rest.url !== sdsModel.urls.authServer) {
-                        Rest.url = sdsModel.urls.authServer
-                    } else {
-                        Rest.url = sdsModel.urls.testAuthServer
-                    }
-                    Signals.serverChanged()
-                }
-
-                Component.onCompleted: {
-                    setButtonText()
-                }
-
-                function setButtonText () {
-                    if (Rest.url !== sdsModel.urls.authServer ) {
-                        text = "Switch to Prod Auth Server"
-                    } else {
-                        text = "Switch to Test Auth Server"
-                    }
-                }
-
-                Connections {
-                    target: Signals
-                    onServerChanged: {
-                        serverChange.setButtonText()
                     }
                 }
             }
