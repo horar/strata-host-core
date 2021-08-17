@@ -84,7 +84,7 @@ protected:
     bool createSerialDevice();
 
     const int deviceNumber_;
-    unsigned int openRetries_;
+    unsigned int openCount_;
     platform::PlatformPtr platform_;
 };
 

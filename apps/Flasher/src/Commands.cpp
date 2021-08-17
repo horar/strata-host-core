@@ -10,8 +10,7 @@
 
 namespace strata {
 
-constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
-constexpr unsigned int OPEN_MAX_RETRIES(5);
+constexpr int OPEN_MAX_RETRIES(4);
 
 using device::SerialDevice;
 
@@ -75,7 +74,9 @@ void ListCommand::process() {
 // DEVICE command
 
 DeviceCommand::DeviceCommand(int deviceNumber) :
-    deviceNumber_(deviceNumber), openRetries_(0) { }
+    deviceNumber_(deviceNumber),
+    openCount_(0)
+{ }
 
 // Destructor must be defined due to unique pointer to incomplete type.
 DeviceCommand::~DeviceCommand() { }
@@ -95,7 +96,7 @@ bool DeviceCommand::createSerialDevice() {
     }
 
     const QByteArray deviceId = SerialDevice::createUniqueHash(name); // no scanner prefix in deviceId, because there is no scanner
-    device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
+    device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, OPEN_MAX_RETRIES);
     platform_ = std::make_shared<platform::Platform>(device);
 
     connect(platform_.get(), &platform::Platform::opened, this, &DeviceCommand::handlePlatformOpened, Qt::QueuedConnection);
@@ -107,16 +108,18 @@ bool DeviceCommand::createSerialDevice() {
 void DeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
 
-    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
-        ++openRetries_;
+    if (errCode == device::Device::ErrorCode::DeviceFailedToOpen ||
+        errCode == device::Device::ErrorCode::DeviceFailedToOpenGoingToRetry)
+    {
+        ++openCount_;
         QString errorMessage(QStringLiteral("Cannot open board (serial device) "));
         errorMessage.append(platform_->deviceName());
         errorMessage.append(QStringLiteral(", attempt "));
-        errorMessage.append(QString::number(openRetries_));
+        errorMessage.append(QString::number(openCount_));
         errorMessage.append(QStringLiteral(" of "));
-        errorMessage.append(QString::number(OPEN_MAX_RETRIES));
+        errorMessage.append(QString::number(OPEN_MAX_RETRIES + 1));
 
-        if (openRetries_ >= OPEN_MAX_RETRIES) {
+        if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
             qCCritical(logCategoryFlasherCli).noquote() << errorMessage;
             emit finished(EXIT_FAILURE);
             return;
@@ -140,7 +143,7 @@ void FlasherCommand::process() {
         return;
     }
 
-    platform_->open(DEVICE_CHECK_INTERVAL);
+    platform_->open();
 }
 
 void FlasherCommand::handlePlatformOpened() {
@@ -177,7 +180,7 @@ void InfoCommand::process() {
         return;
     }
 
-    platform_->open(DEVICE_CHECK_INTERVAL);
+    platform_->open();
 }
 
 void InfoCommand::handlePlatformOpened() {
