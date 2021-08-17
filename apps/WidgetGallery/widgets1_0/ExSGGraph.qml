@@ -628,7 +628,7 @@ Item {
                         // index and points array to store different curve points near the mouse
                         let index = []
                         let curvePoints = []
-                        let diff = 1e10 // large default value
+                        let diff = Infinity // large default value
                         let closestIndex = 0
                         // loop over all the curves and use binary search to find the closest points by the X axis
                         for (let i = 0; i < pointGraph.count; i++) {
