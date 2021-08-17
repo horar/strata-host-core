@@ -82,15 +82,11 @@ ColumnLayout {
                             debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
                         }
 
-                        validator: RegExpValidator {
-                            regExp: {
-                                switch(modelData.type) {
-                                    case "int": return /^([1-9][0-9]*)|^([0])$/
-                                    case "string": return /[0-9A-Za-z_]*/
-                                    case "double": return /(([1-9][0-9]*)|(^([0])))[.]\d{0,2}/
-                                }
-                            }
+                        validator: switch(modelData.type) {
+                            case "int": return intValid
+                            case "double": return doubleValid
                         }
+
                         focus: true
 
                         function isJson(str) {
@@ -123,5 +119,14 @@ ColumnLayout {
                 }
             }
         }
+    }
+
+    IntValidator {
+        id: intValid
+    }
+
+    DoubleValidator {
+        id: doubleValid
+        decimals: 2
     }
 }

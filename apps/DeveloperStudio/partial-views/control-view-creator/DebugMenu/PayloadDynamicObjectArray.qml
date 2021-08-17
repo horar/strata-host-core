@@ -113,7 +113,6 @@ ColumnLayout {
                     }
 
                     SGText {
-                        id: labelText
                         font.bold: true
                         text: "value"
                     }
@@ -141,9 +140,8 @@ ColumnLayout {
                                 validator: RegExpValidator {
                                     regExp: {
                                         switch(comboBox.currentText) {
-                                            case "int": return /^([1-9][0-9]*)|^([0])$/
-                                            case "string": return /[0-9a-zA-Z_]*/
-                                            case "double": return /(([1-9][0-9]*)|(^([0])))[.]\d{0,2}/
+                                            case "int": return intValid
+                                            case "double": return doubleValid
                                         }
                                     }
                                 }
@@ -204,5 +202,14 @@ ColumnLayout {
 
     ListModel {
         id: listModel
+    }
+
+    IntValidator {
+        id: intValid
+    }
+
+    DoubleValidator {
+        id: doubleValid
+        decimals: 2
     }
 }

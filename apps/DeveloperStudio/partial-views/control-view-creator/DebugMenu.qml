@@ -7,7 +7,7 @@ import tech.strata.sgwidgets 0.9
 import tech.strata.signals 1.0
 import tech.strata.commoncpp 1.0
 
-import "DebugMenu"
+import "./DebugMenu"
 
 Rectangle {
     id: debugMenuRoot
@@ -29,7 +29,7 @@ Rectangle {
                 const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
 
                 checkAPI(jsonObject)
-                if (errorString !== "") {
+                if (debugMenuRoot.errorString !== "") {
                     return
                 }
                 debugMenuRoot.json = jsonObject
@@ -52,6 +52,8 @@ Rectangle {
     }
 
     ColumnLayout {
+        visible: !errorLayout.visible
+        spacing: 0
         anchors {
             margins: 10
             fill: debugMenuRoot
@@ -61,13 +63,38 @@ Rectangle {
             id: tabBar
             Layout.fillWidth: true
             Layout.preferredHeight: 35
+            spacing: 0
 
             TabButton {
                 text: "Notifications"
+                background: Rectangle {
+                    color: tabBar.currentIndex === 0 ? "lightGrey" : mouseNotifArea.containsMouse ? "grey" : "transparent"
+                    MouseArea {
+                        id: mouseNotifArea
+                        hoverEnabled: true
+                        anchors.fill: parent
+
+                        onClicked: {
+                            tabBar.currentIndex = 0
+                        }
+                    }
+                }
             }
 
             TabButton {
                 text: "Commands"
+                background: Rectangle {
+                    color: tabBar.currentIndex === 1 ? "lightGrey" : mouseCommandArea.containsMouse ? "grey" : "transparent"
+                    MouseArea {
+                        id: mouseCommandArea
+                        hoverEnabled: true
+                        anchors.fill: parent
+
+                        onClicked: {
+                            tabBar.currentIndex = 1
+                        }
+                    }
+                }
             }
         }
 
@@ -163,6 +190,48 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    ColumnLayout {
+        id: errorLayout
+        visible: debugMenuRoot.errorString.length > 0
+        anchors.fill: debugMenuRoot
+
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
+        SGIcon {
+            id: errorIcon
+            source: "qrc:/sgimages/exclamation-circle.svg"
+            Layout.preferredWidth: 50
+            height: Layout.preferredWidth
+            iconColor: "grey"
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.preferredHeight: 10
+            Layout.fillWidth: true
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+
+            Text {
+               text: errorString
+               font.pixelSize: 13 * 1.1
+               wrapMode: Text.WordWrap
+               anchors.centerIn: parent
+            }
+        }
+
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
         }
     }
 

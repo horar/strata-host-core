@@ -44,16 +44,20 @@ Item {
                 clip: true
                 focus: true
                 selectByMouse: true
-                validator: RegExpValidator {
-                    regExp: {
-                        switch(type) {
-                            case "int": return /^([1-9][0-9]*)|^([0])$/
-                            case "string": return /[0-9A-Za-z_]*/
-                            case "double": return /(([1-9][0-9]*)|(^([0])))[.]\d{0,2}/
-                        }
-                    }
+                validator: switch(type) {
+                    case "int": return intValid
+                    case "double": return doubleValid
                 }
             }
         }
+    }
+
+    IntValidator {
+        id: intValid
+    }
+
+    DoubleValidator {
+        id: doubleValid
+        decimals: 2
     }
 }
