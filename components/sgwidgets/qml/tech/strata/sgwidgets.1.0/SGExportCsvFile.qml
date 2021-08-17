@@ -255,6 +255,7 @@ Popup {
 
         onAccepted: {
             folderPath.text = filePath.fileUrl
+            csvModel.folderPath = folderPath.text
             close()
         }
     }
@@ -277,8 +278,8 @@ Popup {
        }
     }
 
-    function updateMap(name, data) {
-        csvModel.updateMap(name, data)
+    function updateTableFromView(data, exportOnAdd) {
+        csvModel.updateTableFromControlView(data, exportOnAdd)
     }
 
 

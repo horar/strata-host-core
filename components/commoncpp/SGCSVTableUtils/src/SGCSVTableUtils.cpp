@@ -64,7 +64,7 @@ void SGCSVTableUtils::createheaders(QStringList headers)
     _map.insert(rowCount(), headerMap);
 }
 
-void SGCSVTableUtils::updateMap(QString name, QVariant data)
+void SGCSVTableUtils::updateTableFromControlView(QString name, QVariant data)
 {
     if (checkIfColumnFilledOut(_map,rowCount()))
     {
@@ -94,17 +94,16 @@ bool SGCSVTableUtils::checkIfColumnFilledOut(QMap<int,QMap<int, QString>> map, i
     return false;
 }
 
-void SGCSVTableUtils::writeToPath(QString folderPath)
+void SGCSVTableUtils::writeToPath()
 {
     SGUtilsCpp _utils;
-    QUrl url = _utils.joinFilePath(folderPath, _cmdName+".csv");
+    QUrl url = _utils.joinFilePath(_folderPath, _cmdName+".csv");
     QString path = _utils.urlToLocalFile(url);
     _utils.atomicWrite(path, exportModelToCSV());
 }
 
 void SGCSVTableUtils::importTableFromFile(QString folderPath)
 {
-    qDebug() << "called";
     clearBackingModel();
     beginResetModel();
     _map.clear();
@@ -119,4 +118,16 @@ void SGCSVTableUtils::importTableFromFile(QString folderPath)
         }
         _map.insert(i, _dataMap);
     }
+}
+
+void SGCSVTableUtils::writeLineToTable(QMap<int, QString> data) {
+    QString textDataRow;
+    for (int i = 0; i < data.count(); i++) {
+        textDataRow += data.take(i)+";";
+    }
+    textDataRow += "\n";
+    SGUtilsCpp _utils;
+    QUrl url = _utils.joinFilePath(_folderPath, _cmdName+".csv");
+    QString path = _utils.urlToLocalFile(url);
+    _utils.atomicWrite(path, textDataRow);
 }

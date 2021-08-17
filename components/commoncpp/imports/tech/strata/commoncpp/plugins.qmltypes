@@ -411,6 +411,8 @@ Module {
         exportMetaObjectRevisions: [0]
         Property {name: "headers"; type: "QStringList"}
         Property {name: "cmdName"; type: "string"}
+        Property {name: "folderPath"; type: "string"}
+
         Enum {
             name: "CSVTableRole"
             values: {
@@ -419,9 +421,9 @@ Module {
             }
         }
         Method {
-            name: "updateMap"
-            Parameter {name: "name"; type: "string"}
-            Parameter {name: "data"; type: "QVariant"}
+            name: "updateTableFromControlView"
+            Parameter {name: "data"; type: "QMap<int,string>"}
+            Parameter {name: "exportOnAdd"; type: "bool"}
         }
         Method {
             name: "writeToPath"
@@ -432,6 +434,11 @@ Module {
             Parameter {name: "folderPath"; type: "string"}
         }
 
+        Method {
+            name: "writeLineToTable"
+            Parameter {name: "data"; type: "QMap<int,string>"
+        }
+
         Signal {
             name: "headersChanged"
         }
@@ -440,6 +447,9 @@ Module {
         }
         Signal {
             name: "clearBackingModel"
+        }
+        Signal {
+            name: "folderPathChanged"
         }
     }
     Component {

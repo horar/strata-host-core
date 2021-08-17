@@ -11,6 +11,7 @@ class SGCSVTableUtils: public QAbstractTableModel
     Q_OBJECT
     Q_PROPERTY(QStringList headers READ headers WRITE setHeaders NOTIFY headersChanged)
     Q_PROPERTY(QString cmdName READ cmdName WRITE setCmdName NOTIFY cmdNameChanged)
+    Q_PROPERTY(QString folderPath READ folderPath WRITE setFolderPath NOTIFY folderPathChanged)
 public:
 
     enum CSVTableRole {
@@ -19,6 +20,10 @@ public:
     };
 
     explicit SGCSVTableUtils(QObject *parent = nullptr);
+    QString folderPath() const
+    {
+        return _folderPath;
+    }
     QStringList headers() const
     {
         return _headers;
@@ -33,6 +38,13 @@ public:
         {
             _cmdName = cmdName;
             emit cmdNameChanged();
+        }
+    }
+    void setFolderPath(QString folderPath)
+    {
+        if (_folderPath != folderPath) {
+            _folderPath = folderPath;
+            emit folderPathChanged();
         }
     }
     void setHeaders(QStringList headers)
@@ -52,14 +64,15 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     void createheaders(QStringList headers);
-    bool checkIfColumnFilledOut(QMap<int,QMap<int,QString>> map, int row);
-    Q_INVOKABLE void updateMap(QString name, QVariant data);
     QString exportModelToCSV();
-    Q_INVOKABLE void writeToPath(QString folderPath);
+    Q_INVOKABLE void updateTableFromControlView(QMap<int, QString> data, bool exportOnAdd);
+    Q_INVOKABLE void writeToPath();
     Q_INVOKABLE void importTableFromFile(QString folderPath);
+    Q_INVOKABLE void writeLineToTable(QMap<int, QString> data);
 signals:
     void headersChanged();
     void cmdNameChanged();
+    void folderPathChanged();
     void clearBackingModel();
 
 private:
@@ -67,6 +80,7 @@ private:
     QMap<int,QString> _dataMap;
     QStringList _headers;
     QString _cmdName;
+    QString _folderPath;
     int _rows = 0;
 };
 
