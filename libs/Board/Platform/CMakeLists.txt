@@ -20,6 +20,8 @@ add_library(${PROJECT_NAME}
     src/Tcp/TcpDevice.cpp
     src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
     src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
+    src/BluetoothLowEnergy/BluetoothLowEnergyControllerWatcher.cpp
+    src/BluetoothLowEnergy/BluetoothLowEnergyController.cpp
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp
     src/Operations/Commands/CmdRequestPlatformId.cpp
@@ -54,6 +56,8 @@ add_library(${PROJECT_NAME}
     include/Tcp/TcpDevice.h
     include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
     include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
+    include/BluetoothLowEnergy/BluetoothLowEnergyControllerWatcher.h
+    include/BluetoothLowEnergy/BluetoothLowEnergyController.h
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h
     include/Operations/PlatformOperations.h
