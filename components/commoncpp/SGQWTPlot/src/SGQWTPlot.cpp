@@ -906,7 +906,7 @@ void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int 
     return;
 }
 
-// pass the X value of a point to this function and recieve the index of that point in the curve
+// Given any value from the X axis of the graph, find the point in the curve with the nearest X value and return its index
 int SGQWTPlotCurve::closestXAxisPointIndex(double xVal) {
      double diff;
      QPointF currentPoint = QPointF(0,0);
