@@ -6,7 +6,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
@@ -377,76 +376,25 @@ void HostControllerService::sendPlatformMessageToClients(const QString &platform
                                 strataRPC::ResponseType::PlatformMessage);
 }
 
-void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
-                                                 const QByteArray &clientId,
-                                                 FirmwareUpdateController::UpdateProgress progress)
-{
-    QString operation;
-    switch (progress.operation) {
-        case FirmwareUpdateController::UpdateOperation::Download:
-            operation = "download";
-            break;
-        case FirmwareUpdateController::UpdateOperation::Prepare:
-            operation = "prepare";
-            break;
-        case FirmwareUpdateController::UpdateOperation::Backup:
-            operation = "backup";
-            break;
-        case FirmwareUpdateController::UpdateOperation::Flash:
-            operation = "flash";
-            break;
-        case FirmwareUpdateController::UpdateOperation::Restore:
-            operation = "restore";
-            break;
-        case FirmwareUpdateController::UpdateOperation::Finished:
-            operation = "finished";
-            break;
-    }
-
-    QString status;
-    switch (progress.status) {
-        case FirmwareUpdateController::UpdateStatus::Running:
-            status = "running";
-            break;
-        case FirmwareUpdateController::UpdateStatus::Success:
-            status = "success";
-            break;
-        case FirmwareUpdateController::UpdateStatus::Unsuccess:
-            status = "unsuccess";
-            break;
-        case FirmwareUpdateController::UpdateStatus::Failure:
-            status = "failure";
-            break;
-    }
-
-    QJsonObject payload;
-    payload.insert("device_id", QLatin1String(deviceId));
-    payload.insert("operation", operation);
-    payload.insert("status", status);
-    payload.insert("complete", progress.complete);
-    payload.insert("total", progress.total);
-    payload.insert("download_error", progress.downloadError);
-    payload.insert("prepare_error", progress.prepareError);
-    payload.insert("backup_error", progress.backupError);
-    payload.insert("flash_error", progress.flashError);
-    payload.insert("restore_error", progress.restoreError);
-
-    strataServer_->notifyClient(clientId, "firmware_update", payload,
-                                strataRPC::ResponseType::Notification);
-
-    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
-        progress.status == FirmwareUpdateController::UpdateStatus::Success) {
-        // If firmware was updated broadcast new platforms list
-        // to indicate the firmware version has changed.
-        strataServer_->notifyAllClients("connected_platforms",
-                                        platformController_.createPlatformsList());
-    }
-}
-
 void HostControllerService::processCmdRequestHcsStatus(const strataRPC::Message &message)
 {
     strataServer_->notifyClient(message, QJsonObject{{"status", "hcs_active"}},
                                 strataRPC::ResponseType::Response);
+}
+
+void HostControllerService::processCmdDynamicPlatformList(const strataRPC::Message &message)
+{
+    strataServer_->notifyClient(message,
+                                QJsonObject{{"message", "Dynamic platform list requested."}},
+                                strataRPC::ResponseType::Response);
+
+    storageManager_.requestPlatformList(message.clientID);
+
+    strataServer_->notifyClient(message.clientID, "connected_platforms",
+                                platformController_.createPlatformsList(),
+                                strataRPC::ResponseType::Notification);
+
+    currentClient_ = message.clientID;  // Remove this when platforms are mapped to their clients.
 }
 
 void HostControllerService::processCmdLoadDocuments(const strataRPC::Message &message)
@@ -498,21 +446,6 @@ void HostControllerService::processCmdDownloadFiles(const strataRPC::Message &me
 
     strataServer_->notifyClient(message, QJsonObject{{"message", "File download requested."}},
                                 strataRPC::ResponseType::Response);
-}
-
-void HostControllerService::processCmdDynamicPlatformList(const strataRPC::Message &message)
-{
-    strataServer_->notifyClient(message,
-                                QJsonObject{{"message", "Dynamic platform list requested."}},
-                                strataRPC::ResponseType::Response);
-
-    storageManager_.requestPlatformList(message.clientID);
-
-    strataServer_->notifyClient(message.clientID, "connected_platforms",
-                                platformController_.createPlatformsList(),
-                                strataRPC::ResponseType::Notification);
-
-    currentClient_ = message.clientID;  // Remove this when platforms are mapped to their clients.
 }
 
 void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &message)
@@ -577,4 +510,70 @@ void HostControllerService::processCmdSendPlatformMessage(const strataRPC::Messa
 {
     platformController_.sendMessage(message.payload.value("device_id").toString().toUtf8(),
                                     message.payload.value("message").toString().toUtf8());
+}
+
+void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
+                                                 const QByteArray &clientId,
+                                                 FirmwareUpdateController::UpdateProgress progress)
+{
+    QString operation;
+    switch (progress.operation) {
+        case FirmwareUpdateController::UpdateOperation::Download:
+            operation = "download";
+            break;
+        case FirmwareUpdateController::UpdateOperation::Prepare:
+            operation = "prepare";
+            break;
+        case FirmwareUpdateController::UpdateOperation::Backup:
+            operation = "backup";
+            break;
+        case FirmwareUpdateController::UpdateOperation::Flash:
+            operation = "flash";
+            break;
+        case FirmwareUpdateController::UpdateOperation::Restore:
+            operation = "restore";
+            break;
+        case FirmwareUpdateController::UpdateOperation::Finished:
+            operation = "finished";
+            break;
+    }
+
+    QString status;
+    switch (progress.status) {
+        case FirmwareUpdateController::UpdateStatus::Running:
+            status = "running";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Success:
+            status = "success";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Unsuccess:
+            status = "unsuccess";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Failure:
+            status = "failure";
+            break;
+    }
+
+    QJsonObject payload;
+    payload.insert("device_id", QLatin1String(deviceId));
+    payload.insert("operation", operation);
+    payload.insert("status", status);
+    payload.insert("complete", progress.complete);
+    payload.insert("total", progress.total);
+    payload.insert("download_error", progress.downloadError);
+    payload.insert("prepare_error", progress.prepareError);
+    payload.insert("backup_error", progress.backupError);
+    payload.insert("flash_error", progress.flashError);
+    payload.insert("restore_error", progress.restoreError);
+
+    strataServer_->notifyClient(clientId, "firmware_update", payload,
+                                strataRPC::ResponseType::Notification);
+
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
+        progress.status == FirmwareUpdateController::UpdateStatus::Success) {
+        // If firmware was updated broadcast new platforms list
+        // to indicate the firmware version has changed.
+        strataServer_->notifyAllClients("connected_platforms",
+                                        platformController_.createPlatformsList());
+    }
 }
