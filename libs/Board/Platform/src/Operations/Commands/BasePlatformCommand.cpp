@@ -194,6 +194,10 @@ void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, unsigned msgN
 
 void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
+    if (errCode == device::Device::ErrorCode::NoError) {
+        return;
+    }
+
     responseTimer_.stop();
     qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;
 
