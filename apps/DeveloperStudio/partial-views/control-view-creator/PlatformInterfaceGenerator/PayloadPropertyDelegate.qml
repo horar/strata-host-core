@@ -6,26 +6,37 @@ import tech.strata.sgwidgets 1.0
 
 
 Rectangle {
+    id: payloadDelegateRoot
 
     Layout.preferredHeight: payloadContainer.implicitHeight
     Layout.preferredWidth: payloadContainer.implicitWidth
 
-    Layout.leftMargin: 20
+    Layout.leftMargin: 3
 
-    property var indexIs: 0
+    color: "transparent"
 
-    color: (indexIs === 4) || (indexIs === 6) ?  "light grey" : "transparent"
+    property var indexIs: propertyType.currentIndex
+    onIndexIsChanged: {
+        if(propertyType.currentIndex === 4 || propertyType.currentIndex === 6 ) {
+            if(color !== "#d3d3d3") {
+                return color = "#d3d3d3"
+            }
+            else return
+        }
+        else {
+            return
+        }
+    }
 
     ColumnLayout {
         id: payloadContainer
-       // anchors.fill: parent
         spacing: 5
 
         property ListModel subArrayListModel: model.array
         property ListModel subObjectListModel: model.object
 
         function changePropertyType(index, objectListModel, arrayListModel) {
-            indexIs = index
+//            indexIs = index
             if (index === 4) {
                 // static array
                 if (arrayListModel.count === 0) {
@@ -181,7 +192,6 @@ Rectangle {
                     type = payloadContainer.changePropertyType(index, payloadContainer.subObjectListModel, payloadContainer.subArrayListModel)
                     indexSelected = index
 
-                    console.log(indexIs, index)
                 }
             }
         }
@@ -195,6 +205,8 @@ Rectangle {
 
             delegate: PayloadArrayPropertyDelegate {
                 modelIndex: index
+                parentColor: payloadDelegateRoot.color
+
             }
         }
 
@@ -207,6 +219,7 @@ Rectangle {
 
             delegate: PayloadObjectPropertyDelegate {
                 modelIndex: index
+                parentColor: payloadDelegateRoot.color
             }
         }
     }

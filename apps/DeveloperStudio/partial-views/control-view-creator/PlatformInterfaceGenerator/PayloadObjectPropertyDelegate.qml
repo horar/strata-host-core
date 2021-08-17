@@ -3,21 +3,30 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Rectangle {
-
+    id: objectDelegateRoot
     implicitHeight: objectPropertyContainer.implicitHeight
     implicitWidth: objectPropertyContainer.implicitWidth
-    Layout.leftMargin: 20
-
+    Layout.leftMargin: 3
+    Layout.bottomMargin: 3
+    Layout.rightMargin: 3
 
     property int modelIndex
-    property int indexNum
-    color: (indexNum === 6) || (indexNum === 4)? "white" : "transparent"
+    property color parentColor
+
+    color: {
+        if ((propertyType.currentIndex === 6) || (propertyType.currentIndex === 4) ) {
+            if(parentColor == "#ffffff") {
+                return "#d3d3d3"
+            }
+            else return "#ffffff"
+        }
+        else {
+            return parentColor
+        }
+    }
 
     ColumnLayout {
         id: objectPropertyContainer
-
-        // anchors.fill: parent
-        //Layout.leftMargin: 20
         spacing: 5
 
         property ListModel parentListModel: model.parent
@@ -27,7 +36,9 @@ Rectangle {
         RowLayout {
             id: objectRowLayout
             Layout.preferredHeight: 30
-            Layout.leftMargin: 20
+            Layout.leftMargin: 3
+            Layout.rightMargin: 3
+            Layout.fillHeight: true
             spacing: 5
 
             RoundButton {
@@ -119,7 +130,6 @@ Rectangle {
                     } else {
                         currentIndex = indexSelected
                     }
-                    indexNum = currentIndex
                 }
 
                 onActivated: {
@@ -130,8 +140,6 @@ Rectangle {
 
                     type = payloadContainer.changePropertyType(index, objectPropertyContainer.subObjectListModel, objectPropertyContainer.subArrayListModel)
                     indexSelected = index
-                    indexNum = indexSelected
-
                 }
             }
         }
@@ -152,6 +160,7 @@ Rectangle {
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
+                            item.parentColor = Qt.binding(() => objectDelegateRoot.color)
                         }
                     }
                 }
@@ -173,6 +182,7 @@ Rectangle {
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
+                            item.parentColor = Qt.binding(() => objectDelegateRoot.color)
                         }
                     }
                 }

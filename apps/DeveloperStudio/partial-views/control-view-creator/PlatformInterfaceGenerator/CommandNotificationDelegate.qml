@@ -59,8 +59,8 @@ Rectangle {
 
             TextField {
                 id: cmdNotifName
-                Layout.fillWidth: true
                 Layout.preferredHeight: 30
+                Layout.preferredWidth: 200
                 selectByMouse: true
                 persistentSelection: true   // must deselect manually
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
@@ -171,14 +171,5 @@ Rectangle {
                 }
             }
         }
-
-        //        Rectangle {
-        //            id: hDivider
-        //            Layout.preferredHeight: 1
-        //            Layout.fillWidth: true
-        //            Layout.topMargin: 10
-        //            visible: index !== commandsListView.count - 1
-        //            color: "black"
-        //        }
     }
 }

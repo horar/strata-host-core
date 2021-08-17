@@ -4,20 +4,29 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
 
-    //    Layout.preferredHeight: 10
-    //    Layout.preferredWidth: 10
-    //    Layout.preferredHeight:arrayPropertyContainer.implicitHeight
-    //    Layout.preferredWidth: arrayPropertyContainer.implicitWidth
-
+    id: arrayDelegateRoot
     implicitHeight: arrayPropertyContainer.implicitHeight
     implicitWidth: arrayPropertyContainer.implicitWidth
-    Layout.leftMargin: 20
-    Layout.rightMargin: 20
+    Layout.leftMargin: 3
+    Layout.bottomMargin: 3
+    Layout.rightMargin: 3
 
     property int indexNum
     property int modelIndex
+    property color parentColor
 
-    color: (indexNum === 6) || (indexNum === 4) ? "white" : "transparent"
+    color: {
+        if ((indexNum === 6) || (indexNum === 4) ) {
+            console.log("color", parentColor, parentColor == "#ffffff")
+            if(parentColor == "#ffffff") {
+                return "#d3d3d3"
+            }
+            else return "#ffffff"
+        }
+        else {
+            return parentColor
+        }
+    }
 
     ColumnLayout {
         id: arrayPropertyContainer
@@ -29,9 +38,9 @@ Rectangle {
 
         RowLayout {
             id: arrayRowLayout
-            // anchors.fill: parent
             Layout.preferredHeight: 30
-            Layout.leftMargin: 20
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
             Layout.fillHeight: true
             spacing: 5
 
@@ -79,6 +88,7 @@ Rectangle {
 
             TypeSelectorComboBox {
                 id: propertyType
+
                 Component.onCompleted: {
                     if (indexSelected === -1) {
                         currentIndex = getIndexOfType(type)
@@ -118,6 +128,7 @@ Rectangle {
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
+                            item.parentColor = Qt.binding(() => arrayDelegateRoot.color)
                         }
                     }
                 }
@@ -139,6 +150,7 @@ Rectangle {
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
+                            item.parentColor = Qt.binding(() => arrayDelegateRoot.color)
                         }
                     }
                 }
@@ -166,7 +178,6 @@ Rectangle {
                 onClicked: {
                     arrayPropertyContainer.parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.parentListModel})
                     commandsListView.contentY += 40
-                    console.log("test", indexIs, index)
                 }
             }
         }

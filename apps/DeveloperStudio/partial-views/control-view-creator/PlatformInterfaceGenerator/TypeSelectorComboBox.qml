@@ -26,7 +26,7 @@ ComboBox {
         return -1;
     }
 
-    Layout.preferredWidth: 200
+    Layout.preferredWidth: 180
     Layout.preferredHeight: 30
     model: items
     textRole: "name"

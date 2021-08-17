@@ -20,36 +20,36 @@ Item {
     readonly property string jsonFileName: "platformInterface.json"
 
     readonly property var baseModel: ({
-        "commands": [],
-        "notifications": []
-    });
+                                          "commands": [],
+                                          "notifications": []
+                                      });
 
     readonly property var templateCommand: ({
-        "type": "cmd",
-        "name": "",
-        "valid": false,
-        "payload": [],
-        "editing": false
-    });
+                                                "type": "cmd",
+                                                "name": "",
+                                                "valid": false,
+                                                "payload": [],
+                                                "editing": false
+                                            });
 
     readonly property var templateNotification: ({
-        "type": "value",
-        "name": "",
-        "valid": false,
-        "payload": [
-            templatePayload
-        ],
-        "editing": false
-    });
+                                                     "type": "value",
+                                                     "name": "",
+                                                     "valid": false,
+                                                     "payload": [
+                                                         templatePayload
+                                                     ],
+                                                     "editing": false
+                                                 });
 
     readonly property var templatePayload: ({
-        "name": "", // The name of the property
-        "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
-        "indexSelected": 0,
-        "valid": false,
-        "array": [], // This is only filled if the type == "array"
-        "object": []
-    });
+                                                "name": "", // The name of the property
+                                                "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
+                                                "indexSelected": 0,
+                                                "valid": false,
+                                                "array": [], // This is only filled if the type == "array"
+                                                "object": []
+                                            });
 
     onVisibleChanged: {
         if (editor.fileTreeModel.url == "") {
@@ -546,11 +546,10 @@ Item {
             Repeater {
                 model: finishedModel
 
-                delegate: ColumnLayout {
+                delegate:  ColumnLayout {
                     id: commandColumn
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-
 
                     property ListModel commandModel: model.data
                     property bool isCommand: index === 0
@@ -569,6 +568,7 @@ Item {
                     /*****************************************
                     * This ListView corresponds to each command / notification
                     *****************************************/
+
                     ListView {
                         id: commandsListView
                         model: commandColumn.commandModel
@@ -576,7 +576,6 @@ Item {
                         Layout.fillHeight: true
                         Layout.maximumHeight: contentHeight
                         Layout.preferredHeight: contentHeight
-                        ScrollBar.vertical: ScrollBar {}
 
                         property var modelIndex: index
 
@@ -585,6 +584,7 @@ Item {
 
                         delegate: CommandNotificationDelegate {}
                     }
+
 
                     Button {
                         id: addCmdNotifButton
@@ -608,7 +608,7 @@ Item {
                             onClicked: {
                                 if (commandColumn.isCommand) {
                                     commandColumn.commandModel.append(templateCommand)
-                                     commandsListView.contentY += 210
+                                    commandsListView.contentY += 110
                                 } else {
                                     commandColumn.commandModel.append(templateNotification)
                                 }
@@ -624,6 +624,7 @@ Item {
                 }
             }
         }
+
 
         Text {
             Layout.alignment: Qt.AlignHCenter
