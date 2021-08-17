@@ -4,7 +4,6 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "ResourceLoader.h"
-#include "DebugMenuGenerator.h"
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
@@ -34,7 +33,6 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       programControllerManager_(new ProgramControllerManager(coreInterface_, this)),
       firmwareManager_(new FirmwareManager(coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
-      debugMenuGenerator_(new DebugMenuGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
@@ -54,7 +52,6 @@ SDSModel::~SDSModel()
     delete resourceLoader_;
     delete newControlView_;
     delete platformInterfaceGenerator_;
-    delete debugMenuGenerator_;
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
     delete programControllerManager_;
@@ -205,11 +202,6 @@ FirmwareManager *SDSModel::firmwareManager() const
 PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
 {
     return platformInterfaceGenerator_;
-}
-
-DebugMenuGenerator *SDSModel::debugMenuGenerator() const
-{
-    return debugMenuGenerator_;
 }
 
 VisualEditorUndoStack *SDSModel::visualEditorUndoStack() const

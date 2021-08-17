@@ -76,7 +76,8 @@ bool SciMockDevice::reopenMockDevice()
 
     if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
         mockDevice->mockSetOpenEnabled(true);
-        qCDebug(logCategorySci) << "Mock Device configured to open during next interval:" << deviceId_;
+        mockDevice->open();
+        qCDebug(logCategorySci) << "Mock Device reopened:" << deviceId_;
         emit canReopenMockDeviceChanged();
         return true;
     }
