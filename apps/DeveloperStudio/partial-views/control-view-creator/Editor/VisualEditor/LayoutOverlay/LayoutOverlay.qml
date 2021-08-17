@@ -18,6 +18,8 @@ LayoutContainer {
 
     property var multiItemTargetPrevX
     property var multiItemTargetPrevY
+    property var multiItemTargetPrevWidth
+    property var multiItemTargetPrevHeight
     property var multiItemTargetRectLimits: []
 
     onSourceItemChanged: {
@@ -28,16 +30,36 @@ LayoutContainer {
 
     Connections {
         target: visualEditor
+        enabled: layoutOverlayRoot.isSelected
 
         onMultiObjectsDeselectAll: {
             layoutOverlayRoot.isSelected = false
         }
 
+        onMultiObjectsResetTargets: {
+            rect.color = "transparent"
+        }
+
         onMultiObjectsDragged: {
-            if (layoutOverlayRoot.isSelected && objectInitiated != layoutOverlayRoot.objectName) {
+            if (objectInitiated != layoutOverlayRoot.objectName) {
                 rect.color = "red"
                 rect.x += x
                 rect.y += y
+            }
+        }
+
+        onMultiObjectsResizeDragged: {
+            if (objectInitiated != layoutOverlayRoot.objectName) {
+                rect.color = "red"
+                rect.width += width
+                rect.height += height
+
+                if (rect.width < 1) {
+                    rect.width = overlayContainer.columnSize
+                }
+                if (rect.height < 1) {
+                    rect.height = overlayContainer.rowSize
+                }
             }
         }
     }
@@ -256,14 +278,23 @@ LayoutContainer {
                 cursorShape: Qt.SizeFDiagCursor
                 drag.target: this // this determines which object will be moved in a drag
                 Drag.active: drag.active
-                Drag.hotSpot.x: width/2
-                Drag.hotSpot.y: height/2
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
 
                 property point startPoint
+
+                property int maxColumnsToTheRight
+                property int maxRowsDown
 
                 onPressedChanged: {
                     if (pressed) {
                         startPoint = Qt.point(mouseX, mouseY)
+                    }
+
+                    if (visualEditor.selectedMultiObjectsUuid.length > 0) {
+                        layoutOverlayRoot.multiItemTargetPrevWidth = rect.width
+                        layoutOverlayRoot.multiItemTargetPrevHeight = rect.height
+                        multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
                     }
                 }
 
@@ -276,14 +307,28 @@ LayoutContainer {
                     let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
                     colRow = Qt.point(Math.max(colRow.x, 1), Math.max(colRow.y, 1))
 
+                    // if actually resized, edit file
                     if (colRow.x !== layoutOverlayRoot.layoutInfo.columnsWide || colRow.y !== layoutOverlayRoot.layoutInfo.rowsTall) {
-                        // if actually resized, edit file
-                        visualEditor.functions.resizeItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
-                        console.log("Resized:", layoutOverlayRoot.objectName)
+                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                            var xOffset = colRow.x - layoutOverlayRoot.layoutInfo.columnsWide
+                            var yOffset = colRow.y - layoutOverlayRoot.layoutInfo.rowsTall
+                            if (xOffset !== 0 || yOffset !== 0) {
+                                xOffset = Math.min(xOffset, maxColumnsToTheRight)
+                                yOffset = Math.min(yOffset, maxRowsDown)
+                                visualEditor.functions.resizeGroup(xOffset, yOffset)
+                                console.log("Resized selected " + visualEditor.selectedMultiObjectsUuid.length + " items by (" + xOffset + "," + yOffset + ")")
+                            }
+                        } else {
+                            visualEditor.functions.resizeItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
+                            console.log("Resized:", layoutOverlayRoot.objectName)
+                        }
                     } else {
                         // reset mousearea position when it was dragged out of place but not enough to trigger above resize
                         x = 0
                         y = 0
+                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                            visualEditor.functions.resetTargets()
+                        }
                     }
                 }
 
@@ -296,6 +341,33 @@ LayoutContainer {
 
                         rect.width = Math.max(newPosition.x, overlayContainer.columnSize) // size must be >= one column, 1 row. no 0x0 or negative sizes
                         rect.height = Math.max(newPosition.y, overlayContainer.rowSize)
+
+                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                            const rightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
+                            const originalWidth = layoutOverlayRoot.layoutInfo.columnsWide * overlayContainer.columnSize
+                            maxColumnsToTheRight = rightLimit / overlayContainer.columnSize
+                            rect.width = Math.min(rect.width, originalWidth + rightLimit)
+
+                            const bottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
+                            const originalHeight = layoutOverlayRoot.layoutInfo.rowsTall * overlayContainer.rowSize
+                            maxRowsDown = bottomLimit / overlayContainer.rowSize
+                            rect.height = Math.min(rect.height, originalHeight + bottomLimit)
+
+                            const xOffset = rect.width - layoutOverlayRoot.multiItemTargetPrevWidth
+                            const yOffset = rect.height - layoutOverlayRoot.multiItemTargetPrevHeight
+
+                            if (layoutOverlayRoot.objectName === "") {
+                                layoutOverlayRoot.objectName = visualEditor.functions.getObjectPropertyValue(layoutOverlayRoot.sourceItem.layoutInfo.uuid, "id")
+                                layoutOverlayRoot.type = visualEditor.functions.getType(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                            }
+
+                            if (xOffset !== 0 || yOffset !== 0) {
+                                visualEditor.functions.resizeDragGroup(layoutOverlayRoot.objectName, xOffset, yOffset)
+                            }
+
+                            layoutOverlayRoot.multiItemTargetPrevWidth = rect.width
+                            layoutOverlayRoot.multiItemTargetPrevHeight = rect.height
+                        }
                     }
                 }
             }

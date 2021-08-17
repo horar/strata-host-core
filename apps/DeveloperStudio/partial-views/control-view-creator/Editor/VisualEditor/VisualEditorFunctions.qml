@@ -353,19 +353,35 @@ QtObject {
         saveFile()
     }
 
-    function resizeItem(uuid, newX, newY, addToUndoCommandStack = true) {
-        const oldX = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
-        const oldY = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
+    function resizeItem(uuid, newColumnsWide, newRowsTall, addToUndoCommandStack = true, save = true) {
+        if (newColumnsWide < 1 || newRowsTall < 1) {
+            return
+        }
 
-        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newX, "", false)
-        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newY, "", false)
+        const oldColumnsWide = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
+        const oldRowsTall = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
+
+        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newColumnsWide, "", false)
+        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newRowsTall, "", false)
 
         // undo/redo
         if (addToUndoCommandStack) {
-            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newX, newY, oldX, oldY)
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newColumnsWide, newRowsTall, oldColumnsWide, oldRowsTall)
         }
+        if (save) {
+            visualEditor.functions.saveFile(file, fileContents)
+        }
+    }
 
-        visualEditor.functions.saveFile(file, fileContents)
+    function resizeGroup(offsetX, offsetY) {
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                continue
+            }
+            resizeItem(obj.layoutInfo.uuid, obj.layoutInfo.columnsWide + offsetX, obj.layoutInfo.rowsTall + offsetY, true, false)
+        }
+        saveFile()
     }
 
     // returns object contents between tags
@@ -492,6 +508,15 @@ QtObject {
     // emits multiObjectsDragged signal to all layout items
     function dragGroup(objectInitiated, x, y) {
         visualEditor.multiObjectsDragged(objectInitiated, x, y)
+    }
+
+    // emits multiObjectsResizeDragged signal to all layout items
+    function resizeDragGroup(objectInitiated, width, height) {
+        visualEditor.multiObjectsResizeDragged(objectInitiated, width, height)
+    }
+
+    function resetTargets() {
+        visualEditor.multiObjectsResetTargets()
     }
 
     // calculates maximum offsets for multi-item target rectangle

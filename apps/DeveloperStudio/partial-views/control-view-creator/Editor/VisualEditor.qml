@@ -22,9 +22,12 @@ ColumnLayout {
     property string file: ""
     property string fileContents: ""
 
+    // multi-item selection/dragging/resizing
     property var selectedMultiObjectsUuid: []
     signal multiObjectsDragged(string objectInitiated, var x, var y)
+    signal multiObjectsResizeDragged(string objectInitiated, var width, var height)
     signal multiObjectsDeselectAll()
+    signal multiObjectsResetTargets()
 
     property alias loader: loader
     property alias functions: functions
