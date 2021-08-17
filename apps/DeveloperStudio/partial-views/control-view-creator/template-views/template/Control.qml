@@ -29,17 +29,11 @@ Item {
             TabButton {
                 id: basicButton
                 text: "Commands and Notifications"
-                onClicked: {
-                    controlContainer.currentIndex = 0
-                }
             }
 
             TabButton {
                 id: advancedButton
                 text: "Advanced View"
-                onClicked: {
-                    controlContainer.currentIndex = 1
-                }
             }
         }
 

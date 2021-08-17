@@ -695,8 +695,8 @@ UIBase { // start_uibase
         layoutInfo.rowsTall: 8
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 4
-        contentItem: CommandSimple {
-            id: cmdSimple_83e3e
+        contentItem: ViewCommunication {
+            property int type: 1
         }
     } // end_76037
 
@@ -707,8 +707,8 @@ UIBase { // start_uibase
         layoutInfo.rowsTall: 14
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 16
-        contentItem: PeriodicNotification {
-            id: periodNoti_3b7a6
+        contentItem: ViewCommunication {
+            property int type: 2
         }
     } // end_64a34
 
@@ -746,8 +746,8 @@ UIBase { // start_uibase
         layoutInfo.rowsTall: 7
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 34
-        contentItem: ConfigPeriodicNotification {
-            id: configPeriodNoti_6551b
+        contentItem: ViewCommunication {
+            property int type: 3
         }
     } // end_a20d8
 } // end_uibase
