@@ -617,6 +617,18 @@ Item {
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
 
+                Component.onCompleted: {
+                    let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                    curve.color = sgGraphExample.randomColor()
+
+                    let dataArray = []
+                    let i = 0
+                    for (i = 0; i <= 10; i++) {
+                        dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
+                    }
+                    curve.appendList(dataArray)
+                }
+
                 Item {
                     id: mouseCrosshair
                     x: pointGraph.mouseArea.mouseX
@@ -626,16 +638,16 @@ Item {
 
                     onXChanged: {
                         // index and points array to store different curve points near the mouse
-                        let index = []
+                        let index = 0
                         let curvePoints = []
                         let diff = Infinity // large default value
                         let closestIndex = 0
                         // loop over all the curves and use binary search to find the closest points by the X axis
                         for (let i = 0; i < pointGraph.count; i++) {
-                            index[i] = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
-                            if (index[i] !== -1) {
+                            index = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
+                            if (index !== -1) {
                                 // using the index, store that point in the curvePoints array
-                                curvePoints[i] = pointGraph.curve(i).at(index[i])
+                                curvePoints[i] = pointGraph.curve(i).at(index)
                                 let distance = Math.abs(closestValue.mouseValue.y - curvePoints[i].y)
                                 // distance is used to determine which of all the curves is closest to the mouse
                                 if (distance < diff) {
@@ -663,18 +675,6 @@ Item {
                     property int decimalsX: 1 // determines how many decimal points to show
                     property int decimalsY: 1
                     property point pos: pointGraph.mapToPosition(mouseCrosshair.closestPoint)
-                }
-
-                Component.onCompleted: {
-                    let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
-                    curve.color = sgGraphExample.randomColor()
-
-                    let dataArray = []
-                    let i = 0
-                    for (i = 0; i <= 10; i++) {
-                        dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
-                    }
-                    curve.appendList(dataArray)
                 }
             }
 
