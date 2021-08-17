@@ -33,16 +33,6 @@ UIBase { // start_uibase
         Help.registerTarget(configPeriodNotiHelp, "Configures the periodic notification" + " \"" + "my_cmd_simple_periodic" + "\" "+ "with a certain interval - indefinitely or with a certain run count. The Run State will turn on/off the notification and will need to be toggled to enable the notification when the Run Count expires.", 5, "BasicControlHelp")
     }
 
-    Item {
-        id: grayBoxHelpContainer
-        width: simpleCmdHandle.width + 10
-        height: root.height
-        anchors.right: parent.right
-        anchors.rightMargin: 20
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 0
-    }
-
     property var my_cmd_simple_periodic_text: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
@@ -84,6 +74,35 @@ UIBase { // start_uibase
             "dac": parseFloat(dacOutSlider.value.toFixed(2))
         }
     }
+
+    LayoutItem { // start_df650
+        id: mouseArea
+        layoutInfo.uuid: "df650"
+        layoutInfo.columnsWide: 40
+        layoutInfo.rowsTall: 42
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        // Mouse area filling the window
+        // When the user clicks anywhere on screen, the focus is changed, thus submitting any changed values
+        MouseArea {
+            id: containMouseArea
+            anchors.fill: parent
+
+            onClicked: {
+                forceActiveFocus()
+            }
+        }
+    } // end_df650
+
+    LayoutItem { // start_c3744
+        id: grayBoxHelpContainer
+        layoutInfo.uuid: "c3744"
+        layoutInfo.columnsWide: 11
+        layoutInfo.rowsTall: 41
+        layoutInfo.xColumns: 28
+        layoutInfo.yRows: 1
+    } // end_c3744
 
     LayoutRectangle { // start_dadc0
         id: textRect1
@@ -696,7 +715,7 @@ UIBase { // start_uibase
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 4
         contentItem: ViewCommunication {
-            property int type: 1
+            text: JSON.stringify(my_cmd_simple_obj,null,4)
         }
     } // end_76037
 
@@ -708,7 +727,7 @@ UIBase { // start_uibase
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 16
         contentItem: ViewCommunication {
-            property int type: 2
+            text: JSON.stringify(my_cmd_simple_periodic_text, null, 4)
         }
     } // end_64a34
 
@@ -747,7 +766,7 @@ UIBase { // start_uibase
         layoutInfo.xColumns: 28
         layoutInfo.yRows: 34
         contentItem: ViewCommunication {
-            property int type: 3
+            text: JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
         }
     } // end_a20d8
 } // end_uibase

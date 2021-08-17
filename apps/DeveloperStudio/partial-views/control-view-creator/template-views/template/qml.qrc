@@ -7,7 +7,5 @@
         <file>control-views/images/StrataToBoard.png</file>
         <file>control-views/images/BoardToStrata.png</file>
         <file>control-views/ViewCommunication.qml</file>
-        <file>control-views/PeriodicNotification.qml</file>
-        <file>control-views/ConfigPeriodicNotification.qml</file>
     </qresource>
 </RCC>

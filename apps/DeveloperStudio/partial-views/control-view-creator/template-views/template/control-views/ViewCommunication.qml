@@ -6,6 +6,8 @@ import QtQml 2.12
 import tech.strata.sglayout 1.0
 
 UIBase {
+    property alias text: txt.text
+
     ScrollView {
         id: rootScroll
         anchors {
@@ -24,15 +26,6 @@ UIBase {
             selectByMouse: true
             anchors {
                 fill: parent
-            }
-            text: {
-                if (type === 1) {
-                    JSON.stringify(my_cmd_simple_obj,null,4)
-                } else if (type === 2) {
-                    JSON.stringify(my_cmd_simple_periodic_text, null, 4)
-                } else if (type === 3) {
-                    JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
-                } 
             }
             font.pixelSize: 11
         }
