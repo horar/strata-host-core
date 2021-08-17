@@ -198,10 +198,22 @@ private:
     void emitResponses(const std::vector<QByteArray> &responses);
 
     /**
-     * Returns sender service of signal. Helper function.
-     * @return sender service of signal
+     * Returns properly formated service uuid. Helper function.
+     * @return service uuid
      */
-    QByteArray getSignalSenderService() const;
+    QByteArray getServiceUuid(QLowEnergyService *service) const;
+
+    /**
+     * Temporary workaround for custom detection of Lighting Kit
+     * @return true if detected Lighting Kit, false otherwise
+     */
+    bool isLightningKit() const;
+
+    /**
+     * Temporary workaround for custom detection of Smartshot Demo Cam
+     * @return true if detected Smartshot Demo Cam, false otherwise
+     */
+    bool isSmartshotDemoCam() const;
 
     QBluetoothDeviceInfo bluetoothDeviceInfo_;
     QLowEnergyController *lowEnergyController_{nullptr};
