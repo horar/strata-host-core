@@ -8,6 +8,12 @@ import tech.strata.sglayout 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
+/********************************************************************************************************
+    This is a Template UI that works directly with the Template FW found
+    Under Embedded Strata Core (Refer: README):
+                https://code.onsemi.com/projects/SECSWST/repos/embedded-strata-core/browse/template
+*********************************************************************************************************/
+
 UIBase { // start_uibase
     id: root
     columnCount: 40
