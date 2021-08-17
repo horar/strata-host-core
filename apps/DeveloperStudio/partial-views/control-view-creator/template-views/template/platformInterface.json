@@ -2,39 +2,92 @@
     "commands": [
         {
             "cmd": "my_cmd_simple",
-            "payload": {
-                "io": "bool",
-                "dac": "double"
-            }
+            "payload": [
+                {
+                    "name": "dac",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "io",
+                    "type": "bool",
+                    "value": false
+                }
+            ]
         },
         {
             "cmd": "my_cmd_simple_periodic_update",
-            "payload": {
-                "run_state": "bool",
-                "interval": "int",
-                "run_count": "int"
-            }
+            "payload": [
+                {
+                    "name": "interval",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "run_count",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "run_state",
+                    "type": "bool",
+                    "value": false
+                }
+            ]
         },
         {
-            "cmd": "my_cmd_i2c",
-            "payload": null
+            "cmd": "my_cmd_i2c"
         }
     ],
     "notifications": [
         {
             "value": "my_cmd_simple_periodic",
-            "payload": {
-                "adc_read": "double",
-                "gauge_ramp": "double",
-                "io_read": "bool",
-                "random_float": "double",
-                "random_float_array": "array-dynamic",
-                "random_increment": [
-                    "int",
-                    "int"
-                ],
-                "toggle_bool": "bool"
-            }
+            "payload": [
+                {
+                    "name": "adc_read",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "gauge_ramp",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "io_read",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "random_float",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "random_float_array",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                },
+                {
+                    "name": "random_increment",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "toggle_bool",
+                    "type": "bool",
+                    "value": false
+                }
+            ]
         }
     ]
 }
