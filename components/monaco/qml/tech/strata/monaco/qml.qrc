@@ -51,6 +51,5 @@
         <file>minified/utils/suggestions.js</file>
         <file>minified/model/qtItemModel.js</file>
         <file>minified/model/qtQuickModel.js</file>
-        <file>qml.qrc</file>
     </qresource>
 </RCC>
