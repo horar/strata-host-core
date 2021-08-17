@@ -25,7 +25,6 @@ QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
 Platform::Platform(const device::DevicePtr& device) :
     device_(device),
     operationLock_(0),
-    retryInterval_(std::chrono::milliseconds::zero()),
     bootloaderMode_(false),
     isRecognized_(false),
     apiVersion_(ApiVersion::Unknown),
@@ -106,28 +105,22 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString err
         if (errStr.isEmpty()) {
             errStr = "Unable to open device.";
         }
-        if (retryInterval_ != std::chrono::milliseconds::zero()) {
-            reconnectTimer_.start(retryInterval_.count());
-        }
     }
     emit deviceError(errCode, errStr);
 }
 
-void Platform::open(const std::chrono::milliseconds retryInterval) {
+void Platform::open() {
     abortReconnect();
-    retryInterval_ = retryInterval;
     openDevice();
 }
 
-void Platform::close(const std::chrono::milliseconds waitInterval, const std::chrono::milliseconds retryInterval) {
+void Platform::close(const std::chrono::milliseconds waitInterval) {
     abortReconnect();
-    retryInterval_ = retryInterval;
     closeDevice(waitInterval);
 }
 
 void Platform::terminate(bool close) {
     abortReconnect();
-    retryInterval_ = std::chrono::milliseconds::zero();
     if (close) {
         closeDevice(std::chrono::milliseconds::zero());
     }
