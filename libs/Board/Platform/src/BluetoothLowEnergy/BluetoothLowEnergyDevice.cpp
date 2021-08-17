@@ -53,9 +53,9 @@ void BluetoothLowEnergyDevice::deinit()
             notifyOpenFailure();
         }
     }
-    for (auto service : discoveredServices_) {
+    for (const auto& service : discoveredServices_) {
         disconnect(service.second, nullptr, this, nullptr);
-        service.second->deleteLater();
+        // deleted when lowEnergyController_ is deleted
     }
     discoveredServices_.clear();
     allDiscovered_ = false;
@@ -90,7 +90,13 @@ void BluetoothLowEnergyDevice::notifyOpenFailure()
 void BluetoothLowEnergyDevice::close()
 {
     openingTimer_.stop();
-    deinit();
+    if (lowEnergyController_ != nullptr) {
+        if (lowEnergyController_->state() != QLowEnergyController::UnconnectedState) {
+            lowEnergyController_->disconnectFromDevice(); // attempt gracefull close, will deinit later
+        } else {
+            deinit();   // nothing is open, just deinit directly
+        }
+    }
 }
 
 unsigned BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
@@ -351,18 +357,32 @@ void BluetoothLowEnergyDevice::connectToDevice()
         connect(lowEnergyController_, &QLowEnergyController::stateChanged, this, &BluetoothLowEnergyDevice::deviceStateChangeHandler, Qt::QueuedConnection);
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
-    lowEnergyController_->connectToDevice();
+    if (lowEnergyController_->state() == QLowEnergyController::UnconnectedState) {
+        qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
+        lowEnergyController_->connectToDevice();
+    } else {
+        qCWarning(logCategoryDeviceBLE) << this << "Already connected to a BLE device";
+    }
 }
 
 void BluetoothLowEnergyDevice::deviceConnectedHandler()
 {
+    QLowEnergyController *lowEnergyController = qobject_cast<QLowEnergyController*>(QObject::sender());
+    if ((lowEnergyController == nullptr) || (lowEnergyController != lowEnergyController_)) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceBLE) << this << "Device connected, discovering services...";
     lowEnergyController_->discoverServices();
 }
 
 void BluetoothLowEnergyDevice::discoveryFinishedHandler()
 {
+    QLowEnergyController *lowEnergyController = qobject_cast<QLowEnergyController*>(QObject::sender());
+    if ((lowEnergyController == nullptr) || (lowEnergyController != lowEnergyController_)) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceBLE) << this << "Service discovery finished, discovering service details...";
     discoverServiceDetails();
 }
@@ -413,6 +433,11 @@ void BluetoothLowEnergyDevice::checkServiceDetailsDiscovery()
 
 void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::Error error)
 {
+    QLowEnergyController *lowEnergyController = qobject_cast<QLowEnergyController*>(QObject::sender());
+    if ((lowEnergyController == nullptr) || (lowEnergyController != lowEnergyController_)) {
+        return;
+    }
+
     QString statusString;
     QString errorString = lowEnergyController_->errorString();
     switch(error) {
@@ -452,6 +477,11 @@ void BluetoothLowEnergyDevice::deviceErrorReceivedHandler(QLowEnergyController::
 
 void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
 {
+    QLowEnergyController *lowEnergyController = qobject_cast<QLowEnergyController*>(QObject::sender());
+    if ((lowEnergyController == nullptr) || (lowEnergyController != lowEnergyController_)) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceBLE) << this << "Device disconnected.";
     emit deviceError(ErrorCode::DeviceDisconnected, "");
     deinit();
@@ -459,61 +489,94 @@ void BluetoothLowEnergyDevice::deviceDisconnectedHandler()
 
 void BluetoothLowEnergyDevice::deviceStateChangeHandler(QLowEnergyController::ControllerState state)
 {
+    QLowEnergyController *lowEnergyController = qobject_cast<QLowEnergyController*>(QObject::sender());
+    if ((lowEnergyController == nullptr) || (lowEnergyController != lowEnergyController_)) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceBLE) << this << "Device state changed: " << state;
 }
 
 void BluetoothLowEnergyDevice::characteristicWrittenHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
+    QByteArray serviceUuid = getSignalSenderServiceUuid();
+    if (serviceUuid.isNull()) {
+        return;
+    }
+
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckWriteCharacteristic(
-        getSignalSenderService(),
+        serviceUuid,
         info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
         value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::characteristicReadHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
-    QByteArray senderService = getSignalSenderService();
-    if (senderService == ble::STRATA_ID_SERVICE.toByteArray(QBluetoothUuid::WithoutBraces)) {
+    QByteArray serviceUuid = getSignalSenderServiceUuid();
+    if (serviceUuid.isNull()) {
+        return;
+    }
+
+    if (serviceUuid == ble::STRATA_ID_SERVICE.toByteArray(QBluetoothUuid::WithoutBraces)) {
         platformIdentificationReadHandler(info.uuid(), &value);
         return;
     }
 
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckReadCharacteristic(
-        senderService,
+        serviceUuid,
         info.uuid().toByteArray(QBluetoothUuid::WithoutBraces)));
     emitResponses(std::vector<QByteArray>({BluetoothLowEnergyJsonEncoder::encodeNotificationReadCharacteristic(
-        senderService,
+        serviceUuid,
         info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
         value.toHex())}));
 }
 
 void BluetoothLowEnergyDevice::characteristicChangedHandler(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
+    QByteArray serviceUuid = getSignalSenderServiceUuid();
+    if (serviceUuid.isNull()) {
+        return;
+    }
+
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationCharacteristic(
-        getSignalSenderService(),
+        serviceUuid,
         info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
         value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::descriptorWrittenHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
 {
+    QByteArray serviceUuid = getSignalSenderServiceUuid();
+    if (serviceUuid.isNull()) {
+        return;
+    }
+
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeAckWriteDescriptor(
-        getSignalSenderService(),
+        serviceUuid,
         info.uuid().toByteArray(QBluetoothUuid::WithoutBraces),
         value.toHex()));
 }
 
 void BluetoothLowEnergyDevice::serviceStateChangedHandler(QLowEnergyService::ServiceState newState)
 {
+    QLowEnergyService *service = qobject_cast<QLowEnergyService*>(QObject::sender());
+    if ((service == nullptr) || (getService(service->serviceUuid()) != service)) {
+        return;
+    }
+
     qCDebug(logCategoryDeviceBLE) << this << "Service state changed: " << newState;
     checkServiceDetailsDiscovery();
 }
 
 void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceError error)
 {
+    QByteArray serviceUuid = getSignalSenderServiceUuid();
+    if (serviceUuid.isNull()) {
+        return;
+    }
+
     QString command;
     QString details;
-    QByteArray senderService = getSignalSenderService();
     switch(error) {
         case QLowEnergyService::NoError:
             command = "";
@@ -538,7 +601,7 @@ void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceErr
         case QLowEnergyService::CharacteristicReadError:
             command = "read";
             details = "characteristic read error";
-            if (senderService == ble::STRATA_ID_SERVICE.toByteArray(QBluetoothUuid::WithoutBraces)) {
+            if (serviceUuid == ble::STRATA_ID_SERVICE.toByteArray(QBluetoothUuid::WithoutBraces)) {
                 platformIdentificationReadHandler(QBluetoothUuid(), nullptr);
                 return;
             }
@@ -551,7 +614,7 @@ void BluetoothLowEnergyDevice::serviceErrorHandler(QLowEnergyService::ServiceErr
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNAck(
         command.toUtf8(),
         details.toUtf8(),
-        senderService));
+        serviceUuid));
 }
 
 void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & serviceUuid)
@@ -563,7 +626,7 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
         qCInfo(logCategoryDeviceBLE) << this << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
         return;
     }
-    QLowEnergyService * service = lowEnergyController_->createServiceObject(serviceUuid);
+    QLowEnergyService * service = lowEnergyController_->createServiceObject(serviceUuid, lowEnergyController_); // will be automatically deleted after controller is erased
     if (service == nullptr) {
         qCWarning(logCategoryDeviceBLE) << this << "Invalid service";
         return;
@@ -584,12 +647,13 @@ void BluetoothLowEnergyDevice::addDiscoveredService(const QBluetoothUuid & servi
     connect(service, &QLowEnergyService::stateChanged, this, &BluetoothLowEnergyDevice::serviceStateChangedHandler, Qt::QueuedConnection);
 }
 
-QLowEnergyService * BluetoothLowEnergyDevice::getService(const QBluetoothUuid & serviceUuid)
+QLowEnergyService * BluetoothLowEnergyDevice::getService(const QBluetoothUuid & serviceUuid) const
 {
-    if (discoveredServices_.count(serviceUuid) == 0) {
+    auto iter = discoveredServices_.find(serviceUuid);
+    if (iter == discoveredServices_.end()) {
         return nullptr;
     }
-    return discoveredServices_[serviceUuid];
+    return iter->second;
 }
 
 void BluetoothLowEnergyDevice::emitResponses(const std::vector<QByteArray> &responses)
@@ -603,14 +667,14 @@ void BluetoothLowEnergyDevice::emitResponses(const std::vector<QByteArray> &resp
         });
 }
 
-QByteArray BluetoothLowEnergyDevice::getSignalSenderService() const
+QByteArray BluetoothLowEnergyDevice::getSignalSenderServiceUuid() const
 {
-    QByteArray serviceUuid;
     QLowEnergyService *service = qobject_cast<QLowEnergyService*>(QObject::sender());
-    if (service != nullptr) {
-        serviceUuid = service->serviceUuid().toByteArray(QBluetoothUuid::WithoutBraces);
+    if ((service == nullptr) || (getService(service->serviceUuid()) != service)) {
+        return QByteArray();
     }
-    return serviceUuid;
+
+    return service->serviceUuid().toByteArray(QBluetoothUuid::WithoutBraces);
 }
 
 QByteArray BluetoothLowEnergyDevice::createUniqueHash(const QBluetoothDeviceInfo &info)

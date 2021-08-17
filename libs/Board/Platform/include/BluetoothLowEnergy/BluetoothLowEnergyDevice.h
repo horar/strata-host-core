@@ -139,7 +139,7 @@ private:
      * @param serviceUuid UUID of the service.
      * @return service object, identified by serviceUuid. Null if there is no such service discovered.
      */
-    QLowEnergyService *getService(const QBluetoothUuid &serviceUuid);
+    QLowEnergyService *getService(const QBluetoothUuid &serviceUuid) const;
 
     /**
      * Processes a message for the BLE device. Converts the JSON message to GATT commands.
@@ -198,10 +198,10 @@ private:
     void emitResponses(const std::vector<QByteArray> &responses);
 
     /**
-     * Returns sender service of signal. Helper function.
-     * @return sender service of signal
+     * Returns properly formated service uuid from sender of the signal. Helper function.
+     * @return service uuid
      */
-    QByteArray getSignalSenderService() const;
+    QByteArray getSignalSenderServiceUuid() const;
 
     QBluetoothDeviceInfo bluetoothDeviceInfo_;
     QLowEnergyController *lowEnergyController_{nullptr};
