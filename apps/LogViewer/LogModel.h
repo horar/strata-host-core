@@ -86,6 +86,7 @@ private:
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
     void setModelRoles();
+    void clearPrevious();
     QHash<QByteArray, int> roleByNameHash_;
     QHash<int, QByteArray> roleByEnumHash_;
 };

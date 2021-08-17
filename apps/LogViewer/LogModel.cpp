@@ -33,6 +33,7 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     }
     if (fileModel_.containsFilePath(path) == false) {
         fileModel_.append(path);
+        clearPrevious();
     }
 
     QTextStream stream(&file);
@@ -238,6 +239,14 @@ void LogModel::setModelRoles()
         roleByNameHash_.insert(i.value(), i.key());
         ++i;
     }
+}
+
+void LogModel::clearPrevious()
+{
+     previousTimestamp_ = QDateTime();
+     previousPid_ = "";
+     previousTid_ = "";
+     previousLevel_ = LogModel::LevelUnknown;
 }
 
 int LogModel::count() const
