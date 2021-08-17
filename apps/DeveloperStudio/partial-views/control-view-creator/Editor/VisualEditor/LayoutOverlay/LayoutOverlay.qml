@@ -57,6 +57,11 @@ LayoutContainer {
 
             property point startPoint
 
+            property var dragRectLeftLimit
+            property var dragRectRightLimit
+            property var dragRectTopLimit
+            property var dragRectBottomLimit
+
             onWheel: {
                 wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
             }
@@ -68,7 +73,12 @@ LayoutContainer {
                     if (visualEditor.selectedMultiObjectsUuid.length > 0) {
                         layoutOverlayRoot.multiItemTargetPrevX = rect.x
                         layoutOverlayRoot.multiItemTargetPrevY = rect.y
+
                         multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
+                        dragRectLeftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
+                        dragRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
+                        dragRectTopLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
+                        dragRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                     }
                 }
             }
@@ -145,14 +155,10 @@ LayoutContainer {
                     rect.y = newPosition.y
 
                     if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
-                        const leftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
-                        rect.x = Math.max(rect.x, -leftLimit)
-                        const rightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
-                        rect.x = Math.min(rect.x, rightLimit)
-                        const topLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
-                        rect.y = Math.max(rect.y, -topLimit)
-                        const bottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
-                        rect.y = Math.min(rect.y, bottomLimit)
+                        rect.x = Math.max(rect.x, -dragRectLeftLimit)
+                        rect.x = Math.min(rect.x, dragRectRightLimit)
+                        rect.y = Math.max(rect.y, -dragRectTopLimit)
+                        rect.y = Math.min(rect.y, dragRectBottomLimit)
 
                         const xOffset = rect.x - layoutOverlayRoot.multiItemTargetPrevX
                         const yOffset = rect.y - layoutOverlayRoot.multiItemTargetPrevY
