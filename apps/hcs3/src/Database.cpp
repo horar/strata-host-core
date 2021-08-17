@@ -1,5 +1,4 @@
 #include "Database.h"
-#include "Dispatcher.h"
 
 #include "logging/LoggingQtCategories.h"
 
