@@ -57,6 +57,22 @@ public:
 
     static QByteArray encodeNAck(const QByteArray &command, const QByteArray &details, const QByteArray &serviceUuid);
     static QByteArray encodeNotificationError(const QByteArray &status, const QByteArray &details);
+
+    static QByteArray encodeAckGetFirmwareInfo();
+    static QByteArray encodeNotificationGetFirmwareInfo();
+    static QByteArray encodeAckRequestPlatformId();
+    static QByteArray encodeNAckRequestPlatformId();
+    static QByteArray encodeNotificationPlatformId(const QString &name, const QMap<QBluetoothUuid, QString> &platformIdentification);
+
+    /**
+     * Parses characteristic value from Strata ID service, converts it to string (will be used in JSON response)
+     * and stores it into the platformIdentification parameter.
+     * @param characteristicUuid UUID of the characteristic
+     * @param value value to be parsed
+     * @param[out] platformIdentification converted value will be stored here
+     */
+    static void parseCharacteristicValue(const QBluetoothUuid &characteristicUuid, const QByteArray &value, QMap<QBluetoothUuid, QString> &platformIdentification);
+
 };
 
 }  // namespace strata::device

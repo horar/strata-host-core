@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h"
 #include <Device.h>
 #include <rapidjson/document.h>
 #include <QTimer>
@@ -9,13 +10,27 @@
 namespace strata::device
 {
 
+namespace ble
+{
+static constexpr quint16 MANUFACTURER_ID_ON_SEMICONDICTOR = 0x0362;
+static const QBluetoothUuid STRATA_ID_SERVICE(QString("00010000-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_TYPE(QString("00010001-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_PLATFORM_ID(QString("00010002-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CLASS_ID(QString("00010003-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_BOARD_COUNT(QString("00010004-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_BOARD_CONNECTED(QString("00010005-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_PLATFORM_ID(QString("00010006-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_CLASS_ID(QString("00010007-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT(QString("00010008-297d-4dd5-baf7-5da63e41c884"));
+static const QBluetoothUuid STRATA_ID_SERVICE_FW_CLASS_ID(QString("00010009-297d-4dd5-baf7-5da63e41c884"));
+} // namespace ble
+
 class BluetoothLowEnergyDevice : public Device
 {
     Q_OBJECT
     Q_DISABLE_COPY(BluetoothLowEnergyDevice)
 
 public:
-    constexpr static quint16 MANUFACTURER_ID_ON_SEMICONDICTOR = 0x0362;
 
     /**
      * BluetoothLowEnergyDevice constructor
@@ -133,6 +148,17 @@ private:
      */
     [[nodiscard]] QString processRequest(const QByteArray &message);
     /**
+     * Reads firmware info from BLE device.
+     * Current implementation (no FOTA support) only sends hard-coded response.
+     * @return error message. Or null string if message was correct and processed.
+     */
+    [[nodiscard]] QString processGetFirmwareInfoCommand();
+    /**
+     * Reads platform identification info from BLE device.
+     * @return error message. Or null string if message was correct and processed.
+     */
+    [[nodiscard]] QString processRequestPlatformIdCommand();
+    /**
      * Forwards write command to BLE device.
      * @param requestDocument request with the command.
      * @return error message. Or null string if message was correct and processed.
@@ -150,13 +176,20 @@ private:
      * @return error message. Or null string if message was correct and processed.
      */
     [[nodiscard]] QString processReadCommand(const rapidjson::Document &requestDocument);
+
     /**
-     * Temporary workaround, until discovery is implemented, returnshard-coded responses to
-     * get_firmware_info and request_platform_id.
-     * @param cmd command to be processed.
-     * @return true iff message was processed.
+     * Reads (requests read) one characteristic from the Strata ID service.
+     * @param characteristicUuid UUID of the characteristic to be read.
+     * @return count of expected responses:
+     * 1 if read was requested, 0 if request was not sent (e.g. unknown characteristic).
      */
-    [[nodiscard]] bool processHardcodedReplies(const std::string &cmd);  // TODO!!! remove
+    int sendReadPlatformIdentification(const QBluetoothUuid &characteristicUuid);
+    /**
+     * Processes response to reading from Strata ID service.
+     * @param characteristicUuid UUID of read characteristic.
+     * @param value read value, null in case of error.
+     */
+    void platformIdentificationReadHandler(const QBluetoothUuid &characteristicUuid, const QByteArray *value);
 
     /**
      * Emits messageReceived. Emits with delay, to prevent possible timing issues.
@@ -174,6 +207,9 @@ private:
     QLowEnergyController *lowEnergyController_{nullptr};
     std::map<QBluetoothUuid, QLowEnergyService *> discoveredServices_;
     bool allDiscovered_;
+
+    int platforiIdDataAwaiting_;
+    QMap<QBluetoothUuid, QString> platformIdentification_;
 
     QTimer openingTimer_;
 };

@@ -1,4 +1,5 @@
 #include "BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h"
+#include "BluetoothLowEnergy/BluetoothLowEnergyDevice.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -147,5 +148,117 @@ QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationError(const QByteArr
     return R"({"notification":{"value":"error","payload":{"status":")" + status + R"(","details":")" + details + R"("}}})";
 }
 
+QByteArray BluetoothLowEnergyJsonEncoder::encodeAckGetFirmwareInfo()
+{
+    return R"({"ack":"get_firmware_info","payload":{"return_value":true,"return_string":"command valid"}})";
+}
+
+QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationGetFirmwareInfo()
+{
+    // hard-coded reply, because FOTA is not implemented (yet?)
+    return  R"({"notification":{"value":"get_firmware_info","payload": {)"
+            R"("api_version":"2.0","active":"application","bootloader": {},"application": {"version":"0.0.0","date":""}}}})";
+}
+
+QByteArray BluetoothLowEnergyJsonEncoder::encodeAckRequestPlatformId()
+{
+    return R"({"ack":"request_platform_id","payload":{"return_value":true,"return_string":"command valid"}})";
+}
+
+QByteArray BluetoothLowEnergyJsonEncoder::encodeNAckRequestPlatformId()
+{
+    return R"({"ack":"request_platform_id","payload":{"return_value":false,"return_string":"command not supported"}})";
+}
+
+QByteArray BluetoothLowEnergyJsonEncoder::encodeNotificationPlatformId(const QString &name, const QMap<QBluetoothUuid, QString> &platformIdentification)
+{
+    QString retVal;
+    retVal = R"({"notification":{"value":"platform_id","payload":{"name":")" + name + R"(")";
+
+    QString controllerType = platformIdentification.value(ble::STRATA_ID_SERVICE_CONTROLLER_TYPE, QString());
+    if (controllerType.isNull() == false) {
+        retVal += R"(,"controller_type":)" + controllerType;
+    }
+    QString boardConnected = platformIdentification.value(ble::STRATA_ID_SERVICE_BOARD_CONNECTED, QString());
+    if (controllerType.isNull() || controllerType != "2" || boardConnected != "0") {
+        //embedded board or assisted with connected board
+        QString platformId = platformIdentification.value(ble::STRATA_ID_SERVICE_PLATFORM_ID, QString());
+        if (platformId.isNull() == false) {
+            retVal += R"(,"platform_id":)" + platformId;
+        }
+        QString classId = platformIdentification.value(ble::STRATA_ID_SERVICE_CLASS_ID, QString());
+        if (classId.isNull() == false) {
+            retVal += R"(,"class_id":)" + classId;
+        }
+        QString boardCount = platformIdentification.value(ble::STRATA_ID_SERVICE_BOARD_COUNT, QString());
+        if (boardCount.isNull() == false) {
+            retVal += R"(,"board_count":)" + boardCount;
+        }
+    }
+
+    if (controllerType == "2") {
+        //assisted
+        QString controllerPlatformId = platformIdentification.value(ble::STRATA_ID_SERVICE_CONTROLLER_PLATFORM_ID, QString());
+        if (controllerPlatformId.isNull() == false) {
+            retVal += R"(,"controller_platform_id":)" + controllerPlatformId;
+        }
+        QString controllerClassId = platformIdentification.value(ble::STRATA_ID_SERVICE_CONTROLLER_CLASS_ID, QString());
+        if (controllerClassId.isNull() == false) {
+            retVal += R"(,"controller_class_id":)" + controllerClassId;
+        }
+        QString controllerBoardCount = platformIdentification.value(ble::STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT, QString());
+        if (controllerBoardCount.isNull() == false) {
+            retVal += R"(,"controller_board_count":)" + controllerBoardCount;
+        }
+        QString fwClassId = platformIdentification.value(ble::STRATA_ID_SERVICE_FW_CLASS_ID, QString());
+        if (fwClassId.isNull() == false) {
+            retVal += R"(,"fw_class_id":)" + fwClassId;
+        }
+    }
+
+    retVal += R"(}}})";
+    return retVal.toUtf8();
+}
+
+
+void BluetoothLowEnergyJsonEncoder::parseCharacteristicValue(const QBluetoothUuid &characteristicUuid, const QByteArray &value, QMap<QBluetoothUuid, QString> &platformIdentification)
+{
+    if (characteristicUuid == ble::STRATA_ID_SERVICE_PLATFORM_ID ||
+        characteristicUuid == ble::STRATA_ID_SERVICE_CLASS_ID ||
+        characteristicUuid == ble::STRATA_ID_SERVICE_CONTROLLER_PLATFORM_ID ||
+        characteristicUuid == ble::STRATA_ID_SERVICE_CONTROLLER_CLASS_ID ||
+        characteristicUuid == ble::STRATA_ID_SERVICE_FW_CLASS_ID) {
+
+        if (value.size() != 16) {
+            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 16";
+            return;
+        }
+        QByteArray reverseValue = value;
+        std::reverse(reverseValue.begin(), reverseValue.end()); // little endian -> big endian
+        platformIdentification.insert(characteristicUuid,"\"" + QBluetoothUuid(*((quint128 *)reverseValue.data())).toByteArray(QBluetoothUuid::WithoutBraces) + "\"");
+    }
+    if (characteristicUuid == ble::STRATA_ID_SERVICE_BOARD_CONNECTED) {
+        if (value.size() != 1) {
+            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 1";
+            return;
+        }
+        platformIdentification.insert(characteristicUuid,QString::number((quint8)value[0]));
+    }
+    if (characteristicUuid == ble::STRATA_ID_SERVICE_CONTROLLER_TYPE) {
+        if (value.size() != 2) {
+            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 2";
+            return;
+        }
+        platformIdentification.insert(characteristicUuid,QString::number(((quint16)value[0]) + (((quint16)value[1]) << 8)));
+    }
+    if (characteristicUuid == ble::STRATA_ID_SERVICE_BOARD_COUNT ||
+        characteristicUuid == ble::STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT) {
+        if (value.size() != 4) {
+            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 4";
+            return;
+        }
+        platformIdentification.insert(characteristicUuid,QString::number(((quint32)value[0]) + (((quint32)value[1]) << 8) + (((quint32)value[2]) << 16) + (((quint32)value[3]) << 24)));
+    }
+}
 
 }  // namespace strata::device
