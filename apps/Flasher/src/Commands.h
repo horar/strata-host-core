@@ -76,9 +76,12 @@ public:
     explicit DeviceCommand(int deviceNumber);
     virtual ~DeviceCommand() override;
 
+signals:
+    void criticalDeviceError();
+
 protected slots:
     virtual void handlePlatformOpened() = 0;
-    virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
 protected:
     bool createSerialDevice();
@@ -106,6 +109,7 @@ public:
 
 private slots:
     virtual void handlePlatformOpened() override;
+    void handleCriticalDeviceError();
 
 private:
     std::unique_ptr<Flasher> flasher_;
@@ -124,7 +128,8 @@ public:
 
 private slots:
     virtual void handlePlatformOpened() override;
-    virtual void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
+    void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
+    void handleCriticalDeviceError();
 
 private:
     std::unique_ptr<platform::operation::Identify> identifyOperation_;
