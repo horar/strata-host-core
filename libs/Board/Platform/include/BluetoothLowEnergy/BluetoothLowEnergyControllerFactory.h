@@ -7,14 +7,14 @@
 namespace strata::device
 {
 
-class BluetoothLowEnergyControllerWatcher final : public QObject
+class BluetoothLowEnergyControllerFactory final : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(BluetoothLowEnergyControllerWatcher)
+    Q_DISABLE_COPY(BluetoothLowEnergyControllerFactory)
 
 public:
-    explicit BluetoothLowEnergyControllerWatcher(QObject* parent = nullptr);
-    virtual ~BluetoothLowEnergyControllerWatcher();
+    explicit BluetoothLowEnergyControllerFactory(QObject* parent = nullptr);
+    virtual ~BluetoothLowEnergyControllerFactory();
 
     BluetoothLowEnergyControllerPtr acquireController(const QBluetoothDeviceInfo &info);
 
@@ -27,6 +27,6 @@ private:
     QHash<quintptr, BluetoothLowEnergyControllerPtr> controllers_;
 };
 
-typedef std::shared_ptr<BluetoothLowEnergyControllerWatcher> BluetoothLowEnergyControllerWatcherPtr;
+typedef std::shared_ptr<BluetoothLowEnergyControllerFactory> BluetoothLowEnergyControllerFactoryPtr;
 
 }  // namespace strata::device

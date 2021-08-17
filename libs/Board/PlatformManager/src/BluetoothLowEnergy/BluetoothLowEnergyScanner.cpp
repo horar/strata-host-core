@@ -12,7 +12,7 @@ namespace strata::device::scanner {
 BluetoothLowEnergyScanner::BluetoothLowEnergyScanner()
     : DeviceScanner(Device::Type::BLEDevice)
 {
-    controllerWatcher_ = std::make_shared<BluetoothLowEnergyControllerWatcher>();
+    controllerFactory_ = std::make_shared<BluetoothLowEnergyControllerFactory>();
 }
 
 BluetoothLowEnergyScanner::~BluetoothLowEnergyScanner()
@@ -103,7 +103,7 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
     }
     const QBluetoothDeviceInfo & deviceInfo = *deviceInfoIterator;
 
-    DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(deviceId, deviceInfo, controllerWatcher_);
+    DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(deviceId, deviceInfo, controllerFactory_);
 
     connect(device.get(), &Device::opened,
             this, &BluetoothLowEnergyScanner::deviceOpenedHandler);

@@ -2,7 +2,7 @@
 
 #include <DeviceScanner.h>
 #include <BluetoothLowEnergy/BluetoothLowEnergyDevice.h>
-#include "BluetoothLowEnergy/BluetoothLowEnergyControllerWatcher.h"
+#include "BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h"
 
 #include <QBluetoothDeviceDiscoveryAgent>
 
@@ -87,7 +87,7 @@ private:
     QHash<QByteArray, QBluetoothDeviceInfo> createdDevices_;
     QHash<QByteArray, QBluetoothDeviceInfo> discoveredDevicesMap_; // map deviceId -> QBluetoothDeviceInfo
 
-    BluetoothLowEnergyControllerWatcherPtr controllerWatcher_;
+    BluetoothLowEnergyControllerFactoryPtr controllerFactory_;
 };
 
 typedef std::shared_ptr<BluetoothLowEnergyScanner> BluetoothLowEnergyScannerPtr;

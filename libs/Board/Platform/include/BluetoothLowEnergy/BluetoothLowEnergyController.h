@@ -58,7 +58,7 @@ public:
 signals:
     void connected();
     void disconnected(bool failedToOpen);
-    void finished();    // only for watcher to erase this object
+    void finished();    // only for BluetoothLowEnergyControllerFactory to erase this object
 
     void deviceError(QLowEnergyController::Error error, QString errorString);
     void serviceDescriptorWritten(const QByteArray& serviceUuid, const QLowEnergyDescriptor &info, const QByteArray &value);

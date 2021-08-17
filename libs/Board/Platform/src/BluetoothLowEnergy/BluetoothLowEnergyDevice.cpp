@@ -10,14 +10,14 @@
 
 namespace strata::device {
 
-BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info, const BluetoothLowEnergyControllerWatcherPtr& controllerWatcher)
+BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info, const BluetoothLowEnergyControllerFactoryPtr& controllerFactory)
     : Device(
           deviceId,
           info.name(),
           Type::BLEDevice),
       platforiIdDataAwaiting_(0),
       bluetoothDeviceInfo_(info),
-      controllerWatcher_(controllerWatcher)
+      controllerFactory_(controllerFactory)
 {
 
     qCDebug(logCategoryDeviceBLE).nospace().noquote()
@@ -38,7 +38,7 @@ BluetoothLowEnergyDevice::~BluetoothLowEnergyDevice()
 void BluetoothLowEnergyDevice::open()
 {
     if (controller_ == nullptr) {
-        controller_ = controllerWatcher_->acquireController(bluetoothDeviceInfo_);
+        controller_ = controllerFactory_->acquireController(bluetoothDeviceInfo_);
 
         connect(controller_.get(), &BluetoothLowEnergyController::connected, this, &BluetoothLowEnergyDevice::deviceConnectedHandler);
         connect(controller_.get(), &BluetoothLowEnergyController::disconnected, this, &BluetoothLowEnergyDevice::deviceDisconnectedHandler);

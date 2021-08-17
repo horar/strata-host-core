@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QBluetoothDeviceInfo>
 #include <QLowEnergyController>
-#include "BluetoothLowEnergy/BluetoothLowEnergyControllerWatcher.h"
+#include "BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h"
 
 namespace strata::device
 {
@@ -38,7 +38,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info, const BluetoothLowEnergyControllerWatcherPtr& controllerWatcher);
+    BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info, const BluetoothLowEnergyControllerFactoryPtr& controllerFactory);
 
     /**
      * BluetoothLowEnergyDevice destructor
@@ -157,7 +157,7 @@ private:
 
     QBluetoothDeviceInfo bluetoothDeviceInfo_;
     BluetoothLowEnergyControllerPtr controller_;
-    BluetoothLowEnergyControllerWatcherPtr controllerWatcher_;
+    BluetoothLowEnergyControllerFactoryPtr controllerFactory_;
 };
 
 }  // namespace strata::device
