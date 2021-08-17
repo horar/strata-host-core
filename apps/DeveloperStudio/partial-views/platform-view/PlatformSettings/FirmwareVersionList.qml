@@ -211,7 +211,7 @@ ColumnLayout {
                             if (firmwareColumn.flashingInProgress === false) {
                                 firmwareRepeater.resetDescriptions()
 
-                                if ((already_started === true) ||
+                                if (already_started ||
                                     (sdsModel.firmwareManager.updateFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
                                     flashingInProgress = true
                                     description.text = "Do not unplug your board during this process"
