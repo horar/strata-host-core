@@ -162,9 +162,9 @@ UIBase { // start_uibase
     LayoutText { // start_9fd37
         id: dacOutText
         layoutInfo.uuid: "9fd37"
-        layoutInfo.columnsWide: 3
+        layoutInfo.columnsWide: 5
         layoutInfo.rowsTall: 1
-        layoutInfo.xColumns: 12
+        layoutInfo.xColumns: 11
         layoutInfo.yRows: 8
 
         text: "DAC Output"
