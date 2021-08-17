@@ -28,13 +28,14 @@ LayoutContainer {
 
     Connections {
         target: visualEditor
+        enabled: layoutOverlayRoot.isSelected
 
         onMultiObjectsDeselectAll: {
             layoutOverlayRoot.isSelected = false
         }
 
         onMultiObjectsDragged: {
-            if (layoutOverlayRoot.isSelected && objectInitiated != layoutOverlayRoot.objectName) {
+            if (objectInitiated != layoutOverlayRoot.objectName) {
                 rect.color = "red"
                 rect.x += x
                 rect.y += y
