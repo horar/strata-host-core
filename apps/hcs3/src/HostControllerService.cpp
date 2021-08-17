@@ -181,8 +181,9 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
         { "effective_filepath", effectiveFilePath }
     };
 
-    strataServer_->notifyClient(clientId, "download_platform_filepath_changed", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId, hcsNotificationTypeToString(hcsNotificationType::downloadPlatformFilepathChanged),
+        payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
@@ -194,8 +195,10 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
         { "bytes_total", bytesTotal }
     };
 
-    strataServer_->notifyClient(clientId, "download_platform_single_file_progress", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId,
+        hcsNotificationTypeToString(hcsNotificationType::downloadPlatformSingleFileProgress),
+        payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
@@ -206,8 +209,10 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
         { "error_string", errorString }
     };
 
-    strataServer_->notifyClient(clientId, "download_platform_single_file_finished", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId,
+        hcsNotificationTypeToString(hcsNotificationType::downloadPlatformSingleFileFinished),
+        payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId,
@@ -219,8 +224,9 @@ void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByte
         payload.insert("error_string", errorString);
     }
 
-    strataServer_->notifyClient(clientId, "download_platform_files_finished", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId, hcsNotificationTypeToString(hcsNotificationType::downloadPlatformFilesFinished),
+        payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformListMessage(const QByteArray &clientId,
@@ -230,8 +236,9 @@ void HostControllerService::sendPlatformListMessage(const QByteArray &clientId,
         { "list", platformList }
     };
 
-    strataServer_->notifyClient(clientId, "all_platforms", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(clientId,
+                                hcsNotificationTypeToString(hcsNotificationType::allPlatforms),
+                                payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArray &clientId,
@@ -244,8 +251,9 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArra
     payload.insert("files_completed", filesCompleted);
     payload.insert("files_total", filesTotal);
 
-    strataServer_->notifyClient(clientId, "document_progress", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId, hcsNotificationTypeToString(hcsNotificationType::platformDocumentsProgress),
+        payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendControlViewDownloadProgressMessage(const QByteArray &clientId,
@@ -261,8 +269,9 @@ void HostControllerService::sendControlViewDownloadProgressMessage(const QByteAr
         { "bytes_total", bytesTotal }
     };
 
-    strataServer_->notifyClient(clientId, "control_view_download_progress", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId, hcsNotificationTypeToString(hcsNotificationType::controlViewDownloadProgress),
+        payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId,
@@ -281,8 +290,9 @@ void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, con
         payload.insert("error", error);
     }
 
-    strataServer_->notifyClient(clientId, "platform_meta_data", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(clientId,
+                                hcsNotificationTypeToString(hcsNotificationType::platformMetaData),
+                                payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendPlatformDocumentsMessage(const QByteArray &clientId,
@@ -302,8 +312,9 @@ void HostControllerService::sendPlatformDocumentsMessage(const QByteArray &clien
         payload.insert("error", error);
     }
 
-    strataServer_->notifyClient(clientId, "document", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(clientId,
+                                hcsNotificationTypeToString(hcsNotificationType::platformDocument),
+                                payload, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::sendDownloadControlViewFinishedMessage(const QByteArray &clientId,
@@ -317,8 +328,9 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(const QByteAr
         { "error_string", errorString }
     };
 
-    strataServer_->notifyClient(clientId, "download_view_finished", payload,
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        clientId, hcsNotificationTypeToString(hcsNotificationType::downloadViewFinished), payload,
+        strataRPC::ResponseType::Notification);
 }
 
 bool HostControllerService::parseConfig(const QString &config)
@@ -364,16 +376,18 @@ void HostControllerService::platformConnected(const QByteArray &deviceId)
 {
     Q_UNUSED(deviceId)
 
-    strataServer_->notifyAllClients("connected_platforms",
-                                    platformController_.createPlatformsList());
+    strataServer_->notifyAllClients(
+        hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+        platformController_.createPlatformsList());
 }
 
 void HostControllerService::platformDisconnected(const QByteArray &deviceId)
 {
     Q_UNUSED(deviceId)
 
-    strataServer_->notifyAllClients("connected_platforms",
-                                    platformController_.createPlatformsList());
+    strataServer_->notifyAllClients(
+        hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+        platformController_.createPlatformsList());
 }
 
 void HostControllerService::sendPlatformMessageToClients(const QString &platformId,
@@ -382,8 +396,9 @@ void HostControllerService::sendPlatformMessageToClients(const QString &platform
     Q_UNUSED(platformId)
 
     // TODO: map each device to a client and update this functionality
-    strataServer_->notifyClient(currentClient_, "platform_message", payload,
-                                strataRPC::ResponseType::PlatformMessage);
+    strataServer_->notifyClient(currentClient_,
+                                hcsNotificationTypeToString(hcsNotificationType::platformMessage),
+                                payload, strataRPC::ResponseType::PlatformMessage);
 }
 
 void HostControllerService::processCmdRequestHcsStatus(const strataRPC::Message &message)
@@ -400,9 +415,9 @@ void HostControllerService::processCmdDynamicPlatformList(const strataRPC::Messa
 
     storageManager_.requestPlatformList(message.clientID);
 
-    strataServer_->notifyClient(message.clientID, "connected_platforms",
-                                platformController_.createPlatformsList(),
-                                strataRPC::ResponseType::Notification);
+    strataServer_->notifyClient(
+        message.clientID, hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+        platformController_.createPlatformsList(), strataRPC::ResponseType::Notification);
 
     currentClient_ = message.clientID;  // Remove this when platforms are mapped to their clients.
 }
@@ -521,7 +536,7 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
             { "job_id", firmwareData.jobUuid },
             { "device_id", QLatin1String(firmwareData.deviceId) }
         };
-        QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
+
         strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Response);
 
         updateController_.changeFirmware(firmwareData);
@@ -538,7 +553,6 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
         { "device_id", QLatin1String(firmwareData.deviceId) }
     };
 
-    QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
     strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Error);
 }
 
@@ -734,22 +748,21 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
     hcsNotificationType type = (progress.programController)
             ? hcsNotificationType::programControllerJob
             : hcsNotificationType::updateFirmwareJob;
-    QByteArray notification = createHcsNotification(type, payload, true);
 
-    // This notification must be sent before broadcasting new platforms list.
-    // Message order is very important for Developer Studio.
-    // clients_.sendMessage(clientId, notification); // use strataServer
+    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type), payload,
+                                strataRPC::ResponseType::Notification);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
         progress.status == FirmwareUpdateController::UpdateStatus::Success) {
         // If firmware was updated broadcast new platforms list
         // to indicate the firmware version has changed.
-        strataServer_->notifyAllClients("connected_platforms",
-                                        platformController_.createPlatformsList());
+        strataServer_->notifyAllClients(
+            hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+            platformController_.createPlatformsList());
     }
 }
 
-const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationType notificationType)
+constexpr const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationType notificationType)
 {
     const char* type = "";
 
@@ -793,36 +806,21 @@ const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationTy
     case hcsNotificationType::programControllerJob:
         type = "program_controller_job";
         break;
+    case hcsNotificationType::platformDocumentsProgress:
+        type = "document_progress";
+        break;
+    case hcsNotificationType::platformDocument:
+        type = "document";
+        break;
+    case hcsNotificationType::platformMessage:
+        type = "platform_message";
+        break;
+    case hcsNotificationType::connectedPlatforms:
+        type = "connected_platforms";
+        break;
     }
 
     return type;
-}
-
-// might not need this!
-QByteArray HostControllerService::createHcsNotification(hcsNotificationType notificationType, const QJsonObject &payload, bool standalonePayload)
-{
-    const char* type = hcsNotificationTypeToString(notificationType);
-    QJsonObject notificationBody {
-        { "type", type }
-        //, { "payload", payload }  // TODO uncomment this when all notifications will have standalone payload
-    };
-
-    // workaround for support of old notification style (without standalone paylod object)
-    if (standalonePayload) {
-        notificationBody.insert("payload", payload);
-    } else {
-        for (auto it = payload.constBegin(); it != payload.constEnd(); ++it) {
-            notificationBody.insert(it.key(), it.value());
-        }
-    }
-
-    QJsonObject message {
-        { "hcs::notification", notificationBody }
-    };
-
-    QJsonDocument doc(message);
-
-    return doc.toJson(QJsonDocument::Compact);
 }
 
 void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &message)

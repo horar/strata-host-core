@@ -128,10 +128,6 @@ private slots:
     void platformDisconnected(const QByteArray& deviceId);
 
 private:
-    void handleMessage(const DispatcherMessage& msg);
-
-    bool broadcastMessage(const QString& message);
-
     enum class hcsNotificationType {
         downloadPlatformFilepathChanged,
         downloadPlatformSingleFileProgress,
@@ -145,10 +141,13 @@ private:
         updateFirmware,
         updateFirmwareJob,
         programController,
-        programControllerJob
+        programControllerJob,
+        platformDocumentsProgress,
+        platformDocument,
+        platformMessage,
+        connectedPlatforms
     };
-    const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
-    QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
+    constexpr const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
 
     void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
     void processCmdLoadDocuments(const strata::strataRPC::Message &message);
@@ -161,16 +160,6 @@ private:
     void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);
-
-    void callHandlerForTypeCmd(
-            const QString &cmdName,
-            const QJsonObject &payload,
-            const QByteArray &clientId);
-
-    void callHandlerForTypeHcsCmd(
-            const QString &cmdName,
-            const QJsonObject &payload,
-            const QByteArray &clientId);
 
     PlatformController platformController_;
     Database db_;
