@@ -115,9 +115,12 @@ FocusScope {
                 }
                 fileName = fileName + "_" + currentTimestamp() + ".bin"
 
-                const documentsUrl = StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+                let destination = Sci.Settings.lastSavedFirmwarePath
+                if (destination.length === 0) {
+                    destination = CommonCpp.SGUtilsCpp.urlToLocalFile(StandardPaths.writableLocation(StandardPaths.DocumentsLocation))
+                }
 
-                return CommonCpp.SGUtilsCpp.joinFilePath(CommonCpp.SGUtilsCpp.urlToLocalFile(documentsUrl), fileName)
+                return CommonCpp.SGUtilsCpp.joinFilePath(destination, fileName)
             }
 
             dialogLabel: "Select path for firmware binary"
@@ -212,6 +215,7 @@ FocusScope {
                 enabled: saveFirmwareView.editable
                          && model.platform.status === Sci.SciPlatform.Ready
                 onClicked: {
+                    Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(saveFirmwarePathEdit.filePath)
                     startBackupProcess(saveFirmwarePathEdit.filePath)
                 }
              }
