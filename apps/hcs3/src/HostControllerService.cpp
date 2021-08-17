@@ -66,6 +66,12 @@ bool HostControllerService::initialize(const QString &config)
     strataServer_->registerHandler(
         "platform_message", std::bind(&HostControllerService::processCmdSendPlatformMessage, this,
                                       std::placeholders::_1));
+    strataServer_->registerHandler(
+        "check_for_updates",
+        std::bind(&HostControllerService::processCmdCheckForUpdates, this, std::placeholders::_1));
+    strataServer_->registerHandler(
+        "program_controller", std::bind(&HostControllerService::processCmdProgramController, this,
+                                        std::placeholders::_1));
 
     // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
