@@ -78,6 +78,11 @@ LayoutContainer {
 
             property point startPoint
 
+            property var dragRectLeftLimit
+            property var dragRectRightLimit
+            property var dragRectTopLimit
+            property var dragRectBottomLimit
+
             onWheel: {
                 wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
             }
@@ -89,7 +94,12 @@ LayoutContainer {
                     if (visualEditor.selectedMultiObjectsUuid.length > 0) {
                         layoutOverlayRoot.multiItemTargetPrevX = rect.x
                         layoutOverlayRoot.multiItemTargetPrevY = rect.y
+
                         multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
+                        dragRectLeftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
+                        dragRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
+                        dragRectTopLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
+                        dragRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                     }
                 }
             }
@@ -166,14 +176,10 @@ LayoutContainer {
                     rect.y = newPosition.y
 
                     if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
-                        const leftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
-                        rect.x = Math.max(rect.x, -leftLimit)
-                        const rightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
-                        rect.x = Math.min(rect.x, rightLimit)
-                        const topLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
-                        rect.y = Math.max(rect.y, -topLimit)
-                        const bottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
-                        rect.y = Math.min(rect.y, bottomLimit)
+                        rect.x = Math.max(rect.x, -dragRectLeftLimit)
+                        rect.x = Math.min(rect.x, dragRectRightLimit)
+                        rect.y = Math.max(rect.y, -dragRectTopLimit)
+                        rect.y = Math.min(rect.y, dragRectBottomLimit)
 
                         const xOffset = rect.x - layoutOverlayRoot.multiItemTargetPrevX
                         const yOffset = rect.y - layoutOverlayRoot.multiItemTargetPrevY
@@ -283,8 +289,10 @@ LayoutContainer {
 
                 property point startPoint
 
-                property int maxColumnsToTheRight
-                property int maxRowsDown
+                property var dragResizeRectLeftLimit
+                property var dragResizeRectRightLimit
+                property var dragResizeRectTopLimit
+                property var dragResizeRectBottomLimit
 
                 onPressedChanged: {
                     if (pressed) {
@@ -294,7 +302,12 @@ LayoutContainer {
                     if (visualEditor.selectedMultiObjectsUuid.length > 0) {
                         layoutOverlayRoot.multiItemTargetPrevWidth = rect.width
                         layoutOverlayRoot.multiItemTargetPrevHeight = rect.height
-                        multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
+
+                        multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetResizeRectLimits()
+                        dragResizeRectLeftLimit = (multiItemTargetRectLimits[0] - 1) * overlayContainer.columnSize
+                        dragResizeRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
+                        dragResizeRectTopLimit = (multiItemTargetRectLimits[2] - 1) * overlayContainer.rowSize
+                        dragResizeRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                     }
                 }
 
@@ -313,8 +326,10 @@ LayoutContainer {
                             var xOffset = colRow.x - layoutOverlayRoot.layoutInfo.columnsWide
                             var yOffset = colRow.y - layoutOverlayRoot.layoutInfo.rowsTall
                             if (xOffset !== 0 || yOffset !== 0) {
-                                xOffset = Math.min(xOffset, maxColumnsToTheRight)
-                                yOffset = Math.min(yOffset, maxRowsDown)
+                                xOffset = Math.max(xOffset, (-multiItemTargetRectLimits[0] + 1))
+                                xOffset = Math.min(xOffset, multiItemTargetRectLimits[1])
+                                yOffset = Math.max(yOffset, (-multiItemTargetRectLimits[2] + 1))
+                                yOffset = Math.min(yOffset, multiItemTargetRectLimits[3])
                                 visualEditor.functions.resizeGroup(xOffset, yOffset)
                                 console.log("Resized selected " + visualEditor.selectedMultiObjectsUuid.length + " items by (" + xOffset + "," + yOffset + ")")
                             }
@@ -343,24 +358,20 @@ LayoutContainer {
                         rect.height = Math.max(newPosition.y, overlayContainer.rowSize)
 
                         if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
-                            const rightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
                             const originalWidth = layoutOverlayRoot.layoutInfo.columnsWide * overlayContainer.columnSize
-                            maxColumnsToTheRight = rightLimit / overlayContainer.columnSize
-                            rect.width = Math.min(rect.width, originalWidth + rightLimit)
-
-                            const bottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                             const originalHeight = layoutOverlayRoot.layoutInfo.rowsTall * overlayContainer.rowSize
-                            maxRowsDown = bottomLimit / overlayContainer.rowSize
-                            rect.height = Math.min(rect.height, originalHeight + bottomLimit)
-
-                            const xOffset = rect.width - layoutOverlayRoot.multiItemTargetPrevWidth
-                            const yOffset = rect.height - layoutOverlayRoot.multiItemTargetPrevHeight
+                            rect.width = Math.max(rect.width, originalWidth - dragResizeRectLeftLimit)
+                            rect.width = Math.min(rect.width, originalWidth + dragResizeRectRightLimit)
+                            rect.height = Math.max(rect.height, originalHeight - dragResizeRectTopLimit)
+                            rect.height = Math.min(rect.height, originalHeight + dragResizeRectBottomLimit)
 
                             if (layoutOverlayRoot.objectName === "") {
                                 layoutOverlayRoot.objectName = visualEditor.functions.getObjectPropertyValue(layoutOverlayRoot.sourceItem.layoutInfo.uuid, "id")
                                 layoutOverlayRoot.type = visualEditor.functions.getType(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
                             }
 
+                            const xOffset = rect.width - layoutOverlayRoot.multiItemTargetPrevWidth
+                            const yOffset = rect.height - layoutOverlayRoot.multiItemTargetPrevHeight
                             if (xOffset !== 0 || yOffset !== 0) {
                                 visualEditor.functions.resizeDragGroup(layoutOverlayRoot.objectName, xOffset, yOffset)
                             }

@@ -515,11 +515,12 @@ QtObject {
         visualEditor.multiObjectsResizeDragged(objectInitiated, width, height)
     }
 
+    // emits resetTargets signal to all layout items
     function resetTargets() {
         visualEditor.multiObjectsResetTargets()
     }
 
-    // calculates maximum offsets for multi-item target rectangle
+    // calculates maximum offsets for multi-item target rectangle for item moving
     function getMultiItemTargetRectLimits() {
         var minX = overlayContainer.columnCount
         var maxX = overlayContainer.columnCount
@@ -534,6 +535,27 @@ QtObject {
             maxX = Math.min(maxX, obj.layoutInfo.xColumns)
             minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
             maxY = Math.min(maxY, obj.layoutInfo.yRows)
+            minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
+        }
+
+        return [maxX, minX, maxY, minY]
+    }
+
+    // calculates maximum offsets for multi-item target rectangle for item resizing
+    function getMultiItemTargetResizeRectLimits() {
+        var minX = overlayContainer.columnCount
+        var maxX = overlayContainer.columnCount * overlayContainer.columnSize
+        var minY = overlayContainer.rowCount
+        var maxY = overlayContainer.rowCount * overlayContainer.rowSize
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                continue
+            }
+            maxX = Math.min(maxX, obj.layoutInfo.columnsWide)
+            minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
+            maxY = Math.min(maxY, obj.layoutInfo.rowsTall)
             minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
         }
 
