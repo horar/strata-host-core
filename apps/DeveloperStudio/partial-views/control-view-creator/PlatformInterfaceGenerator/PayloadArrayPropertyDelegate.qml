@@ -11,12 +11,11 @@ Rectangle {
     Layout.bottomMargin: 3
     Layout.rightMargin: 3
 
-    property int indexNum
     property int modelIndex
     property color parentColor
 
     color: {
-        if ((indexNum === 6) || (indexNum === 4) ) {
+        if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
             if(parentColor == "#ffffff") {
                 return "#d3d3d3"
             }
@@ -96,7 +95,6 @@ Rectangle {
                     } else {
                         currentIndex = indexSelected
                     }
-                    indexNum = currentIndex
                 }
 
                 onActivated: {
@@ -107,8 +105,6 @@ Rectangle {
 
                     type = payloadContainer.changePropertyType(index, arrayPropertyContainer.subObjectListModel, arrayPropertyContainer.subArrayListModel)
                     indexSelected = index
-                    indexNum = indexSelected
-
                 }
             }
         }
@@ -134,7 +130,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
         Repeater {

@@ -15,7 +15,7 @@ Rectangle {
     property color parentColor
 
     color: {
-        if ((propertyType.currentIndex === 6) || (propertyType.currentIndex === 4) ) {
+        if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
             if(parentColor == "#ffffff") {
                 return "#d3d3d3"
             }
