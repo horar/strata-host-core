@@ -27,7 +27,6 @@ ColumnLayout {
     signal multiObjectsDragged(string objectInitiated, var x, var y)
     signal multiObjectsResizeDragged(string objectInitiated, var width, var height)
     signal multiObjectsDeselectAll()
-    signal multiObjectsResetTargets()
 
     property alias loader: loader
     property alias functions: functions

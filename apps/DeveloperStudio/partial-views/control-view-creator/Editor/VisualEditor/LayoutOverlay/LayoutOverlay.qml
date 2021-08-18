@@ -36,10 +36,6 @@ LayoutContainer {
             layoutOverlayRoot.isSelected = false
         }
 
-        onMultiObjectsResetTargets: {
-            rect.color = "transparent"
-        }
-
         onMultiObjectsDragged: {
             if (objectInitiated != layoutOverlayRoot.objectName) {
                 rect.color = "red"
@@ -53,13 +49,6 @@ LayoutContainer {
                 rect.color = "red"
                 rect.width += width
                 rect.height += height
-
-                if (rect.width < 1) {
-                    rect.width = overlayContainer.columnSize
-                }
-                if (rect.height < 1) {
-                    rect.height = overlayContainer.rowSize
-                }
             }
         }
     }
@@ -149,6 +138,8 @@ LayoutContainer {
                         if (xOffset !== 0 || yOffset !== 0) {
                             visualEditor.functions.moveGroup(xOffset, yOffset)
                             console.log("Moved selected " + visualEditor.selectedMultiObjectsUuid.length + " items by (" + xOffset + "," + yOffset + ")")
+                        } else {
+                            visualEditor.functions.unload(true)
                         }
                     } else {
                         visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
@@ -342,7 +333,7 @@ LayoutContainer {
                         x = 0
                         y = 0
                         if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
-                            visualEditor.functions.resetTargets()
+                            visualEditor.functions.unload(true)
                         }
                     }
                 }

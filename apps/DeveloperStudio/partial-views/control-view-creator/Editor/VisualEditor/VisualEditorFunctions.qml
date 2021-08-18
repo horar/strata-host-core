@@ -515,11 +515,6 @@ QtObject {
         visualEditor.multiObjectsResizeDragged(objectInitiated, width, height)
     }
 
-    // emits resetTargets signal to all layout items
-    function resetTargets() {
-        visualEditor.multiObjectsResetTargets()
-    }
-
     // calculates maximum offsets for multi-item target rectangle for item moving
     function getMultiItemTargetRectLimits() {
         var minX = overlayContainer.columnCount
