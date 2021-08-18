@@ -59,7 +59,8 @@ void BluetoothLowEnergyDevice::open()
 void BluetoothLowEnergyDevice::close()
 {
     if (controller_ != nullptr) {
-        controller_->close();   // will emit disconnected() signal
+        controller_->close();
+        deinit();
     }
 }
 

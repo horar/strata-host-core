@@ -34,7 +34,8 @@ BluetoothLowEnergyController::~BluetoothLowEnergyController()
 
 void BluetoothLowEnergyController::open()
 {
-    if(controllerActive_ == true) {
+    if((controllerActive_ == true) ||
+       (lowEnergyController_->state() != QLowEnergyController::UnconnectedState)) {
         return;
     }
 
@@ -42,6 +43,7 @@ void BluetoothLowEnergyController::open()
     openingTimer_.start();
 
     qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
+
     lowEnergyController_->connectToDevice();
 }
 
@@ -51,11 +53,10 @@ void BluetoothLowEnergyController::close()
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Closing BLE device...";
-
     openingTimer_.stop();
     controllerActive_ = false;
-    emit disconnected(allDiscovered_ == false);
+
+    qCDebug(logCategoryDeviceBLE) << this << "Closing BLE device...";
 
 #ifdef Q_OS_WIN
     // only for windows, leave the connecting running until it finishes
@@ -72,6 +73,13 @@ void BluetoothLowEnergyController::close()
     }
 }
 
+void BluetoothLowEnergyController::disconnect()
+{
+    emit disconnected(allDiscovered_ == false);
+
+    close();
+}
+
 bool BluetoothLowEnergyController::isConnected() const
 {
     return lowEnergyController_->state() == QLowEnergyController::DiscoveredState && allDiscovered_;
@@ -80,7 +88,7 @@ bool BluetoothLowEnergyController::isConnected() const
 void BluetoothLowEnergyController::openingTimeoutHandler()
 {
     qCDebug(logCategoryDeviceBLE) << this << "Timeout while connecting and/or discovering services";
-    close();
+    disconnect();
 }
 
 void BluetoothLowEnergyController::deviceConnectedHandler()
@@ -105,7 +113,7 @@ void BluetoothLowEnergyController::deviceDisconnectedHandler()
 
     if(controllerActive_) {
         // this signal came from the device itself
-        close();    // lowEnergyController_ will be in UnconnectedState so it is ok to call close
+        disconnect();   // lowEnergyController_ will be in UnconnectedState
     } else {
         emit finished();
     }
@@ -173,7 +181,7 @@ void BluetoothLowEnergyController::deviceErrorReceivedHandler(QLowEnergyControll
     emit deviceError(error, lowEnergyController->errorString());
 
     if (allDiscovered_ == false) {
-        close();
+        disconnect();
     }
 }
 

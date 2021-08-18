@@ -38,7 +38,7 @@ public:
 
     /**
      * Tries to close device communication channel if possible (could take some time on Windows).
-     * Emits disconnected() immediatelly and finished() once completely closed and device can be erased.
+     * Emits finished() once completely closed and device can be erased.
      */
     void close();
 
@@ -84,6 +84,12 @@ private slots:
     void serviceErrorHandler(QLowEnergyService::ServiceError error);
 
 private:
+    /**
+     * Disconnects device communication channel by calling close().
+     * Emits disconnected() to notify that this device should no longer be re-used.
+     */
+    void disconnect();
+
     /**
      * Starts detail discovery for all discovered services.
      */
