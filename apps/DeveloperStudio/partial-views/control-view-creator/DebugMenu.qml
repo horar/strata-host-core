@@ -15,16 +15,12 @@ Rectangle {
     anchors.fill: parent
 
     property var json: ({})
-    property url source
-    property string errorString
-
-    Component.onCompleted: {
-        init()
-    }
+    property url source: editor.fileTreeModel.debugMenuSource
+    property string errorString: "No platformInterface.json detected in project" // default state is no pi.json found
 
     function init() {
         errorString = ""
-        if (source !== "") {
+        if (source.toString() !== "") {
             try {
                 const localFile = SGUtilsCpp.urlToLocalFile(source)
                 const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
@@ -42,10 +38,16 @@ Rectangle {
         }
     }
 
+    onSourceChanged: {
+        // re-init if platformInterface.json is deleted or if project changes
+        init()
+    }
+
     Connections {
         target: editor.fileTreeModel
 
         onFileChanged: {
+            // re-init upon changes to platformInterface.json (e.g. PIG generation etc)
             if (source === path) {
                 init()
             }
@@ -290,6 +292,8 @@ Rectangle {
 
     function checkAPI(jsonObject) {
         errorString = ""
+        let commandsFound = false
+        let notificationsFound = false
         if (jsonObject.hasOwnProperty("commands") && jsonObject.commands.length > 0) {
             for (let i = 0; i < jsonObject.commands.length; i++) {
                 if (jsonObject.commands[i].hasOwnProperty("payload")) {
@@ -299,6 +303,7 @@ Rectangle {
                     return
                 }
             }
+            commandsFound = true
         }
 
         if (jsonObject.hasOwnProperty("notifications") && jsonObject.notifications.length > 0) {
@@ -310,8 +315,12 @@ Rectangle {
                     return
                 }
             }
+            notificationsFound = true
         }
-        errorString = "Could not parse platformInterface.json - must contain notifications or commands"
+
+        if (notificationsFound === false && commandsFound === false) {
+            errorString = "Could not parse platformInterface.json - must contain notifications or commands"
+        }
     }
 }
 

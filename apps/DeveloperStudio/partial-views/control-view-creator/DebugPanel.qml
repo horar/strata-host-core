@@ -12,7 +12,6 @@ Item {
 
     property bool debugVisible: true
     property real rectWidth: 450
-    property url debugMenuSource: editor.fileTreeModel.debugMenuSource
     property alias mainContainer: mainContainer
 
     MouseArea {
@@ -81,17 +80,11 @@ Item {
                 left: parent.left
                 bottom: parent.bottom
             } 
-
-            property bool firstLoad: true
+            source: "qrc:/partial-views/control-view-creator/DebugMenu.qml"
 
             onVisibleChanged: {
-                if (visible && firstLoad) {
-                    firstLoad = false
-                    setSource("qrc:/partial-views/control-view-creator/DebugMenu.qml", {source: debugMenuSource})
-                    if (debugMenuSource !== "") {
-                        // Listen for changes to platformInterface.json in order to update DebugMenu.qml
-                        editor.fileTreeModel.startWatchingPath(SGUtilsCpp.urlToLocalFile(debugMenuSource))
-                    }
+                if (visible && active === false) {
+                    active = true
                 }
             }
 
