@@ -3,8 +3,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Rectangle {
-
     id: arrayDelegateRoot
+
     implicitHeight: arrayPropertyContainer.implicitHeight
     implicitWidth: arrayPropertyContainer.implicitWidth
     Layout.leftMargin: 3

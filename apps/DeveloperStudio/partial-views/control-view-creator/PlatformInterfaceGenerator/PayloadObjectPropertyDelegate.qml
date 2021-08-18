@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
     id: objectDelegateRoot
+
     implicitHeight: objectPropertyContainer.implicitHeight
     implicitWidth: objectPropertyContainer.implicitWidth
     Layout.leftMargin: 3

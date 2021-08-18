@@ -10,7 +10,6 @@ Rectangle {
 
     Layout.preferredHeight: payloadContainer.implicitHeight
     Layout.preferredWidth: payloadContainer.implicitWidth
-
     Layout.leftMargin: 3
 
     color: "transparent"
