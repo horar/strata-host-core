@@ -218,7 +218,6 @@ Item {
             onPressed:{
                 consoleLogs.deselectAll()
                 var clickedDelegate = consoleLogs.itemAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
-
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)
                 } else {
