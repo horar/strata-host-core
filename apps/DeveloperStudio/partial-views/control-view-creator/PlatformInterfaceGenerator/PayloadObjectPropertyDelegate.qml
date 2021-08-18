@@ -62,19 +62,6 @@ Rectangle {
                 Accessible.onPressAction: {
                     removeObjectFromPayloadMouseArea.clicked()
                 }
-
-                MouseArea {
-                    id: removeObjectFromPayloadMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: {
-                        if (propertyKey.text !== "") {
-                            unsavedChanges = true
-                        }
-                        objectPropertyContainer.parentListModel.remove(modelIndex)
-                    }
-                }
             }
 
             TextField {
@@ -82,6 +69,7 @@ Rectangle {
                 Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
                 placeholderText: "Key"
+                selectByMouse: true
                 validator: RegExpValidator {
                     regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
                 }
@@ -103,17 +91,17 @@ Rectangle {
                 }
 
                 Component.onCompleted: {
-                    text = model.key
+                    text = model.name
                     forceActiveFocus()
                 }
 
                 onTextChanged: {
-                    if (model.key === text) {
+                    if (model.name === text) {
                         return
                     }
                     unsavedChanges = true
 
-                    model.key = text
+                    model.name = text
                     if (text.length > 0) {
                         model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
                     } else {
@@ -139,12 +127,33 @@ Rectangle {
                     }
                     unsavedChanges = true
 
-                    type = payloadContainer.changePropertyType(index, objectPropertyContainer.subObjectListModel, objectPropertyContainer.subArrayListModel)
+                    type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
                     indexSelected = index
                 }
             }
         }
 
+
+        Loader {
+            sourceComponent: defaultValue
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+            visible: active
+
+            onItemChanged: {
+                if (item) {
+                    item.leftMargin = 20 * 2
+                    item.rightMargin = 30
+                    item.text = model.value
+                    item.textChanged.connect(textChanged)
+                }
+            }
+
+            function textChanged() {
+                model.value = item.text
+            }
+        }
 
         /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
@@ -192,9 +201,9 @@ Rectangle {
 
         Button {
             id: addPropertyButton
-            text: "Add Item To Object"
+            text: "Add Property To Object"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === objectPropertyContainer.parentListModel.count - 1
+            visible: modelIndex === parentListModel.count - 1
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -209,7 +218,7 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    objectPropertyContainer.parentListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.parentListModel})
+                    parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value":"0"})
                     commandsListView.contentY += 40
                 }
             }

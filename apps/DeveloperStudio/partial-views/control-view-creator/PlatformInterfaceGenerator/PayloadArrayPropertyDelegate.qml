@@ -79,6 +79,7 @@ Rectangle {
                 }
             }
 
+
             Text {
                 text: "[Index " + modelIndex + "] Element type: "
                 Layout.alignment: Qt.AlignVCenter
@@ -110,6 +111,27 @@ Rectangle {
                     indexNum = indexSelected
 
                 }
+            }
+        }
+
+        Loader {
+            sourceComponent: defaultValue
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+            visible: active
+
+            onItemChanged: {
+                if (item) {
+                    item.leftMargin = 20 * 2
+                    item.rightMargin = 30
+                    item.text = model.value
+                    item.textChanged.connect(textChanged)
+                }
+            }
+
+            function textChanged() {
+                model.value = item.text
             }
         }
 
@@ -161,7 +183,7 @@ Rectangle {
             id: addPropertyButton
             text: "Add Item To Array"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === arrayPropertyContainer.parentListModel.count - 1
+            visible: modelIndex === parentListModel.count - 1
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -176,7 +198,7 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    arrayPropertyContainer.parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.parentListModel})
+                    parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value": "0"})
                     commandsListView.contentY += 40
                 }
             }

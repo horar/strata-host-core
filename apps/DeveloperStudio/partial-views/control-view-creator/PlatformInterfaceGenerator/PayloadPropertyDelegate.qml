@@ -27,6 +27,24 @@ Rectangle {
         }
     }
 
+    function changePropertyType(index, objectListModel, arrayListModel) {
+        if (index === 4) {
+            // static array
+            if (arrayListModel.count === 0) {
+                objectListModel.clear()
+                arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0"})
+                commandsListView.contentY += 50
+            }
+        } else if (index === 6) {
+            // Object with known properties
+            if (objectListModel.count === 0) {
+                arrayListModel.clear()
+                objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
+
+            }
+        }
+    }
+
     ColumnLayout {
         id: payloadContainer
         spacing: 5
@@ -190,6 +208,27 @@ Rectangle {
                     type = payloadContainer.changePropertyType(index, payloadContainer.subObjectListModel, payloadContainer.subArrayListModel)
                     indexSelected = index
                 }
+            }
+        }
+
+
+        Loader {
+            sourceComponent: defaultValue
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+            visible: active
+
+            onItemChanged: {
+                if (item) {
+                    item.leftMargin = 20
+                    item.text = model.value
+                    item.textChanged.connect(textChanged)
+                }
+            }
+
+            function textChanged() {
+                model.value = item.text
             }
         }
 

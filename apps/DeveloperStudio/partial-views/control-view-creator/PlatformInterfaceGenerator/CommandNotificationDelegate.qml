@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
@@ -167,6 +168,44 @@ Rectangle {
                     if (commandsColumn.modelIndex === commandsListView.count - 1) {
                         commandsListView.contentY += 70
                     }
+                }
+            }
+        }
+    }
+    Rectangle {
+        id: hDivider
+        Layout.preferredHeight: 1
+        Layout.fillWidth: true
+        Layout.topMargin: 10
+        visible: index !== commandsListView.count - 1
+        color: "black"
+    }
+
+    Component {
+        id: defaultValue
+
+        Item {
+            id: defaultValueContainer
+            property int leftMargin: 20
+            property int rightMargin: 0
+            property alias text: textField.text
+
+            RowLayout {
+                anchors {
+                    fill: parent
+                    rightMargin: parent.rightMargin
+                }
+
+                Text {
+                    Layout.leftMargin: leftMargin
+                    text: "Default Value:"
+                }
+
+                TextField {
+                    id: textField
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    selectByMouse: true
                 }
             }
         }
