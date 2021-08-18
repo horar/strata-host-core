@@ -87,7 +87,6 @@ Item {
                     active = true
                 }
             }
-
         }
 
         Rectangle {
