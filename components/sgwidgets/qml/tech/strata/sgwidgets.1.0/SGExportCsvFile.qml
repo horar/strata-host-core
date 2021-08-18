@@ -13,8 +13,6 @@ Popup {
     closePolicy: Popup.NoAutoClose
     anchors.centerIn: Overlay.overlay
 
-    property alias headers: csvModel.headers
-    property alias cmdName: csvModel.cmdName
     property alias folderPath: folderPath.text
 
     contentItem: ColumnLayout {
@@ -34,6 +32,7 @@ Popup {
             id: csvView
             Layout.fillWidth: true
             Layout.fillHeight: true
+            clip: true
             model: csvModel
 
             ScrollBar.vertical: ScrollBar {
@@ -42,7 +41,7 @@ Popup {
 
             delegate: Rectangle {
                 id: delRect
-                implicitWidth: csvView.width / headers.length
+                implicitWidth: csvView.width / csvModel.getHeadersCount()
                 implicitHeight: 35
                 border {
                     color: "black"
@@ -63,42 +62,10 @@ Popup {
             Layout.leftMargin: 5
             Layout.rightMargin: 5
 
-            RowLayout {
-                id: fileNameRow
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 0
-                Rectangle {
-                    id: fileLabelrect
-                    Layout.preferredHeight: 50
-                    Layout.preferredWidth: 50
-                    SGWidgets.SGText {
-                        text: "Filename: "
-                        anchors.centerIn: fileLabelrect
-                    }
-                }
-
-                SGWidgets.SGTextField {
-                    id: fileNameField
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    text: csvModel.cmdName
-                    Layout.alignment: Qt.AlignVCenter
-
-                    onTextChanged: {
-                        csvModel.cmdName = text
-                    }
-                }
-
-                Rectangle {
-                    id: fileTailRect
-                    Layout.preferredHeight: 50
-                    Layout.preferredWidth: 25
-                    SGWidgets.SGText {
-                        text: ".csv"
-                        anchors.centerIn: fileTailRect
-                    }
-                }
+            SGWidgets.SGText {
+                text: "Export"
+                fontSizeMultiplier: 1.1
+                Layout.alignment: Qt.AlignVCenter
             }
 
             RowLayout {
@@ -164,7 +131,7 @@ Popup {
                     anchors.fill: exportButtonRect
                     enabled: folderPath.text.length > 0
                     onClicked: {
-                        csvModel.writeToPath(folderPath.text)
+                        csvModel.writeToPath()
                         root.close()
                     }
                 }
@@ -177,6 +144,12 @@ Popup {
             Layout.maximumHeight: 50
             Layout.leftMargin: 5
             Layout.rightMargin: 5
+
+            SGWidgets.SGText {
+                text: "Import"
+                fontSizeMultiplier: 1.1
+                Layout.alignment: Qt.AlignVCenter
+            }
 
             RowLayout {
                 id: folderImportPathRow
@@ -257,7 +230,6 @@ Popup {
 
         onAccepted: {
             folderPath.text = filePath.fileUrl
-            csvModel.folderPath = folderPath.text
             close()
         }
     }

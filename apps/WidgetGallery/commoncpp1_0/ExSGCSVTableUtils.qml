@@ -16,30 +16,38 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
 
-            property string cmdName: "my_data_cmd"
 
-            property var payload: {
-                "dac": 0.00,
-                "io": false,
-                "pwm": 0
+            property var cmdObj: {
+                "cmd": "my_data_cmd",
+                "payload": {
+                    "dac": 0.00,
+                    "io": false,
+                    "pwm": 0
+                }
+            }
+
+            property var notifObj: {
+                "value": "my_data_notif",
+                "payload": {
+                    "dac": 0.00,
+                    "io": false,
+                    "pwm": 0
+                }
             }
 
             SGWidgets.SGButton {
                 text: "Export to csv"
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
-                    sgExportCSV.headers = Object.keys(rowButton.payload)
-                    sgExportCSV.cmdName = `${rowButton.cmdName}_${Date.now()}`
-                    sgExportCSV.folderPath = "file:///Users/zbb69r/CSVFolder"
                     for (var i = 0; i < 100; i++) {
                         if (i % 2 === 0) {
-                            rowButton.payload["io"] = true
+                            rowButton.cmdObj["payload"]["io"] = true
                         } else {
-                            rowButton.payload["io"] = false
+                            rowButton.cmdObj["payload"]["io"] = false
                         }
-                        rowButton.payload["dac"] = Math.random(i).toFixed(2)
-                        rowButton.payload["pwm"] = Math.random(rowButton.payload["dac"]).toFixed(2)
-                        sgExportCSV.updateTableFromControlView(rowButton.payload, true)
+                        rowButton.cmdObj["payload"]["dac"] = Math.random(i).toFixed(2)
+                        rowButton.cmdObj["payload"]["pwm"] = Math.random(rowButton.cmdObj["payload"]["dac"]).toFixed(2)
+                        sgExportCSV.updateTableFromControlView(rowButton.cmdObj, true)
                     }
                 }
             }
@@ -48,6 +56,7 @@ ColumnLayout {
 
     CommonCpp.SGCSVTableUtils {
         id: sgExportCSV
+        folderPath: "file:///Users/zbb69r/CSVFolder"
     }
 
 }

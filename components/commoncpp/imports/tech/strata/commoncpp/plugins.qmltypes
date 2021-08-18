@@ -409,16 +409,14 @@ Module {
         prototype: "QAbstractTableModel"
         exports: ["tech.strata.commoncpp/SGCSVTableUtils 1.0"]
         exportMetaObjectRevisions: [0]
-        Property {name: "headers"; type: "QStringList"}
-        Property {name: "cmdName"; type: "string"}
         Property {name: "folderPath"; type: "string"}
-
-        Enum {
-            name: "CSVTableRole"
-            values: {
-                "KeyRole": 1,
-                "ValueRole": 2
-            }
+        Method {
+            name: "getHeadersCount"
+            type: "int"
+        }
+        Method {
+            name: "importTableFromFile"
+            Parameter {name: "folderPath"; type: "string"}
         }
         Method {
             name: "updateTableFromControlView"
@@ -428,17 +426,6 @@ Module {
         Method {
             name: "writeToPath"
              Parameter {name: "folderPath"; type: "string"}
-        }
-        Method {
-            name: "importTableFromFile"
-            Parameter {name: "folderPath"; type: "string"}
-        }
-
-        Signal {
-            name: "headersChanged"
-        }
-        Signal {
-            name: "cmdNameChanged"
         }
         Signal {
             name: "clearBackingModel"
