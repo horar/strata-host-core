@@ -229,6 +229,11 @@ public:
     Q_INVOKABLE void stopWatchingPath(const QString &path);
 
     /**
+     * @brief stopWatchingAll Removes all file/dir paths from internal QFileSystemWatcher
+     */
+    Q_INVOKABLE void stopWatchingAll();
+
+    /**
      * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
      * @param path The path to the file or directory
      */
