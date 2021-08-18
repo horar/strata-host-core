@@ -61,14 +61,13 @@ QtObject {
             sdsModel.qtLogger.visualEditorReloading = true
             loader.setSource(visualEditor.file)
             sdsModel.qtLogger.visualEditorReloading = false
-
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
                 visualEditor.fileValid = true
                 unload(false)
                 return
             }
         }
-        loadError()
+        loadError(loader.sourceComponent.errorString())
     }
 
     function unload(reload = false) {
@@ -82,6 +81,7 @@ QtObject {
     }
 
     function load() {
+        visualEditor.error = "Visual Editor supports QML files only"
         if (visualEditor.file.toLowerCase().endsWith(".qml")) {
             fileContents = readFileContents(visualEditor.file)
             sdsModel.qtLogger.visualEditorReloading = true
@@ -94,15 +94,14 @@ QtObject {
                 identifyChildren(loader.children[0])
                 visualEditor.fileValid = true
             } else {
-                loadError()
+                loadError(loader.sourceComponent.errorString())
             }
         } else {
             visualEditor.fileValid = false
-            visualEditor.error = "Visual Editor supports QML files only"
         }
     }
 
-    function loadError() {
+    function loadError(errorMsg) {
         unload(false)
         loader.setSource("qrc:/partial-views/SGLoadError.qml")
         if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
@@ -110,7 +109,7 @@ QtObject {
             loader.item.error_intro = "Unable to display file"
             loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use Visual Editor."
             visualEditor.fileValid = false
-            visualEditor.error = "Visual Editor supports files derived from UIBase only"
+            visualEditor.error = errorMsg
         } else {
             loader.item.error_intro = "Unable to display file"
             loader.item.error_message = "Build error, see logs"
