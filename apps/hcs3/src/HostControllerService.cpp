@@ -31,8 +31,8 @@ bool HostControllerService::initialize(const QString &config)
     // strataServer_ setup
     QJsonObject serverConfig = config_.value("host_controller_service").toObject();
 
-    if (false == serverConfig.contains("subscriber_address") &&
-        true == serverConfig.value("subscriber_address").isString()) {
+    if (false == serverConfig.contains("subscriber_address") ||
+        false == serverConfig.value("subscriber_address").isString()) {
         qCCritical(logCategoryHcs) << "Invalid subscriber_address.";
         return false;
     }
