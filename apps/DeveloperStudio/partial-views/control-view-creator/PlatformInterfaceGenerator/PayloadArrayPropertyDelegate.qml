@@ -17,7 +17,6 @@ Rectangle {
 
     color: {
         if ((indexNum === 6) || (indexNum === 4) ) {
-            console.log("color", parentColor, parentColor == "#ffffff")
             if(parentColor == "#ffffff") {
                 return "#d3d3d3"
             }
