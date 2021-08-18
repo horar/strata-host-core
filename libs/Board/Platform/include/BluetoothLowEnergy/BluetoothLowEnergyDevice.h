@@ -152,7 +152,7 @@ private:
      */
     void emitResponses(const std::vector<QByteArray> &responses);
 
-    int platforiIdDataAwaiting_;
+    int platformIdDataAwaiting_;
     QMap<QBluetoothUuid, QString> platformIdentification_;
 
     QBluetoothDeviceInfo bluetoothDeviceInfo_;

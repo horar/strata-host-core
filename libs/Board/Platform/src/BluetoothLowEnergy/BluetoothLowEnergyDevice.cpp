@@ -15,7 +15,7 @@ BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, c
           deviceId,
           info.name(),
           Type::BLEDevice),
-      platforiIdDataAwaiting_(0),
+      platformIdDataAwaiting_(0),
       bluetoothDeviceInfo_(info),
       controllerFactory_(controllerFactory)
 {
@@ -71,7 +71,7 @@ void BluetoothLowEnergyDevice::deinit()
         disconnect(controller_.get(), nullptr, this, nullptr);
         controller_.reset();
 
-        platforiIdDataAwaiting_ = 0;
+        platformIdDataAwaiting_ = 0;
         platformIdentification_.clear();
     }
 }
@@ -143,22 +143,22 @@ QString BluetoothLowEnergyDevice::processGetFirmwareInfoCommand()
 
 QString BluetoothLowEnergyDevice::processRequestPlatformIdCommand()
 {
-    if (platforiIdDataAwaiting_ > 0)
+    if (platformIdDataAwaiting_ > 0)
     {
         qCDebug(logCategoryDeviceBLE) << this << "Already requested request_platform_id, will only send 1 result notification";
         return QString();
     }
     platformIdentification_.clear();
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_TYPE);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_PLATFORM_ID);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CLASS_ID);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_BOARD_COUNT);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_BOARD_CONNECTED);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_PLATFORM_ID);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_CLASS_ID);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT);
-    platforiIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_FW_CLASS_ID);
-    if (platforiIdDataAwaiting_ == 0) {
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_TYPE);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_PLATFORM_ID);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CLASS_ID);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_BOARD_COUNT);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_BOARD_CONNECTED);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_PLATFORM_ID);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_CLASS_ID);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT);
+    platformIdDataAwaiting_ += sendReadPlatformIdentification(ble::STRATA_ID_SERVICE_FW_CLASS_ID);
+    if (platformIdDataAwaiting_ == 0) {
         emitResponses({BluetoothLowEnergyJsonEncoder::encodeNAckRequestPlatformId()});
     } else {
         emitResponses({BluetoothLowEnergyJsonEncoder::encodeAckRequestPlatformId()});
@@ -189,13 +189,13 @@ void BluetoothLowEnergyDevice::platformIdentificationReadHandler(const QBluetoot
     if (value != nullptr) {
         BluetoothLowEnergyJsonEncoder::parseCharacteristicValue(characteristicUuid, *value, platformIdentification_);
     }
-    platforiIdDataAwaiting_--;
+    platformIdDataAwaiting_--;
 
-    if (platforiIdDataAwaiting_ == 0) {
+    if (platformIdDataAwaiting_ == 0) {
         emitResponses({BluetoothLowEnergyJsonEncoder::encodeNotificationPlatformId(bluetoothDeviceInfo_.name(), platformIdentification_)});
         platformIdentification_.clear();
-    } else if (platforiIdDataAwaiting_ < 0) {
-        platforiIdDataAwaiting_ = 0; // just in case the driver sends more responses than we requested -> wrong answer, but no infinite waiting
+    } else if (platformIdDataAwaiting_ < 0) {
+        platformIdDataAwaiting_ = 0; // just in case the driver sends more responses than we requested -> wrong answer, but no infinite waiting
         platformIdentification_.clear();
         qCWarning(logCategoryDeviceBLE) << this << "Unexpected Strata ID service response" << characteristicUuid;
     }
