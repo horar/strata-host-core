@@ -183,7 +183,7 @@ Rectangle {
             id: addPropertyButton
             text: "Add Item To Array"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === parentListModel.count - 1
+            visible: modelIndex === arrayPropertyContainer.parentListModel.count - 1
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -198,7 +198,7 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value": "0"})
+                    arrayPropertyContainer.parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.parentListModel, "value": "0"})
                     commandsListView.contentY += 40
                 }
             }
