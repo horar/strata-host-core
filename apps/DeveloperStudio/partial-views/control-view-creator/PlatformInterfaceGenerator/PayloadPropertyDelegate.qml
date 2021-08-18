@@ -21,10 +21,10 @@ Rectangle {
             if(color !== "#d3d3d3") {
                 return color = "#d3d3d3"
             }
-            else return
+            else return color
         }
         else {
-            return
+            return color
         }
     }
 
@@ -36,7 +36,6 @@ Rectangle {
         property ListModel subObjectListModel: model.object
 
         function changePropertyType(index, objectListModel, arrayListModel) {
-//            indexIs = index
             if (index === 4) {
                 // static array
                 if (arrayListModel.count === 0) {
@@ -191,7 +190,6 @@ Rectangle {
 
                     type = payloadContainer.changePropertyType(index, payloadContainer.subObjectListModel, payloadContainer.subArrayListModel)
                     indexSelected = index
-
                 }
             }
         }
@@ -206,7 +204,6 @@ Rectangle {
             delegate: PayloadArrayPropertyDelegate {
                 modelIndex: index
                 parentColor: payloadDelegateRoot.color
-
             }
         }
 

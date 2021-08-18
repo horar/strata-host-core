@@ -7,7 +7,6 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     width:  ListView.view.width
     height: commandsColumn.height
-
     color: "#F8F8F8"
 
     property ListModel payloadModel: commandsColumn.payloadModel
