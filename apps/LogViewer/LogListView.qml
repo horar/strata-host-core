@@ -528,7 +528,25 @@ Item {
                         id: copyAction
                         text: qsTr("Copy")
                         onTriggered: {
-                            copyToClipboard([ts.text,pid.text,tid.text,level.text,msg.text.trim()].filter(Boolean).join("  "))
+                            let line = []
+                            let delimiter = " , "
+
+                            if (ts.text) {
+                                line.push(ts.text)
+                            }
+                            if (pid.text) {
+                                line.push(pid.text)
+                            }
+                            if (tid.text) {
+                                line.push(tid.text)
+                            }
+                            if (level.text) {
+                                line.push(level.text)
+                            }
+                            if (msg.text) {
+                                line.push(msg.text.trim())
+                            }
+                            copyToClipboard(line.join(delimiter))
                         }
                     }
 
