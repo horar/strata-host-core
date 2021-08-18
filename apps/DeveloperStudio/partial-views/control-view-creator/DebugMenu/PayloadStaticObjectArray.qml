@@ -54,9 +54,19 @@ ColumnLayout {
                 SGText {
                     id: labelName
                     font.bold: true
-                    Layout.preferredWidth: 35
+                    Layout.minimumWidth: 100
+                    Layout.maximumWidth: 100
                     fontSizeMultiplier: 1.2
-                    text: modelData.hasOwnProperty("name") ? modelData.name : index
+                    elide: Text.ElideRight
+                    text: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
+                }
+
+                SGText {
+                    id: typeName
+                    Layout.minimumWidth: 50
+                    Layout.maximumWidth: 50
+                    fontSizeMultiplier: 1.2
+                    text: modelData.type
                 }
 
                 Rectangle {
@@ -77,8 +87,18 @@ ColumnLayout {
                         text: createTextValue(modelData.value, modelData.type)
 
                         onTextChanged: {
-                            const keyIndex = isArray ? parseInt(labelName.text) : labelName.text
-                            listView.payload[labelText.text][keyIndex] = isJson(text) ? JSON.parse(text) : text
+                            const keyIndex = isArray ? parseInt(labelName.text.split(":")[1].trim()) : labelName.text
+                            let textVal;
+                            switch(modelData.type) {
+                                case "int": textVal = Number(text)
+                                break;
+                                case "double": textVal = Number(text)
+                                break;
+                                case "bool": textVal = Boolean(text)
+                                break;
+                                default: textVal = text
+                            }
+                            listView.payload[labelText.text][keyIndex] = isJson(text) ? JSON.parse(text) : textVal
                             debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
                         }
 
@@ -112,7 +132,12 @@ ColumnLayout {
                                 }
                                 return JSON.stringify(retVal)
                             } else {
-                                return value
+                                switch(type) {
+                                    case "int": return Number(value)
+                                    case "double": return Number(value)
+                                    case "bool": return Boolean(value)
+                                    default: return value
+                                }
                             }
                         }
                     }
@@ -127,6 +152,5 @@ ColumnLayout {
 
     DoubleValidator {
         id: doubleValid
-        decimals: 2
     }
 }

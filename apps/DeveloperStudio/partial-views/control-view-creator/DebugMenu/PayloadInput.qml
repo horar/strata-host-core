@@ -24,7 +24,7 @@ Item {
             id: labelText
             font.bold: true
             fontSizeMultiplier: 1.2
-            Layout.preferredWidth: 100
+            Layout.minimumWidth: 150
         }
 
         Rectangle {
@@ -58,6 +58,5 @@ Item {
 
     DoubleValidator {
         id: doubleValid
-        decimals: 2
     }
 }

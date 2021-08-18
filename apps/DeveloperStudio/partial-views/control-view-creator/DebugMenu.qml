@@ -5,6 +5,7 @@ import QtQuick.Window 2.12
 import "qrc:/js/constants.js" as Constants
 import tech.strata.sgwidgets 0.9
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0
 
 import "./DebugMenu"
@@ -66,9 +67,10 @@ Rectangle {
             spacing: 0
 
             TabButton {
-                text: "Notifications"
                 background: Rectangle {
-                    color: tabBar.currentIndex === 0 ? "lightGrey" : mouseNotifArea.containsMouse ? "grey" : "transparent"
+                    id: backGroundRectNotif
+                    height: 35
+                    color: tabBar.currentIndex === 0 ? Theme.palette.lightGray : mouseNotifArea.containsMouse ? Theme.palette.gray: Theme.palette.darkGray
                     MouseArea {
                         id: mouseNotifArea
                         hoverEnabled: true
@@ -78,13 +80,30 @@ Rectangle {
                             tabBar.currentIndex = 0
                         }
                     }
+
+                    Text {
+                        id: notifText
+                        text: "Notifications"
+                        anchors.centerIn: backGroundRectNotif
+                    }
+
+                    Rectangle {
+                        width: notifText.width
+                        height: 5
+                        radius: 5
+                        color: Theme.palette.darkGray
+                        visible: tabBar.currentIndex === 0
+                        anchors.top: notifText.bottom
+                        anchors.horizontalCenter: backGroundRectNotif.horizontalCenter
+                    }
                 }
             }
 
             TabButton {
-                text: "Commands"
                 background: Rectangle {
-                    color: tabBar.currentIndex === 1 ? "lightGrey" : mouseCommandArea.containsMouse ? "grey" : "transparent"
+                    id: backGroundRectCommand
+                    height: 35
+                    color: tabBar.currentIndex === 1 ? Theme.palette.lightGray : mouseCommandArea.containsMouse ? Theme.palette.gray: Theme.palette.darkGray
                     MouseArea {
                         id: mouseCommandArea
                         hoverEnabled: true
@@ -93,6 +112,22 @@ Rectangle {
                         onClicked: {
                             tabBar.currentIndex = 1
                         }
+                    }
+
+                    Text {
+                        id: commandText
+                        text: "Commands"
+                        anchors.centerIn: backGroundRectCommand
+                    }
+
+                    Rectangle {
+                        width: commandText.width
+                        height: 5
+                        radius: 5
+                        color: Theme.palette.darkGray
+                        visible: tabBar.currentIndex === 1
+                        anchors.top: commandText.bottom
+                        anchors.horizontalCenter: backGroundRectCommand.horizontalCenter
                     }
                 }
             }

@@ -105,12 +105,6 @@ ColumnLayout {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 30
                     }
-                }
-
-                RowLayout {
-                    Item {
-                        Layout.preferredWidth: 10
-                    }
 
                     SGText {
                         font.bold: true
@@ -118,14 +112,16 @@ ColumnLayout {
                     }
 
                     Loader {
+                        id: loader
                         active: true
                         sourceComponent: comboBox.currentIndex !== 1 ? inputComponent : switchComponent
-
+                        Layout.fillWidth: true
+                        Layout.rightMargin: 10
                         Component {
                             id: inputComponent
 
                             SGTextField {
-                                width: root.width - 75
+                                width: loader.width
                                 height: 30
                                 clip: true
                                 readOnly: isArray ? false : nameField.length < 1
@@ -137,13 +133,9 @@ ColumnLayout {
                                     }
                                 }
 
-                                validator: RegExpValidator {
-                                    regExp: {
-                                        switch(comboBox.currentText) {
-                                            case "int": return intValid
-                                            case "double": return doubleValid
-                                        }
-                                    }
+                                validator: switch(comboBox.currentText) {
+                                    case "int": return intValid
+                                    case "double": return doubleValid
                                 }
                                 focus: true
 
@@ -183,6 +175,10 @@ ColumnLayout {
                             }
                         }
                     }
+
+                    Item {
+                        Layout.preferredWidth: 10
+                    }
                 }
             }
         }
@@ -210,6 +206,5 @@ ColumnLayout {
 
     DoubleValidator {
         id: doubleValid
-        decimals: 2
     }
 }
