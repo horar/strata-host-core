@@ -23,7 +23,7 @@ Rectangle {
 
     function init() {
         errorString = ""
-        if (source !== "") {
+        if (source.toString() !== "") {
             try {
                 const localFile = SGUtilsCpp.urlToLocalFile(source)
                 const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
