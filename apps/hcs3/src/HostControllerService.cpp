@@ -102,9 +102,12 @@ bool HostControllerService::initialize(const QString &config)
         qCInfo(logCategoryHcs) << "Running in" << stage << "setup";
         baseFolder += QString("/%1").arg(stage);
         QDir baseFolderDir{baseFolder};
-        if (baseFolderDir.exists() == false) {
-            qCDebug(logCategoryHcs)
-                << "Creating base folder" << baseFolder << "-" << baseFolderDir.mkpath(baseFolder);
+
+        if (false == baseFolderDir.exists()) {
+            qCDebug(logCategoryHcs) << "Creating base folder" << baseFolder;
+            if (false == baseFolderDir.mkpath(baseFolder)) {
+                qCCritical(logCategoryHcs) << "Failed to create base folder" << baseFolder;
+            }
         }
     }
 
