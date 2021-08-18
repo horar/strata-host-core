@@ -128,6 +128,8 @@ LayoutContainer {
                         if (xOffset !== 0 || yOffset !== 0) {
                             visualEditor.functions.moveGroup(xOffset, yOffset)
                             console.log("Moved selected " + visualEditor.selectedMultiObjectsUuid.length + " items by (" + xOffset + "," + yOffset + ")")
+                        } else {
+                            visualEditor.functions.unload(true)
                         }
                     } else {
                         visualEditor.functions.moveItem(layoutOverlayRoot.layoutInfo.uuid, colRow.x, colRow.y)
