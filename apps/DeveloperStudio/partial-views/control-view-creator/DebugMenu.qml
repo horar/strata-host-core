@@ -58,7 +58,6 @@ Rectangle {
         visible: !errorLayout.visible
         spacing: 0
         anchors {
-            margins: 10
             fill: debugMenuRoot
         }
 
@@ -73,6 +72,7 @@ Rectangle {
                     id: backGroundRectNotif
                     height: 35
                     color: tabBar.currentIndex === 0 ? Theme.palette.lightGray : mouseNotifArea.containsMouse ? Theme.palette.gray: Theme.palette.darkGray
+
                     MouseArea {
                         id: mouseNotifArea
                         hoverEnabled: true
@@ -87,12 +87,13 @@ Rectangle {
                         id: notifText
                         text: "Notifications"
                         anchors.centerIn: backGroundRectNotif
+                        color: tabBar.currentIndex === 0 ? "black" : "lightgrey"
                     }
 
                     Rectangle {
                         width: notifText.width
-                        height: 5
-                        radius: 5
+                        height: 2
+                        radius: height/2
                         color: Theme.palette.darkGray
                         visible: tabBar.currentIndex === 0
                         anchors.top: notifText.bottom
@@ -106,6 +107,7 @@ Rectangle {
                     id: backGroundRectCommand
                     height: 35
                     color: tabBar.currentIndex === 1 ? Theme.palette.lightGray : mouseCommandArea.containsMouse ? Theme.palette.gray: Theme.palette.darkGray
+
                     MouseArea {
                         id: mouseCommandArea
                         hoverEnabled: true
@@ -120,12 +122,13 @@ Rectangle {
                         id: commandText
                         text: "Commands"
                         anchors.centerIn: backGroundRectCommand
+                        color: tabBar.currentIndex === 1 ? "black" : "lightgrey"
                     }
 
                     Rectangle {
                         width: commandText.width
-                        height: 5
-                        radius: 5
+                        height: 2
+                        radius: height/2
                         color: Theme.palette.darkGray
                         visible: tabBar.currentIndex === 1
                         anchors.top: commandText.bottom
@@ -138,16 +141,12 @@ Rectangle {
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            border {
-                width: 1
-                color: "darkgrey"
-            }
             color: "lightgrey"
 
             StackLayout {
                 anchors {
                     fill: parent
-                    margins: 1 // so border in parent Rectangle can be seen
+                    topMargin: 5
                 }
                 currentIndex: tabBar.currentIndex
 
@@ -187,6 +186,17 @@ Rectangle {
                             }
                         }
                     }
+
+                    Text {
+                        text: "No notifications found in platformInterface.json"
+                        visible: notifications.jsonModel.length === 0
+                        anchors {
+                            centerIn: parent
+                        }
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                    }
                 }
 
                 SGAccordion {
@@ -225,6 +235,17 @@ Rectangle {
                             }
                         }
                     }
+
+                    Text {
+                        text: "No commands found in platformInterface.json"
+                        visible: commands.jsonModel.length === 0
+                        anchors {
+                            centerIn: parent
+                        }
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                    }
                 }
             }
         }
@@ -233,42 +254,26 @@ Rectangle {
     ColumnLayout {
         id: errorLayout
         visible: debugMenuRoot.errorString.length > 0
-        anchors.fill: debugMenuRoot
-
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
+        anchors.centerIn: debugMenuRoot
+        width: debugMenuRoot.width
+        spacing: 10
 
         SGIcon {
             id: errorIcon
             source: "qrc:/sgimages/exclamation-circle.svg"
             Layout.preferredWidth: 50
-            height: Layout.preferredWidth
+            Layout.preferredHeight: Layout.preferredWidth
             iconColor: "grey"
             Layout.alignment: Qt.AlignHCenter
         }
 
-        Item {
-            Layout.preferredHeight: 10
+        Text {
+            text: errorString
+            font.pixelSize: 13 * 1.1
+            wrapMode: Text.Wrap
+            Layout.margins: 10
             Layout.fillWidth: true
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-
-            Text {
-               text: errorString
-               font.pixelSize: 13 * 1.1
-               wrapMode: Text.WordWrap
-               anchors.centerIn: parent
-            }
-        }
-
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 
