@@ -100,7 +100,7 @@ Rectangle {
 
             TextField {
                 id: propertyKey
-                Layout.fillWidth: true
+                Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
                 selectByMouse: true
                 persistentSelection: true   // must deselect manually

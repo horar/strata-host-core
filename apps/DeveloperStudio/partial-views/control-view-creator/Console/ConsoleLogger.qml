@@ -185,9 +185,9 @@ Item {
                     consoleLogs.selectInBetween(index)
                 }
 
-//                onExited: {
-//                    console.log(consoleMessage.selectedText)
-//                }
+                onExited: {
+                    console.log(consoleMessage.selectedText)
+                }
 
                 onPositionChanged: {
                     end = consoleMessage.positionAt(drag.x, drag.y)
