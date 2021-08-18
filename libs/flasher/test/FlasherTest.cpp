@@ -280,7 +280,7 @@ void FlasherTest::flashFirmwareTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherOkCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -328,7 +328,7 @@ void FlasherTest::flashFirmwareWithoutStartApplicationTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->flashFirmware(false);
+    flasher_->flashFirmware(strata::Flasher::FinalAction::StayInBootloader);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherOkCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -378,7 +378,7 @@ void FlasherTest::flashFirmwareStartInBootloaderTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherOkCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -523,7 +523,7 @@ void FlasherTest::setFwClassIdTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->setFwClassId();
+    flasher_->setFwClassId(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherOkCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -558,7 +558,7 @@ void FlasherTest::setFwClassIdWithoutStartApplicationTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName(),expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->setFwClassId(false);
+    flasher_->setFwClassId(strata::Flasher::FinalAction::StayInBootloader);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherOkCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -592,7 +592,7 @@ void FlasherTest::startFlashFirmwareInvalidCommandTest()
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_invalid_command,MockCommand::Start_flash_firmware);
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -625,7 +625,7 @@ void FlasherTest::startFlashFirmwareFirmwareTooLargeTest()
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Start_flash_firmware_too_large,MockCommand::Start_flash_firmware);
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -658,7 +658,7 @@ void FlasherTest::flashFirmwareResendChunkTest()
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_resend_chunk,MockCommand::Flash_firmware);
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -709,7 +709,7 @@ void FlasherTest::flashFirmwareMemoryErrorTest()
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_memory_error,MockCommand::Flash_firmware);
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -750,7 +750,7 @@ void FlasherTest::flashFirmwareInvalidCmdSequenceTest()
     connectFlasherHandlers(flasher_.data());
     mockDevice_->mockSetResponseForCommand(MockResponse::Flash_firmware_invalid_cmd_sequence,MockCommand::Flash_firmware);
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -787,7 +787,7 @@ void FlasherTest::disconnectDuringFlashTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherForDisconnectDuringFlashOperation(flasher_.data());
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherDisconnectedCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Device disconnected during firmware operation.
 
@@ -805,7 +805,7 @@ void FlasherTest::setNoFwClassIdTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->setFwClassId();
+    flasher_->setFwClassId(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherErrorCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Cannot set firmware class ID, no fwClassId was provided.
 
@@ -823,7 +823,7 @@ void FlasherTest::flashFirmwareCancelTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherForCancelFlashOperation(flasher_.data());
 
-    flasher_->flashFirmware();
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Firmware operation was cancelled.
 
@@ -911,7 +911,7 @@ void FlasherTest::backupFirmwareTest()
                 new strata::Flasher(platform_,fakeFirmwareBackupName_,expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->backupFirmware();
+    flasher_->backupFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -963,7 +963,7 @@ void FlasherTest::backupFirmwareWithoutStartApplicationTest()
                 new strata::Flasher(platform_,fakeFirmwareBackupName_,expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->backupFirmware(false);
+    flasher_->backupFirmware(strata::Flasher::FinalAction::StayInBootloader);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -1012,7 +1012,7 @@ void FlasherTest::backupFirmwareStartInBootloaderTest()
                 new strata::Flasher(platform_,fakeFirmwareBackupName_,expectedMd5_,"00000000-0000-4000-0000-000000000000"), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->backupFirmware();
+    flasher_->backupFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherFinishedCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -1064,7 +1064,7 @@ void FlasherTest::disconnectDuringBackupTest()
                 new strata::Flasher(platform_,fakeFirmware_.fileName()), &QObject::deleteLater);
     connectFlasherForDisconnectDuringFlashOperation(flasher_.data());
 
-    flasher_->backupFirmware();
+    flasher_->backupFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherDisconnectedCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Device disconnected during firmware operation.
 
@@ -1082,7 +1082,7 @@ void FlasherTest::backupFirmwareCancelTest()
                 new strata::Flasher(platform_,fakeBootloader_.fileName()), &QObject::deleteLater);
     connectFlasherForCancelFlashOperation(flasher_.data());
 
-    flasher_->backupFirmware();
+    flasher_->backupFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherCancelledCount_, 1, flasher_test_constants::TEST_TIMEOUT); //Flash bootlaoder operation was cancelled.
 
@@ -1115,7 +1115,7 @@ void FlasherTest::startBackupNoFirmwareTest()
                 new strata::Flasher(platform_,fakeFirmwareBackupName_), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->backupFirmware();
+    flasher_->backupFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherNoFirmwareCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 
@@ -1140,7 +1140,7 @@ void FlasherTest::backupNoFirmwareTest()
                 new strata::Flasher(platform_,fakeFirmwareBackupName_), &QObject::deleteLater);
     connectFlasherHandlers(flasher_.data());
 
-    flasher_->backupFirmware();
+    flasher_->backupFirmware(Flasher::FinalAction::StartApplication);
 
     QTRY_COMPARE_WITH_TIMEOUT(flasherNoFirmwareCount_, 1, flasher_test_constants::TEST_TIMEOUT);
 

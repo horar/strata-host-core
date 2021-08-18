@@ -90,7 +90,7 @@ void FirmwareUpdater::setFwClassId()
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
-    flasherConnector_->setFwClassId();
+    flasherConnector_->setFwClassId(strata::Flasher::FinalAction::StartApplication);
 }
 
 void FirmwareUpdater::updateFinished(FirmwareUpdateController::UpdateStatus status)
@@ -172,7 +172,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
-    flasherConnector_->flash(backupOldFirmware_);
+    flasherConnector_->flash(backupOldFirmware_, strata::Flasher::FinalAction::StartApplication);
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
