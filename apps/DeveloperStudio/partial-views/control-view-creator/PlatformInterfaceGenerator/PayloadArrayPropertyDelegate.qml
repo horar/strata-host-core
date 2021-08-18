@@ -48,15 +48,18 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (cmdNotifName.text !== "") {
+                        unsavedChanges = true
+                    }
                     parentListModel.remove(modelIndex)
                 }
             }
         }
 
         Text {
-            text: "[Index " + modelIndex  + "] Element type: "
+            text: "[Index " + modelIndex + "] Element type: "
             Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: 150
+            Layout.fillWidth: true
             verticalAlignment: Text.AlignVCenter
         }
 
@@ -72,9 +75,35 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
             }
+        }
+    }
+
+    Loader {
+        sourceComponent: defaultValue
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
+        active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+        visible: active
+
+        onItemChanged: {
+            if (item) {
+                item.leftMargin = 20 * 2
+                item.rightMargin = 30
+                item.text = model.value
+                item.textChanged.connect(textChanged)
+            }
+        }
+
+        function textChanged() {
+            model.value = item.text
         }
     }
 
@@ -139,10 +168,9 @@ ColumnLayout {
             cursorShape: Qt.PointingHandCursor
 
             onClicked: {
-                parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value": "0"})
                 commandsListView.contentY += 40
             }
         }
     }
 }
-

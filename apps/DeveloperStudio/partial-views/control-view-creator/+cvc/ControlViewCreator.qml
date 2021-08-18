@@ -20,14 +20,16 @@ Rectangle {
 
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
+    property bool isDebugMenuOpen: false
     property bool popupWindow: false
+    property bool debugMenuWindow: false
     property bool recompileRequested: false
     property bool projectInitialization: false
     property string previousCompiledRccFilePath: ""
     property string previousCompiledRccFileUniquePrefix: ""
     property var debugPlatform: ({
-                                     deviceId: Constants.NULL_DEVICE_ID,
-                                     classId: ""
+                                     device_id: Constants.NULL_DEVICE_ID,
+                                     class_id: ""
                                  })
 
     property alias openFilesModel: editor.openFilesModel
@@ -83,53 +85,32 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
-                SGSplitView {
-                    id: controlViewContainer
+                Loader {
+                    id: controlViewLoader
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.minimumWidth: 600
 
-                    onResizingChanged: {
-                        if (!resizing) {
-                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                                debugPanel.expandWidth = debugPanel.width
-                            } else {
-                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
-                            }
+                    asynchronous: true
+
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
+
+                            recompileRequested = false
+                        } else if (status === Loader.Error) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
+
+                            recompileRequested = false
+                            console.error("Error while loading control view")
+                            setSource(NavigationControl.screens.LOAD_ERROR,
+                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                      );
                         }
-                    }
-
-                    Loader {
-                        id: controlViewLoader
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        Layout.minimumWidth: 600
-
-                        asynchronous: true
-
-                        onStatusChanged: {
-                            if (status === Loader.Ready) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                            } else if (status === Loader.Error) {
-                                // Tear Down creation context
-                                delete NavigationControl.context.class_id
-                                delete NavigationControl.context.device_id
-
-                                recompileRequested = false
-                                console.error("Error while loading control view")
-                                setSource(NavigationControl.screens.LOAD_ERROR,
-                                          { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
-                                          );
-                            }
-                        }
-                    }
-
-                    DebugPanel {
-                        id: debugPanel
-                        Layout.fillHeight: true
                     }
                 }
 
@@ -143,13 +124,33 @@ Rectangle {
                 Layout.minimumHeight: 30
                 implicitHeight: 200
                 Layout.fillWidth: true
-                visible:  viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
+                visible: viewStack.currentIndex === 1 && isConsoleLogOpen === true && popupWindow === false
+            }
+        }
+    }
+
+    Item {
+        id: debugMenuContainer
+        width: parent.width - navigationBar.width
+        height: parent.height
+        anchors.top: parent.top
+        anchors.right: parent.right
+        visible: viewStack.currentIndex === 2 && isDebugMenuOpen === true && debugMenuWindow === false
+    }
+
+    DebugPanel {
+        id: debugPanel
+        parent: {
+            if (debugMenuWindow) {
+                return newWindowDebugMenuLoader.item.consoleLogParent
+            } else {
+                return debugMenuContainer
             }
         }
     }
 
     ConsoleContainer {
-        id:consoleContainer
+        id: consoleContainer
         parent: {
             if (popupWindow) {
                 return newWindowLoader.item.consoleLogParent
@@ -176,6 +177,12 @@ Rectangle {
         id: newWindowLoader
         active: popupWindow
         source: "Console/NewWindowConsoleLog.qml"
+    }
+
+    Loader {
+        id: newWindowDebugMenuLoader
+        active: debugMenuWindow
+        source: "NewWindowDebugMenu.qml"
     }
 
     ConfirmClosePopup {
@@ -215,10 +222,46 @@ Rectangle {
 
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
-                controlViewCreator.openFilesModel.closeAll()
-                callbackFunc()
+                if (platformInterfaceGenerator.unsavedChanges) {
+                    pigConfirmClosePopup.callbackFunc = callbackFunc
+                    pigConfirmClosePopup.open()
+                } else {
+                    controlViewCreator.openFilesModel.closeAll()
+                    callbackFunc()
+                }
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
+
+                if (platformInterfaceGenerator.unsavedChanges) {
+                    pigConfirmClosePopup.callbackFunc = callbackFunc
+                    pigConfirmClosePopup.open()
+                } else {
+                    controlViewCreator.openFilesModel.closeAll()
+                    callbackFunc()
+                }
+            }
+
+            isConfirmCloseOpen = false
+        }
+    }
+
+    SGConfirmationPopup {
+        id: pigConfirmClosePopup
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        titleText: "You have unsaved changes in the Platform Interface Generator"
+        popupText: "Platform Interface Generator:\nYour changes will be lost if you choose to not save them."
+        acceptButtonColor: Theme.palette.red
+        acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
+        acceptButtonText: "Continue without Saving"
+        cancelButtonText: "Cancel"
+
+        property var callbackFunc
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.acceptCloseReason) {
                 callbackFunc()
             }
 
@@ -297,20 +340,18 @@ Rectangle {
     function requestRecompile() {
         recompileRequested = true
         controlViewLoader.setSource("")
-        Help.resetDeviceIdTour(debugPlatform.deviceId)
+        Help.resetDeviceIdTour(debugPlatform.device_id)
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
     function registerAndSetRecompiledRccFile (compiledRccFile) {
-        let uniquePrefix = new Date().getTime().valueOf()
-        uniquePrefix = "/" + uniquePrefix
-
         // Unregister previous (cached) resource
         if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
             sdsModel.resourceLoader.unregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, controlViewLoader, false)
         }
 
         // Register new control view resource
+        const uniquePrefix = "/" + new Date().getTime().valueOf()
         if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
             console.error("Failed to register resource")
             return
@@ -319,23 +360,30 @@ Rectangle {
         controlViewCreatorRoot.previousCompiledRccFilePath = compiledRccFile
         controlViewCreatorRoot.previousCompiledRccFileUniquePrefix = uniquePrefix
 
-        Help.setDeviceId(debugPlatform.deviceId)
-        NavigationControl.context.class_id = debugPlatform.classId
-        NavigationControl.context.device_id = debugPlatform.deviceId
+        Help.setDeviceId(debugPlatform.device_id)
+        NavigationControl.context.class_id = debugPlatform.class_id
+        NavigationControl.context.device_id = debugPlatform.device_id
 
-        const qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
+        const controlPath = "qrc:" + uniquePrefix + "/Control.qml"
+        controlViewLoader.setSource(controlPath, Object.assign({}, NavigationControl.context))
     }
 
     function blockWindowClose(callback) {
-        let unsavedCount = editor.openFilesModel.getUnsavedCount();
+        let unsavedCount = editor.openFilesModel.getUnsavedCount()
         if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
-            confirmClosePopup.unsavedFileCount = unsavedCount;
-            confirmClosePopup.open();
+            confirmClosePopup.unsavedFileCount = unsavedCount
             confirmClosePopup.callbackFunc = callback
-            controlViewCreatorRoot.isConfirmCloseOpen = true;
+            confirmClosePopup.open()
+            controlViewCreatorRoot.isConfirmCloseOpen = true
             return true
         }
+        if (platformInterfaceGenerator.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
+            pigConfirmClosePopup.callbackFunc = callback
+            pigConfirmClosePopup.open()
+            controlViewCreatorRoot.isConfirmCloseOpen = true
+            return true
+        }
+
         return false
     }
 

@@ -19,14 +19,14 @@ ColumnLayout {
             // static array
             if (arrayListModel.count === 0) {
                 objectListModel.clear()
-                arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel})
+                arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0"})
                 commandsListView.contentY += 50
             }
         } else if (index === 6) {
             // Object with known properties
             if (objectListModel.count === 0) {
                 arrayListModel.clear()
-                objectListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel})
+                objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
             }
         } else {
             arrayListModel.clear()
@@ -68,6 +68,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (propertyKey.text !== "") {
+                        unsavedChanges = true
+                    }
                     payloadModel.remove(index)
                 }
             }
@@ -107,8 +110,12 @@ ColumnLayout {
             }
 
             onTextChanged: {
-                model.name = text
+                if (model.name === text) {
+                    return
+                }
+                unsavedChanges = true
 
+                model.name = text
                 if (text.length > 0) {
                     finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
                 } else {
@@ -154,9 +161,34 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
             }
+        }
+    }
+
+    Loader {
+        sourceComponent: defaultValue
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
+        active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+        visible: active
+
+        onItemChanged: {
+            if (item) {
+                item.leftMargin = 20
+                item.text = model.value
+                item.textChanged.connect(textChanged)
+            }
+        }
+
+        function textChanged() {
+            model.value = item.text
         }
     }
 
