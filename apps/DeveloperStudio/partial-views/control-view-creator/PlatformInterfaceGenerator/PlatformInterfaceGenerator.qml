@@ -53,11 +53,11 @@ Item {
     })
 
     onVisibleChanged: {
-        if (editor.fileTreeModel.url === "") {
+        if (editor.fileTreeModel.url == "") {
             return
         }
 
-        if (currentCvcProjectQrcUrl === editor.fileTreeModel.url) {
+        if (currentCvcProjectQrcUrl == editor.fileTreeModel.url) {
             return
         }
 
@@ -438,20 +438,7 @@ Item {
                             // checks if the user has recently opened a file and uses that path
                             // then, if there projects in the recent projects model and uses that dir path
                             // else, the user's home directory is opened
-                            let path = currentCvcProjectJsonUrl
-                            let projectDir = startContainer.openControlView.projectContainer.previousFileURL.projects[0]
-                            if (SGUtilsCpp.isValidFile(path)) {
-                                path = SGUtilsCpp.parentDirectoryPath(path)
-                                path = SGUtilsCpp.pathToUrl(path)
-                                inputFileDialog.folder = path
-                            } else if (SGUtilsCpp.isValidFile(projectDir)) {
-                                projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                                projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                                projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
-                                inputFileDialog.folder = projectDir
-                            } else {
-                                inputFileDialog.folder = inputFileDialog.shortcuts.home
-                            }
+                            inputFileDialog.folder = fileDialogFolder(inputFileDialog)
                             inputFileDialog.open()
                         }
                     }
@@ -528,20 +515,7 @@ Item {
                                 // checks if the user has recently opened a file and uses that path
                                 // then, if there projects in the recent projects model and uses that dir path
                                 // else, the user's home directory is opened
-                                let path = currentCvcProjectJsonUrl
-                                let projectDir = startContainer.openControlView.projectContainer.previousFileURL.projects[0]
-                                if (SGUtilsCpp.isValidFile(path)) {
-                                    path = SGUtilsCpp.parentDirectoryPath(path)
-                                    path = SGUtilsCpp.pathToUrl(path)
-                                    outputFileDialog.folder = path
-                                } else if (SGUtilsCpp.isValidFile(projectDir)) {
-                                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                                    projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                                    projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
-                                    outputFileDialog.folder = projectDir
-                                } else {
-                                    outputFileDialog.folder = outputFileDialog.shortcuts.home
-                                }
+                                outputFileDialog.folder = fileDialogFolder(outputFileDialog)
                                 outputFileDialog.open()
                             }
                         }
@@ -870,6 +844,29 @@ Item {
             outputFileText.text = findProjectRootDir()
         } else {
             outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
+        }
+    }
+
+    /**
+      * determines the fileDialog.folder to open depending on recent and current projects
+    **/
+    function fileDialogFolder(dialogId) {
+        // checks if the user has recently opened a file and uses that path
+        // then, if there projects in the recent projects model and uses that dir path
+        // else, the user's home directory is opened
+        let path = currentCvcProjectJsonUrl
+        let projectDir = startContainer.openControlView.projectContainer.previousFileURL.projects[0]
+        if (SGUtilsCpp.isValidFile(path)) {
+            path = SGUtilsCpp.parentDirectoryPath(path)
+            path = SGUtilsCpp.pathToUrl(path)
+            return path
+        } else if (SGUtilsCpp.isValidFile(projectDir)) {
+            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+            projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
+            return projectDir
+        } else {
+            return dialogId.shortcuts.home
         }
     }
 

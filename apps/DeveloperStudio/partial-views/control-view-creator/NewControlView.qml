@@ -81,16 +81,7 @@ Item {
                     // Grabs the most recent project from the fileUrl array
                     // goes up two directories in order to be in the directory the project was created in
                     // if there are no recent projects, the home folder is used
-                    let projectDir = openProjectContainer.previousFileURL.projects[0]
-                    if (SGUtilsCpp.isValidFile(projectDir)) {
-                        projectDir = SGUtilsCpp.urlToLocalFile(projectDir)
-                        projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                        projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-                        projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
-                        fileDialog.folder = projectDir
-                    } else {
-                        fileDialog.folder = fileDialog.shortcuts.home
-                    }
+                    fileDialog.folder = openProjectContainer.fileDialogFolder(fileDialog)
                     fileDialog.open()
                 }
             }
