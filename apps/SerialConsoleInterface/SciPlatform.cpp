@@ -270,7 +270,7 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
 
-    flasherConnector_->flash(doBackup);
+    flasherConnector_->flash(doBackup, strata::Flasher::FinalAction::PreservePlatformState);
     setProgramInProgress(true);
 
     return true;
@@ -309,7 +309,7 @@ QString SciPlatform::saveDeviceFirmware(QString filePath) {
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
 
-    flasherConnector_->backup();
+    flasherConnector_->backup(strata::Flasher::FinalAction::PreservePlatformState);
     setProgramInProgress(true);
 
     return QString();

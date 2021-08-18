@@ -333,42 +333,8 @@ Item {
             }
 
             if (closeReason === acceptCloseReason) {
-                let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
-                try {
-                    const jsonObject = JSON.parse(fileText)
-                    if (importValidationCheck(jsonObject)) {
-                        if (apiVersion === "APIv1") {
-                            if (alertToast.visible) {
-                                alertToast.hide()
-                            }
-                            createModelFromJson(jsonObject)
-                        } else if (apiVersion === "APIv0") {
-                            if (alertToast.visible) {
-                                alertToast.hide()
-                            }
-                            alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
-                            alertToast.textColor = "white"
-                            alertToast.color = "goldenrod"
-                            alertToast.interval = 0
-                            alertToast.show()
-                            createModelFromJsonAPIv0(jsonObject)
-                        }
-                    } else {
-                        alertToast.text = "The JSON file is improperly formatted"
-                        alertToast.textColor = "white"
-                        alertToast.color = "#D10000"
-                        alertToast.interval = 0
-                        alertToast.show()
-                    }
-                } catch (e) {
-                    console.error(e)
-                    alertToast.text = "Failed to parse input JSON file: " + e
-                    alertToast.textColor = "white"
-                    alertToast.color = "#D10000"
-                    alertToast.interval = 0
-                    alertToast.show()
-                }
                 unsavedChanges = false
+                loadJsonFile(inputFilePath)
             }
         }
     }
