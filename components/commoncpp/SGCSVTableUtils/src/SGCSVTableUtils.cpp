@@ -18,8 +18,7 @@ int SGCSVTableUtils::columnCount(const QModelIndex &parent) const
 void SGCSVTableUtils::createheaders(QStringList headers)
 {
     QMap<int,QString> headerMap;
-    foreach(QString header, headers)
-    {
+    foreach(QString header, headers) {
         headerMap.insert(headers.indexOf(header), header);
     }
     map_.insert(rowCount(), headerMap);
@@ -29,8 +28,7 @@ QVariant SGCSVTableUtils::data(const QModelIndex &index, int role) const
 {
     if (map_.isEmpty()) return  QVariant();
 
-    if (index.column() < 0 || index.column() > columnCount() || index.row() < 0 || index.row() > rowCount() || role != Qt::DisplayRole)
-    {
+    if (index.column() < 0 || index.column() > columnCount() || index.row() < 0 || index.row() > rowCount() || role != Qt::DisplayRole) {
         return QString();
     }
     return map_.value(index.row()).value(index.column());
@@ -42,10 +40,8 @@ QString SGCSVTableUtils::exportModelToCSV()
     int rows = rowCount();
     int columns = columnCount();
 
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < columns; j++)
-        {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
             textData += data(index(i,j),Qt::DisplayRole).toString();
             if (j < columns - 1) {
                 textData += ";";
