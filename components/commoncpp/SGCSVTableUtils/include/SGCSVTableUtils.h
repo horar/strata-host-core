@@ -7,6 +7,8 @@
 #include <QAbstractTableModel>
 #include <QJsonValue>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 
 class SGCSVTableUtils: public QAbstractTableModel
 {

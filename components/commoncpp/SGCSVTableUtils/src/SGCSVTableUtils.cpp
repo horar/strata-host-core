@@ -46,7 +46,10 @@ QString SGCSVTableUtils::exportModelToCSV()
     {
         for (int j = 0; j < columns; j++)
         {
-            textData += data(index(i,j),Qt::DisplayRole).toString()+";";
+            textData += data(index(i,j),Qt::DisplayRole).toString();
+            if (j < columns - 1) {
+                textData += ";";
+            }
         }
         textData += "\n";
     }
@@ -94,7 +97,10 @@ void SGCSVTableUtils::setFolderPath(QString folderPath)
 void SGCSVTableUtils::writeLineToFile(QMap<int, QString> data) {
     QString textDataRow;
     for (int i = 0; i < data.count(); i++) {
-        textDataRow += data.value(i)+";";
+        textDataRow += data.value(i);
+        if( i < data.count() - 1) {
+            textDataRow += ";";
+        }
     }
     SGUtilsCpp _utils;
     QUrl url = _utils.joinFilePath(folderPath_, cmdName_+".csv");
@@ -105,7 +111,10 @@ void SGCSVTableUtils::writeLineToFile(QMap<int, QString> data) {
         if (file.size() == 0) {
             QString textHeaderRow;
             for (int i = 0; i < headers_.length(); i++) {
-                textHeaderRow += headers_.at(i)+";";
+                textHeaderRow += headers_.at(i);
+                if(i < headers_.length() - 1) {
+                    textHeaderRow += ";";
+                }
             }
             out << textHeaderRow;
             out << endl;
@@ -164,11 +173,47 @@ void SGCSVTableUtils::updateTableFromControlView(QJsonValue data, bool exportOnA
         headers_ = payloadObject.keys();
         createheaders(headers_);
     }
-    QMap<QString, QVariant> dataMap = payloadObject.toVariantMap();
     insertRows(rowCount(),1,index(rowCount(),0));
     QMap <int, QString> convertedMap;
-    foreach (QString key, dataMap.keys()) {
-        convertedMap.insert(headers_.indexOf(key), dataMap.value(key).toString());
+    foreach(QString key, payloadObject.keys()) {
+        QJsonValue val = payloadObject.value(key);
+        QString retStr;
+        switch (val.type()) {
+            case QJsonValue::Array: {
+                QJsonDocument doc(val.toArray());
+                retStr = doc.toJson(QJsonDocument::Compact);
+            }
+            break;
+            case QJsonValue::Object: {
+                QJsonDocument doc(val.toObject());
+                retStr = doc.toJson(QJsonDocument::Compact);
+            }
+            break;
+            case QJsonValue::String: {
+                retStr = val.toVariant().toString();
+            }
+            break;
+            case QJsonValue::Double: {
+                retStr = val.toVariant().toString();
+            }
+            break;
+            case QJsonValue::Bool: {
+                retStr = val.toVariant().toString();
+            }
+            break;
+            case QJsonValue::Null: {
+                return;
+            }
+            break;
+            case QJsonValue::Undefined: {
+                return;
+            }
+            break;
+            default: {
+                retStr = val.toVariant().toString();
+            }
+        }
+        convertedMap.insert(headers_.indexOf(key), retStr);
     }
     map_.insert(rowCount(),convertedMap);
     if (exportOnAdd) {
