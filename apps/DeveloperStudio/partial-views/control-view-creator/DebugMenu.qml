@@ -30,7 +30,7 @@ Rectangle {
                 const jsonObject = JSON.parse(SGUtilsCpp.readTextFileContent(localFile))
 
                 checkAPI(jsonObject)
-                if (debugMenuRoot.errorString !== "") {
+                if (errorString !== "") {
                     return
                 }
                 debugMenuRoot.json = jsonObject
