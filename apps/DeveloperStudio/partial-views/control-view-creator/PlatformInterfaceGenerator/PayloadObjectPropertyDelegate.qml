@@ -62,6 +62,18 @@ Rectangle {
                 Accessible.onPressAction: {
                     removeObjectFromPayloadMouseArea.clicked()
                 }
+                MouseArea {
+                    id: removeObjectFromPayloadMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: {
+                        if (propertyKey.text !== "") {
+                            unsavedChanges = true
+                        }
+                        objectPropertyContainer.parentListModel.remove(modelIndex)
+                    }
+                }
             }
 
             TextField {
@@ -103,7 +115,7 @@ Rectangle {
 
                     model.name = text
                     if (text.length > 0) {
-                        model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
+                        model.valid = finishedModel.checkForDuplicateObjectPropertyNames(objectPropertyContainer.parentListModel, modelIndex)
                     } else {
                         model.valid = false
                     }
@@ -127,7 +139,7 @@ Rectangle {
                     }
                     unsavedChanges = true
 
-                    type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
+                    type = payloadContainer.changePropertyType(index, objectPropertyContainer.subObjectListModel, objectPropertyContainer.subArrayListModel)
                     indexSelected = index
                 }
             }
@@ -203,7 +215,7 @@ Rectangle {
             id: addPropertyButton
             text: "Add Property To Object"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === parentListModel.count - 1
+            visible: modelIndex === objectPropertyContainer.parentListModel.count - 1
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -218,7 +230,7 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value":"0"})
+                    objectPropertyContainer.parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.parentListModel, "value":"0"})
                     commandsListView.contentY += 40
                 }
             }

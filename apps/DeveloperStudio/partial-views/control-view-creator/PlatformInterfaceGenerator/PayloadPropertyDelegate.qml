@@ -27,23 +27,6 @@ Rectangle {
         }
     }
 
-    function changePropertyType(index, objectListModel, arrayListModel) {
-        if (index === 4) {
-            // static array
-            if (arrayListModel.count === 0) {
-                objectListModel.clear()
-                arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0"})
-                commandsListView.contentY += 50
-            }
-        } else if (index === 6) {
-            // Object with known properties
-            if (objectListModel.count === 0) {
-                arrayListModel.clear()
-                objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
-
-            }
-        }
-    }
 
     ColumnLayout {
         id: payloadContainer
@@ -57,14 +40,14 @@ Rectangle {
                 // static array
                 if (arrayListModel.count === 0) {
                     objectListModel.clear()
-                    arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel})
+                    arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0"})
                     commandsListView.contentY += 50
                 }
             } else if (index === 6) {
                 // Object with known properties
                 if (objectListModel.count === 0) {
                     arrayListModel.clear()
-                    objectListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel})
+                    objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
                 }
             } else {
                 arrayListModel.clear()
@@ -73,7 +56,6 @@ Rectangle {
 
             return propertyType.items[index].value
         }
-
 
         RowLayout {
             id: propertyBox
