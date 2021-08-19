@@ -629,42 +629,70 @@ Item {
                     curve.appendList(dataArray)
                 }
 
+                function closestPointByXValue() {
+                    // index and points array to store different curve points near the mouse
+                    let index = 0
+                    let curvePoints = []
+                    let diff = Infinity // large default value
+                    let closestIndex = 0
+                    // loop over all the curves and use binary search to find the closest points by the X axis
+                    for (let i = 0; i < pointGraph.count; i++) {
+                        index = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
+                        if (index !== -1) {
+                            // using the index, store that point in the curvePoints array
+                            curvePoints[i] = pointGraph.curve(i).at(index)
+                            let distance = Math.abs(closestValue.mouseValue.y - curvePoints[i].y)
+                            // distance is used to determine which of all the curves is closest to the mouse
+                            if (distance < diff) {
+                                diff = distance
+                                closestIndex = i
+                            }
+                        }
+                    }
+                    return curvePoints[closestIndex] // closest point by X, to the mouse
+                }
+
                 Item {
                     id: mouseCrosshair
                     x: pointGraph.mouseArea.mouseX
-                    y: pointGraph.mouseArea.mouseY - 3
+                    y: pointGraph.mouseArea.mouseY
 
                     property point closestPoint
 
                     onXChanged: {
-                        // index and points array to store different curve points near the mouse
-                        let index = 0
-                        let curvePoints = []
-                        let diff = Infinity // large default value
-                        let closestIndex = 0
-                        // loop over all the curves and use binary search to find the closest points by the X axis
-                        for (let i = 0; i < pointGraph.count; i++) {
-                            index = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
-                            if (index !== -1) {
-                                // using the index, store that point in the curvePoints array
-                                curvePoints[i] = pointGraph.curve(i).at(index)
-                                let distance = Math.abs(closestValue.mouseValue.y - curvePoints[i].y)
-                                // distance is used to determine which of all the curves is closest to the mouse
-                                if (distance < diff) {
-                                    diff = distance
-                                    closestIndex = i
-                                }
-                            }
-                        }
-                        closestPoint = curvePoints[closestIndex] // closest point by X, to the mouse
+                        closestPoint = pointGraph.closestPointByXValue()
                     }
                 }
 
                 SGWidgets09.SGToolTipPopup {
                     // popup to display the point's coordinates and hovers over that location
                     id: closestValue
-                    x: pos.x - width / 2 - 7
-                    y: pos.y - height
+                    // x and y positions are limited to the size of pointGraph
+                    // if the point is beyond the bounds, then the tooltip will be pushed to the edge of the pointGraph area
+                    x: {
+                        if (mouseCrosshair.closestPoint.x < pointGraph.xMin) {
+                            let limit = Qt.point(pointGraph.xMin, mouseCrosshair.closestPoint.y)
+                            visible = false
+                            return pointGraph.mapToPosition(limit).x - width / 2 - 7
+                        } else {
+                            return pos.x - width / 2 - 7
+
+                        }
+                    }
+                    y: {
+                        if (mouseCrosshair.closestPoint.y > pointGraph.yMax) {
+                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMax)
+                            visible = false
+                            return pointGraph.mapToPosition(limit).y - height
+                        } else if (mouseCrosshair.closestPoint.y < pointGraph.yMin){
+                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMin)
+                            visible = false
+                            return pointGraph.mapToPosition(limit).y - height
+                        } else {
+                            visible = true
+                            return pos.y - height
+                        }
+                    }
                     color: "white"
                     showOn: pointGraph.mouseArea.containsMouse
                     enabled: false // disables internal mouse area
