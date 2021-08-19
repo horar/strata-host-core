@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 ColumnLayout {
     id: root
@@ -13,13 +14,11 @@ ColumnLayout {
 
     ColumnLayout {
         id: column
+        Layout.fillWidth: true
+        Layout.leftMargin: 10
         RowLayout {
             Layout.fillWidth: true
             Layout.minimumHeight: 50
-
-            Item {
-                Layout.preferredWidth: 10
-            }
 
             SGText {
                 id: labelText
@@ -33,13 +32,10 @@ ColumnLayout {
             }
         }
 
-        ListView {
+        Repeater {
             id: listView
-            Layout.preferredWidth: 300
-            Layout.minimumHeight: contentHeight
-            Layout.leftMargin: 20
-            clip: true
-            spacing: 5
+            Layout.minimumWidth: 300
+            Layout.minimumHeight: 100
 
             property var payload: ({})
 
@@ -48,101 +44,107 @@ ColumnLayout {
             }
 
             delegate: RowLayout {
+                id: inputRow
                 width: listView.width
                 height: 30
 
-                SGText {
-                    id: labelName
-                    font.bold: true
-                    Layout.minimumWidth: 100
-                    Layout.maximumWidth: 100
-                    fontSizeMultiplier: 1.2
-                    elide: Text.ElideRight
-                    text: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
-                }
-
-                SGText {
-                    id: typeName
-                    Layout.minimumWidth: 50
-                    Layout.maximumWidth: 50
-                    fontSizeMultiplier: 1.2
-                    text: modelData.type
-                }
-
-                Rectangle {
-                    id: textInputBorder
+                Loader {
+                    id: inputLoader
                     Layout.fillWidth: true
                     Layout.preferredHeight: 30
-                    border.color: Theme.palette.lightGray
-                    border.width: 1
-                    radius: 5
+                    sourceComponent: modelData.type !== "bool" ? textInputComponent : textSwitchComponent
 
-                    SGTextInput {
-                        id: textInput
-                        anchors.fill: textInputBorder
-                        verticalAlignment: Text.AlignVCenter
-                        anchors.leftMargin: 5
-                        fontSizeMultiplier: 1.2
-                        clip: true
-                        text: createTextValue(modelData.value, modelData.type)
+                    Component {
+                        id: textInputComponent
+                        PayloadInput {
+                            width: inputLoader.width
+                            name: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
+                            type: modelData.type
+                            value: createTextValue(modelData.value, modelData.type)
 
-                        onTextChanged: {
-                            const keyIndex = isArray ? parseInt(labelName.text.split(":")[1].trim()) : labelName.text
-                            let textVal;
-                            switch(modelData.type) {
-                                case "int": textVal = Number(text)
-                                break;
-                                case "double": textVal = Number(text)
-                                break;
-                                case "bool": textVal = Boolean(text)
-                                break;
-                                default: textVal = text
-                            }
-                            listView.payload[labelText.text][keyIndex] = isJson(text) ? JSON.parse(text) : textVal
-                            debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
-                        }
-
-                        validator: switch(modelData.type) {
-                            case "int": return intValid
-                            case "double": return doubleValid
-                        }
-
-                        focus: true
-
-                        function isJson(str) {
-                            try {
-                                return JSON.parse(str);
-                            } catch (e) {
-                                return false;
-                            }
-                        }
-
-
-                        function createTextValue(value, type) {
-                            if (Array.isArray(value)) {
-                                const retVal = type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC ? [] : {}
-                                if (Array.isArray(retVal)) {
-                                    for (let i = 0; i < value.length; i++) {
-                                        retVal[i] = createTextValue(value[i].value, value[i].type)
-                                    }
-                                } else {
-                                    for (let i = 0;i < value.length; i++) {
-                                        retVal[value[i].name] = createTextValue(value[i].value, value[i].type)
-                                    }
+                            onValueChanged: {
+                                const keyIndex = isArray ? parseInt(name.split(":")[1].trim()) : name
+                                let textVal;
+                                switch(modelData.type) {
+                                    case "int": textVal = Number(value)
+                                    break;
+                                    case "double": textVal = Number(value)
+                                    break;
+                                    default: textVal = value
                                 }
-                                return JSON.stringify(retVal)
-                            } else {
-                                switch(type) {
-                                    case "int": return Number(value)
-                                    case "double": return Number(value)
-                                    case "bool": return Boolean(value)
-                                    default: return value
+                                listView.payload[labelText.text][keyIndex] = isJson(value) ? JSON.parse(value) : textVal
+                                debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+                            }
+
+                            function isJson(str) {
+                                try {
+                                    return JSON.parse(str);
+                                } catch (e) {
+                                    return false;
+                                }
+                            }
+
+                            function createTextValue(value, type) {
+                                if (Array.isArray(value)) {
+                                    const retVal = type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC ? [] : {}
+                                    if (Array.isArray(retVal)) {
+                                        for (let i = 0; i < value.length; i++) {
+                                            retVal[i] = createTextValue(value[i].value, value[i].type)
+                                        }
+                                    } else {
+                                        for (let i = 0;i < value.length; i++) {
+                                            retVal[value[i].name] = createTextValue(value[i].value, value[i].type)
+                                        }
+                                    }
+                                    return JSON.stringify(retVal)
+                                } else {
+                                    switch(type) {
+                                        case "int": return Number(value)
+                                        case "double": return Number(value)
+                                        default: return value
+                                    }
                                 }
                             }
                         }
                     }
+
+                    Component {
+                        id: textSwitchComponent
+
+                        PayloadSwitch {
+                            width: inputLoader.width
+                            name: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
+                            value: modelData.value
+
+                            onValueChanged: {
+                                const keyIndex = isArray ? parseInt(name.split(":")[1].trim()) : name
+                                listView.payload[labelText.text][keyIndex] = value
+                                debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+                            }
+                        }
+                    }
+
+                    /*
+                        SGSwitch {
+                            id: textSwitch
+                            width: 50
+                            height: 35
+                            checkedLabel: "true"
+                            uncheckedLabel: "false"
+                            onCheckedChanged: {
+                                const keyIndex = isArray ? parseInt(labelName.text.split(":")[1].trim()) : labelName.text
+                                listView.payload[labelText.text][keyIndex] = checked
+                                debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+
+                            }
+                        }
+                      */
                 }
             }
+        }
+
+        Item {
+            Layout.preferredHeight: 10
         }
     }
 

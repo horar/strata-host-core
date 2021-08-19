@@ -12,20 +12,16 @@ Item {
     RowLayout {
         id: row
         width: parent.width
-
-        Item {
-            Layout.preferredWidth: 10
-        }
+        spacing: 10
 
         SGText {
             id: labelText
             font.bold: true
             fontSizeMultiplier: 1.2
-            Layout.preferredWidth: 100
-        }
-
-        Item {
-            Layout.preferredWidth: 10
+            Layout.minimumWidth: 100
+            Layout.maximumWidth: 250
+            elide: Text.ElideRight
+            Layout.leftMargin: 10
         }
 
         SGSwitch {

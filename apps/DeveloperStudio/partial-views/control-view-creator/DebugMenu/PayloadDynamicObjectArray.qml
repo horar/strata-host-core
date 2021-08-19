@@ -117,6 +117,7 @@ ColumnLayout {
                         sourceComponent: comboBox.currentIndex !== 1 ? inputComponent : switchComponent
                         Layout.fillWidth: true
                         Layout.rightMargin: 10
+
                         Component {
                             id: inputComponent
 

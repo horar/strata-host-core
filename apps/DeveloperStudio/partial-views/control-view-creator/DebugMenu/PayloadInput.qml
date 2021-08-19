@@ -14,22 +14,30 @@ Item {
 
     RowLayout {
         id: row
-        anchors {
-            left: parent.left
-            right: parent.right
-            margins: 10
-        }
+        width: parent.width
+        spacing: 10
 
         SGText {
             id: labelText
             font.bold: true
             fontSizeMultiplier: 1.2
-            Layout.minimumWidth: 150
+            Layout.minimumWidth: 100
+            Layout.maximumWidth: 250
+            elide: Text.ElideRight
+            Layout.leftMargin: 10
+        }
+
+        SGText {
+            id: typeText
+            fontSizeMultiplier: 1.1
+            Layout.minimumWidth: 50
+            text: type
         }
 
         Rectangle {
             id: textInputBorder
-            Layout.fillWidth: true
+            Layout.minimumWidth: 150
+            Layout.maximumWidth: 150
             Layout.preferredHeight: 35
             border.color: Theme.palette.lightGray
             border.width: 1
@@ -49,6 +57,10 @@ Item {
                     case "double": return doubleValid
                 }
             }
+        }
+
+        Item {
+            Layout.preferredWidth: 10
         }
     }
 

@@ -12,11 +12,12 @@ Item {
 
     property bool debugVisible: true
     property real rectWidth: 450
+    property real minWidth: 350
     property alias mainContainer: mainContainer
 
     MouseArea {
         id: mainContainer
-        width: debugMenuWindow ? parent.width : Math.min(root.width, rectWidth)
+        width: debugMenuWindow ? parent.width : Math.min(root.width, Math.max(rectWidth, minWidth))
         height: parent.height
         anchors.right: parent.right
         clip: true
@@ -74,6 +75,7 @@ Item {
         }
 
         Loader {
+            id: debugLoader
             anchors {
                 top: topBar.bottom
                 right: parent.right

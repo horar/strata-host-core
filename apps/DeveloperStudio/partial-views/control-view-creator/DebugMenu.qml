@@ -56,7 +56,7 @@ Rectangle {
 
     ColumnLayout {
         visible: !errorLayout.visible
-        spacing: 0
+        spacing: -1
         anchors {
             fill: debugMenuRoot
         }
