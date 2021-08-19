@@ -283,17 +283,19 @@ LayoutContainer {
 
                 property point startPoint
 
-                property var dragResizeRectLeftLimit
-                property var dragResizeRectRightLimit
-                property var dragResizeRectTopLimit
-                property var dragResizeRectBottomLimit
+                property real dragResizeRectLeftLimit
+                property real dragResizeRectRightLimit
+                property real dragResizeRectTopLimit
+                property real dragResizeRectBottomLimit
 
-                onPressedChanged: {
-                    if (pressed) {
-                        startPoint = Qt.point(mouseX, mouseY)
-                    }
+                onPressed: {
+                    startPoint = Qt.point(mouseX, mouseY)
 
-                    if (visualEditor.selectedMultiObjectsUuid.length > 0) {
+                    if ((mouse.modifiers & Qt.ShiftModifier) == false && layoutOverlayRoot.isSelected === false) {
+                        visualEditor.multiObjectsDeselectAll()
+                        layoutOverlayRoot.isSelected = true
+                        visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                    } else if (visualEditor.selectedMultiObjectsUuid.length > 1) {
                         layoutOverlayRoot.multiItemTargetPrevWidth = rect.width
                         layoutOverlayRoot.multiItemTargetPrevHeight = rect.height
 
@@ -316,7 +318,7 @@ LayoutContainer {
 
                     // if actually resized, edit file
                     if (colRow.x !== layoutOverlayRoot.layoutInfo.columnsWide || colRow.y !== layoutOverlayRoot.layoutInfo.rowsTall) {
-                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                             var xOffset = colRow.x - layoutOverlayRoot.layoutInfo.columnsWide
                             var yOffset = colRow.y - layoutOverlayRoot.layoutInfo.rowsTall
                             if (xOffset !== 0 || yOffset !== 0) {
@@ -335,7 +337,7 @@ LayoutContainer {
                         // reset mousearea position when it was dragged out of place but not enough to trigger above resize
                         x = 0
                         y = 0
-                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                             visualEditor.functions.unload(true)
                         }
                     }
@@ -351,7 +353,7 @@ LayoutContainer {
                         rect.width = Math.max(newPosition.x, overlayContainer.columnSize) // size must be >= one column, 1 row. no 0x0 or negative sizes
                         rect.height = Math.max(newPosition.y, overlayContainer.rowSize)
 
-                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                        if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                             const originalWidth = layoutOverlayRoot.layoutInfo.columnsWide * overlayContainer.columnSize
                             const originalHeight = layoutOverlayRoot.layoutInfo.rowsTall * overlayContainer.rowSize
                             rect.width = Math.max(rect.width, originalWidth - dragResizeRectLeftLimit)
