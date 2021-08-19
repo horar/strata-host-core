@@ -123,7 +123,6 @@ ColumnLayout {
 
                             SGTextField {
                                 width: loader.width
-                                height: 30
                                 clip: true
                                 readOnly: isArray ? false : nameField.length < 1
                                 placeholderText: {

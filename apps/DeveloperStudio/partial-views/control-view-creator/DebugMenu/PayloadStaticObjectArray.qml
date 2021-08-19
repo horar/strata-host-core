@@ -53,6 +53,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 30
                     sourceComponent: modelData.type !== "bool" ? textInputComponent : textSwitchComponent
+                    Layout.bottomMargin: 5
 
                     Component {
                         id: textInputComponent
