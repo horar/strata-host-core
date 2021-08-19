@@ -70,7 +70,7 @@ LayoutContainer {
             onPressed: {
                 startPoint = Qt.point(mouseX, mouseY)
 
-                if ((mouse.modifiers & Qt.ShiftModifier) == false && layoutOverlayRoot.isSelected === false){
+                if ((mouse.modifiers & Qt.ShiftModifier) == false && layoutOverlayRoot.isSelected === false) {
                     visualEditor.multiObjectsDeselectAll()
                     layoutOverlayRoot.isSelected = true
                     visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
