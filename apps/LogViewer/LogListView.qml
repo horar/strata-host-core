@@ -50,8 +50,8 @@ Item {
         logListView.positionViewAtEnd();
     }
 
-    function copyToClipboard(textElement) {
-        CommonCPP.SGUtilsCpp.copyToClipboard(textElement.text)
+    function copyToClipboard(text) {
+        CommonCPP.SGUtilsCpp.copyToClipboard(text)
     }
 
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
@@ -546,7 +546,25 @@ Item {
                         id: copyAction
                         text: qsTr("Copy")
                         onTriggered: {
-                            copyToClipboard(msg)
+                            let line = []
+                            let delimiter = " , "
+
+                            if (ts.text) {
+                                line.push(ts.text)
+                            }
+                            if (pid.text) {
+                                line.push(pid.text)
+                            }
+                            if (tid.text) {
+                                line.push(tid.text)
+                            }
+                            if (level.text) {
+                                line.push(level.text)
+                            }
+                            if (msg.text) {
+                                line.push(msg.text.trim())
+                            }
+                            copyToClipboard(line.join(delimiter))
                         }
                     }
 
