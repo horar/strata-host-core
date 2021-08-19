@@ -7,8 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "QtLoggerSetup.h"
-
-#include "moc_QtLoggerSetup.cpp"
+#include "QtLoggerDefaults.h"
 
 #include "LoggingQtCategories.h"
 #include "QtLogger.h"

@@ -58,4 +58,4 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::debug("{}: SpdLogger::setup - \tmaxNoFiles: {}", logCategory_, maxNoFiles);
 }
 
-}  // namespace strata::loggers::spdlog
+}  // namespace strata::loggers
