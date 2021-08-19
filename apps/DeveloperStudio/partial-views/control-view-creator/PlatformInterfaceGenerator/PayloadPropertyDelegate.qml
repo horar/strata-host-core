@@ -117,7 +117,7 @@ ColumnLayout {
 
                 model.name = text
                 if (text.length > 0) {
-                    finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
+                    functions.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
                 } else {
                     model.valid = false
                 }

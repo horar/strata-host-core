@@ -94,7 +94,7 @@ ColumnLayout {
 
                 model.name = text
                 if (text.length > 0) {
-                    model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
+                    model.valid = functions.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
                 } else {
                     model.valid = false
                 }
