@@ -7,6 +7,13 @@
 */
 SGCSVTableUtils::SGCSVTableUtils(QObject *parent): QAbstractTableModel(parent)
 {
+    connect(this,SIGNAL(clearBackingModel()),this,SLOT(clearAll()));
+    setOutputFolderLocation();
+}
+
+SGCSVTableUtils::~SGCSVTableUtils()
+{
+    // disconnect(this,nullptr,nullptr,nullptr);
 }
 /* This is an overwritten method that in our implementation allows for the number of columns to be defined by the number of headers */
 int SGCSVTableUtils::columnCount(const QModelIndex &parent) const
@@ -52,11 +59,6 @@ QString SGCSVTableUtils::exportModelToCSV()
 
     return textData;
 }
-/* This is the READ for folderPath, where we return the current folderPath*/
-QString SGCSVTableUtils::folderPath() const
-{
-    return folderPath_;
-}
 /* This is an overwritten method that in our implementation returns the header point at headerPoint[0][column] */
 QVariant SGCSVTableUtils::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -81,12 +83,17 @@ int SGCSVTableUtils::rowCount(const QModelIndex &parent) const
     Q_UNUSED(parent);
     return rows_;
 }
-/* This is the WRITE for folderPath, where we set the FolderPath*/
-void SGCSVTableUtils::setFolderPath(QString folderPath)
+/* Custom method that sets the initial folder location for csv file outputs */
+void SGCSVTableUtils::setOutputFolderLocation()
 {
-    if (folderPath_ != folderPath) {
-        folderPath_ = folderPath;
-        emit folderPathChanged();
+    SGUtilsCpp utils;
+    const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString folderBasePath = utils.joinFilePath(appDataPath, "csv-folder");
+    QString outputTimePath = utils.joinFilePath(folderBasePath, QDateTime::currentDateTime().toString());
+    folderPath_ = outputTimePath;
+    QDir dir(appDataPath);
+    if(!dir.exists(folderPath_)) {
+        dir.mkpath(folderPath_);
     }
 }
 /* This is a custom method that will read in a now convertedData input and append it to the .csv file*/
@@ -99,9 +106,8 @@ void SGCSVTableUtils::writeLineToFile(QMap<int, QString> data) {
         }
     }
     SGUtilsCpp _utils;
-    QUrl url = _utils.joinFilePath(folderPath_, cmdName_+".csv");
-    QString path = _utils.urlToLocalFile(url);
-    QFile file(path);
+    QString url = _utils.joinFilePath(folderPath_, cmdName_+".csv");
+    QFile file(url);
     if (file.open(QFile::Append | QFile::Text)) {
         QTextStream out(&file);
         if (file.size() == 0) {
@@ -129,19 +135,29 @@ int SGCSVTableUtils::getHeadersCount() const {
 /* This is a custom method that imports a .csv file and converts it to a table model */
 void SGCSVTableUtils::importTableFromFile(QString folderPath)
 {
-    clearBackingModel();
     beginResetModel();
-    map_.clear();
+    emit clearBackingModel();
     endResetModel();
     SGUtilsCpp _utils;
+    cmdName_ = _utils.fileName(folderPath);
     QStringList fileContent = _utils.readTextFileContent(folderPath).split("\n");
     for (int i = 0; i < fileContent.length(); i++) {
         QStringList lineContent = fileContent.at(i).split(";");
         QMap<int,QString> dataMap;
         for (int j = 0; j < lineContent.length(); j++) {
+            if ( i == 0) {
+                createheaders(lineContent);
+            }
             dataMap.insert(j,lineContent.at(j));
         }
         map_.insert(i, dataMap);
+    }
+}
+
+void SGCSVTableUtils::overrideFolderPath(QString folderPath)
+{
+    if (folderPath_ != folderPath) {
+        folderPath_ = folderPath;
     }
 }
 /*
@@ -151,18 +167,15 @@ void SGCSVTableUtils::importTableFromFile(QString folderPath)
 void SGCSVTableUtils::updateTableFromControlView(QJsonValue data, bool exportOnAdd)
 {
     if (!data["cmd"].isUndefined() && cmdName_ != data["cmd"].toString()) {
+        beginResetModel();
+        emit clearBackingModel();
+        endResetModel();
         cmdName_ = data["cmd"].toString();
-        headers_.clear();
-        clearBackingModel();
-        beginResetModel();
-        map_.clear();
-        endResetModel();
     } else if(!data["value"].isUndefined() && cmdName_ != data["value"].toString()){
-        cmdName_ = data["value"].toString();
-        clearBackingModel();
         beginResetModel();
-        map_.clear();
+        emit clearBackingModel();
         endResetModel();
+        cmdName_ = data["value"].toString();
     }
     QJsonObject payloadObject = data["payload"].toObject();
     if (headers_.length() == 0) {
@@ -219,9 +232,8 @@ void SGCSVTableUtils::updateTableFromControlView(QJsonValue data, bool exportOnA
 /* This is a custom method that converts a complete table into a .csv file */
 void SGCSVTableUtils::writeToPath()
 {
-    SGUtilsCpp _utils;
-    QUrl url = _utils.joinFilePath(folderPath_, cmdName_+".csv");
-    QString path = _utils.urlToLocalFile(url);
-    _utils.atomicWrite(path, exportModelToCSV());
+    SGUtilsCpp utils;
+    QUrl url = utils.joinFilePath(folderPath_, cmdName_+".csv");
+    QString path = utils.urlToLocalFile(url);
+    utils.atomicWrite(path, exportModelToCSV());
 }
-

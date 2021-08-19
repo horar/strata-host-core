@@ -409,7 +409,6 @@ Module {
         prototype: "QAbstractTableModel"
         exports: ["tech.strata.commoncpp/SGCSVTableUtils 1.0"]
         exportMetaObjectRevisions: [0]
-        Property {name: "folderPath"; type: "string"}
         Method {
             name: "getHeadersCount"
             type: "int"
@@ -418,6 +417,11 @@ Module {
             name: "importTableFromFile"
             Parameter {name: "folderPath"; type: "string"}
         }
+        Method {
+            name: "overrideFolderPath"
+            Parameter {name: "folderPath"; type: "string"}
+        }
+
         Method {
             name: "updateTableFromControlView"
             Parameter {name: "data"; type: "QJsonValue"}
@@ -429,9 +433,6 @@ Module {
         }
         Signal {
             name: "clearBackingModel"
-        }
-        Signal {
-            name: "folderPathChanged"
         }
     }
     Component {

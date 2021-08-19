@@ -241,12 +241,12 @@ Popup {
 
         onAccepted: {
             importFolderPath.text = importPath.fileUrl
+            csvModel.overrideFolderPath(importFolderPath.text);
         }
     }
 
     SGCSVTableUtils {
         id: csvModel
-        folderPath: folderPath.text
 
        onClearBackingModel: {
            csvView.update();
