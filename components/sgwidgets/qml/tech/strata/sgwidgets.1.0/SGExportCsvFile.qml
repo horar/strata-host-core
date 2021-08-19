@@ -33,7 +33,7 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
-            model: csvModel
+            model: SGCSVTableUtils
 
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AlwaysOn
@@ -41,7 +41,7 @@ Popup {
 
             delegate: Rectangle {
                 id: delRect
-                implicitWidth: csvView.width / csvModel.getHeadersCount()
+                implicitWidth: csvView.width / SGCSVTableUtils.getHeadersCount()
                 implicitHeight: 35
                 border {
                     color: "black"
@@ -131,7 +131,7 @@ Popup {
                     anchors.fill: exportButtonRect
                     enabled: folderPath.text.length > 0
                     onClicked: {
-                        csvModel.writeToPath()
+                        SGCSVTableUtils.writeToPath()
                         root.close()
                     }
                 }
@@ -230,6 +230,7 @@ Popup {
 
         onAccepted: {
             folderPath.text = filePath.fileUrl
+            SGCSVTableUtils.overrideFolderPath(folderPath.text)
             close()
         }
     }
@@ -241,25 +242,17 @@ Popup {
 
         onAccepted: {
             importFolderPath.text = importPath.fileUrl
-            csvModel.overrideFolderPath(importFolderPath.text);
+            SGCSVTableUtils.overrideFolderPath(importFolderPath.text);
         }
     }
 
-    SGCSVTableUtils {
-        id: csvModel
-
-       onClearBackingModel: {
-           csvView.update();
-       }
-    }
-
-    function updateTableFromView(data, exportOnAdd) {
-        csvModel.updateTableFromControlView(data, exportOnAdd)
+    function updateTableFromView(data, exportOnAdd = true) {
+        SGCSVTableUtils.updateTableFromControlView(data, exportOnAdd)
     }
 
 
     function importFile(filePath) {
         const path = SGUtilsCpp.urlToLocalFile(filePath)
-        csvModel.importTableFromFile(path);
+        SGCSVTableUtils.importTableFromFile(path);
     }
 }

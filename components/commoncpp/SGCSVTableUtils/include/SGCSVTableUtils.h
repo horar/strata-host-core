@@ -16,6 +16,7 @@
 class SGCSVTableUtils: public QAbstractTableModel
 {
     Q_OBJECT
+    Q_DISABLE_COPY(SGCSVTableUtils)
 public:
     explicit SGCSVTableUtils(QObject *parent = nullptr);
     virtual ~SGCSVTableUtils();
@@ -24,18 +25,16 @@ public:
     void createheaders(QStringList headers);
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
     QString exportModelToCSV();
-    QString folderPath() const;
     QVariant headerData(int section,Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    void setFolderPath(QString folderPath);
     void setOutputFolderLocation();
     void writeLineToFile(QMap<int, QString> data);
 
     Q_INVOKABLE int getHeadersCount() const;
     Q_INVOKABLE void importTableFromFile(QString folderPath);
     Q_INVOKABLE void overrideFolderPath(QString folderPath);
-    Q_INVOKABLE void updateTableFromControlView(QJsonValue data, bool exportOnAdd);
+    Q_INVOKABLE void updateTableFromControlView(QJsonValue data, bool exportOnAdd = true);
     Q_INVOKABLE void writeToPath();
 signals:
     void clearBackingModel();

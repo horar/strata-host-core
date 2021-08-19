@@ -409,6 +409,8 @@ Module {
         prototype: "QAbstractTableModel"
         exports: ["tech.strata.commoncpp/SGCSVTableUtils 1.0"]
         exportMetaObjectRevisions: [0]
+        isSingleton: true
+        isCreatable: false
         Method {
             name: "getHeadersCount"
             type: "int"

@@ -89,7 +89,7 @@ void SGCSVTableUtils::setOutputFolderLocation()
     SGUtilsCpp utils;
     const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     QString folderBasePath = utils.joinFilePath(appDataPath, "csv-folder");
-    QString outputTimePath = utils.joinFilePath(folderBasePath, QDateTime::currentDateTime().toString());
+    QString outputTimePath = utils.joinFilePath(folderBasePath, QDateTime::currentDateTimeUtc().toString());
     folderPath_ = outputTimePath;
     QDir dir(appDataPath);
     if(!dir.exists(folderPath_)) {
@@ -136,18 +136,18 @@ int SGCSVTableUtils::getHeadersCount() const {
 void SGCSVTableUtils::importTableFromFile(QString folderPath)
 {
     beginResetModel();
-    emit clearBackingModel();
+    map_.clear();
     endResetModel();
-    SGUtilsCpp _utils;
-    cmdName_ = _utils.fileName(folderPath);
-    QStringList fileContent = _utils.readTextFileContent(folderPath).split("\n");
+    SGUtilsCpp utils;
+    cmdName_ = utils.fileName(folderPath);
+    QStringList fileContent = utils.readTextFileContent(folderPath).split("\n");
     for (int i = 0; i < fileContent.length(); i++) {
         QStringList lineContent = fileContent.at(i).split(";");
+        if (i == 0) {
+            createheaders(lineContent);
+        }
         QMap<int,QString> dataMap;
         for (int j = 0; j < lineContent.length(); j++) {
-            if ( i == 0) {
-                createheaders(lineContent);
-            }
             dataMap.insert(j,lineContent.at(j));
         }
         map_.insert(i, dataMap);

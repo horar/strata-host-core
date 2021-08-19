@@ -35,9 +35,16 @@ void CommonCppPlugin::registerTypes(const char *uri)
         return formatter;
     });
 
+    qmlRegisterSingletonType<SGCSVTableUtils>(uri, 1, 0,"SGCSVTableUtils", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject* {
+        Q_UNUSED(engine)
+        Q_UNUSED(scriptEngine)
+
+        SGCSVTableUtils *csvTableUtils = new SGCSVTableUtils();
+        return csvTableUtils;
+    });
+
     qmlRegisterType<SGJLinkConnector>(uri, 1, 0, "SGJLinkConnector");
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
-    qmlRegisterType<SGCSVTableUtils>(uri, 1, 0, "SGCSVTableUtils");
     qmlRegisterType<SGQWTPlot>(uri, 1, 0, "SGQWTPlot");
     qmlRegisterType<SGQWTPlotCurve>(uri, 1, 0, "SGQWTPlotCurve");
     qmlRegisterType<SGUserSettings>(uri, 1, 0, "SGUserSettings");
