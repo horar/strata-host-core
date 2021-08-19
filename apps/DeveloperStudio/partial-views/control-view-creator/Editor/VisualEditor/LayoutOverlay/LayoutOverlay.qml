@@ -14,10 +14,10 @@ LayoutContainer {
     property string type: ""
     property var sourceItem // Item that this overlay represents
 
+    // multi-item selection/dragging/resizing
     property bool isSelected: false
-
-    property var multiItemTargetPrevX
-    property var multiItemTargetPrevY
+    property real multiItemTargetPrevX
+    property real multiItemTargetPrevY
     property var multiItemTargetRectLimits: []
 
     onSourceItemChanged: {
@@ -57,10 +57,11 @@ LayoutContainer {
 
             property point startPoint
 
-            property var dragRectLeftLimit
-            property var dragRectRightLimit
-            property var dragRectTopLimit
-            property var dragRectBottomLimit
+            // multi-item selection/dragging/resizing
+            property real dragRectLeftLimit
+            property real dragRectRightLimit
+            property real dragRectTopLimit
+            property real dragRectBottomLimit
 
             onWheel: {
                 wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
