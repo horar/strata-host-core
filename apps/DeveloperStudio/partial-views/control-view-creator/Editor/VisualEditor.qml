@@ -22,6 +22,7 @@ ColumnLayout {
     property string file: ""
     property string fileContents: ""
 
+    // multi-item selection/dragging/resizing
     property var selectedMultiObjectsUuid: []
     signal multiObjectsDragged(string objectInitiated, var x, var y)
     signal multiObjectsDeselectAll()
@@ -59,8 +60,10 @@ ColumnLayout {
         Layout.fillWidth: true
 
         onClicked: {
-            multiObjectsDeselectAll()
-            selectedMultiObjectsUuid = []
+            if ((mouse.modifiers & Qt.ShiftModifier) == false) {
+                multiObjectsDeselectAll()
+                selectedMultiObjectsUuid = []
+            }
         }
 
         Loader {
