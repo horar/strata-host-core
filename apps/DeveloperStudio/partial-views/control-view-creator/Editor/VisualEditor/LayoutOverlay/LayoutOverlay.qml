@@ -73,7 +73,7 @@ LayoutContainer {
                     visualEditor.multiObjectsDeselectAll()
                     layoutOverlayRoot.isSelected = true
                     visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
-                } else if (visualEditor.selectedMultiObjectsUuid.length > 0) {
+                } else if (visualEditor.selectedMultiObjectsUuid.length > 1) {
                     layoutOverlayRoot.multiItemTargetPrevX = rect.x
                     layoutOverlayRoot.multiItemTargetPrevY = rect.y
 
@@ -124,7 +124,7 @@ LayoutContainer {
                     const newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     const colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
 
-                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                         const xOffset = colRow.x - layoutOverlayRoot.layoutInfo.xColumns
                         const yOffset = colRow.y - layoutOverlayRoot.layoutInfo.yRows
                         if (xOffset !== 0 || yOffset !== 0) {
@@ -158,7 +158,7 @@ LayoutContainer {
                     rect.x = newPosition.x
                     rect.y = newPosition.y
 
-                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                         rect.x = Math.max(rect.x, -dragRectLeftLimit)
                         rect.x = Math.min(rect.x, dragRectRightLimit)
                         rect.y = Math.max(rect.y, -dragRectTopLimit)
