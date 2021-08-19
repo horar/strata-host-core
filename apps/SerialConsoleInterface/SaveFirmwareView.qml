@@ -215,7 +215,6 @@ FocusScope {
                 enabled: saveFirmwareView.editable
                          && model.platform.status === Sci.SciPlatform.Ready
                 onClicked: {
-                    Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(saveFirmwarePathEdit.filePath)
                     startBackupProcess(saveFirmwarePathEdit.filePath)
                 }
              }
@@ -240,6 +239,7 @@ FocusScope {
          var errorString = model.platform.saveDeviceFirmware(firmwarePath)
          if (errorString.length === 0) {
              setupNode.nodeState = StatusNode.Succeed
+             Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(firmwarePath)
          } else {
              setupNode.nodeState = StatusNode.Failed
              setupNode.subText = "Operation cannot start: " + errorString
