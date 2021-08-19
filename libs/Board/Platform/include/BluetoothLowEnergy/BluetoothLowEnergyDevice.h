@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QBluetoothDeviceInfo>
 #include <QLowEnergyController>
+#include "BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h"
 
 namespace strata::device
 {
@@ -37,7 +38,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info);
+    BluetoothLowEnergyDevice(const QByteArray& deviceId, const QBluetoothDeviceInfo &info, const BluetoothLowEnergyControllerFactoryPtr& controllerFactory);
 
     /**
      * BluetoothLowEnergyDevice destructor
@@ -79,67 +80,21 @@ public:
     virtual void resetReceiving() override;
 
 private slots:
-    void openingTimeoutHandler();
-
     void deviceConnectedHandler();
-    void discoveryFinishedHandler();
-    void deviceErrorReceivedHandler(QLowEnergyController::Error error);
-    void deviceDisconnectedHandler();
-    void deviceStateChangeHandler(QLowEnergyController::ControllerState state);
+    void deviceDisconnectedHandler(bool failedToOpen);
+    void deviceErrorHandler(QLowEnergyController::Error error, const QString& errorString);
 
-    void characteristicWrittenHandler(const QLowEnergyCharacteristic &info,
-                                      const QByteArray &value);
-    void descriptorWrittenHandler(const QLowEnergyDescriptor &info, const QByteArray &value);
-    void characteristicReadHandler(const QLowEnergyCharacteristic &info, const QByteArray &value);
-    void characteristicChangedHandler(const QLowEnergyCharacteristic &info,
-                                      const QByteArray &value);
-    void serviceStateChangedHandler(QLowEnergyService::ServiceState newState);
-    void serviceErrorHandler(QLowEnergyService::ServiceError error);
+    void serviceDescriptorWrittenHandler(const QByteArray& serviceUuid, const QLowEnergyDescriptor &info, const QByteArray &value);
+    void serviceCharacteristicWrittenHandler(const QByteArray& serviceUuid, const QLowEnergyCharacteristic &info, const QByteArray &value);
+    void serviceCharacteristicReadHandler(const QByteArray& serviceUuid, const QLowEnergyCharacteristic &info, const QByteArray &value);
+    void serviceCharacteristicChangedHandler(const QByteArray& serviceUuid, const QLowEnergyCharacteristic &info, const QByteArray &value);
+    void serviceErrorHandler(const QByteArray& serviceUuid, QLowEnergyService::ServiceError error);
 
 private:
-    /**
-     * Processing after opening of device (including service scan) successfully ends.
-     */
-    void notifyOpenSuccess();
-
-    /**
-     * Processing after opening of device (including service scan) failed.
-     */
-    void notifyOpenFailure();
-
     /**
      * Deinitializes the object, deletes stored objects.
      */
     void deinit();
-
-    /**
-     * Tries to connect to the device identified by bluetoothDeviceInfo_
-     */
-    void connectToDevice();
-
-    /**
-     * Starts detail discovery for all discovered services.
-     */
-    void discoverServiceDetails();
-
-    /**
-     * Checks the state of service details discovery.
-     * Runs discovery where necessary, notifies about complete discovery.
-     */
-    void checkServiceDetailsDiscovery();
-
-    /**
-     * Creates a service object and stores it into internal map
-     * @param serviceUuid UUID of the service.
-     */
-    void addDiscoveredService(const QBluetoothUuid &serviceUuid);
-
-    /**
-     * Returns service object, identified by serviceUuid. Null if there is no such service discovered.
-     * @param serviceUuid UUID of the service.
-     * @return service object, identified by serviceUuid. Null if there is no such service discovered.
-     */
-    QLowEnergyService *getService(const QBluetoothUuid &serviceUuid) const;
 
     /**
      * Processes a message for the BLE device. Converts the JSON message to GATT commands.
@@ -197,21 +152,12 @@ private:
      */
     void emitResponses(const std::vector<QByteArray> &responses);
 
-    /**
-     * Returns properly formated service uuid from sender of the signal. Helper function.
-     * @return service uuid
-     */
-    QByteArray getSignalSenderServiceUuid() const;
-
-    QBluetoothDeviceInfo bluetoothDeviceInfo_;
-    QLowEnergyController *lowEnergyController_{nullptr};
-    std::map<QBluetoothUuid, QLowEnergyService *> discoveredServices_;
-    bool allDiscovered_;
-
-    int platforiIdDataAwaiting_;
+    int platformIdDataAwaiting_;
     QMap<QBluetoothUuid, QString> platformIdentification_;
 
-    QTimer openingTimer_;
+    QBluetoothDeviceInfo bluetoothDeviceInfo_;
+    BluetoothLowEnergyControllerPtr controller_;
+    BluetoothLowEnergyControllerFactoryPtr controllerFactory_;
 };
 
 }  // namespace strata::device
