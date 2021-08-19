@@ -348,6 +348,7 @@ Item {
         case 1: return "warning"
         case 2: return "error"
         case 4: return "info"
+
         }
     }
 
