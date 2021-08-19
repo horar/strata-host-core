@@ -97,8 +97,9 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
 
     qCDebug(logCategoryPlatformManager) << "Created DeviceScanner with type:" << scannerType;
 
-    connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected);
-    connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost);
+    // Handlers can take few seconds to to be processed. QueuedConnection makes processing async.
+    connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected, Qt::QueuedConnection);
+    connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost, Qt::QueuedConnection);
 
     scanner->init(flags);
 }
