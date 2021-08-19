@@ -26,6 +26,11 @@ ColumnLayout {
     signal multiObjectsDragged(string objectInitiated, var x, var y)
     signal multiObjectsDeselectAll()
 
+    onMultiObjectsDeselectAll: {
+        selectedMultiObjectsUuid = []
+    }
+
+
     property alias loader: loader
     property alias functions: functions
 
@@ -60,7 +65,6 @@ ColumnLayout {
 
         onClicked: {
             multiObjectsDeselectAll()
-            selectedMultiObjectsUuid = []
         }
 
         Loader {

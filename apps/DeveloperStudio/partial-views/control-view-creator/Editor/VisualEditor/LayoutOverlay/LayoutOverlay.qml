@@ -66,20 +66,22 @@ LayoutContainer {
                 wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
             }
 
-            onPressedChanged: {
-                if (pressed) {
-                    startPoint = Qt.point(mouseX, mouseY)
+            onPressed: {
+                startPoint = Qt.point(mouseX, mouseY)
 
-                    if (visualEditor.selectedMultiObjectsUuid.length > 0) {
-                        layoutOverlayRoot.multiItemTargetPrevX = rect.x
-                        layoutOverlayRoot.multiItemTargetPrevY = rect.y
+                if ((mouse.modifiers & Qt.ShiftModifier) == false && layoutOverlayRoot.isSelected === false){
+                    visualEditor.multiObjectsDeselectAll()
+                    layoutOverlayRoot.isSelected = true
+                    visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                } else if (visualEditor.selectedMultiObjectsUuid.length > 0) {
+                    layoutOverlayRoot.multiItemTargetPrevX = rect.x
+                    layoutOverlayRoot.multiItemTargetPrevY = rect.y
 
-                        multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
-                        dragRectLeftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
-                        dragRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
-                        dragRectTopLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
-                        dragRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
-                    }
+                    multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
+                    dragRectLeftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
+                    dragRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
+                    dragRectTopLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
+                    dragRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                 }
             }
 
