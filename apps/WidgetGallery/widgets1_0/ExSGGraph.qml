@@ -657,65 +657,84 @@ Item {
                     x: pointGraph.mouseArea.mouseX
                     y: pointGraph.mouseArea.mouseY
 
-                    property point closestPoint
+                    property int scroll: pointGraph.mouseArea.wheelChoke
+                    property var position: pointGraph.mouseArea.mousePosition
+                    property point closestPoint: Qt.point(0,0)
+
+                    onScrollChanged: {
+                        closestValue.visible = false // while scrolling the tooltip is not visible
+                    }
+
+                    onPositionChanged: {
+                        closestValue.visible = false // when shifting the graph the tooltip is not visible
+                    }
 
                     onXChanged: {
                         closestPoint = pointGraph.closestPointByXValue()
                     }
                 }
 
+                // popup to display the point's coordinates and hovers over that location
                 SGWidgets09.SGToolTipPopup {
-                    // popup to display the point's coordinates and hovers over that location
                     id: closestValue
                     // x and y positions are limited to the size of pointGraph
-                    // if the point is beyond the bounds, then the tooltip will be pushed to the edge of the pointGraph area
-                    x: {
-                        if (mouseCrosshair.closestPoint.x < pointGraph.xMin) {
-                            let limit = Qt.point(pointGraph.xMin, mouseCrosshair.closestPoint.y)
-                            visible = false
-                            return pointGraph.mapToPosition(limit).x - width / 2 - 7
-                        } else {
-                            return pos.x - width / 2 - 7
-
-                        }
-                    }
-                    y: {
-                        if (mouseCrosshair.closestPoint.y > pointGraph.yMax) {
-                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMax)
-                            visible = false
-                            return pointGraph.mapToPosition(limit).y - height
-                        } else if (mouseCrosshair.closestPoint.y < pointGraph.yMin){
-                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMin)
-                            visible = false
-                            return pointGraph.mapToPosition(limit).y - height
-                        } else {
-                            visible = true
-                            return pos.y - height
-                        }
-                    }
+                    x: determineX()
+                    y: determineY()
                     color: "white"
                     showOn: pointGraph.mouseArea.containsMouse
                     enabled: false // disables internal mouse area
                     content: Text {
                         text: "(" + mouseCrosshair.closestPoint.x.toFixed(closestValue.decimalsX) + "," + mouseCrosshair.closestPoint.y.toFixed(closestValue.decimalsY) + ")"
                     }
+
                     property point mouseValue: pointGraph.mapToValue(Qt.point(mouseCrosshair.x, mouseCrosshair.y))
                     property int decimalsX: 1 // determines how many decimal points to show
                     property int decimalsY: 1
                     property point pos: pointGraph.mapToPosition(mouseCrosshair.closestPoint)
+
+                    // determines the x position of the tooltip, will not extend beyond the xMin and xMax
+                    // can comment the 'visible' property to see off screen point coordinates
+                    function determineX() {
+                        if (mouseCrosshair.closestPoint.x < pointGraph.xMin) {
+                            let limit = Qt.point(pointGraph.xMin, mouseCrosshair.closestPoint.y)
+                            visible = false // comment out to show tooltip at the edge of the screen
+                            return pointGraph.mapToPosition(limit).x - width / 2 - 7
+                        } else {
+                            return pos.x - width / 2 - 7
+
+                        }
+                    }
+
+                    // determines the y position of the tooltip, will not extend beyond the yMin and yMax
+                    function determineY() {
+                        if (mouseCrosshair.closestPoint.y > pointGraph.yMax) {
+                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMax)
+                            visible = false // comment out to show tooltip at the edge of the screen
+                            return pointGraph.mapToPosition(limit).y - height
+                        } else if (mouseCrosshair.closestPoint.y < pointGraph.yMin){
+                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMin)
+                            visible = false // comment out to show tooltip at the edge of the screen
+                            return pointGraph.mapToPosition(limit).y - height
+                        } else {
+                            visible = true // comment out to show tooltip at the edge of the screen
+                            return pos.y - height
+                        }
+                    }
                 }
             }
 
             Column {
+                spacing: 5
                 anchors {
                     verticalCenter: parent.verticalCenter
                 }
-                spacing: 5
 
+                // This button will remove the two sine waves and produce one curve with random points
                 Button {
                     id: singleCurveButton
                     text: "Single Curve"
                     enabled: false
+
                     onClicked: {
                         pointGraph.yMin = 0
                         singleCurveButton.enabled = false
@@ -733,10 +752,14 @@ Item {
                         curve.appendList(dataArray)
                     }
                 }
+
+                // This button removes the single curve and creates two sine waves
+                // Useful for testing tooltip with multiple curves
                 Button {
                     id: manyCurveButton
                     text: "Multiple Curves"
                     enabled: true
+
                     onClicked: {
                         pointGraph.yMin = -10
                         singleCurveButton.enabled = true
