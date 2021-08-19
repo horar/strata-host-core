@@ -14,12 +14,12 @@ LayoutContainer {
     property string type: ""
     property var sourceItem // Item that this overlay represents
 
+    // multi-item selection/dragging/resizing
     property bool isSelected: false
-
-    property var multiItemTargetPrevX
-    property var multiItemTargetPrevY
-    property var multiItemTargetPrevWidth
-    property var multiItemTargetPrevHeight
+    property real multiItemTargetPrevX
+    property real multiItemTargetPrevY
+    property real multiItemTargetPrevWidth
+    property real multiItemTargetPrevHeight
     property var multiItemTargetRectLimits: []
 
     onSourceItemChanged: {
@@ -67,29 +67,32 @@ LayoutContainer {
 
             property point startPoint
 
-            property var dragRectLeftLimit
-            property var dragRectRightLimit
-            property var dragRectTopLimit
-            property var dragRectBottomLimit
+            // multi-item selection/dragging/resizing
+            property real dragRectLeftLimit
+            property real dragRectRightLimit
+            property real dragRectTopLimit
+            property real dragRectBottomLimit
 
             onWheel: {
                 wheel.accepted = true // do not propagate wheel events to objects below overlay (e.g. sggraph zoom)
             }
 
-            onPressedChanged: {
-                if (pressed) {
-                    startPoint = Qt.point(mouseX, mouseY)
+            onPressed: {
+                startPoint = Qt.point(mouseX, mouseY)
 
-                    if (visualEditor.selectedMultiObjectsUuid.length > 0) {
-                        layoutOverlayRoot.multiItemTargetPrevX = rect.x
-                        layoutOverlayRoot.multiItemTargetPrevY = rect.y
+                if ((mouse.modifiers & Qt.ShiftModifier) == false && layoutOverlayRoot.isSelected === false) {
+                    visualEditor.multiObjectsDeselectAll()
+                    layoutOverlayRoot.isSelected = true
+                    visualEditor.functions.addUuidToMultiObjectSelection(layoutOverlayRoot.sourceItem.layoutInfo.uuid)
+                } else if (visualEditor.selectedMultiObjectsUuid.length > 1) {
+                    layoutOverlayRoot.multiItemTargetPrevX = rect.x
+                    layoutOverlayRoot.multiItemTargetPrevY = rect.y
 
-                        multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
-                        dragRectLeftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
-                        dragRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
-                        dragRectTopLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
-                        dragRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
-                    }
+                    multiItemTargetRectLimits = visualEditor.functions.getMultiItemTargetRectLimits()
+                    dragRectLeftLimit = multiItemTargetRectLimits[0] * overlayContainer.columnSize
+                    dragRectRightLimit = multiItemTargetRectLimits[1] * overlayContainer.columnSize
+                    dragRectTopLimit = multiItemTargetRectLimits[2] * overlayContainer.rowSize
+                    dragRectBottomLimit = multiItemTargetRectLimits[3] * overlayContainer.rowSize
                 }
             }
 
@@ -132,7 +135,7 @@ LayoutContainer {
                     const newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     const colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
 
-                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                         const xOffset = colRow.x - layoutOverlayRoot.layoutInfo.xColumns
                         const yOffset = colRow.y - layoutOverlayRoot.layoutInfo.yRows
                         if (xOffset !== 0 || yOffset !== 0) {
@@ -166,7 +169,7 @@ LayoutContainer {
                     rect.x = newPosition.x
                     rect.y = newPosition.y
 
-                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 0) {
+                    if (layoutOverlayRoot.isSelected && visualEditor.selectedMultiObjectsUuid.length > 1) {
                         rect.x = Math.max(rect.x, -dragRectLeftLimit)
                         rect.x = Math.min(rect.x, dragRectRightLimit)
                         rect.y = Math.max(rect.y, -dragRectTopLimit)

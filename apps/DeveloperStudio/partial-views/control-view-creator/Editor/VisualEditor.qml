@@ -28,6 +28,10 @@ ColumnLayout {
     signal multiObjectsResizeDragged(string objectInitiated, var width, var height)
     signal multiObjectsDeselectAll()
 
+    onMultiObjectsDeselectAll: {
+        selectedMultiObjectsUuid = []
+    }
+
     property alias loader: loader
     property alias functions: functions
 
@@ -61,8 +65,9 @@ ColumnLayout {
         Layout.fillWidth: true
 
         onClicked: {
-            multiObjectsDeselectAll()
-            selectedMultiObjectsUuid = []
+            if ((mouse.modifiers & Qt.ShiftModifier) == false) {
+                multiObjectsDeselectAll()
+            }
         }
 
         Loader {

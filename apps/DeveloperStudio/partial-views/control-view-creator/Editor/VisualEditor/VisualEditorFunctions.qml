@@ -345,7 +345,7 @@ QtObject {
     function moveGroup(offsetX, offsetY) {
         for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
             const obj = visualEditor.overlayObjects[i]
-            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
                 continue
             }
             moveItem(obj.layoutInfo.uuid, obj.layoutInfo.xColumns + offsetX, obj.layoutInfo.yRows + offsetY, true, false)
@@ -492,7 +492,7 @@ QtObject {
 
     // adds object uuid to multi-item selection
     function addUuidToMultiObjectSelection(uuid) {
-        if (!visualEditor.selectedMultiObjectsUuid.includes(uuid)) {
+        if (!isUuidSelected(uuid)) {
             visualEditor.selectedMultiObjectsUuid.push(uuid)
         }
     }
@@ -524,7 +524,7 @@ QtObject {
 
         for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
             const obj = visualEditor.overlayObjects[i]
-            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
                 continue
             }
             maxX = Math.min(maxX, obj.layoutInfo.xColumns)
