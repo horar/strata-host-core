@@ -438,7 +438,7 @@ Item {
                             // checks if the user has recently opened a file and uses that path
                             // then, if there projects in the recent projects model and uses that dir path
                             // else, the user's home directory is opened
-                            inputFileDialog.folder = fileDialogFolder(inputFileDialog)
+                            inputFileDialog.folder = fileDialogFolder()
                             inputFileDialog.open()
                         }
                     }
@@ -515,7 +515,7 @@ Item {
                                 // checks if the user has recently opened a file and uses that path
                                 // then, if there projects in the recent projects model and uses that dir path
                                 // else, the user's home directory is opened
-                                outputFileDialog.folder = fileDialogFolder(outputFileDialog)
+                                outputFileDialog.folder = fileDialogFolder()
                                 outputFileDialog.open()
                             }
                         }
@@ -850,7 +850,7 @@ Item {
     /**
       * determines the fileDialog.folder to open depending on recent and current projects
     **/
-    function fileDialogFolder(dialogId) {
+    function fileDialogFolder() {
         // checks if the user has recently opened a file and uses that path
         // then, if there projects in the recent projects model and uses that dir path
         // else, the user's home directory is opened
@@ -866,7 +866,7 @@ Item {
             projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
             return projectDir
         } else {
-            return dialogId.shortcuts.home
+            return inputFileDialog.shortcuts.home
         }
     }
 
