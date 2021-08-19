@@ -18,16 +18,7 @@ ColumnLayout {
 
 
             property var cmdObj: {
-                "cmd": "my_data_cmd",
-                "payload": {
-                    "dac": 0.00,
-                    "io": false,
-                    "pwm": 0
-                }
-            }
-
-            property var notifObj: {
-                "value": "my_data_notif",
+                "cmd": "my_data_cmd_1",
                 "payload": {
                     "dac": 0.00,
                     "io": false,
@@ -47,16 +38,10 @@ ColumnLayout {
                         }
                         rowButton.cmdObj["payload"]["dac"] = Math.random(i).toFixed(2)
                         rowButton.cmdObj["payload"]["pwm"] = Math.random(rowButton.cmdObj["payload"]["dac"]).toFixed(2)
-                        sgExportCSV.updateTableFromControlView(rowButton.cmdObj, true)
+                        CommonCpp.SGCSVTableUtils.updateTableFromControlView(rowButton.cmdObj)
                     }
                 }
             }
         }
     }
-
-    CommonCpp.SGCSVTableUtils {
-        id: sgExportCSV
-        folderPath: "file:///Users/zbb69r/CSVFolder"
-    }
-
 }

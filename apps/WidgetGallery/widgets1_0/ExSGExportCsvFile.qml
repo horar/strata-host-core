@@ -46,7 +46,7 @@ ColumnLayout {
                         }
                         rowButton.cmdObj["payload"]["dac"] = Math.random(i).toFixed(2)
                         rowButton.cmdObj["payload"]["pwm"] = Math.random(rowButton.cmdObj["payload"]["dac"]).toFixed(2)
-                        sgExportCsv.updateTableFromView(rowButton.cmdObj, true)
+                        sgExportCsv.updateTableFromView(rowButton.cmdObj)
                     }
 
                     sgExportCsv.open()
