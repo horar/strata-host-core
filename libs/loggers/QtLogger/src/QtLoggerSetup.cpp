@@ -72,10 +72,10 @@ void QtLoggerSetup::generateDefaultSettings() const
 
     // spdlog related settings
     if (settings.contains(QStringLiteral("maxFileSize")) == false) {
-        settings.setValue(QStringLiteral("maxFileSize"), 1024 * 1024 * 5);
+        settings.setValue(QStringLiteral("maxFileSize"), defaults::LOGFILE_MAX_SIZE);
     }
     if (settings.contains(QStringLiteral("maxNoFiles")) == false) {
-        settings.setValue(QStringLiteral("maxNoFiles"), 5);
+        settings.setValue(QStringLiteral("maxNoFiles"), defaults::LOGFILE_MAX_COUNT);
     }
     if (settings.contains(QStringLiteral("level-comment")) == false) {
         settings.setValue(
@@ -83,27 +83,19 @@ void QtLoggerSetup::generateDefaultSettings() const
             QStringLiteral("log level is one of: debug, info, warning, error, critical, off"));
     }
     if (settings.contains(QStringLiteral("level")) == false) {
-        settings.setValue(QStringLiteral("level"), QStringLiteral("info"));
+        settings.setValue(QStringLiteral("level"), defaults::LOGLEVEL);
     }
     if (settings.contains(QStringLiteral("spdlogMessagePattern")) == false) {
         settings.setValue(QStringLiteral("spdlogMessagePattern"),
-                          QStringLiteral("%T.%e %^[%=7l]%$ %v"));
+                          defaults::SPDLOG_MESSAGE_PATTERN_4CONSOLE);
     }
 
     // Qt logging related settings
     if (settings.contains(QStringLiteral("qtFilterRules")) == false) {
-        settings.setValue(QStringLiteral("qtFilterRules"), QStringLiteral("strata.*=true"));
+        settings.setValue(QStringLiteral("qtFilterRules"), defaults::QT_FILTER_RULES);
     }
     if (settings.contains(QStringLiteral("qtMessagePattern")) == false) {
-        settings.setValue(QStringLiteral("qtMessagePattern"),
-                          QStringLiteral("%{if-category}%{category}: %{endif}"
-                                         /*"%{file}:%{line}"*/
-                                         "%{if-debug}%{function}%{endif}"
-                                         "%{if-info}%{function}%{endif}"
-                                         "%{if-warning}%{function}%{endif}"
-                                         "%{if-critical}%{function}%{endif}"
-                                         "%{if-fatal}%{function}%{endif}"
-                                         " - %{message}"));
+        settings.setValue(QStringLiteral("qtMessagePattern"), defaults::QT_MESSAGE_PATTERN);
     }
 
     settings.endGroup();
@@ -117,11 +109,10 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
     const auto maxNoFiles{settings.value(QStringLiteral("maxNoFiles")).toUInt()};
     logLevel_ = {settings.value(QStringLiteral("level")).toString()};
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
-    const auto messagePattern4file{
-        settings
-            .value(QStringLiteral("spdlogFileMessagePattern"),
-                   QStringLiteral("%Y-%m-%dT%T.%e%z\tPID:%P\tTID:%t\t[%L]\t%v"))
-            .toString()};
+    const auto messagePattern4file{settings
+                                       .value(QStringLiteral("spdlogFileMessagePattern"),
+                                              defaults::SPDLOG_MESSAGE_PATTERN_4FILE)
+                                       .toString()};
     settings.endGroup();
 
     const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
