@@ -642,7 +642,7 @@ Item {
                         let curvePoints = []
                         let diff = Infinity // large default value
                         let closestIndex = 0
-                        // loop over all the curves and use binary search to find the closest points by the X axis
+                         // loop over all curves to find the closest points to the mouse's X position, then find the curve closest to the mouse's Y position
                         for (let i = 0; i < pointGraph.count; i++) {
                             index = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
                             if (index !== -1) {
