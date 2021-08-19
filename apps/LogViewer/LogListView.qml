@@ -411,6 +411,9 @@ Item {
         highlightMoveVelocity: -1
         clip: true
 
+        Behavior on anchors.rightMargin { NumberAnimation {}}
+        Behavior on anchors.bottomMargin { NumberAnimation {}}
+
         ScrollBar.vertical: ScrollBar {
             id: verticalScrollbar
             parent: logListView.parent
