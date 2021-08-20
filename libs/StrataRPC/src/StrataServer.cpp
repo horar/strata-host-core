@@ -210,7 +210,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
     if ((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
         // Check if this command is meant to be sent to a platform
         if (true == jsonObject.contains("device_id") &&
-            true == jsonObject.value("device_id").isDouble()) {
+            true == jsonObject.value("device_id").isString()) {
             clientMessage->handlerName = "platform_message";
             isPlatformMessage = true;
         } else {
@@ -232,7 +232,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
     QJsonObject payloadJsonObject{};
 
     if (true == isPlatformMessage) {
-        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toDouble());
+        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toString());
         QJsonObject messageJsonObject;
         messageJsonObject.insert("cmd", jsonObject.value("cmd"));
         if (true == hasPayload) {
@@ -240,7 +240,9 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
         } else {
             messageJsonObject.insert("payload", QJsonObject{});
         }
-        payloadJsonObject.insert("message", messageJsonObject);
+        payloadJsonObject.insert(
+            "message",
+            QString(QJsonDocument(messageJsonObject).toJson(QJsonDocument::JsonFormat::Compact)));
     } else {
         if (true == hasPayload) {
             payloadJsonObject = jsonObject.value("payload").toObject();
@@ -430,10 +432,12 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
         case ResponseType::Notification:
         case ResponseType::Response:
             // determine the notification type
-            // "load_documents" --> "cloud::notification"
+            // "document" --> "cloud::notification"
+            // "document_progress" --> "cloud::notification"
             // "platform" message --> "notification"
             // all others       --> "hcs::notification"
-            if (clientMessage.handlerName == "load_documents") {
+            if (clientMessage.handlerName == "document" ||
+                clientMessage.handlerName == "document_progress") {
                 notificationType = "cloud::notification";
             } else {
                 notificationType = "hcs::notification";
