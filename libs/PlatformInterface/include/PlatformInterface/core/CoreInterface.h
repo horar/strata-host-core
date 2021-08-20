@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string>
 #include <HostControllerClient.hpp>
+#include <StrataRPC/StrataClient.h>
 
 using NotificationHandler = std::function<void(QJsonObject)>; // notification handler
 using DataSourceHandler = std::function<void(QJsonObject)>; // data source handler accepting QJsonObject
@@ -55,9 +56,9 @@ public:
     bool registerNotificationHandler(std::string notification, NotificationHandler handler);
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
-    std::unique_ptr<strata::hcc::HostControllerClient> hcc;
+    //std::unique_ptr<strata::hcc::HostControllerClient> hcc;
     std::thread notification_thread_;
-    void notificationsThread();
+    // void notificationsThread();
 
     // Invokables
     //To send the selected platform and its connection status
@@ -111,4 +112,5 @@ private:
 
     // attached Data Source subscribers
     std::map<std::string, DataSourceHandler > data_source_handlers_;
+    std::shared_ptr<strata::strataRPC::StrataClient> strataClient_;
 };

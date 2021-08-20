@@ -15,12 +15,14 @@ using std::string;
 using strata::hcc::HostControllerClient;
 
 CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
-    : QObject(parent), hcc{std::make_unique<HostControllerClient>(hcsInAddress)}
+    : QObject(parent)
 {
     // qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) :
     // QObject(parent) CTOR\n";
 
     qCDebug(logCategoryCoreInterface) << QStringLiteral("HCS incomming address set to: %1").arg(QString::fromStdString(hcsInAddress));
+    strataClient_ = std::make_shared<strata::strataRPC::StrataClient>(QString::fromStdString(hcsInAddress),"", this);
+    strataClient_->connect();
 
     // --------------------
     // Core Framework
@@ -43,108 +45,109 @@ CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
                                 std::bind(&CoreInterface::cloudNotificationHandler,
                                      this, std::placeholders::_1));
 
-    notification_thread_running_.store(false);
-    notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
+    // notification_thread_running_.store(false);
+    // notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
 }
 
 CoreInterface::~CoreInterface()
 {
-    setNotificationThreadRunning(false);
-    bool closed = hcc->close();
+    strataClient_->disconnect();
+    // setNotificationThreadRunning(false);
+    // bool closed = hcc->close();
 
-    if (closed && notification_thread_.joinable()) {
-        notification_thread_.join();
-    } else {
-        notification_thread_.detach();
-    }
+    // if (closed && notification_thread_.joinable()) {
+    //     notification_thread_.join();
+    // } else {
+    //     notification_thread_.detach();
+    // }
 }
 
 // @f notificationsThreadHandle
 // @b main dispatch thread for notifications from Host Controller Service
 //
 //
-void CoreInterface::notificationsThread()
-{
-    //qDebug () << "CoreInterface::notificationsThread - notification handling.";
-    notification_thread_running_.store(true);
+// void CoreInterface::notificationsThread()
+// {
+//     //qDebug () << "CoreInterface::notificationsThread - notification handling.";
+//     notification_thread_running_.store(true);
 
-    while(notification_thread_running_.load()) {
-        // Notification Message Architecture
-        //
-        //    {
-        //        "notification": {
-        //            "device_id": -1088988335,
-        //            "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
-        //        }
-        //    }
-        //
-        //    {
-        //        "cloud::notification": {
-        //        "type": "document",
-        //        "name": "schematic",
-        //        "documents": [
-        //              {"data": "*******","filename": "schematic1.png"},
-        //              {"data": "*******","filename": "schematic1.png"}
-        //        ]
-        //        }
-        //   }
-        //
+//     while(notification_thread_running_.load()) {
+//         // Notification Message Architecture
+//         //
+//         //    {
+//         //        "notification": {
+//         //            "device_id": -1088988335,
+//         //            "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
+//         //        }
+//         //    }
+//         //
+//         //    {
+//         //        "cloud::notification": {
+//         //        "type": "document",
+//         //        "name": "schematic",
+//         //        "documents": [
+//         //              {"data": "*******","filename": "schematic1.png"},
+//         //              {"data": "*******","filename": "schematic1.png"}
+//         //        ]
+//         //        }
+//         //   }
+//         //
 
-        // TODO [ian] need to avoid uneeded std::string to QString conversion
-        // TODO [ian] need to error check/validate json messages
-        string message = hcc->receiveNotification();  // Host Controller Service
+//         // TODO [ian] need to avoid uneeded std::string to QString conversion
+//         // TODO [ian] need to error check/validate json messages
+//         // string message = hcc->receiveNotification();  // Host Controller Service
 
-        if (message.empty()) {
-            continue;
-        }
+//         if (message.empty()) {
+//             continue;
+//         }
 
-        QByteArray n(QByteArray::fromStdString(message));
+//         QByteArray n(QByteArray::fromStdString(message));
 
-        // Debug; Some messages are too long to print (ex: cloud images)
-        if (n.length() < 500) {
-          qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n << "'";
-        } else {
-          qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n.left(500) << " ...' (message over 500 chars truncated)";
-        }
+//         // Debug; Some messages are too long to print (ex: cloud images)
+//         if (n.length() < 500) {
+//           qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n << "'";
+//         } else {
+//           qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n.left(500) << " ...' (message over 500 chars truncated)";
+//         }
 
-        QJsonDocument doc = QJsonDocument::fromJson(n);
-        if(doc.isNull()) {
-            // TODO [ian] fix the "ONSEMI" message from fouling up all this
-            //qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle()."
-            //             "Failed to create JSON doc. message=" << n.toStdString().c_str();
-            continue;
-        }
+//         QJsonDocument doc = QJsonDocument::fromJson(n);
+//         if(doc.isNull()) {
+//             // TODO [ian] fix the "ONSEMI" message from fouling up all this
+//             //qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle()."
+//             //             "Failed to create JSON doc. message=" << n.toStdString().c_str();
+//             continue;
+//         }
 
-        QJsonObject notification_json = doc.object();
-        if(notification_json.isEmpty() ) {
-            qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle():"
-                         "JSON is empty.";
-            continue;
-        }
+//         QJsonObject notification_json = doc.object();
+//         if(notification_json.isEmpty() ) {
+//             qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle():"
+//                          "JSON is empty.";
+//             continue;
+//         }
 
-        //[TODO: ack responses to setting a parameter have both an "ack" and a "payload", which generates an error here. How should that be fixed?]
-        QStringList keys = notification_json.keys();
-        if( keys.size() != 1 ) {
-            //qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle():"
-            //             " More then one key in notification message. Violates message architecture.";
-            continue;
-        }
+//         //[TODO: ack responses to setting a parameter have both an "ack" and a "payload", which generates an error here. How should that be fixed?]
+//         QStringList keys = notification_json.keys();
+//         if( keys.size() != 1 ) {
+//             //qCritical()<<"ERROR: void CoreInterface::notificationsThreadHandle():"
+//             //             " More then one key in notification message. Violates message architecture.";
+//             continue;
+//         }
 
-        QString notification(keys.at(0)); // top level JSON keys
+//         QString notification(keys.at(0)); // top level JSON keys
 
-        auto handler = notification_handlers_.find(notification.toStdString());
-        if( handler == notification_handlers_.end()) {
-            qCritical("CoreInterface::notificationsThreadHandle()"
-                      " ERROR: no handler exits for %s !!", notification.toStdString().c_str ());
-            continue;
-        }
+//         auto handler = notification_handlers_.find(notification.toStdString());
+//         if( handler == notification_handlers_.end()) {
+//             qCritical("CoreInterface::notificationsThreadHandle()"
+//                       " ERROR: no handler exits for %s !!", notification.toStdString().c_str ());
+//             continue;
+//         }
 
-        // dispatch handler for notification
-        handler->second(notification_json[notification].toObject());
-    }
-}
+//         // dispatch handler for notification
+//         handler->second(notification_json[notification].toObject());
+//     }
+// }
 
-// ---
+// // ---
 // Core Framework Infrastructure Notification Handlers
 //
 
@@ -232,7 +235,7 @@ void CoreInterface::loadDocuments(QString class_id)
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     //qDebug()<<"parse to send"<<strJson;
-    hcc->sendCmd(strJson.toStdString());
+    // hcc->sendCmd(strJson.toStdString());
 }
 
 // @f sendCommand
@@ -240,12 +243,12 @@ void CoreInterface::loadDocuments(QString class_id)
 //
 void CoreInterface::sendCommand(QString cmd)
 {
-    hcc->sendCmd(cmd.toStdString());
+    // hcc->sendCmd(cmd.toStdString());
 }
 
 void CoreInterface::setNotificationThreadRunning(bool running)
 {
-    notification_thread_running_.store(running);
+    // notification_thread_running_.store(running);
 }
 
 // @f unregisterClient
@@ -260,7 +263,7 @@ void CoreInterface::unregisterClient()
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     //qDebug()<<"parse to send"<<strJson;
-    hcc->sendCmd(strJson.toStdString());
+    // hcc->sendCmd(strJson.toStdString());
 }
 
 // @f cloudNotificationHandler
@@ -349,7 +352,7 @@ bool CoreInterface::registerDataSourceHandler(std::string source, DataSourceHand
     payload.insert("type", source.c_str());
     cmd.insert("db::payload", payload);
 
-    hcc->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString());
+    // hcc->sendCmd(QString(QJsonDocument(cmd).toJson(QJsonDocument::Compact)).toStdString());
     return true;
 }
 
