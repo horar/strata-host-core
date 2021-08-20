@@ -188,6 +188,10 @@ private slots:
     void updatePlotSize();
 };
 
+/*-----------------------
+    SGQWTPlotCurve Class
+------------------------*/
+
 class SGQWTPlotCurve : public QObject
 {
     Q_OBJECT
@@ -242,6 +246,10 @@ private:
     bool yAxisLeft();
     void setYAxisLeft(bool yleftAxis);
 };
+
+/*-----------------------
+    SGQWTPlotCurveData Class
+------------------------*/
 
 class SGQWTPlotCurveData : public QwtSeriesData<QPointF>
 {
