@@ -25,11 +25,11 @@ UIBase { // start_uibase
     property alias clearGraph: periodicNotificationGraph.clearGraph
 
     Component.onCompleted: {
-        Help.registerTarget(controlViewRoot.tabBar, "These tabs contain different user interface functionality of the Strata evaluation board. Take the idea of walking the user into evaluating the board by ensuring the board is instantly functional when powered on and then dive into more complex tabs and features. These tabs are not required but contains in the template for illustration.", 0, "BasicControlHelp")
+        Help.registerTarget(tabBar, "These tabs contain different user interface functionality of the Strata evaluation board. Take the idea of walking the user into evaluating the board by ensuring the board is instantly functional when powered on and then dive into more complex tabs and features. These tabs are not required but contains in the template for illustration.", 0, "BasicControlHelp")
         Help.registerTarget(ioOutSwitch, "Toggle the state of a single IO output pin on the microcontroller. The IO Input control will reflect the state of the IO Output when the next Periodic Notification" + " \"" + "my_cmd_simple_periodic" + "\" "  + "is sent from the firmware to Strata.", 1, "BasicControlHelp")
         Help.registerTarget(dacOutSlider, "Sets the Digital to Analog Converter (DAC) pin of the microcontroller between 0 and full scale.", 2, "BasicControlHelp")
         Help.registerTarget(grayBoxHelpContainer, "These boxes indicate the command or notification communication between Strata and the board's firmware. The communication direction is indicated by the image in the top right corner of these boxes. The Serial Console Interface (SCI) should be used during firmware development to debug notifications and commands before connecting to the user interface.", 3, "BasicControlHelp")
-        Help.registerTarget(periodNotiContainer, "This is a visualization of the data being sent as a notification to Strata using various user interface elements such as boolean indicators, live graphing, and gauges. The periodic notification is configured in the firmware to send the" + " \"" + "my_cmd_simple_periodic"+ "\" "  + "notification at a certain interval - indefinitely or with a certain run count configured in the Configure Periodic Notification section.", 4, "BasicControlHelp")
+        Help.registerTarget(textBackground3, "This is a visualization of the data being sent as a notification to Strata using various user interface elements such as boolean indicators, live graphing, and gauges. The periodic notification is configured in the firmware to send the" + " \"" + "my_cmd_simple_periodic"+ "\" "  + "notification at a certain interval - indefinitely or with a certain run count configured in the Configure Periodic Notification section.", 4, "BasicControlHelp")
         Help.registerTarget(configPeriodNotiHelp, "Configures the periodic notification" + " \"" + "my_cmd_simple_periodic" + "\" "+ "with a certain interval - indefinitely or with a certain run count. The Run State will turn on/off the notification and will need to be toggled to enable the notification when the Run Count expires.", 5, "BasicControlHelp")
     }
 
@@ -104,6 +104,15 @@ UIBase { // start_uibase
         layoutInfo.yRows: 1
     } // end_c3744
 
+    LayoutItem { // start_aff41
+        id: configPeriodNotiHelp
+        layoutInfo.uuid: "aff41"
+        layoutInfo.columnsWide: 40
+        layoutInfo.rowsTall: 11
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 31
+    } // end_aff41
+
     LayoutRectangle { // start_dadc0
         id: textRect1
         layoutInfo.uuid: "dadc0"
@@ -118,14 +127,13 @@ UIBase { // start_uibase
     LayoutText { // start_86237
         id: simpleCommandHandler
         layoutInfo.uuid: "86237"
-        layoutInfo.columnsWide: 40
+        layoutInfo.columnsWide: 17
         layoutInfo.rowsTall: 2
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 1
 
         text: "Simple Command Handler"
-        fontSizeMode: Text.Fit
-        font.pixelSize: 40
+        font.pixelSize: 20
         anchors {
             left: parent.left
             leftMargin: 10
@@ -212,7 +220,7 @@ UIBase { // start_uibase
     } // end_36237
 
     LayoutRectangle { // start_870e3
-        id: titleBackground1
+        id: textBackground1
         layoutInfo.uuid: "870e3"
         layoutInfo.columnsWide: 11
         layoutInfo.rowsTall: 8
@@ -220,6 +228,10 @@ UIBase { // start_uibase
         layoutInfo.yRows: 4
 
         color: "lightgrey"
+
+        ViewCommunication {
+            text: JSON.stringify(my_cmd_simple_obj,null,4)
+        }
     } // end_870e3
 
     LayoutRectangle { // start_4a3f7
@@ -236,14 +248,13 @@ UIBase { // start_uibase
     LayoutText { // start_75d9f
         id: periodicNotification
         layoutInfo.uuid: "75d9f"
-        layoutInfo.columnsWide: 40
+        layoutInfo.columnsWide: 17
         layoutInfo.rowsTall: 2
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 13
 
         text: "Periodic Notification"
-        fontSizeMode: Text.Fit
-        font.pixelSize: 40
+        font.pixelSize: 20
         anchors {
             left: parent.left
             leftMargin: 10
@@ -486,7 +497,7 @@ UIBase { // start_uibase
     } // end_cfe58
 
     LayoutRectangle { // start_06848
-        id: titleBackground3
+        id: textBackground3
         layoutInfo.uuid: "06848"
         layoutInfo.columnsWide: 11
         layoutInfo.rowsTall: 14
@@ -494,6 +505,10 @@ UIBase { // start_uibase
         layoutInfo.yRows: 16
 
         color: "lightgrey"
+
+        ViewCommunication {
+            text: JSON.stringify(my_cmd_simple_periodic_text, null, 4)
+        }
     } // end_06848
 
     LayoutRectangle { // start_a944d
@@ -697,7 +712,7 @@ UIBase { // start_uibase
     } // end_bc288
 
     LayoutRectangle { // start_e0518
-        id: titleBackground2
+        id: textBackground2
         layoutInfo.uuid: "e0518"
         layoutInfo.columnsWide: 11
         layoutInfo.rowsTall: 7
@@ -705,68 +720,26 @@ UIBase { // start_uibase
         layoutInfo.yRows: 34
 
         color: "lightgrey"
+
+        ViewCommunication {
+            text: JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
+        }
     } // end_e0518
-
-    LayoutContainer { // start_76037
-        id: simpleCmdHandle
-        layoutInfo.uuid: "76037"
-        layoutInfo.columnsWide: 11
-        layoutInfo.rowsTall: 8
-        layoutInfo.xColumns: 28
-        layoutInfo.yRows: 4
-        contentItem: ViewCommunication {
-            text: JSON.stringify(my_cmd_simple_obj,null,4)
-        }
-    } // end_76037
-
-    LayoutContainer { // start_64a34
-        id: periodNotiContainer
-        layoutInfo.uuid: "64a34"
-        layoutInfo.columnsWide: 11
-        layoutInfo.rowsTall: 14
-        layoutInfo.xColumns: 28
-        layoutInfo.yRows: 16
-        contentItem: ViewCommunication {
-            text: JSON.stringify(my_cmd_simple_periodic_text, null, 4)
-        }
-    } // end_64a34
-
-    LayoutItem { // start_aff41
-        id: configPeriodNotiHelp
-        layoutInfo.uuid: "aff41"
-        layoutInfo.columnsWide: 40
-        layoutInfo.rowsTall: 11
-        layoutInfo.xColumns: 0
-        layoutInfo.yRows: 31
-    } // end_aff41
 
     LayoutText { // start_17037
         id: configPeriodicNotification
         layoutInfo.uuid: "17037"
-        layoutInfo.columnsWide: 40
+        layoutInfo.columnsWide: 17
         layoutInfo.rowsTall: 2
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 31
 
         text: "Configure Periodic Notification"
-        fontSizeMode: Text.Fit
-        font.pixelSize: 40
+        font.pixelSize: 20
         anchors {
             left: parent.left
             leftMargin: 10
         }
         verticalAlignment: Text.AlignVCenter
     } // end_17037
-
-    LayoutContainer { // start_a20d8
-        id: configPeriodNoti
-        layoutInfo.uuid: "a20d8"
-        layoutInfo.columnsWide: 11
-        layoutInfo.rowsTall: 7
-        layoutInfo.xColumns: 28
-        layoutInfo.yRows: 34
-        contentItem: ViewCommunication {
-            text: JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
-        }
-    } // end_a20d8
 } // end_uibase
