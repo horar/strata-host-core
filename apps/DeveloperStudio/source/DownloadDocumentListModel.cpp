@@ -11,11 +11,22 @@ DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterfac
     : QAbstractListModel(parent),
       coreInterface_(coreInterface)
 {
-
-    connect(coreInterface_, &CoreInterface::downloadPlatformFilepathChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
-    connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileProgress, this, &DownloadDocumentListModel::singleDownloadProgressHandler);
-    connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileFinished, this, &DownloadDocumentListModel::singleDownloadFinishedHandler);
-    connect(coreInterface_, &CoreInterface::downloadPlatformFilesFinished, this, &DownloadDocumentListModel::groupDownloadFinishedHandler);
+    coreInterface_->registerNotificationHandler(
+        "download_platform_filepath_changed",
+        std::bind(&DownloadDocumentListModel::downloadFilePathChangedHandler, this,
+                  std::placeholders::_1));
+    coreInterface_->registerNotificationHandler(
+        "download_platform_single_file_progress",
+        std::bind(&DownloadDocumentListModel::singleDownloadProgressHandler, this,
+                  std::placeholders::_1));
+    coreInterface_->registerNotificationHandler(
+        "download_platform_single_file_finished",
+        std::bind(&DownloadDocumentListModel::singleDownloadFinishedHandler, this,
+                  std::placeholders::_1));
+    coreInterface_->registerNotificationHandler(
+        "download_platform_files_finished",
+        std::bind(&DownloadDocumentListModel::groupDownloadFinishedHandler, this,
+                  std::placeholders::_1));
 }
 
 DownloadDocumentListModel::~DownloadDocumentListModel()
@@ -187,15 +198,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
         {"destination_dir", saveUrl.path()}
     };
 
-    QJsonObject message
-    {
-        {"hcs::cmd", "download_files"},
-        {"payload", payload},
-    };
-
-    doc.setObject(message);
-
-    coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
+    coreInterface_->sendRequest("download_files", payload);
 
     emit downloadInProgressChanged();
 }

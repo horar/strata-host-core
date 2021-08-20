@@ -10,26 +10,11 @@
 //
 
 #include <QObject>
-#include <iterator>
 #include <QString>
-#include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <QVariant>
-#include <QStringList>
-#include <QString>
 #include <QJsonArray>
-#include <string>
-#include <thread>
-#include <map>
-#include <functional>
-#include <stdlib.h>
-#include <string>
-#include <HostControllerClient.hpp>
 #include <StrataRPC/StrataClient.h>
-
-using NotificationHandler = std::function<void(QJsonObject)>; // notification handler
-using DataSourceHandler = std::function<void(QJsonObject)>; // data source handler accepting QJsonObject
 
 class CoreInterface : public QObject
 {
@@ -40,7 +25,6 @@ class CoreInterface : public QObject
     //
     Q_PROPERTY(QString platform_list_ READ platformList NOTIFY platformListChanged)
     Q_PROPERTY(QString connected_platform_list_ READ connectedPlatformList NOTIFY connectedPlatformListChanged)
-    Q_PROPERTY(QString hcs_token_ READ hcsToken NOTIFY hcsTokenChanged)
 
 public:
     explicit CoreInterface(QObject* parent = nullptr,
@@ -51,44 +35,27 @@ public:
     // Core Framework: Q_PROPERTY read methods
     QString platformList() { return platform_list_; }
     QString connectedPlatformList() { return connected_platform_list_; }
-    QString hcsToken() { return hcs_token_; }
 
-    bool registerNotificationHandler(std::string notification, NotificationHandler handler);
-    bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
-
-    //std::unique_ptr<strata::hcc::HostControllerClient> hcc;
-    std::thread notification_thread_;
-    // void notificationsThread();
+    bool registerNotificationHandler(const QString &method, strata::strataRPC::StrataClient::ClientHandler handler);
 
     // Invokables
     //To send the selected platform and its connection status
     Q_INVOKABLE void loadDocuments(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
+    Q_INVOKABLE void sendRequest(const QString &handler, const QJsonObject &payload);
+    Q_INVOKABLE void sendNotification(const QString &handler, const QJsonObject &payload);
 
     void setNotificationThreadRunning(bool running);
 
 signals:
     // ---
     // Core Framework Signals
-    bool platformIDChanged(QString id);
-    bool platformStateChanged(bool platform_connected_state);
     bool platformListChanged(QString list);
     bool connectedPlatformListChanged(QString list);
-    bool hcsTokenChanged(QString token);
-
-    void platformMetaData(QJsonObject payload);
-    void downloadPlatformFilepathChanged(QJsonObject payload);
-    void downloadPlatformSingleFileProgress(QJsonObject payload);
-    void downloadPlatformSingleFileFinished(QJsonObject payload);
-    void downloadPlatformFilesFinished(QJsonObject payload);
-
-    void firmwareProgress(QJsonObject payload);
-    void downloadViewFinished(QJsonObject payload);
-    void downloadControlViewProgress(QJsonObject payload);
 
     // Platform Framework Signals
-    void notification(QString payload);
+    void notification(QString payload);                             // can be replaced with a handler
 
 private:
 
@@ -99,18 +66,15 @@ private:
     QString hcs_token_;
     std::atomic_bool notification_thread_running_;
 
-    // ---
-    // notification handling
-    std::map<std::string, NotificationHandler > notification_handlers_;
-
     // Main Catagory Notification handlers
-    void platformNotificationHandler(QJsonObject notification);
+    void platformNotificationHandler(const QJsonObject &notification);
     void cloudNotificationHandler(QJsonObject notification);
+
+    void processAllPlatformsNotification(const QJsonObject &payload);
+    void processConnectedPlatformsNotification(const QJsonObject &payload);
 
     // Core Framework Notificaion Handlers
     void hcsNotificationHandler(QJsonObject payload);
 
-    // attached Data Source subscribers
-    std::map<std::string, DataSourceHandler > data_source_handlers_;
     std::shared_ptr<strata::strataRPC::StrataClient> strataClient_;
 };

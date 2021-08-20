@@ -46,11 +46,7 @@ function disablePlatformNotifications(){
 
 function getPlatformList () {
     platformSelectorModel.platformListStatus = "loading"
-    const get_dynamic_plat_list = {
-        "hcs::cmd": "dynamic_platform_list",
-        "payload": {}
-    }
-    coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
+    coreInterface.sendRequest("dynamic_platform_list", {})
 }
 
 /*

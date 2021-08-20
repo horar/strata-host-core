@@ -19,14 +19,16 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
         Register document handler with CoreInterface
         This will also send a command to Nimbus
     */
-    coreInterface->registerDataSourceHandler("document_progress",
+
+    coreInterface_->registerNotificationHandler("document_progress",
                                             std::bind(&DocumentManager::documentProgressHandler,
                                             this, std::placeholders::_1));
-
-    coreInterface->registerDataSourceHandler("document",
+    coreInterface_->registerNotificationHandler("document",
                                             std::bind(&DocumentManager::loadDocumentHandler,
                                             this, std::placeholders::_1));
-    connect(coreInterface_, &CoreInterface::platformMetaData, this, &DocumentManager::platformMetaDataHandler);
+    coreInterface_->registerNotificationHandler("platform_meta_data",
+                                            std::bind(&DocumentManager::platformMetaDataHandler,
+                                            this, std::placeholders::_1));
 
     init();
 }
