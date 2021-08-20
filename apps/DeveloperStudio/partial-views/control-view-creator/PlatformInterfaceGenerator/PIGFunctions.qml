@@ -10,6 +10,8 @@ import tech.strata.signals 1.0
 import "../"
 
 Item {
+    id: rootFunctions
+    
     /**
       * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
     **/
@@ -171,8 +173,8 @@ Item {
     }
 
     /**
-        * checkForArrayValid checks if array/object is valid
-        **/
+      * checkForArrayValid checks if array/object is valid
+    **/
     function checkForArrayValid(arrayModel) {
         for (let i = 0; i < arrayModel.count; i++) {
             if (arrayModel.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
@@ -193,9 +195,9 @@ Item {
     }
 
     /**
-        * checkForDuplicateIds checks for duplicate ids in either the "commands" or "notifications" array. Note that there can be duplicates between the commands and notifications.
-        * E.g.: Commands can have a cmd with name "test" and so can the notifications
-        **/
+      * checkForDuplicateIds checks for duplicate ids in either the "commands" or "notifications" array. Note that there can be duplicates between the commands and notifications.
+      * E.g.: Commands can have a cmd with name "test" and so can the notifications
+    **/
     function checkForDuplicateIds(index) {
         let commands = finishedModel.get(index).data
         let allValid = true
@@ -216,7 +218,7 @@ Item {
 
     /**
       * createModelFromJson creates the model from a JSON object (used when importing a JSON file)
-     **/
+    **/
     function createModelFromJson(jsonObject) {
         let topLevelKeys = Object.keys(jsonObject) // This contains "commands" / "notifications" arrays
 
@@ -307,7 +309,7 @@ Item {
 
     /**
       * modelPopulated checks to see if either the commands or notifications has been populated
-     **/
+    **/
     function modelPopulated() {
         for (let i = 0; i < finishedModel.count; i++) {
             if (finishedModel.get(i).data.count > 0) {
@@ -319,7 +321,7 @@ Item {
 
     /**
       * generateArrayModel takes an Array and transforms it into an array readable by our delegates
-     **/
+    **/
     function generateArrayModel(arr, parentListModel) {
         for (let i = 0; i < arr.length; i++) {
             const type = arr[i].type
@@ -342,7 +344,7 @@ Item {
 
     /**
       * generateObjectModel takes an Object and transforms it into an array readable by our delegates
-     **/
+    **/
     function generateObjectModel(object, parentListModel) {
         for (let i = 0; i < object.length; i++) {
             const type = object[i].type
@@ -365,7 +367,7 @@ Item {
 
     /**
       * createJsonObject creates the JSON object to output
-     **/
+    **/
     function createJsonObject() {
         let obj = {}
 
@@ -439,7 +441,7 @@ Item {
 
     /**
       * Convert string values to typed values
-     **/
+    **/
     function getTypedValue (type, value) {
         switch (type) {
             case "int":
@@ -459,7 +461,7 @@ Item {
 
     /**
       * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
-     **/
+    **/
     function generatePlatformInterface() {
         const jsonObject = createJsonObject()
         const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, jsonFileName)
@@ -489,8 +491,7 @@ Item {
 
     /**
       * importValidationCheck will check if the incoming JSON file is a valid Platform Interface JSON
-     **/
-
+    **/
     function importValidationCheck(object) {
         if (!object.hasOwnProperty("commands") || 
             !object.hasOwnProperty("notifications") ||
@@ -578,7 +579,7 @@ Item {
 
     /**
       * loadJsonFile read JSON file and import object
-     **/
+    **/
     function loadJsonFile(url) {
         if (SGUtilsCpp.isFile(url)) {
             inputFilePath = url
@@ -610,7 +611,7 @@ Item {
                         alertToast.color = "goldenrod"
                         alertToast.interval = 0
                         alertToast.show()
-                        createModelFromJsonAPIv0(jsonObject)
+                        deprecatedFunctions.createModelFromJsonAPIv0(jsonObject)
                     }
                 } else {
                     alertToast.text = "The JSON file is improperly formatted"
@@ -635,186 +636,8 @@ Item {
 
     /**
       * findProjectRootDir find project root directory given root Qrc file url
-     **/
+    **/
     function findProjectRootDir() {
         return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
-    }
-
-    /********************************************************************************************
-      * All functions below this mark are for APIv0. 
-      * This allows deprecated PI.json to function as expected
-      * When the user generates again, their PI.json file be updated to APIv1
-    /********************************************************************************************
-
-    /**
-      * DEPRECATED - APIv0 Model
-      * This function creates the model from a JSON object (used when importing a JSON file)
-    **/
-    function createModelFromJsonAPIv0(jsonObject) {
-        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
-
-        finishedModel.modelAboutToBeReset()
-        finishedModel.clear()
-
-        for (let i = 0; i < topLevelKeys.length; i++) {
-            const topLevelType = topLevelKeys[i]
-            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
-            let listOfCommandsOrNotifications = {
-                "name": topLevelType, // "commands" / "notifications"
-                "data": []
-            }
-
-            finishedModel.append(listOfCommandsOrNotifications)
-
-            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                let commandsModel = finishedModel.get(i).data
-
-                let cmd = arrayOfCommandsOrNotifications[j]
-                let commandName
-                let commandType
-                let commandObject = {}
-
-                if (topLevelType === "commands") {
-                    // If we are dealing with commands, then look for the "cmd" key
-                    commandName = cmd["cmd"]
-                    commandType = "cmd"
-                } else {
-                    commandName = cmd["value"]
-                    commandType = "value"
-                }
-
-                commandObject["type"] = commandType
-                commandObject["name"] = commandName
-                commandObject["valid"] = true
-                commandObject["payload"] = []
-                commandObject["editing"] = false
-
-                commandsModel.append(commandObject)
-
-                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
-                let payloadPropertiesArray = []
-
-                if (payload) {
-                    let payloadProperties = Object.keys(payload)
-                    // sorting pi.json file so the generated files, pi.json & pi.qml, will function as intented prior to APIv1
-                    payloadProperties = payloadProperties.sort(); 
-                    let payloadModel = commandsModel.get(j).payload
-                    for (let k = 0; k < payloadProperties.length; k++) {
-
-                        const key = payloadProperties[k]
-                        let type = getType(payload[key])
-                        let payloadPropObject = Object.assign({}, templatePayload)
-                        payloadPropObject["name"] = key
-                        payloadPropObject["type"] = type
-                        payloadPropObject["valid"] = true
-                        payloadPropObject["indexSelected"] = -1
-
-                        if (type === "int") {
-                            payloadPropObject["value"] = "0"
-                        } else if (type === "double") {
-                            payloadPropObject["value"] = "0"
-                        } else if (type === "bool") {
-                            payloadPropObject["value"] = "false"
-                        } else if (type === "string") {
-                            payloadPropObject["value"] = ""
-                        }
-
-                        payloadModel.append(payloadPropObject)
-
-                        let propertyArray = []
-                        let propertyObject = []
-
-                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                            generateArrayModelAPIv0(payload[key], payloadModel.get(k).array)
-                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                            generateObjectModelAPIv0(payload[key], payloadModel.get(k).object)
-                        }
-                    }
-                }
-            }
-        }
-        finishedModel.modelReset()
-
-        if (inputFilePath == currentCvcProjectJsonUrl) {
-            outputFileText.text = findProjectRootDir()
-        } else {
-            outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
-        }
-    }
-
-    /**
-      * DEPRECATED - APIv0 Model
-      * getType called from createModelFromJsonAPIv0(); returns the sdsModel type
-    **/
-    function getType(item) {
-        if (Array.isArray(item)) {
-            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
-        } else if (item === "array-dynamic") {
-            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC
-        } else if (typeof item === "object") {
-            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
-        } else if (item === "object-dynamic") {
-            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC
-        } else {
-            return item
-        }
-    }
-
-    /**
-      * DEPRECATED - APIv0 Model
-      * This function takes an Array and transforms it into an array readable by our delegates
-    **/
-    function generateArrayModelAPIv0(arr, parentListModel) {
-        for (let i = 0; i < arr.length; i++) {
-            let type = getType(arr[i])
-
-            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
-            
-            if (type === "int") {
-                obj["value"] = "0"
-            } else if (type === "double") {
-                obj["value"] = "0"
-            } else if (type === "bool") {
-                obj["value"] = "false"
-            }
-            
-            parentListModel.append(obj)
-
-            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
-            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
-            }
-        }
-    }
-
-    /**
-      * DEPRECATED - APIv0 Model
-      * This function takes an Object and transforms it into an array readable by our delegates
-    **/
-    function generateObjectModelAPIv0(object, parentListModel) {
-        let keys = Object.keys(object)
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i]
-            let type = getType(object[key])
-            
-            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
-            
-            if (type === "int") {
-                obj["value"] = "0"
-            } else if (type === "double") {
-                obj["value"] = "0"
-            } else if (type === "bool") {
-                obj["value"] = "false"
-            }
-            
-            parentListModel.append(obj)
-
-            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
-            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
-            }
-        }
     }
 }

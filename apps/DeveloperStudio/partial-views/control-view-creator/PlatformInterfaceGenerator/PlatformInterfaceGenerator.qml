@@ -81,6 +81,20 @@ Item {
         platformInterfaceGeneratorSeen = false
     }
 
+    // All functions needed for PIG
+    PIGFunctions {
+        id: functions
+    }
+
+    /********************************************************************************************
+        * All functions in here are for APIv0.
+        * This allows deprecated PI.json to function as expected
+        * When the user generates again, their PI.json file be updated to APIv1
+    /*******************************************************************************************/
+    PIGDeprecatedFunctions {
+        id: deprecatedFunctions
+    }
+
     ListModel {
         id: finishedModel
 
@@ -512,9 +526,5 @@ Item {
         onAccepted: {
             functions.loadJsonFile(fileUrl)
         }
-    }
-
-    PIGFunctions {
-        id: functions
     }
 }

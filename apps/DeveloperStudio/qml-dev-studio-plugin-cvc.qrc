@@ -69,6 +69,7 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml</file>
         <file alias="PlatformInterfaceGenerator/PlatformInterfaceGenerator.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PlatformInterfaceGenerator.qml</file>
         <file alias="PlatformInterfaceGenerator/PIGFunctions.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PIGFunctions.qml</file>
+        <file alias="PlatformInterfaceGenerator/PIGDeprecatedFunctions.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PIGDeprecatedFunctions.qml</file>
         <file alias="PlatformInterfaceGenerator/AlertToast.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/AlertToast.qml</file>
         <file alias="PlatformInterfaceGenerator/CommandNotificationDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/CommandNotificationDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/PayloadArrayPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadArrayPropertyDelegate.qml</file>
