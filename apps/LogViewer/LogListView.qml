@@ -50,8 +50,8 @@ Item {
         logListView.positionViewAtEnd();
     }
 
-    function copyToClipboard(textElement) {
-        CommonCPP.SGUtilsCpp.copyToClipboard(textElement.text)
+    function copyToClipboard(text) {
+        CommonCPP.SGUtilsCpp.copyToClipboard(text)
     }
 
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
@@ -402,6 +402,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.bottomMargin: horizontalScrollbar.visible ? horizontalScrollbar.height : 0
+        anchors.rightMargin: verticalScrollbar.visible ? verticalScrollbar.width : 0
         flickableDirection: Flickable.HorizontalAndVerticalFlick
         boundsMovement: Flickable.StopAtBounds
         boundsBehavior: Flickable.DragAndOvershootBounds
@@ -409,15 +411,37 @@ Item {
         highlightMoveVelocity: -1
         clip: true
 
+        Behavior on anchors.rightMargin { NumberAnimation {}}
+        Behavior on anchors.bottomMargin { NumberAnimation {}}
+
         ScrollBar.vertical: ScrollBar {
-            minimumSize: 0.1
+            id: verticalScrollbar
+            parent: logListView.parent
+            anchors {
+                top: logListView.top
+                left: logListView.right
+                bottom: logListView.bottom
+            }
+            width: 8
+
             policy: ScrollBar.AlwaysOn
+            minimumSize: 0.1
+            visible: logListView.height < logListView.contentHeight
         }
 
         ScrollBar.horizontal: ScrollBar {
             id: horizontalScrollbar
+            parent: logListView.parent
+            anchors {
+                top: logListView.bottom
+                left: logListView.left
+                right: logListView.right
+            }
+            height: 8
+
+            policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
-            policy: ScrollBar.AsNeeded
+            visible: logListView.width < logListView.contentWidth
         }
 
         onContentYChanged: {
@@ -528,7 +552,25 @@ Item {
                         id: copyAction
                         text: qsTr("Copy")
                         onTriggered: {
-                            copyToClipboard(msg)
+                            let line = []
+                            let delimiter = " , "
+
+                            if (ts.text) {
+                                line.push(ts.text)
+                            }
+                            if (pid.text) {
+                                line.push(pid.text)
+                            }
+                            if (tid.text) {
+                                line.push(tid.text)
+                            }
+                            if (level.text) {
+                                line.push(level.text)
+                            }
+                            if (msg.text) {
+                                line.push(msg.text.trim())
+                            }
+                            copyToClipboard(line.join(delimiter))
                         }
                     }
 
