@@ -78,7 +78,7 @@ Item {
                 text: "Browse"
 
                 onClicked: {
-                    fileDialog.folder = openProjectContainer.fileDialogFolder(fileDialog)
+                    fileDialog.folder = openProjectContainer.fileDialogFolder()
                     fileDialog.open()
                 }
             }
