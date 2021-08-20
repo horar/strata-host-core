@@ -67,7 +67,11 @@ QtObject {
                 return
             }
         }
-        loadError(loader.sourceComponent.errorString())
+        if (loader.sourceComponent.errorString().length > 0) {
+            loadError(loader.sourceComponent.errorString())
+        } else {
+            loadError("Visual Editor supports QML files only")
+        }
     }
 
     function unload(reload = false) {
@@ -81,7 +85,6 @@ QtObject {
     }
 
     function load() {
-        visualEditor.error = "Visual Editor supports QML files only"
         if (visualEditor.file.toLowerCase().endsWith(".qml")) {
             fileContents = readFileContents(visualEditor.file)
             sdsModel.qtLogger.visualEditorReloading = true
@@ -94,7 +97,11 @@ QtObject {
                 identifyChildren(loader.children[0])
                 visualEditor.fileValid = true
             } else {
-                loadError(loader.sourceComponent.errorString())
+                if (loader.sourceComponent.errorString().length > 0) {
+                    loadError(loader.sourceComponent.errorString())
+                } else {
+                    loadError("Visual Editor supports QML files only")
+                }
             }
         } else {
             visualEditor.fileValid = false
@@ -105,7 +112,7 @@ QtObject {
         unload(false)
         loader.setSource("qrc:/partial-views/SGLoadError.qml")
         if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-            console.log("Visual Editor disabled: file '" + SGUtilsCpp.urlToLocalFile(visualEditor.file) + "' does not derive from UIBase")
+            console.log("Visual Editor disabled: file '" + SGUtilsCpp.urlToLocalFile(visualEditor.file) + `${errorMsg}`)
             loader.item.error_intro = "Unable to display file"
             loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use Visual Editor."
             visualEditor.fileValid = false
@@ -113,6 +120,8 @@ QtObject {
         } else {
             loader.item.error_intro = "Unable to display file"
             loader.item.error_message = "Build error, see logs"
+            visualEditor.fileValid = false
+            visualEditor.error = errorMsg
         }
     }
 
