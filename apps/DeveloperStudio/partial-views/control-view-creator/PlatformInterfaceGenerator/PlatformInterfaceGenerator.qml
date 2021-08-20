@@ -435,9 +435,6 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             alertToast.hide()
-                            // checks if the user has recently opened a file and uses that path
-                            // then, if there projects in the recent projects model and uses that dir path
-                            // else, the user's home directory is opened
                             inputFileDialog.folder = fileDialogFolder()
                             inputFileDialog.open()
                         }
@@ -512,9 +509,6 @@ Item {
 
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
-                                // checks if the user has recently opened a file and uses that path
-                                // then, if there projects in the recent projects model and uses that dir path
-                                // else, the user's home directory is opened
                                 outputFileDialog.folder = fileDialogFolder()
                                 outputFileDialog.open()
                             }
@@ -853,20 +847,15 @@ Item {
     function fileDialogFolder() {
         // checks if the user has recently opened a file and uses that path
         // then, if there projects in the recent projects model and uses that dir path
-        // else, the user's home directory is opened
+        // else, the user's home directory is opened                
         let path = currentCvcProjectJsonUrl
-        let projectDir = startContainer.openControlView.projectContainer.previousFileURL.projects[0]
         if (SGUtilsCpp.isValidFile(path)) {
+            path = SGUtilsCpp.urlToLocalFile(path)
             path = SGUtilsCpp.parentDirectoryPath(path)
             path = SGUtilsCpp.pathToUrl(path)
             return path
-        } else if (SGUtilsCpp.isValidFile(projectDir)) {
-            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
-            projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert to url for the FileDialog folder
-            return projectDir
         } else {
-            return inputFileDialog.shortcuts.home
+            return startContainer.openControlView.fileDialogFolder()
         }
     }
 

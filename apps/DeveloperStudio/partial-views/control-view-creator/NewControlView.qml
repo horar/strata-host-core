@@ -78,9 +78,6 @@ Item {
                 text: "Browse"
 
                 onClicked: {
-                    // Grabs the most recent project from the fileUrl array
-                    // goes up two directories in order to be in the directory the project was created in
-                    // if there are no recent projects, the home folder is used
                     fileDialog.folder = openProjectContainer.fileDialogFolder(fileDialog)
                     fileDialog.open()
                 }
