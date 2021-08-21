@@ -45,8 +45,8 @@ FocusScope {
         }
 
         ListElement {
-            name: "SGExportCsvFile"
-            page: "ExSGExportCsvFile.qml"
+            name: "SGCSVFileUtilsManager"
+            page: "ExSGCSVFileUtilsManager.qml"
         }
 
         ListElement {

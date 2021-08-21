@@ -33,7 +33,7 @@
         <file>commoncpp1_0/ExSGTextHighlighter.qml</file>
         <file>commoncpp1_0/ExSGJsonSyntaxHighlighter.qml</file>
         <file>commoncpp1_0/ExSGSortFilterProxyModel.qml</file>
-        <file>widgets1_0/ExSGExportCsvFile.qml</file>
+        <file>widgets1_0/ExSGCSVFileUtilsManager.qml</file>
         <file>commoncpp1_0/ExSGCSVTableUtils.qml</file>
     </qresource>
 </RCC>

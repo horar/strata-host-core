@@ -56,7 +56,7 @@ ColumnLayout {
     }
 
 
-    SGWidgets.SGExportCsvFile {
+    SGWidgets.SGCSVFileUtilsManager {
         id: sgExportCsv
     }
 }
