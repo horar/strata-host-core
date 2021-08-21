@@ -15,6 +15,7 @@ Dialog {
 
     property alias folderPath: folderPath.text
     property color baseColor: "#fefefe"
+    property alias headerTitle: title.text
 
     onClosed: {
         SGCSVTableUtils.clearBackingModel()
@@ -157,7 +158,7 @@ Dialog {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            filePath.open()
+                            changeImportOrExport(false)
                         }
                     }
                 }
@@ -242,7 +243,7 @@ Dialog {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            importPath.open()
+                            changeImportOrExport(true)
                         }
                     }
                 }
@@ -277,11 +278,11 @@ Dialog {
                 MouseArea {
                     id: importButtonMouse
                     anchors.fill: importButtonRect
-                    enabled: importPath.accepted
+                    enabled: filePath.accepted
                     hoverEnabled: enabled
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        importFile(importPath.fileUrl)
+                        importFile(importFolderPath.text)
                     }
                 }
             }
@@ -294,23 +295,18 @@ Dialog {
         selectFolder: true
         folder: filePath.shortcuts.home
 
+        property bool isImport: false
+
         onAccepted: {
-            folderPath.text = filePath.fileUrl
-            SGCSVTableUtils.overrideFolderPath(folderPath.text)
+            if (!isImport) {
+                folderPath.text = filePath.fileUrl
+                SGCSVTableUtils.overrideFolderPath(folderPath.text)
+            } else {
+                importFolderPath.text = filePath.fileUrl
+                const path = SGUtilsCpp.parentDirectoryPath(importFolderPath.text)
+                SGCSVTableUtils.overrideFolderPath(path);
+            }
             close()
-        }
-    }
-
-    FileDialog {
-        id: importPath
-        selectMultiple: false
-        folder: filePath.folder
-        nameFilters: ["*.csv"]
-
-        onAccepted: {
-            importFolderPath.text = importPath.fileUrl
-            const path = SGUtilsCpp.parentDirectoryPath(importFolderPath.text)
-            SGCSVTableUtils.overrideFolderPath(path);
         }
     }
 
@@ -322,5 +318,19 @@ Dialog {
     function importFile(filePath) {
         const path = SGUtilsCpp.urlToLocalFile(filePath)
         SGCSVTableUtils.importTableFromFile(path);
+    }
+
+    function changeImportOrExport(_import) {
+        if (_import) {
+            filePath.selectMultiple = false
+            filePath.selectFolder = false
+            filePath.nameFilters = ["*.csv"]
+            filePath.isImport = true
+        } else {
+            filePath.selectMultiple = false
+            filePath.selectFolder = true
+            filePath.isImport = false
+        }
+        filePath.open()
     }
 }
