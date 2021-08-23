@@ -7,23 +7,23 @@
 #include <QDebug>
 #include "logging/LoggingQtCategories.h"
 
-DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterface, QObject *parent)
-    : QAbstractListModel(parent),
-      coreInterface_(coreInterface)
+DownloadDocumentListModel::DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
+                                                     QObject *parent)
+    : QAbstractListModel(parent), strataClient_(strataClient)
 {
-    coreInterface_->registerNotificationHandler(
+    strataClient_->registerHandler(
         "download_platform_filepath_changed",
         std::bind(&DownloadDocumentListModel::downloadFilePathChangedHandler, this,
                   std::placeholders::_1));
-    coreInterface_->registerNotificationHandler(
+    strataClient_->registerHandler(
         "download_platform_single_file_progress",
         std::bind(&DownloadDocumentListModel::singleDownloadProgressHandler, this,
                   std::placeholders::_1));
-    coreInterface_->registerNotificationHandler(
+    strataClient_->registerHandler(
         "download_platform_single_file_finished",
         std::bind(&DownloadDocumentListModel::singleDownloadFinishedHandler, this,
                   std::placeholders::_1));
-    coreInterface_->registerNotificationHandler(
+    strataClient_->registerHandler(
         "download_platform_files_finished",
         std::bind(&DownloadDocumentListModel::groupDownloadFinishedHandler, this,
                   std::placeholders::_1));
@@ -198,7 +198,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
         {"destination_dir", saveUrl.path()}
     };
 
-    coreInterface_->sendRequest("download_files", payload);
+    strataClient_->sendRequest("download_files", payload);
 
     emit downloadInProgressChanged();
 }

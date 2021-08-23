@@ -25,19 +25,6 @@ void CoreInterface::platformNotificationHandler(const QJsonObject &payload)
     emit notification(doc.toJson(QJsonDocument::Compact));
 }
 
-void CoreInterface::loadDocuments(QString class_id)
-{
-    auto deferredRequest = strataClient_->sendRequest("load_documents", QJsonObject{{"class_id", class_id}});
-
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, [&class_id](const QJsonObject &) {
-        qCDebug(logCategoryCoreInterface) << "documents for class id:";// << class_id << "requested successfully";
-    });
-
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, [&class_id](const QJsonObject &payload){
-        qCCritical(logCategoryCoreInterface) << "Failed to request documents for class id:"; // << class_id << payload;
-    });
-}
-
 void CoreInterface::sendCommand(QString cmd)
 {
     // hcc->sendCmd(cmd.toStdString());

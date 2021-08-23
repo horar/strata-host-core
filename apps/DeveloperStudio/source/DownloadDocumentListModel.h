@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QJsonArray>
-#include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
 #include <QUrl>
 #include <QList>
 
@@ -19,7 +19,8 @@ class DownloadDocumentListModel: public QAbstractListModel
     Q_PROPERTY(bool downloadInProgress READ downloadInProgress NOTIFY downloadInProgressChanged)
 
 public:
-    DownloadDocumentListModel(CoreInterface *coreInterface , QObject *parent = nullptr);
+    DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
+                              QObject *parent = nullptr);
     virtual ~DownloadDocumentListModel() override;
 
     enum {
@@ -76,7 +77,7 @@ private slots:
     void groupDownloadFinishedHandler(const QJsonObject &payload);
 
 private:
-    CoreInterface *coreInterface_;
+    strata::strataRPC::StrataClient *strataClient_;
 
     QList<DownloadDocumentItem*>data_;
     QHash<QString, DownloadDocumentItem* > downloadingData_;
