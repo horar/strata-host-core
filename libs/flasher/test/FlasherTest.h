@@ -71,6 +71,11 @@ private:
     void getExpectedValues(QString firmwarePath);
     void clearExpectedValues();
 
+    void flashFirmware(bool startInBootloader, strata::Flasher::FinalAction finalAction);
+    void flashBootloader(bool startInBootloader);
+    void setFwClassId(bool startInBootloader, strata::Flasher::FinalAction finalAction);
+    void backupFirmware(bool startInBootloader, strata::Flasher::FinalAction finalAction);
+
     strata::platform::PlatformPtr platform_;
     strata::device::MockDevicePtr mockDevice_;
     QSharedPointer<strata::Flasher> flasher_;
