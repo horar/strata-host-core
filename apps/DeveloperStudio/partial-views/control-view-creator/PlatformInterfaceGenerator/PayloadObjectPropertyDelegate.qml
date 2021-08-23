@@ -9,7 +9,7 @@ Rectangle {
     implicitWidth: objectPropertyContainer.implicitWidth
     Layout.leftMargin: 3
     Layout.bottomMargin: 3
-    Layout.rightMargin: 3
+    Layout.rightMargin: 5
 
     property int modelIndex
     property color parentColor
@@ -37,8 +37,8 @@ Rectangle {
         RowLayout {
             id: objectRowLayout
             Layout.preferredHeight: 30
-            Layout.leftMargin: 3
-            Layout.rightMargin: 3
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
             Layout.fillHeight: true
             spacing: 5
 
@@ -103,7 +103,9 @@ Rectangle {
                 }
 
                 Component.onCompleted: {
-                    text = model.name
+                    if(model.name) {
+                        text = model.name
+                    }
                     forceActiveFocus()
                 }
 
@@ -124,6 +126,8 @@ Rectangle {
 
             TypeSelectorComboBox {
                 id: propertyType
+                Layout.topMargin: 2
+
                 Component.onCompleted: {
                     if (indexSelected === -1) {
                         currentIndex = getIndexOfType(type)
@@ -167,7 +171,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
         Repeater {
@@ -189,7 +193,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "object"
     *****************************************/
         Repeater {
@@ -213,9 +217,9 @@ Rectangle {
 
         Button {
             id: addPropertyButton
-            text: "Add Property To Object"
+            text: (propertyType.currentIndex === 4) ? "Add Item To Array" : "Add Item To Object"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === objectPropertyContainer.parentListModel.count - 1
+            visible:  propertyType.currentIndex === 4 || propertyType.currentIndex === 6
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -230,7 +234,12 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    objectPropertyContainer.parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.parentListModel, "value":"0"})
+                    if(propertyType.currentIndex === 4) {
+                        objectPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subArrayListModel, "value": "0"})
+                    }
+                    else {
+                        objectPropertyContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subObjectListModel, "value": "0"})
+                    }
                     commandsListView.contentY += 40
                 }
             }

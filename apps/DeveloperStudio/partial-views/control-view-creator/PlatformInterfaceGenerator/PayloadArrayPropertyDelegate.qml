@@ -9,7 +9,7 @@ Rectangle {
     implicitWidth: arrayPropertyContainer.implicitWidth
     Layout.leftMargin: 3
     Layout.bottomMargin: 3
-    Layout.rightMargin: 3
+    Layout.rightMargin: 5
 
     property int modelIndex
     property color parentColor
@@ -87,6 +87,7 @@ Rectangle {
 
             TypeSelectorComboBox {
                 id: propertyType
+                Layout.topMargin: 2
 
                 Component.onCompleted: {
                     if (indexSelected === -1) {
@@ -130,7 +131,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
         Repeater {
@@ -152,7 +153,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "object"
     *****************************************/
         Repeater {
@@ -176,9 +177,9 @@ Rectangle {
 
         Button {
             id: addPropertyButton
-            text: "Add Item To Array"
+            text: (propertyType.currentIndex === 4) ? "Add Item To Array" : "Add Item To Object"
             Layout.alignment: Qt.AlignHCenter
-            visible: modelIndex === arrayPropertyContainer.parentListModel.count - 1
+            visible: propertyType.currentIndex === 4 || propertyType.currentIndex === 6 /*modelIndex === arrayPropertyContainer.parentListModel.count - 1*/
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -193,7 +194,12 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    arrayPropertyContainer.parentListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.parentListModel, "value": "0"})
+                    if(propertyType.currentIndex === 4) {
+                        arrayPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.subArrayListModel, "value": "0"})
+                    }
+                    else {
+                        arrayPropertyContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.subObjectListModel, "value": "0"})
+                    }
                     commandsListView.contentY += 40
                 }
             }

@@ -172,6 +172,8 @@ Rectangle {
 
             TypeSelectorComboBox {
                 id: propertyType
+                Layout.topMargin: 2
+
                 Component.onCompleted: {
                     if (indexSelected === -1) {
                         currentIndex = getIndexOfType(type)
@@ -237,6 +239,32 @@ Rectangle {
             delegate: PayloadObjectPropertyDelegate {
                 modelIndex: index
                 parentColor: payloadDelegateRoot.color
+            }
+        }
+
+        Button {
+            id: addPropertyButton
+            text: (propertyType.currentIndex === 4) ? "Add Item To Array" : "Add Item To Object"
+            Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: 5
+            visible: propertyType.currentIndex === 4 || propertyType.currentIndex === 6
+
+            Accessible.name: addPropertyButton.text
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                addPropertyButtonMouseArea.clicked()
+            }
+
+            MouseArea {
+                id: addPropertyButtonMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: {
+                    payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0"})
+                    commandsListView.contentY += 40
+                }
             }
         }
     }
