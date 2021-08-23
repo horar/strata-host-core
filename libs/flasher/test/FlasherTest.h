@@ -61,7 +61,6 @@ protected slots:
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
-    static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectFlasherHandlers(strata::Flasher* flasher) const;
     void connectFlasherForDisconnectDuringFlashOperation(strata::Flasher* flasher) const;

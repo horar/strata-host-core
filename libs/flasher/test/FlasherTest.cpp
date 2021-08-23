@@ -158,23 +158,6 @@ void FlasherTest::printJsonDoc(rapidjson::Document &doc)
     qDebug("%s", buffer.GetString());
 }
 
-void FlasherTest::verifyMessage(const QByteArray &msg, const QByteArray &expectedJson)
-{
-    rapidjson::Document doc;
-    rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
-
-    parseResult = doc.Parse(msg.data(), msg.size());
-    QVERIFY(parseResult.IsError() == false);
-    QVERIFY(doc.IsObject());
-    expectedDoc.Parse(expectedJson.data(), expectedJson.size());
-    if (doc != expectedDoc) {
-        printJsonDoc(doc);
-        printJsonDoc(expectedDoc);
-    }
-    QCOMPARE(doc, expectedDoc);
-}
-
 void FlasherTest::connectFlasherHandlers(strata::Flasher *flasher) const
 {
     connect(flasher, &strata::Flasher::finished, this, &FlasherTest::handleFlasherFinished);
