@@ -57,7 +57,7 @@ FocusScope {
 
     Flickable {
         id: leftPaneFlick
-        height: flick.height
+        height: flick.height + horizontalScrollbar.height
         width: leftPane.width
 
         contentWidth: leftPane.width
@@ -74,7 +74,7 @@ FocusScope {
             }
 
             width: textMetrics.width + 14
-            height: Math.max(flick.height, flick.contentHeight)
+            height: Math.max(flick.height, flick.contentHeight) + horizontalScrollbar.height
 
             Rectangle {
                 anchors.fill: parent
@@ -135,6 +135,8 @@ FocusScope {
             bottom: parent.bottom
             left: leftPaneFlick.right
             right: parent.right
+            rightMargin: verticalScrollbar.visible ? verticalScrollbar.width : 0
+            bottomMargin: horizontalScrollbar.height ? horizontalScrollbar.height : 0
         }
 
         contentHeight: edit.height
@@ -144,25 +146,31 @@ FocusScope {
         boundsBehavior: Flickable.StopAtBounds
 
         ScrollBar.vertical: ScrollBar {
-            width: 8
+            id: verticalScrollbar
+            parent: flick.parent
             anchors {
-                right: flick.right
-                rightMargin: 1
+                top: flick.top
+                left: flick.right
+                bottom: flick.bottom
             }
 
+            width: 8
             policy: ScrollBar.AlwaysOn
             visible: flick.height < flick.contentHeight
             minimumSize: 0.1
         }
 
         ScrollBar.horizontal: ScrollBar {
+            id: horizontalScrollbar
+            parent: flick.parent
             anchors {
-                bottom: flick.bottom
-                bottomMargin: 1
+                top: flick.bottom
+                left: flick.left
+                right: flick.right
             }
 
-            policy: ScrollBar.AlwaysOn
             height: 8
+            policy: ScrollBar.AlwaysOn
             visible: flick.width < flick.contentWidth
             minimumSize: 0.1
         }
