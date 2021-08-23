@@ -1,9 +1,5 @@
 #pragma once
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-
 #include <set>
 #include <memory>
 
@@ -13,15 +9,13 @@
 #include <QJsonArray>
 #include <QNetworkAccessManager>
 
-#include "Dispatcher.h"
-#include "ClientsController.h"
 #include "Database.h"
 #include "PlatformController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
 
 #include <DownloadManager.h>
-
+#include <StrataRPC/StrataServer.h>
 
 struct DispatcherMessage;
 
@@ -119,32 +113,21 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
-    void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
-
 private:
-    void handleMessage(const DispatcherMessage& msg);
-
-    void sendMessageToClients(const QString &platformId, const QString& message);
-
-    bool broadcastMessage(const QString& message);
+    void sendPlatformMessageToClients(const QString &platformId, const QJsonObject& payload);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
-    void processCmdRequestHcsStatus(const QByteArray &clientId);
-    void processCmdClientUnregister(const QByteArray &clientId);
-    void processCmdLoadDocuments(const QJsonObject &payload, const QByteArray &clientId);
-    void processCmdHostUnregister(const QByteArray &clientId);
-    void processCmdDownloadFiles(const QJsonObject &payload, const QByteArray &clientId);
-    void processCmdDynamicPlatformList(const QByteArray &clientId);
-    void processCmdUpdateFirmware(const QJsonObject &payload, const QByteArray &clientId);
-    void processCmdDownlodView(const QJsonObject &payload, const QByteArray &clientId);
+    void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
+    void processCmdLoadDocuments(const strata::strataRPC::Message &message);
+    void processCmdDownloadFiles(const strata::strataRPC::Message &message);
+    void processCmdDynamicPlatformList(const strata::strataRPC::Message &message);
+    void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
+    void processCmdDownlodView(const strata::strataRPC::Message &message);
+    void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
 
     void platformConnected(const QByteArray& deviceId);
     void platformDisconnected(const QByteArray& deviceId);
-
-    Client* getSenderClient() const { return current_client_; }     //TODO: only one client
-
-    Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
 
@@ -159,18 +142,14 @@ private:
             const QByteArray &clientId);
 
     PlatformController platformController_;
-    ClientsController clients_;     //UI or other clients
     Database db_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    std::shared_ptr<HCS_Dispatcher> dispatcher_;
-    std::thread dispatcherThread_;
+    QByteArray currentClient_ = "";   // remove this when platforms are mapped to connected clients.
 
-    std::list<Client*> clientList_;
-    Client* current_client_;
-
-    rapidjson::Document config_;
+    QJsonObject config_;
+    std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;
 };

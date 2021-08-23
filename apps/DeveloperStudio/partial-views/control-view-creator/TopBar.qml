@@ -114,6 +114,7 @@ RowLayout {
         textRole: "verbose_name"
         boxColor: "transparent"
         textColor: "white"
+        popupBackground.color: "#B3B3B3"
 
         onCurrentIndexChanged: {
             if (currentIndex === -1) {
