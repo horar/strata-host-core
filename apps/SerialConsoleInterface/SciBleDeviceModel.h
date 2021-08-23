@@ -36,6 +36,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     void init();
 
+    Q_INVOKABLE bool bleSupported() const;
     Q_INVOKABLE void startDiscovery();
     Q_INVOKABLE void tryConnectDevice(int index);
     Q_INVOKABLE QVariantMap get(int row);

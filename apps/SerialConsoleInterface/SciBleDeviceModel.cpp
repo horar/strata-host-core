@@ -1,6 +1,8 @@
 #include "SciBleDeviceModel.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <QOperatingSystemVersion>
+
 using strata::device::Device;
 using strata::device::scanner::BlootoothLowEnergyInfo;
 
@@ -55,6 +57,17 @@ void SciBleDeviceModel::init()
 
     connect(scanner_.get(), &BluetoothLowEnergyScanner::discoveryFinished,
             this, &SciBleDeviceModel::discoveryFinishedHandler);
+}
+
+bool SciBleDeviceModel::bleSupported() const
+{
+    if ((QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS) ||
+       ((QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows) &&
+        (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows8))) {
+        return true;
+    }
+
+    return false;
 }
 
 void SciBleDeviceModel::startDiscovery()

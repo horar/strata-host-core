@@ -38,6 +38,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
+    Q_INVOKABLE bool bleSupported() const;
     Q_INVOKABLE void startScan();
     Q_INVOKABLE void tryConnect(int row);
     Q_INVOKABLE void tryDisconnect(int row);
