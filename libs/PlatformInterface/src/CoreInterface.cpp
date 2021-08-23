@@ -4,19 +4,24 @@
 
 using std::string;
 
-CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObject* parent)
+CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObject *parent)
     : QObject(parent)
 {
     strataClient_ = strataClient;
-    strataClient_->registerHandler("all_platforms", std::bind(&CoreInterface::processAllPlatformsNotification, this, std::placeholders::_1));
-    strataClient_->registerHandler("connected_platforms", std::bind(&CoreInterface::processConnectedPlatformsNotification, this, std::placeholders::_1));
-    strataClient_->registerHandler("platform_notification", std::bind(&CoreInterface::platformNotificationHandler, this, std::placeholders::_1));
-
+    strataClient_->registerHandler(
+        "all_platforms",
+        std::bind(&CoreInterface::processAllPlatformsNotification, this, std::placeholders::_1));
+    strataClient_->registerHandler("connected_platforms",
+                                   std::bind(&CoreInterface::processConnectedPlatformsNotification,
+                                             this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "platform_notification",
+        std::bind(&CoreInterface::platformNotificationHandler, this, std::placeholders::_1));
 }
 
 CoreInterface::~CoreInterface()
 {
-    strataClient_->disconnect();    // Move this to SDSModel
+    strataClient_->disconnect();  // Move this to SDSModel
 }
 
 void CoreInterface::platformNotificationHandler(const QJsonObject &payload)
@@ -42,7 +47,8 @@ void CoreInterface::unregisterClient()
     QString strJson(doc.toJson(QJsonDocument::Compact));
 }
 
-bool CoreInterface::registerNotificationHandler(const QString &method, strata::strataRPC::StrataClient::ClientHandler handler)
+bool CoreInterface::registerNotificationHandler(
+    const QString &method, strata::strataRPC::StrataClient::ClientHandler handler)
 {
     return strataClient_->registerHandler(method, handler);
 }
@@ -60,10 +66,9 @@ void CoreInterface::sendNotification(const QString &method, const QJsonObject &p
 void CoreInterface::processAllPlatformsNotification(const QJsonObject &payload)
 {
     QString newPlatformList = QJsonDocument(payload).toJson(QJsonDocument::Compact);
-    if (platform_list_ == newPlatformList) {
-        return;
+    if (platform_list_ != newPlatformList) {
+        platform_list_ = newPlatformList;
     }
-    platform_list_ = newPlatformList;
     emit platformListChanged(platform_list_);
 }
 
