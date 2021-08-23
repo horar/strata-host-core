@@ -27,8 +27,8 @@ class CoreInterface : public QObject
     Q_PROPERTY(QString connected_platform_list_ READ connectedPlatformList NOTIFY connectedPlatformListChanged)
 
 public:
-    explicit CoreInterface(QObject* parent = nullptr,
-                           const std::string& hcsInAddress = "tcp://127.0.0.1:5563");
+    explicit CoreInterface(strata::strataRPC::StrataClient *strataClient,
+                           QObject *parent = nullptr);
     virtual ~CoreInterface();
 
     // ---
@@ -76,5 +76,5 @@ private:
     // Core Framework Notificaion Handlers
     void hcsNotificationHandler(QJsonObject payload);
 
-    std::shared_ptr<strata::strataRPC::StrataClient> strataClient_;
+    strata::strataRPC::StrataClient *strataClient_{nullptr};
 };

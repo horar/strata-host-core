@@ -24,7 +24,8 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), "", this)),
+      coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
@@ -34,6 +35,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
+    strataClient_->connect();
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
     if (urlConfig_->parseUrl() == false) {
         delete urlConfig_;
@@ -201,6 +203,11 @@ strata::sds::config::UrlConfig *SDSModel::urls() const
 strata::loggers::QtLogger *SDSModel::qtLogger() const
 {
     return std::addressof(strata::loggers::QtLogger::instance());
+}
+
+strata::strataRPC::StrataClient *SDSModel::strataClient() const
+{
+    return strataClient_;
 }
 
 void SDSModel::shutdownService()

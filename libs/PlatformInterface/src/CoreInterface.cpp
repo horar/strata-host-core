@@ -4,13 +4,10 @@
 
 using std::string;
 
-CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
+CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObject* parent)
     : QObject(parent)
 {
-    qCDebug(logCategoryCoreInterface) << QStringLiteral("HCS incomming address set to: %1").arg(QString::fromStdString(hcsInAddress));
-    strataClient_ = std::make_shared<strata::strataRPC::StrataClient>(QString::fromStdString(hcsInAddress),"", this);
-    strataClient_->connect();
-
+    strataClient_ = strataClient;
     strataClient_->registerHandler("all_platforms", std::bind(&CoreInterface::processAllPlatformsNotification, this, std::placeholders::_1));
     strataClient_->registerHandler("connected_platforms", std::bind(&CoreInterface::processConnectedPlatformsNotification, this, std::placeholders::_1));
     strataClient_->registerHandler("platform_notification", std::bind(&CoreInterface::platformNotificationHandler, this, std::placeholders::_1));
@@ -19,7 +16,7 @@ CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
 
 CoreInterface::~CoreInterface()
 {
-    strataClient_->disconnect();
+    strataClient_->disconnect();    // Move this to SDSModel
 }
 
 void CoreInterface::platformNotificationHandler(const QJsonObject &payload)
