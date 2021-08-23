@@ -53,6 +53,7 @@ SDSModel::~SDSModel()
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
     delete urlConfig_;
+    delete strataClient_;
 }
 
 bool SDSModel::startHcs()

@@ -5,9 +5,8 @@
 using std::string;
 
 CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObject *parent)
-    : QObject(parent)
+    : QObject(parent), strataClient_(strataClient)
 {
-    strataClient_ = strataClient;
     strataClient_->registerHandler(
         "all_platforms",
         std::bind(&CoreInterface::processAllPlatformsNotification, this, std::placeholders::_1));
@@ -21,7 +20,6 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
 
 CoreInterface::~CoreInterface()
 {
-    strataClient_->disconnect();  // Move this to SDSModel
 }
 
 void CoreInterface::platformNotificationHandler(const QJsonObject &payload)
