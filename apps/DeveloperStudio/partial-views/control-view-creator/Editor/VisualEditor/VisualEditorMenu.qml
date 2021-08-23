@@ -12,6 +12,8 @@ import "../../components"
 RowLayout {
     id: controls
 
+    property bool hasErrors: visualEditor.hasErrors
+
     Component.onCompleted: {
         if (model.unsavedChanges) {
             console.log("Visual Editor undo/redo reset: detected local changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
@@ -25,11 +27,11 @@ RowLayout {
     MenuButton {
         text: "Layout mode"
         checkable: true
-        checked: visualEditor.layoutDebugMode
+        checked: !hasErrors ? visualEditor.layoutDebugMode : false
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
+        enabled: !hasErrors
         padding: 0
-
         onCheckedChanged: {
             visualEditor.layoutDebugMode = checked
         }
@@ -39,6 +41,7 @@ RowLayout {
         text: "Add..."
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
+        enabled: !hasErrors
         padding: 0
 
         onClicked: {
@@ -54,6 +57,7 @@ RowLayout {
         text: "Rows/Cols..."
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
+        enabled: !hasErrors
         padding: 0
 
         onClicked: {
@@ -196,6 +200,7 @@ RowLayout {
             }
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+            enabled: !hasErrors
 
             onClicked: {
                 dotsMenu.open()

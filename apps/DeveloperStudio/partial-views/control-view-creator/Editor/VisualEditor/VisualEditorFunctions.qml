@@ -11,6 +11,7 @@ QtObject {
     id: functions
 
     signal passUUID(string uuid)
+    signal loadErrorUpdate(string update)
 
     property bool saveRequestedByVE: false
 
@@ -31,6 +32,10 @@ QtObject {
             }
         }
     }
+
+
+
+
 
     Component.onDestruction: {
         unload(false)
@@ -58,18 +63,22 @@ QtObject {
 
     function checkFile() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")) {
+            visualEditor.fileValid = true
             sdsModel.qtLogger.visualEditorReloading = true
             loader.setSource(visualEditor.file)
             sdsModel.qtLogger.visualEditorReloading = false
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-                visualEditor.fileValid = true
                 unload(false)
                 return
+            } else {
+                if (loader.sourceComponent.errorString().length > 0) {
+                    loadError(loader.sourceComponent.errorString())
+                } else {
+                    loadError("Unable to open Visual Editor file must contain UIBase as root")
+                }
             }
-        }
-        if (loader.sourceComponent.errorString().length > 0) {
-            loadError(loader.sourceComponent.errorString())
         } else {
+            visualEditor.fileValid = false
             loadError("Visual Editor supports QML files only")
         }
     }
@@ -86,42 +95,41 @@ QtObject {
 
     function load() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")) {
+            visualEditor.fileValid = true
             fileContents = readFileContents(visualEditor.file)
             sdsModel.qtLogger.visualEditorReloading = true
             loader.setSource(visualEditor.file)
             sdsModel.qtLogger.visualEditorReloading = false
-
             if (loader.children[0] && loader.children[0].objectName === "UIBase") {
                 overlayContainer.rowCount = loader.children[0].rowCount
                 overlayContainer.columnCount = loader.children[0].columnCount
                 identifyChildren(loader.children[0])
-                visualEditor.fileValid = true
             } else {
                 if (loader.sourceComponent.errorString().length > 0) {
                     loadError(loader.sourceComponent.errorString())
                 } else {
-                    loadError("Visual Editor supports QML files only")
+                    loadError("Unable to open Visual Editor file must contain UIBase as root")
                 }
             }
         } else {
             visualEditor.fileValid = false
+            loadError("VEError: Visual Editor supports QML files only")
         }
     }
 
     function loadError(errorMsg) {
         unload(false)
         loader.setSource("qrc:/partial-views/SGLoadError.qml")
+        visualEditor.hasErrors = true
         if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-            console.log("Visual Editor disabled: file '" + SGUtilsCpp.urlToLocalFile(visualEditor.file) + `${errorMsg}`)
+            console.log("Visual Editor disabled: "+`${errorMsg}`)
             loader.item.error_intro = "Unable to display file"
-            loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use Visual Editor."
-            visualEditor.fileValid = false
-            visualEditor.error = errorMsg
+            loader.item.error_message = errorMsg
+            visualEditor.error = loader.item.error_message
         } else {
             loader.item.error_intro = "Unable to display file"
-            loader.item.error_message = "Build error, see logs"
-            visualEditor.fileValid = false
-            visualEditor.error = errorMsg
+            loader.item.error_message = errorMsg
+            visualEditor.error = "Visual Editor has build errors, see logs"
         }
     }
 

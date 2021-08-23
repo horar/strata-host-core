@@ -16,6 +16,7 @@ ColumnLayout {
     spacing: 0
 
     property bool fileValid: false
+    property bool hasErrors: false
     property string error: ""
     property bool layoutDebugMode: true
     property var overlayObjects: []
@@ -73,6 +74,10 @@ ColumnLayout {
             onStatusChanged: {
                 if (loader.status == Loader.Error) {
                     visualEditor.error = "Error occurred checking this file, see logs"
+                    visualEditor.hasErrors = true
+                    // Change to error screen
+                } else if(loader.status === Loader.Ready) {
+                    visualEditor.hasErrors = false
                 }
             }
         }
