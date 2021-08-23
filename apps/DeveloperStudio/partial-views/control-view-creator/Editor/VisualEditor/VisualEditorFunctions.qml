@@ -11,7 +11,6 @@ QtObject {
     id: functions
 
     signal passUUID(string uuid)
-    signal loadErrorUpdate(string update)
 
     property bool saveRequestedByVE: false
 
@@ -32,10 +31,6 @@ QtObject {
             }
         }
     }
-
-
-
-
 
     Component.onDestruction: {
         unload(false)
@@ -122,7 +117,7 @@ QtObject {
         loader.setSource("qrc:/partial-views/SGLoadError.qml")
         visualEditor.hasErrors = true
         if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-            console.log("Visual Editor disabled: "+`${errorMsg}`)
+            console.log("Visual Editor (error): "+`${errorMsg}`)
             loader.item.error_intro = "Unable to display file"
             loader.item.error_message = errorMsg
             visualEditor.error = loader.item.error_message

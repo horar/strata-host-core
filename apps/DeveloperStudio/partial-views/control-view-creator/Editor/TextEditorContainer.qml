@@ -272,8 +272,9 @@ ColumnLayout {
                 text: "Visual Editor"
                 checkable: true
                 implicitHeight: menuRow.height - 10
-                checked: viewStack.currentIndex === 1
                 enabled: visualEditor.fileValid
+                checked: viewStack.currentIndex === 1
+
                 Component.onCompleted: buttonGroup.addButton(this)
 
                 onCheckedChanged: {

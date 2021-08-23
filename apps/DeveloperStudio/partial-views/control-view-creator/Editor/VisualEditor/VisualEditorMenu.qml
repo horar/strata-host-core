@@ -32,6 +32,7 @@ RowLayout {
         implicitWidth: implicitContentWidth + 10
         enabled: !hasErrors
         padding: 0
+
         onCheckedChanged: {
             visualEditor.layoutDebugMode = checked
         }
