@@ -87,7 +87,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::RemoteObjects
     Qt5::Svg
 
-    strata::HostControllerClient
     strata::PlatformInterface
     strata::SGUtilsCpp
     strata::SGVersionUtils
