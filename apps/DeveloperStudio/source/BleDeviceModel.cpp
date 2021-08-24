@@ -3,6 +3,7 @@
 
 #include <QTimer>
 #include <chrono>
+#include <QOperatingSystemVersion>
 
 using namespace std::literals::chrono_literals;
 
@@ -56,6 +57,17 @@ int BleDeviceModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return data_.length();
+}
+
+bool BleDeviceModel::bleSupported() const
+{
+    if ((QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS) ||
+       ((QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows) &&
+        (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows8))) {
+        return true;
+    }
+
+    return false;
 }
 
 void BleDeviceModel::startScan()
