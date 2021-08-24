@@ -73,10 +73,10 @@ signals:
 
     /**
      * Signal emitted when a platform notification is received
-     * @param [in] platformNotification QString of the platform notification that contains the
+     * @param [in] payload QString of the platform notification that contains the
      * device_it and the notification.
      */
-    void notification(const QString &platformNotification);
+    void notification(const QString &payload);
 
 private:
     void processPlatformNotification(const QJsonObject &payload);
