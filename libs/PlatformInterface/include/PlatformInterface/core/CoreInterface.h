@@ -40,7 +40,6 @@ public:
 
     // Invokables
     //To send the selected platform and its connection status
-    Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
     Q_INVOKABLE void sendRequest(const QString &handler, const QJsonObject &payload);
     Q_INVOKABLE void sendNotification(const QString &handler, const QJsonObject &payload);
@@ -62,8 +61,6 @@ private:
     // Core Framework
     QString platform_list_{"{ \"list\":[]}"};
     QString connected_platform_list_{"{ \"list\":[]}"};
-    QString hcs_token_;
-    std::atomic_bool notification_thread_running_;
 
     // Main Catagory Notification handlers
     void platformNotificationHandler(const QJsonObject &notification);

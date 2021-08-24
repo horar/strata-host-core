@@ -34,17 +34,6 @@ void CoreInterface::sendCommand(QString cmd)
     qCDebug(logCategoryCoreInterface) << "sendCommand" << cmd;
 }
 
-void CoreInterface::unregisterClient()
-{
-    // this is not needed
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "unregister");
-    cmdMessageObject.insert("payload", QJsonObject());
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-}
-
 bool CoreInterface::registerNotificationHandler(
     const QString &method, strata::strataRPC::StrataClient::ClientHandler handler)
 {
