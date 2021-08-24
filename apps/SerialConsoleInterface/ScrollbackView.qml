@@ -542,7 +542,7 @@ Item {
 
                 color: "black"
                 opacity: 0.2
-                visible: index < scrollbackView.count - 1
+                visible: index < scrollbackView.count - 1 || verticalScrollbar.visible == false
             }
 
             Component {
