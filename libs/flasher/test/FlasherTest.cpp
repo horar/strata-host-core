@@ -485,39 +485,74 @@ void FlasherTest::backupFirmware(bool startInBootloader, strata::Flasher::FinalA
     }
 }
 
-void FlasherTest::flashFirmwareTest()
+void FlasherTest::flashFirmwareApplicationToApplicationTest()
 {
     flashFirmware(false, Flasher::FinalAction::StartApplication);
 }
 
-void FlasherTest::flashFirmwareWithoutStartApplicationTest()
+void FlasherTest::flashFirmwareApplicationToBootloaderTest()
 {
     flashFirmware(false, Flasher::FinalAction::StayInBootloader);
 }
 
-void FlasherTest::flashFirmwareStartInBootloaderTest()
+void FlasherTest::flashFirmwareApplicationToPreserveStateTest()
+{
+    flashFirmware(false, Flasher::FinalAction::PreservePlatformState);
+}
+
+void FlasherTest::flashFirmwareBootloaderToApplicationTest()
 {
     flashFirmware(true, Flasher::FinalAction::StartApplication);
 }
 
-void FlasherTest::flashBootloaderTest()
+void FlasherTest::flashFirmwareBootloaderToBootloaderTest()
+{
+    flashFirmware(true, Flasher::FinalAction::StayInBootloader);
+}
+
+void FlasherTest::flashFirmwareBootloaderToPreserveStateTest()
+{
+    flashFirmware(true, Flasher::FinalAction::PreservePlatformState);
+}
+
+void FlasherTest::flashBootloaderFromApplicationTest()
 {
     flashBootloader(false);
 }
 
-void FlasherTest::flashBootloaderStartInBootloaderTest()
+void FlasherTest::flashBootloaderFromBootloaderTest()
 {
     flashBootloader(true);
 }
 
-void FlasherTest::setFwClassIdTest()
+void FlasherTest::setFwClassIdApplicationToApplicationTest()
 {
     setFwClassId(false, Flasher::FinalAction::StartApplication);
 }
 
-void FlasherTest::setFwClassIdWithoutStartApplicationTest()
+void FlasherTest::setFwClassIdApplicationToBootloaderTest()
 {
     setFwClassId(false, Flasher::FinalAction::StayInBootloader);
+}
+
+void FlasherTest::setFwClassIdApplicationToPreserveStateTest()
+{
+    setFwClassId(false, Flasher::FinalAction::PreservePlatformState);
+}
+
+void FlasherTest::setFwClassIdBootloaderToApplicationTest()
+{
+    setFwClassId(true, Flasher::FinalAction::StartApplication);
+}
+
+void FlasherTest::setFwClassIdBootloaderToBootloaderTest()
+{
+    setFwClassId(true, Flasher::FinalAction::StayInBootloader);
+}
+
+void FlasherTest::setFwClassIdBootloaderToPreserveStateTest()
+{
+    setFwClassId(true, Flasher::FinalAction::PreservePlatformState);
 }
 
 void FlasherTest::startFlashFirmwareInvalidCommandTest()
@@ -840,19 +875,34 @@ void FlasherTest::flashBootloaderCancelTest()
     QCOMPARE(flasherFinishedCount_,1);
 }
 
-void FlasherTest::backupFirmwareTest()
+void FlasherTest::backupFirmwareApplicationToApplicationTest()
 {
     backupFirmware(false, Flasher::FinalAction::StartApplication);
 }
 
-void FlasherTest::backupFirmwareWithoutStartApplicationTest()
+void FlasherTest::backupFirmwareApplicationToBootloaderTest()
 {
     backupFirmware(false, Flasher::FinalAction::StayInBootloader);
 }
 
-void FlasherTest::backupFirmwareStartInBootloaderTest()
+void FlasherTest::backupFirmwareApplicationToPreserveStateTest()
+{
+    backupFirmware(false, Flasher::FinalAction::PreservePlatformState);
+}
+
+void FlasherTest::backupFirmwareBootloaderToApplicationTest()
 {
     backupFirmware(true, Flasher::FinalAction::StartApplication);
+}
+
+void FlasherTest::backupFirmwareBootloaderToBootloaderTest()
+{
+    backupFirmware(true, Flasher::FinalAction::StayInBootloader);
+}
+
+void FlasherTest::backupFirmwareBootloaderToPreserveStateTest()
+{
+    backupFirmware(true, Flasher::FinalAction::PreservePlatformState);
 }
 
 void FlasherTest::disconnectDuringBackupTest()

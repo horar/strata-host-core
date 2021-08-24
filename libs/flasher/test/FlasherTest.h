@@ -24,16 +24,26 @@ private slots:
     void cleanup();
 
     // tests standard responses
-    void flashFirmwareTest();
-    void flashFirmwareWithoutStartApplicationTest();
-    void flashFirmwareStartInBootloaderTest();
-    void flashBootloaderTest();
-    void flashBootloaderStartInBootloaderTest();
-    void setFwClassIdTest();
-    void setFwClassIdWithoutStartApplicationTest();
-    void backupFirmwareTest();
-    void backupFirmwareWithoutStartApplicationTest();
-    void backupFirmwareStartInBootloaderTest();
+    void flashFirmwareApplicationToApplicationTest();
+    void flashFirmwareApplicationToBootloaderTest();
+    void flashFirmwareApplicationToPreserveStateTest();
+    void flashFirmwareBootloaderToApplicationTest();
+    void flashFirmwareBootloaderToBootloaderTest();
+    void flashFirmwareBootloaderToPreserveStateTest();
+    void flashBootloaderFromApplicationTest();
+    void flashBootloaderFromBootloaderTest();
+    void setFwClassIdApplicationToApplicationTest();
+    void setFwClassIdApplicationToBootloaderTest();
+    void setFwClassIdApplicationToPreserveStateTest();
+    void setFwClassIdBootloaderToApplicationTest();
+    void setFwClassIdBootloaderToBootloaderTest();
+    void setFwClassIdBootloaderToPreserveStateTest();
+    void backupFirmwareApplicationToApplicationTest();
+    void backupFirmwareApplicationToBootloaderTest();
+    void backupFirmwareApplicationToPreserveStateTest();
+    void backupFirmwareBootloaderToApplicationTest();
+    void backupFirmwareBootloaderToBootloaderTest();
+    void backupFirmwareBootloaderToPreserveStateTest();
 
     // tests faulty/invalid responses
     void startFlashFirmwareInvalidCommandTest();
