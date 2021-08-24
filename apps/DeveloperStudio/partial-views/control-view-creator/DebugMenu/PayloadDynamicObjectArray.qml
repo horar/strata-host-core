@@ -26,7 +26,7 @@ ColumnLayout {
                 id: labelText
                 font.bold: true
                 fontSizeMultiplier: 1.2
-                Layout.preferredWidth: 100
+                Layout.fillWidth: true
             }
 
             Item {
@@ -88,7 +88,7 @@ ColumnLayout {
 
                     SGTextField {
                         id: nameField
-                        Layout.preferredWidth: 100
+                        Layout.fillWidth: true
                         Layout.preferredHeight: 30
                         visible: !root.isArray
                         placeholderText: "key"
@@ -122,7 +122,7 @@ ColumnLayout {
                             id: inputComponent
 
                             SGTextField {
-                                width: loader.width
+                                anchors.centerIn: loader
                                 clip: true
                                 readOnly: isArray ? false : nameField.length < 1
                                 placeholderText: {
@@ -161,8 +161,7 @@ ColumnLayout {
                             id: switchComponent
 
                             SGSwitch {
-                                width: 100
-                                height: 30
+                                anchors.centerIn: loader
                                 checkedLabel: "true"
                                 uncheckedLabel: "false"
 

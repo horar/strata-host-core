@@ -33,6 +33,7 @@ Item {
             delegate: PayloadDelegate {
                 id: payloadDelegate
                 payloadIndex: debugDelegateRoot.name
+                Layout.fillWidth: true
             }
         }
 

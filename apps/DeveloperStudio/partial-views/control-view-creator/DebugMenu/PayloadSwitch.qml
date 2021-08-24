@@ -18,8 +18,7 @@ Item {
             id: labelText
             font.bold: true
             fontSizeMultiplier: 1.2
-            Layout.minimumWidth: 100
-            Layout.maximumWidth: 250
+            Layout.fillWidth: true
             elide: Text.ElideRight
             Layout.leftMargin: 10
         }

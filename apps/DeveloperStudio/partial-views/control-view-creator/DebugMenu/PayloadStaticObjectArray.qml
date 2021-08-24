@@ -58,7 +58,6 @@ ColumnLayout {
                     Component {
                         id: textInputComponent
                         PayloadInput {
-                            width: inputLoader.width
                             name: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
                             type: modelData.type
                             value: createTextValue(modelData.value, modelData.type)
@@ -113,7 +112,6 @@ ColumnLayout {
                         id: textSwitchComponent
 
                         PayloadSwitch {
-                            width: inputLoader.width
                             name: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
                             value: modelData.value
 
@@ -124,22 +122,6 @@ ColumnLayout {
                             }
                         }
                     }
-
-                    /*
-                        SGSwitch {
-                            id: textSwitch
-                            width: 50
-                            height: 35
-                            checkedLabel: "true"
-                            uncheckedLabel: "false"
-                            onCheckedChanged: {
-                                const keyIndex = isArray ? parseInt(labelName.text.split(":")[1].trim()) : labelName.text
-                                listView.payload[labelText.text][keyIndex] = checked
-                                debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
-
-                            }
-                        }
-                      */
                 }
             }
         }

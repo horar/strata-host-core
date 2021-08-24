@@ -21,8 +21,7 @@ Item {
             id: labelText
             font.bold: true
             fontSizeMultiplier: 1.2
-            Layout.minimumWidth: 100
-            Layout.maximumWidth: 250
+            Layout.fillWidth: true
             elide: Text.ElideRight
             Layout.leftMargin: 10
         }
@@ -37,7 +36,7 @@ Item {
         Rectangle {
             id: textInputBorder
             Layout.minimumWidth: 150
-            Layout.maximumWidth: 150
+            Layout.maximumWidth: root.width
             Layout.preferredHeight: 35
             border.color: Theme.palette.lightGray
             border.width: 1
