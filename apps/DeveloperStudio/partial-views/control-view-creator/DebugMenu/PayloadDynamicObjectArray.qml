@@ -19,7 +19,7 @@ ColumnLayout {
             id: titleRow
 
             Item {
-                Layout.preferredWidth: 10
+                Layout.preferredWidth: 5
             }
 
             SGText {
