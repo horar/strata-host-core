@@ -145,17 +145,20 @@ QtObject {
         }
     }
 
-    function insertTextAtEndOfFile(text) {
+    function insertTextAtEndOfFile(text, save = true) {
         let regex = new RegExp(endOfObjectRegexString("uibase")) // insert text before file ending '} // end_uibase'
         let endOfFile = fileContents.match(regex)
         if (endOfFile === null) {
             return
         }
-        fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile);
-        saveFile()
+        fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile)
+
+        if (save) {
+            saveFile()
+        }
     }
 
-    function removeControl(uuid, addToUndoCommandStack = true) {
+    function removeControl(uuid, addToUndoCommandStack = true, save = true, deselect = true) {
         const objectString = getObjectFromString(uuid)
         if (objectString === null) {
             return
@@ -166,11 +169,25 @@ QtObject {
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.removeItem(file, uuid, objectString)
         }
-
-        saveFile()
+        if (save) {
+            saveFile()
+        }
+        // remove the deleted item from selected-items array
+        if (deselect) {
+            removeUuidFromMultiObjectSelection(uuid)
+        }
     }
 
-    function duplicateControl(uuid) {
+    function removeControlSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            removeControl(selectedUuid, true, false, false)
+        }
+        saveFile()
+        visualEditor.selectedMultiObjectsUuid = []
+    }
+
+    function duplicateControl(uuid, save = true) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
@@ -220,16 +237,32 @@ QtObject {
             console.warn("Problem detected with layoutInfo in object " + newUuid)
         }
 
-        insertTextAtEndOfFile(copy)
+        insertTextAtEndOfFile(copy, save)
     }
 
-    function bringToFront(uuid) {
+    function duplicateControlSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            duplicateControl(selectedUuid, false)
+        }
+        saveFile()
+    }
+
+    function bringToFront(uuid, save = true) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
         }
         fileContents = fileContents.replace(copy, "\n")
-        insertTextAtEndOfFile(copy)
+        insertTextAtEndOfFile(copy, save)
+    }
+
+    function bringToFrontSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            bringToFront(selectedUuid, false)
+        }
+        saveFile()
     }
 
     /*
