@@ -10,6 +10,7 @@
 
 var isInitialized = false
 var coreInterface
+var strataClient
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
@@ -31,9 +32,10 @@ function createPlatformActions() {
     notificationActions[1].triggered.connect(function(){disablePlatformNotifications()})
 }
 
-function initialize (newCoreInterface) {
+function initialize (newCoreInterface, newStrataClient) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
+    strataClient = newStrataClient
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
     createPlatformActions()
@@ -46,7 +48,7 @@ function disablePlatformNotifications(){
 
 function getPlatformList () {
     platformSelectorModel.platformListStatus = "loading"
-    coreInterface.sendRequest("dynamic_platform_list", {})
+    strataClient.sendRequest("dynamic_platform_list", {})
 }
 
 /*
