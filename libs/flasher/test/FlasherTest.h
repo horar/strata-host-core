@@ -68,6 +68,7 @@ protected slots:
     void handleFlashingProgressForCancelDuringFlashOperation(int chunk, int total);
     void handleBackupProgressForDisconnectDuringBackupOperation(int chunk, int total);
     void handleBackupProgressForCancelDuringBackupOperation(int chunk, int total);
+    void handleFlasherState(strata::Flasher::State flasherState, bool done);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
@@ -75,6 +76,7 @@ private:
     void connectFlasherHandlers(strata::Flasher* flasher) const;
     void connectFlasherForDisconnectDuringFlashOperation(strata::Flasher* flasher) const;
     void connectFlasherForCancelFlashOperation(strata::Flasher* flasher) const;
+    void connectFlasherForSwitchingFromBootloader(strata::Flasher* flasher) const;
 
     void createFiles();
     void getExpectedValues(QString firmwarePath);
