@@ -16,14 +16,12 @@ Rectangle {
 
     color: {
         if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
-            if(parentColor == "#ffffff") {
+            if (parentColor == "#ffffff") {
                 return "#d3d3d3"
             }
-            else return "#ffffff"
+            return "#ffffff"
         }
-        else {
-            return parentColor
-        }
+        return parentColor
     }
 
     ColumnLayout {
@@ -179,7 +177,7 @@ Rectangle {
             id: addPropertyButton
             text: (propertyType.currentIndex === 4) ? "Add Item To Array" : "Add Item To Object"
             Layout.alignment: Qt.AlignHCenter
-            visible: propertyType.currentIndex === 4 || propertyType.currentIndex === 6 /*modelIndex === arrayPropertyContainer.parentListModel.count - 1*/
+            visible: propertyType.currentIndex === 4 || propertyType.currentIndex === 6
 
             Accessible.name: addPropertyButton.text
             Accessible.role: Accessible.Button
@@ -194,10 +192,9 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    if(propertyType.currentIndex === 4) {
+                    if (propertyType.currentIndex === 4) {
                         arrayPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.subArrayListModel, "value": "0"})
-                    }
-                    else {
+                    } else {
                         arrayPropertyContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayPropertyContainer.subObjectListModel, "value": "0"})
                     }
                     commandsListView.contentY += 40
