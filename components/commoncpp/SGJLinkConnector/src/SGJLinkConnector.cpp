@@ -15,6 +15,7 @@ SGJLinkConnector::SGJLinkConnector(QObject *parent)
 
 SGJLinkConnector::~SGJLinkConnector()
 {
+    clearInternalBinary();
 }
 
 bool SGJLinkConnector::checkConnectionRequested()
@@ -45,6 +46,19 @@ bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
         return false;
     }
 
+    if (internalBinaryFilename_.isEmpty() == false) {
+        qCCritical(logCategoryJLink) << "another operation in progress";
+        return false;
+    }
+
+    /* This is to fix an issue on win where if binaryPath belongs to file created via QTemporaryFile,
+       jlink.exe fails with "Failed to open file" */
+    copyToInternalBinary(binaryPath);
+    if (internalBinaryFilename_.isEmpty()) {
+        qCCritical(logCategoryJLink) << "cannot create internal copy of binary file";
+        return false;
+    }
+
     QString cmd;
     cmd += QString("exitonerror 1\n");
     cmd += QString("exec DisableInfoWinFlashDL\n");
@@ -57,8 +71,8 @@ bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
 
     QString startAddressHex = SGUtilsCpp::toHex(startAddress_, 8);
 
-    cmd += QString("loadbin \"%1\", %2\n").arg(binaryPath). arg(startAddressHex);
-    cmd += QString("verifybin \"%1\", %2\n").arg(binaryPath).arg(startAddressHex);
+    cmd += QString("loadbin \"%1\", %2\n").arg(internalBinaryFilename_). arg(startAddressHex);
+    cmd += QString("verifybin \"%1\", %2\n").arg(internalBinaryFilename_).arg(startAddressHex);
     cmd += QString("r\n");
     cmd += QString("go\n");
     cmd += QString("exit\n");
@@ -286,6 +300,7 @@ void SGJLinkConnector::finishProcess(bool exitedNormally)
 
         emit checkConnectionProcessFinished(exitedNormally, isConnected);
     } else if (type == PROCESS_PROGRAM) {
+        clearInternalBinary();
         emit programBoardProcessFinished(exitedNormally);
     } else if (type == PROCESS_CHECK_HOST_VERSION) {
         emit checkHostVersionProcessFinished(exitedNormally);
@@ -383,4 +398,43 @@ bool SGJLinkConnector::parseEmulatorFwVersion(const QString &output, QString &ve
     version = match.captured("version");
     date = match.captured("date");
     return true;
+}
+
+void SGJLinkConnector::copyToInternalBinary(const QString &src)
+{
+    QFileInfo srcInfo(src);
+    QString defaultFilePath = QDir(QDir::tempPath()).filePath("jlink-connector-data." + srcInfo.completeSuffix());
+    QFileInfo info(defaultFilePath);
+    QString uniqueFilePath = defaultFilePath;
+
+    int index = 1;
+    while (QFileInfo::exists(uniqueFilePath)) {
+        QString addition = "-" + QString::number(index);
+        uniqueFilePath = defaultFilePath;
+        uniqueFilePath.insert(uniqueFilePath.length() - info.completeSuffix().length() - 1, addition);
+        ++index;
+    }
+
+    bool copied = QFile::copy(src, uniqueFilePath);
+    if (copied == false) {
+        qCWarning(logCategoryJLink) << "cannot copy file";
+        return;
+    }
+
+    internalBinaryFilename_ = uniqueFilePath;
+}
+
+void SGJLinkConnector::clearInternalBinary()
+{
+    if (internalBinaryFilename_.isEmpty()) {
+        return;
+    }
+
+    QFile internalBinary(internalBinaryFilename_);
+    if (internalBinary.remove() == false) {
+        qCCritical(logCategoryJLink)
+                << "cannot remove internal binary"
+                << internalBinary.fileName()
+                << internalBinary.errorString();
+    }
 }
