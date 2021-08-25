@@ -12,6 +12,8 @@ Rectangle {
     id: startContainer
     color: "#ccc"
 
+    property alias openControlView: openControlView
+
     onVisibleChanged: {
         if(!visible) stack.state = "open"
     }
