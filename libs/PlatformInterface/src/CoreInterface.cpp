@@ -63,3 +63,13 @@ void CoreInterface::processUpdatesAvailableNotification(const QJsonObject &paylo
 {
     emit updateInfoReceived(payload);
 }
+
+void CoreInterface::processDownloadViewFinishedNotification(const QJsonObject &payload)
+{
+    emit downloadViewFinished(payload);
+}
+
+void CoreInterface::processDownloadControlViewProgressNotification(const QJsonObject &payload)
+{
+    emit downloadControlViewProgress(payload);
+}
