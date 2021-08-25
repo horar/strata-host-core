@@ -10,7 +10,6 @@ Item {
     id: root
     anchors.fill: parent
 
-    property bool debugVisible: true
     property real rectWidth: 450
     property real minWidth: 350
     property alias mainContainer: mainContainer

@@ -33,6 +33,11 @@ public:
     PlatformController();
 
     /**
+     * PlatformController destructor
+     */
+    virtual ~PlatformController();
+
+    /**
      * Initializes the platform controller
      */
     void initialize();
@@ -55,12 +60,12 @@ public:
      * Creates JSON with list of platforms
      * @return list of platforms in JSON format
      */
-    QString createPlatformsList();
+    QJsonObject createPlatformsList();
 
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
-    void platformMessage(QString platformId, QString message);
+    void platformMessage(QString platformId, QJsonObject message);
 
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);

@@ -18,10 +18,6 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#if defined(Q_OS_WIN)
-#include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
-#endif
-
 #if !defined(Q_OS_WIN)
 #include "unix/SignalHandlers.h"
 #endif
@@ -41,6 +37,11 @@ int main(int argc, char *argv[])
         {QStringLiteral("f")},
         QObject::tr("Optional configuration <filename> (default: AppConfigLocation)."),
         QObject::tr("filename")
+    });
+    parser.addOption({
+        {QStringLiteral("i")},
+        QObject::tr("Optional numerical HCS Identifier <identifier> (default: 0)."),
+        QObject::tr("identifier")
     });
     parser.addOption({
         {QStringLiteral("c")},
@@ -113,11 +114,18 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE + 1; // LC: todo..
     }
 
-#if defined(Q_OS_WIN)
-    strata::events_mgr::EvEventsMgrInstance instance;
-#endif
+    unsigned hcsIdentifier = 0;
+    if (parser.isSet(QStringLiteral("i"))) {
+        const QString hcsStringIdentifier{parser.value(QStringLiteral("i"))};
+        bool ok = true;
+        hcsIdentifier = hcsStringIdentifier.toUInt(&ok);
+        if (ok == false) {
+            qCCritical(logCategoryHcs) << QStringLiteral("Non-numerical identifier provided:") << hcsStringIdentifier;
+            return EXIT_FAILURE;
+        }
+    }
 
-    HostControllerServiceNode hcsNode;
+    HostControllerServiceNode hcsNode(hcsIdentifier);
     hcsNode.start(QUrl(QStringLiteral("local:hcs3")));
     QObject::connect(qApp, &QCoreApplication::aboutToQuit,
                      &hcsNode, &HostControllerServiceNode::stop);

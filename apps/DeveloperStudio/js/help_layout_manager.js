@@ -13,6 +13,7 @@ var tour_count = 0
 var internal_tour_index
 var views = [ ]
 var stackContainer
+var control_view_creator = null
 
 var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(bool tour_running)}', Qt.application, 'HelpUtility');
 
@@ -116,7 +117,12 @@ function startHelpTour(tourName, device_id) {
         if (platformView) {
             device_id = platformView.device_id
         } else {
-            device_id = Constants.NULL_DEVICE_ID // Matches default in ControlViewCreator.qml and SGControlViewDevPopup.qml
+            if (control_view_creator) {
+                device_id = control_view_creator.debugPlatform.device_id
+            } else {
+                console.error("Help tour started from nonstandard location")
+                return
+            }
         }
     }
 

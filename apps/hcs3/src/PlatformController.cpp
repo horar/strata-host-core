@@ -4,7 +4,6 @@
 #include <QLatin1String>
 
 #include "PlatformController.h"
-#include "Dispatcher.h"
 #include "logging/LoggingQtCategories.h"
 #include "JsonStrings.h"
 
@@ -16,6 +15,11 @@ using strata::platform::PlatformMessage;
 PlatformController::PlatformController(): platformManager_(false, false, true) {
     connect(&platformManager_, &PlatformManager::platformRecognized, this, &PlatformController::newConnection);
     connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &PlatformController::closeConnection);
+}
+
+PlatformController::~PlatformController() {
+    // do not listen to platformManager_ signals when going to destroy it
+    disconnect(&platformManager_, nullptr, this, nullptr);
 }
 
 void PlatformController::initialize() {
@@ -92,20 +96,14 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
 
     const QByteArray deviceId = platform->deviceId();
 
-    QJsonObject wrapper {
+    QJsonObject payload {
         { JSON_MESSAGE, QString(message.raw()) },
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 
-    QJsonObject notification {
-        { JSON_NOTIFICATION, wrapper }
-    };
-    QJsonDocument wrapperDoc(notification);
-    QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
-
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
-    emit platformMessage(platform->platformId(), wrapperStrJson);
+    emit platformMessage(platform->platformId(), payload);
 }
 
 void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString)
@@ -127,7 +125,7 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
     }
 }
 
-QString PlatformController::createPlatformsList() {
+QJsonObject PlatformController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = platforms_.constBegin(); it != platforms_.constEnd(); ++it) {
         Platform::ControllerType controllerType = it.value()->controllerType();
@@ -146,14 +144,6 @@ QString PlatformController::createPlatformsList() {
         }
         arr.append(item);
     }
-    QJsonObject notif {
-        { JSON_LIST, arr },
-        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
-    };
-    QJsonObject msg {
-        { JSON_HCS_NOTIFICATION, notif }
-    };
-    QJsonDocument doc(msg);
 
-    return doc.toJson(QJsonDocument::Compact);
+    return QJsonObject{{JSON_LIST, arr}};
 }
