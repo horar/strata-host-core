@@ -10,11 +10,12 @@
 #include <QDir>
 #include <QList>
 
-ClassDocuments::ClassDocuments(QString classId, CoreInterface *coreInterface, QObject *parent)
+ClassDocuments::ClassDocuments(QString classId, strata::strataRPC::StrataClient *strataClient,
+                               QObject *parent)
     : QObject(parent),
       classId_(classId),
-      coreInterface_(coreInterface),
-      downloadDocumentModel_(coreInterface, parent)
+      strataClient_(strataClient),
+      downloadDocumentModel_(strataClient, parent)
 {
     loadPlatformDocuments();
 }
@@ -70,7 +71,7 @@ void ClassDocuments::loadPlatformDocuments()
         setLoadingProgressPercentage(0);
         setLoading(true);
         setErrorString("");
-        coreInterface_->loadDocuments(classId_);
+        strataClient_->sendRequest("load_documents", QJsonObject{{"class_id", classId_}});
     }
 }
 

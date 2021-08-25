@@ -6,7 +6,7 @@
 #include <QString>
 #include <QDebug>
 #include <QJsonObject>
-#include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
 #include "DownloadDocumentListModel.h"
 #include <DocumentListModel.h>
 #include <VersionedListModel.h>
@@ -29,7 +29,8 @@ class ClassDocuments : public QObject
 
 
 public:
-    explicit ClassDocuments(QString classId, CoreInterface *coreInterface, QObject *parent = nullptr);
+    explicit ClassDocuments(QString classId, strata::strataRPC::StrataClient* strataClient,
+                            QObject* parent = nullptr);
 
     DownloadDocumentListModel* downloadDocumentListModel();
     DocumentListModel* datasheetListModel();
@@ -62,7 +63,7 @@ private slots:
 
 private:
     QString classId_;
-    CoreInterface *coreInterface_;
+    strata::strataRPC::StrataClient *strataClient_;
     DownloadDocumentListModel downloadDocumentModel_;
     DocumentListModel datasheetModel_;
     DocumentListModel pdfModel_;

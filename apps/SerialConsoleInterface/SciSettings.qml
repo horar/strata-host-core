@@ -14,7 +14,8 @@ Item {
     property bool backupFirmware: defaultBackupFirmware
     property int maxInputLines: 500
     property var firmwarePathList: []
-    property var maxFirmwarePathList: 10
+    property int maxFirmwarePathList: 10
+    property string lastSavedFirmwarePath
 
     readonly property int defaultMaxCommandsInScrollback: 5000
     readonly property bool defaultCommandsInScrollbackUnlimited: false
@@ -30,6 +31,7 @@ Item {
         property alias commandsCondensedAtStartup: root.commandsCondensedAtStartup
         property alias backupFirmware: root.backupFirmware
         property alias firmwarePathList: root.firmwarePathList
+        property alias lastSavedFirmwarePath: root.lastSavedFirmwarePath
     }
 
     function resetToDefaultValues() {
