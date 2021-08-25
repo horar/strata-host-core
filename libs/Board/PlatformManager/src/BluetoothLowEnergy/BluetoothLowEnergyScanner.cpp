@@ -40,8 +40,9 @@ void BluetoothLowEnergyScanner::startDiscovery()
             qCDebug(logCategoryDeviceScanner) << "device discovery is already in progress";
             return;
         } else {
-            discoveryAgent_->disconnect();
+            disconnect(discoveryAgent_, nullptr, this, nullptr);
             discoveryAgent_->deleteLater();
+            discoveryAgent_ = nullptr;
         }
     }
 
