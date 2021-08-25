@@ -37,6 +37,8 @@ PrtModel::PrtModel(QObject *parent)
 
 PrtModel::~PrtModel()
 {
+    // do not listen to platformManager_ signals when going to destroy it
+    disconnect(&platformManager_, nullptr, this, nullptr);
 }
 
 int PrtModel::deviceCount() const
@@ -157,7 +159,7 @@ void PrtModel::programDevice()
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &PrtModel::flasherProgress);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &PrtModel::flasherFinishedHandler);
 
-    flasherConnector_->flash(false);
+    flasherConnector_->flash(false, strata::Flasher::FinalAction::StartApplication);
 }
 
 void PrtModel::downloadBinaries(

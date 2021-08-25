@@ -33,6 +33,7 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     }
     if (fileModel_.containsFilePath(path) == false) {
         fileModel_.append(path);
+        clearPrevious();
     }
 
     QTextStream stream(&file);
@@ -240,6 +241,14 @@ void LogModel::setModelRoles()
     }
 }
 
+void LogModel::clearPrevious()
+{
+     previousTimestamp_ = QDateTime();
+     previousPid_ = "";
+     previousTid_ = "";
+     previousLevel_ = LogModel::LevelUnknown;
+}
+
 int LogModel::count() const
 {
     return data_.length();
@@ -254,7 +263,9 @@ LogItem* LogModel::parseLine(const QString &line)
         item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
         previousTimestamp_ = item->timestamp;
         item->pid = splitIt.takeFirst().replace("PID:","");
+        previousPid_ = item->pid;
         item->tid = splitIt.takeFirst().replace("TID:","");
+        previousTid_ = item->tid;
         QString level = splitIt.takeFirst();
 
         if (level == "[D]") {
@@ -266,17 +277,25 @@ LogItem* LogModel::parseLine(const QString &line)
         } else if (level == "[E]") {
             item->level = LevelError;
         }
+        previousLevel_ = item->level;
         item->message = splitIt.join('\t');
     } else {
         item->message = line;
     }
 
-    if (line.isEmpty()) {
-        item->timestamp = previousTimestamp_;
-    }
     if (item->timestamp.isNull()) {
         item->timestamp = previousTimestamp_;
     }
+    if (item->pid.isEmpty()) {
+        item->pid = previousPid_;
+    }
+    if (item->tid.isEmpty()) {
+        item->tid = previousTid_;
+    }
+    if (item->level == LogLevel::LevelUnknown) {
+        item->level = previousLevel_;
+    }
+
     return item;
 }
 

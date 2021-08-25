@@ -108,3 +108,31 @@ void RequestsControllerTest::testPopRequest()
     const auto [res, request] = rc.popPendingRequest(numOfTestCases);
     QVERIFY(false == res);
 }
+
+void RequestsControllerTest::testRequestTimeout()
+{
+    int totalTimedoutRequests = 0;
+    int totalNumOfRequests = 1000;
+
+    RequestsController rc;
+
+    connect(
+        &rc, &RequestsController::requestTimedout, this,
+        [&totalTimedoutRequests, &rc](const int &id) {
+            auto [requestFound, request] = rc.popPendingRequest(id);
+            if (false == requestFound && request.deferredRequest_ == nullptr) {
+                return;
+            }
+
+            request.deferredRequest_->deleteLater();
+            ++totalTimedoutRequests;
+        },
+        Qt::QueuedConnection);
+
+    for (int i = 0; i < totalNumOfRequests; i++) {
+        std::pair<DeferredRequest *, QByteArray> requestInfo =
+            rc.addNewRequest("test", QJsonObject({{}}));
+    }
+
+    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 550);
+}

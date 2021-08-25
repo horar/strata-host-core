@@ -3,8 +3,8 @@
 #include <QCoreApplication>
 
 
-HostControllerServiceNode::HostControllerServiceNode(QObject *parent)
-    : HostControllerServiceSource(parent)
+HostControllerServiceNode::HostControllerServiceNode(unsigned hcsIdentifier, QObject *parent)
+    : HostControllerServiceSource(parent), hcsIdentifier_(hcsIdentifier)
 {
 }
 
@@ -32,9 +32,12 @@ AppInfoPod HostControllerServiceNode::appInfoPod() const
     return AppInfoPod(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
 }
 
-void HostControllerServiceNode::shutdown_cb()
+void HostControllerServiceNode::shutdown_cb(unsigned hcsIdentifier)
 {
-    qCDebug(logCategoryHcsNode) << "shutting down on remote requested";
-
-    QCoreApplication::exit(0);
+    if (hcsIdentifier_ == hcsIdentifier) {
+        qCDebug(logCategoryHcsNode) << "shutting down on remote requested";
+        QCoreApplication::exit(0);
+    } else {
+        qCDebug(logCategoryHcsNode) << "HCS Identifier not matching, shutdown request ignored, our:" << hcsIdentifier_ << "requested:" << hcsIdentifier;
+    }
 }
