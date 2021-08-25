@@ -4,16 +4,16 @@
 #include <QJsonDocument>
 
 ProgramControllerManager::ProgramControllerManager(
-        CoreInterface *coreInterface,
+        strata::strataRPC::StrataClient *strataClient,
         QObject *parent)
     : QObject(parent),
-      coreInterface_(coreInterface)
+      strataClient_(strataClient)
 {
-    connect(coreInterface_, &CoreInterface::programControllerReply, this, &ProgramControllerManager::replyHandler);
-    connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
+    strataClient_->registerHandler("program_controller", std::bind(&ProgramControllerManager::replyHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler("program_controller_job", std::bind(&ProgramControllerManager::jobUpdateHandler, this, std::placeholders::_1));
 
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramControllerManager::replyHandler);
-    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
+    strataClient_->registerHandler("update_firmware", std::bind(&ProgramControllerManager::replyHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler("update_firmware_job", std::bind(&ProgramControllerManager::jobUpdateHandler, this, std::placeholders::_1));
 }
 
 ProgramControllerManager::~ProgramControllerManager()
@@ -26,16 +26,9 @@ void ProgramControllerManager::programAssisted(QString deviceId)
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "program_controller");
-    cmdMessageObject.insert("payload", cmdPayloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
     requestedDeviceIds_.append(deviceId);
 
-    coreInterface_->sendCommand(strJson);
+    strataClient_->sendRequest("program_controller", cmdPayloadObject);
 }
 
 void ProgramControllerManager::programEmbedded(QString deviceId)
@@ -43,16 +36,9 @@ void ProgramControllerManager::programEmbedded(QString deviceId)
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "update_firmware");
-    cmdMessageObject.insert("payload", cmdPayloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
     requestedDeviceIds_.append(deviceId);
 
-    coreInterface_->sendCommand(strJson);
+    strataClient_->sendRequest("update_firmware", cmdPayloadObject);
 }
 
 void ProgramControllerManager::replyHandler(QJsonObject payload)
