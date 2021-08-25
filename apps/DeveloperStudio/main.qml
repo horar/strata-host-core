@@ -102,7 +102,7 @@ SGWidgets.SGMainWindow {
             PlatformSelection.initialize(sdsModel)
         }
         if (!CoreUpdate.isInitialized) {
-            CoreUpdate.initialize(sdsModel.coreInterface, updateLoader)
+            CoreUpdate.initialize(sdsModel)
         }
         initialized()
     }
