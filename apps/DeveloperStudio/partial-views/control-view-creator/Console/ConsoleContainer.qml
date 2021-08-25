@@ -100,7 +100,11 @@ Rectangle {
                 }
 
                 Item {
-                    Layout.preferredWidth: 10
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    SGSwitch {
+                        anchors.fill: parent
+                    }
                 }
 
                 SGControlSearchComboBox {
