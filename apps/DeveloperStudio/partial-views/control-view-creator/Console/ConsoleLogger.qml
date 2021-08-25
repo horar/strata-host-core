@@ -280,6 +280,7 @@ Item {
                 return true
             } else {
                 var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
+                console.log(searchMsg, )
                 if(searchBox.useCase) {
                     if(searchMsg.includes(searchText)){
                         return true

@@ -103,7 +103,16 @@ Rectangle {
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
                     SGSwitch {
-                        anchors.fill: parent
+                        checkedLabel: "Error"
+                        uncheckedLabel: "Warning"
+                        onToggled: {
+                            if(checked) {
+                                 consoleLogger.searchText = "Error"
+                            }
+                            else {
+                                consoleLogger.searchText = "Warning"
+                            }
+                        }
                     }
                 }
 
