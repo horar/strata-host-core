@@ -369,14 +369,14 @@ QtObject {
             sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newColumnsWide, newRowsTall, oldColumnsWide, oldRowsTall)
         }
         if (save) {
-            visualEditor.functions.saveFile(file, fileContents)
+            saveFile()
         }
     }
 
     function resizeGroup(offsetX, offsetY) {
         for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
             const obj = visualEditor.overlayObjects[i]
-            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
                 continue
             }
             resizeItem(obj.layoutInfo.uuid, obj.layoutInfo.columnsWide + offsetX, obj.layoutInfo.rowsTall + offsetY, true, false)
@@ -545,7 +545,7 @@ QtObject {
 
         for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
             const obj = visualEditor.overlayObjects[i]
-            if (!visualEditor.selectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
                 continue
             }
             maxX = Math.min(maxX, obj.layoutInfo.columnsWide)
