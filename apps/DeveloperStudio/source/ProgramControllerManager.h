@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QStringList>
 #include <QJsonObject>
+#include <QString>
+#include <QHash>
 
 
 class ProgramControllerManager: public QObject
