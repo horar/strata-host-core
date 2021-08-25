@@ -20,11 +20,9 @@ Rectangle {
             if(color !== "#d3d3d3") {
                 return color = "#d3d3d3"
             }
-            else return color
-        }
-        else {
             return color
         }
+        return color
     }
 
 

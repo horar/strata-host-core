@@ -19,11 +19,9 @@ Rectangle {
             if(parentColor == "#ffffff") {
                 return "#d3d3d3"
             }
-            else return "#ffffff"
+            return "#ffffff"
         }
-        else {
-            return parentColor
-        }
+        return parentColor
     }
 
     ColumnLayout {
