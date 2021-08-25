@@ -32,7 +32,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
       programControllerManager_(new ProgramControllerManager(strataClient_, this)),
-      firmwareManager_(new FirmwareManager(coreInterface_, this)),
+      firmwareManager_(new FirmwareManager(strataClient_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),

@@ -4,13 +4,13 @@
 #include <QJsonDocument>
 
 FirmwareManager::FirmwareManager(
-        CoreInterface *coreInterface,
+        strata::strataRPC::StrataClient *strataClient,
         QObject *parent)
     : QObject(parent),
-      coreInterface_(coreInterface)
+      strataClient_(strataClient)
 {
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &FirmwareManager::replyHandler);
-    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &FirmwareManager::jobUpdateHandler);
+    strataClient_->registerHandler("update_firmware", std::bind(&FirmwareManager::replyHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler("update_firmware_job", std::bind(&FirmwareManager::jobUpdateHandler, this, std::placeholders::_1));
 }
 
 FirmwareManager::~FirmwareManager()
@@ -35,16 +35,9 @@ bool FirmwareManager::updateFirmware(QString deviceId, QString uri, QString md5)
     cmdPayloadObject.insert("path", uri);
     cmdPayloadObject.insert("md5", md5);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "update_firmware");
-    cmdMessageObject.insert("payload", cmdPayloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
     deviceData_.insert(deviceId, {uri, md5, QString(), QString(), QString(), 0.0});
 
-    coreInterface_->sendCommand(strJson);
+    strataClient_->sendRequest("update_firmware", cmdPayloadObject);
     return true;
 }
 

@@ -62,9 +62,6 @@ signals:
     void updateInfoReceived(QJsonObject payload);
     void updateApplicationReceived(QJsonObject payload);
 
-    void updateFirmwareReply(QJsonObject payload);
-    void updateFirmwareJobUpdate(QJsonObject payload);
-
     /**
      * Signal emitted when platformList_ is updated.
      * @param [in] platformList QString of the all platform
