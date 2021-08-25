@@ -23,6 +23,14 @@ Rectangle {
         }
         return parentColor
     }
+        if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
+            if (parentColor == "#ffffff") {
+                return "#d3d3d3"
+            }
+            return "#ffffff"
+        }
+        return parentColor
+    }
 
     ColumnLayout {
         id: arrayPropertyContainer
