@@ -10,17 +10,8 @@ Item {
     id: root
     anchors.fill: parent
 
-    property bool debugVisible: false
     property real rectWidth: 450
     property alias mainContainer: mainContainer
-
-    onDebugMenuSourceChanged: {
-        if (debugMenuSource) {
-            debugVisible = true
-        } else {
-            debugVisible = false
-        }
-    }
 
     MouseArea {
         id: mainContainer
