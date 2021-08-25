@@ -15,6 +15,9 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
     strataClient_->registerHandler(
         "platform_notification",
         std::bind(&CoreInterface::processPlatformNotification, this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "updates_available", std::bind(&CoreInterface::processUpdatesAvailableNotification, this,
+                                       std::placeholders::_1));
 }
 
 CoreInterface::~CoreInterface()
@@ -54,4 +57,9 @@ void CoreInterface::processConnectedPlatformsNotification(const QJsonObject &pay
     }
     connectedPlatformList_ = newConnectedPlatformList;
     emit connectedPlatformListChanged(connectedPlatformList_);
+}
+
+void CoreInterface::processUpdatesAvailableNotification(const QJsonObject &payload)
+{
+    emit updateInfoReceived(payload);
 }

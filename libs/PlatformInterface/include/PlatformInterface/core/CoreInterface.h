@@ -59,9 +59,6 @@ public:
     }
 
 signals:
-    void updateInfoReceived(QJsonObject payload);
-    void updateApplicationReceived(QJsonObject payload);
-
     /**
      * Signal emitted when platformList_ is updated.
      * @param [in] platformList QString of the all platform
@@ -81,10 +78,17 @@ signals:
      */
     void notification(const QString &payload);
 
+    /**
+     * Signal emitted when updates available notification is received
+     * @param [in] payload QJsonObject of updates_available notification.
+     */
+    void updateInfoReceived(const QJsonObject &payload);
+
 private:
     void processPlatformNotification(const QJsonObject &payload);
     void processAllPlatformsNotification(const QJsonObject &payload);
     void processConnectedPlatformsNotification(const QJsonObject &payload);
+    void processUpdatesAvailableNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};
     QString platformList_{"{ \"list\":[]}"};
