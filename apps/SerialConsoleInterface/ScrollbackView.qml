@@ -353,20 +353,23 @@ Item {
         }
 
         ScrollBar.vertical: ScrollBar {
+            id: verticalScrollbar
             anchors {
                 right: listView.right
                 rightMargin: 0
             }
-            width: 8
+            width: visible ? 8 : 0
 
             policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
             visible: listView.height < listView.contentHeight
+
+            Behavior on width { NumberAnimation {}}
         }
 
         delegate: Item {
             id: cmdDelegate
-            width: ListView.view.width
+            width: ListView.view.width - verticalScrollbar.width
             height: cmdText.height + 3
 
             property color helperTextColor: "#333333"
@@ -539,6 +542,7 @@ Item {
 
                 color: "black"
                 opacity: 0.2
+                visible: index < scrollbackView.count - 1 || verticalScrollbar.visible == false
             }
 
             Component {

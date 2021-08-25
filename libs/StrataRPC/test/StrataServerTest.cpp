@@ -456,8 +456,9 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
 
     server.registerHandler("platform_message", [&handlerCalled, &currentCommandName](
                                                    const strata::strataRPC::Message &message) {
-        QCOMPARE_(message.payload.value("message").toObject().value("cmd").toString(),
-                  currentCommandName);
+        QJsonObject platformCommand =
+            QJsonDocument::fromJson(message.payload.value("message").toString().toUtf8()).object();
+        QCOMPARE_(platformCommand.value("cmd").toString(), currentCommandName);
         handlerCalled = true;
     });
 
@@ -468,21 +469,21 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
     currentCommandName = "test_1";
     QMetaObject::invokeMethod(
         &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "AA"),
-        Q_ARG(QByteArray, R"({"cmd":"test_1","payload":{"enable":"off"},"device_id":-949921126})"));
+        Q_ARG(QByteArray, R"({"cmd":"test_1","payload":{"enable":"off"},"device_id":"949921126"})"));
     QVERIFY_(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_2";
     QMetaObject::invokeMethod(
         &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "AA"),
-        Q_ARG(QByteArray, R"({"cmd":"test_2","payload":"enable","device_id":-949921126})"));
+        Q_ARG(QByteArray, R"({"cmd":"test_2","payload":"enable","device_id":"949921126"})"));
     QVERIFY_(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_3";
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AA"),
-                              Q_ARG(QByteArray, R"({"cmd":"test_3","device_id":-949921126})"));
+                              Q_ARG(QByteArray, R"({"cmd":"test_3","device_id":"949921126"})"));
     QVERIFY_(handlerCalled);
 
     handlerCalled = false;

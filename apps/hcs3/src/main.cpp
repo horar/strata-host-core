@@ -18,10 +18,6 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#if defined(Q_OS_WIN)
-#include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
-#endif
-
 #if !defined(Q_OS_WIN)
 #include "unix/SignalHandlers.h"
 #endif
@@ -117,10 +113,6 @@ int main(int argc, char *argv[])
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
         return EXIT_FAILURE + 1; // LC: todo..
     }
-
-#if defined(Q_OS_WIN)
-    strata::events_mgr::EvEventsMgrInstance instance;
-#endif
 
     unsigned hcsIdentifier = 0;
     if (parser.isSet(QStringLiteral("i"))) {
