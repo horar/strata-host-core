@@ -6,7 +6,6 @@ import tech.strata.signals 1.0
 
 Loader {
     id: payloadDelegateRoot
-    width: parent.width
 
     property string type: modelData.type
     property string name: modelData.name === undefined ? index : modelData.name

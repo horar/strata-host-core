@@ -16,6 +16,7 @@ ColumnLayout {
         id: column
         Layout.fillWidth: true
         Layout.leftMargin: 10
+
         RowLayout {
             Layout.fillWidth: true
             Layout.minimumHeight: 50

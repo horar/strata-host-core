@@ -15,23 +15,14 @@ ColumnLayout {
         id: column
         width: root.width
 
-        RowLayout {
-            id: titleRow
-
-            Item {
-                Layout.preferredWidth: 5
-            }
-
-            SGText {
-                id: labelText
-                font.bold: true
-                fontSizeMultiplier: 1.2
-                Layout.fillWidth: true
-            }
-
-            Item {
-                Layout.fillWidth: true
-            }
+        SGText {
+            id: labelText
+            font.bold: true
+            fontSizeMultiplier: 1.2
+            Layout.fillWidth: true
+            elide: Text.ElideRight
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
         }
 
         Repeater {
@@ -51,7 +42,6 @@ ColumnLayout {
             delegate: ColumnLayout {
                 id: delegateColumn
                 Layout.fillWidth: true
-                Layout.preferredHeight: 75
 
                 RowLayout {
                     Item {
@@ -63,6 +53,7 @@ ColumnLayout {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
                         color: "red"
+
                         SGIcon {
                             anchors.centerIn: parent
                             width: 22

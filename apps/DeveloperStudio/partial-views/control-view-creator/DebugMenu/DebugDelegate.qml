@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+
 Item {
     id: debugDelegateRoot
     width: parent.width
@@ -29,7 +30,6 @@ Item {
 
         Repeater {
             id: payloadRepeater
-            Layout.fillWidth: true
             delegate: PayloadDelegate {
                 id: payloadDelegate
                 payloadIndex: debugDelegateRoot.name
