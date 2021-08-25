@@ -7,6 +7,11 @@
 #include <QBluetoothUuid>
 #include <QDebug>
 
+#if defined(Q_OS_WIN)
+  #include <Windows.h>
+  #include <BluetoothAPIs.h>
+#endif
+
 namespace strata::device::scanner {
 
 BluetoothLowEnergyScanner::BluetoothLowEnergyScanner()
@@ -38,6 +43,17 @@ void BluetoothLowEnergyScanner::startDiscovery()
             discoveryAgent_->disconnect();
             discoveryAgent_->deleteLater();
         }
+    }
+
+    if (hasLocalAdapters() == false) {
+        qCWarning(logCategoryDeviceScanner) << "no valid Bluetooth adapters found, unable to start scan";
+
+        //make sure signal is emitted after this slot is executed
+        QTimer::singleShot(1, this, [this](){
+            emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, "Cannot find valid Bluetooth adapter.");
+        });
+
+        return;
     }
 
     createDiscoveryAgent();
@@ -286,6 +302,42 @@ void BluetoothLowEnergyScanner::createDiscoveryAgent()
 
     connect(discoveryAgent_, QOverload<QBluetoothDeviceDiscoveryAgent::Error>::of(&QBluetoothDeviceDiscoveryAgent::error),
             this, &BluetoothLowEnergyScanner::discoveryErrorHandler, Qt::QueuedConnection);
+}
+
+bool BluetoothLowEnergyScanner::hasLocalAdapters()
+{
+#if defined(Q_OS_WIN)
+    QList<QBluetoothHostInfo> adapters;
+
+    BLUETOOTH_FIND_RADIO_PARAMS searchParameters = {0};
+    searchParameters.dwSize = sizeof(searchParameters);
+    HANDLE radioHandle = nullptr;
+
+    const HBLUETOOTH_RADIO_FIND radioSearchHandle = ::BluetoothFindFirstRadio(&searchParameters, &radioHandle);
+    if (radioSearchHandle != nullptr) {
+        do {
+            BLUETOOTH_RADIO_INFO radioInfo = {0};
+            radioInfo.dwSize = sizeof(radioInfo);
+
+            if (::BluetoothGetRadioInfo(radioHandle, &radioInfo) == ERROR_SUCCESS) {
+                QBluetoothHostInfo adapterInfo;
+                adapterInfo.setAddress(QBluetoothAddress(radioInfo.address.ullLong));
+                adapterInfo.setName(QString::fromWCharArray(radioInfo.szName));
+                adapters.append(adapterInfo);
+            }
+            ::CloseHandle(radioHandle);
+        } while (::BluetoothFindNextRadio(radioSearchHandle, &radioHandle));
+
+        ::BluetoothFindRadioClose(radioSearchHandle);
+    }
+#else
+    QList<QBluetoothHostInfo> adapters = QBluetoothLocalDevice::allDevices();
+#endif
+
+    foreach(auto adapter, adapters) {
+        qCDebug(logCategoryDeviceScanner).noquote().nospace() << "Found Bluetooth adapter, name: '" << adapter.name() << "', address: '" << adapter.address() << "'";
+    }
+    return (adapters.empty() == false);
 }
 
 }  // namespace
