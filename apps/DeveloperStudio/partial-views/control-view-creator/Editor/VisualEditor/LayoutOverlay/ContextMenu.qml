@@ -71,6 +71,14 @@ Popup {
         }
 
         ContextMenuButton {
+            text: "Send To Back"
+            onClicked: {
+                visualEditor.functions.sendToBack(layoutOverlayRoot.layoutInfo.uuid)
+                contextMenu.close()
+            }
+        }
+
+        ContextMenuButton {
             text: "Delete"
             onClicked: {
                 visualEditor.functions.removeControl(layoutOverlayRoot.layoutInfo.uuid)
@@ -91,6 +99,89 @@ Popup {
             onClicked: {
                 Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
                 contextMenu.close()
+            }
+        }
+
+        ContextMenuButton {
+            text: "Object Alignment"
+            onClicked: {
+                alignmentPopup.open()
+            }
+
+            Popup {
+                id: alignmentPopup
+                x: parent.width
+                padding: 0
+                background: Rectangle {
+                    layer.enabled: true
+                    layer.effect: DropShadow {
+                        horizontalOffset: 1
+                        verticalOffset: 3
+                        radius: 6.0
+                        samples: 12
+                        color: "#99000000"
+                    }
+                }
+
+                ColumnLayout {
+                    id: alignmentColumn
+                    spacing: 1
+
+                    ContextMenuButton {
+                        text: "Bottom"
+
+                        onClicked: {
+                            visualEditor.functions.alignItem("bottom", layoutOverlayRoot.layoutInfo.uuid)
+                            contextMenu.close()
+                        }
+                    }
+
+                    ContextMenuButton {
+                        text: "Horizontal Center"
+
+                        onClicked: {
+                            visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
+                            contextMenu.close()
+                        }
+                    }
+
+                    ContextMenuButton {
+                        text: "Left"
+
+                        onClicked: {
+                            visualEditor.functions.alignItem("left", layoutOverlayRoot.layoutInfo.uuid)
+                            contextMenu.close()
+                        }
+                    }
+
+                    ContextMenuButton {
+                        text: "Right"
+
+                        onClicked: {
+                            visualEditor.functions.alignItem("right", layoutOverlayRoot.layoutInfo.uuid)
+                            contextMenu.close()
+                        }
+                    }
+
+                    ContextMenuButton {
+                        text: "Top"
+
+                        onClicked: {
+                            visualEditor.functions.alignItem("top", layoutOverlayRoot.layoutInfo.uuid)
+                            contextMenu.close()
+                        }
+                    }
+
+                    ContextMenuButton {
+                        text: "Vertical Center"
+
+                        onClicked: {
+                            visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
+                            contextMenu.close()
+                        }
+                    }
+
+                }
             }
         }
 

@@ -155,6 +155,14 @@ QtObject {
         saveFile()
     }
 
+    function insertTextAtBeginningOfFile(text) {
+        let regex = new RegExp(startOfObjectRegexString("uibase"))
+        let startOfFile = fileContents.match(regex)
+        fileContents = fileContents.replace(startOfFile, startOfFile + "\n" + text + "\n")
+
+        saveFile()
+    }
+
     function removeControl(uuid, addToUndoCommandStack = true) {
         const objectString = getObjectFromString(uuid)
         if (objectString === null) {
@@ -232,6 +240,15 @@ QtObject {
         insertTextAtEndOfFile(copy)
     }
 
+    function sendToBack(uuid) {
+        let copy = getObjectFromString(uuid)
+        if (copy === null) {
+            return
+        }
+        fileContents = fileContents.replace(copy, "\n")
+        insertTextAtBeginningOfFile(copy)
+    }
+
     /*
         Given a <string>, find object's start and end tags for <uuid>, within those tags find the first
         instance of <propertyName> and return its value.
@@ -280,6 +297,7 @@ QtObject {
         If <propertyName> is not found, it will be appended as a new property above the first child or end of object
         ** Only works on properties declared above children - see getObjectContents
     */
+
     function setObjectProperty(uuid, propertyName, value, string = fileContents, addToUndoCommandStack = true) {
         if (string == "") {
             string = fileContents
@@ -416,6 +434,23 @@ QtObject {
             console.warn("No match for " + uuid + " found, start/end tags may be malformed")
         }
         return type;
+    }
+
+    function alignItem(position, uuid) {
+        switch (position) {
+            case "left": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", 0, "", false)
+                break;
+            case "horCenter": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2), "", false)
+                break;
+            case "right": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", overlayContainer.columnCount - getObjectPropertyValue(uuid, "layoutInfo.columnsWide"), "", false)
+                break;
+            case "top": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", 0, "", false)
+                break;
+            case "verCenter": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2), "", false)
+                break;
+            case "bottom": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", overlayContainer.rowCount - getObjectPropertyValue(uuid, "layoutInfo.rowsTall"), "", false)
+        }
+        saveFile();
     }
 
     function create_UUID() {
