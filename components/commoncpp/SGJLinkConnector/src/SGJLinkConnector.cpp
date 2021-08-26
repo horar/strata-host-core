@@ -437,4 +437,6 @@ void SGJLinkConnector::clearInternalBinary()
                 << internalBinary.fileName()
                 << internalBinary.errorString();
     }
+
+    internalBinaryFilename_.clear();
 }
