@@ -525,7 +525,7 @@ BaseStateMachine {
         }
 
         DSM.SignalTransition {
-            targetState: stateWaitForDevice
+            targetState: stateCheckDevice
             signal: continueButton.clicked
         }
     }
