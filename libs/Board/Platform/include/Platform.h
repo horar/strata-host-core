@@ -65,18 +65,15 @@ namespace strata::platform {
          * Open device communication channel.
          * Emits opened() signal in case of success.
          * Emits deviceError(DeviceFailedToOpen) signal in case of failure.
-         * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        void open(const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
+        void open();
 
         /**
          * Close device communication channel.
          * Emits closed() signal upon completion.
          * @param waitInterval how long to remain in closed state before re-attempting to open the device (0 - stay closed)
-         * @param retryInterval timeout between re-attempts to open the device when open fails (0 - do not retry)
          */
-        void close(const std::chrono::milliseconds waitInterval = std::chrono::milliseconds::zero(),
-                   const std::chrono::milliseconds retryInterval = std::chrono::milliseconds::zero());
+        void close(const std::chrono::milliseconds waitInterval = std::chrono::milliseconds::zero());
 
         /**
          * Terminate all operations
@@ -370,7 +367,6 @@ namespace strata::platform {
 
     private:
         QTimer reconnectTimer_;
-        std::chrono::milliseconds retryInterval_;
 
         QReadWriteLock propertiesLock_;  // Lock for protect access to device properties.
 

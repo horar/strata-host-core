@@ -69,7 +69,7 @@ public:
 
     /**
      * @brief debugMenuSource Gets the debug menu source
-     * @return Returns the path to the debug menu. If it doesn't exist, it returns "".
+     * @return Returns the path to the debug menu platformInterface.json source. If it doesn't exist, it returns "".
      */
     QUrl debugMenuSource() const;
 

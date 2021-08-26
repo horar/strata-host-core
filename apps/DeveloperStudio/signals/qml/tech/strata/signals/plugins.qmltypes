@@ -22,7 +22,6 @@ Module {
         Signal { name: "profileUpdateResult"; Parameter {name: "result"; type: "string"} Parameter {name: "updatedProperties"; type: "var"}}
         Signal { name: "changePasswordResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "getProfileResult"; Parameter {name: "result"; type: "string"} Parameter {name: "user"; type: "var"}}
-        Signal { name: "serverChanged" }
         Signal { name: "feedbackResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "loadCVC"}
     }

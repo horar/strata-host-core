@@ -120,5 +120,6 @@ var uuid_map = {
     "abc1cf67-bfb4-4e08-8c67-e6a78f9b9adb": "mv-mdk",
     "c7069a8a-0dd9-40cf-ac89-29aafabb02a2": "mv-mdk",
     "b1133641-5b46-4d11-9b96-9126b9d2a109": "mv-mdk",
-    "1917934f-3b79-4e8b-b37a-b1bd92d2afd5": "mv-mdk"
+    "1917934f-3b79-4e8b-b37a-b1bd92d2afd5": "mv-mdk",
+    "d5029d50-9f39-4e44-8c35-589686b511cb": "lighting-kit-demo",
 }

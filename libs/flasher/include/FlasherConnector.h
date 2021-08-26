@@ -61,21 +61,24 @@ public:
     /*!
      * Flash firmware.
      * \param backupBeforeFlash if set to true backup old firmware before flashing new one and if flash process fails flash old firmware
+     * \param finalAction what to do after flash: start application, stay in bootloader or do not change state of borad's binary
      * \return true if flash process has started, otherwise false
      */
-    bool flash(bool backupBeforeFlash = true);
+    bool flash(bool backupBeforeFlash, Flasher::FinalAction finalAction);
 
     /*!
      * Backup firmware.
+     * \param finalAction what to do after backup: start application, stay in bootloader or do not change state of borad's binary
      * \return true if backup process has started, otherwise false
      */
-    bool backup();
+    bool backup(Flasher::FinalAction finalAction);
 
     /*!
      * Set Firmware Class ID (without flashing firmware)
+     * finalAction what to do after set FW clas ID: start application, stay in bootloader or do not change state of borad's binary
      * \return true if set process has started, otherwise false
      */
-    bool setFwClassId();
+    bool setFwClassId(Flasher::FinalAction finalAction);
 
     /*!
      * Stop flash/backup firmware operation.
@@ -163,13 +166,14 @@ signals:
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
     void handleFlasherState(Flasher::State flasherState, bool done);
+    void handleDevicePropertiesChanged();
 
 private:
     // deleter for flasher_ unique pointer
     static void flasherDeleter(Flasher* flasher);
 
     void flashFirmware(bool flashOld);
-    void backupFirmware(bool backupOld);
+    void backupFirmware(bool backupOld, Flasher::FinalAction finalAction);
     void processStartupError(const QString& errorString);
 
     platform::PlatformPtr platform_;
@@ -195,6 +199,8 @@ private:
     Action action_;
 
     Operation operation_;
+
+    Flasher::FinalAction flashFinalAction_;
 };
 
 }  // namespace

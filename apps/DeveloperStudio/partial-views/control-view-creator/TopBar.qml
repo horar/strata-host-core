@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import "qrc:/js/constants.js" as Constants
 
 RowLayout {
     spacing: 10
@@ -26,7 +27,7 @@ RowLayout {
                 if (SGUtilsCpp.isFile(cMakeFile)) {
                     const content = SGUtilsCpp.readTextFileContent(cMakeFile)
                     // Regex will parse the project name from CMakeLists.txt; "project(<project name to be captured>"
-                    const splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m 
+                    const splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m
                     const cMakeArr = content.match(splitCondition)
                     
                     if (cMakeArr === null || cMakeArr.length < 2) {
@@ -113,12 +114,20 @@ RowLayout {
         textRole: "verbose_name"
         boxColor: "transparent"
         textColor: "white"
+        popupBackground.color: "#B3B3B3"
 
         onCurrentIndexChanged: {
-            let platform = connectedPlatforms.get(currentIndex)
-            controlViewCreatorRoot.debugPlatform = {
-                deviceId: platform.device_id,
-                classId: platform.class_id
+            if (currentIndex === -1) {
+                controlViewCreatorRoot.debugPlatform = {
+                    device_id: Constants.NULL_DEVICE_ID,
+                    class_id: ""
+                }
+            } else {
+                let platform = connectedPlatforms.get(currentIndex)
+                controlViewCreatorRoot.debugPlatform = {
+                    device_id: platform.device_id,
+                    class_id: platform.class_id
+                }
             }
         }
     }
