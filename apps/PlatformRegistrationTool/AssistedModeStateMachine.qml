@@ -676,15 +676,9 @@ BaseStateMachine {
         }
 
         DSM.SignalTransition {
-            targetState: stateAssistedDeviceCheck
-            signal: continueButton.clicked
-            guard: prtModel.deviceCount === 1
-        }
-
-        DSM.SignalTransition {
             targetState: stateControllerCheck
             signal: continueButton.clicked
-            guard: prtModel.deviceCount !== 1
+            guard: prtModel.deviceCount === 0
         }
     }
 
