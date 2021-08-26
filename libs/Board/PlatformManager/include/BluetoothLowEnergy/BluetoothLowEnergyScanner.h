@@ -80,6 +80,7 @@ private:
     BlootoothLowEnergyInfo convertBlootoothLowEnergyInfo(const QBluetoothDeviceInfo &info) const;
 
     void createDiscoveryAgent();
+    bool hasLocalAdapters();
 
     QBluetoothDeviceDiscoveryAgent *discoveryAgent_ = nullptr;
     const std::chrono::milliseconds discoveryTimeout_ = std::chrono::milliseconds(5000);

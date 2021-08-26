@@ -45,6 +45,13 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE strata::CommandValidator
 )
 
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE Bthprops
+        PRIVATE ws2_32
+    )
+endif()
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}

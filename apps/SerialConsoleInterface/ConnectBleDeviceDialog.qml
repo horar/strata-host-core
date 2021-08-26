@@ -289,9 +289,14 @@ SGWidgets.SGDialog {
             text: {
                 if (bleSupported === false) {
                     return "Bluetooth Low Energy is not supported on this operating system"
-                } else {
+                }
+
+                if (deviceSortFilterModel.count === 0
+                        && sciModel.bleDeviceModel.inDiscoveryMode === false) {
                     return "Please scan for available devices"
                 }
+
+                return ""
             }
             wrapMode: Text.WordWrap
             fontSizeMultiplier: 1.4
