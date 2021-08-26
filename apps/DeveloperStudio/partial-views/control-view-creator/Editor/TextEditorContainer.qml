@@ -491,7 +491,7 @@ ColumnLayout {
                 anchors {
                     fill: parent
                 }
-                visible: webEngine.loadProgress !== 100
+                visible: indicator.playing
 
                 AnimatedImage {
                     id: indicator
@@ -539,6 +539,10 @@ ColumnLayout {
         signal undo();
         signal redo();
         signal goToUUID(string uuid)
+
+        function setFinished(isFinished) {
+            indicator.playing = !isFinished
+        }
 
         function setHtml(value) {
             setValue(value)
