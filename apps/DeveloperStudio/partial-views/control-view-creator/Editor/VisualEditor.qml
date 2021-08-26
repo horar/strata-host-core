@@ -67,7 +67,7 @@ ColumnLayout {
             id: gridContainer
 
             Repeater {
-                model: layoutDebugMode && hasErrors === false ? overlayContainer.columnCount : 0
+                model: layoutDebugMode ? overlayContainer.columnCount : 0
                 delegate: Rectangle {
                     width: 1
                     opacity: .5
@@ -78,7 +78,7 @@ ColumnLayout {
             }
 
             Repeater {
-                model: layoutDebugMode && hasErrors === false ? overlayContainer.rowCount : 0
+                model: layoutDebugMode ? overlayContainer.rowCount : 0
                 delegate: Rectangle {
                     height: 1
                     opacity: .5

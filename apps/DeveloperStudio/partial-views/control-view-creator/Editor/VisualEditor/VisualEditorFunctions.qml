@@ -66,6 +66,8 @@ QtObject {
 
     function unload(reload = false) {
         loader.setSource("")
+        overlayContainer.rowCount = 0
+        overlayContainer.columnCount = 0
         for (let i = 0; i < overlayObjects.length; i++) {
             overlayObjects[i].destroy()
         }
