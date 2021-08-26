@@ -27,7 +27,7 @@ RowLayout {
     MenuButton {
         text: "Layout mode"
         checkable: true
-        checked: !hasErrors ? visualEditor.layoutDebugMode : false
+        checked: visualEditor.layoutDebugMode
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
         enabled: !hasErrors
@@ -193,6 +193,8 @@ RowLayout {
         Layout.preferredWidth: height
         source: "qrc:/sgimages/three-dots.svg"
         iconColor: dotsMouse.containsMouse ? "black" : "grey"
+        enabled: !hasErrors
+        opacity: enabled ? 1 : .5
 
         MouseArea {
             id: dotsMouse
@@ -201,7 +203,6 @@ RowLayout {
             }
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            enabled: !hasErrors
 
             onClicked: {
                 dotsMenu.open()

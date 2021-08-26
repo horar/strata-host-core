@@ -17,7 +17,6 @@ ColumnLayout {
 
     property bool fileValid: false
     property bool hasErrors: false
-    property string error: ""
     property bool layoutDebugMode: true
     property var overlayObjects: []
     property string file: ""
@@ -27,15 +26,7 @@ ColumnLayout {
     property alias functions: functions
 
     Component.onCompleted: {
-        offsetCheckFile.start()
-    }
-
-    // Hack to force checkfile to happen asynchronously from Monaco initialization
-    // otherwise debugBar warnings append late and are not captured by sdsModel.qtLogger disable during VE load
-    Timer {
-        id: offsetCheckFile
-        interval: 1
-        onTriggered: functions.checkFile()
+        functions.checkFile()
     }
 
     Connections {
@@ -70,23 +61,13 @@ ColumnLayout {
             anchors {
                 fill: parent
             }
-
-            onStatusChanged: {
-                if (loader.status == Loader.Error) {
-                    visualEditor.error = "Error occurred checking this file, see logs"
-                    visualEditor.hasErrors = true
-                    // Change to error screen
-                } else if(loader.status === Loader.Ready) {
-                    visualEditor.hasErrors = false
-                }
-            }
         }
 
         Item {
             id: gridContainer
 
             Repeater {
-                model: layoutDebugMode ? overlayContainer.columnCount : 0
+                model: layoutDebugMode && hasErrors === false ? overlayContainer.columnCount : 0
                 delegate: Rectangle {
                     width: 1
                     opacity: .5
@@ -97,7 +78,7 @@ ColumnLayout {
             }
 
             Repeater {
-                model: layoutDebugMode ? overlayContainer.rowCount : 0
+                model: layoutDebugMode && hasErrors === false ? overlayContainer.rowCount : 0
                 delegate: Rectangle {
                     height: 1
                     opacity: .5
