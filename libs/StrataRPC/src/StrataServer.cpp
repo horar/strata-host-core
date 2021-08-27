@@ -87,8 +87,9 @@ bool StrataServer::unregisterHandler(const QString &handlerName)
 
 void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServer) << "StrataServer messageReceived"
-                                     << "Client ID:" << clientId << "Message:" << message;
+    qCDebug(logCategoryStrataServer).noquote().nospace()
+        << "StrataServer messageReceived, ClientID: 0x" << clientId.toHex()
+        << ", Message: '" << message << '\'';
 
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -109,7 +110,7 @@ void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray 
 
     // Check if registered client
     if (true == client.getClientID().isEmpty()) {
-        qCDebug(logCategoryStrataServer) << "client not registered";
+        qCDebug(logCategoryStrataServer) << "Client not registered";
 
         // Find out the client api version.
         if ((true == jsonObject.contains("jsonrpc"))) {
@@ -263,7 +264,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
 
     switch (clientsController_->getClientApiVersion(clientMessage.clientID)) {
         case ApiVersion::v1:
-            qCDebug(logCategoryStrataServer) << "building message for API v1";
+            qCDebug(logCategoryStrataServer) << "Building message for API v1";
             serverMessage = buildServerMessageAPIv1(clientMessage, jsonObject, responseType);
             if (serverMessage == "") {
                 return;
@@ -271,13 +272,13 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
             break;
 
         case ApiVersion::v2:
-            qCDebug(logCategoryStrataServer) << "building message for API v2";
+            qCDebug(logCategoryStrataServer) << "Building message for API v2";
             serverMessage = buildServerMessageAPIv2(clientMessage, jsonObject, responseType);
             break;
 
         case ApiVersion::none:
             QString errorMessage(
-                QStringLiteral("unsupported API version or client is not registered."));
+                QStringLiteral("Unsupported API version or client is not registered."));
             qCCritical(logCategoryStrataServer) << errorMessage;
             emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
             return;
@@ -333,8 +334,8 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
 
 void StrataServer::registerNewClientHandler(const Message &clientMessage)
 {
-    qCDebug(logCategoryStrataServer)
-        << "Handle New Client Registration. Client ID:" << clientMessage.clientID;
+    qCDebug(logCategoryStrataServer).noquote().nospace()
+        << "Handle New Client Registration. ClientID 0x:" << clientMessage.clientID.toHex();
 
     // Find the client API version, if it was v1, ignore the parsing.
     if (ApiVersion currentApiVersion =
@@ -374,8 +375,8 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
 
 void StrataServer::unregisterClientHandler(const Message &clientMessage)
 {
-    qCDebug(logCategoryStrataServer)
-        << "Handle Client Unregistration. Client ID:" << clientMessage.clientID;
+    qCDebug(logCategoryStrataServer).noquote().nospace()
+        << "Handle Client Unregistration. ClientID: 0x" << clientMessage.clientID.toHex();
     if (false == clientsController_->unregisterClient(clientMessage.clientID)) {
         QString errorMessage(
             QStringLiteral("Failed to unregister client. Client is not registered."));

@@ -10,30 +10,31 @@ QList<Client> ClientsController::getAllClients()
 
 bool ClientsController::isRegisteredClient(const QByteArray &clientId)
 {
-    qCDebug(logCategoryStrataClientsController) << "searching for clientId: " << clientId;
+    qCDebug(logCategoryStrataClientsController).noquote().nospace()
+        << "Searching for ClientID: 0x" << clientId.toHex();
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientId](Client &client) {
         return client.getClientID() == clientId;
     });
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController)
-            << "Client is not registered. clientId: " << clientId;
+        qCDebug(logCategoryStrataClientsController).noquote().nospace()
+            << "Client is not registered. ClientID: 0x" << clientId.toHex();
         return false;
     }
-    qCDebug(logCategoryStrataClientsController)
-        << "Client is registered. clientId: " << it->getClientID()
-        << " API Version: " << static_cast<int>(it->getApiVersion());
+    qCDebug(logCategoryStrataClientsController).noquote().nospace()
+        << "Client is registered. ClientID: 0x" << it->getClientID().toHex()
+        << ", API Version: " << static_cast<int>(it->getApiVersion());
     return true;
 }
 
 bool ClientsController::registerClient(const Client &client)
 {
-    qCInfo(logCategoryStrataClientsController)
-        << "Registering Client: " << client.getClientID()
-        << "API:" << static_cast<int>(client.getApiVersion());
+    qCInfo(logCategoryStrataClientsController).noquote().nospace()
+        << "Registering ClientID: 0x" << client.getClientID().toHex()
+        << ", API:" << static_cast<int>(client.getApiVersion());
 
     if (true == isRegisteredClient(client.getClientID())) {
-        qCCritical(logCategoryStrataClientsController)
-            << "Client ID is already registered. ClientID: " << client.getClientID();
+        qCCritical(logCategoryStrataClientsController).noquote().nospace()
+            << "Client ID is already registered. ClientID: 0x" << client.getClientID().toHex();
         return false;
     }
 
@@ -43,7 +44,8 @@ bool ClientsController::registerClient(const Client &client)
 
 bool ClientsController::unregisterClient(const QByteArray &clientId)
 {
-    qCInfo(logCategoryStrataClientsController) << "Unregistering client. clientId: " << clientId;
+    qCInfo(logCategoryStrataClientsController).noquote().nospace()
+        << "Unregistering client. ClientID: 0x" << clientId.toHex();
 
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(),
                            [&clientId](const Client &currentClient) {
@@ -51,11 +53,12 @@ bool ClientsController::unregisterClient(const QByteArray &clientId)
                            });
 
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController) << "Client not found. Client ID: " << clientId;
+        qCDebug(logCategoryStrataClientsController).noquote().nospace()
+            << "Client not found. ClientID: 0x" << clientId.toHex();
         return false;
     } else {
-        qCInfo(logCategoryStrataClientsController)
-            << "Client unregistered. Client ID: " << clientId;
+        qCInfo(logCategoryStrataClientsController).noquote().nospace()
+            << "Client unregistered. ClientID: 0x" << clientId.toHex();
         clientsList_.erase(it);
         return true;
     }
@@ -63,18 +66,19 @@ bool ClientsController::unregisterClient(const QByteArray &clientId)
 
 ApiVersion ClientsController::getClientApiVersion(const QByteArray &clientId)
 {
-    qCDebug(logCategoryStrataClientsController) << "searching for clientId: " << clientId;
+    qCDebug(logCategoryStrataClientsController).noquote().nospace()
+        << "Searching for ClientID: 0x" << clientId.toHex();
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientId](Client &client) {
         return client.getClientID() == clientId;
     });
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController)
-            << "Client is not registered. clientId: " << clientId;
+        qCDebug(logCategoryStrataClientsController).noquote().nospace()
+            << "Client is not registered. ClientID: 0x" << clientId.toHex();
         return ApiVersion::none;
     }
-    qCDebug(logCategoryStrataClientsController)
-        << "Client is registered. clientId: " << it->getClientID()
-        << " API Version: " << static_cast<int>(it->getApiVersion());
+    qCDebug(logCategoryStrataClientsController).noquote().nospace()
+        << "Client is registered. ClientID: 0x" << it->getClientID().toHex()
+        << ", API Version: " << static_cast<int>(it->getApiVersion());
     return it->getApiVersion();
 }
 
@@ -84,8 +88,8 @@ Client ClientsController::getClient(const QByteArray &clientId)
         return client.getClientID() == clientId;
     });
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController)
-            << "Client is not registered. clientId: " << clientId;
+        qCDebug(logCategoryStrataClientsController).noquote().nospace()
+            << "Client is not registered. ClientID: 0x" << clientId.toHex();
         return Client("", ApiVersion::v2);
     }
     return clientsList_[std::distance(clientsList_.begin(), it)];
@@ -94,13 +98,14 @@ Client ClientsController::getClient(const QByteArray &clientId)
 bool ClientsController::updateClientApiVersion(const QByteArray &clientId,
                                                const ApiVersion &newApiVersion)
 {
-    qCDebug(logCategoryStrataClientsController) << "Updating API Version. client id:" << clientId;
+    qCDebug(logCategoryStrataClientsController).noquote().nospace()
+        << "Updating API Version. ClientID: 0x" << clientId.toHex();
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientId](Client &client) {
         return client.getClientID() == clientId;
     });
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController)
-            << "Client is not registered. clientId: " << clientId;
+        qCDebug(logCategoryStrataClientsController).noquote().nospace()
+            << "Client is not registered. ClientID: 0x" << clientId.toHex();
         return false;
     }
     it->UpdateClientApiVersion(newApiVersion);
