@@ -425,7 +425,7 @@ Rectangle {
                 openViewOnBuild = settings.openViewOnBuild
             }
             if (settings.hasOwnProperty("reloadViewExternalChanges")) {
-                openViewOnBuild = settings.reloadViewExternalChanges
+                reloadViewExternalChanges = settings.reloadViewExternalChanges
             }
         }
 

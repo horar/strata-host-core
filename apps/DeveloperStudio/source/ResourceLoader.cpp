@@ -93,7 +93,7 @@ void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id,
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
     }
-    QTimer::singleShot(100, this, [=]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
+    QTimer::singleShot(1, this, [=]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
 }
 
 bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
@@ -144,7 +144,7 @@ void ResourceLoader::requestUnregisterResource(const QString &path, const QStrin
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << path;
     }
-    QTimer::singleShot(100, this, [=]{ unregisterResource(path, prefix, parent, removeFromSystem); });
+    QTimer::singleShot(1, this, [=]{ unregisterResource(path, prefix, parent, removeFromSystem); });
 }
 
 bool ResourceLoader::unregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {

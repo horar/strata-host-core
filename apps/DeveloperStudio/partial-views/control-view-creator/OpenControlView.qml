@@ -45,10 +45,9 @@ Item {
             return
         }
 
+        addToTheProjectList(path)
+
         openProjectContainer.url = path
-        if (inRecentProjects === false) {
-            addToTheProjectList(path)
-        }
         viewStack.currentIndex = 1 // switch to edit view
         controlViewCreatorRoot.projectInitialization = true
         controlViewCreatorRoot.recompileControlViewQrc();
@@ -116,7 +115,9 @@ Item {
     function addToTheProjectList (fileUrl) {
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
             if (previousFileURL.projects[i] === fileUrl) {
-                return
+                listModelForUrl.remove(i)
+                previousFileURL.projects.splice(i,1)
+                break
             }
         }
 
@@ -137,6 +138,22 @@ Item {
                 saveSettings()
                 return
             }
+        }
+    }
+
+    // Grabs the most recent project from the fileUrl array
+    // goes up two directories in order to be in the directory the project was created in
+    // if there are no recent projects, the home folder is used
+    function fileDialogFolder() {
+        let projectDir = previousFileURL.projects[0]
+        if (SGUtilsCpp.isValidFile(projectDir)) {
+            projectDir = SGUtilsCpp.urlToLocalFile(projectDir)
+            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+            projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
+            return projectDir
+        } else {
+            return fileDialog.shortcuts.home
         }
     }
 
@@ -269,6 +286,7 @@ Item {
                 text: "Browse"
 
                 onClicked: {
+                    fileDialog.folder = fileDialogFolder()
                     fileDialog.open()
                 }
             }

@@ -167,7 +167,7 @@ QtObject {
             sdsModel.visualEditorUndoStack.removeItem(file, uuid, objectString)
         }
 
-        saveFile(file, fileContents)
+        saveFile()
     }
 
     function duplicateControl(uuid) {
@@ -256,7 +256,7 @@ QtObject {
             console.warn("No match for " + propertyName + " found in object " + uuid +", may be malformed")
             value = null
         }
-        return value;
+        return value
     }
 
     function getObjectFromString(uuid, string = fileContents) {
@@ -267,7 +267,7 @@ QtObject {
             objectString = null
             console.warn("No match for " + uuid + " found, object start/end tags may be malformed or does not exist")
         }
-        return objectString;
+        return objectString
     }
 
     function setObjectPropertyAndSave(uuid, propertyName, value, addToUndoCommandStack = true) {
@@ -326,7 +326,7 @@ QtObject {
         return string.replace(objectString, newObjectString)
     }
 
-    function moveItem(uuid, newX, newY, addToUndoCommandStack = true) {
+    function moveItem(uuid, newX, newY, addToUndoCommandStack = true, save = true) {
         const oldX = getObjectPropertyValue(uuid, "layoutInfo.xColumns")
         const oldY = getObjectPropertyValue(uuid, "layoutInfo.yRows")
 
@@ -337,8 +337,20 @@ QtObject {
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "move", newX, newY, oldX, oldY)
         }
+        if (save) {
+            visualEditor.functions.saveFile(file, fileContents)
+        }
+    }
 
-        visualEditor.functions.saveFile(file, fileContents)
+    function moveGroup(offsetX, offsetY) {
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
+                continue
+            }
+            moveItem(obj.layoutInfo.uuid, obj.layoutInfo.xColumns + offsetX, obj.layoutInfo.yRows + offsetY, true, false)
+        }
+        saveFile()
     }
 
     function resizeItem(uuid, newX, newY, addToUndoCommandStack = true) {
@@ -455,5 +467,51 @@ QtObject {
     function endOfObjectRegexString(uuid = uuidRegex()) {
         // matches "   } // end_<uuid> "
         return "[^\S\r\n]*\\}\\s*\\/\\/\\s*end_" + uuid + ".*"
+    }
+
+    // returns whether object uuid is part of multi-item selection
+    function isUuidSelected(uuid) {
+        return visualEditor.selectedMultiObjectsUuid.includes(uuid)
+    }
+
+    // adds object uuid to multi-item selection
+    function addUuidToMultiObjectSelection(uuid) {
+        if (!isUuidSelected(uuid)) {
+            visualEditor.selectedMultiObjectsUuid.push(uuid)
+        }
+    }
+
+    // removes object uuid from multi-item selection
+    function removeUuidFromMultiObjectSelection(uuid) {
+        const index = visualEditor.selectedMultiObjectsUuid.indexOf(uuid)
+        if (index > -1) {
+            visualEditor.selectedMultiObjectsUuid.splice(index, 1)
+        }
+    }
+
+    // emits multiObjectsDragged signal to all layout items
+    function dragGroup(objectInitiated, x, y) {
+        visualEditor.multiObjectsDragged(objectInitiated, x, y)
+    }
+
+    // calculates maximum offsets for multi-item target rectangle
+    function getMultiItemTargetRectLimits() {
+        var minX = overlayContainer.columnCount
+        var maxX = overlayContainer.columnCount
+        var minY = overlayContainer.rowCount
+        var maxY = overlayContainer.rowCount
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
+                continue
+            }
+            maxX = Math.min(maxX, obj.layoutInfo.xColumns)
+            minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
+            maxY = Math.min(maxY, obj.layoutInfo.yRows)
+            minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
+        }
+
+        return [maxX, minX, maxY, minY]
     }
 }
