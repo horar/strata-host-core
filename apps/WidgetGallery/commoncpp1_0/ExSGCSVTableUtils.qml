@@ -8,7 +8,7 @@ ColumnLayout {
 
     SGWidgets.SGAlignedLabel {
         target: rowButton
-        text: "Basic SGExportCSV with button"
+        text: "Basic export to .csv button"
         fontSizeMultiplier: 1.3
 
         RowLayout {
