@@ -17,8 +17,8 @@ Rectangle {
     property var selectedIndex: propertyType.currentIndex
     onSelectedIndexChanged:{
         if(propertyType.currentIndex === 4 || propertyType.currentIndex === 6 ) {
-            if(color !== "#d3d3d3") {
-                return color = "#d3d3d3"
+            if(color !== "#ffffff") {
+                return color = "#ffffff"
             }
             return color
         }
