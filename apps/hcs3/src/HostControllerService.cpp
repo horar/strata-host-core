@@ -615,7 +615,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
             if (firmware != nullptr) {
                 currentMD5 = firmware->md5;
             } else {
-                qCWarning(logCategoryHcs) << platform << "Cannot find current firmware in database";
+                qCWarning(logCategoryHcs) << platform << "Cannot find current firmware in database.";
             }
         } else {
             qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
