@@ -130,9 +130,25 @@ ColumnLayout {
                                 }
                                 focus: true
 
+                                Component.onCompleted: {
+                                    let value
+                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
+                                    switch(comboBox.currentText) {
+                                           case "int": value = parseInt(text)
+                                               break;
+                                           case "string": value = text
+                                               break;
+                                           case "double": value = parseFloat(text)
+                                               break;
+                                    }
+                                    listView.payload[root.name][newIndex] = value
+                                    root.value = value
+                                    debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+                                }
+
                                 onTextChanged: {
                                     let value
-                                    let newIndex = isArray ? model.index : nameField.text
+                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
                                     switch(comboBox.currentText) {
                                            case "int": value = parseInt(text)
                                                break;
@@ -155,9 +171,17 @@ ColumnLayout {
                                 anchors.centerIn: loader
                                 checkedLabel: "true"
                                 uncheckedLabel: "false"
+                                checked: false
+
+                                Component.onCompleted: {
+                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
+                                    listView.payload[root.name][newIndex] = checked
+                                    root.value = value
+                                    debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+                                }
 
                                 onCheckedChanged: {
-                                    let newIndex = isArray ? model.index : nameField.text
+                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
                                     listView.payload[root.name][newIndex] = checked
                                     root.value = value
                                     debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
