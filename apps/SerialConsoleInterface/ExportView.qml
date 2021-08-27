@@ -163,10 +163,14 @@ FocusScope {
                 text: model.platform.scrollbackModel.autoExportErrorString
                 font.bold: true
                 textColor: "white"
+                mask: "A"
                 color: TangoTheme.palette.error
+                sizeByMask: text.length === 0
+
             }
 
             SGWidgets.SGButton {
+                id: startExportButton
                 anchors {
                     top: autoExportErrorTag.bottom
                     topMargin: baseSpacing
@@ -180,6 +184,18 @@ FocusScope {
                         model.platform.scrollbackModel.startAutoExport(autoExportPathPicker.filePath)
                     }
                 }
+            }
+
+            SGWidgets.SGButton {
+                anchors {
+                    top: startExportButton.top
+                    left: startExportButton.right
+                    leftMargin: 6
+                }
+
+                text: "Clear Error"
+                visible: model.platform.scrollbackModel.autoExportErrorString.length > 0
+                onClicked: model.platform.scrollbackModel.clearAutoExportError()
             }
         }
 
@@ -209,7 +225,6 @@ FocusScope {
     }
 
     function closeView() {
-        model.platform.scrollbackModel.clearAutoExportError()
         StackView.view.pop();
     }
 }
