@@ -21,7 +21,7 @@ Item {
 
     Rectangle {
         id: textArea
-        color: Theme.palette.green
+        color: Theme.palette.onsemiOrange
         height: 30
         anchors {
             verticalCenter: parent.verticalCenter

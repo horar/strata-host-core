@@ -206,7 +206,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: Theme.palette.green
+                        border.color: Theme.palette.onsemiOrange
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
