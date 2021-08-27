@@ -257,7 +257,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 }
 
 void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                                const ResponseType &responseType)
+                                const ResponseType responseType)
 {
     QByteArray serverMessage;
 
@@ -288,7 +288,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
-                                const QJsonObject &jsonObject, const ResponseType &responseType)
+                                const QJsonObject &jsonObject, const ResponseType responseType)
 {
     Message message;
     message.clientID = clientId;
@@ -391,7 +391,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 
 QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 const ResponseType &responseType)
+                                                 const ResponseType responseType)
 {
     QJsonObject jsonObject{{"jsonrpc", "2.0"}};
 
@@ -425,7 +425,7 @@ QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
 
 QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 const ResponseType &responseType)
+                                                 const ResponseType responseType)
 {
     QJsonObject jsonObject;
     QString notificationType = "";
