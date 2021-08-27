@@ -1,5 +1,4 @@
 /* 
-    This File contains portions of snippets.json that exists in https://github.com/ThomasVogelpohl/vsc-qml-snippets/blob/master/snippets/snippets.json
     This File is the base for mapping the auto complete, For CVC purposes this files auto complete will be limited in the number of QtQuick Objects but 
     detailed in the properties
 
@@ -10,8 +9,16 @@
                 "meta_properties":[]
             },
         },
-        "functions": [],
-        "signals": [],
+        "functions": {
+            "function": {
+                "param_names": []
+            }
+        },
+        "signals": {
+            "signal": {
+                 "param_names:": []
+            }
+        },
         "inherits": "",
         "source" : "",
         "nonInstantiable": false,
@@ -81,18 +88,34 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "toggle()",
-            ],
-            "signals": [
-                "canceled()",
-                "clicked()",
-                "doubleClicked()",
-                "pressAndHold()",
-                "pressed()",
-                "released()",
-                "toggled()",
-            ],
+            "functions": {
+                "toggle": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "canceled": {
+                    "params_name": []
+                },
+                "clicked": {
+                    "params_name": []
+                },
+                "doubleClicked": {
+                    "params_name": []
+                },
+                "pressAndHold": {
+                    "params_name": []
+                },
+                "pressed": {
+                    "params_name": []
+                },
+                "released": {
+                    "params_name": []
+                },
+                "toggled": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "",
             "nonInstantiable": true,
@@ -126,14 +149,22 @@ const qtTypeJson = {
                 }
 
             },
-            "functions": [
-                "toggle()",
-                "trigger()",
-            ],
-            "signals": [
-                "toggled()",
-                "triggered()",
-            ],
+            "functions": {
+                "toggle": {
+                    "params_name": ["source"]
+                },
+                "trigger": {
+                    "params_name": ["source"]
+                },
+            },
+            "signals": {
+                "toggled": {
+                    "params_name": ["source"]
+                },
+                "triggered": {
+                    "params_name": ["source"]
+                },
+            },
             "inherits": "",
             "source": "Controls",
             "nonInstantiable": false,
@@ -175,8 +206,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Window",
             "source": "Controls",
             "nonInstantiable": false,
@@ -191,8 +230,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -216,8 +263,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "QtQml",
             "nonInstantiable": false,
@@ -229,13 +284,20 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
             "isVisualWidget": false,
-
         },
         "Button": {
             "properties": {
@@ -246,10 +308,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "AbstractButton",
-            "source": "",
+            "source": "Controls",
             "nonInstantiable": false,
             "isVisualWidget": false,
         },
@@ -274,25 +344,55 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "cancelRequestAnimationFrame()",
-                "getContext()",
-                "isImageError()",
-                "isImageLoaded()",
-                "isImageLoading()",
-                "loadImage()",
-                "markDirty()",
-                "requestAnimationFrame()",
-                "requestPaint()",
-                "save()",
-                "toDataURL()",
-                "unloadImage()",
-            ],
-            "signals": [
-                "imageLoaded()",
-                "paint()",
-                "painted()",
-            ],
+            "functions": {
+                "cancelRequestAnimationFrame": {
+                    "params_name": ["handle"]
+                },
+                "getContext": {
+                    "params_name": ["contextId", "...args"]
+                },
+                "isImageError": {
+                    "params_name": ["image"]
+                },
+                "isImageLoaded": {
+                    "params_name": ["image"]
+                },
+                "isImageLoading": {
+                    "params_name": ["image"]
+                },
+                "loadImage": {
+                    "params_name": ["image"]
+                },
+                "markDirty": {
+                    "params_name": ["area"]
+                },
+                "requestAnimationFrame": {
+                    "params_name": ["callback"]
+                },
+                "requestPaint": {
+                    "params_name": []
+                },
+                "save": {
+                    "params_name": ["filename"]
+                },
+                "toDataURL": {
+                    "params_name": ["mimeType"]
+                },
+                "unloadImage": {
+                    "params_name": ["image"]
+                },
+            },
+            "signals": {
+                "imageLoaded": {
+                    "params_name": []
+                },
+                "paint": {
+                    "params_name": ["region"]
+                },
+                "painted": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -310,8 +410,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
@@ -335,8 +443,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "Extra",
             "nonInstantiable": false,
@@ -372,12 +488,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "forceLayout()",
-            ],
-            "signals": [
-                "positioningComplete()",
-            ],
+            "functions": {
+                "forceLayout": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "positioningComplete": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -392,8 +512,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
@@ -456,18 +584,34 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "decrementCurrentIndex()",
-                "find()",
-                "incrementCurrentIndex()",
-                "selectAll()",
-                "textAt()",
-            ],
-            "signals": [
-                "accepted()",
-                "activated()",
-                "highlighted()",
-            ],
+            "functions": {
+                "decrementCurrentIndex": {
+                    "params_name": []
+                },
+                "find": {
+                    "params_name": ["text", "flags"]
+                },
+                "incrementCurrentIndex": {
+                    "params_name": []
+                },
+                "selectAll": {
+                    "params_name": []
+                },
+                "textAt": {
+                    "params_name": ["index"]
+                },
+            },
+            "signals": {
+                "accepted": {
+                    "params_name": []
+                },
+                "activated": {
+                    "params_name": ["index"]
+                },
+                "highlighted": {
+                    "params_name": ["index"]
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -491,15 +635,25 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "createObject()",
-                "errorString()",
-                "incubateObject()",
-            ],
-            "signals": [
-                "completed()",
-                "destruction()",
-            ],
+            "functions": {
+                "createObject": {
+                    "params_name": ["parent", "properties"]
+                },
+                "errorString": {
+                    "params_name": []
+                },
+                "incubateObject": {
+                    "params_name": ["parent", "properties", "mode"]
+                },
+            },
+            "signals": {
+                "completed": {
+                    "params_name": []
+                },
+                "destruction": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -517,8 +671,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "QtQml",
             "nonInstantiable": false,
@@ -617,8 +779,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
@@ -654,20 +824,40 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "accept()",
-                "done()",
-                "reject()",
-                "standardButton()",
-            ],
-            "signals": [
-                "accepted()",
-                "applied()",
-                "discarded()",
-                "helpRequested()",
-                "rejected()",
-                "reset()",
-            ],
+            "functions": {
+                "accept": {
+                    "params_name": []
+                },
+                "done": {
+                    "params_name": ["result"]
+                },
+                "reject": {
+                    "params_name": []
+                },
+                "standardButton": {
+                    "params_name": ["button"]
+                },
+            },
+            "signals": {
+                "accepted": {
+                    "params_name": []
+                },
+                "applied": {
+                    "params_name": []
+                },
+                "discarded": {
+                    "params_name": []
+                },
+                "helpRequested": {
+                    "params_name": []
+                },
+                "rejected": {
+                    "params_name": []
+                },
+                "reset": {
+                    "params_name": []
+                },
+            },
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
@@ -715,11 +905,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "close()",
-                "open()",
-            ],
-            "signals": [],
+            "functions": {
+                "close": {
+                    "params_name": []
+                },
+                "open": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "Dialogs",
             "nonInstantiable": false,
@@ -850,18 +1048,34 @@ const qtTypeJson = {
                     ]
                 }
             },
-            "functions": [
-                "cancelFlick()",
-                "flick()",
-                "resizeContent()",
-                "returnToBounds()",
-            ],
-            "signals": [
-                "flickEnded()",
-                "flickStarted()",
-                "movementEnded()",
-                "movementStarted()",
-            ],
+            "functions": {
+                "cancelFlick": {
+                    "params_name": []
+                },
+                "flick": {
+                    "params_name": ["xVelocity", "yVelocity"]
+                },
+                "resizeContent": {
+                    "params_name": ["width", "height", "center"]
+                },
+                "returnToBounds": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "flickEnded": {
+                    "params_name": []
+                },
+                "flickStarted": {
+                    "params_name": []
+                },
+                "movementEnded": {
+                    "params_name": []
+                },
+                "movementStarted": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -906,12 +1120,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "forceLayout()"
-            ],
-            "signals": [
-                "positioningComplete()"
-            ],
+            "functions": {
+                "forceLayout": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "positioningComplete": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -977,12 +1195,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "forceLayout()"
-            ],
-            "signals": [
-                "positioningComplete()"
-            ],
+            "functions": {
+                "forceLayout": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "positioningComplete": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -1009,8 +1231,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
@@ -1064,8 +1294,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -1216,25 +1454,40 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "childAt()",
-                "contains()",
-                "forceActiveFocus()",
-                "forceActiveFocus()",
-                "grabToImage()",
-                "mapFromGlobal()",
-                "mapFromItem()",
-                "mapFromItem()",
-                "mapFromItem()",
-                "mapFromItem()",
-                "mapToGlobal()",
-                "mapToItem()",
-                "mapToItem()",
-                "mapToItem()",
-                "mapToItem()",
-                "nextItemInFocusChain()",
-            ],
-            "signals": [],
+            "functions": {
+                "childAt": {
+                    "params_name": ["x", "y"]
+                },
+                "contains": {
+                    "params_name": ["point"]
+                },
+                "forceActiveFocus": {
+                    "params_name": ["reason"]
+                },
+                "grabToImage": {
+                    "params_name": ["callback", "targetSize"]
+                },
+                "mapFromGlobal": {
+                    "params_name": ["x", "y"]
+                },
+                "mapFromItem": {
+                    "params_name": ["item", "x", "y", "width", "height"]
+                },
+                "mapToGlobal": {
+                    "params_name": ["x", "y"]
+                },
+                "mapToItem": {
+                    "params_name": ["item", "x", "y", "width", "height"]
+                },
+                "nextItemInFocusChain": {
+                    "params_name": ["forward"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -1252,50 +1505,134 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [
-                "asteriskPressed()",
-                "backPressed()",
-                "backtabPressed()",
-                "callPressed()",
-                "cancelPressed()",
-                "context1Pressed()",
-                "context2Pressed()",
-                "context3Pressed()",
-                "context4Pressed()",
-                "deletePressed()",
-                "digit0Pressed()",
-                "digit1Pressed()",
-                "digit2Pressed()",
-                "digit3Pressed()",
-                "digit4Pressed()",
-                "digit5Pressed()",
-                "digit6Pressed()",
-                "digit7Pressed()",
-                "digit8Pressed()",
-                "digit9Pressed()",
-                "downPressed()",
-                "enterPressed()",
-                "escapePressed()",
-                "flipPressed()",
-                "hangupPressed()",
-                "leftPressed()",
-                "menuPressed()",
-                "noPressed()",
-                "pressed()",
-                "released()",
-                "returnPressed()",
-                "rightPressed()",
-                "selectPressed()",
-                "shortcutOverride()",
-                "spacePressed()",
-                "tabPressed()",
-                "upPressed()",
-                "volumeDownPressed()",
-                "volumeUpPressed()",
-                "yesPressed()",
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "asteriskPressed": {
+                    "params_name": ["event"]
+                },
+                "backPressed": {
+                    "params_name": ["event"]
+                },
+                "backtabPressed": {
+                    "params_name": ["event"]
+                },
+                "callPressed": {
+                    "params_name": ["event"]
+                },
+                "cancelPressed": {
+                    "params_name": ["event"]
+                },
+                "context1Pressed": {
+                    "params_name": ["event"]
+                },
+                "context2Pressed": {
+                    "params_name": ["event"]
+                },
+                "context3Pressed": {
+                    "params_name": ["event"]
+                },
+                "context4Pressed": {
+                    "params_name": ["event"]
+                },
+                "deletePressed": {
+                    "params_name": ["event"]
+                },
+                "digit0Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit1Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit2Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit3Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit4Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit5Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit6Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit7Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit8Pressed": {
+                    "params_name": ["event"]
+                },
+                "digit9Pressed": {
+                    "params_name": ["event"]
+                },
+                "downPressed": {
+                    "params_name": ["event"]
+                },
+                "enterPressed": {
+                    "params_name": ["event"]
+                },
+                "escapePressed": {
+                    "params_name": ["event"]
+                },
+                "flipPressed": {
+                    "params_name": ["event"]
+                },
+                "hangupPressed": {
+                    "params_name": ["event"]
+                },
+                "leftPressed": {
+                    "params_name": ["event"]
+                },
+                "menuPressed": {
+                    "params_name": ["event"]
+                },
+                "noPressed": {
+                    "params_name": ["event"]
+                },
+                "pressed": {
+                    "params_name": ["event"]
+                },
+                "released": {
+                    "params_name": ["event"]
+                },
+                "returnPressed": {
+                    "params_name": ["event"]
+                },
+                "rightPressed": {
+                    "params_name": ["event"]
+                },
+                "selectPressed": {
+                    "params_name": ["event"]
+                },
+                "shortcutOverride": {
+                    "params_name": ["event"]
+                },
+                "spacePressed": {
+                    "params_name": ["event"]
+                },
+                "tabPressed": {
+                    "params_name": ["event"]
+                },
+                "upPressed": {
+                    "params_name": ["event"]
+                },
+                "volumeDownPressed": {
+                    "params_name": ["event"]
+                },
+                "volumeUpPressed": {
+                    "params_name": ["event"]
+                },
+                "yesPressed": {
+                    "params_name": ["event"]
+                },
 
-            ],
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
@@ -1328,8 +1665,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Text",
             "source": "Controls",
             "nonInstantiable": false,
@@ -1392,8 +1737,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "Layouts",
             "nonInstantiable": true,
@@ -1404,13 +1757,13 @@ const qtTypeJson = {
                 "text": {
                     "meta_properties": []
                 },
-                "checkable": {
-                    "meta_properties": []
-                },
                 "textColor": {
                     "meta_properties": []
                 },
                 "color": {
+                    "meta_properties": []
+                },
+                "checkable": {
                     "meta_properties": []
                 },
                 "checked": {
@@ -1424,14 +1777,20 @@ const qtTypeJson = {
                 },
                 "down": {
                     "meta_properties": []
+                },
+            },
+            "functions": {
+                "function": {
+                    "param_names": []
                 }
             },
-            "functions": [],
-            "signals": [
-                "clicked()"
-            ],
+            "signals": {
+                "clicked": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1450,12 +1809,20 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "Item",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
-            "isVisualWidget": false,
+            "isVisualWidget": true,
         },
         "LayoutDivider": {
             "properties": {
@@ -1469,11 +1836,49 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutInfo": {
+            "properties": {
+                "columnsWide": {
+                    "meta_properties": []
+                },
+                "rowsTall": {
+                    "meta_properties": []
+                },
+                "xColumns": {
+                    "meta_properties": []
+                },
+                "yRows": {
+                    "meta_properties": []
+                }
+            },
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
+            "inherits": "QtObject",
+            "source": "tech.strata.sglayout 1.0",
+            "nonInstantiable": true,
             "isVisualWidget": true,
         },
         "LayoutRadioButtons": {
@@ -1500,10 +1905,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "clicked": {
+                    "param_names:": ["index"]
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1525,10 +1938,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1550,10 +1971,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "clicked": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1602,10 +2031,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "lerpColor": {
+                    "param_names": ["color1", "color2", "x"]
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1657,10 +2094,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": ["activated()"],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "activated": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1712,17 +2157,33 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "createCurve()",
-                "curve()",
-                "shiftXAxis()",
-                "shiftYAxis()",
-                "removeCurve()",
-                "update()",
-            ],
-            "signals": [],
+            "functions": {
+                "createCurve": {
+                    "param_names": ["name"]
+                },
+                "curve": {
+                    "param_names": ["index"]
+                },
+                "shiftXAxis": {
+                    "param_names": ["offset"]
+                },
+                "shiftYAxis": {
+                    "param_names": ["offset"]
+                },
+                "removeCurve": {
+                    "param_names": ["index"]
+                },
+                "update": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1738,7 +2199,7 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
                 "containsMouse": {
-                    "meta_properties": [] 
+                    "meta_properties": []
                 },
                 "cursorShape": {
                     "meta_properties": []
@@ -1747,10 +2208,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": ["clicked()"],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "clicked": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1799,13 +2268,21 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [
-                "accepted()",
-                "editingFinished()"
-            ],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "accepted": {
+                    "param_names:": []
+                },
+                "editingFinished": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1914,13 +2391,21 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [
-                "userSet()",
-                "moved()"
-            ],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "moved": {
+                    "param_names:": []
+                },
+                "userSet": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1936,10 +2421,84 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
+            "inherits": "",
+            "source": "tech.strata.sglayout 1.0",
+            "nonInstantiable": false,
+            "isVisualWidget": true,
+        },
+        "LayoutSGStatusLogBox": {
+            "properties": {
+                "fontSizeMultiplier": {
+                    "meta_properties": []
+                },
+                "handleColor": {
+                    "meta_properties": []
+                },
+                "textColor": {
+                    "meta_properties": []
+                },
+                "labelsInside": {
+                    "meta_properties": []
+                },
+                "pressed": {
+                    "meta_properties": []
+                },
+                "down": {
+                    "meta_properties": []
+                },
+                "checked": {
+                    "meta_properties": []
+                },
+                "checkedLabel": {
+                    "meta_properties": []
+                },
+                "uncheckedLabel": {
+                    "meta_properties": []
+                },
+                "grooveFillColor": {
+                    "meta_properties": []
+                },
+                "grooveColor": {
+                    "meta_properties": []
+                },
+            },
+            "functions": {
+                "append": {
+                    "param_names": ["message"]
+                },
+                "remove": {
+                    "param_names": ["id"]
+                },
+                "updateMessageAtID": {
+                    "param_names": ["message", "id"]
+                },
+                "clear": {
+                    "param_names": []
+                },
+                "onFilter": {
+                    "param_names": ["listElement"]  
+                },
+                "copySelectionTest": {
+                    "param_names": ["index"] 
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -1979,17 +2538,33 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [
-                "released()",
-                "canceled()",
-                "clicked()",
-                "toggled()",
-                "press()",
-                "pressAndHold()",
-            ],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "released": {
+                    "param_names:": []
+                },
+                "canceled": {
+                    "param_names:": []
+                },
+                "clicked": {
+                    "param_names:": []
+                },
+                "toggled": {
+                    "param_names:": []
+                },
+                "press": {
+                    "param_names:": []
+                },
+                "pressAndHold": {
+                    "param_names:": []
+                },
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2036,10 +2611,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "LayoutContainer",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -2049,8 +2632,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -2065,18 +2656,40 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "append()",
-                "clear()",
-                "get()",
-                "insert()",
-                "move()",
-                "remove()",
-                "set()",
-                "setProperty()",
-                "sync()",
-            ],
-            "signals": [],
+            "functions": {
+                "append": {
+                    "params_name": ["dict"]
+                },
+                "clear": {
+                    "params_name": []
+                },
+                "get": {
+                    "params_name": ["index"]
+                },
+                "insert": {
+                    "params_name": ["index", "dict"]
+                },
+                "move": {
+                    "params_name": ["from", "to", "n"]
+                },
+                "remove": {
+                    "params_name": ["index", "count"]
+                },
+                "set": {
+                    "params_name": ["index", "dict"]
+                },
+                "setProperty": {
+                    "params_name": ["index", "property", "value"]
+                },
+                "sync": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -2234,20 +2847,40 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "decrementCurrentIndex()",
-                "forceLayout()",
-                "incrementCurrentIndex()",
-                "indexAt()",
-                "itemAt()",
-                "positionViewAtBeginning()",
-                "positionViewAtEnd()",
-                "positionViewAtIndex()",
-            ],
-            "signals": [
-                "add()",
-                "remove()"
-            ],
+            "functions": {
+                "decrementCurrentIndex": {
+                    "params_name": []
+                },
+                "forceLayout": {
+                    "params_name": []
+                },
+                "incrementCurrentIndex": {
+                    "params_name": []
+                },
+                "indexAt": {
+                    "params_name": ["x", "y"]
+                },
+                "itemAt": {
+                    "params_name": ["x", "y"]
+                },
+                "positionViewAtBeginning": {
+                    "params_name": []
+                },
+                "positionViewAtEnd": {
+                    "params_name": []
+                },
+                "positionViewAtIndex": {
+                    "params_name": ["index", "mode"]
+                },
+            },
+            "signals": {
+                "add": {
+                    "params_name": []
+                },
+                "remove": {
+                    "params_name": []
+                },
+            },
             "inherits": "Flickable",
             "source": "",
             "nonInstantiable": false,
@@ -2277,12 +2910,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "setSource()"
-            ],
-            "signals": [
-                "loaded()"
-            ],
+            "functions": {
+                "setSource": {
+                    "params_name": ["source", "properties"]
+                },
+            },
+            "signals": {
+                "loaded": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -2318,27 +2955,67 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "actionAt()",
-                "addAction()",
-                "addItem()",
-                "addMenu()",
-                "dismiss()",
-                "insertAction()",
-                "insertItem()",
-                "insertMenu()",
-                "itemAt()",
-                "menuAt()",
-                "moveItem()",
-                "popup()",
-                "removeAction()",
-                "removeItem()",
-                "removeMenu()",
-                "takeAction()",
-                "takeItem()",
-                "takeMenu()",
-            ],
-            "signals": [],
+            "functions": {
+                "actionAt": {
+                    "params_name": ["index"]
+                },
+                "addAction": {
+                    "params_name": ["action"]
+                },
+                "addItem": {
+                    "params_name": ["item"]
+                },
+                "addMenu": {
+                    "params_name": ["menu"]
+                },
+                "dismiss": {
+                    "params_name": []
+                },
+                "insertAction": {
+                    "params_name": ["index", "action"]
+                },
+                "insertItem": {
+                    "params_name": ["index", "item"]
+                },
+                "insertMenu": {
+                    "params_name": ["index", "menu"]
+                },
+                "itemAt": {
+                    "params_name": ["index"]
+                },
+                "menuAt": {
+                    "params_name": ["index"]
+                },
+                "moveItem": {
+                    "params_name": ["from", "to"]
+                },
+                "popup": {
+                    "params_name": ["x", "y", "pos", "parent", "item"]
+                },
+                "removeAction": {
+                    "params_name": ["action"]
+                },
+                "removeItem": {
+                    "params_name": ["item"]
+                },
+                "removeMenu": {
+                    "params_name": ["menu"]
+                },
+                "takeAction": {
+                    "params_name": ["index"]
+                },
+                "takeItem": {
+                    "params_name": ["index"]
+                },
+                "takeMenu": {
+                    "params_name": ["index"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
@@ -2359,10 +3036,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [
-                "triggered()"
-            ],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "triggered": {
+                    "params_name": []
+                },
+            },
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
@@ -2374,8 +3057,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -2439,19 +3130,43 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [
-                "canceled()",
-                "clicked()",
-                "doubleClicked()",
-                "entered()",
-                "exited()",
-                "positionChanged()",
-                "pressAndHold()",
-                "pressed()",
-                "released()",
-                "wheel()"
-            ],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "canceled": {
+                    "params_name": []
+                },
+                "clicked": {
+                    "params_name": ["mouse"]
+                },
+                "doubleClicked": {
+                    "params_name": ["mouse"]
+                },
+                "entered": {
+                    "params_name": []
+                },
+                "exited": {
+                    "params_name": []
+                },
+                "positionChanged": {
+                    "params_name": ["mouse"]
+                },
+                "pressAndHold": {
+                    "params_name": ["mouse"]
+                },
+                "pressed": {
+                    "params_name": ["mouse"]
+                },
+                "released": {
+                    "params_name": ["mouse"]
+                },
+                "wheel": {
+                    "params_name": ["wheel"]
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -2469,11 +3184,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [
-                "pressed()",
-                "released()",
-            ],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "pressed": {
+                    "params_name": []
+                },
+                "released": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
@@ -2649,17 +3372,31 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "close()",
-                "forceActiveFocus()",
-                "open()",
-            ],
-            "signals": [
-                "aboutToHide()",
-                "aboutToShow()",
-                "closed()",
-                "opened()",
-            ],
+            "functions": {
+                "close": {
+                    "params_name": []
+                },
+                "forceActiveFocus": {
+                    "params_name": ["reason"]
+                },
+                "open": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "aboutToHide": {
+                    "params_name": []
+                },
+                "aboutToShow": {
+                    "params_name": []
+                },
+                "closed": {
+                    "params_name": []
+                },
+                "opened": {
+                    "params_name": []
+                },
+            },
             "inherits": "QtObject",
             "source": "Controls",
             "nonInstantiable": false,
@@ -2680,48 +3417,130 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "atob()",
-                "binding()",
-                "btoa()",
-                "callLater()",
-                "colorEqual()",
-                "createComponent()",
-                "createQmlObject()",
-                "darker()",
-                "exit()",
-                "font()",
-                "fontFamilies()",
-                "formatDate()",
-                "formatDateTime()",
-                "formatTime()",
-                "hsla()",
-                "hsva()",
-                "include()",
-                "isQtObject()",
-                "lighter()",
-                "locale()",
-                "md5()",
-                "matrix4x4()",
-                "openUrlExteranlly()",
-                "point()",
-                "qsTr()",
-                "qsTrId()",
-                "qsTrIdNoOp()",
-                "qsTranslate()",
-                "qsTranslateNoOp()",
-                "quanternion()",
-                "quit()",
-                "rect()",
-                "resolvedUrl()",
-                "rgba()",
-                "size()",
-                "tint()",
-                "vector2d()",
-                "vector3d()",
-                "vector4d()",
-            ],
-            "signals": [],
+            "functions": {
+                "atob": {
+                    "params_name": ["data"]
+                },
+                "binding": {
+                    "params_name": ["function"]
+                },
+                "btoa": {
+                    "params_name": ["data"]
+                },
+                "callLater": {
+                    "params_name": ["function", `$1`, `$2`, `$n`]
+                },
+                "colorEqual": {
+                    "params_name": ["lhs", "rhs"]
+                },
+                "createComponent": {
+                    "params_name": ["url", "mode", "parent"]
+                },
+                "createQmlObject": {
+                    "params_name": ["qml", "parent", "filepath"]
+                },
+                "darker": {
+                    "params_name": ["baseColor", "factor"]
+                },
+                "exit": {
+                    "params_name": ["retCode"]
+                },
+                "font": {
+                    "params_name": ["fontSpecifier"]
+                },
+                "fontFamilies": {
+                    "params_name": []
+                },
+                "formatDate": {
+                    "params_name": ["date", "format"]
+                },
+                "formatDateTime": {
+                    "params_name": ["dateTime", "format"]
+                },
+                "formatTime": {
+                    "params_name": ["time", "format"]
+                },
+                "hsla": {
+                    "params_name": ["hue", "saturation", "lightness", "alpha"]
+                },
+                "hsva": {
+                    "params_name": ["hue", "saturation", "value", "alpha"]
+                },
+                "include": {
+                    "params_name": ["url", "callback"]
+                },
+                "isQtObject": {
+                    "params_name": ["object"]
+                },
+                "lighter": {
+                    "params_name": ["baseColor", "factor"]
+                },
+                "locale": {
+                    "params_name": ["name"]
+                },
+                "md5": {
+                    "params_name": ["data"]
+                },
+                "matrix4x4": {
+                    "params_name": ["m11", "m12", "m13", "m14", "m21", "m22", "m23", "m24", "m31", "m32", "m33", "m34", "m41", "m42", "m43", "m44"]
+                },
+                "openUrlExteranlly": {
+                    "params_name": ["target"]
+                },
+                "point": {
+                    "params_name": ["x", "y"]
+                },
+                "qsTr": {
+                    "params_name": ["sourceText", "disambiguation", "n"]
+                },
+                "qsTrId": {
+                    "params_name": ["id", "n"]
+                },
+                "qsTrIdNoOp": {
+                    "params_name": ["id"]
+                },
+                "qsTranslate": {
+                    "params_name": ["context", "sourceText", "disambiguation", "n"]
+                },
+                "qsTranslateNoOp": {
+                    "params_name": ["context", "sourceText", "disambiguation"]
+                },
+                "quanternion": {
+                    "params_name": ["scalar", "x", "y", "z"]
+                },
+                "quit": {
+                    "params_name": []
+                },
+                "rect": {
+                    "params_name": ["x", "y", "width", "height"]
+                },
+                "resolvedUrl": {
+                    "params_name": ["url"]
+                },
+                "rgba": {
+                    "params_name": ["red", "green", "blue", "alpha"]
+                },
+                "size": {
+                    "params_name": ["width", "height"]
+                },
+                "tint": {
+                    "params_name": ["baseColor", "tintColor"]
+                },
+                "vector2d": {
+                    "params_name": ["x", "y"]
+                },
+                "vector3d": {
+                    "params_name": ["x", "y", "z"]
+                },
+                "vector4d": {
+                    "params_name": ["x", "y", "z", "w"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": true,
@@ -2733,8 +3552,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -2746,12 +3573,20 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
-            "isVisualWidget": false
+            "isVisualWidget": false,
         },
         "Rectangle": {
             "properties": {
@@ -2774,8 +3609,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -2787,8 +3630,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -2806,13 +3657,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "itemAt()"
-            ],
-            "signals": [
-                "itemAdded()",
-                "itemRemoved()",
-            ],
+            "functions": {
+                "itemAt": {
+                    "params_name": ["index"]
+                },
+            },
+            "signals": {
+                "itemAdded": {
+                    "params_name": ["index", "item"]
+                },
+                "itemRemoved": {
+                    "params_name": ["index", "item"]
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -2837,8 +3694,16 @@ const qtTypeJson = {
                     ]
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -2877,14 +3742,20 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "forceLayout()"
-            ],
-            "signals": [
-                "positioningComplete()"
-            ],
+            "functions": {
+                "forceLayout": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "positioningComplete": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
+            "isVisualWidget": false,
         },
         "RowLayout": {
             "properties": {
@@ -2895,9 +3766,17 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
-            "inherits": "item",
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
+            "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
             "isVisualWidget": false,
@@ -2917,8 +3796,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -2969,11 +3856,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "decrease()",
-                "increase()",
-            ],
-            "signals": [],
+            "functions": {
+                "decrease": {
+                    "params_name": []
+                },
+                "increase": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -3024,8 +3919,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -3040,8 +3943,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -3056,11 +3967,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "setValue()",
-                "value()",
-            ],
-            "signals": [],
+            "functions": {
+                "setValue": {
+                    "params_name": ["key", "value"]
+                },
+                "value": {
+                    "params_name": ["key", "defaultValue"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "labs.settings",
             "nonInstantiable": false,
@@ -3102,8 +4021,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 0.9",
             "nonInstantiable": false,
@@ -3154,13 +4081,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "clearAnchors()",
-                "setAnchors()"
-            ],
-            "signals": [
-                "clicked()"
-            ],
+            "functions": {
+                "clearAnchors": {
+                    "params_name": ["object"]
+                },
+                "setAnchors": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "clicked": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3172,7 +4105,7 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
                 "fontSizeMultiplier": {
-                    "meta_properties": []                    
+                    "meta_properties": []
                 },
                 "minimumContentHeight": {
                     "meta_properties": []
@@ -3235,8 +4168,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Button",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3260,12 +4201,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "isChecked()"
-            ],
-            "signals": [
-                "clicked()"
-            ],
+            "functions": {
+                "isChecked": {
+                    "params_name": ["index"]
+                },
+            },
+            "signals": {
+                "clicked": {
+                    "params_name": ["index"]
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3316,8 +4261,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": ["lerpColor()"],
-            "signals": [],
+            "functions": {
+                "lerpColor": {
+                    "params_name": ["color1", "color2", "x"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3374,11 +4327,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "findWidth()",
-                "colorMod()",
-            ],
-            "signals": [],
+            "functions": {
+                "findWidth": {
+                    "params_name": []
+                },
+                "colorMod": {
+                    "params_name": ["color", "increment"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "ComboBox",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3405,8 +4366,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3433,11 +4402,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "hueToRgbPowerSave()",
-                "hsvToRgb()",
-            ],
-            "signals": [],
+            "functions": {
+                "hueToRgbPowerSave": {
+                    "params_name": ["h"]
+                },
+                "hsvToRgb": {
+                    "params_name": ["h", "s", "v"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3445,7 +4422,7 @@ const qtTypeJson = {
         },
         "SGIcon": {
             "properties": {
-                "aynchronous": {
+                "asynchronous": {
                     "meta_properties": []
                 },
                 "autoTransform": {
@@ -3491,8 +4468,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3570,13 +4555,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "selectAll()"
-            ],
-            "signals": [
-                "accepted()",
-                "editingFinished()"
-            ],
+            "functions": {
+                "selectAll": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "accepted": {
+                    "params_name": ["text"]
+                },
+                "editingFinished": {
+                    "params_name": ["text"]
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3606,8 +4597,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "RadioButton",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3625,8 +4624,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": ["hToRgb()"],
-            "signals": [],
+            "functions": {
+                "hToRgb": {
+                    "params_name": ["value"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3734,16 +4741,28 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "userSetValue()",
-                "increase()",
-                "decrease()",
-                "valueAt()",
-            ],
-            "signals": [
-                "userSet()",
-                "moved()"
-            ],
+            "functions": {
+                "userSetValue": {
+                    "params_name": ["value"]
+                },
+                "increase": {
+                    "params_name": []
+                },
+                "decrease": {
+                    "params_name": []
+                },
+                "valueAt": {
+                    "params_name": ["position"]
+                },
+            },
+            "signals": {
+                "userSet": {
+                    "params_name": ["value"]
+                },
+                "moved": {
+                    "params_name": []
+                },
+            },
             "inherits": "GridLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3755,8 +4774,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "SpinBox",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3774,8 +4801,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3841,15 +4876,31 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "onFilter()",
-                "copySelectionTest()",
-                "append()",
-                "remove()",
-                "updateMessageAtID()",
-                "clear()",
-            ],
-            "signals": [],
+            "functions": {
+                "onFilter": {
+                    "params_name": ["listElement"]
+                },
+                "copySelectionTest": {
+                    "params_name": ["index"]
+                },
+                "append": {
+                    "params_name": ["message"]
+                },
+                "remove": {
+                    "params_name": ["id"]
+                },
+                "updateMessageAtID": {
+                    "params_name": ["message", "id"]
+                },
+                "clear": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Rectangle",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3918,15 +4969,25 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "forceActiveFocus()",
-                "selectAll()",
-                "deselect()",
-            ],
-            "signals": [
-                "accepted()",
-                "editingFinished()",
-            ],
+            "functions": {
+                "forceActiveFocus": {
+                    "params_name": []
+                },
+                "selectAll": {
+                    "params_name": []
+                },
+                "deselect": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "accepted": {
+                    "params_name": ["text"]
+                },
+                "editingFinished": {
+                    "params_name": ["text"]
+                },
+            },
             "inherits": "RowLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -3968,17 +5029,31 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "colorMod()"
-            ],
-            "signals": [
-                "released()",
-                "canceled()",
-                "clicked()",
-                "toggled()",
-                "press()",
-                "pressAndHold()",
-            ],
+            "functions": {
+                "colorMod": {
+                    "params_name": ["color", "factor"]
+                },
+            },
+            "signals": {
+                "released": {
+                    "params_name": []
+                },
+                "canceled": {
+                    "params_name": []
+                },
+                "clicked": {
+                    "params_name": []
+                },
+                "toggled": {
+                    "params_name": []
+                },
+                "press": {
+                    "params_name": []
+                },
+                "pressAndHold": {
+                    "params_name": []
+                },
+            },
             "inherits": "RowLayout",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -4010,7 +5085,7 @@ const qtTypeJson = {
                 "darkMode": {
                     "meta_properties": []
                 },
-                "showCursorPosition":  {
+                "showCursorPosition": {
                     "meta_properties": []
                 },
                 "showClearButton": {
@@ -4065,11 +5140,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [
-                "suggestionsDelegateSelected()",
-                "suggestionDelegateRemoveRequested()",
-            ],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "suggestionsDelegateSelected": {
+                    "params_name": ["index"]
+                },
+                "suggestionDelegateRemoveRequested": {
+                    "params_name": ["index"]
+                },
+            },
             "inherits": "TextField",
             "source": "tech.strata.sgwidgets 1.0",
             "nonInstantiable": false,
@@ -4084,17 +5167,31 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "writeFile()",
-                "readFile()",
-                "listFilesInDirectory()",
-                "deleteFile()",
-                "renameFile()",
-            ],
-            "signals": [
-                "classIdChanged()",
-                "userChanged()"
-            ],
+            "functions": {
+                "writeFile": {
+                    "params_name": ["fileName", "data", "subdirectory"]
+                },
+                "readFile": {
+                    "params_name": ["fileName", "subdirectory"]
+                },
+                "listFilesInDirectory": {
+                    "params_name": ["subdirectory"]
+                },
+                "deleteFile": {
+                    "params_name": ["fileName", "subdirectory"]
+                },
+                "renameFile": {
+                    "params_name": ["origFileName", "newFileName", "subdirectory"]
+                },
+            },
+            "signals": {
+                "classIdChanged": {
+                    "params_name": ["id"]
+                },
+                "userChanged": {
+                    "params_name": ["user"]
+                },
+            },
             "inherits": "QtObject",
             "source": "tech.strata.commoncpp 1.0",
             "nonInstantiable": false,
@@ -4151,14 +5248,22 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "decrease()",
-                "increase()",
-                "valueAt()"
-            ],
-            "signals": [
-                "moved()"
-            ],
+            "functions": {
+                "decrease": {
+                    "params_name": []
+                },
+                "increase": {
+                    "params_name": []
+                },
+                "valueAt": {
+                    "params_name": ["position"]
+                },
+            },
+            "signals": {
+                "moved": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4221,13 +5326,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "decrease()",
-                "increase()"
-            ],
-            "signals": [
-                "valueModified()"
-            ],
+            "functions": {
+                "decrease": {
+                    "params_name": []
+                },
+                "increase": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "valueModified": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4245,11 +5356,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "addItem()",
-                "removeItem()"
-            ],
-            "signals": [],
+            "functions": {
+                "addItem": {
+                    "params_name": ["item"]
+                },
+                "removeItem": {
+                    "params_name": ["item"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4267,8 +5386,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "Source",
             "nonInstantiable": false,
@@ -4283,8 +5410,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Layouts",
             "nonInstantiable": false,
@@ -4338,21 +5473,43 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "clear()",
-                "find()",
-                "get()",
-                "pop()",
-                "push()",
-                "replace()",
-            ],
-            "signals": [
-                "activated()",
-                "activating()",
-                "deactivated()",
-                "deactivatting()",
-                "removed()",
-            ],
+            "functions": {
+                "clear": {
+                    "params_name": ["transition"]
+                },
+                "find": {
+                    "params_name": ["callback", "behavior"]
+                },
+                "get": {
+                    "params_name": ["index", "behavior"]
+                },
+                "pop": {
+                    "params_name": ["item", "operation"]
+                },
+                "push": {
+                    "params_name": ["item", "properties", "operation"]
+                },
+                "replace": {
+                    "params_name": ["target", "item", "properties", "operation"]
+                },
+            },
+            "signals": {
+                "activated": {
+                    "params_name": []
+                },
+                "activating": {
+                    "params_name": []
+                },
+                "deactivated": {
+                    "params_name": []
+                },
+                "deactivatting": {
+                    "params_name": []
+                },
+                "removed": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4373,8 +5530,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -4389,8 +5554,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4405,8 +5578,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "Extras",
             "nonInstantiable": false,
@@ -4421,8 +5602,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4434,8 +5623,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Loader",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4462,8 +5659,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4475,8 +5680,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "AbstractButton",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4503,14 +5716,28 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "addTab()",
-                "getTab()",
-                "insertTab()",
-                "moveTab()",
-                "removeTab()",
-            ],
-            "signals": [],
+            "functions": {
+                "addTab": {
+                    "params_name": ["title", "component"]
+                },
+                "getTab": {
+                    "params_name": ["index"]
+                },
+                "insertTab": {
+                    "params_name": ["index", "title", "component"]
+                },
+                "moveTab": {
+                    "params_name": ["from", "to"]
+                },
+                "removeTab": {
+                    "params_name": ["index"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Item",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4631,15 +5858,25 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "forceLayout()",
-                "linkAt()",
-            ],
-            "signals": [
-                "lineLaidOut()",
-                "linkActivated()",
-                "linkHovered()",
-            ],
+            "functions": {
+                "forceLayout": {
+                    "params_name": []
+                },
+                "linkAt": {
+                    "params_name": ["x", "y"]
+                },
+            },
+            "signals": {
+                "lineLaidOut": {
+                    "params_name": ["line"]
+                },
+                "linkActivated": {
+                    "params_name": ["link"]
+                },
+                "linkHovered": {
+                    "params_name": ["link"]
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -4690,12 +5927,74 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [
-                "pressAndHold()",
-                "pressed()",
-                "released()",
-            ],
+            "functions": {
+                "append": {
+                    "params_name": ["text"]
+                },
+                "copy": {
+                    "params_name": []
+                },
+                "cut": {
+                    "params_name": []
+                },
+                "deselect": {
+                    "params_name": []
+                },
+                "getFormattedText": {
+                    "params_name": ["start", "end"]
+                },
+                "getText": {
+                    "params_name": ["start", "end"]
+                },
+                "insert": {
+                    "params_name": ["position", "text"]
+                },
+                "isRightToLeft": {
+                    "params_name": ["start", "end"]
+                },
+                "moveCursorSelection": {
+                    "params_name": ["position", "mode"]
+                },
+                "paste": {
+                    "params_name": []
+                },
+                "positionAt": {
+                    "params_name": ["x", "y"]
+                },
+                "positionToRectangle": {
+                    "params_name": ["position"]
+                },
+                "redo": {
+                    "params_name": []
+                },
+                "remove": {
+                    "params_name": ["start", "end"]
+                },
+                "select": {
+                    "params_name": ["start", "end"]
+                },
+                "selectAll": {
+                    "params_name": []
+                },
+                "selectWord": {
+                    "params_name": []
+                },
+                "undo": {
+                    "params_name": []
+                },
+
+            },
+            "signals": {
+                "editingFinished": {
+                    "params_name": []
+                },
+                "linkActivated": {
+                    "params_name": ["link"]
+                },
+                "linkHovered": {
+                    "params_name": ["link"]
+                },
+            },
             "inherits": "TextEdit",
             "source": "Controls",
             "nonInstantiable": false,
@@ -4855,33 +6154,79 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "append()",
-                "clear()",
-                "copy()",
-                "cut()",
-                "deselect()",
-                "getFormattedText()",
-                "getText()",
-                "insert()",
-                "isRightToLeft()",
-                "linkAt()",
-                "moveCursorSelection()",
-                "paste()",
-                "positionAt()",
-                "positionToRectangle()",
-                "redo()",
-                "remove()",
-                "select()",
-                "selectAll()",
-                "selectWord()",
-                "undo()",
-            ],
-            "signals": [
-                "editingFinished()",
-                "linkActivated(string link)",
-                "linkHovered(string link)",
-            ],
+            "functions": {
+                "append": {
+                    "params_name": ["text"]
+                },
+                "clear": {
+                    "params_name": []
+                },
+                "copy": {
+                    "params_name": []
+                },
+                "cut": {
+                    "params_name": []
+                },
+                "deselect": {
+                    "params_name": []
+                },
+                "getFormattedText": {
+                    "params_name": ["start", "end"]
+                },
+                "getText": {
+                    "params_name": ["start", "end"]
+                },
+                "insert": {
+                    "params_name": ["position", "text"]
+                },
+                "isRightToLeft": {
+                    "params_name": ["start", "end"]
+                },
+                "linkAt": {
+                    "params_name": ["x", "y"]
+                },
+                "moveCursorSelection": {
+                    "params_name": ["position", "mode"]
+                },
+                "paste": {
+                    "params_name": []
+                },
+                "positionAt": {
+                    "params_name": ["x", "y"]
+                },
+                "positionToRectangle": {
+                    "params_name": ["position"]
+                },
+                "redo": {
+                    "params_name": []
+                },
+                "remove": {
+                    "params_name": ["start", "end"]
+                },
+                "select": {
+                    "params_name": ["start", "end"]
+                },
+                "selectAll": {
+                    "params_name": []
+                },
+                "selectWord": {
+                    "params_name": []
+                },
+                "undo": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "editingFinished": {
+                    "params_name": []
+                },
+                "linkActivated": {
+                    "params_name": ["link"]
+                },
+                "linkHovered": {
+                    "params_name": ["link"]
+                },
+            },
             "inherits": "Item",
             "source": "",
             "nonInstantiable": false,
@@ -4929,13 +6274,23 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [
-                "pressAndHold()",
-                "pressed()",
-                "released()",
-            ],
-            "inherits": "TextInputs",
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "pressAndHold": {
+                    "params_name": ["event"]
+                },
+                "pressed": {
+                    "params_name": ["event"]
+                },
+                "released": {
+                    "params_name": ["event"]
+                },
+            },
+            "inherits": "TextInput",
             "source": "Controls",
             "nonInstantiable": false,
             "isVisualWidget": false,
@@ -5091,30 +6446,73 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "clear()",
-                "copy()",
-                "cut()",
-                "deselect()",
-                "ensureVisible()",
-                "getText()",
-                "insert()",
-                "isRightToLeft()",
-                "moveCursorSelection()",
-                "paste()",
-                "positionAt()",
-                "positionToRectangle()",
-                "redo()",
-                "remove()",
-                "select()",
-                "selectAll()",
-                "undo()",
-            ],
-            "signals": [
-                "accepted()",
-                "editingFinished()",
-                "textEdited()"
-            ],
+            "functions": {
+                "clear": {
+                    "params_name": []
+                },
+                "copy": {
+                    "params_name": []
+                },
+                "cut": {
+                    "params_name": []
+                },
+                "deselect": {
+                    "params_name": []
+                },
+                "ensureVisible": {
+                    "params_name": ["position"]
+                },
+                "getText": {
+                    "params_name": ["start", "end"]
+                },
+                "insert": {
+                    "params_name": ["position", "text"]
+                },
+                "isRightToLeft": {
+                    "params_name": ["start", "end"]
+                },
+                "moveCursorSelection": {
+                    "params_name": ["position", "mode"]
+                },
+                "paste": {
+                    "params_name": []
+                },
+                "positionAt": {
+                    "params_name": ["x", "y", "position"]
+                },
+                "positionToRectangle": {
+                    "params_name": ["pos"]
+                },
+                "redo": {
+                    "params_name": []
+                },
+                "remove": {
+                    "params_name": ["start", "end"]
+                },
+                "select": {
+                    "params_name": ["start", "end"]
+                },
+                "selectAll": {
+                    "params_name": []
+                },
+                "selectWord": {
+                    "params_name": []
+                },
+                "undo": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "accepted": {
+                    "params_name": []
+                },
+                "editingFinished": {
+                    "params_name": []
+                },
+                "textEdited": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -5153,8 +6551,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -5175,14 +6581,22 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "restart()",
-                "start()",
-                "stop()"
-            ],
-            "signals": [
-                "triggered()"
-            ],
+            "functions": {
+                "restart": {
+                    "params_name": []
+                },
+                "start": {
+                    "params_name": []
+                },
+                "stop": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "triggered": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -5194,8 +6608,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Button",
             "source": "Extras",
             "nonInstantiable": false,
@@ -5207,8 +6629,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -5216,12 +6646,20 @@ const qtTypeJson = {
         },
         "ToolButton": {
             "properties": {
-                "property":{
+                "property": {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Button",
             "source": "Controls",
             "nonInstantiable": false,
@@ -5239,8 +6677,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Control",
             "source": "Controls",
             "nonInstantiable": false,
@@ -5264,11 +6710,19 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [
-                "hide()",
-                "show()"
-            ],
-            "signals": [],
+            "functions": {
+                "hide": {
+                    "params_name": []
+                },
+                "show": {
+                    "params_name": ["text", "timeout"]
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "Popup",
             "source": "Controls",
             "nonInstantiable": false,
@@ -5295,8 +6749,16 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "signal": {
+                    "params_name": []
+                },
+            },
             "inherits": "",
             "source": "",
             "nonInstantiable": false,
@@ -5317,10 +6779,18 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [],
-            "signals": [],
+            "functions": {
+                "function": {
+                    "param_names": []
+                }
+            },
+            "signals": {
+                "signal": {
+                    "param_names:": []
+                }
+            },
             "inherits": "Item",
-            "source": "",
+            "source": "tech.strata.sglayout 1.0",
             "nonInstantiable": false,
             "isVisualWidget": true,
         },
@@ -5387,22 +6857,46 @@ const qtTypeJson = {
                     "meta_properties": []
                 }
             },
-            "functions": [
-                "alert()",
-                "close()",
-                "hide()",
-                "lower()",
-                "raise()",
-                "requestActivate()",
-                "show()",
-                "showFullScreen()",
-                "showMaximized()",
-                "showMinimized()",
-                "showNormal()",
-            ],
-            "signals": [
-                "closing()"
-            ],
+            "functions": {
+                "alert": {
+                    "params_name": ["msec"]
+                },
+                "close": {
+                    "params_name": []
+                },
+                "hide": {
+                    "params_name": []
+                },
+                "lower": {
+                    "params_name": []
+                },
+                "raise": {
+                    "params_name": []
+                },
+                "requestActivate": {
+                    "params_name": []
+                },
+                "show": {
+                    "params_name": []
+                },
+                "showFullScreen": {
+                    "params_name": []
+                },
+                "showMaximized": {
+                    "params_name": []
+                },
+                "showMinimized": {
+                    "params_name": []
+                },
+                "showNormal": {
+                    "params_name": []
+                },
+            },
+            "signals": {
+                "closing": {
+                    "params_name": ["close"]
+                },
+            },
             "inherits": "",
             "source": "Window",
             "nonInstantiable": false,
@@ -5436,5 +6930,110 @@ const qtTypeJson = {
         "String": [
             "arg()",
         ],
-    },"property": []
+    },
+    "import_statements": {
+        "QtQuick": {
+            "ver": [
+                "2.0",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11",
+                "2.12",
+            ],
+            "subTypes": {
+                "Controls": {
+                    "ver": [
+                        "2.0",
+                        "2.1",
+                        "2.2",
+                        "2.3",
+                        "2.4",
+                        "2.5",
+                        "2.12",
+                    ]
+                },
+                "Dialogs": {
+                    "ver": [
+                        "1.0",
+                        "1.1",
+                        "1.2",
+                    ]
+                },
+                "Layouts": {
+                    "ver": [
+                        "1.0",
+                        "1.1",
+                        "1.2",
+                        "1.3",
+                        "1.12",
+                    ]
+                },
+                "Window": {
+                    "ver": [
+                        "2.0",
+                        "2.1",
+                        "2.2",
+                        "2.3",
+                        "2.10",
+                        "2.11",
+                        "2.12",
+                    ]
+                }
+            }
+        },
+        "QtQml": {
+            "ver": [
+                "2.0",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.12",
+            ],
+            "subTypes": {
+                "Models": {
+                    "ver": [
+                        "2.1",
+                        "2.2",
+                        "2.3",
+                        "2.11",
+                        "2.12",
+                    ]
+                }
+            }
+        },
+        "tech.strata.sgwidgets": {
+            "ver": [
+                "0.9",
+                "1.0",
+            ]
+        },
+        "tech.strata.commoncpp": {
+            "ver": [
+                "1.0",
+            ]
+        },
+        "tech.strata.fonts": {
+            "ver": [
+                "1.0",
+            ]
+        },
+        "tech.strata.theme": {
+            "ver": [
+                "1.0",
+            ]
+        },
+        "tech.strata.sglayout": {
+            "ver": [
+                "1.0"
+            ]
+        }
+    }
 }
