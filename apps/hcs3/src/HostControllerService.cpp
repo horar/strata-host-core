@@ -608,15 +608,13 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
 
         QString currentMD5; // get md5 accorging to old fw_class_id and fw version
         if (platform->applicationVer().isEmpty() == false
-                && platform->firmwareClassId().isNull() == false
-                && platform->firmwareClassId().isEmpty() == false) {
+            && platform->firmwareClassId().isNull() == false
+            && platform->firmwareClassId().isEmpty() == false)
+        {
             firmware = storageManager_.findFirmware(platform->firmwareClassId(), controllerClassId, platform->applicationVer());
-            if (firmware == nullptr) {
-                errorString = "No compatible firmware";
-                break;
+            if (firmware != nullptr) {
+                currentMD5 = firmware->md5;
             }
-
-            currentMD5 = firmware->md5;
         } else {
             qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
         }
