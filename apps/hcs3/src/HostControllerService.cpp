@@ -614,6 +614,8 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
             firmware = storageManager_.findFirmware(platform->firmwareClassId(), controllerClassId, platform->applicationVer());
             if (firmware != nullptr) {
                 currentMD5 = firmware->md5;
+            } else {
+                qCWarning(logCategoryHcs) << platform << "Cannot find current firmware in database";
             }
         } else {
             qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
