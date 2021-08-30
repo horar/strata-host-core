@@ -90,7 +90,7 @@ void SerialDevice::open()
         serialPort_->clear(QSerialPort::AllDirections);
         emit Device::opened();
     }
-    // There is no need to emit 'deviceError(ErrorCode::DeviceFailedToOpenRequestRetry)' when 'opened'
+    // There is no need to emit 'deviceError(ErrorCode::DeviceFailedToOpen)' when 'opened'
     // is 'false' because this error signal is already emmited from 'handleError()' method.
 }
 

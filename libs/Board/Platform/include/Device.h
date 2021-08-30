@@ -67,7 +67,7 @@ namespace strata::device {
 
         /**
          * Open device communication channel. Non-blocking.
-         * Emits opened() on success or deviceError(DeviceFailedToOpenRequestRetry, ...) on failure.
+         * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
          */
         virtual void open() = 0;
 

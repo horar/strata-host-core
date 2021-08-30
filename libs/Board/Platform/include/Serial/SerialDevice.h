@@ -43,7 +43,7 @@ public:
 
     /**
      * Open serial port.
-     * Emits opened() on success or deviceError(DeviceFailedToOpenRequestRetry, ...) on failure.
+     * Emits opened() on success or deviceError(DeviceFailedToOpen, ...) on failure.
      */
     virtual void open() override;
 
