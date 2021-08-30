@@ -257,7 +257,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 }
 
 void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                                const ResponseType &responseType)
+                                const ResponseType responseType)
 {
     QByteArray serverMessage;
 
@@ -288,7 +288,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
-                                const QJsonObject &jsonObject, const ResponseType &responseType)
+                                const QJsonObject &jsonObject, const ResponseType responseType)
 {
     Message message;
     message.clientID = clientId;
@@ -304,28 +304,31 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
     Message tempClientMessage;
     tempClientMessage.handlerName = handlerName;
 
-    QByteArray serverMessageAPI_v1 =
-        buildServerMessageAPIv1(tempClientMessage, jsonObject, ResponseType::Notification);
-    QByteArray serverMessageAPI_v2 =
-        buildServerMessageAPIv2(tempClientMessage, jsonObject, ResponseType::Notification);
-
     // get all clients.
     auto allClients = clientsController_->getAllClients();
 
     for (const auto &client : allClients) {
         switch (client.getApiVersion()) {
             case ApiVersion::v1:
-                emit sendMessage(client.getClientID(), serverMessageAPI_v1);
+                emit sendMessage(
+                        client.getClientID(),
+                        buildServerMessageAPIv1(tempClientMessage, jsonObject, ResponseType::Notification)
+                     );
                 break;
 
             case ApiVersion::v2:
-                emit sendMessage(client.getClientID(), serverMessageAPI_v2);
+                emit sendMessage(
+                        client.getClientID(),
+                        buildServerMessageAPIv2(tempClientMessage, jsonObject, ResponseType::Notification)
+                     );
                 break;
 
             case ApiVersion::none:
-                QString errorMessage(QStringLiteral("Unsupported client API version"));
-                qCCritical(logCategoryStrataServer) << errorMessage;
-                emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+                {
+                    QString errorMessage(QStringLiteral("Unsupported client API version"));
+                    qCCritical(logCategoryStrataServer) << errorMessage;
+                    emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+                }
                 break;
         }
     }
@@ -388,7 +391,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 
 QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 const ResponseType &responseType)
+                                                 const ResponseType responseType)
 {
     QJsonObject jsonObject{{"jsonrpc", "2.0"}};
 
@@ -422,7 +425,7 @@ QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
 
 QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 const ResponseType &responseType)
+                                                 const ResponseType responseType)
 {
     QJsonObject jsonObject;
     QString notificationType = "";
