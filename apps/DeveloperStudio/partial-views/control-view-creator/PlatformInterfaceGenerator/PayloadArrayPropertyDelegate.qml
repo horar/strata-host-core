@@ -7,6 +7,7 @@ Rectangle {
 
     implicitHeight: arrayPropertyContainer.implicitHeight
     implicitWidth: arrayPropertyContainer.implicitWidth
+
     Layout.leftMargin: 3
     Layout.bottomMargin: 3
     Layout.rightMargin: 5
@@ -16,7 +17,7 @@ Rectangle {
 
     color: {
         if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
-            if (parentColor == "#efefef") {
+            if (Qt.colorEqual(parentColor, "#efefef")) {
                 return "#ffffff"
             }
             return "#efefef"
@@ -34,10 +35,12 @@ Rectangle {
 
         RowLayout {
             id: arrayRowLayout
+
             Layout.preferredHeight: 30
             Layout.leftMargin: 5
             Layout.rightMargin: 5
-            Layout.fillHeight: true
+            Layout.fillWidth: true
+
             spacing: 5
 
             RoundButton {

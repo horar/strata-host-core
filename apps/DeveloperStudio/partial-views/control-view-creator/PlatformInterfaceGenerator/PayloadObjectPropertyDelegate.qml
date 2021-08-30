@@ -7,6 +7,7 @@ Rectangle {
 
     implicitHeight: objectPropertyContainer.implicitHeight
     implicitWidth: objectPropertyContainer.implicitWidth
+
     Layout.leftMargin: 3
     Layout.bottomMargin: 3
     Layout.rightMargin: 5
@@ -34,10 +35,11 @@ Rectangle {
 
         RowLayout {
             id: objectRowLayout
+
             Layout.preferredHeight: 30
             Layout.leftMargin: 5
             Layout.rightMargin: 5
-            Layout.fillHeight: true
+
             spacing: 5
 
             RoundButton {
@@ -169,7 +171,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
         Repeater {
@@ -191,7 +193,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "object"
     *****************************************/
         Repeater {

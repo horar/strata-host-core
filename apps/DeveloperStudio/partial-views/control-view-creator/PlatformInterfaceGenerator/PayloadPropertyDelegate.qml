@@ -9,7 +9,7 @@ Rectangle {
     id: payloadDelegateRoot
 
     Layout.preferredHeight: payloadContainer.implicitHeight
-    Layout.preferredWidth: payloadContainer.implicitWidth
+    Layout.fillWidth: true
     Layout.leftMargin: 3
 
     color: "transparent"
@@ -29,6 +29,8 @@ Rectangle {
     ColumnLayout {
         id: payloadContainer
         spacing: 5
+
+        width: parent.width
 
         property ListModel subArrayListModel: model.array
         property ListModel subObjectListModel: model.object
@@ -57,9 +59,11 @@ Rectangle {
 
         RowLayout {
             id: propertyBox
-            spacing: 5
             enabled: cmdNotifName.text.length > 0
             Layout.preferredHeight: 30
+            Layout.fillWidth: true
+
+            spacing: 5
 
             RoundButton {
                 Layout.preferredHeight: 15
@@ -97,7 +101,8 @@ Rectangle {
 
             TextField {
                 id: propertyKey
-                Layout.preferredWidth: 150
+                Layout.fillWidth: true
+                //Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
                 selectByMouse: true
                 persistentSelection: true   // must deselect manually
@@ -214,7 +219,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
         Repeater {
@@ -224,10 +229,12 @@ Rectangle {
             delegate: PayloadArrayPropertyDelegate {
                 modelIndex: index
                 parentColor: payloadDelegateRoot.color
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to the elements in a property of type "object"
     *****************************************/
         Repeater {
@@ -237,6 +244,8 @@ Rectangle {
             delegate: PayloadObjectPropertyDelegate {
                 modelIndex: index
                 parentColor: payloadDelegateRoot.color
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
 
@@ -260,7 +269,11 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0"})
+                    if (propertyType.currentIndex === 4) {
+                        payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0"})
+                    } else {
+                        payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subObjectListModel, "value": "0"})
+                    }
                     commandsListView.contentY += 40
                 }
             }

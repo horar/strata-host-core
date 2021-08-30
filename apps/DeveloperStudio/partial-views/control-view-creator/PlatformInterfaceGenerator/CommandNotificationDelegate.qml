@@ -7,25 +7,27 @@ import tech.strata.sgwidgets 1.0
 
 Rectangle {
     width:  ListView.view.width
-    height: commandsColumn.height
+    height: commandsColumn.height + 10
     color: "#efefef"
 
     property ListModel payloadModel: commandsColumn.payloadModel
 
-    ColumnLayout {
+    ColumnLayout  {
         id: commandsColumn
 
-        width: ListView.view.width
+        width: parent.width
 
         property ListModel payloadModel: model.payload
         property var modelIndex: index
 
         RowLayout {
             Layout.fillWidth: true
+            Layout.fillHeight: true
 
             RoundButton {
                 Layout.preferredHeight: 15
                 Layout.preferredWidth: 15
+
                 padding: 0
                 hoverEnabled: true
 
@@ -60,7 +62,8 @@ Rectangle {
             TextField {
                 id: cmdNotifName
                 Layout.preferredHeight: 30
-                Layout.preferredWidth: 200
+                Layout.fillWidth: true
+                Layout.rightMargin: 10
                 selectByMouse: true
                 persistentSelection: true   // must deselect manually
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
@@ -131,7 +134,7 @@ Rectangle {
             }
         }
 
-    /*****************************************
+        /*****************************************
     * This Repeater corresponds to each property in the payload
     *****************************************/
 
@@ -141,7 +144,6 @@ Rectangle {
 
             delegate: PayloadPropertyDelegate {}
         }
-
 
         Button {
             id: addPropertyButton
