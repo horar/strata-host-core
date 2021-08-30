@@ -125,7 +125,7 @@ bool PlatformManager::disconnectPlatform(const QByteArray& deviceId, std::chrono
     if (it != openedPlatforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: "
             << deviceId << ", duration: " << disconnectDuration.count() << " ms";
-        it.value()->close(disconnectDuration, DEVICE_CHECK_INTERVAL);
+        it.value()->close(disconnectDuration);
         return true;
     }
     return false;
@@ -135,7 +135,7 @@ bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
     auto it = closedPlatforms_.constFind(deviceId);
     if (it != closedPlatforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote() << "Going to reconnect platform, deviceId:" << deviceId;
-        it.value()->open(DEVICE_CHECK_INTERVAL);
+        it.value()->open();
         return true;
     }
     return false;
@@ -211,7 +211,7 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
         connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
         connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError, Qt::QueuedConnection);
 
-        platform->open(DEVICE_CHECK_INTERVAL);
+        platform->open();
     } else {
         qCCritical(logCategoryPlatformManager) << "Unable to add platform to maps, device Id already exists";
     }
@@ -376,14 +376,10 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     switch (errCode) {
     case Device::ErrorCode::NoError: {
     } break;
-    case Device::ErrorCode::DeviceFailedToOpenRequestRetry: {
-        // no need to handle this error code
+    case Device::ErrorCode::DeviceFailedToOpen:
+    case Device::ErrorCode::DeviceFailedToOpenGoingToRetry: {
+        // no need to handle these error codes
         // qCDebug(logCategoryPlatformManager).nospace() << "Platform warning received: deviceId: " << platform->deviceId() << ", code: " << errCode << ", message: " << errStr;
-    } break;
-    case Device::ErrorCode::DeviceFailedToOpen: {
-        const QByteArray deviceId = platform->deviceId();
-        qCWarning(logCategoryPlatformManager).nospace() << "Platform didn't connect: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
-        disconnectPlatform(deviceId);
     } break;
     case Device::ErrorCode::DeviceDisconnected: {
         const QByteArray deviceId = platform->deviceId();
@@ -395,7 +391,6 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
         qCCritical(logCategoryPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
         disconnectPlatform(deviceId);
     } break;
-    default: break;
     }
 }
 

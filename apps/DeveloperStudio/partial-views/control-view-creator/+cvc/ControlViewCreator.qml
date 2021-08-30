@@ -28,8 +28,8 @@ Rectangle {
     property string previousCompiledRccFilePath: ""
     property string previousCompiledRccFileUniquePrefix: ""
     property var debugPlatform: ({
-                                     deviceId: Constants.NULL_DEVICE_ID,
-                                     classId: ""
+                                     device_id: Constants.NULL_DEVICE_ID,
+                                     class_id: ""
                                  })
 
     property alias openFilesModel: editor.openFilesModel
@@ -340,7 +340,7 @@ Rectangle {
     function requestRecompile() {
         recompileRequested = true
         controlViewLoader.setSource("")
-        Help.resetDeviceIdTour(debugPlatform.deviceId)
+        Help.resetDeviceIdTour(debugPlatform.device_id)
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
@@ -360,9 +360,9 @@ Rectangle {
         controlViewCreatorRoot.previousCompiledRccFilePath = compiledRccFile
         controlViewCreatorRoot.previousCompiledRccFileUniquePrefix = uniquePrefix
 
-        Help.setDeviceId(debugPlatform.deviceId)
-        NavigationControl.context.class_id = debugPlatform.classId
-        NavigationControl.context.device_id = debugPlatform.deviceId
+        Help.setDeviceId(debugPlatform.device_id)
+        NavigationControl.context.class_id = debugPlatform.class_id
+        NavigationControl.context.device_id = debugPlatform.device_id
 
         const controlPath = "qrc:" + uniquePrefix + "/Control.qml"
         controlViewLoader.setSource(controlPath, Object.assign({}, NavigationControl.context))

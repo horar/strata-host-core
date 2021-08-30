@@ -7,6 +7,7 @@
 #include <Device.h>
 
 #include <QSerialPort>
+#include <QTimer>
 
 namespace strata::device {
 
@@ -22,16 +23,18 @@ public:
      * SerialDevice constructor
      * @param deviceId device ID
      * @param name device name
+     * @param openRetries count of retries if 'open()' fails; default = 0, unlimited = -1 (negative number)
      */
-    SerialDevice(const QByteArray& deviceId, const QString& name);
+    SerialDevice(const QByteArray& deviceId, const QString& name, int openRetries = 0);
 
     /**
      * SerialDevice constructor
      * @param deviceId device ID
      * @param name device name
      * @param port already existing serial port
+     * @param openRetries count of retries if 'open()' fails; default = 0, unlimited = -1 (negative number)
      */
-    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port);
+    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port, int openRetries = 0);
 
     /**
      * SerialDevice destructor
@@ -84,18 +87,26 @@ public:
      */
     virtual void resetReceiving() override;
 
+    /**
+     * Set count of retries if 'open()' fails.
+     * @param retries retries count (default = 0), -1 (negative number) = unlimited
+     */
+    void setOpenRetries(int retries);
+
 private slots:
     void readMessage();
     void handleError(QSerialPort::SerialPortError error);
 
 private:
-    void initSerialDevice();
-    ErrorCode translateQSerialPortError(QSerialPort::SerialPortError error);
+    void initSerialDevice(int openRetries);
 
     SerialPortPtr serialPort_;
     std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 
     bool connected_;
+
+    QTimer openRetryTimer_;
+    int openRetries_;
 };
 
 }  // namespace

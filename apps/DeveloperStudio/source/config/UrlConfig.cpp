@@ -40,16 +40,13 @@ bool UrlConfig::parseUrl()
         return false;
     }
 
-    if (setUrlValue(value[QLatin1String("auth_server")], &authServer_) == false) {
+    if (setValue(value[QLatin1String("auth_server")], &authServer_) == false) {
         qCCritical(logCategoryStrataDevStudioConfig) << "authentication server was not set";
             return false;
     }
 
-    if (value[QLatin1String("test_auth_server")] != QJsonValue::Undefined) {
-        if (setUrlValue(value[QLatin1String("test_auth_server")], &testAuthServer_) == false) {
-            qCCritical(logCategoryStrataDevStudioConfig) << " non-production server was not set";
-                return false;
-        }
+    if (value[QLatin1String("server")] != QJsonValue::Undefined) {
+        setValue(value[QLatin1String("server")], &serverType_);
     }
 
     value = loadDoc[QLatin1String("static_website")];
@@ -58,12 +55,12 @@ bool UrlConfig::parseUrl()
         return false;
     }
 
-    if (setUrlValue(value[QLatin1String("sales_popup_url")], &salesPopupUrl_) == false ||
-        setUrlValue(value[QLatin1String("license_url")], &licenseUrl_) == false ||
-        setUrlValue(value[QLatin1String("privacy_policy_url")], &privacyPolicyUrl_) == false ||
-        setUrlValue(value[QLatin1String("mouser_url")], &mouserUrl_) == false ||
-        setUrlValue(value[QLatin1String("digikey_url")], &digiKeyUrl_) == false ||
-        setUrlValue(value[QLatin1String("avnet_url")], &avnetUrl_) == false) {
+    if (setValue(value[QLatin1String("sales_popup_url")], &salesPopupUrl_) == false ||
+        setValue(value[QLatin1String("license_url")], &licenseUrl_) == false ||
+        setValue(value[QLatin1String("privacy_policy_url")], &privacyPolicyUrl_) == false ||
+        setValue(value[QLatin1String("mouser_url")], &mouserUrl_) == false ||
+        setValue(value[QLatin1String("digikey_url")], &digiKeyUrl_) == false ||
+        setValue(value[QLatin1String("avnet_url")], &avnetUrl_) == false) {
             qCCritical(logCategoryStrataDevStudioConfig) << "at least one value from 'static websites' was not set";
             return false;
     }
@@ -71,7 +68,7 @@ bool UrlConfig::parseUrl()
     return true;
 }
 
-bool UrlConfig::setUrlValue(QJsonValue val, QString *url) {
+bool UrlConfig::setValue(QJsonValue val, QString *url) {
     if (val == QJsonValue::Undefined) {
         qCCritical(logCategoryStrataDevStudioConfig) << "missing " << val <<  " key";
         return false;
@@ -103,10 +100,6 @@ QString UrlConfig::getAuthServer() const {
     return authServer_;
 }
 
-QString UrlConfig::getTestAuthServer() const {
-    return testAuthServer_;
-}
-
 QString UrlConfig::getMouserUrl() const {
     return mouserUrl_;
 }
@@ -117,6 +110,11 @@ QString UrlConfig::getDigiKeyUrl() const {
 
 QString UrlConfig::getAvnetUrl() const {
     return avnetUrl_;
+}
+
+QString UrlConfig::getServerType() const
+{
+    return serverType_;
 }
 
 } // namespace strata::sds::config

@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
     source/ProgramControllerManager.cpp
+    source/FirmwareManager.cpp
     source/SGQrcTreeModel.cpp
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp
@@ -41,7 +42,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/RunGuard.cpp
     source/CoreUpdate.cpp
     source/PlatformInterfaceGenerator.cpp
-    source/DebugMenuGenerator.cpp
     source/BleDeviceModel.cpp
     source/VisualEditorUndoStack.cpp
 

@@ -332,7 +332,6 @@ Item {
         viewStack.currentIndex = 1
         controlViewCreatorRoot.projectInitialization = true
         controlViewCreatorRoot.recompileControlViewQrc();
-
         projectName.text = ""
         fileOutput.text = ""
     }

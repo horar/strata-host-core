@@ -61,7 +61,7 @@ public:
      * Creates JSON with list of platforms
      * @return list of platforms in JSON format
      */
-    QString createPlatformsList();
+    QJsonObject createPlatformsList();
 
     /**
      * Starts scanning for BLE devices. Will send a notification upon success/failure.
@@ -88,7 +88,7 @@ public:
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
-    void platformMessage(QString platformId, QString message);
+    void platformMessage(QString platformId, QJsonObject message);
     void bluetoothScanFinished(const QJsonObject payload);
     void connectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
     void connectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);

@@ -31,7 +31,7 @@ namespace strata::device {
             // [WARNING] - device does not have to be disconnected
 
             DeviceFailedToOpen, // device failed to open (possible cause: port open in another application)
-            DeviceFailedToOpenRequestRetry, // device failed to open, should be retried (possible cause: port open in another application)
+            DeviceFailedToOpenGoingToRetry, // device failed to open, going to retry (possible cause: port open in another application)
 
             // [ERROR] - device should be disconnected
 
