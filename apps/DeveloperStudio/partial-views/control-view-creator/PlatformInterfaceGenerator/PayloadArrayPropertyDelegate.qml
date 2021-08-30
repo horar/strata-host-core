@@ -17,7 +17,7 @@ Rectangle {
 
     color: {
         if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
-            if (Qt.colorEqual(parentColor, "#efefef")) {
+            if (parentColor == "#efefef") {
                 return "#ffffff"
             }
             return "#efefef"
@@ -132,7 +132,7 @@ Rectangle {
             }
         }
 
-        /*****************************************
+    /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
         Repeater {
@@ -154,7 +154,7 @@ Rectangle {
             }
         }
 
-        /*****************************************
+    /*****************************************
     * This Repeater corresponds to the elements in a property of type "object"
     *****************************************/
         Repeater {
