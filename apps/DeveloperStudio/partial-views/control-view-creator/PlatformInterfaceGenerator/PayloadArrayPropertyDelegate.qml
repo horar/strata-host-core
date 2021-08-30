@@ -16,10 +16,10 @@ Rectangle {
 
     color: {
         if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
-            if (parentColor == "#ffffff") {
-                return "#d3d3d3"
+            if (parentColor == "#efefef") {
+                return "#ffffff"
             }
-            return "#ffffff"
+            return "#efefef"
         }
         return parentColor
     }
