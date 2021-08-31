@@ -22,6 +22,15 @@ ColumnLayout {
     property string file: ""
     property string fileContents: ""
 
+    // multi-item selection/dragging/resizing
+    property var selectedMultiObjectsUuid: []
+    signal multiObjectsDragged(string objectInitiated, var x, var y)
+    signal multiObjectsDeselectAll()
+
+    onMultiObjectsDeselectAll: {
+        selectedMultiObjectsUuid = []
+    }
+
     property alias loader: loader
     property alias functions: functions
 
@@ -37,16 +46,6 @@ ColumnLayout {
         onTriggered: functions.checkFile()
     }
 
-    Connections {
-        target: treeModel
-        enabled: cvcUserSettings.reloadViewExternalChanges
-        onFileChanged: {
-            if (path == visualEditor.file) {
-                functions.unload(true)
-            }
-        }
-    }
-
     onVisibleChanged: {
         if (visible) {
             functions.load()
@@ -59,10 +58,16 @@ ColumnLayout {
         id: functions
     }
 
-    Item {
+    MouseArea {
         id: loaderContainer
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        onClicked: {
+            if ((mouse.modifiers & Qt.ShiftModifier) == false) {
+                multiObjectsDeselectAll()
+            }
+        }
 
         Loader {
             id: loader
@@ -141,6 +146,17 @@ ColumnLayout {
                     property real columnSize: overlayContainer.columnSize
                     property real rowSize: overlayContainer.rowSize
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: treeModel
+        enabled: cvcUserSettings.reloadViewExternalChanges
+
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                functions.unload(true)
             }
         }
     }
