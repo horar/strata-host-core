@@ -14,6 +14,8 @@ Rectangle {
     color: "#eee"
 
     signal clicked()
+    property bool filterTypeWarning: false
+    property bool filterTextError: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -40,15 +42,18 @@ Rectangle {
                     Layout.preferredHeight: 30
                     spacing: 0
 
-                    Item {
+                    Rectangle {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
+                        color: filterTypeWarning || warningMouseArea.containsMouse ? "#888" : "transparent"
+
 
                         Rectangle {
                             anchors.centerIn: parent
                             height: 16
                             width: 5
                             color: "white"
+
                         }
 
                         SGIcon {
@@ -58,6 +63,34 @@ Rectangle {
                             height: 25
                             width: height
                             enabled: consoleLogWarningCount > 0
+                        }
+
+                        MouseArea{
+                            id: warningMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: enabled
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                filterTypeWarning = !filterTypeWarning
+                                consoleLogger.test()
+
+                                //var testArray =  ["allSelected", "allSelected", "allSelected"]
+                                //consoleLogger.consoleLogs.model =  testArray
+
+                                //                                if(filterTypeWarning) {
+                                //                                    console.log("Warning")
+                                //                                    if(filterTextError) {
+                                //                                        consoleLogger.searchText = "Warning"
+                                //                                    }
+                                //                                    else {
+                                //                                        consoleLogger.searchText = "Warning"
+                                //                                    }
+                                //                                }
+                                //                                else {
+                                //                                    consoleLogger.searchText = ""
+                                //                                }
+                            }
                         }
                     }
 
@@ -69,9 +102,10 @@ Rectangle {
                         fontSizeMultiplier: 1.2
                     }
 
-                    Item {
+                    Rectangle {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
+                        color: filterTextError || errorMouseArea.containsMouse ? "#888" : "transparent"
 
                         Rectangle {
                             anchors.centerIn: parent
@@ -88,6 +122,32 @@ Rectangle {
                             width: height
                             enabled: consoleLogErrorCount > 0
                         }
+
+                        MouseArea{
+                            id: errorMouseArea
+                            anchors.fill: parent
+                            onClicked: {
+                                filterTextError = !filterTextError
+                                consoleLogger.test()
+
+
+
+                                console.log(filterTextError,filterTypeWarning)
+
+                                //                                if(filterTextError) {
+                                //                                    if(filterTypeWarning) {
+                                //                                        consoleLogger.searchText =  "Error"
+                                //                                        console.log(consoleLogger.searchText)
+                                //                                    }
+                                //                                    else {
+                                //                                        consoleLogger.searchText = "Error"
+                                //                                    }
+                                //                                }
+                                //                                else {
+                                //                                    consoleLogger.searchText = ""
+                                //                                }
+                            }
+                        }
                     }
 
                     SGText {
@@ -99,22 +159,6 @@ Rectangle {
                     }
                 }
 
-                Item {
-                    Layout.preferredHeight: 30
-                    Layout.preferredWidth: 30
-                    SGSwitch {
-                        checkedLabel: "Error"
-                        uncheckedLabel: "Warning"
-                        onToggled: {
-                            if(checked) {
-                                 consoleLogger.searchText = "Error"
-                            }
-                            else {
-                                consoleLogger.searchText = "Warning"
-                            }
-                        }
-                    }
-                }
 
                 SGControlSearchComboBox {
                     id: searchBox
@@ -122,6 +166,8 @@ Rectangle {
                     Layout.preferredWidth: 330
 
                     onTextChanged: {
+//                        filterTypeWarning = false
+//                        filterTextError = false
                         consoleLogger.searchText = text
                     }
                 }

@@ -16,6 +16,15 @@ Item {
 
     property double fontMultiplier: 1.0
     property string searchText: ""
+    property string searchType: ""
+    property var testArray: ["a", "b", "c"]
+    //    property alias consoleItems: consoleItems
+    //    property alias consoleLogs: consoleLogs
+
+    function test() {
+        consoleItems.invalidate()
+        consoleLogs.deselectAll()
+    }
 
     onFontMultiplierChanged: {
         if(fontMultiplier >= 2.5){
@@ -26,8 +35,7 @@ Item {
     }
 
     onSearchTextChanged: {
-        consoleItems.invalidate()
-        consoleLogs.deselectAll()
+        test()
     }
 
     onVisibleChanged: {
@@ -272,34 +280,86 @@ Item {
 
         function filterAcceptsRow(row){
             var item = sourceModel.get(row)
-            return containsFilterText(item)
+            var notFilter = true
+            var containFilterText = true
+
+
+            if(filterTypeWarning || filterTextError) {
+                if(filterTextError && filterTypeWarning) {
+                    notFilter = (item.type === "warning") || (item.type === "error")
+                }
+                else if(filterTypeWarning) {
+                    notFilter = (item.type === "warning")
+                }
+                else
+                    notFilter = (item.type === "error")
+            }
+
+            //            if(filterTypeWarning && item.type !== "warning") {
+            //                notFilter = false
+            //            }
+
+            //            if (filterTextError && item.type !== "error") {
+
+            //                notFilter = false
+            //            }
+
+            if(searchText !== "") {
+                containFilterText = containsFilterText(item)
+            }
+
+            if(!filterTypeWarning && !filterTextError && searchText === "") {
+                return true
+            }
+            else return containFilterText && notFilter
         }
 
         function containsFilterText(item){
-            if(searchText === ""){
-                return true
-            } else {
-                var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
-                console.log(searchMsg, )
-                if(searchBox.useCase) {
-                    if(searchMsg.includes(searchText)){
-                        return true
-                    } else {
-                        return false
-                    }
-                }
-                if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
+
+            //            if(searchText === "" && !filterTypeWarning && !filterTextError){
+            //                return true
+            //            } else {
+            var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
+
+            if(searchBox.useCase) {
+                if(searchMsg.includes(searchText)){
                     return true
                 } else {
                     return false
                 }
             }
+            if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
+                return true
+            } else {
+                return false
+            }
+            //}
+        }
+
+        function isWarning(item) {
+            if (filterTypeWarning) {
+                return item.type === "warning"
+            } else {
+                return true
+            }
+        }
+
+        function isError(item) {
+            if (filterTextError) {
+                return item.type === "error"
+            } else {
+                return true
+            }
         }
     }
+
 
     ListModel {
         id: consoleModel
     }
+    //    ListModel {
+    //        id: consoleModel2
+    //    }
 
     Connections {
         id: srcConnection
@@ -345,10 +405,10 @@ Item {
 
     function getMsgType(type) {
         switch (type) {
-        	case 0: return "debug"
-        	case 1: return "warning"
-        	case 2: return "error"
-        	case 4: return "info"
+        case 0: return "debug"
+        case 1: return "warning"
+        case 2: return "error"
+        case 4: return "info"
         }
     }
 
