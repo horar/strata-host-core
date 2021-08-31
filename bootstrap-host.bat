@@ -28,7 +28,7 @@ echo Setting up environment for Qt IFW usage..
 set PATH=C:\dev\Qt\Tools\QtInstallerFramework\3.2\bin;%PATH%
 
 echo Setting up environment for 'JOM' usage..
-set PATH="C:\dev\Qt\Tools\QtCreator\bin";%PATH%
+set PATH="C:\dev\Qt\Tools\QtCreator\jom\bin";%PATH%
 
 echo Setting up environment for CMake usage..
 set PATH="C:\Program Files\CMake\bin";%PATH%
