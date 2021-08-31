@@ -94,7 +94,7 @@ QString DownloadManager::download(
 bool DownloadManager::verifyFileHash(
         const QString &filePath,
         const QString &checksum,
-        const QCryptographicHash::Algorithm &method)
+        const QCryptographicHash::Algorithm method)
 {
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly) == false) {
