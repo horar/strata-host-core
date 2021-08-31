@@ -282,11 +282,9 @@ Item {
             if(filterTypeWarning || filterTypeError) {
                 if(filterTypeError && filterTypeWarning) {
                     notFilter = (item.type === "warning") || (item.type === "error")
-                }
-                else if(filterTypeWarning) {
+                } else if(filterTypeWarning) {
                     notFilter = (item.type === "warning")
-                }
-                else {
+                } else {
                     notFilter = (item.type === "error")
                 }
             }
@@ -297,8 +295,9 @@ Item {
 
             if(!filterTypeWarning && !filterTypeError && searchText === "") {
                 return true
+            } else {
+                return containFilterText && notFilter
             }
-            else return containFilterText && notFilter
         }
 
         function containsFilterText(item){
@@ -311,7 +310,7 @@ Item {
                     return false
                 }
             }
-            if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
+            if(searchMsg.toLowerCase().includes(searchText.toLowerCase())) {
                 return true
             } else {
                 return false
