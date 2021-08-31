@@ -116,7 +116,7 @@ function generatePlatformSelectorModel(platform_list_json) {
         generatePlatform(platform)
     }
 
-    parseConnectedPlatforms(coreInterface.connected_platform_list_)
+    parseConnectedPlatforms(coreInterface.connectedPlatformList_)
     platformSelectorModel.platformListStatus = "loaded"
 }
 
