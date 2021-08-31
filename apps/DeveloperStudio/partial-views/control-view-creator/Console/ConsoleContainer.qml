@@ -15,7 +15,7 @@ Rectangle {
 
     signal clicked()
     property bool filterTypeWarning: false
-    property bool filterTextError: false
+    property bool filterTypeError: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -29,7 +29,7 @@ Rectangle {
 
             RowLayout {
                 anchors.fill: parent
-                spacing: 5
+                spacing: 10
 
                 SGText {
                     text: "Console Output"
@@ -40,29 +40,42 @@ Rectangle {
 
                 RowLayout {
                     Layout.preferredHeight: 30
-                    spacing: 0
+                    spacing: 5
 
                     Rectangle {
-                        Layout.preferredWidth: 30
+                        Layout.preferredWidth: 45
                         Layout.preferredHeight: 30
                         color: filterTypeWarning || warningMouseArea.containsMouse ? "#888" : "transparent"
 
-
                         Rectangle {
-                            anchors.centerIn: parent
+                            anchors.centerIn: warningIcon
                             height: 16
                             width: 5
                             color: "white"
-
                         }
 
                         SGIcon {
-                            anchors.centerIn: parent
+                            id: warningIcon
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                leftMargin: 5
+                            }
                             source: "qrc:/sgimages/exclamation-triangle.svg"
                             iconColor: Theme.palette.warning
                             height: 25
                             width: height
                             enabled: consoleLogWarningCount > 0
+                        }
+
+
+                        SGText {
+                            text: consoleLogWarningCount
+                            anchors.left: warningIcon.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 2
+                            color: "white"
+                            fontSizeMultiplier: 1.2
                         }
 
                         MouseArea{
@@ -73,49 +86,30 @@ Rectangle {
 
                             onClicked: {
                                 filterTypeWarning = !filterTypeWarning
-                                consoleLogger.test()
-
-                                //var testArray =  ["allSelected", "allSelected", "allSelected"]
-                                //consoleLogger.consoleLogs.model =  testArray
-
-                                //                                if(filterTypeWarning) {
-                                //                                    console.log("Warning")
-                                //                                    if(filterTextError) {
-                                //                                        consoleLogger.searchText = "Warning"
-                                //                                    }
-                                //                                    else {
-                                //                                        consoleLogger.searchText = "Warning"
-                                //                                    }
-                                //                                }
-                                //                                else {
-                                //                                    consoleLogger.searchText = ""
-                                //                                }
+                                consoleLogger.validateSearchText()
                             }
                         }
                     }
 
-                    SGText {
-                        text: consoleLogWarningCount
-                        Layout.alignment: Qt.AlignVCenter
-                        height: 30
-                        color: "white"
-                        fontSizeMultiplier: 1.2
-                    }
-
                     Rectangle {
                         Layout.preferredHeight: 30
-                        Layout.preferredWidth: 30
-                        color: filterTextError || errorMouseArea.containsMouse ? "#888" : "transparent"
+                        Layout.preferredWidth: 45
+                        color: filterTypeError || errorMouseArea.containsMouse ? "#888" : "transparent"
 
                         Rectangle {
-                            anchors.centerIn: parent
+                            anchors.centerIn: errorIcon
                             height: 16
                             width: 5
                             color: "white"
                         }
 
                         SGIcon {
-                            anchors.centerIn: parent
+                            id: errorIcon
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                leftMargin: 5
+                            }
                             source: "qrc:/sgimages/exclamation-circle.svg"
                             iconColor: Theme.palette.error
                             height: 25
@@ -123,39 +117,23 @@ Rectangle {
                             enabled: consoleLogErrorCount > 0
                         }
 
+                        SGText {
+                            text: consoleLogErrorCount
+                            anchors.left: errorIcon.right
+                            anchors.leftMargin: 2
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            fontSizeMultiplier: 1.2
+                        }
+
                         MouseArea{
                             id: errorMouseArea
                             anchors.fill: parent
                             onClicked: {
-                                filterTextError = !filterTextError
-                                consoleLogger.test()
-
-
-
-                                console.log(filterTextError,filterTypeWarning)
-
-                                //                                if(filterTextError) {
-                                //                                    if(filterTypeWarning) {
-                                //                                        consoleLogger.searchText =  "Error"
-                                //                                        console.log(consoleLogger.searchText)
-                                //                                    }
-                                //                                    else {
-                                //                                        consoleLogger.searchText = "Error"
-                                //                                    }
-                                //                                }
-                                //                                else {
-                                //                                    consoleLogger.searchText = ""
-                                //                                }
+                                filterTypeError = !filterTypeError
+                                consoleLogger.validateSearchText()
                             }
                         }
-                    }
-
-                    SGText {
-                        text: consoleLogErrorCount
-                        Layout.alignment: Qt.AlignVCenter
-                        color: "white"
-                        height: 30
-                        fontSizeMultiplier: 1.2
                     }
                 }
 
@@ -166,8 +144,6 @@ Rectangle {
                     Layout.preferredWidth: 330
 
                     onTextChanged: {
-//                        filterTypeWarning = false
-//                        filterTextError = false
                         consoleLogger.searchText = text
                     }
                 }

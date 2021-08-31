@@ -16,12 +16,8 @@ Item {
 
     property double fontMultiplier: 1.0
     property string searchText: ""
-    property string searchType: ""
-    property var testArray: ["a", "b", "c"]
-    //    property alias consoleItems: consoleItems
-    //    property alias consoleLogs: consoleLogs
 
-    function test() {
+    function validateSearchText() {
         consoleItems.invalidate()
         consoleLogs.deselectAll()
     }
@@ -35,7 +31,7 @@ Item {
     }
 
     onSearchTextChanged: {
-        test()
+        validateSearchText()
     }
 
     onVisibleChanged: {
@@ -283,42 +279,29 @@ Item {
             var notFilter = true
             var containFilterText = true
 
-
-            if(filterTypeWarning || filterTextError) {
-                if(filterTextError && filterTypeWarning) {
+            if(filterTypeWarning || filterTypeError) {
+                if(filterTypeError && filterTypeWarning) {
                     notFilter = (item.type === "warning") || (item.type === "error")
                 }
                 else if(filterTypeWarning) {
                     notFilter = (item.type === "warning")
                 }
-                else
+                else {
                     notFilter = (item.type === "error")
+                }
             }
-
-            //            if(filterTypeWarning && item.type !== "warning") {
-            //                notFilter = false
-            //            }
-
-            //            if (filterTextError && item.type !== "error") {
-
-            //                notFilter = false
-            //            }
 
             if(searchText !== "") {
                 containFilterText = containsFilterText(item)
             }
 
-            if(!filterTypeWarning && !filterTextError && searchText === "") {
+            if(!filterTypeWarning && !filterTypeError && searchText === "") {
                 return true
             }
             else return containFilterText && notFilter
         }
 
         function containsFilterText(item){
-
-            //            if(searchText === "" && !filterTypeWarning && !filterTextError){
-            //                return true
-            //            } else {
             var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
 
             if(searchBox.useCase) {
@@ -333,33 +316,12 @@ Item {
             } else {
                 return false
             }
-            //}
-        }
-
-        function isWarning(item) {
-            if (filterTypeWarning) {
-                return item.type === "warning"
-            } else {
-                return true
-            }
-        }
-
-        function isError(item) {
-            if (filterTextError) {
-                return item.type === "error"
-            } else {
-                return true
-            }
         }
     }
-
 
     ListModel {
         id: consoleModel
     }
-    //    ListModel {
-    //        id: consoleModel2
-    //    }
 
     Connections {
         id: srcConnection
