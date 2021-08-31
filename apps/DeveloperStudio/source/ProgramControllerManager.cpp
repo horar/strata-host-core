@@ -5,21 +5,22 @@
 
 ProgramControllerManager::ProgramControllerManager(
         strata::strataRPC::StrataClient *strataClient,
+        CoreInterface *coreInterface,
         QObject *parent)
     : QObject(parent),
-      strataClient_(strataClient)
+      strataClient_(strataClient),
+      coreInterface_(coreInterface)
 {
     strataClient_->registerHandler("program_controller", std::bind(&ProgramControllerManager::replyHandler, this, std::placeholders::_1));
     strataClient_->registerHandler("program_controller_job", std::bind(&ProgramControllerManager::jobUpdateHandler, this, std::placeholders::_1));
 
-    strataClient_->registerHandler("update_firmware", std::bind(&ProgramControllerManager::replyHandler, this, std::placeholders::_1));
-    strataClient_->registerHandler("update_firmware_job", std::bind(&ProgramControllerManager::jobUpdateHandler, this, std::placeholders::_1));
+    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramControllerManager::replyHandler);
+    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
 }
 
 ProgramControllerManager::~ProgramControllerManager()
 {
 }
-
 
 void ProgramControllerManager::programAssisted(QString deviceId)
 {

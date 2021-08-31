@@ -5,12 +5,14 @@
 
 FirmwareManager::FirmwareManager(
         strata::strataRPC::StrataClient *strataClient,
+        CoreInterface *coreInterface,
         QObject *parent)
     : QObject(parent),
-      strataClient_(strataClient)
+      strataClient_(strataClient),
+      coreInterface_(coreInterface)
 {
-    strataClient_->registerHandler("update_firmware", std::bind(&FirmwareManager::replyHandler, this, std::placeholders::_1));
-    strataClient_->registerHandler("update_firmware_job", std::bind(&FirmwareManager::jobUpdateHandler, this, std::placeholders::_1));
+    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &FirmwareManager::replyHandler);
+    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &FirmwareManager::jobUpdateHandler);
 }
 
 FirmwareManager::~FirmwareManager()

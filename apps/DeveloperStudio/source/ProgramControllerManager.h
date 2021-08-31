@@ -1,6 +1,7 @@
 #pragma once
 
 #include <StrataRPC/StrataClient.h>
+#include <PlatformInterface/core/CoreInterface.h>
 
 #include <QObject>
 #include <QStringList>
@@ -15,7 +16,7 @@ class ProgramControllerManager: public QObject
     Q_DISABLE_COPY(ProgramControllerManager)
 
 public:
-    ProgramControllerManager(strata::strataRPC::StrataClient *strataClient, QObject *parent = nullptr);
+    ProgramControllerManager(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface, QObject *parent = nullptr);
     ~ProgramControllerManager();
 
     enum ProgressState {
@@ -40,6 +41,7 @@ private slots:
 
 private:
     strata::strataRPC::StrataClient *strataClient_;
+    CoreInterface *coreInterface_;
     QList<QString> requestedDeviceIds_;
     QHash<QString /*jobId*/, QString /*deviceId*/> jobIdHash_;
 
