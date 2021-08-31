@@ -12,6 +12,8 @@ import "../../components"
 RowLayout {
     id: controls
 
+    property bool hasErrors: visualEditor.hasErrors
+
     Component.onCompleted: {
         if (model.unsavedChanges) {
             console.log("Visual Editor undo/redo reset: detected local changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
@@ -28,6 +30,7 @@ RowLayout {
         checked: visualEditor.layoutDebugMode
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
+        enabled: !hasErrors
         padding: 0
 
         onCheckedChanged: {
@@ -39,6 +42,7 @@ RowLayout {
         text: "Add..."
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
+        enabled: !hasErrors
         padding: 0
 
         onClicked: {
@@ -54,6 +58,7 @@ RowLayout {
         text: "Rows/Cols..."
         implicitHeight: menuRow.height - 10
         implicitWidth: implicitContentWidth + 10
+        enabled: !hasErrors
         padding: 0
 
         onClicked: {
@@ -188,6 +193,8 @@ RowLayout {
         Layout.preferredWidth: height
         source: "qrc:/sgimages/three-dots.svg"
         iconColor: dotsMouse.containsMouse ? "black" : "grey"
+        enabled: !hasErrors
+        opacity: enabled ? 1 : .5
 
         MouseArea {
             id: dotsMouse

@@ -294,7 +294,7 @@ ColumnLayout {
 
                 ToolTip {
                     visible: toolTipMouse.containsMouse
-                    text: visualEditor.error
+                    text: "Visual Editor supports QML files only"
                 }
             }
         }
