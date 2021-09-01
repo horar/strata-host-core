@@ -916,36 +916,36 @@ int SGQWTPlotCurve::closestXAxisPointIndex(double xVal) {
         return -1; // return -1 if there is no curve
     }
 
-     int right = curveData_.count() - 1;
-     int left = 0;
-     int mid = 0;
+    int right = curveData_.count() - 1;
+    int left = 0;
+    int mid = 0;
 
-     // loop until there are only two points remaining
-     // binary search
-     while (right - left > 1) {
-         mid = (left + right) / 2;
-         currentPoint = curveData_.at(mid);
-         diff = (currentPoint.x() - xVal);
-         if (diff == 0) {
-             return mid;
-         } else if (diff < 0) {
-             left = mid;
-         } else {
-             right = mid;
-         }
-     }
+    // loop until there are only two points remaining
+    // binary search
+    while (right - left > 1) {
+        mid = (left + right) / 2;
+        currentPoint = curveData_.at(mid);
+        diff = (currentPoint.x() - xVal);
+        if (diff == 0) {
+            return mid;
+        } else if (diff < 0) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
 
-     // once only two points remain, determines which is the mouse closer to
-     QPointF leftVal = curveData_.at(left);
-     QPointF rightVal = curveData_.at(right);
-     double lDiff = abs(leftVal.x() - xVal);
-     double rDiff = abs(rightVal.x() - xVal);
+    // once only two points remain, determines which is the mouse closer to
+    QPointF leftVal = curveData_.at(left);
+    QPointF rightVal = curveData_.at(right);
+    double lDiff = abs(leftVal.x() - xVal);
+    double rDiff = abs(rightVal.x() - xVal);
 
-     if (lDiff < rDiff) {
-         return left;
-     } else {
-         return right;
-     }
+    if (lDiff < rDiff) {
+        return left;
+    } else {
+        return right;
+    }
 }
 
 /*-----------------------
