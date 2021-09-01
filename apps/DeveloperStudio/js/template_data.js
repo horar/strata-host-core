@@ -18,4 +18,9 @@ const data = [
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/visual-editor.jpg",
                    "path": ":/partial-views/control-view-creator/template-views/visual-editor/"
                },
+               {
+                   "name": "Motor Drive Template",
+                   "image": "qrc:/partial-views/control-view-creator/template-views/images/motor-template.jpg",
+                   "path": ":/partial-views/control-view-creator/template-views/motor-template/"
+               },
            ]
