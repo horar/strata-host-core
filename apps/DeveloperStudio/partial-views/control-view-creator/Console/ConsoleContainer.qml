@@ -81,7 +81,7 @@ Rectangle {
                         MouseArea{
                             id: warningMouseArea
                             anchors.fill: parent
-                            hoverEnabled: enabled
+                            hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
 
                             onClicked: {
@@ -129,6 +129,8 @@ Rectangle {
                         MouseArea{
                             id: errorMouseArea
                             anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 filterTypeError = !filterTypeError
                                 consoleLogger.validateSearchText()
