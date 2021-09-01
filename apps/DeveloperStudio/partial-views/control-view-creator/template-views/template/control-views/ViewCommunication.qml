@@ -5,11 +5,12 @@ import QtQml 2.12
 
 import tech.strata.sglayout 1.0
 
-// needs to be UIBase, or text will overflow the rectangle
-UIBase {
+Item {
     anchors {
         fill: parent
     }
+    clip: true
+
     property alias text: txt.text
 
     ScrollView {
