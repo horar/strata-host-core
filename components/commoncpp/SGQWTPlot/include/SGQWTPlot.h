@@ -218,7 +218,7 @@ public:
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
     Q_INVOKABLE void setSymbol(int newStyle , QColor color ,  int penStyle , int size);
-
+    Q_INVOKABLE int closestXAxisPointIndex(double xVal);
 
 protected:
     void setGraph(SGQWTPlot* graph);
