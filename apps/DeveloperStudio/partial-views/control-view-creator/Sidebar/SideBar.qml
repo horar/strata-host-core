@@ -9,6 +9,10 @@ import QtQml.Models 2.12
 import tech.strata.SGQrcTreeModel 1.0
 import tech.strata.SGFileTabModel 1.0
 import tech.strata.theme 1.0
+import QtQuick.Controls.Styles 1.4
+
+import tech.strata.sgwidgets 1.0
+import tech.strata.fonts 1.0
 
 import "qrc:/partial-views"
 
@@ -33,6 +37,32 @@ Item {
         backgroundVisible: false
         frameVisible: false
         alternatingRowColors: false
+        style: TreeViewStyle {
+            branchDelegate: Item {
+                width: 12; height: 12
+                SGIcon {
+                    anchors.fill: parent
+                    iconColor: expandIconMouseArea.containsMouse ? "green" : "grey"
+                    source: styleData.isExpanded ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+
+                    MouseArea {
+                        id: expandIconMouseArea
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        propagateComposedEvents: true
+                        onClicked: {
+                            if(!treeView.isExpanded(styleData.index)) {
+                                treeView.expand(styleData.index)
+                            }
+                            else {
+                                treeView.collapse(styleData.index)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         onRootIndexChanged: {
             treeModel.rootIndex = rootIndex
