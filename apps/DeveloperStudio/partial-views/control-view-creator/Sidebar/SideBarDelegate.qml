@@ -72,12 +72,6 @@ Item {
 
         onClicked: {
             if (model.filename !== "") {
-                if(!treeView.isExpanded(styleData.index)) {
-                    treeView.expand(styleData.index)
-                }
-                else {
-                    treeView.collapse(styleData.index)
-                }
                 if (mouse.button === Qt.RightButton) {
                     treeView.selectItem(styleData.index)
                     contextMenu.item.popup()
@@ -88,6 +82,13 @@ Item {
                             openFilesModel.currentId = model.uid
                         } else {
                             openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                        }
+                    } else {
+                        if(!treeView.isExpanded(styleData.index)) {
+                            treeView.expand(styleData.index)
+                        }
+                        else {
+                            treeView.collapse(styleData.index)
                         }
                     }
                 }

@@ -39,7 +39,8 @@ Item {
         alternatingRowColors: false
         style: TreeViewStyle {
             branchDelegate: Item {
-                width: 12; height: 12
+                width: 12
+                height: 12
                 SGIcon {
                     anchors.fill: parent
                     iconColor: expandIconMouseArea.containsMouse ? "green" : "grey"
@@ -52,10 +53,9 @@ Item {
                         hoverEnabled: true
                         propagateComposedEvents: true
                         onClicked: {
-                            if(!treeView.isExpanded(styleData.index)) {
+                            if (!treeView.isExpanded(styleData.index)) {
                                 treeView.expand(styleData.index)
-                            }
-                            else {
+                            } else {
                                 treeView.collapse(styleData.index)
                             }
                         }
