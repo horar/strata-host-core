@@ -189,7 +189,7 @@ Rectangle {
 
                     Text {
                         text: "No notifications found in platformInterface.json"
-                        visible: notifications.jsonModel.length === 0
+                        visible: notifications.jsonModel && notifications.jsonModel.length === 0
                         anchors {
                             centerIn: parent
                         }
@@ -238,7 +238,7 @@ Rectangle {
 
                     Text {
                         text: "No commands found in platformInterface.json"
-                        visible: commands.jsonModel.length === 0
+                        visible: commands.jsonModel && commands.jsonModel.length === 0
                         anchors {
                             centerIn: parent
                         }

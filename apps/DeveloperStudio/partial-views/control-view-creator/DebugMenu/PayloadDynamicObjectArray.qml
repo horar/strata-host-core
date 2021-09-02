@@ -6,10 +6,10 @@ import tech.strata.signals 1.0
 ColumnLayout {
     id: root
     width: parent.width
+
     property alias name: labelText.text
     property bool isArray: true
     property string payloadIndex: ""
-    property var value: ({})
 
     ColumnLayout {
         id: column
@@ -32,166 +32,149 @@ ColumnLayout {
             Layout.minimumHeight: 75
             Layout.leftMargin: 10
 
-            property var payload: ({})
+            delegate:  RowLayout {
+                id: delegateRow
 
-            onPayloadChanged: {
-                payload[root.name] = isArray ? [] : {}
-                debugDelegateRoot.updatePartialPayload(payload, payloadIndex)
-            }
+                function setType(type) {
+                    model.type = type
+                }
 
-            delegate: ColumnLayout {
-                id: delegateColumn
-                Layout.fillWidth: true
+                function setValue(value) {
+                    model.value = value
+                }
 
-                RowLayout {
-                    Item {
-                        Layout.preferredWidth: 10
+                Rectangle {
+                    id: remove
+                    Layout.preferredWidth: 30
+                    Layout.preferredHeight: 30
+                    Layout.leftMargin: 10
+                    color: "red"
+
+                    SGIcon {
+                        anchors.centerIn: parent
+                        width: 22
+                        height: 22
+                        source: "qrc:/sgimages/times.svg"
+                        iconColor: "white"
                     }
 
-                    Rectangle {
-                        id: errorBoundary
-                        Layout.preferredWidth: 30
-                        Layout.preferredHeight: 30
-                        color: "red"
+                    MouseArea {
+                        anchors.fill: remove
 
-                        SGIcon {
-                            anchors.centerIn: parent
-                            width: 22
-                            height: 22
-                            source: "qrc:/sgimages/times.svg"
-                            iconColor: "white"
+                        onClicked: {
+                            let forwardDeclaration = root.update // must save reference to 'root' as after remove(), this no longer exists
+                            listModel.remove(model.index)
+                            forwardDeclaration()
                         }
+                    }
+                }
 
-                        MouseArea {
-                            anchors.fill: errorBoundary
+                SGTextField {
+                    id: nameField
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 30
+                    visible: !root.isArray
+                    placeholderText: "key name here"
+                    text: model.key
 
-                            onClicked: {
-                                let deletedIndex = isArray ? model.index : nameField.text
-                                if (isArray) {
-                                    listView.payload[root.name].splice(deletedIndex, 1)
-                                } else {
-                                    delete listView.payload[root.name][deletedIndex]
-                                }
-                                listModel.remove(model.index)
+                    onTextChanged: {
+                        if (text !== model.key) {
+                            model.key = text
+                            root.update()
+                        }
+                    }
+                }
+
+                SGComboBox {
+                    id: comboBox
+                    Layout.preferredWidth: 75
+                    Layout.preferredHeight: 30
+                    model: [
+                        `${sdsModel.platformInterfaceGenerator.TYPE_INT}`,
+                        `${sdsModel.platformInterfaceGenerator.TYPE_BOOL}`,
+                        `${sdsModel.platformInterfaceGenerator.TYPE_STRING}`,
+                        `${sdsModel.platformInterfaceGenerator.TYPE_DOUBLE}`,
+                    ]
+
+                    onCurrentTextChanged: {
+                        delegateRow.setType(currentText)
+                        if (currentText === sdsModel.platformInterfaceGenerator.TYPE_BOOL) {
+                            delegateRow.setValue(valueBool.checked.toString())
+                            valueField.visible = false
+                            valueBool.visible = true
+                        } else {
+                            delegateRow.setValue(valueField.text)
+                            switch(comboBox.currentText) {
+                                case sdsModel.platformInterfaceGenerator.TYPE_INT:
+                                    valueField.text = "0"
+                                    break
+                                case sdsModel.platformInterfaceGenerator.TYPE_STRING:
+                                    valueField.text = "string"
+                                    break
+                                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
+                                    valueField.text = "0.0"
+                                    break
+                            }
+                            valueField.visible = true
+                            valueBool.visible = false
+                            valueField.forceActiveFocus()
+                        }
+                        root.update()
+                    }
+                }
+
+                SGText {
+                    font.bold: true
+                    text: "value"
+                }
+
+                SGTextField {
+                    id: valueField
+                    clip: true
+                    focus: true
+                    Layout.fillWidth: true
+                    Layout.rightMargin: 10
+                    Layout.preferredHeight: 30
+                    text: model.value
+
+                    placeholderText: {
+                        switch(comboBox.currentText) {
+                            case sdsModel.platformInterfaceGenerator.TYPE_INT: return 0
+                            case sdsModel.platformInterfaceGenerator.TYPE_STRING: return "Your String Here"
+                            case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE: return 0.00
+                        }
+                    }
+
+                    validator: switch(comboBox.currentText) {
+                               case sdsModel.platformInterfaceGenerator.TYPE_INT: return intValid
+                               case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE: return doubleValid
+                               }
+
+                    onTextChanged: {
+                        if (text !== "" && text !== model.value) {
+                            model.value = text
+
+                            if (visible) {
+                                root.update()
                             }
                         }
                     }
+                }
 
-                    SGTextField {
-                        id: nameField
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-                        visible: !root.isArray
-                        placeholderText: "key"
-                    }
+                SGSwitch {
+                    id: valueBool
+                    checkedLabel: "true"
+                    uncheckedLabel: "false"
+                    checked: false
+                    Layout.fillWidth: true
+                    Layout.rightMargin: 10
+                    Layout.preferredHeight: 30
 
-                    SGComboBox {
-                        id: comboBox
-                        model: [
-                            `${sdsModel.platformInterfaceGenerator.TYPE_INT}`,
-                            `${sdsModel.platformInterfaceGenerator.TYPE_BOOL}`,
-                            `${sdsModel.platformInterfaceGenerator.TYPE_STRING}`,
-                            `${sdsModel.platformInterfaceGenerator.TYPE_DOUBLE}`,
-                        ]
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-                    }
-
-                    SGText {
-                        font.bold: true
-                        text: "value"
-                    }
-
-                    Loader {
-                        id: loader
-                        active: true
-                        sourceComponent: comboBox.currentIndex !== 1 ? inputComponent : switchComponent
-                        Layout.fillWidth: true
-                        Layout.rightMargin: 10
-
-                        Component {
-                            id: inputComponent
-
-                            SGTextField {
-                                anchors.centerIn: loader
-                                clip: true
-                                readOnly: isArray ? false : nameField.length < 1
-                                placeholderText: {
-                                     switch(comboBox.currentText) {
-                                            case "int": return 0
-                                            case "string": return ""
-                                            case "double": return 0.00
-                                    }
-                                }
-
-                                validator: switch(comboBox.currentText) {
-                                    case "int": return intValid
-                                    case "double": return doubleValid
-                                }
-                                focus: true
-
-                                Component.onCompleted: {
-                                    let value
-                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
-                                    switch(comboBox.currentText) {
-                                           case "int": value = parseInt(text)
-                                               break;
-                                           case "string": value = text
-                                               break;
-                                           case "double": value = parseFloat(text)
-                                               break;
-                                    }
-                                    listView.payload[root.name][newIndex] = value
-                                    root.value = value
-                                    debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
-                                }
-
-                                onTextChanged: {
-                                    let value
-                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
-                                    switch(comboBox.currentText) {
-                                           case "int": value = parseInt(text)
-                                               break;
-                                           case "string": value = text
-                                               break;
-                                           case "double": value = parseFloat(text)
-                                               break;
-                                    }
-                                    listView.payload[root.name][newIndex] = value
-                                    root.value = value
-                                    debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
-                                }
-                            }
+                    onCheckedChanged: {
+                        model.value = checked.toString()
+                        if (visible) {
+                            root.update()
                         }
-
-                        Component {
-                            id: switchComponent
-
-                            SGSwitch {
-                                anchors.centerIn: loader
-                                checkedLabel: "true"
-                                uncheckedLabel: "false"
-                                checked: false
-
-                                Component.onCompleted: {
-                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
-                                    listView.payload[root.name][newIndex] = checked
-                                    root.value = value
-                                    debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
-                                }
-
-                                onCheckedChanged: {
-                                    let newIndex = isArray ? model.index : nameField.text.length > 0 ? nameField.text : nameField.placeholderText
-                                    listView.payload[root.name][newIndex] = checked
-                                    root.value = value
-                                    debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
-                                }
-                            }
-                        }
-                    }
-
-                    Item {
-                        Layout.preferredWidth: 10
                     }
                 }
             }
@@ -202,10 +185,10 @@ ColumnLayout {
             text: "Add Property"
             Layout.preferredWidth: 200
             Layout.preferredHeight: 30
-            Layout.leftMargin: 50
+            Layout.alignment: Qt.AlignHCenter
 
             onClicked: {
-                listModel.append({"name": "", "type": "", "value": null, "payloadIndex": root.payloadIndex})
+                listModel.append({type: sdsModel.platformInterfaceGenerator.TYPE_INT, value: "0", key: "key"})
             }
         }
     }
@@ -220,5 +203,39 @@ ColumnLayout {
 
     DoubleValidator {
         id: doubleValid
+    }
+
+    function update() {
+        let payload = {}
+        payload[root.name] = isArray ? [] : {}
+
+        for (let i = 0; i < listModel.count; i++) {
+            let object = listModel.get(i)
+            let value
+            switch(object.type) {
+                case sdsModel.platformInterfaceGenerator.TYPE_INT:
+                    value = parseInt(object.value)
+                    break
+                case sdsModel.platformInterfaceGenerator.TYPE_STRING:
+                    value = object.value
+                    break
+                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
+                    value = parseFloat(object.value)
+                    break
+                case sdsModel.platformInterfaceGenerator.TYPE_BOOL:
+                    value = (object.value === "true")
+                    break
+            }
+
+            if (isArray) {
+                payload[root.name].push(value)
+            } else {
+                payload[root.name][object.key] = value
+            }
+        }
+
+        console.log("FALLER:", JSON.stringify(payload, null, 2))
+
+        debugDelegateRoot.updatePartialPayload(payload, root.payloadIndex)
     }
 }
