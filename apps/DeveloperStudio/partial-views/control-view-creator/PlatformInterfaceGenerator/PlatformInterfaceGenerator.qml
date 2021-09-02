@@ -86,11 +86,7 @@ Item {
         id: functions
     }
 
-    /********************************************************************************************
-        * All functions in here are for APIv0.
-        * This allows deprecated PI.json to function as expected
-        * When the user generates again, their PI.json file be updated to APIv1
-    /*******************************************************************************************/
+    // All deprecated functions needed for PIG
     PIGDeprecatedFunctions {
         id: deprecatedFunctions
     }
