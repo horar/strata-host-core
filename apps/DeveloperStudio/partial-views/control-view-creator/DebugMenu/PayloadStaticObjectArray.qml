@@ -17,20 +17,14 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: 10
 
-        RowLayout {
+        SGText {
+            id: labelText
+            font.bold: true
+            fontSizeMultiplier: 1.2
             Layout.fillWidth: true
-            Layout.minimumHeight: 50
-
-            SGText {
-                id: labelText
-                font.bold: true
-                fontSizeMultiplier: 1.2
-                Layout.fillWidth: true
-            }
-
-            Item {
-                Layout.preferredWidth: 10
-            }
+            Layout.rightMargin: 10
+            Layout.topMargin: 10
+            elide: Text.ElideRight
         }
 
         Repeater {
@@ -38,11 +32,7 @@ ColumnLayout {
             Layout.minimumWidth: 300
             Layout.minimumHeight: 100
 
-            property var payload: ({})
-
-            onPayloadChanged: {
-                payload[labelText.text] = isArray ? [] : {}
-            }
+            property var payload: isArray ? [] : {}
 
             delegate: RowLayout {
                 id: inputRow
@@ -81,21 +71,22 @@ ColumnLayout {
                                 switch(modelData.type) {
                                     case "int":
                                         textVal = Number(value)
-                                        break;
+                                        break
                                     case "double":
                                         textVal = Number(value)
-                                        break;
+                                        break
                                     default: textVal = value
                                 }
-                                listView.payload[labelText.text][keyIndex] = isJson(value) ? JSON.parse(value) : textVal
-                                debugDelegateRoot.updatePartialPayload(listView.payload)
+                                listView.payload[keyIndex] = isJson(value) ? JSON.parse(value) : textVal
+                                root.update()
                             }
 
                             function isJson(str) {
                                 try {
-                                    return JSON.parse(str);
+                                    JSON.parse(str)
+                                    return true
                                 } catch (e) {
-                                    return false;
+                                    return false
                                 }
                             }
 
@@ -104,11 +95,11 @@ ColumnLayout {
                                     const retVal = type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC ? [] : {}
                                     if (Array.isArray(retVal)) {
                                         for (let i = 0; i < value.length; i++) {
-                                            retVal[i] = createTextValue(value[i].value, value[i].type)
+                                            retVal[i] = JSON.parse(createTextValue(value[i].value, value[i].type))
                                         }
                                     } else {
                                         for (let i = 0;i < value.length; i++) {
-                                            retVal[value[i].name] = createTextValue(value[i].value, value[i].type)
+                                            retVal[value[i].name] = JSON.parse(createTextValue(value[i].value, value[i].type))
                                         }
                                     }
                                     return JSON.stringify(retVal)
@@ -143,17 +134,13 @@ ColumnLayout {
 
                             function update() {
                                 const keyIndex = isArray ? parseInt(name.split(":")[1].trim()) : name
-                                listView.payload[labelText.text][keyIndex] = value
-                                debugDelegateRoot.updatePartialPayload(listView.payload)
+                                listView.payload[keyIndex] = value
+                                root.update()
                             }
                         }
                     }
                 }
             }
-        }
-
-        Item {
-            Layout.preferredHeight: 10
         }
     }
 
@@ -163,5 +150,11 @@ ColumnLayout {
 
     DoubleValidator {
         id: doubleValid
+    }
+
+    function update() {
+        let payload = {}
+        payload[root.name] = listView.payload
+        debugDelegateRoot.updatePartialPayload(payload)
     }
 }
