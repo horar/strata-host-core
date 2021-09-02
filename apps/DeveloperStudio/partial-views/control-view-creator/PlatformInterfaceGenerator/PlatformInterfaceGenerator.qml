@@ -209,7 +209,7 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             alertToast.hide()
-                            inputFileDialog.folder = fileDialogFolder()
+                            inputFileDialog.folder = functions.fileDialogFolder()
                             inputFileDialog.open()
                         }
                     }
@@ -283,7 +283,7 @@ Item {
 
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
-                                outputFileDialog.folder = fileDialogFolder()
+                                outputFileDialog.folder = functions.fileDialogFolder()
                                 outputFileDialog.open()
                             }
                         }

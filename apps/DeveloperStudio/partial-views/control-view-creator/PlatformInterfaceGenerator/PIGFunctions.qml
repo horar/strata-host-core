@@ -640,4 +640,22 @@ Item {
     function findProjectRootDir() {
         return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
     }
+
+    /**
+      * determines the fileDialog.folder to open depending on recent and current projects
+    **/
+    function fileDialogFolder() {
+        // checks if the user has recently opened a file and uses that path
+        // then, if there projects in the recent projects model and uses that dir path
+        // else, the user's home directory is opened                
+        let path = currentCvcProjectJsonUrl
+        if (SGUtilsCpp.isValidFile(path)) {
+            path = SGUtilsCpp.urlToLocalFile(path)
+            path = SGUtilsCpp.parentDirectoryPath(path)
+            path = SGUtilsCpp.pathToUrl(path)
+            return path
+        } else {
+            return startContainer.openControlView.fileDialogFolder()
+        }
+    }
 }
