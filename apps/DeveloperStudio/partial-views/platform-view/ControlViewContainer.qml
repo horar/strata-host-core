@@ -168,7 +168,7 @@ Item {
 
             activeDownloadUri = controlViewList.uri(latestVersionIndex)
 
-            strataClient.sendRequest("download_view", downloadCommand);
+            sdsModel.strataClient.sendRequest("download_view", downloadCommand);
         }
     }
 
