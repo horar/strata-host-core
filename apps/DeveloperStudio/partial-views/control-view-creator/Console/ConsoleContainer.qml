@@ -68,7 +68,6 @@ Rectangle {
                             enabled: consoleLogWarningCount > 0
                         }
 
-
                         SGText {
                             text: consoleLogWarningCount
                             anchors.left: warningIcon.right

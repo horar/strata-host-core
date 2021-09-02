@@ -279,8 +279,8 @@ Item {
             var notFilter = true
             var containFilterText = true
 
-            if(filterTypeWarning || filterTypeError) {
-                if(filterTypeError && filterTypeWarning) {
+            if  (filterTypeWarning || filterTypeError) {
+                if (filterTypeError && filterTypeWarning) {
                     notFilter = (item.type === "warning") || (item.type === "error")
                 } else if(filterTypeWarning) {
                     notFilter = (item.type === "warning")
@@ -289,11 +289,11 @@ Item {
                 }
             }
 
-            if(searchText !== "") {
+            if (searchText !== "") {
                 containFilterText = containsFilterText(item)
             }
 
-            if(!filterTypeWarning && !filterTypeError && searchText === "") {
+            if (!filterTypeWarning && !filterTypeError && searchText === "") {
                 return true
             } else {
                 return containFilterText && notFilter
@@ -303,14 +303,14 @@ Item {
         function containsFilterText(item){
             var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
 
-            if(searchBox.useCase) {
+            if (searchBox.useCase) {
                 if(searchMsg.includes(searchText)){
                     return true
                 } else {
                     return false
                 }
             }
-            if(searchMsg.toLowerCase().includes(searchText.toLowerCase())) {
+            if (searchMsg.toLowerCase().includes(searchText.toLowerCase())) {
                 return true
             } else {
                 return false
@@ -366,10 +366,10 @@ Item {
 
     function getMsgType(type) {
         switch (type) {
-           case 0: return "debug"
-           case 1: return "warning"
-           case 2: return "error"
-           case 4: return "info"
+            case 0: return "debug"
+            case 1: return "warning"
+            case 2: return "error"
+            case 4: return "info"
         }
     }
 
