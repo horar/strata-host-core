@@ -36,6 +36,17 @@ Rectangle {
         url: root.url === "datasheet-unavailable" ? "qrc:/tech/pdfjs/minified/web/viewer.html?file=" :"qrc:/tech/pdfjs/minified/web/viewer.html?file=" + root.url
         enabled: url != "qrc:/tech/pdfjs/minified/web/viewer.html?file="
 
+        onNavigationRequested: {
+            if (request.url.toString().startsWith("qrc:")) {
+                // internal requests will always start with qrc:/tech/pdfjs/minified/web/viewer.html?file=...
+                request.action = WebEngineNavigationRequest.AcceptRequest
+            } else {
+                // external request when user clicked on hyperlink should be opened in dedicated browser
+                request.action = WebEngineNavigationRequest.IgnoreRequest
+                Qt.openUrlExternally(request.url);
+            }
+        }
+
         profile: WebEngineProfile {
             onDownloadRequested: {
                 download.accept()
