@@ -21,6 +21,13 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
     strataClient_->registerHandler(
         "update_firmware_job", std::bind(&CoreInterface::processUpdateFirmwareJobNotification, this,
                                          std::placeholders::_1));
+    strataClient_->registerHandler(
+        "control_view_download_progress",
+        std::bind(&CoreInterface::processDownloadControlViewProgressNotification, this,
+                  std::placeholders::_1));
+    strataClient_->registerHandler(
+        "download_view_finished", std::bind(&CoreInterface::processDownloadViewFinishedNotification,
+                                            this, std::placeholders::_1));
 }
 
 CoreInterface::~CoreInterface()
