@@ -50,7 +50,7 @@ Item {
         case "debug": return Theme.palette.lightBlue
         case "warning": return Theme.palette.warning
         case "error": return Theme.palette.error
-        case "info": return Theme.palette.green
+        case "info": return Theme.palette.onsemiOrange
         default: return "#aaa"
         }
     }
