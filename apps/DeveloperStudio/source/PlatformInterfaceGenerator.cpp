@@ -225,7 +225,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         commandBody += insertTabs(indentLevel + 2) + "this.set(" + updateFunctionKwRemoved.join(", ") + ")\n";
     }
     commandBody += insertTabs(indentLevel + 2) + "this.send()\n";
-    commandBody += insertTabs(indentLevel + 1) + "}\n";
+    commandBody += insertTabs(indentLevel + 1) + "}\n\n";
 
     // Create set function if necessary
     if (updateFunctionParams.count() > 0) {
@@ -233,7 +233,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         for (int i = 0; i < updateFunctionParams.count(); ++i) {
             commandBody += insertTabs(indentLevel + 2) + "this." + updateFunctionParams.at(i) + " = " + updateFunctionKwRemoved.at(i) + "\n";
         }
-        commandBody += insertTabs(indentLevel + 1) + "}\n";
+        commandBody += insertTabs(indentLevel + 1) + "}\n\n";
     }
 
     // Create send function
