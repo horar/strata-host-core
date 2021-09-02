@@ -97,12 +97,6 @@ signals:
     void downloadControlViewProgress(const QJsonObject &payload);
 
     /**
-     * Signal emitted when update_firmware notification is received.
-     * @param [in] payload QJsonObject of update_firmware notification payload.
-     */
-    void updateFirmwareReply(const QJsonObject &payload);
-
-    /**
      * Signal emitted when update_firmware_job notification is received.
      * @param [in] payload QJsonObject of update_firmware_job notification payload.
      */
@@ -115,7 +109,6 @@ private:
     void processUpdatesAvailableNotification(const QJsonObject &payload);
     void processDownloadViewFinishedNotification(const QJsonObject &payload);
     void processDownloadControlViewProgressNotification(const QJsonObject &payload);
-    void processUpdateFirmwareNotification(const QJsonObject &payload);
     void processUpdateFirmwareJobNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};

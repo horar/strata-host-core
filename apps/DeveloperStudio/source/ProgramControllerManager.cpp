@@ -11,10 +11,8 @@ ProgramControllerManager::ProgramControllerManager(
       strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
-    strataClient_->registerHandler("program_controller", std::bind(&ProgramControllerManager::replyHandler, this, std::placeholders::_1));
     strataClient_->registerHandler("program_controller_job", std::bind(&ProgramControllerManager::jobUpdateHandler, this, std::placeholders::_1));
 
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramControllerManager::replyHandler);
     connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
 }
 
@@ -26,20 +24,34 @@ void ProgramControllerManager::programAssisted(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
+    auto deferredRequest = strataClient_->sendRequest("program_controller", cmdPayloadObject);
+
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio) << "Failed to send program_controller request";
+        return;
+    }
 
     requestedDeviceIds_.append(deviceId);
 
-    strataClient_->sendRequest("program_controller", cmdPayloadObject);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &ProgramControllerManager::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &ProgramControllerManager::replyHandler);
 }
 
 void ProgramControllerManager::programEmbedded(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
+    auto deferredRequest = strataClient_->sendRequest("update_firmware", cmdPayloadObject);
+
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio) << "Failed to send update_firmware request";
+        return;
+    }
 
     requestedDeviceIds_.append(deviceId);
 
-    strataClient_->sendRequest("update_firmware", cmdPayloadObject);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &ProgramControllerManager::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &ProgramControllerManager::replyHandler);
 }
 
 void ProgramControllerManager::replyHandler(QJsonObject payload)

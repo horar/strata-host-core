@@ -11,7 +11,6 @@ FirmwareManager::FirmwareManager(
       strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &FirmwareManager::replyHandler);
     connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &FirmwareManager::jobUpdateHandler);
 }
 
@@ -37,9 +36,18 @@ bool FirmwareManager::updateFirmware(QString deviceId, QString uri, QString md5)
     cmdPayloadObject.insert("path", uri);
     cmdPayloadObject.insert("md5", md5);
 
+    auto deferredRequest = strataClient_->sendRequest("update_firmware", cmdPayloadObject);
+
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio) << "Failed to send update_firmware request";
+        return false;
+    }
+
     deviceData_.insert(deviceId, {uri, md5, QString(), QString(), QString(), 0.0});
 
-    strataClient_->sendRequest("update_firmware", cmdPayloadObject);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &FirmwareManager::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &FirmwareManager::replyHandler);
+
     return true;
 }
 

@@ -19,9 +19,6 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
         "updates_available", std::bind(&CoreInterface::processUpdatesAvailableNotification, this,
                                        std::placeholders::_1));
     strataClient_->registerHandler(
-        "update_firmware",
-        std::bind(&CoreInterface::processUpdateFirmwareNotification, this, std::placeholders::_1));
-    strataClient_->registerHandler(
         "update_firmware_job", std::bind(&CoreInterface::processUpdateFirmwareJobNotification, this,
                                          std::placeholders::_1));
 }
@@ -78,11 +75,6 @@ void CoreInterface::processDownloadViewFinishedNotification(const QJsonObject &p
 void CoreInterface::processDownloadControlViewProgressNotification(const QJsonObject &payload)
 {
     emit downloadControlViewProgress(payload);
-}
-
-void CoreInterface::processUpdateFirmwareNotification(const QJsonObject &payload)
-{
-    emit updateFirmwareReply(payload);
 }
 
 void CoreInterface::processUpdateFirmwareJobNotification(const QJsonObject &payload)
