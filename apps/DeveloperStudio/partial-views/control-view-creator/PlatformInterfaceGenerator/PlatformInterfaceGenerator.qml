@@ -12,8 +12,6 @@ import "../"
 Item {
     id: root
 
-    property alias root: root
-
     property bool unsavedChanges: false
     property string inputFilePath
     property string currentCvcProjectQrcUrl
@@ -82,13 +80,8 @@ Item {
     }
 
     // All functions needed for PIG
-    PIGFunctions {
+    Functions {
         id: functions
-    }
-
-    // All deprecated functions needed for PIG
-    PIGDeprecatedFunctions {
-        id: deprecatedFunctions
     }
 
     ListModel {

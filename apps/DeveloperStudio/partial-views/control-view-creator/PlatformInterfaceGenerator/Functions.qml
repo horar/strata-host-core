@@ -11,6 +11,11 @@ import "../"
 
 Item {
     id: rootFunctions
+
+    // All deprecated functions needed for PIG
+    DeprecatedFunctions {
+        id: deprecatedFunctions
+    }
     
     /**
       * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
