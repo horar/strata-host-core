@@ -366,10 +366,10 @@ Item {
 
     function getMsgType(type) {
         switch (type) {
-            case 0: return "debug"
-            case 1: return "warning"
-            case 2: return "error"
-            case 4: return "info"
+        	case 0: return "debug"
+        	case 1: return "warning"
+        	case 2: return "error"
+        	case 4: return "info"
         }
     }
 
