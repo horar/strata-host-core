@@ -9,7 +9,10 @@ ColumnLayout {
 
     property alias name: labelText.text
     property bool isArray: true
-    property string payloadIndex: ""
+
+    Component.onCompleted: {
+        update()
+    }
 
     ColumnLayout {
         id: column
@@ -234,8 +237,6 @@ ColumnLayout {
             }
         }
 
-        console.log("FALLER:", JSON.stringify(payload, null, 2))
-
-        debugDelegateRoot.updatePartialPayload(payload, root.payloadIndex)
+        debugDelegateRoot.updatePartialPayload(payload)
     }
 }

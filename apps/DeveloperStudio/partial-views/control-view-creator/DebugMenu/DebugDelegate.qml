@@ -13,12 +13,6 @@ Item {
     property alias payload: payloadRepeater.model
     property var payloadJSON: ({})
 
-    onPayloadJSONChanged: {
-        if (!payloadJSON.hasOwnProperty(debugDelegateRoot.name)) {
-            payloadJSON[debugDelegateRoot.name] = {}
-        }
-    }
-
     ColumnLayout {
         id: column
         width: debugDelegateRoot.width
@@ -32,7 +26,6 @@ Item {
             id: payloadRepeater
             delegate: PayloadDelegate {
                 id: payloadDelegate
-                payloadIndex: debugDelegateRoot.name
                 Layout.fillWidth: true
             }
         }
@@ -47,30 +40,21 @@ Item {
             Layout.preferredHeight: 35
             Layout.preferredWidth: 250
             Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: 10
             text: `Send ${type}`
 
             onClicked: {
                 if (type === "Command") {
-                    debugMenuRoot.updateAndCreatePayload({"cmd": name, "payload": payloadJSON[name]})
+                    debugMenuRoot.updateAndCreatePayload({"cmd": name, "payload": payloadJSON})
                 } else {
-                    debugMenuRoot.updateAndCreatePayload({"value": name, "payload": payloadJSON[name]})
+                    debugMenuRoot.updateAndCreatePayload({"value": name, "payload": payloadJSON})
                 }
             }
         }
-
-        Item {
-            Layout.preferredHeight: 10
-            Layout.fillWidth: true
-        }
     }
 
-    function updatePartialPayload (partialJson, cmdName) {
-        if (payload !== null && debugDelegateRoot.name === cmdName) {
-            if (!payloadJSON.hasOwnProperty(cmdName)) {
-                payloadJSON[cmdName] = {}
-            }
-            payloadJSON[cmdName] = Object.assign(payloadJSON[cmdName], partialJson)
-        }
+    function updatePartialPayload (partialJson) {
+        Object.assign(payloadJSON, partialJson)  // copy/merge contents of partialJson into payloadJSON
     }
 }
 

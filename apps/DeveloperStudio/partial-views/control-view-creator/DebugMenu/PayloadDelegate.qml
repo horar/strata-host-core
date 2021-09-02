@@ -10,14 +10,6 @@ Loader {
     property string type: modelData.type
     property string name: modelData.name === undefined ? index : modelData.name
     property var value: modelData.value
-    property string payloadIndex: ""
-
-    onPayloadIndexChanged: {
-        const keyValue = {}
-        keyValue[name] = value
-        debugDelegateRoot.updatePartialPayload(keyValue, payloadIndex)
-        payloadDelegateRoot.active = true
-    }
 
     sourceComponent: switch(type) {
                         case sdsModel.platformInterfaceGenerator.TYPE_INT: typeInput
@@ -47,7 +39,18 @@ Loader {
             type: payloadDelegateRoot.type
             value: payloadDelegateRoot.value
 
+            Component.onCompleted: {
+                update()
+                initialized = true
+            }
+
             onValueChanged: {
+                if (initialized) {
+                    update()
+                }
+            }
+
+            function update() {
                 const keyValue = {}
                 let defaultVal = value
                 switch(type) {
@@ -57,7 +60,7 @@ Loader {
                         break
                 }
                 keyValue[name] = defaultVal
-                debugDelegateRoot.updatePartialPayload(keyValue, payloadIndex)
+                debugDelegateRoot.updatePartialPayload(keyValue)
             }
         }
     }
@@ -69,10 +72,21 @@ Loader {
             name: payloadDelegateRoot.name
             value: payloadDelegateRoot.value
 
+            Component.onCompleted: {
+                update()
+                initialized = true
+            }
+
             onValueChanged: {
+                if (initialized) {
+                    update()
+                }
+            }
+
+            function update() {
                 const keyValue = {}
                 keyValue[name] = value
-                debugDelegateRoot.updatePartialPayload(keyValue, payloadIndex)
+                debugDelegateRoot.updatePartialPayload(keyValue)
             }
         }
     }
@@ -83,7 +97,6 @@ Loader {
         PayloadStaticObjectArray {
             name: payloadDelegateRoot.name
             value: payloadDelegateRoot.value
-            payloadIndex: payloadDelegateRoot.payloadIndex
             isArray: payloadDelegateRoot.type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
         }
     }
@@ -93,7 +106,6 @@ Loader {
 
         PayloadDynamicObjectArray {
             name: payloadDelegateRoot.name
-            payloadIndex: payloadDelegateRoot.payloadIndex
             isArray: type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC
         }
     }

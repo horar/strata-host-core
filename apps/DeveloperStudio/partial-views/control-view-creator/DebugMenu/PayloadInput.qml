@@ -7,9 +7,11 @@ import tech.strata.signals 1.0
 Item {
     width: parent.width
     height: row.height
-    
-    property alias name: labelText.text
+
+    property bool initialized: false
     property string type: ""
+
+    property alias name: labelText.text
     property alias value: textInput.text
 
     RowLayout {

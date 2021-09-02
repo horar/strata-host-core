@@ -7,10 +7,10 @@ import tech.strata.theme 1.0
 ColumnLayout {
     id: root
     width: parent.width
+
     property alias name: labelText.text
     property alias value: listView.model
     property bool isArray: true
-    property string payloadIndex: ""
 
     ColumnLayout {
         id: column
@@ -58,23 +58,37 @@ ColumnLayout {
 
                     Component {
                         id: textInputComponent
+
                         PayloadInput {
                             name: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
                             type: modelData.type
                             value: createTextValue(modelData.value, modelData.type)
 
+                            Component.onCompleted: {
+                                update()
+                                initialized = true
+                            }
+
                             onValueChanged: {
+                                if (initialized) {
+                                    update()
+                                }
+                            }
+
+                            function update() {
                                 const keyIndex = isArray ? parseInt(name.split(":")[1].trim()) : name
                                 let textVal;
                                 switch(modelData.type) {
-                                    case "int": textVal = Number(value)
-                                    break;
-                                    case "double": textVal = Number(value)
-                                    break;
+                                    case "int":
+                                        textVal = Number(value)
+                                        break;
+                                    case "double":
+                                        textVal = Number(value)
+                                        break;
                                     default: textVal = value
                                 }
                                 listView.payload[labelText.text][keyIndex] = isJson(value) ? JSON.parse(value) : textVal
-                                debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+                                debugDelegateRoot.updatePartialPayload(listView.payload)
                             }
 
                             function isJson(str) {
@@ -116,10 +130,21 @@ ColumnLayout {
                             name: modelData.hasOwnProperty("name") ? modelData.name : `index: ${index}`
                             value: modelData.value
 
+                            Component.onCompleted: {
+                                update()
+                                initialized = true
+                            }
+
                             onValueChanged: {
+                                if (initialized) {
+                                    update()
+                                }
+                            }
+
+                            function update() {
                                 const keyIndex = isArray ? parseInt(name.split(":")[1].trim()) : name
                                 listView.payload[labelText.text][keyIndex] = value
-                                debugDelegateRoot.updatePartialPayload(listView.payload, payloadIndex)
+                                debugDelegateRoot.updatePartialPayload(listView.payload)
                             }
                         }
                     }

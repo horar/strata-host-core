@@ -6,6 +6,9 @@ import tech.strata.signals 1.0
 Item {
     width: parent.width
     height: row.height
+
+    property bool initialized: false
+
     property alias name: labelText.text
     property alias value: payloadEnabled.checked
 
