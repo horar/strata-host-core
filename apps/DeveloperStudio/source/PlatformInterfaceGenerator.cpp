@@ -163,11 +163,11 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
     QString documentationText = generateComment("@command " + cmd, indentLevel);
     QString commandBody = "";
 
-    commandBody += insertTabs(indentLevel) + "property var " + cmd + ": ({\n";
-    commandBody += insertTabs(indentLevel + 1) + "\"cmd\": \"" + cmd + "\",\n";
+    commandBody += insertTabs(indentLevel) + "property QtObject " + cmd + ": QtObject {\n";
 
     QStringList updateFunctionParams;
     QStringList updateFunctionKwRemoved;
+    QStringList payloadProperties;
 
     if (command.contains("payload") && command["payload"].isNull() == false) {
         QJsonArray payload = command["payload"].toArray();
@@ -180,9 +180,6 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         updateFunctionKwRemoved = updateFunctionParams;
         removeReservedKeywords(updateFunctionKwRemoved);
 
-        commandBody += insertTabs(indentLevel + 1) + "\"payload\": {\n";
-        QStringList payloadProperties;
-
         for (QJsonValue payloadPropertyValue : payload) {
             QJsonObject payloadProperty = payloadPropertyValue.toObject();
             QJsonValue propNameValue = payloadProperty.value("name");
@@ -191,7 +188,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
             QJsonValue typeValue = payloadProperty.value("type");
             QString propType = typeValue.toString();
 
-            payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + propName + "\": " + getPropertyValue(payloadProperty, propType, indentLevel + 2));
+            payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + propName + "\": " + propName);
 
             if (lastError_.length() > 0) {
                 qCCritical(logCategoryControlViewCreator) << lastError_;
@@ -203,38 +200,56 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
             } else {
                 documentationText += generateComment("@property " + propName + ": " + propType, indentLevel);
             }
+
+            if (propType == TYPE_OBJECT_STATIC || propType == TYPE_ARRAY_STATIC) {
+                continue;
+            } else if (propType == TYPE_ARRAY_DYNAMIC || propType == TYPE_OBJECT_DYNAMIC) {
+                commandBody += insertTabs(indentLevel + 1) + "property var " + propName + ": " + getPropertyValue(payloadProperty, propType, indentLevel) + "\n";
+            } else {
+                commandBody += insertTabs(indentLevel + 1) + "property " + propType + " " + propName + ": " + getPropertyValue(payloadProperty, propType, indentLevel) + "\n";
+            }
         }
 
-        commandBody += payloadProperties.join(",\n");
+        commandBody += "\n" + insertTabs(indentLevel + 1) + "signal commandSent()\n";
+
         commandBody += "\n";
-        commandBody += insertTabs(indentLevel + 1) + "},\n";
-        commandBody += insertTabs(indentLevel + 1) + "update: function (";
+        commandBody += insertTabs(indentLevel + 1) + "function update(";
         commandBody += updateFunctionKwRemoved.join(", ");
         commandBody += ") {\n";
     } else {
-        commandBody += insertTabs(indentLevel + 1) + "update: function () {\n";
+        commandBody += insertTabs(indentLevel + 1) + "function update() {\n";
     }
 
     // Write update function definition
     if (updateFunctionParams.count() > 0) {
         commandBody += insertTabs(indentLevel + 2) + "this.set(" + updateFunctionKwRemoved.join(", ") + ")\n";
     }
-    commandBody += insertTabs(indentLevel + 2) + "this.send(this)\n";
-    commandBody += insertTabs(indentLevel + 1) + "},\n";
+    commandBody += insertTabs(indentLevel + 2) + "this.send()\n";
+    commandBody += insertTabs(indentLevel + 1) + "}\n";
 
     // Create set function if necessary
     if (updateFunctionParams.count() > 0) {
-        commandBody += insertTabs(indentLevel + 1) + "set: function (" + updateFunctionKwRemoved.join(", ") + ") {\n";
+        commandBody += insertTabs(indentLevel + 1) + "function set(" + updateFunctionKwRemoved.join(", ") + ") {\n";
         for (int i = 0; i < updateFunctionParams.count(); ++i) {
-            commandBody += insertTabs(indentLevel + 2) + "this.payload." + updateFunctionParams.at(i) + " = " + updateFunctionKwRemoved.at(i) + "\n";
+            commandBody += insertTabs(indentLevel + 2) + "this." + updateFunctionParams.at(i) + " = " + updateFunctionKwRemoved.at(i) + "\n";
         }
-        commandBody += insertTabs(indentLevel + 1) + "},\n";
+        commandBody += insertTabs(indentLevel + 1) + "}\n";
     }
 
     // Create send function
-    commandBody += insertTabs(indentLevel + 1) + "send: function () { platformInterface.send(this) }\n";
-    commandBody += insertTabs(indentLevel) + "})\n\n";
+    commandBody += insertTabs(indentLevel + 1) + "function send() {\n";
+    commandBody += insertTabs(indentLevel + 2) + "platformInterface.send({\n";
+    commandBody += insertTabs(indentLevel + 3) + "\"cmd\": \"" + cmd + "\"";
+    if (command.contains("payload") && command["payload"].isNull() == false) {
+        commandBody += ",\n" + insertTabs(indentLevel + 3) + "\"payload\": {\n";
+        commandBody += insertTabs(indentLevel) + payloadProperties.join(",\n" + insertTabs(indentLevel));
+        commandBody += "\n" + insertTabs(indentLevel + 3) + "}";
+    }
+    commandBody += "\n" + insertTabs(indentLevel + 2) + "})\n";
+    commandBody += insertTabs(indentLevel + 2) + "commandSent()\n";
+    commandBody += insertTabs(indentLevel + 1) + "}\n";
 
+    commandBody += insertTabs(indentLevel) + "}\n";
     return documentationText + commandBody;
 }
 
