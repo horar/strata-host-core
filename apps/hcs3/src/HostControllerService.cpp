@@ -657,22 +657,33 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
 {
     QString url = message.payload.value("url").toString();
     if (url.isEmpty()) {
-        qCWarning(logCategoryHcs) << "url attribute is empty or has bad format";
+        QString errorMessage(QStringLiteral("url attribute is empty or has bad format"));
+        qCWarning(logCategoryHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
 
     QString md5 = message.payload.value("md5").toString();
     if (md5.isEmpty()) {
-        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
+        QString errorMessage(QStringLiteral("md5 attribute is empty or has bad format"));
+        qCWarning(logCategoryHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
 
     QString classId = message.payload.value("class_id").toString();
     if (classId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "class_id attribute is empty or has bad format";
+        QString errorMessage(QStringLiteral("class_id attribute is empty or has bad format"));
+        qCWarning(logCategoryHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
 
+    strataServer_->notifyClient(message, QJsonObject{{"message", "view download requested"}},
+                                strataRPC::ResponseType::Response);
     storageManager_.requestDownloadControlView(message.clientID, url, md5, classId);
 }
 
