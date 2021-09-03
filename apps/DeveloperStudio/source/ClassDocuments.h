@@ -30,7 +30,7 @@ class ClassDocuments : public QObject
 
 public:
     explicit ClassDocuments(QString classId, strata::strataRPC::StrataClient* strataClient,
-                            QObject* parent = nullptr);
+                            CoreInterface* coreInterface, QObject* parent = nullptr);
 
     DownloadDocumentListModel* downloadDocumentListModel();
     DocumentListModel* datasheetListModel();

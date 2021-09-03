@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <StrataRPC/StrataClient.h>
+#include <PlatformInterface/core/CoreInterface.h>
 #include "DownloadDocumentListModel.h"
 #include "ClassDocuments.h"
 #include <DocumentListModel.h>
@@ -18,7 +19,8 @@ class DocumentManager : public QObject
     Q_DISABLE_COPY(DocumentManager)
 
 public:
-    DocumentManager(strata::strataRPC::StrataClient *strataClient, QObject *parent = nullptr);
+    DocumentManager(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface_,
+                    QObject *parent = nullptr);
 
     virtual ~DocumentManager();
 
@@ -41,6 +43,7 @@ private slots:
 
 private:
     strata::strataRPC::StrataClient *strataClient_;
+    CoreInterface *coreInterface_;
 
     void init();
 };
