@@ -133,6 +133,10 @@ FocusScope {
             name: "SGContextMenuEditActions"
             page: "ExSGContextMenuEditActions.qml"
         }
+        ListElement {
+            name: "SGCommandQueue"
+            page: "ExCommandQueue.qml"
+        }
     }
 
     Component.onCompleted: {
