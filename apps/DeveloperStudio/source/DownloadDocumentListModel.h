@@ -1,11 +1,13 @@
 #ifndef DOWNLOAD_DOCUMENT_LIST_MODEL_H
 #define DOWNLOAD_DOCUMENT_LIST_MODEL_H
 
+#include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+
 #include <QAbstractListModel>
 #include <QJsonArray>
-#include <StrataRPC/StrataClient.h>
-#include <QUrl>
 #include <QList>
+#include <QUrl>
 
 /* forward declarations */
 struct DownloadDocumentItem;
@@ -20,7 +22,7 @@ class DownloadDocumentListModel: public QAbstractListModel
 
 public:
     DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
-                              QObject *parent = nullptr);
+                              CoreInterface *coreInterface, QObject *parent = nullptr);
     virtual ~DownloadDocumentListModel() override;
 
     enum {
@@ -78,6 +80,7 @@ private slots:
 
 private:
     strata::strataRPC::StrataClient *strataClient_;
+    CoreInterface *coreInterface_;
 
     QList<DownloadDocumentItem*>data_;
     QHash<QString, DownloadDocumentItem* > downloadingData_;

@@ -8,25 +8,13 @@
 #include "logging/LoggingQtCategories.h"
 
 DownloadDocumentListModel::DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
-                                                     QObject *parent)
-    : QAbstractListModel(parent), strataClient_(strataClient)
+                                                     CoreInterface *coreInterface, QObject *parent)
+    : QAbstractListModel(parent), strataClient_(strataClient), coreInterface_(coreInterface)
 {
-    strataClient_->registerHandler(
-        "download_platform_filepath_changed",
-        std::bind(&DownloadDocumentListModel::downloadFilePathChangedHandler, this,
-                  std::placeholders::_1));
-    strataClient_->registerHandler(
-        "download_platform_single_file_progress",
-        std::bind(&DownloadDocumentListModel::singleDownloadProgressHandler, this,
-                  std::placeholders::_1));
-    strataClient_->registerHandler(
-        "download_platform_single_file_finished",
-        std::bind(&DownloadDocumentListModel::singleDownloadFinishedHandler, this,
-                  std::placeholders::_1));
-    strataClient_->registerHandler(
-        "download_platform_files_finished",
-        std::bind(&DownloadDocumentListModel::groupDownloadFinishedHandler, this,
-                  std::placeholders::_1));
+    connect(coreInterface_, &CoreInterface::downloadPlatformFilepathChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileProgress, this, &DownloadDocumentListModel::singleDownloadProgressHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileFinished, this, &DownloadDocumentListModel::singleDownloadFinishedHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformFilesFinished, this, &DownloadDocumentListModel::groupDownloadFinishedHandler);
 }
 
 DownloadDocumentListModel::~DownloadDocumentListModel()

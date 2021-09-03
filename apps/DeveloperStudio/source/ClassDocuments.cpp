@@ -11,11 +11,11 @@
 #include <QList>
 
 ClassDocuments::ClassDocuments(QString classId, strata::strataRPC::StrataClient *strataClient,
-                               QObject *parent)
+                               CoreInterface *coreInterface, QObject *parent)
     : QObject(parent),
       classId_(classId),
       strataClient_(strataClient),
-      downloadDocumentModel_(strataClient, parent)
+      downloadDocumentModel_(strataClient, coreInterface, parent)
 {
     loadPlatformDocuments();
 }

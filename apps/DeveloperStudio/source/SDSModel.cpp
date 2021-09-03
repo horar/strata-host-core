@@ -28,7 +28,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
     : QObject(parent),
       strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), "", this)),
       coreInterface_(new CoreInterface(strataClient_, this)),
-      documentManager_(new DocumentManager(strataClient_, this)),
+      documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
       programControllerManager_(new ProgramControllerManager(strataClient_, coreInterface_, this)),

@@ -102,6 +102,31 @@ signals:
      */
     void updateFirmwareJobUpdate(const QJsonObject &payload);
 
+    /**
+     * Signal emitted when download_platform_filepath_changed notification is received.
+     * @param [in] payload QJsonObject of download_platform_filepath_changed notification payload.
+     */
+    void downloadPlatformFilepathChanged(const QJsonObject &payload);
+    /**
+     * Signal emitted when download_platform_single_file_progress notification is received.
+     * @param [in] payload QJsonObject of download_platform_single_file_progress notification
+     * payload.
+     */
+    void downloadPlatformSingleFileProgress(const QJsonObject &payload);
+
+    /**
+     * Signal emitted when download_platform_single_file_finished notification is received.
+     * @param [in] payload QJsonObject of download_platform_single_file_finished notification
+     * payload.
+     */
+    void downloadPlatformSingleFileFinished(const QJsonObject &payload);
+
+    /**
+     * Signal emitted when download_platform_files_finished notification is received.
+     * @param [in] payload QJsonObject of download_platform_files_finished notification payload.
+     */
+    void downloadPlatformFilesFinished(const QJsonObject &payload);
+
 private:
     void processPlatformNotification(const QJsonObject &payload);
     void processAllPlatformsNotification(const QJsonObject &payload);
@@ -110,6 +135,10 @@ private:
     void processDownloadViewFinishedNotification(const QJsonObject &payload);
     void processDownloadControlViewProgressNotification(const QJsonObject &payload);
     void processUpdateFirmwareJobNotification(const QJsonObject &payload);
+    void processDownloadPlatformFilepathChangedNotification(const QJsonObject &payload);
+    void processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload);
+    void processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload);
+    void processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};
     QString platformList_{"{ \"list\":[]}"};

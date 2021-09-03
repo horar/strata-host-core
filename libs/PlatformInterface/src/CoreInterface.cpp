@@ -28,6 +28,22 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
     strataClient_->registerHandler(
         "download_view_finished", std::bind(&CoreInterface::processDownloadViewFinishedNotification,
                                             this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "download_platform_filepath_changed",
+        std::bind(&CoreInterface::processDownloadPlatformFilepathChangedNotification, this,
+                  std::placeholders::_1));
+    strataClient_->registerHandler(
+        "download_platform_single_file_progress",
+        std::bind(&CoreInterface::processDownloadPlatformSingleFileProgressNotification, this,
+                  std::placeholders::_1));
+    strataClient_->registerHandler(
+        "download_platform_single_file_finished",
+        std::bind(&CoreInterface::processDownloadPlatformSingleFileFinishedNotification, this,
+                  std::placeholders::_1));
+    strataClient_->registerHandler(
+        "download_platform_files_finished",
+        std::bind(&CoreInterface::processDownloadPlatformFilesFinishedNotification, this,
+                  std::placeholders::_1));
 }
 
 CoreInterface::~CoreInterface()
@@ -87,4 +103,24 @@ void CoreInterface::processDownloadControlViewProgressNotification(const QJsonOb
 void CoreInterface::processUpdateFirmwareJobNotification(const QJsonObject &payload)
 {
     emit updateFirmwareJobUpdate(payload);
+}
+
+void CoreInterface::processDownloadPlatformFilepathChangedNotification(const QJsonObject &payload) 
+{
+    emit downloadPlatformFilepathChanged(payload);
+}
+
+void CoreInterface::processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload) 
+{
+    emit downloadPlatformSingleFileProgress(payload);
+}
+
+void CoreInterface::processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload) 
+{
+    emit downloadPlatformSingleFileFinished(payload);
+}
+
+void CoreInterface::processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload) 
+{
+    emit downloadPlatformFilesFinished(payload);
 }
