@@ -14,6 +14,8 @@ Rectangle {
     color: "#eee"
 
     signal clicked()
+    property bool filterTypeWarning: false
+    property bool filterTypeError: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -27,7 +29,7 @@ Rectangle {
 
             RowLayout {
                 anchors.fill: parent
-                spacing: 5
+                spacing: 10
 
                 SGText {
                     text: "Console Output"
@@ -38,70 +40,104 @@ Rectangle {
 
                 RowLayout {
                     Layout.preferredHeight: 30
-                    spacing: 0
+                    spacing: 5
 
-                    Item {
-                        Layout.preferredWidth: 30
+                    Rectangle {
+                        Layout.preferredWidth: 45
                         Layout.preferredHeight: 30
+                        color: filterTypeWarning || warningMouseArea.containsMouse ? "#888" : "transparent"
 
                         Rectangle {
-                            anchors.centerIn: parent
+                            anchors.centerIn: warningIcon
                             height: 16
                             width: 5
                             color: "white"
                         }
 
                         SGIcon {
-                            anchors.centerIn: parent
+                            id: warningIcon
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                leftMargin: 5
+                            }
                             source: "qrc:/sgimages/exclamation-triangle.svg"
                             iconColor: Theme.palette.warning
                             height: 25
                             width: height
                             enabled: consoleLogWarningCount > 0
                         }
+
+                        SGText {
+                            text: consoleLogWarningCount
+                            anchors.left: warningIcon.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 2
+                            color: "white"
+                            fontSizeMultiplier: 1.2
+                        }
+
+                        MouseArea{
+                            id: warningMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                filterTypeWarning = !filterTypeWarning
+                                consoleLogger.validateSearchText()
+                            }
+                        }
                     }
 
-                    SGText {
-                        text: consoleLogWarningCount
-                        Layout.alignment: Qt.AlignVCenter
-                        height: 30
-                        color: "white"
-                        fontSizeMultiplier: 1.2
-                    }
-
-                    Item {
+                    Rectangle {
                         Layout.preferredHeight: 30
-                        Layout.preferredWidth: 30
+                        Layout.preferredWidth: 45
+                        color: filterTypeError || errorMouseArea.containsMouse ? "#888" : "transparent"
 
                         Rectangle {
-                            anchors.centerIn: parent
+                            anchors.centerIn: errorIcon
                             height: 16
                             width: 5
                             color: "white"
                         }
 
                         SGIcon {
-                            anchors.centerIn: parent
+                            id: errorIcon
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                leftMargin: 5
+                            }
                             source: "qrc:/sgimages/exclamation-circle.svg"
                             iconColor: Theme.palette.error
                             height: 25
                             width: height
                             enabled: consoleLogErrorCount > 0
                         }
-                    }
 
-                    SGText {
-                        text: consoleLogErrorCount
-                        Layout.alignment: Qt.AlignVCenter
-                        color: "white"
-                        height: 30
-                        fontSizeMultiplier: 1.2
+                        SGText {
+                            text: consoleLogErrorCount
+                            anchors.left: errorIcon.right
+                            anchors.leftMargin: 2
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: "white"
+                            fontSizeMultiplier: 1.2
+                        }
+
+                        MouseArea{
+                            id: errorMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                filterTypeError = !filterTypeError
+                                consoleLogger.validateSearchText()
+                            }
+                        }
                     }
                 }
 
-                Item {
-                    Layout.preferredWidth: 10
-                }
 
                 SGControlSearchComboBox {
                     id: searchBox
