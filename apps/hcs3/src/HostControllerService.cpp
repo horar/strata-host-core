@@ -758,8 +758,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
             ? hcsNotificationType::programControllerJob
             : hcsNotificationType::updateFirmwareJob;
 
-    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type),
-                                QJsonObject{{"payload", payload}},
+    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type), payload,
                                 strataRPC::ResponseType::Notification);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
