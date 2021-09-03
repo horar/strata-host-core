@@ -84,10 +84,9 @@ Item {
                             openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                         }
                     } else {
-                        if(!treeView.isExpanded(styleData.index)) {
+                        if (!treeView.isExpanded(styleData.index)) {
                             treeView.expand(styleData.index)
-                        }
-                        else {
+                        } else {
                             treeView.collapse(styleData.index)
                         }
                     }
