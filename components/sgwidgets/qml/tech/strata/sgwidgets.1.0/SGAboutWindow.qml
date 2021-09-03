@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import QtQuick.Window 2.12
+import QtQuick.Layouts 1.12
 
 SGWidgets.SGWindow {
     id: window
@@ -61,7 +62,7 @@ SGWidgets.SGWindow {
         SGWidgets.SGText {
             id: appNameText
             width: parent.width
-            leftPadding: baseSpacing
+            padding: baseSpacing
 
             fontSizeMultiplier: 1.5
             wrapMode: Text.Wrap
@@ -73,6 +74,7 @@ SGWidgets.SGWindow {
             id: versionText
             width: parent.width
             padding: baseSpacing
+            topPadding: 0
 
             anchors {
                 top: appNameText.bottom
@@ -109,122 +111,141 @@ SGWidgets.SGWindow {
             }
         }
 
-        SGWidgets.SGButtonStrip {
-            id: buttonTabs
-            checkedIndices: 1
+        TabBar {
+            id: tabBar
+
+            palette.text: "black"
+
             anchors {
                 left: imageColumn.right
                 top: versionText.bottom
-                margins: baseSpacing
+                leftMargin: baseSpacing
             }
-            model: ["General", "Attributions"]
 
-            onClicked: {
-                if (index === 1) {
-                    generalTab.visible = false
-                    attributionsTab.visible = true
-                } else {
-                    attributionsTab.visible = false
-                    generalTab.visible = true
+            TabButton {
+                id: generalButton
+                text: qsTr("General")
+
+                contentItem: Text {
+                    text: generalButton.text
+                    color: "black"
+                }
+
+                background: Rectangle {
+                    color: tabBar.currentIndex == 0 ? "#D3D3D3" : "#aaaaaa"
+                }
+            }
+
+            TabButton {
+                id: attributionsButton
+                text: qsTr("Attributions")
+                width: implicitWidth
+
+                contentItem: Text {
+                    text: attributionsButton.text
+                    color: "black"
+                }
+
+                background: Rectangle {
+                    color: tabBar.currentIndex == 1 ? "#D3D3D3" : "#aaaaaa"
                 }
             }
         }
 
-        Rectangle {
-            id: generalTab
-            color: "#aaaaaa"
-            visible: true
+        StackLayout {
+            currentIndex: tabBar.currentIndex
 
             anchors {
-                top: buttonTabs.bottom
+                top: tabBar.bottom
                 left: imageColumn.right
                 bottom: closeButton.top
                 right: parent.right
                 margins: baseSpacing
+                topMargin: 0
             }
 
-            SGWidgets.SGText {
-                id: infoText
-                width: parent.width
-                padding: baseSpacing
-
-                fontSizeMultiplier: 1.1
-                font.italic: true
-                wrapMode: Text.Wrap
-                text: "\"Designed by engineers for engineers to securely deliver software & information, " +
-                    "efficiently bringing you the focused info you need, nothing you don’t.\"\n"
-            }
-
-            SGWidgets.SGText {
-                width: parent.width
-                padding: baseSpacing
-
-                anchors {
-                    top: infoText.bottom
-                    margins: baseSpacing
-                }
-                fontSizeMultiplier: 1.1
-                wrapMode: Text.Wrap
-                text: Qt.application.name + " is part of Strata development kit.\n" +
-                    "\n"+
-                    "Copyright \u00a9 2018-2021 " + Qt.application.organization + ".\n"+
-                    "All rights reserved."
-            }
-        }
-
-        Rectangle {
-            id: attributionsTab
-            color: "#aaaaaa"
-            visible: false
-
-            anchors {
-                top: buttonTabs.bottom
-                left: imageColumn.right
-                bottom: closeButton.top
-                right: parent.right
-                margins: baseSpacing
-            }
-
-            Flickable {
-                width: parent.width
-                height: parent.height
-                contentWidth: parent.width
-                contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
-                clip: true
-
-                ScrollBar.vertical: ScrollBar { }
+            Rectangle {
+                id: generalTab
+                color: "#D3D3D3"
 
                 SGWidgets.SGText {
-                    id: disclaimerTextLabel
+                    id: infoText
                     width: parent.width
                     padding: baseSpacing
 
-                    anchors.topMargin: baseSpacing
-
                     fontSizeMultiplier: 1.1
+                    font.italic: true
                     wrapMode: Text.Wrap
-                    text: "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
-                        "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
-                        "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
-                        "NONINFRINGEMENT."
+                    text: "\"Designed by engineers for engineers to securely deliver software & information, " +
+                        "efficiently bringing you the focused info you need, nothing you don’t.\"\n"
                 }
 
                 SGWidgets.SGText {
-                    id: attributionTextLabel
                     width: parent.width
                     padding: baseSpacing
 
                     anchors {
-                        top: disclaimerTextLabel.bottom
-                        topMargin: 2*baseSpacing
+                        top: infoText.bottom
+                        margins: baseSpacing
+                    }
+                    fontSizeMultiplier: 1.1
+                    wrapMode: Text.Wrap
+                    text: Qt.application.name + " is part of Strata development kit.\n" +
+                        "\n"+
+                        "Copyright \u00a9 2018-2021 " + Qt.application.organization + ".\n"+
+                        "All rights reserved."
+                }
+            }
+
+            Rectangle {
+                id: attributionsTab
+                color: "#D3D3D3"
+
+                Flickable {
+                    width: parent.width
+                    height: parent.height
+                    contentWidth: parent.width
+                    contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
+                    clip: true
+
+                    ScrollBar.vertical: ScrollBar { }
+
+                    SGWidgets.SGText {
+                        id: disclaimerTextLabel
+                        width: parent.width
+                        padding: baseSpacing
+
+                        anchors.topMargin: baseSpacing
+
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        text: "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
+                            "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
+                            "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
+                            "NONINFRINGEMENT." +
+                            "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
+                            "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
+                            "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
+                            "NONINFRINGEMENT."
                     }
 
-                    wrapMode: Text.Wrap
-                    font.italic: true
-                    textFormat: Text.RichText
-                    text: attributionText
-                    onLinkActivated: {
-                        Qt.openUrlExternally(link)
+                    SGWidgets.SGText {
+                        id: attributionTextLabel
+                        width: parent.width
+                        padding: baseSpacing
+
+                        anchors {
+                            top: disclaimerTextLabel.bottom
+                            topMargin: 2*baseSpacing
+                        }
+
+                        wrapMode: Text.Wrap
+                        font.italic: true
+                        textFormat: Text.RichText
+                        text: attributionText
+                        onLinkActivated: {
+                            Qt.openUrlExternally(link)
+                        }
                     }
                 }
             }
