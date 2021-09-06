@@ -414,7 +414,7 @@ BaseStateMachine {
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
                     } else if (statusString) {
-                        stateMachine.internalSubtext = "Error: " + errorString
+                        stateMachine.internalSubtext = "Error: " + statusString
                     }
 
                     console.error(Logger.prtCategory, "controller registration failed:", statusString)
