@@ -2,6 +2,7 @@ import QtQuick 2.12
 import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
+import QtWinExtras 1.0
 
 
 SGWidgets.SGMainWindow {
@@ -36,17 +37,24 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    TaskbarButton {
+        id: taskbarButton
+        progress.minimum: 0
+        progress.maximum: 0
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "#eeeeee"
     }
-
 
     PrtMain {
         anchors {
             fill: parent
             margins: 4
         }
+
+        taskbarButtonHelper: taskbarButton
     }
 
     function showAboutWindow() {

@@ -54,9 +54,9 @@ BaseStateMachine {
 
     property QtObject prtModel
     property QtObject jLinkConnector
-
     property QtObject breakButton
     property QtObject continueButton
+    property QtObject taskbarButton
 
     property string jlinkExePath: ""
 
@@ -88,6 +88,8 @@ BaseStateMachine {
 
         onEntered: {
             prtModel.clearBinaries();
+            taskbarButton.progress.resume()
+            taskbarButton.progress.show()
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
@@ -188,6 +190,9 @@ BaseStateMachine {
             id: stateCheckDeviceCount
             onEntered: {
                 stateMachine.statusText = "Waiting for device to connect"
+                taskbarButton.progress.resume()
+                taskbarButton.progress.pause()
+                taskbarButton.progress.show()
 
                 console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
@@ -297,6 +302,7 @@ BaseStateMachine {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
                 stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
+                taskbarButton.progress.resume()
 
                 console.debug(Logger.prtCategory, "bootloader about to be programmed")
 
@@ -513,6 +519,7 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Platform Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
@@ -526,11 +533,13 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
             targetState: stateCheckDevice
             signal: continueButton.clicked
+            guard: prtModel.deviceCount === 0
         }
     }
 
@@ -540,6 +549,8 @@ BaseStateMachine {
         onEntered: {
             stateMachine.statusText = "Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
+            taskbarButton.progress.hide()
+            taskbarButton.progress.reset()
         }
 
         DSM.SignalTransition {
@@ -556,6 +567,8 @@ BaseStateMachine {
     DSM.FinalState {
         id: exitState
         onEntered: {
+            taskbarButton.progress.hide()
+            taskbarButton.progress.resume()
             stateMachine.exitWizardRequested()
         }
     }
