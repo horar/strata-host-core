@@ -86,13 +86,9 @@ SGWidgets.SGWindow {
 
         Column {
             id: imageColumn
-            width: 120
             spacing: 20
-
-            anchors {
-                top: versionText.bottom
-                margins: baseSpacing
-            }
+            padding: baseSpacing
+            anchors.top: versionText.bottom
 
             Image {
                 id: appLogoImage
@@ -202,13 +198,19 @@ SGWidgets.SGWindow {
                 color: "#D3D3D3"
 
                 Flickable {
+                    id: flick
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
                     contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
                     clip: true
 
-                    ScrollBar.vertical: ScrollBar { }
+                    ScrollBar.vertical: ScrollBar {
+                        width: visible ? 8 : 0
+                        anchors.right: flick.right
+                        policy: ScrollBar.AlwaysOn
+                        visible: flick.height < flick.contentHeight
+                    }
 
                     SGWidgets.SGText {
                         id: disclaimerTextLabel
@@ -220,10 +222,6 @@ SGWidgets.SGWindow {
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
                         text: "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
-                            "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
-                            "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
-                            "NONINFRINGEMENT." +
-                            "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
                             "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES "+
                             "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
                             "NONINFRINGEMENT."
