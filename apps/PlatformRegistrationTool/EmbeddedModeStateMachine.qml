@@ -40,7 +40,11 @@ BaseStateMachine {
         } else if (stateLoopFailedActive) {
             t = internalSubtext
             t += "\n\n"
-            t += "Unplug device and press Continue"
+            if (prtModel.deviceCount === 0) {
+                t += "Press Continue"
+            } else {
+                t += "Unplug device and press Continue"
+            }
         } else if (stateErrorActive) {
             t = internalSubtext
         }
