@@ -74,7 +74,7 @@ signals:
     /**
      * Signal emitted when a platform notification is received
      * @param [in] payload QString of the platform notification that contains the
-     * device_it and the notification.
+     * device it and the notification.
      */
     void notification(const QString &payload);
 
