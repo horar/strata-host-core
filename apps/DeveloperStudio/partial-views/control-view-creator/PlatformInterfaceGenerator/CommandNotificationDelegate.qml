@@ -4,7 +4,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 
-
 Rectangle {
     width:  ListView.view.width
     height: commandsColumn.height + 10
@@ -14,8 +13,13 @@ Rectangle {
 
     ColumnLayout  {
         id: commandsColumn
-
-        width: parent.width
+        anchors {
+            left: parent.left
+            right: parent.right
+            rightMargin: 5
+            leftMargin: 5
+            verticalCenter: parent.verticalCenter
+        }
 
         property ListModel payloadModel: model.payload
         property var modelIndex: index
@@ -63,7 +67,6 @@ Rectangle {
                 id: cmdNotifName
                 Layout.preferredHeight: 30
                 Layout.fillWidth: true
-                Layout.rightMargin: 10
                 selectByMouse: true
                 persistentSelection: true   // must deselect manually
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
@@ -135,8 +138,8 @@ Rectangle {
         }
 
         /*****************************************
-    * This Repeater corresponds to each property in the payload
-    *****************************************/
+        * This Repeater corresponds to each property in the payload
+        *****************************************/
 
         Repeater {
             id: payloadRepeater
@@ -149,7 +152,6 @@ Rectangle {
             id: addPropertyButton
             text: "Add Payload Property"
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 10
             visible: commandsListView.count > 0
             enabled: cmdNotifName.text !== ""
 
@@ -174,20 +176,13 @@ Rectangle {
             }
         }
     }
-    Rectangle {
-        id: hDivider
-        Layout.preferredHeight: 1
-        Layout.fillWidth: true
-        Layout.topMargin: 10
-        visible: index !== commandsListView.count - 1
-        color: "black"
-    }
 
     Component {
         id: defaultValue
 
         Item {
             id: defaultValueContainer
+
             property int leftMargin: 20
             property int rightMargin: 0
             property alias text: textField.text

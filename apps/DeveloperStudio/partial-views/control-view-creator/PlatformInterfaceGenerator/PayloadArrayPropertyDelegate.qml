@@ -4,13 +4,8 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
     id: arrayDelegateRoot
-
-    implicitHeight: arrayPropertyContainer.implicitHeight
+    implicitHeight: arrayPropertyContainer.implicitHeight + 10
     implicitWidth: arrayPropertyContainer.implicitWidth
-
-    Layout.leftMargin: 3
-    Layout.bottomMargin: 3
-    Layout.rightMargin: 5
 
     property int modelIndex
     property color parentColor
@@ -28,6 +23,13 @@ Rectangle {
     ColumnLayout {
         id: arrayPropertyContainer
         spacing: 5
+        anchors {
+            left: parent.left
+            right: parent.right
+            rightMargin: 5
+            leftMargin: 5
+            verticalCenter: parent.verticalCenter
+        }
 
         property ListModel parentListModel: model.parent
         property ListModel subArrayListModel: model.array
@@ -35,13 +37,7 @@ Rectangle {
 
         RowLayout {
             id: arrayRowLayout
-
             Layout.preferredHeight: 30
-            Layout.leftMargin: 5
-            Layout.rightMargin: 5
-            Layout.fillWidth: true
-
-            spacing: 5
 
             RoundButton {
                 Layout.preferredHeight: 15
@@ -80,15 +76,16 @@ Rectangle {
 
 
             Text {
-                text: "[Index " + modelIndex + "] Element type: "
+                text: "[Index " + modelIndex + "] Type: "
                 Layout.alignment: Qt.AlignVCenter
+                Layout.fillWidth: true
                 Layout.preferredWidth: 150
+                elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
             }
 
             TypeSelectorComboBox {
                 id: propertyType
-                Layout.topMargin: 2
 
                 Component.onCompleted: {
                     if (indexSelected === -1) {
@@ -120,8 +117,8 @@ Rectangle {
 
             onItemChanged: {
                 if (item) {
-                    item.leftMargin = 20 * 2
-                    item.rightMargin = 30
+                    item.leftMargin = 15
+                    item.rightMargin = 0
                     item.text = model.value
                     item.textChanged.connect(textChanged)
                 }
@@ -141,13 +138,15 @@ Rectangle {
 
             delegate: Component {
                 Loader {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
 
                     source: "./PayloadArrayPropertyDelegate.qml"
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
                             item.parentColor = Qt.binding(() => arrayDelegateRoot.color)
+                            item.Layout.rightMargin = 0
                         }
                     }
                 }
@@ -163,13 +162,15 @@ Rectangle {
 
             delegate: Component {
                 Loader {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
 
                     source: "./PayloadObjectPropertyDelegate.qml"
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
                             item.parentColor = Qt.binding(() => arrayDelegateRoot.color)
+                            item.Layout.rightMargin = 0
                         }
                     }
                 }

@@ -4,20 +4,18 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 
-
 Rectangle {
     id: payloadDelegateRoot
-
-    Layout.preferredHeight: payloadContainer.implicitHeight
+    Layout.preferredHeight: payloadContainer.implicitHeight + 10
     Layout.fillWidth: true
-    Layout.leftMargin: 3
+    Layout.leftMargin: 10
 
     color: "transparent"
 
     property var selectedIndex: propertyType.currentIndex
-    onSelectedIndexChanged:{
-        if(propertyType.currentIndex === 4 || propertyType.currentIndex === 6 ) {
-            if(color !== "#ffffff") {
+    onSelectedIndexChanged: {
+        if (propertyType.currentIndex === 4 || propertyType.currentIndex === 6 ) {
+            if (color !== "#ffffff") {
                 return color = "#ffffff"
             }
             return color
@@ -25,12 +23,16 @@ Rectangle {
         return color
     }
 
-
     ColumnLayout {
         id: payloadContainer
         spacing: 5
-
-        width: parent.width
+        anchors {
+            left: parent.left
+            right: parent.right
+            rightMargin: 5
+            leftMargin: 5
+            verticalCenter: parent.verticalCenter
+        }
 
         property ListModel subArrayListModel: model.array
         property ListModel subObjectListModel: model.object
@@ -175,7 +177,6 @@ Rectangle {
 
             TypeSelectorComboBox {
                 id: propertyType
-                Layout.topMargin: 2
 
                 Component.onCompleted: {
                     if (indexSelected === -1) {
@@ -197,7 +198,6 @@ Rectangle {
                 }
             }
         }
-
 
         Loader {
             sourceComponent: defaultValue
@@ -231,6 +231,7 @@ Rectangle {
                 parentColor: payloadDelegateRoot.color
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.leftMargin: 10
             }
         }
 
@@ -246,6 +247,7 @@ Rectangle {
                 parentColor: payloadDelegateRoot.color
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.leftMargin: 10
             }
         }
 
@@ -253,7 +255,6 @@ Rectangle {
             id: addPropertyButton
             text: (propertyType.currentIndex === 4) ? "Add Item To Array" : "Add Item To Object"
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 5
             visible: propertyType.currentIndex === 4 || propertyType.currentIndex === 6
 
             Accessible.name: addPropertyButton.text

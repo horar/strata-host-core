@@ -4,20 +4,15 @@ import QtQuick.Layouts 1.12
 
 Rectangle {
     id: objectDelegateRoot
-
-    implicitHeight: objectPropertyContainer.implicitHeight
+    implicitHeight: objectPropertyContainer.implicitHeight + 10
     implicitWidth: objectPropertyContainer.implicitWidth
-
-    Layout.leftMargin: 3
-    Layout.bottomMargin: 3
-    Layout.rightMargin: 5
 
     property int modelIndex
     property color parentColor
 
     color: {
         if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
-            if(parentColor == "#efefef") {
+            if (parentColor == "#efefef") {
                 return "#ffffff"
             }
             return "#efefef"
@@ -28,6 +23,13 @@ Rectangle {
     ColumnLayout {
         id: objectPropertyContainer
         spacing: 5
+        anchors {
+            left: parent.left
+            right: parent.right
+            rightMargin: 5
+            leftMargin: 5
+            verticalCenter: parent.verticalCenter
+        }
 
         property ListModel parentListModel: model.parent
         property ListModel subArrayListModel: model.array
@@ -35,12 +37,7 @@ Rectangle {
 
         RowLayout {
             id: objectRowLayout
-
             Layout.preferredHeight: 30
-            Layout.leftMargin: 5
-            Layout.rightMargin: 5
-
-            spacing: 5
 
             RoundButton {
                 Layout.preferredHeight: 15
@@ -62,6 +59,7 @@ Rectangle {
                 Accessible.onPressAction: {
                     removeObjectFromPayloadMouseArea.clicked()
                 }
+
                 MouseArea {
                     id: removeObjectFromPayloadMouseArea
                     anchors.fill: parent
@@ -80,6 +78,7 @@ Rectangle {
                 id: propertyKey
                 Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
+                Layout.fillWidth: true
                 placeholderText: "Key"
                 selectByMouse: true
                 validator: RegExpValidator {
@@ -126,7 +125,6 @@ Rectangle {
 
             TypeSelectorComboBox {
                 id: propertyType
-                Layout.topMargin: 2
 
                 Component.onCompleted: {
                     if (indexSelected === -1) {
@@ -149,7 +147,6 @@ Rectangle {
             }
         }
 
-
         Loader {
             sourceComponent: defaultValue
             Layout.fillWidth: true
@@ -159,8 +156,8 @@ Rectangle {
 
             onItemChanged: {
                 if (item) {
-                    item.leftMargin = 20 * 2
-                    item.rightMargin = 30
+                    item.leftMargin = 15
+                    item.rightMargin = 0
                     item.text = model.value
                     item.textChanged.connect(textChanged)
                 }
@@ -180,13 +177,15 @@ Rectangle {
 
             delegate: Component {
                 Loader {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
 
                     source: "./PayloadArrayPropertyDelegate.qml"
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
                             item.parentColor = Qt.binding(() => objectDelegateRoot.color)
+                            item.Layout.rightMargin = 0
                         }
                     }
                 }
@@ -202,13 +201,15 @@ Rectangle {
 
             delegate: Component {
                 Loader {
-                    Layout.leftMargin: 20
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
 
                     source: "./PayloadObjectPropertyDelegate.qml"
                     onStatusChanged: {
                         if (status === Loader.Ready) {
                             item.modelIndex = Qt.binding(() => index)
                             item.parentColor = Qt.binding(() => objectDelegateRoot.color)
+                            item.Layout.rightMargin = 0
                         }
                     }
                 }
@@ -234,7 +235,7 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    if(propertyType.currentIndex === 4) {
+                    if (propertyType.currentIndex === 4) {
                         objectPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subArrayListModel, "value": "0"})
                     }
                     else {
