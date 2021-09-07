@@ -67,7 +67,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
     outputStream << insertTabs(indentLevel) << "QtObject {\n";
 
     indentLevel++;
-    outputStream << insertTabs(indentLevel) << "id: notifications\n\n";
+    outputStream << insertTabs(indentLevel) << "id: notifications\n";
 
     // Create QtObjects to handle notifications
 
@@ -160,7 +160,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         return QString();
     }
     const QString cmd = command["cmd"].toString();
-    QString documentationText = generateComment("@command " + cmd, indentLevel);
+    QString documentationText = '\n' + generateComment("@command " + cmd, indentLevel);
     QString commandBody = "";
 
     commandBody += insertTabs(indentLevel) + "property QtObject " + cmd + ": QtObject {\n";
@@ -266,7 +266,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
     QString documentationBody = "";
 
     // Create documentation for notification
-    documentationBody += generateComment("@notification: " + notificationId, indentLevel);
+    documentationBody += '\n' + generateComment("@notification: " + notificationId, indentLevel);
 
     // Create the QtObject to handle this notification
     notificationBody += insertTabs(indentLevel) + "property QtObject " + notificationId + ": QtObject {\n";
@@ -319,7 +319,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
     notificationBody += childrenNotificationBody;
 
     indentLevel--;
-    notificationBody += insertTabs(indentLevel) + "}\n\n";
+    notificationBody += insertTabs(indentLevel) + "}\n";
     return documentationBody + notificationBody;
 }
 
