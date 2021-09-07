@@ -87,8 +87,9 @@ bool StrataServer::unregisterHandler(const QString &handlerName)
 
 void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServer) << "StrataServer messageReceived"
-                                     << "Client ID:" << clientId << "Message:" << message;
+    qCDebug(logCategoryStrataServer).noquote().nospace()
+        << "StrataServer messageReceived, ClientID: 0x" << clientId.toHex()
+        << ", Message: '" << message << '\'';
 
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -109,7 +110,7 @@ void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray 
 
     // Check if registered client
     if (true == client.getClientID().isEmpty()) {
-        qCDebug(logCategoryStrataServer) << "client not registered";
+        qCDebug(logCategoryStrataServer) << "Client not registered";
 
         // Find out the client api version.
         if ((true == jsonObject.contains("jsonrpc"))) {
@@ -210,7 +211,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
     if ((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
         // Check if this command is meant to be sent to a platform
         if (true == jsonObject.contains("device_id") &&
-            true == jsonObject.value("device_id").isDouble()) {
+            true == jsonObject.value("device_id").isString()) {
             clientMessage->handlerName = "platform_message";
             isPlatformMessage = true;
         } else {
@@ -232,7 +233,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
     QJsonObject payloadJsonObject{};
 
     if (true == isPlatformMessage) {
-        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toDouble());
+        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toString());
         QJsonObject messageJsonObject;
         messageJsonObject.insert("cmd", jsonObject.value("cmd"));
         if (true == hasPayload) {
@@ -240,7 +241,9 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
         } else {
             messageJsonObject.insert("payload", QJsonObject{});
         }
-        payloadJsonObject.insert("message", messageJsonObject);
+        payloadJsonObject.insert(
+            "message",
+            QString(QJsonDocument(messageJsonObject).toJson(QJsonDocument::JsonFormat::Compact)));
     } else {
         if (true == hasPayload) {
             payloadJsonObject = jsonObject.value("payload").toObject();
@@ -255,13 +258,13 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 }
 
 void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                                const ResponseType &responseType)
+                                const ResponseType responseType)
 {
     QByteArray serverMessage;
 
     switch (clientsController_->getClientApiVersion(clientMessage.clientID)) {
         case ApiVersion::v1:
-            qCDebug(logCategoryStrataServer) << "building message for API v1";
+            qCDebug(logCategoryStrataServer) << "Building message for API v1";
             serverMessage = buildServerMessageAPIv1(clientMessage, jsonObject, responseType);
             if (serverMessage == "") {
                 return;
@@ -269,13 +272,13 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
             break;
 
         case ApiVersion::v2:
-            qCDebug(logCategoryStrataServer) << "building message for API v2";
+            qCDebug(logCategoryStrataServer) << "Building message for API v2";
             serverMessage = buildServerMessageAPIv2(clientMessage, jsonObject, responseType);
             break;
 
         case ApiVersion::none:
             QString errorMessage(
-                QStringLiteral("unsupported API version or client is not registered."));
+                QStringLiteral("Unsupported API version or client is not registered."));
             qCCritical(logCategoryStrataServer) << errorMessage;
             emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
             return;
@@ -286,7 +289,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
-                                const QJsonObject &jsonObject, const ResponseType &responseType)
+                                const QJsonObject &jsonObject, const ResponseType responseType)
 {
     Message message;
     message.clientID = clientId;
@@ -302,28 +305,31 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
     Message tempClientMessage;
     tempClientMessage.handlerName = handlerName;
 
-    QByteArray serverMessageAPI_v1 =
-        buildServerMessageAPIv1(tempClientMessage, jsonObject, ResponseType::Notification);
-    QByteArray serverMessageAPI_v2 =
-        buildServerMessageAPIv2(tempClientMessage, jsonObject, ResponseType::Notification);
-
     // get all clients.
     auto allClients = clientsController_->getAllClients();
 
     for (const auto &client : allClients) {
         switch (client.getApiVersion()) {
             case ApiVersion::v1:
-                emit sendMessage(client.getClientID(), serverMessageAPI_v1);
+                emit sendMessage(
+                        client.getClientID(),
+                        buildServerMessageAPIv1(tempClientMessage, jsonObject, ResponseType::Notification)
+                     );
                 break;
 
             case ApiVersion::v2:
-                emit sendMessage(client.getClientID(), serverMessageAPI_v2);
+                emit sendMessage(
+                        client.getClientID(),
+                        buildServerMessageAPIv2(tempClientMessage, jsonObject, ResponseType::Notification)
+                     );
                 break;
 
             case ApiVersion::none:
-                QString errorMessage(QStringLiteral("Unsupported client API version"));
-                qCCritical(logCategoryStrataServer) << errorMessage;
-                emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+                {
+                    QString errorMessage(QStringLiteral("Unsupported client API version"));
+                    qCCritical(logCategoryStrataServer) << errorMessage;
+                    emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+                }
                 break;
         }
     }
@@ -331,8 +337,8 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
 
 void StrataServer::registerNewClientHandler(const Message &clientMessage)
 {
-    qCDebug(logCategoryStrataServer)
-        << "Handle New Client Registration. Client ID:" << clientMessage.clientID;
+    qCDebug(logCategoryStrataServer).noquote().nospace()
+        << "Handle New Client Registration. ClientID 0x:" << clientMessage.clientID.toHex();
 
     // Find the client API version, if it was v1, ignore the parsing.
     if (ApiVersion currentApiVersion =
@@ -372,8 +378,8 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
 
 void StrataServer::unregisterClientHandler(const Message &clientMessage)
 {
-    qCDebug(logCategoryStrataServer)
-        << "Handle Client Unregistration. Client ID:" << clientMessage.clientID;
+    qCDebug(logCategoryStrataServer).noquote().nospace()
+        << "Handle Client Unregistration. ClientID: 0x" << clientMessage.clientID.toHex();
     if (false == clientsController_->unregisterClient(clientMessage.clientID)) {
         QString errorMessage(
             QStringLiteral("Failed to unregister client. Client is not registered."));
@@ -386,7 +392,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 
 QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 const ResponseType &responseType)
+                                                 const ResponseType responseType)
 {
     QJsonObject jsonObject{{"jsonrpc", "2.0"}};
 
@@ -420,7 +426,7 @@ QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
 
 QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
                                                  const QJsonObject &payload,
-                                                 const ResponseType &responseType)
+                                                 const ResponseType responseType)
 {
     QJsonObject jsonObject;
     QString notificationType = "";
@@ -430,10 +436,12 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
         case ResponseType::Notification:
         case ResponseType::Response:
             // determine the notification type
-            // "load_documents" --> "cloud::notification"
+            // "document" --> "cloud::notification"
+            // "document_progress" --> "cloud::notification"
             // "platform" message --> "notification"
             // all others       --> "hcs::notification"
-            if (clientMessage.handlerName == "load_documents") {
+            if (clientMessage.handlerName == "document" ||
+                clientMessage.handlerName == "document_progress") {
                 notificationType = "cloud::notification";
             } else {
                 notificationType = "hcs::notification";

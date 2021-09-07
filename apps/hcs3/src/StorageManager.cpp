@@ -3,7 +3,6 @@
 #include <DownloadManager.h>
 
 #include "PlatformDocument.h"
-#include "Dispatcher.h"
 #include "Database.h"
 
 #include "logging/LoggingQtCategories.h"

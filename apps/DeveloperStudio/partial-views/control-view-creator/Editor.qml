@@ -26,23 +26,21 @@ Item {
         id: treeModel
 
         onModelAboutToBeReset: {
-            openFilesModel.closeAll()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
-            editor.editQRCEnabled = true
         }
 
         onErrorParsing: {
-            parsingErrorRect.errorMessage = error;
+            parsingErrorRect.errorMessage = error
             parsingErrorRect.visible = true
             openProjectContainer.url = ""
         }
 
         onUrlChanged: {
-            if (debugMenuWindow) {
-                debugMenuWindow = false
-            }
+            debugMenuWindow = false
             isDebugMenuOpen = false
+            openFilesModel.closeAll()
+            editor.editQRCEnabled = true
         }
     }
 
@@ -64,7 +62,7 @@ Item {
         invokeCustomFilter: true
 
         function filterAcceptsRow(index) {
-            return sourceModel.get(index).connected;
+            return sourceModel.get(index).connected
         }
     }
 
@@ -293,22 +291,22 @@ Item {
 
                                     source: {
                                         switch (model.filetype) {
-                                        case "svg":
-                                        case "jpg":
-                                        case "jpeg":
-                                        case "png":
-                                        case "gif":
-                                            return "./Editor/ImageContainer.qml"
-                                        case "qml":
-                                        case "csv":
-                                        case "html":
-                                        case "txt":
-                                        case "json":
-                                        case "qrc":
-                                        case "ts":
-                                            return "./Editor/TextEditorContainer.qml"
-                                        default:
-                                            return "./Editor/UnsupportedFileType.qml"
+                                            case "svg":
+                                            case "jpg":
+                                            case "jpeg":
+                                            case "png":
+                                            case "gif":
+                                                return "./Editor/ImageContainer.qml"
+                                            case "qml":
+                                            case "csv":
+                                            case "html":
+                                            case "txt":
+                                            case "json":
+                                            case "qrc":
+                                            case "ts":
+                                                return "./Editor/TextEditorContainer.qml"
+                                            default:
+                                                return "./Editor/UnsupportedFileType.qml"
                                         }
                                     }
                                 }
@@ -332,10 +330,10 @@ Item {
             confirmClosePopup.open()
             controlViewCreatorRoot.isConfirmCloseOpen = true
         } else {
-            if(model.filetype === "qrc") {
+            if (model.filepath === treeModel.url) {
                 editQRCEnabled = true
             }
-            openFilesModel.closeTabAt(index);
+            openFilesModel.closeTabAt(index)
         }
     }
 }

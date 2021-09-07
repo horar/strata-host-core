@@ -916,6 +916,48 @@ void SGQWTPlotCurve::setSymbol(int newStyle, QColor color, int penStyle, int siz
     }
 }
 
+// Given any value from the X axis of the graph, find the point in the curve with the nearest X value and return its index
+int SGQWTPlotCurve::closestXAxisPointIndex(double xVal) {
+    double diff;
+    QPointF currentPoint = QPointF(0,0);
+
+    // error check to ensure there is a curve with points
+    if (curveData_.count() == 0) {
+        return -1; // return -1 if there is no curve
+    }
+
+    int right = curveData_.count() - 1;
+    int left = 0;
+    int mid = 0;
+
+    // loop until there are only two points remaining
+    // binary search
+    while (right - left > 1) {
+        mid = (left + right) / 2;
+        currentPoint = curveData_.at(mid);
+        diff = (currentPoint.x() - xVal);
+        if (diff == 0) {
+            return mid;
+        } else if (diff < 0) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+
+    // once only two points remain, determines which is the mouse closer to
+    QPointF leftVal = curveData_.at(left);
+    QPointF rightVal = curveData_.at(right);
+    double lDiff = abs(leftVal.x() - xVal);
+    double rDiff = abs(rightVal.x() - xVal);
+
+    if (lDiff < rDiff) {
+        return left;
+    } else {
+        return right;
+    }
+}
+
 /*-----------------------
     SGQWTPlotCurveData Class
 ------------------------*/

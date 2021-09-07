@@ -16,35 +16,27 @@ ColumnLayout {
     spacing: 0
 
     property bool fileValid: false
-    property string error: ""
+    property bool hasErrors: false
     property bool layoutDebugMode: true
     property var overlayObjects: []
     property string file: ""
     property string fileContents: ""
 
+    // multi-item selection/dragging/resizing
+    property var selectedMultiObjectsUuid: []
+    signal multiObjectsDragged(string objectInitiated, var x, var y)
+    signal multiObjectsResizeDragged(string objectInitiated, var width, var height)
+    signal multiObjectsDeselectAll()
+
+    onMultiObjectsDeselectAll: {
+        selectedMultiObjectsUuid = []
+    }
+
     property alias loader: loader
     property alias functions: functions
 
     Component.onCompleted: {
-        offsetCheckFile.start()
-    }
-
-    // Hack to force checkfile to happen asynchronously from Monaco initialization
-    // otherwise debugBar warnings append late and are not captured by sdsModel.qtLogger disable during VE load
-    Timer {
-        id: offsetCheckFile
-        interval: 1
-        onTriggered: functions.checkFile()
-    }
-
-    Connections {
-        target: treeModel
-        enabled: cvcUserSettings.reloadViewExternalChanges
-        onFileChanged: {
-            if (path == visualEditor.file) {
-                functions.unload(true)
-            }
-        }
+        functions.checkFile()
     }
 
     onVisibleChanged: {
@@ -59,21 +51,21 @@ ColumnLayout {
         id: functions
     }
 
-    Item {
+    MouseArea {
         id: loaderContainer
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        onClicked: {
+            if ((mouse.modifiers & Qt.ShiftModifier) == false) {
+                multiObjectsDeselectAll()
+            }
+        }
 
         Loader {
             id: loader
             anchors {
                 fill: parent
-            }
-
-            onStatusChanged: {
-                if (loader.status == Loader.Error) {
-                    visualEditor.error = "Error occurred checking this file, see logs"
-                }
             }
         }
 
@@ -141,6 +133,17 @@ ColumnLayout {
                     property real columnSize: overlayContainer.columnSize
                     property real rowSize: overlayContainer.rowSize
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: treeModel
+        enabled: cvcUserSettings.reloadViewExternalChanges
+
+        onFileChanged: {
+            if (path == visualEditor.file) {
+                functions.unload(true)
             }
         }
     }

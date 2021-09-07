@@ -1,3 +1,3 @@
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryUserSettings, "userSettings")
+Q_LOGGING_CATEGORY(logCategoryUserSettings, "strata.commoncpp.userSettings")

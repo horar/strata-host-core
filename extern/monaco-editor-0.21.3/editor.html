@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!-- This file will be copied to the host/components/monaco after build so that any changes made will be reflected in that build-->
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="./min/vs/editor/editor.main.css" />
+</head>
+
+<body>
+    <div id="container"></div>
+    <!-- 
+            the "loader.js" adds the editor and initializes the require variable
+            the "editor.main.js" inits and defines the MonacoEditor
+            the "editor.main.nls.js" defines the key bindings and definitions of the Monaco Editor
+        -->
+
+    <script>
+        var require = { paths: { vs: './min/vs' } };
+    </script>
+    <script src="./min/vs/loader.js"></script>
+    <script src="./min/vs/editor/editor.main.nls.js"></script>
+    <script src="./min/vs/editor/editor.main.js"></script>
+    <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="./model/qtItemModel.js" type="text/javascript"></script>
+    <script src="./model/qtQuickModel.js" type="text/javascript"></script>
+    <script src="./utils/search.js" type="text/javascript"></script>
+    <script src="./utils/helper.js" type="text/javascript"></script>
+    <script src="./utils/suggestions.js" type="text/javascript"></script>
+    <script src="./qtQuickTypes.js" type="text/javascript"></script>
+    <script src="./qtQuick.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        new QWebChannel(qt.webChannelTransport, function (channel) {
+            // all published objects are available in channel.objects under
+            // the identifier set in their attached WebChannel.id property
+            var link = channel.objects.valueLink;
+            window.link = link;
+
+            link.setValue.connect(function (value) {
+                window.link.setFinished(false)
+                editor.setValue(value);
+            });
+
+            link.setContainerHeight.connect(function (height) {
+                document.getElementById("container").setAttribute("style", `height:${height}px`);
+                editor.layout()
+            });
+
+            link.setContainerWidth.connect(function (width) {
+                document.getElementById("container").setAttribute("style", `width:${width}px`);
+                editor.layout()
+            });
+
+            link.goToUUID.connect(function (uuid){
+                searchForUUID(uuid)
+                link.checkForErrors(err_flag,err_msg)
+                err_flag = false
+            })
+
+            link.undo.connect(function () {
+                editor.getModel().undo()
+            });
+
+            link.resetContainer.connect(function (height, width) {
+                document.getElementById("container").setAttribute("style", `height:${height}px`);
+                document.getElementById("container").setAttribute("style", `width:${width}px`);
+                editor.layout()
+            })
+
+            link.redo.connect(function () {
+                editor.getModel().redo()
+            });
+        });
+    </script>
+    <script>
+        document.onreadystatechange = function() {
+            if (document.readyState === 'interactive') {
+                if(editor !== null){
+                    editor.dispose()
+                }
+                initEditor()
+                registerQmlProvider()
+            } else if (document.readyState === 'complete') {}
+        }
+    </script>
+</body>
+
+</html>

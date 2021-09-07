@@ -5,14 +5,15 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/tests")
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
 
 function(prepareTestExecutable)
     get_filename_component(EXECUTABLE_NAME ${ARGV0} NAME_WE)
+
+    string(REPLACE "Test" "" EXECUTABLE_NAME ${EXECUTABLE_NAME})
+    string(PREPEND EXECUTABLE_NAME "test-")
 
     add_executable(${EXECUTABLE_NAME} ${ARGV})
 
