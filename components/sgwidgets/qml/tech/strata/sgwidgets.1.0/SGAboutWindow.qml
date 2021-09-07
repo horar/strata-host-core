@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
+import tech.strata.theme 1.0
 
 SGWidgets.SGWindow {
     id: window
@@ -24,10 +25,10 @@ SGWidgets.SGWindow {
     property string attributionText
     property variant versionNumberList: Qt.application.version.split(".")
     property string versionNumber: "%1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])
+    property color dialogBg: "#eeeeee"
 
     defaultAttributionText: {
-        return "Attributions:<br>"+
-                "Built on the awesome Qt/QML framework<br>"+
+        return "Built on the awesome Qt/QML framework<br>"+
                 "<a href=\"https://www.qt.io\">https://www.qt.io</a><br>"+
                 "<br>"+
                 "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
@@ -56,7 +57,7 @@ SGWidgets.SGWindow {
         Rectangle {
             id: bg
             anchors.fill: parent
-            color:"#eeeeee"
+            color: dialogBg
         }
 
         SGWidgets.SGText {
@@ -109,8 +110,9 @@ SGWidgets.SGWindow {
 
         TabBar {
             id: tabBar
-
-            palette.text: "black"
+            background:  {
+                color: dialogBg
+            }
 
             anchors {
                 left: imageColumn.right
@@ -128,7 +130,7 @@ SGWidgets.SGWindow {
                 }
 
                 background: Rectangle {
-                    color: tabBar.currentIndex == 0 ? "#D3D3D3" : "#aaaaaa"
+                    color: tabBar.currentIndex == 0 ? Qt.lighter(Theme.palette.gray, 1.25) : Qt.lighter(Theme.palette.gray, 1.05)
                 }
             }
 
@@ -143,7 +145,7 @@ SGWidgets.SGWindow {
                 }
 
                 background: Rectangle {
-                    color: tabBar.currentIndex == 1 ? "#D3D3D3" : "#aaaaaa"
+                    color: tabBar.currentIndex == 1 ? Qt.lighter(Theme.palette.gray, 1.25) : Qt.lighter(Theme.palette.gray, 1.05)
                 }
             }
         }
@@ -162,62 +164,61 @@ SGWidgets.SGWindow {
 
             Rectangle {
                 id: generalTab
-                color: "#D3D3D3"
-
-                SGWidgets.SGText {
-                    id: infoText
-                    width: parent.width
-                    padding: baseSpacing
-
-                    fontSizeMultiplier: 1.1
-                    font.italic: true
-                    wrapMode: Text.Wrap
-                    text: "\"Designed by engineers for engineers to securely deliver software & information, " +
-                        "efficiently bringing you the focused info you need, nothing you don’t.\"\n"
-                }
-
-                SGWidgets.SGText {
-                    width: parent.width
-                    padding: baseSpacing
-
-                    anchors {
-                        top: infoText.bottom
-                        margins: baseSpacing
-                    }
-                    fontSizeMultiplier: 1.1
-                    wrapMode: Text.Wrap
-                    text: Qt.application.name + " is part of Strata development kit.\n" +
-                        "\n"+
-                        "Copyright \u00a9 2018-2021 " + Qt.application.organization + ".\n"+
-                        "All rights reserved."
-                }
-            }
-
-            Rectangle {
-                id: attributionsTab
-                color: "#D3D3D3"
+                color: Qt.lighter(Theme.palette.gray, 1.25)
 
                 Flickable {
-                    id: flick
+                    id: generalFlick
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
                     contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
                     clip: true
+                    boundsBehavior: Flickable.StopAtBounds
 
                     ScrollBar.vertical: ScrollBar {
                         width: visible ? 8 : 0
-                        anchors.right: flick.right
+                        anchors.right: generalFlick.right
                         policy: ScrollBar.AlwaysOn
-                        visible: flick.height < flick.contentHeight
+                        visible: generalFlick.height < generalFlick.contentHeight
+                    }
+
+                    SGWidgets.SGText {
+                        id: infoText
+                        width: parent.width
+                        padding: baseSpacing
+
+                        fontSizeMultiplier: 1.1
+                        font.italic: true
+                        wrapMode: Text.Wrap
+                        text: "\"Designed by engineers for engineers to securely deliver software & information, " +
+                            "efficiently bringing you the focused info you need, nothing you don’t.\""
+                    }
+
+                    SGWidgets.SGText {
+                        id: copirightText
+                        width: parent.width
+                        padding: baseSpacing
+
+                        anchors {
+                            top: infoText.bottom
+                            margins: baseSpacing
+                        }
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        text: Qt.application.name + " is part of Strata development kit.\n" +
+                            "\n"+
+                            "Copyright \u00a9 2018-2021 " + Qt.application.organization + ".\n"+
+                            "All rights reserved."
                     }
 
                     SGWidgets.SGText {
                         id: disclaimerTextLabel
                         width: parent.width
                         padding: baseSpacing
-
-                        anchors.topMargin: baseSpacing
+                        anchors {
+                            top: copirightText.bottom
+                            margins: baseSpacing
+                        }
 
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
@@ -226,6 +227,28 @@ SGWidgets.SGWindow {
                             "OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND "+
                             "NONINFRINGEMENT."
                     }
+                }
+            }
+
+            Rectangle {
+                id: attributionsTab
+                color: "#D3D3D3"
+
+                Flickable {
+                    id: attributionsFlick
+                    width: parent.width
+                    height: parent.height
+                    contentWidth: parent.width
+                    contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
+                    clip: true
+                    boundsBehavior: Flickable.StopAtBounds
+
+                    ScrollBar.vertical: ScrollBar {
+                        width: visible ? 8 : 0
+                        anchors.right: attributionsFlick.right
+                        policy: ScrollBar.AlwaysOn
+                        visible: attributionsFlick.height < attributionsFlick.contentHeight
+                    }
 
                     SGWidgets.SGText {
                         id: attributionTextLabel
@@ -233,7 +256,6 @@ SGWidgets.SGWindow {
                         padding: baseSpacing
 
                         anchors {
-                            top: disclaimerTextLabel.bottom
                             topMargin: 2*baseSpacing
                         }
 
