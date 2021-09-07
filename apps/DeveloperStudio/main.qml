@@ -174,7 +174,7 @@ SGWidgets.SGMainWindow {
     }
 
     Connections {
-        target: sdsModel.programControllerManager
+        target: sdsModel.programFirmware
 
         onJobStatusChanged: {
             if (status === "running") {
