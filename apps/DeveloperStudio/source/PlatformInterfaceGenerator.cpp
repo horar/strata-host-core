@@ -202,7 +202,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
             }
 
             if (propType == TYPE_OBJECT_STATIC || propType == TYPE_ARRAY_STATIC) {
-                continue;
+                commandBody += insertTabs(indentLevel + 1) + "property var " + propName + ": " + getPropertyValue(payloadProperty, propType, indentLevel + 1) + "\n";
             } else if (propType == TYPE_ARRAY_DYNAMIC || propType == TYPE_OBJECT_DYNAMIC) {
                 commandBody += insertTabs(indentLevel + 1) + "property var " + propName + ": " + getPropertyValue(payloadProperty, propType, indentLevel) + "\n";
             } else {
