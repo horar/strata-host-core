@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 
 import "../"
 
@@ -14,15 +15,16 @@ Item {
     property bool unsavedChanges: false
     property string inputFilePath
     property string currentCvcProjectQrcUrl
-    property string currentCvcProjectJsonUrl
+    property string currentCvcProjectJsonUrl: editor.fileTreeModel.debugMenuSource
     property bool platformInterfaceGeneratorSeen
+    property string apiVersion
 
     readonly property string jsonFileName: "platformInterface.json"
 
     readonly property var baseModel: ({
         "commands": [],
         "notifications": []
-    });
+    })
 
     readonly property var templateCommand: ({
         "type": "cmd",
@@ -30,17 +32,15 @@ Item {
         "valid": false,
         "payload": [],
         "editing": false
-    });
+    })
 
     readonly property var templateNotification: ({
         "type": "value",
         "name": "",
         "valid": false,
-        "payload": [
-            templatePayload
-        ],
+        "payload": [],
         "editing": false
-    });
+	})
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
@@ -48,8 +48,9 @@ Item {
         "indexSelected": 0,
         "valid": false,
         "array": [], // This is only filled if the type == "array"
-        "object": []
-    });
+        "object": [],
+        "value": "0"
+    })
 
     onVisibleChanged: {
         if (editor.fileTreeModel.url == "") {
@@ -63,8 +64,8 @@ Item {
         currentCvcProjectQrcUrl = editor.fileTreeModel.url
 
         if (visible) {
-            if (!platformInterfaceGeneratorSeen && findPlatformInterfaceJsonInProject() != "") {
-                alertToast.text = "Detected " + jsonFileName + " in the project root. Select 'Import from Project' to load it."
+            if (!platformInterfaceGeneratorSeen && currentCvcProjectJsonUrl != "") {
+                alertToast.text = "Detected " + jsonFileName + " in the project. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
                 alertToast.color = "green"
                 alertToast.interval = 8000
@@ -75,7 +76,6 @@ Item {
     }
 
     onCurrentCvcProjectQrcUrlChanged: {
-        currentCvcProjectJsonUrl = findPlatformInterfaceJsonInProject()
         platformInterfaceGeneratorSeen = false
     }
 
@@ -83,9 +83,9 @@ Item {
         id: finishedModel
 
         Component.onCompleted: {
-            let keys = Object.keys(baseModel);
+            let keys = Object.keys(baseModel)
             for (let i = 0; i < keys.length; i++) {
-                let name = keys[i];
+                let name = keys[i]
                 let type = {
                     "name": name, // "commands" / "notifications"
                     "data": []
@@ -102,68 +102,68 @@ Item {
             // First loop through each command / notification and make sure there are no duplicate commands / notification names
             // Then recursively go through each property to ensure that there are no duplicate object property names
             for (let i = 0; i < count; i++) {
-                let commands = get(i).data;
+                let commands = get(i).data
                 for (let k = 0; k < commands.count; k++) {
-                    let valid = true;
+                    let valid = true
                     if (commands.get(k).name === "") {
                         commands.setProperty(k, "valid", false)
                         console.error("Empty", i === 0 ? "command" : "notification", "name at index", k)
-                        return false;
+                        return false
                     }
 
                     for (let j = 0; j < commands.count; j++) {
                         if (j !== k && commands.get(k).name === commands.get(j).name) {
                             commands.setProperty(j, "valid", false)
                             console.error("Duplicate", i === 0 ? "command" : "notification", "'" + commands.get(j).name + "' found")
-                            return false;
+                            return false
                         }
                     }
 
                     if (!checkForDuplicatePropertyNames(i, k, true)) {
-                        return false;
+                        return false
                     }
                 }
             }
-            return true;
+            return true
         }
 
         /**
           * checkForDuplicatePropertyNames checks for valid and duplicate property names in a command / notification
          **/
         function checkForDuplicatePropertyNames(typeIndex, commandIndex, shortCircuit = false) {
-            let commands = get(typeIndex).data;
-            let payload = commands.get(commandIndex).payload;
+            let commands = get(typeIndex).data
+            let payload = commands.get(commandIndex).payload
 
-            let allValid = true;
+            let allValid = true
             for (let i = 0; i < payload.count; i++) {
-                let valid = true;
+                let valid = true
 
                 if (payload.get(i).name === "") {
                     payload.setProperty(i, "valid", false)
-                    allValid = false;
+                    allValid = false
                     if (shortCircuit) {
                         console.error("Empty payload name at index", i)
-                        return false;
+                        return false
                     }
 
-                    continue;
+                    continue
                 }
 
                 for (let j = 0; j < payload.count; j++) {
                     if (j !== i && payload.get(i).name === payload.get(j).name) {
-                        valid = false;
-                        allValid = false;
+                        valid = false
+                        allValid = false
                         if (shortCircuit) {
                             console.error("Duplicate payload key '" + payload.get(j).name + "' found")
-                            return false;
+                            return false
                         }
-                        break;
+                        break
                     }
                 }
 
                 // If the payload property is an object, check to make sure there are no duplicate keys in that object
-                if (valid && payload.get(i).type === "object") {
-                    let objectPropertiesModel = payload.get(i).object;
+                if (valid && payload.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                    let objectPropertiesModel = payload.get(i).object
                     for (let k = 0; k < objectPropertiesModel.count; k++) {
                         let tmpValid = checkForDuplicateObjectPropertyNames(objectPropertiesModel, k)
                         if (!tmpValid) {
@@ -178,7 +178,7 @@ Item {
                             }
                         }
                     }
-                } else if (valid && payload.get(i).type === "array") {
+                } else if (valid && payload.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                     if (!checkForArrayValid(payload.get(i).array)) {
                         valid = false
                         allValid = false
@@ -193,14 +193,14 @@ Item {
 
                 payload.setProperty(i, "valid", valid)
             }
-            return allValid;
+            return allValid
         }
 
         /**
           * checkForDuplicateObjectPropertyNames checks for duplicate keys in a given payload property that is of 'object' type
          **/
         function checkForDuplicateObjectPropertyNames(objectPropertiesModel, index) {
-            let key = objectPropertiesModel.get(index).key
+            let key = objectPropertiesModel.get(index).name
 
             if (key === "") {
                 return false
@@ -208,43 +208,43 @@ Item {
 
             for (let i = 0; i < objectPropertiesModel.count; i++) {
                 if (i !== index) {
-                    let item = objectPropertiesModel.get(i);
-                    if (item.key === key) {
-                        return false;
+                    let item = objectPropertiesModel.get(i)
+                    if (item.name === key) {
+                        return false
                     }
                 }
             }
 
             // Now recurse through any children that are objects or arrays
             for (let j = 0; j < objectPropertiesModel.count; j++) {
-                let item = objectPropertiesModel.get(j);
+                let item = objectPropertiesModel.get(j)
 
-                if (item.type === "array") {
+                if (item.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                     for (let k = 0; k < item.array.count; k++) {
-                        if (item.array.get(k).type === "array") {
+                        if (item.array.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                             if (!checkForArrayValid(item.array.get(k).array)) {
                                 return false
                             }
-                        } else if (item.array.get(k).type === "object") {
-                            let subObject = item.array.get(k).object;
+                        } else if (item.array.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            let subObject = item.array.get(k).object
                             for (let m = 0; m < subObject.count; m++) {
                                 if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
-                                    return false;
+                                    return false
                                 }
                             }
                         }
                     }
-                } else if (item.type === "object") {
+                } else if (item.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
                     for (let k = 0; k < item.object.count; k++) {
-                        if (item.object.get(k).type === "array") {
+                        if (item.object.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                             if (!checkForArrayValid(item.object.get(k).array)) {
                                 return false
                             }
-                        } else if (item.object.get(k).type === "object") {
-                            let subObject = item.object.get(k).object;
+                        } else if (item.object.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            let subObject = item.object.get(k).object
                             for (let m = 0; m < subObject.count; m++) {
                                 if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
-                                    return false;
+                                    return false
                                 }
                             }
                         }
@@ -252,7 +252,7 @@ Item {
                 }
             }
 
-            return true;
+            return true
         }
 
         /**
@@ -260,15 +260,15 @@ Item {
          **/
         function checkForArrayValid(arrayModel) {
             for (let i = 0; i < arrayModel.count; i++) {
-                if (arrayModel.get(i).type === "array") {
+                if (arrayModel.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                     if (!checkForArrayValid(arrayModel.get(i).array)) {
                         return false
                     }
-                } else if (arrayModel.get(i).type === "object") {
-                    let subObject = arrayModel.get(i).object;
+                } else if (arrayModel.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                    let subObject = arrayModel.get(i).object
                     for (let m = 0; m < subObject.count; m++) {
                         if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
-                            return false;
+                            return false
                         }
                     }
                 }
@@ -282,21 +282,21 @@ Item {
           * E.g.: Commands can have a cmd with name "test" and so can the notifications
          **/
         function checkForDuplicateIds(index) {
-            let commands = get(index).data;
+            let commands = get(index).data
             let allValid = true
             for (let i = 0; i < commands.count; i++) {
-                let valid = true;
+                let valid = true
                 for (let j = 0; j < commands.count; j++) {
                     if (j !== i && commands.get(i).name === commands.get(j).name) {
-                        valid = false;
-                        allValid = false;
-                        break;
+                        valid = false
+                        allValid = false
+                        break
                     }
                 }
                 get(index).data.setProperty(i, "valid", valid)
             }
 
-            return allValid;
+            return allValid
         }
     }
 
@@ -333,19 +333,8 @@ Item {
             }
 
             if (closeReason === acceptCloseReason) {
-                let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
-                try {
-                    const jsonObject = JSON.parse(fileText)
-                    createModelFromJson(jsonObject)
-                } catch (e) {
-                    console.error(e)
-                    alertToast.text = "Failed to parse input JSON file: " + e
-                    alertToast.textColor = "white"
-                    alertToast.color = "#D10000"
-                    alertToast.interval = 0
-                    alertToast.show()
-                }
                 unsavedChanges = false
+                loadJsonFile(inputFilePath)
             }
         }
     }
@@ -359,8 +348,8 @@ Item {
         }
 
         Text {
-            Layout.alignment: Qt.AlignHCenter
             text: "Platform Interface Generator"
+            Layout.alignment: Qt.AlignHCenter
             padding: 0
             font {
                 bold: true
@@ -455,7 +444,7 @@ Item {
                         }
 
                         ToolTip {
-                            text: "A project must be open and contain " + jsonFileName + " in its root directory"
+                            text: "A project must be open and contain " + jsonFileName + " in its directory structure"
                             visible: !importJsonFileFromProjectButton.enabled && importFromProjectMouseArea.containsMouse
                         }
                     }
@@ -679,7 +668,7 @@ Item {
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
 
                 onClicked: {
-                    let valid = finishedModel.checkForAllValid();
+                    let valid = finishedModel.checkForAllValid()
                     if (!valid) {
                         alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique."
                         alertToast.textColor = "white"
@@ -729,71 +718,71 @@ Item {
       * createModelFromJson creates the model from a JSON object (used when importing a JSON file)
      **/
     function createModelFromJson(jsonObject) {
-        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+        let topLevelKeys = Object.keys(jsonObject) // This contains "commands" / "notifications" arrays
 
         finishedModel.modelAboutToBeReset()
-        finishedModel.clear();
+        finishedModel.clear()
 
         for (let i = 0; i < topLevelKeys.length; i++) {
-            const topLevelType = topLevelKeys[i];
-            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
+            const topLevelType = topLevelKeys[i]
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
             let listOfCommandsOrNotifications = {
                 "name": topLevelType, // "commands" / "notifications"
                 "data": []
             }
 
-            finishedModel.append(listOfCommandsOrNotifications);
+            finishedModel.append(listOfCommandsOrNotifications)
 
             for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                let commandsModel = finishedModel.get(i).data;
+                let commandsModel = finishedModel.get(i).data
 
-                let cmd = arrayOfCommandsOrNotifications[j];
-                let commandName;
-                let commandType;
-                let commandObject = {};
+                let cmd = arrayOfCommandsOrNotifications[j]
+                let commandName
+                let commandType
+                let commandObject = {}
 
                 if (topLevelType === "commands") {
                     // If we are dealing with commands, then look for the "cmd" key
-                    commandName = cmd["cmd"];
-                    commandType = "cmd";
+                    commandName = cmd["cmd"]
+                    commandType = "cmd"
                 } else {
-                    commandName = cmd["value"];
-                    commandType = "value";
+                    commandName = cmd["value"]
+                    commandType = "value"
                 }
 
-                commandObject["type"] = commandType;
-                commandObject["name"] = commandName;
-                commandObject["valid"] = true;
-                commandObject["payload"] = [];
-                commandObject["editing"] = false;
+                commandObject["type"] = commandType
+                commandObject["name"] = commandName
+                commandObject["valid"] = true
+                commandObject["payload"] = []
+                commandObject["editing"] = false
 
-                commandsModel.append(commandObject);
+                commandsModel.append(commandObject)
 
-                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
-                let payloadPropertiesArray = [];
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
 
                 if (payload) {
-                    let payloadProperties = Object.keys(payload);
-                    let payloadModel = commandsModel.get(j).payload;
-                    for (let k = 0; k < payloadProperties.length; k++) {
+                    let payloadModel = commandsModel.get(j).payload
+                    for (let k = 0; k < payload.length; k++) {
 
-                        const key = payloadProperties[k];
-                        const type = getType(payload[key]);
-                        let payloadPropObject = Object.assign({}, templatePayload);
-                        payloadPropObject["name"] = key;
-                        payloadPropObject["type"] = type;
-                        payloadPropObject["valid"] = true;
-                        payloadPropObject["indexSelected"] = -1;
+                        const payloadProperty = payload[k]
+                        const type = payloadProperty.type
 
-                        payloadModel.append(payloadPropObject);
+                        let payloadPropObject = Object.assign({}, templatePayload)
+                        payloadPropObject["name"] = payloadProperty.name
+                        payloadPropObject["type"] = type
+                        payloadPropObject["valid"] = true
+                        payloadPropObject["indexSelected"] = -1
+                        if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                                type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            payloadPropObject["value"] = String(payloadProperty.value)
+                        }
 
-                        let propertyArray = [];
-                        let propertyObject = [];
+                        payloadModel.append(payloadPropObject)
 
-                        if (type === "array") {
-                            generateArrayModel(payload[key], payloadModel.get(k).array);
-                        } else if (type === "object") {
-                            generateObjectModel(payload[key], payloadModel.get(k).object);
+                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
+                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            generateObjectModel(payloadProperty.value, payloadModel.get(k).object)
                         }
                     }
                 }
@@ -833,15 +822,20 @@ Item {
      **/
     function generateArrayModel(arr, parentListModel) {
         for (let i = 0; i < arr.length; i++) {
-            const type = getType(arr[i]);
-            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel};
+            const type = arr[i].type
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
 
-            parentListModel.append(obj);
+            if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                    type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                obj["value"] = String(arr[i].value)
+            }
 
-            if (type === "array") {
-                generateArrayModel(arr[i], parentListModel.get(i).array)
-            } else if (type === "object") {
-                generateObjectModel(arr[i], parentListModel.get(i).object)
+            parentListModel.append(obj)
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModel(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModel(arr[i].value, parentListModel.get(i).object)
             }
         }
     }
@@ -850,32 +844,22 @@ Item {
       * generateObjectModel takes an Object and transforms it into an array readable by our delegates
      **/
     function generateObjectModel(object, parentListModel) {
-        let keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            const type = getType(object[key]);
+        for (let i = 0; i < object.length; i++) {
+            const type = object[i].type
+            let obj = {"name": object[i].name, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""}
 
-            let obj = {"key": key, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel};
-            parentListModel.append(obj);
-
-            if (type === "array") {
-                generateArrayModel(object[key], parentListModel.get(i).array)
-            } else if (type === "object") {
-                generateObjectModel(object[key], parentListModel.get(i).object)
+            if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                    type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                obj["value"] = String(object[i].value)
             }
-        }
-    }
 
-    /**
-      * getType returns the type of an item
-     **/
-    function getType(item) {
-        if (Array.isArray(item)) {
-            return "array";
-        } else if (typeof item === "object") {
-            return "object";
-        } else {
-            return item;
+            parentListModel.append(obj)
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModel(object[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModel(object[i].value, parentListModel.get(i).object)
+            }
         }
     }
 
@@ -883,83 +867,103 @@ Item {
       * createJsonObject creates the JSON object to output
      **/
     function createJsonObject() {
-        let obj = {};
+        let obj = {}
 
         for (let i = 0; i < finishedModel.count; i++) {
-            let type = finishedModel.get(i);
-            let commands = [];
+            let type = finishedModel.get(i)
+            let commands = []
 
             for(let j = 0; j < type.data.count; j++) {
-                let command = type.data.get(j);
-                let commandObj = {};
-                commandObj[command.type] = command.name;
+                let command = type.data.get(j)
+                let commandObj = {}
+                commandObj[command.type] = command.name
 
                 if (command.payload.count === 0) {
-                    commandObj["payload"] = null;
-                    commands.push(commandObj);
-                    continue;
+                    // don't add a payload key if the payload is empty
+                    commands.push(commandObj)
+                    continue
                 } else {
-                    commandObj["payload"] = {};
+                    commandObj["payload"] = []
                 }
 
                 for (let k = 0; k < command.payload.count; k++) {
-                    let payloadProperty = command.payload.get(k);
-
-                    if (payloadProperty.type === "array") {
-                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromArrayProperty(payloadProperty.array, []);
-                    } else if (payloadProperty.type === "object") {
-                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromObjectProperty(payloadProperty.object, {});
-                    } else {
-                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
+                    let payloadProperty = command.payload.get(k)
+                    let payloadObject = {
+                        name: payloadProperty.name,
+                        type: payloadProperty.type
                     }
+
+                    if (payloadProperty.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                        payloadObject.value =  createJsonObjectFromModel(payloadProperty.array)
+                    } else if (payloadProperty.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                        payloadObject.value = createJsonObjectFromModel(payloadProperty.object)
+                    } else if (payloadProperty.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC
+                               || payloadProperty.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC) {
+                        payloadObject.value = []
+                    } else {
+                        payloadObject.value = getTypedValue(payloadProperty.type, payloadProperty.value)
+                    }
+                    commandObj["payload"].push(payloadObject)
                 }
                 commands.push(commandObj)
             }
-            obj[type.name] = commands;
+            obj[type.name] = commands
         }
-        return obj;
+        return obj
     }
 
-    function createJsonObjectFromArrayProperty(arrayModel, outputArr) {
-        for (let m = 0; m < arrayModel.count; m++) {
-            let arrayElement = arrayModel.get(m);
-
-            if (arrayElement.type === "object") {
-                outputArr.push(createJsonObjectFromObjectProperty(arrayElement.object, {}))
-            } else if (arrayElement.type === "array") {
-                outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))
-            } else {
-                outputArr.push(arrayElement.type)
+    function createJsonObjectFromModel(model) {
+        let outputArr = []
+        for (let m = 0; m < model.count; m++) {
+            let arrayElement = model.get(m)
+            let object = {
+                name: arrayElement.name,
+                type: arrayElement.type
             }
+
+            if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                object.value =  createJsonObjectFromModel(arrayElement.array)
+            } else if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                object.value = createJsonObjectFromModel(arrayElement.object)
+            } else if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC) {
+                object.value = []
+            } else if (arrayElement.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC) {
+                object.value = {}
+            } else {
+                object.value = getTypedValue(arrayElement.type, arrayElement.value)
+            }
+            outputArr.push(object)
         }
-        return outputArr;
+        return outputArr
     }
 
-    function createJsonObjectFromObjectProperty(objectModel, outputObj) {
-        for (let i = 0; i < objectModel.count; i++) {
-            let objectProperty = objectModel.get(i);
-
-            // Recurse through array
-            if (objectProperty.type === "array") {
-                outputObj[objectProperty.key] = createJsonObjectFromArrayProperty(objectProperty.array, [])
-            } else if (objectProperty.type === "object") {
-                outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})
-            } else {
-                outputObj[objectProperty.key] = objectProperty.type
-            }
+    /**
+      * Convert string values to typed values
+     **/
+    function getTypedValue (type, value) {
+        switch (type) {
+            case "int":
+                return parseInt(value)
+            case "double":
+                return parseFloat(value)
+            case "bool":
+                if (value === "false") {
+                    return false
+                } else {
+                    return true
+                }
+            default: // case "string"
+                return value
         }
-        return outputObj;
     }
 
     /**
       * generatePlatformInterface calls c++ function to generate PlatformInterface from JSON object
      **/
     function generatePlatformInterface() {
-        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, jsonFileName);
-        let jsonObject = createJsonObject();
-        SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
-
-        let result = sdsModel.platformInterfaceGenerator.generate(jsonInputFilePath, outputFileText.text);
+        const jsonObject = createJsonObject()
+        const jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, jsonFileName)
+        const result = sdsModel.platformInterfaceGenerator.generate(jsonObject, outputFileText.text)
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
@@ -970,17 +974,106 @@ Item {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
         } else {
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.textColor = "white"
             alertToast.color = "green"
             alertToast.interval = 4000
-            sdsModel.debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
+            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
         }
         alertToast.show()
-
+        
         unsavedChanges = false
+    }
+
+    /**
+      * importValidationCheck will check if the incoming JSON file is a valid Platform Interface JSON
+     **/
+
+    function importValidationCheck(object) {
+        if (!object.hasOwnProperty("commands") || 
+            !object.hasOwnProperty("notifications") ||
+            Object.keys(object).length !== 2) {
+            // must contain only commands and notifications
+            return false
+        }
+
+        const commands = object["commands"]
+        const notifications = object["notifications"]
+
+        if (!Array.isArray(commands) || !Array.isArray(notifications)) {
+            return false
+        }
+
+        for (var i = 0; i < commands.length; i++) {
+            const command = commands[i]
+            if (!command.hasOwnProperty("cmd")) {
+                return false
+            }
+
+            if (command.hasOwnProperty("payload") && !Array.isArray(command["payload"])) {
+                if (typeof command["payload"] === "object") {
+                    apiVersion = "APIv0"
+                    return true
+                }
+            }
+
+            if (!searchLevel1(command)) {
+                return false
+            }
+        }
+
+        for (var i = 0; i < notifications.length; i++) {
+            const notification = notifications[i]
+            if (!notification.hasOwnProperty("value")) {
+                return false
+            }
+
+            if (!searchLevel1(notification)) {
+                return false
+            }
+        }
+        apiVersion = "APIv1"
+        return true
+    }
+
+    function searchLevel1(object) {
+        if (object.hasOwnProperty("payload")) {
+            if (!Array.isArray(object["payload"])) {
+                return false
+            }
+
+            for (var i = 0; i < object["payload"].length; i++) {
+                const payload = object["payload"][i]
+                if (!payload.hasOwnProperty("type") || !payload.hasOwnProperty("value") || !payload.hasOwnProperty("name")) {
+                    return false
+                }
+                if (payload["type"].includes("array-static") || payload["type"].includes("object-known")) {
+                    for (var j = 0; j < payload["value"].length; j++) {
+                        const obj = payload["value"][j]
+                        if (!searchLevel2Recurse(obj)) {
+                            return false
+                        }
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    function searchLevel2Recurse(object) {
+        if (!object.hasOwnProperty("type") || !object.hasOwnProperty("value")) {
+            return false
+        }
+
+        if (object["type"].includes("array-static") || object["type"].includes("object-known")) {
+            for (var j = 0; j < object["value"].length; j++) {
+                const obj = object["value"][j]
+                return searchLevel2Recurse(obj)
+            }
+        }
+        return true
     }
 
     /**
@@ -1002,7 +1095,30 @@ Item {
             const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)
-                createModelFromJson(jsonObject)
+                if (importValidationCheck(jsonObject)) {
+                    if (apiVersion === "APIv1") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        createModelFromJson(jsonObject)
+                    } else if (apiVersion === "APIv0") {
+                        if (alertToast.visible) {
+                            alertToast.hide()
+                        }
+                        alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
+                        alertToast.textColor = "white"
+                        alertToast.color = "goldenrod"
+                        alertToast.interval = 0
+                        alertToast.show()
+                        createModelFromJsonAPIv0(jsonObject)
+                    }
+                } else {
+                    alertToast.text = "The JSON file is improperly formatted"
+                    alertToast.textColor = "white"
+                    alertToast.color = "#D10000"
+                    alertToast.interval = 0
+                    alertToast.show()
+                }
             } catch (e) {
                 console.error(e)
                 alertToast.text = "Failed to parse input JSON file: " + e
@@ -1024,16 +1140,181 @@ Item {
         return SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(currentCvcProjectQrcUrl))
     }
 
+    /********************************************************************************************
+      * All functions below this mark are for APIv0. 
+      * This allows deprecated PI.json to function as expected
+      * When the user generates again, their PI.json file be updated to APIv1
+    /********************************************************************************************
+
     /**
-      * findPlatformInterfaceJsonInProject find platform interface JSON given root Qrc file url
-      * return the JSON filepath or empty if does not exist
-     **/
-    function findPlatformInterfaceJsonInProject() {
-        const projectRootDir = findProjectRootDir()
-        const platformInterfaceJsonFilepath = SGUtilsCpp.joinFilePath(projectRootDir, jsonFileName)
-        if (SGUtilsCpp.isFile(platformInterfaceJsonFilepath)) {
-            return platformInterfaceJsonFilepath
+      * DEPRECATED - APIv0 Model
+      * This function creates the model from a JSON object (used when importing a JSON file)
+    **/
+    function createModelFromJsonAPIv0(jsonObject) {
+        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+
+        finishedModel.modelAboutToBeReset()
+        finishedModel.clear()
+
+        for (let i = 0; i < topLevelKeys.length; i++) {
+            const topLevelType = topLevelKeys[i]
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
+            let listOfCommandsOrNotifications = {
+                "name": topLevelType, // "commands" / "notifications"
+                "data": []
+            }
+
+            finishedModel.append(listOfCommandsOrNotifications)
+
+            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+                let commandsModel = finishedModel.get(i).data
+
+                let cmd = arrayOfCommandsOrNotifications[j]
+                let commandName
+                let commandType
+                let commandObject = {}
+
+                if (topLevelType === "commands") {
+                    // If we are dealing with commands, then look for the "cmd" key
+                    commandName = cmd["cmd"]
+                    commandType = "cmd"
+                } else {
+                    commandName = cmd["value"]
+                    commandType = "value"
+                }
+
+                commandObject["type"] = commandType
+                commandObject["name"] = commandName
+                commandObject["valid"] = true
+                commandObject["payload"] = []
+                commandObject["editing"] = false
+
+                commandsModel.append(commandObject)
+
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
+                let payloadPropertiesArray = []
+
+                if (payload) {
+                    let payloadProperties = Object.keys(payload)
+                    // sorting pi.json file so the generated files, pi.json & pi.qml, will function as intented prior to APIv1
+                    payloadProperties = payloadProperties.sort(); 
+                    let payloadModel = commandsModel.get(j).payload
+                    for (let k = 0; k < payloadProperties.length; k++) {
+
+                        const key = payloadProperties[k]
+                        let type = getType(payload[key])
+                        let payloadPropObject = Object.assign({}, templatePayload)
+                        payloadPropObject["name"] = key
+                        payloadPropObject["type"] = type
+                        payloadPropObject["valid"] = true
+                        payloadPropObject["indexSelected"] = -1
+
+                        if (type === "int") {
+                            payloadPropObject["value"] = "0"
+                        } else if (type === "double") {
+                            payloadPropObject["value"] = "0"
+                        } else if (type === "bool") {
+                            payloadPropObject["value"] = "false"
+                        } else if (type === "string") {
+                            payloadPropObject["value"] = ""
+                        }
+
+                        payloadModel.append(payloadPropObject)
+
+                        let propertyArray = []
+                        let propertyObject = []
+
+                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                            generateArrayModelAPIv0(payload[key], payloadModel.get(k).array)
+                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                            generateObjectModelAPIv0(payload[key], payloadModel.get(k).object)
+                        }
+                    }
+                }
+            }
         }
-        return ""
+        finishedModel.modelReset()
+
+        if (inputFilePath == currentCvcProjectJsonUrl) {
+            outputFileText.text = findProjectRootDir()
+        } else {
+            outputFileText.text = SGUtilsCpp.parentDirectoryPath(inputFilePath)
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * getType called from createModelFromJsonAPIv0(); returns the sdsModel type
+    **/
+    function getType(item) {
+        if (Array.isArray(item)) {
+            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
+        } else if (item === "array-dynamic") {
+            return sdsModel.platformInterfaceGenerator.TYPE_ARRAY_DYNAMIC
+        } else if (typeof item === "object") {
+            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
+        } else if (item === "object-dynamic") {
+            return sdsModel.platformInterfaceGenerator.TYPE_OBJECT_DYNAMIC
+        } else {
+            return item
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function takes an Array and transforms it into an array readable by our delegates
+    **/
+    function generateArrayModelAPIv0(arr, parentListModel) {
+        for (let i = 0; i < arr.length; i++) {
+            let type = getType(arr[i])
+
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
+            
+            if (type === "int") {
+                obj["value"] = "0"
+            } else if (type === "double") {
+                obj["value"] = "0"
+            } else if (type === "bool") {
+                obj["value"] = "false"
+            }
+            
+            parentListModel.append(obj)
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
+            }
+        }
+    }
+
+    /**
+      * DEPRECATED - APIv0 Model
+      * This function takes an Object and transforms it into an array readable by our delegates
+    **/
+    function generateObjectModelAPIv0(object, parentListModel) {
+        let keys = Object.keys(object)
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
+            let type = getType(object[key])
+            
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel, "value": ""}
+            
+            if (type === "int") {
+                obj["value"] = "0"
+            } else if (type === "double") {
+                obj["value"] = "0"
+            } else if (type === "bool") {
+                obj["value"] = "false"
+            }
+            
+            parentListModel.append(obj)
+
+            if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                generateArrayModelAPIv0(arr[i].value, parentListModel.get(i).array)
+            } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                generateObjectModelAPIv0(arr[i].value, parentListModel.get(i).object)
+            }
+        }
     }
 }

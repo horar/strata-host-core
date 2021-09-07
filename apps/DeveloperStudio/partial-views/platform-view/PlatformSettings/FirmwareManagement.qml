@@ -26,17 +26,17 @@ ColumnLayout {
     }
 
     Connections {
-        target: coreInterface
+        target: sdsModel.firmwareManager
 
-        onUpdateFirmwareReply: {
-            if (payload.device_id === platformStack.device_id) {
-                firmwareColumn.activeFirmware.initUpdateFirmwareJob(payload)
+        onUpdateFirmwareJobProgress: {
+            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
+                firmwareColumn.activeFirmware.processUpdateFirmwareJobProgress(status, progress)
             }
         }
 
-        onUpdateFirmwareJobUpdate: {
-            if (firmwareColumn.activeFirmware) {
-                firmwareColumn.activeFirmware.processUpdateFirmwareJobUpdate(payload)
+        onUpdateFirmwareJobFinished: {
+            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
+                firmwareColumn.activeFirmware.processUpdateFirmwareJobFinished(status, errorString)
             }
         }
     }
@@ -77,14 +77,6 @@ ColumnLayout {
 
             if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
                 firmwareIsOutOfDate = true
-            }
-        }
-    }
-
-    function clearDescriptions () {
-        for (let i = 0; i < firmwareList.firmwareVersions.children.length; i++) {
-            if (firmwareList.firmwareVersions.children[i].objectName === "firmwareRow") {
-                firmwareList.firmwareVersions.children[i].description = ""
             }
         }
     }

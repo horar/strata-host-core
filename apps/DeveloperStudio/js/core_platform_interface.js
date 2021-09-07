@@ -29,39 +29,46 @@ function data_source_handler (payload) {
 
             if (message.hasOwnProperty("notification")) {
                 let notification = message.notification
-                if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
+                if (notification.hasOwnProperty("value")) {
                     var notification_key = notification.value
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
 
                         if (!platformInterface["notifications"].hasOwnProperty(notification_key)) {
-                            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "This platform interface doesn't support the notification '" + notification_key + "'. Ignoring...")
+                            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "PlatformInterface.qml doesn't recognize the notification '" + notification_key + "'. Ignoring...")
                             return;
                         }
 
-                        // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
-                        for (const key of Object.keys(notification["payload"])) {
+                        // before iterating on the payload, confirm it exists, and is an object
+                        if (notification.hasOwnProperty("payload") && typeof notification["payload"] === 'object' && notification["payload"] !== null){
+                            // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
+                            for (const key of Object.keys(notification["payload"])) {
+                                if (!platformInterface["notifications"][notification_key].hasOwnProperty(key)) {
+                                    console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
+                                    continue;
+                                }
 
-                            if (!platformInterface["notifications"][notification_key].hasOwnProperty(key)) {
-                                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
-                                continue;
-                            }
+                                const payloadObj = notification["payload"][key]
+                                let platformInterfaceObj = platformInterface["notifications"][notification_key][key]
 
-                            const payloadObj = notification["payload"][key]
-                            let platformInterfaceObj = platformInterface["notifications"][notification_key][key]
-
-                            if (typeof payloadObj === "object" && isQtObject(platformInterfaceObj)) {
-                                // if payload is an object or array, and platform interface object is a QtObject, recurse
-                                setNotification(platformInterfaceObj, payloadObj);
-                            } else {
-                                // directly assign value; either basic types or JS objects/arrays
-                                platformInterface["notifications"][notification_key][key] = payloadObj;
+                                if (typeof payloadObj === "object" && isQtObject(platformInterfaceObj)) {
+                                    // if payload is an object or array, and platform interface object is a QtObject, recurse
+                                    setNotification(platformInterfaceObj, payloadObj);
+                                } else {
+                                    // directly assign value; either basic types or JS objects/arrays
+                                    platformInterface["notifications"][notification_key][key] = payloadObj;
+                                }
                             }
                         }
 
                         // Emit the notificationFinished signal
                         platformInterface["notifications"][notification_key].notificationFinished()
                     } else {
-                        platformInterface[notification_key] = Object.create(notification["payload"]);
+                        // Notifications using old API must include "payload" key
+                        if (notification.hasOwnProperty("payload")){
+                            platformInterface[notification_key] = Object.create(notification["payload"]);
+                        } else {
+                            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Notification is malformed:", JSON.stringify(notification));
+                        }
                     }
                     //console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "data_source_handler: signalling -> notification key:", notification_key);
                 } else {

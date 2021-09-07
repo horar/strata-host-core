@@ -109,38 +109,6 @@ Item {
                 }
             }
 
-            Button {
-                id: serverChange
-                enabled: sdsModel.urls.testAuthServer !== ""
-                onClicked: {
-                    if (Rest.url !== sdsModel.urls.authServer) {
-                        Rest.url = sdsModel.urls.authServer
-                    } else {
-                        Rest.url = sdsModel.urls.testAuthServer
-                    }
-                    Signals.serverChanged()
-                }
-
-                Component.onCompleted: {
-                    setButtonText()
-                }
-
-                function setButtonText () {
-                    if (Rest.url !== sdsModel.urls.authServer ) {
-                        text = "Switch to Prod Auth Server"
-                    } else {
-                        text = "Switch to Test Auth Server"
-                    }
-                }
-
-                Connections {
-                    target: Signals
-                    onServerChanged: {
-                        serverChange.setButtonText()
-                    }
-                }
-            }
-
             RowLayout {
                 Label {
                     text: qsTr("Log level:")

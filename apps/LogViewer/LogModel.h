@@ -74,6 +74,9 @@ private:
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
     QDateTime previousTimestamp_;
+    QString previousPid_;
+    QString previousTid_;
+    LogModel::LogLevel previousLevel_;
     QList<LogItem*> data_;
     QVector<qint64> lastPositions_;
     LogItem* parseLine(const QString &line);
@@ -83,6 +86,7 @@ private:
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
     void setModelRoles();
+    void clearPrevious();
     QHash<QByteArray, int> roleByNameHash_;
     QHash<int, QByteArray> roleByEnumHash_;
 };

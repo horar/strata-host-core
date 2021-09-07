@@ -115,9 +115,12 @@ FocusScope {
                 }
                 fileName = fileName + "_" + currentTimestamp() + ".bin"
 
-                const documentsUrl = StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+                let destination = Sci.Settings.lastSavedFirmwarePath
+                if (destination.length === 0) {
+                    destination = CommonCpp.SGUtilsCpp.urlToLocalFile(StandardPaths.writableLocation(StandardPaths.DocumentsLocation))
+                }
 
-                return CommonCpp.SGUtilsCpp.joinFilePath(CommonCpp.SGUtilsCpp.urlToLocalFile(documentsUrl), fileName)
+                return CommonCpp.SGUtilsCpp.joinFilePath(destination, fileName)
             }
 
             dialogLabel: "Select path for firmware binary"
@@ -236,6 +239,7 @@ FocusScope {
          var errorString = model.platform.saveDeviceFirmware(firmwarePath)
          if (errorString.length === 0) {
              setupNode.nodeState = StatusNode.Succeed
+             Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(firmwarePath)
          } else {
              setupNode.nodeState = StatusNode.Failed
              setupNode.subText = "Operation cannot start: " + errorString

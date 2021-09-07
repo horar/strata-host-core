@@ -274,7 +274,7 @@ void PlatformErrorsTest::unableToOpenTest()
     QList<QVariant> arguments = platformErrorSignal.takeFirst();
     QVERIFY(arguments.at(0).type() == QVariant::UserType);
     QVERIFY(arguments.at(1).type() == QVariant::String);
-    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceFailedToOpenRequestRetry);
+    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceFailedToOpen);
 
     QVERIFY(platform_->deviceConnected() == false);
 }

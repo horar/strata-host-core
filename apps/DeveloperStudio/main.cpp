@@ -32,9 +32,9 @@
 #include "HcsNode.h"
 #include "RunGuard.h"
 #include "ProgramControllerManager.h"
+#include "FirmwareManager.h"
 #include "PlatformInterfaceGenerator.h"
-#include "DebugMenuGenerator.h"
-#include <BleDeviceModel.h>
+#include "BleDeviceModel.h"
 #include "VisualEditorUndoStack.h"
 
 #include "AppUi.h"
@@ -149,12 +149,12 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<strata::loggers::QtLogger>("tech.strata.QtLogger",1,0,"QtLogger", "You can't instantiate QtLogger in QML");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<PlatformInterfaceGenerator>("tech.strata.PlatformInterfaceGenerator", 1, 0, "PlatformInterfaceGenerator", "You can't instantiate PlatformInterfaceGenerator in QML");
-    qmlRegisterUncreatableType<DebugMenuGenerator>("tech.strata.DebugMenuGenerator", 1, 0, "DebugMenuGenerator", "You can't instantiate DebugMenuGenerator in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
     qmlRegisterUncreatableType<ProgramControllerManager>("tech.strata.ProgramControllerManager", 1, 0, "ProgramControllerManager", "You can't instantiate ProgramControllerManager in QML");
     qmlRegisterUncreatableType<BleDeviceModel>("tech.strata.BleDeviceModel", 1, 0, "BleDeviceModel", "You can't instantiate BleDeviceModel in QML");
+    qmlRegisterUncreatableType<FirmwareManager>("tech.strata.FirmwareManager", 1, 0, "FirmwareManager", "You can't instantiate FirmwareManager in QML");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 

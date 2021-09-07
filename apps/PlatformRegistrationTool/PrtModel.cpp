@@ -159,7 +159,7 @@ void PrtModel::programDevice()
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &PrtModel::flasherProgress);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &PrtModel::flasherFinishedHandler);
 
-    flasherConnector_->flash(false);
+    flasherConnector_->flash(false, strata::Flasher::FinalAction::StartApplication);
 }
 
 void PrtModel::downloadBinaries(

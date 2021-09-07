@@ -225,11 +225,11 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
     } else if (type == "program_controller_job") {
         emit programControllerJobUpdate(innerPayload);
     } else if (type == "bluetooth_scan") {
-        emit bluetoothScan(innerPayload);
+        emit bluetoothScan(payload);
     } else if (type == "connect_device") {
-        emit connectDevice(innerPayload);
+        emit connectDevice(payload);
     }else if (type == "disconnect_device") {
-        emit disconnectDevice(innerPayload);
+        emit disconnectDevice(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
