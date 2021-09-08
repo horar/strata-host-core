@@ -26,6 +26,8 @@ SGWidgets.SGWindow {
     property variant versionNumberList: Qt.application.version.split(".")
     property string versionNumber: "%1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])
     property color dialogBg: "#eeeeee"
+    property color lighterGrayColor: Qt.lighter(Theme.palette.gray, 1.33)
+    property color darkerGrayColor: Qt.lighter(Theme.palette.gray, 1.15)
 
     defaultAttributionText: {
         return "Built on the awesome Qt/QML framework<br>"+
@@ -88,8 +90,11 @@ SGWidgets.SGWindow {
         Column {
             id: imageColumn
             spacing: 20
-            padding: baseSpacing
-            anchors.top: versionText.bottom
+            anchors {
+                margins: baseSpacing
+                top: versionText.bottom
+                left: parent.left
+            }
 
             Image {
                 id: appLogoImage
@@ -110,7 +115,7 @@ SGWidgets.SGWindow {
 
         TabBar {
             id: tabBar
-            background:  {
+            background: Rectangle {
                 color: dialogBg
             }
 
@@ -127,10 +132,11 @@ SGWidgets.SGWindow {
                 contentItem: Text {
                     text: generalButton.text
                     color: "black"
+                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize
                 }
 
                 background: Rectangle {
-                    color: tabBar.currentIndex == 0 ? Qt.lighter(Theme.palette.gray, 1.25) : Qt.lighter(Theme.palette.gray, 1.05)
+                    color: tabBar.currentIndex == 0 ? lighterGrayColor : darkerGrayColor
                 }
             }
 
@@ -142,15 +148,17 @@ SGWidgets.SGWindow {
                 contentItem: Text {
                     text: attributionsButton.text
                     color: "black"
+                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize
                 }
 
                 background: Rectangle {
-                    color: tabBar.currentIndex == 1 ? Qt.lighter(Theme.palette.gray, 1.25) : Qt.lighter(Theme.palette.gray, 1.05)
+                    color: tabBar.currentIndex == 1 ? lighterGrayColor : darkerGrayColor
                 }
             }
         }
 
         StackLayout {
+            id:tabLayout
             currentIndex: tabBar.currentIndex
 
             anchors {
@@ -164,7 +172,7 @@ SGWidgets.SGWindow {
 
             Rectangle {
                 id: generalTab
-                color: Qt.lighter(Theme.palette.gray, 1.25)
+                color: lighterGrayColor
 
                 Flickable {
                     id: generalFlick
@@ -232,7 +240,7 @@ SGWidgets.SGWindow {
 
             Rectangle {
                 id: attributionsTab
-                color: "#D3D3D3"
+                color: lighterGrayColor
 
                 Flickable {
                     id: attributionsFlick
@@ -280,6 +288,7 @@ SGWidgets.SGWindow {
                 right: parent.right
             }
             text: "Close"
+            color: darkerGrayColor
             onClicked: window.close()
         }
     }
