@@ -2,212 +2,247 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-ColumnLayout {
-    id: objectPropertyContainer
+Rectangle {
+    id: objectDelegateRoot
+    implicitHeight: objectPropertyContainer.implicitHeight + 10
+    implicitWidth: objectPropertyContainer.implicitWidth
 
-    Layout.leftMargin: 20
-    spacing: 5
-
-    property ListModel parentListModel: model.parent
-    property ListModel subArrayListModel: model.array
-    property ListModel subObjectListModel: model.object
     property int modelIndex
+    property color parentColor
 
-    RowLayout {
-        id: objectRowLayout
-        Layout.preferredHeight: 30
-        Layout.leftMargin: 20
-        Layout.fillHeight: true
+    color: {
+        if (propertyType.currentIndex === 6 || propertyType.currentIndex === 4) {
+            if (parentColor == "#efefef") {
+                return "#ffffff"
+            }
+            return "#efefef"
+        }
+        return parentColor
+    }
+
+    ColumnLayout {
+        id: objectPropertyContainer
         spacing: 5
+        anchors {
+            left: parent.left
+            right: parent.right
+            rightMargin: 5
+            leftMargin: 5
+            verticalCenter: parent.verticalCenter
+        }
 
-        RoundButton {
-            Layout.preferredHeight: 15
-            Layout.preferredWidth: 15
-            padding: 0
-            hoverEnabled: true
-            visible: parentListModel.count > 1
+        property ListModel parentListModel: model.parent
+        property ListModel subArrayListModel: model.array
+        property ListModel subObjectListModel: model.object
 
-            icon {
-                source: "qrc:/sgimages/times.svg"
-                color: removeObjectFromPayloadMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-                height: 7
-                width: 7
-                name: "add"
-            }
+        RowLayout {
+            id: objectRowLayout
+            Layout.preferredHeight: 30
 
-            Accessible.name: "Remove property from object in payload"
-            Accessible.role: Accessible.Button
-            Accessible.onPressAction: {
-                removeObjectFromPayloadMouseArea.clicked()
-            }
-
-            MouseArea {
-                id: removeObjectFromPayloadMouseArea
-                anchors.fill: parent
+            RoundButton {
+                Layout.preferredHeight: 15
+                Layout.preferredWidth: 15
+                padding: 0
                 hoverEnabled: true
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    if (propertyKey.text !== "") {
-                        unsavedChanges = true
+                visible: objectPropertyContainer.parentListModel.count > 1
+
+                icon {
+                    source: "qrc:/sgimages/times.svg"
+                    color: removeObjectFromPayloadMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                    height: 7
+                    width: 7
+                    name: "add"
+                }
+
+                Accessible.name: "Remove property from object in payload"
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    removeObjectFromPayloadMouseArea.clicked()
+                }
+
+                MouseArea {
+                    id: removeObjectFromPayloadMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: {
+                        if (propertyKey.text !== "") {
+                            unsavedChanges = true
+                        }
+                        objectPropertyContainer.parentListModel.remove(modelIndex)
                     }
-                    parentListModel.remove(modelIndex)
+                }
+            }
+
+            TextField {
+                id: propertyKey
+                Layout.preferredWidth: 150
+                Layout.preferredHeight: 30
+                Layout.fillWidth: true
+                placeholderText: "Key"
+                selectByMouse: true
+                validator: RegExpValidator {
+                    regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+                }
+
+                background: Rectangle {
+                    border.color: {
+                        if (!model.valid) {
+                            border.width = 2
+                            return "#D10000";
+                        } else if (propertyKey.activeFocus) {
+                            border.width = 2
+                            return palette.highlight
+                        } else {
+                            border.width = 1
+                            return "lightgrey"
+                        }
+                    }
+                    border.width: 2
+                }
+
+                Component.onCompleted: {
+                    if(model.name) {
+                        text = model.name
+                    }
+                    forceActiveFocus()
+                }
+
+                onTextChanged: {
+                    if (model.name === text) {
+                        return
+                    }
+                    unsavedChanges = true
+
+                    model.name = text
+                    if (text.length > 0) {
+                        model.valid = functions.checkForDuplicateObjectPropertyNames(objectPropertyContainer.parentListModel, modelIndex)
+                    } else {
+                        model.valid = false
+                    }
+                }
+            }
+
+            TypeSelectorComboBox {
+                id: propertyType
+
+                Component.onCompleted: {
+                    if (indexSelected === -1) {
+                        currentIndex = getIndexOfType(type)
+                        indexSelected = currentIndex
+                    } else {
+                        currentIndex = indexSelected
+                    }
+                }
+
+                onActivated: {
+                    if (indexSelected === index) {
+                        return
+                    }
+                    unsavedChanges = true
+
+                    type = payloadContainer.changePropertyType(index, objectPropertyContainer.subObjectListModel, objectPropertyContainer.subArrayListModel)
+                    indexSelected = index
                 }
             }
         }
 
-        TextField {
-            id: propertyKey
+        Loader {
+            sourceComponent: defaultValue
             Layout.fillWidth: true
             Layout.preferredHeight: 30
-            placeholderText: "Key"
-            selectByMouse: true
-            validator: RegExpValidator {
-                regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+            active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+            visible: active
+
+            onItemChanged: {
+                if (item) {
+                    item.leftMargin = 15
+                    item.rightMargin = 0
+                    item.text = model.value
+                    item.textChanged.connect(textChanged)
+                }
             }
 
-            background: Rectangle {
-                border.color: {
-                    if (!model.valid) {
-                        border.width = 2
-                        return "#D10000";
-                    } else if (propertyKey.activeFocus) {
-                        border.width = 2
-                        return palette.highlight
-                    } else {
-                        border.width = 1
-                        return "lightgrey"
-                    }
-                }
-                border.width: 2
-            }
-
-            Component.onCompleted: {
-                text = model.name
-                forceActiveFocus()
-            }
-
-            onTextChanged: {
-                if (model.name === text) {
-                    return
-                }
-                unsavedChanges = true
-
-                model.name = text
-                if (text.length > 0) {
-                    model.valid = functions.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
-                } else {
-                    model.valid = false
-                }
+            function textChanged() {
+                model.value = item.text
             }
         }
-
-        TypeSelectorComboBox {
-            id: propertyType
-            Component.onCompleted: {
-                if (indexSelected === -1) {
-                    currentIndex = getIndexOfType(type)
-                    indexSelected = currentIndex
-                } else {
-                    currentIndex = indexSelected
-                }
-            }
-
-            onActivated: {
-                if (indexSelected === index) {
-                    return
-                }
-                unsavedChanges = true
-
-                type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
-                indexSelected = index
-            }
-        }
-    }
-
-    Loader {
-        sourceComponent: defaultValue
-        Layout.fillWidth: true
-        Layout.preferredHeight: 30
-        active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
-        visible: active
-
-        onItemChanged: {
-            if (item) {
-                item.leftMargin = 20 * 2
-                item.rightMargin = 30
-                item.text = model.value
-                item.textChanged.connect(textChanged)
-            }
-        }
-
-        function textChanged() {
-            model.value = item.text
-        }
-    }
 
     /*****************************************
     * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
-    Repeater {
-        id: subArrayRepeater
-        model: subArrayListModel
+        Repeater {
+            id: subArrayRepeater
+            model: objectPropertyContainer.subArrayListModel
 
-        delegate: Component {
-            Loader {
-                Layout.leftMargin: 20
+            delegate: Component {
+                Loader {
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
 
-                source: "./PayloadArrayPropertyDelegate.qml"
-                onStatusChanged: {
-                    if (status === Loader.Ready) {
-                        item.modelIndex = Qt.binding(() => index)
+                    source: "./PayloadArrayPropertyDelegate.qml"
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            item.modelIndex = Qt.binding(() => index)
+                            item.parentColor = Qt.binding(() => objectDelegateRoot.color)
+                            item.Layout.rightMargin = 0
+                        }
                     }
                 }
             }
         }
-    }
 
     /*****************************************
     * This Repeater corresponds to the elements in a property of type "object"
     *****************************************/
-    Repeater {
-        id: subObjectRepeater
-        model: subObjectListModel
+        Repeater {
+            id: subObjectRepeater
+            model: objectPropertyContainer.subObjectListModel
 
-        delegate: Component {
-            Loader {
-                Layout.leftMargin: 20
+            delegate: Component {
+                Loader {
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true
 
-                source: "./PayloadObjectPropertyDelegate.qml"
-                onStatusChanged: {
-                    if (status === Loader.Ready) {
-                        item.modelIndex = Qt.binding(() => index)
+                    source: "./PayloadObjectPropertyDelegate.qml"
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            item.modelIndex = Qt.binding(() => index)
+                            item.parentColor = Qt.binding(() => objectDelegateRoot.color)
+                            item.Layout.rightMargin = 0
+                        }
                     }
                 }
             }
         }
-    }
 
-    Button {
-        id: addPropertyButton
-        text: "Add Property To Object"
-        Layout.alignment: Qt.AlignHCenter
-        visible: modelIndex === parentListModel.count - 1
+        Button {
+            id: addPropertyButton
+            text: (propertyType.currentIndex === 4) ? "Add Item To Array" : "Add Item To Object"
+            Layout.alignment: Qt.AlignHCenter
+            visible:  propertyType.currentIndex === 4 || propertyType.currentIndex === 6
 
-        Accessible.name: addPropertyButton.text
-        Accessible.role: Accessible.Button
-        Accessible.onPressAction: {
-            addPropertyButtonMouseArea.clicked()
-        }
+            Accessible.name: addPropertyButton.text
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                addPropertyButtonMouseArea.clicked()
+            }
 
-        MouseArea {
-            id: addPropertyButtonMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+            MouseArea {
+                id: addPropertyButtonMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
 
-            onClicked: {
-                parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value":"0"})
-                commandsListView.contentY += 40
+                onClicked: {
+                    if (propertyType.currentIndex === 4) {
+                        objectPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subArrayListModel, "value": "0"})
+                    }
+                    else {
+                        objectPropertyContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subObjectListModel, "value": "0"})
+                    }
+                    commandsListView.contentY += 40
+                }
             }
         }
     }

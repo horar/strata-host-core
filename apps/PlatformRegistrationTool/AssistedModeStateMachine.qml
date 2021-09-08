@@ -72,6 +72,7 @@ BaseStateMachine {
     property QtObject jLinkConnector
     property QtObject breakButton
     property QtObject continueButton
+    property QtObject taskbarButton
 
     property string jlinkExePath: ""
     property var firmwareData: ({})
@@ -109,6 +110,8 @@ BaseStateMachine {
 
         onEntered: {
             prtModel.clearBinaries();
+            taskbarButton.progress.resume()
+            taskbarButton.progress.show()
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
@@ -215,6 +218,9 @@ BaseStateMachine {
             id: stateCheckDeviceCount
             onEntered: {
                 stateMachine.statusText = "Waiting for controller"
+                taskbarButton.progress.resume()
+                taskbarButton.progress.pause()
+                taskbarButton.progress.show()
 
                 console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
@@ -357,7 +363,6 @@ BaseStateMachine {
             targetState: stateAssistedDeviceCheck
             timeout: 1000
         }
-
     }
 
     DSM.State {
@@ -377,6 +382,7 @@ BaseStateMachine {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
                 stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
+                taskbarButton.progress.resume()
 
                 console.debug(Logger.prtCategory, "bootloader on controller is about to be programmed")
 
@@ -486,7 +492,7 @@ BaseStateMachine {
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
                     } else if (statusString) {
-                        stateMachine.internalSubtext = "Error: " + errorString
+                        stateMachine.internalSubtext = "Error: " + statusString
                     }
 
                     console.error(Logger.prtCategory, "controller registration failed:", statusString)
@@ -510,6 +516,9 @@ BaseStateMachine {
 
             onEntered: {
                 stateMachine.statusText = "Waiting for assisted device"
+                taskbarButton.progress.resume()
+                taskbarButton.progress.pause()
+                taskbarButton.progress.show()
 
                 console.debug(Logger.prtCategory, "checking assisted device")
 
@@ -572,6 +581,7 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Registering Assisted Device"
+            taskbarButton.progress.resume()
         }
 
         property string currentPlatformId
@@ -646,7 +656,7 @@ BaseStateMachine {
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
                     } else if (statusString) {
-                        stateMachine.internalSubtext = "Error: " + errorString
+                        stateMachine.internalSubtext = "Error: " + statusString
                     }
 
                     console.error(Logger.prtCategory, "assisted device registration failed:", statusString)
@@ -660,6 +670,7 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Assisted Platform Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
@@ -673,18 +684,13 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Assisted Platform Registration Failed"
-        }
-
-        DSM.SignalTransition {
-            targetState: stateAssistedDeviceCheck
-            signal: continueButton.clicked
-            guard: prtModel.deviceCount === 1
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
             targetState: stateControllerCheck
             signal: continueButton.clicked
-            guard: prtModel.deviceCount !== 1
+            guard: prtModel.deviceCount === 0
         }
     }
 
@@ -694,6 +700,8 @@ BaseStateMachine {
         onEntered: {
             stateMachine.statusText = "Assisted Platform Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
+            taskbarButton.progress.hide()
+            taskbarButton.progress.reset()
         }
 
         DSM.SignalTransition {

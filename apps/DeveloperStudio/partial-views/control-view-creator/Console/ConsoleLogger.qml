@@ -17,6 +17,11 @@ Item {
     property double fontMultiplier: 1.0
     property string searchText: ""
 
+    function validateSearchText() {
+        consoleItems.invalidate()
+        consoleLogs.deselectAll()
+    }
+
     onFontMultiplierChanged: {
         if(fontMultiplier >= 2.5){
             fontMultiplier = 2.5
@@ -26,8 +31,7 @@ Item {
     }
 
     onSearchTextChanged: {
-        consoleItems.invalidate()
-        consoleLogs.deselectAll()
+        validateSearchText()
     }
 
     onVisibleChanged: {
@@ -272,26 +276,44 @@ Item {
 
         function filterAcceptsRow(row){
             var item = sourceModel.get(row)
-            return containsFilterText(item)
+            var notFilter = true
+            var containFilterText = true
+
+            if  (filterTypeWarning || filterTypeError) {
+                if (filterTypeError && filterTypeWarning) {
+                    notFilter = (item.type === "warning") || (item.type === "error")
+                } else if(filterTypeWarning) {
+                    notFilter = (item.type === "warning")
+                } else {
+                    notFilter = (item.type === "error")
+                }
+            }
+
+            if (searchText !== "") {
+                containFilterText = containsFilterText(item)
+            }
+
+            if (!filterTypeWarning && !filterTypeError && searchText === "") {
+                return true
+            } else {
+                return containFilterText && notFilter
+            }
         }
 
         function containsFilterText(item){
-            if(searchText === ""){
-                return true
-            } else {
-                var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
-                if(searchBox.useCase) {
-                    if(searchMsg.includes(searchText)){
-                        return true
-                    } else {
-                        return false
-                    }
-                }
-                if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
+            var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
+
+            if (searchBox.useCase) {
+                if(searchMsg.includes(searchText)){
                     return true
                 } else {
                     return false
                 }
+            }
+            if (searchMsg.toLowerCase().includes(searchText.toLowerCase())) {
+                return true
+            } else {
+                return false
             }
         }
     }

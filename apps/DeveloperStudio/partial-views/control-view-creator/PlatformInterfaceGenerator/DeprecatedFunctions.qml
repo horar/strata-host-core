@@ -1,7 +1,4 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -16,10 +13,7 @@ import "../"
 /*******************************************************************************************/
 
 Item {
-    id: rootDeprecatedFunctions
-
     /**
-      * DEPRECATED - APIv0 Model
       * This function creates the model from a JSON object (used when importing a JSON file)
     **/
     function createModelFromJsonAPIv0(jsonObject) {
@@ -115,7 +109,6 @@ Item {
     }
 
     /**
-      * DEPRECATED - APIv0 Model
       * getType called from createModelFromJsonAPIv0(); returns the sdsModel type
     **/
     function getType(item) {
@@ -133,7 +126,6 @@ Item {
     }
 
     /**
-      * DEPRECATED - APIv0 Model
       * This function takes an Array and transforms it into an array readable by our delegates
     **/
     function generateArrayModelAPIv0(arr, parentListModel) {
@@ -161,7 +153,6 @@ Item {
     }
 
     /**
-      * DEPRECATED - APIv0 Model
       * This function takes an Object and transforms it into an array readable by our delegates
     **/
     function generateObjectModelAPIv0(object, parentListModel) {

@@ -1,7 +1,4 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -10,8 +7,6 @@ import tech.strata.signals 1.0
 import "../"
 
 Item {
-    id: rootFunctions
-
     // All deprecated functions needed for PIG
     DeprecatedFunctions {
         id: deprecatedFunctions
@@ -119,8 +114,8 @@ Item {
     }
 
     /**
-        * checkForDuplicateObjectPropertyNames checks for duplicate keys in a given payload property that is of 'object' type
-        **/
+      * checkForDuplicateObjectPropertyNames checks for duplicate keys in a given payload property that is of 'object' type
+    **/
     function checkForDuplicateObjectPropertyNames(objectPropertiesModel, index) {
         let key = objectPropertiesModel.get(index).name
 
@@ -419,6 +414,9 @@ Item {
         return obj
     }
 
+    /**
+      * createJsonObjectFromModel creates the JSON object from the model depending on the type and returns it
+    **/
     function createJsonObjectFromModel(model) {
         let outputArr = []
         for (let m = 0; m < model.count; m++) {
@@ -544,6 +542,9 @@ Item {
         return true
     }
 
+    /**
+      * searchLevel1 is the first step of verifying an imported JSON file is valid or not. The API version is determined here as well.
+    **/
     function searchLevel1(object) {
         if (object.hasOwnProperty("payload")) {
             if (!Array.isArray(object["payload"])) {
@@ -568,6 +569,9 @@ Item {
         return true
     }
 
+    /**
+      * searchLevel2Recurse is the next level of file verification and is recursive depending on the size of the array or object.
+    **/
     function searchLevel2Recurse(object) {
         if (!object.hasOwnProperty("type") || !object.hasOwnProperty("value")) {
             return false

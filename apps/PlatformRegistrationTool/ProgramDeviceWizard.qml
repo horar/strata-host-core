@@ -16,6 +16,7 @@ FocusScope {
     property var controllerData: ({})
 
     property QtObject prtModel
+    property QtObject taskbarButton
 
     property int spacing: 10
 
@@ -110,6 +111,8 @@ FocusScope {
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
         continueButton: continueBtn
+        taskbarButton: wizard.taskbarButton
+
         onExitWizardRequested: {
             closeWizard()
         }
@@ -145,6 +148,7 @@ FocusScope {
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
         continueButton: continueBtn
+        taskbarButton: wizard.taskbarButton
 
         onExitWizardRequested: {
             closeWizard()
@@ -181,6 +185,7 @@ FocusScope {
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
         continueButton: continueBtn
+        taskbarButton: wizard.taskbarButton
 
         onExitWizardRequested: {
             closeWizard()

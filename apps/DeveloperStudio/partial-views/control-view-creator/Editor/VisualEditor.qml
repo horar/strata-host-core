@@ -25,6 +25,7 @@ ColumnLayout {
     // multi-item selection/dragging/resizing
     property var selectedMultiObjectsUuid: []
     signal multiObjectsDragged(string objectInitiated, var x, var y)
+    signal multiObjectsResizeDragged(string objectInitiated, var width, var height)
     signal multiObjectsDeselectAll()
 
     onMultiObjectsDeselectAll: {

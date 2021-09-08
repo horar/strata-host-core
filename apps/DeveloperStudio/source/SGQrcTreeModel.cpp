@@ -803,6 +803,11 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
     return true;
 }
 
+void SGQrcTreeModel::reloadQrcModel()
+{
+    createModel();
+}
+
 void SGQrcTreeModel::createModel()
 {
     // reset fsWatcher and pathsInTree_ before creating model
@@ -940,6 +945,7 @@ void SGQrcTreeModel::save()
     stream << qrcDoc_.toString(4);
     qrcFile.close();
     startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
+    emit fileChanged(url_);
 }
 
 void SGQrcTreeModel::setNeedsCleaning(const bool needsCleaning)
@@ -961,7 +967,6 @@ void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
     }
 }
 
-
 /***
  * PRIVATE SLOTS
  ***/
@@ -980,6 +985,7 @@ void SGQrcTreeModel::projectFilesModified(const QString &path)
                 if (node->filepath() == url_) {
                     // If we encounter a change to the project's .qrc file, then reparse the qrc
                     createModel();
+                    emit fileChanged(url_);
                 } else {
                     emit fileChanged(url);
                 }
