@@ -103,6 +103,18 @@ signals:
      */
     void downloadPlatformFilesFinished(const QJsonObject &payload);
 
+    /**
+     * Signal emitted when download view finished notification is received
+     * @param [in] payload QJsonObject of download_view_finished notification payload.
+     */
+    void downloadViewFinished(const QJsonObject &payload);
+
+    /**
+     * Signal emitted when control view download progress notification is received
+     * @param [in] payload QJsonObject of control_view_download_progress notification payload.
+     */
+    void downloadControlViewProgress(const QJsonObject &payload);
+
 private:
     void processPlatformNotification(const QJsonObject &payload);
     void processAllPlatformsNotification(const QJsonObject &payload);
