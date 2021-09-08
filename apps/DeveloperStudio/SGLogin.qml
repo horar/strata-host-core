@@ -5,13 +5,13 @@ import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
 import "qrc:/js/utilities.js" as Utility
-import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 Item {
     id: root
     clip: true
@@ -27,24 +27,48 @@ Item {
         anchors.fill: root
         spacing: 0
 
-        Item {
-            id: onSemiHeader
-            Layout.fillWidth: true
-            Layout.maximumHeight: 130
-            Layout.preferredHeight: 130
-            Layout.fillHeight: true
+        RowLayout {
+            Item {
+                id: onSemiHeader
+                Layout.fillWidth: true
+                Layout.maximumHeight: 130
+                Layout.preferredHeight: 130
+                Layout.fillHeight: true
 
-            Image {
-                id: onSemiLogo
-                source: "qrc:/images/on-semi-logo-horiz.svg"
-                anchors {
-                    left: parent.left
-                    leftMargin: 15
-                    verticalCenter: parent.verticalCenter
+                Image {
+                    id: onSemiLogo
+                    source: "qrc:/images/on-semi-logo-horiz.svg"
+                    anchors {
+                        left: parent.left
+                        leftMargin: 15
+                        verticalCenter: parent.verticalCenter
+                    }
+                    height: (10/13) * parent.height
+                    fillMode: Image.PreserveAspectFit
+                    mipmap: true
                 }
-                height: (10/13) * parent.height
-                fillMode: Image.PreserveAspectFit
-                mipmap: true
+            }
+
+            SGIcon {
+                id: aboutIcon
+
+                Layout.alignment: Qt.AlignTop
+                Layout.margins: 10
+                source: "qrc:/sgimages/info-circle.svg"
+                height: 30
+                width: 30
+                iconColor: helpMouseArea.containsMouse ? "black" : "grey"
+
+                MouseArea {
+                    id: helpMouseArea
+                    anchors {
+                        fill: aboutIcon
+                    }
+                    hoverEnabled: true
+                    onClicked: {
+                        showAboutWindow()
+                    }
+                }
             }
         }
 
@@ -212,14 +236,8 @@ Item {
             margins: 30
         }
         height: testServerWarning.height + 30
-        visible: Rest.url !== sdsModel.urls.authServer
-
-        Connections {
-            target: Signals
-            onServerChanged: {
-                testServerWarningContainer.visible = ( Rest.url !== sdsModel.urls.authServer )
-            }
-        }
+        visible: sdsModel.urls.serverType !== "production"
+        // Checks if the authServer is set to Non-Production server
 
         Text {
             id: testServerWarning
@@ -260,5 +278,9 @@ Item {
             family: Fonts.franklinGothicBook
         }
         visible: false
+    }
+
+    function showAboutWindow() {
+        SGDialogJS.createDialog(root, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 }

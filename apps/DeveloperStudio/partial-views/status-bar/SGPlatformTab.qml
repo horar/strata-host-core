@@ -13,8 +13,7 @@ Item {
     id: platformTabRoot
     height: 40
     width: 250 // will be set by the listview
-    property color menuColor: Theme.palette.green
-    state: parent.state
+    property color menuColor: Theme.palette.onsemiOrange
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
@@ -176,7 +175,7 @@ Item {
         spacing: 0
 
         Rectangle {
-            color: mouseTab.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
+            color: mouseTab.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
             Layout.fillHeight: true
             Layout.fillWidth: true
 
@@ -216,7 +215,7 @@ Item {
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: height
-            color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
+            color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
 
             MouseArea {
                 id: mouseMenu
@@ -271,7 +270,7 @@ Item {
 
         Rectangle {
             id: menu
-            color: Qt.darker(Theme.palette.green, 1.15)
+            color: Qt.darker(Theme.palette.onsemiOrange, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
             state: "normal"

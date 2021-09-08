@@ -93,7 +93,7 @@ void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id,
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
     }
-    QTimer::singleShot(100, this, [=]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
+    QTimer::singleShot(1, this, [=]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
 }
 
 bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
@@ -144,7 +144,7 @@ void ResourceLoader::requestUnregisterResource(const QString &path, const QStrin
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << path;
     }
-    QTimer::singleShot(100, this, [=]{ unregisterResource(path, prefix, parent, removeFromSystem); });
+    QTimer::singleShot(1, this, [=]{ unregisterResource(path, prefix, parent, removeFromSystem); });
 }
 
 bool ResourceLoader::unregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {
@@ -353,7 +353,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     }
 
     qrcFilePath.replace("file://", "");
-    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+    if ((QDir::separator() != '/') && qrcFilePath.startsWith('/')) {
         qrcFilePath.remove(0, 1);
     }
 
@@ -443,4 +443,19 @@ void ResourceLoader::setLastLoggedError(QString &error_str) {
 
 QString ResourceLoader::getLastLoggedError() {
     return lastLoggedError_;
+}
+
+void ResourceLoader::trimComponentCache(QObject *parent) {
+    QQmlEngine *eng = qmlEngine(parent);
+    eng->collectGarbage();
+    eng->trimComponentCache();
+}
+
+QList<QString> ResourceLoader::getQrcPaths(QString path) {
+    QList<QString> pathList;
+    QDirIterator it(path, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        pathList.append(it.next());
+    }
+    return pathList;
 }

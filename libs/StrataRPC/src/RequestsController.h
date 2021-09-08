@@ -2,8 +2,9 @@
 
 #include "Request.h"
 
-#include <QHash>
+#include <QMap>
 #include <QObject>
+#include <QTimer>
 
 namespace strata::strataRPC
 {
@@ -38,7 +39,7 @@ public:
      * @param [in] id pending request id.
      * @return True if there is a pending request with the same id.
      */
-    bool isPendingRequest(int id);
+    bool isPendingRequest(const int &id);
 
     /**
      * Removes a pending id
@@ -46,7 +47,7 @@ public:
      * @return True if the pending request was removed successfully, False if there is no pending
      * requests with the same id
      */
-    bool removePendingRequest(int id);
+    bool removePendingRequest(const int &id);
 
     /**
      * Pops a pending request.
@@ -54,7 +55,7 @@ public:
      * @return std::pair, boolean of request removal status and a copy of the request object. if the
      * request is not found in the list, the request object will be empty request with id 0.
      */
-    [[nodiscard]] std::pair<bool, Request> popPendingRequest(int id);
+    [[nodiscard]] std::pair<bool, Request> popPendingRequest(const int &id);
 
     /**
      * return the handlerName of a pending request using it's id
@@ -62,11 +63,30 @@ public:
      * @return QString of the handler name. This will return an empty string if there is no pending
      * request with the same id.
      */
-    [[nodiscard]] QString getMethodName(int id);
+    [[nodiscard]] QString getMethodName(const int &id);
+
+signals:
+    /**
+     * Signal emitted when there are timed out requests.
+     * @param [in] id of the timed out request.
+     * @note connections to this signal must be Qt::ConnectionType::QueuedConnection, otherwise the
+     * requests map will be modified during the search.
+     */
+    void requestTimedout(const int &id);
 
 private:
-    QHash<int, Request> requestsList_;
+    /**
+     * Search for timed out requests in requests map.
+     * @note requestTimedout() signal will be emitted when timed out request are found.
+     */
+    void findTimedoutRequests();
+
+    QMap<int, Request> requests_;
     int currentRequestId_;
+
+    QTimer findTimedoutRequestsTimer_;
+    static constexpr int FIND_TIMEDOUT_REQUESTS_INTERVAL{10};
+    static constexpr int REQUEST_TIMEOUT{500};
 };
 
 }  // namespace strata::strataRPC

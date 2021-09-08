@@ -34,6 +34,7 @@ Item {
 
     function positionViewAtEnd() {
         listView.positionViewAtEnd()
+        scrollbackViewAtEndTimer.restart()
     }
 
     // internal stuff
@@ -47,20 +48,16 @@ Item {
     property int delegateButtonRowX: delegateTimestampX + timestampWidth + buttonRowSpacing
     property int delegateTextX: delegateButtonRowX + buttonRowWidth + delegateBaseSpacing
 
-    Shortcut {
-        id: copyShortcut
-        sequence: StandardKey.Copy
-        onActivated: {
+    Keys.onPressed: {
+        if (event.matches(StandardKey.Copy)) {
             copyToClipboard()
-        }
-    }
-
-    Shortcut {
-        id: selectShortcut
-        sequence: StandardKey.SelectAll
-        onActivated: {
+        } else if (event.matches(StandardKey.SelectAll)) {
             selectAllText()
+        } else {
+            return
         }
+
+        event.accepted = true
     }
 
     Timer {
@@ -356,20 +353,23 @@ Item {
         }
 
         ScrollBar.vertical: ScrollBar {
+            id: verticalScrollbar
             anchors {
                 right: listView.right
                 rightMargin: 0
             }
-            width: 8
+            width: visible ? 8 : 0
 
             policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
             visible: listView.height < listView.contentHeight
+
+            Behavior on width { NumberAnimation {}}
         }
 
         delegate: Item {
             id: cmdDelegate
-            width: ListView.view.width
+            width: ListView.view.width - verticalScrollbar.width
             height: cmdText.height + 3
 
             property color helperTextColor: "#333333"
@@ -487,7 +487,7 @@ Item {
 
                 textFormat: Text.PlainText
                 font.family: "monospace"
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 selectByKeyboard: true
                 selectByMouse: false
                 readOnly: true
@@ -542,6 +542,7 @@ Item {
 
                 color: "black"
                 opacity: 0.2
+                visible: index < scrollbackView.count - 1 || verticalScrollbar.visible == false
             }
 
             Component {

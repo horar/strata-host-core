@@ -44,6 +44,14 @@ public:
     };
     Q_ENUM(PlatformStatus)
 
+    enum SendMessageErrorType {
+        NoError,
+        NotConnectedError,
+        JsonError,
+        PlatformError,
+    };
+    Q_ENUM(SendMessageErrorType)
+
     // redeclaration of Type Q_ENUM required for custom-type properties to work properly in QML
     // because Q_ENUM macro is constrained to the class it is used in and doesn't work well between classes
     Q_ENUM(strata::device::Device::Type)
@@ -71,8 +79,9 @@ public:
     void setDeviceName(const QString &deviceName);
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE QVariantMap sendMessage(const QString &message, bool onlyValidJson);
+    Q_INVOKABLE void sendMessage(const QString &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
+    Q_INVOKABLE QString saveDeviceFirmware(QString filePath);
 
     //settings handlers
     void storeCommandHistory(const QStringList &list);
@@ -98,11 +107,11 @@ signals:
             QString errorString);
 
     void flasherFinished(strata::FlasherConnector::Result result);
-
+    void sendMessageResultReceived(SendMessageErrorType type, QVariantMap data);
 
 private slots:
     void messageFromDeviceHandler(strata::platform::PlatformMessage message);
-    void messageToDeviceHandler(QByteArray rawMessage);
+    void messageToDeviceHandler(QByteArray rawMessage, uint msgNumber, QString errorString);
     void deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString);
     void flasherProgramProgressHandler(int chunk, int total);
     void flasherBackupProgressHandler(int chunk, int total);
@@ -126,13 +135,15 @@ private:
     QString errorString_;
     bool programInProgress_ = false;
     QString deviceName_;
-
     SciMockDevice* mockDevice_;
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;
     SciFilterSuggestionModel *filterSuggestionModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
+    strata::PlatformManager *platformManager_;
+    uint currentMessageId_ = 0;
 
     void setProgramInProgress(bool programInProgress);
+    void setMessageSendInProgress(bool messageSendInProgress);
 };

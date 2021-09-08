@@ -22,11 +22,8 @@ Item {
         if (visible) {
             focus = true
             firstNameField.focus = true
-            passReqsPopup.close()
         }
-        else {
-            passReqsPopup.close()
-        }
+        passReqsPopup.close()
     }
 
     ColumnLayout {
@@ -120,6 +117,10 @@ Item {
                         }
                     }
                 }
+
+                onPressed: {
+                    passReqsPopup.openPopup()
+                }
             }
 
             ValidationField {
@@ -129,8 +130,53 @@ Item {
                 valid: passReqs.passwordValid
                 placeholderText: "Confirm Password"
                 Layout.preferredWidth: 50
+
+                onPressed: {
+                    passReqsPopup.openPopup()
+                }
+
+                onValidChanged: {
+                    if (valid) {
+                        passReqsPopup.close()
+                    } else {
+                        passReqsPopup.openPopup()
+                    }
+                }
             }
 
+            Popup {
+                id: passReqsPopup
+                width: newPasswordRow.width
+                height: passReqs.height
+                y: passwordField.height + 5
+                padding: 0
+                background: Item {}
+                closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnEscape
+
+                property bool acquiredFocus: passwordField.focus || confirmPasswordField.focus
+
+                PasswordRequirements {
+                    id: passReqs
+                    width: passReqsPopup.width
+                    onClicked: {
+                        passReqsPopup.close()
+                    }
+                }
+
+                onAcquiredFocusChanged: {
+                    if (acquiredFocus) {
+                        passReqsPopup.openPopup()
+                    } else {
+                        passReqsPopup.close()
+                    }
+                }
+
+                function openPopup() {
+                    if ((passReqsPopup.opened === false) && (passReqs.passwordValid === false)) {
+                        passReqsPopup.open()
+                    }
+                }
+            }
         }
 
         RowLayout{
@@ -160,7 +206,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: Theme.palette.green
+                        border.color: Theme.palette.onsemiOrange
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
@@ -170,7 +216,7 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the onsemi <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"
@@ -295,26 +341,6 @@ Item {
                 anchors.fill: registerButton
                 hoverEnabled: true
                 visible: !registerButton.enabled
-            }
-        }
-    }
-
-    Popup {
-        id: passReqsPopup
-        width: confirmPasswordField.width + passwordField.width
-        height: passReqs.height
-        visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
-        x: newPasswordRow.x
-        y: newPasswordRow.y + passwordField.height + 5
-        padding: 0
-        background: Item {}
-        closePolicy: Popup.NoAutoClose
-
-        PasswordRequirements {
-            id: passReqs
-            width: passReqsPopup.width
-            onClicked: {
-                passwordField.focus = confirmPasswordField.focus = false
             }
         }
     }

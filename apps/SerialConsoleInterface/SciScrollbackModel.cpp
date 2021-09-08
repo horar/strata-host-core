@@ -194,8 +194,16 @@ void SciScrollbackModel::clearAutoExportError()
 QString SciScrollbackModel::exportToFile(QString filePath)
 {
     if (filePath.isEmpty()) {
-        qCCritical(logCategorySci) << "No file name specified";
-        return "No file name specified";
+        QString errorString(QStringLiteral("No file name specified"));
+        qCCritical(logCategorySci) << errorString;
+        return errorString;
+    }
+
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        QString errorString(QStringLiteral("Cannot use relative path for export"));
+        qCCritical(logCategorySci) << errorString;
+        return errorString;
     }
 
     QSaveFile file(filePath);
@@ -242,6 +250,14 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
         return false;
     }
 
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        errorString = "Cannot use relative path for export";
+        qCCritical(logCategorySci) << errorString;
+        setAutoExportErrorString(errorString);
+        return false;
+    }
+
     exportFile_.setFileName(filePath);
     bool ret = exportFile_.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
     if (ret == false ) {
@@ -273,7 +289,7 @@ QByteArray SciScrollbackModel::stringify(const ScrollbackModelItem &item) const
     line += " ";
     line += item.type == MessageType::Request ? "request" : "response";
     line += " ";
-    line += SGJsonFormatter::minifyJson(item.message);
+    line += SGJsonFormatter::minifyJson(item.message).toUtf8();
     line += "\n";
 
     return line;

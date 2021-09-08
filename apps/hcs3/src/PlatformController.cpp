@@ -4,7 +4,6 @@
 #include <QLatin1String>
 
 #include "PlatformController.h"
-#include "Dispatcher.h"
 #include "logging/LoggingQtCategories.h"
 #include "JsonStrings.h"
 
@@ -18,18 +17,24 @@ PlatformController::PlatformController(): platformManager_(false, false, true) {
     connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &PlatformController::closeConnection);
 }
 
-void PlatformController::initialize() {
-    platformManager_.init(strata::device::Device::Type::SerialDevice);
+PlatformController::~PlatformController() {
+    // do not listen to platformManager_ signals when going to destroy it
+    disconnect(&platformManager_, nullptr, this, nullptr);
 }
 
-bool PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
+void PlatformController::initialize() {
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
+}
+
+void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
     auto it = platforms_.constFind(deviceId);
     if (it == platforms_.constEnd()) {
         qCWarning(logCategoryHcsPlatform).noquote() << "Cannot send message, platform" << deviceId << "was not found.";
-        return false;
+        return;
     }
     qCDebug(logCategoryHcsPlatform).noquote() << "Sending message to platform" << deviceId;
-    return it.value()->sendMessage(message);
+    unsigned msgNumber = it.value()->sendMessage(message);
+    sentMessageNumbers_.insert(deviceId, msgNumber);
 }
 
 PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
@@ -44,10 +49,12 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
     if (recognized) {
         PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
+            qCWarning(logCategoryHcsPlatform).noquote() << "Platform not found by its id" << deviceId;
             return;
         }
 
         connect(platform.get(), &Platform::messageReceived, this, &PlatformController::messageFromPlatform);
+        connect(platform.get(), &Platform::messageSent, this, &PlatformController::messageToPlatform);
         platforms_.insert(deviceId, platform);
 
         qCInfo(logCategoryHcsPlatform).noquote() << "Connected new platform" << deviceId;
@@ -58,6 +65,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         // Remove platform if it was previously connected.
         if (platforms_.contains(deviceId)) {
             platforms_.remove(deviceId);
+            sentMessageNumbers_.remove(deviceId);
             emit platformDisconnected(deviceId);
         }
     }
@@ -72,6 +80,7 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     }
 
     platforms_.remove(deviceId);
+    sentMessageNumbers_.remove(deviceId);
 
     qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected platform" << deviceId;
 
@@ -87,23 +96,36 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
 
     const QByteArray deviceId = platform->deviceId();
 
-    QJsonObject wrapper {
+    QJsonObject payload {
         { JSON_MESSAGE, QString(message.raw()) },
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 
-    QJsonObject notification {
-        { JSON_NOTIFICATION, wrapper }
-    };
-    QJsonDocument wrapperDoc(notification);
-    QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
-
     qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
-    emit platformMessage(platform->platformId(), wrapperStrJson);
+    emit platformMessage(platform->platformId(), payload);
 }
 
-QString PlatformController::createPlatformsList() {
+void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString)
+{
+    if (errorString.isEmpty()) {
+        // message was sent successfully
+        return;
+    }
+
+    Platform *platform = qobject_cast<Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        return;
+    }
+
+    auto iter = sentMessageNumbers_.constFind(platform->deviceId());
+    if ((iter != sentMessageNumbers_.constEnd()) && (iter.value() == msgNumber)) {
+        qCWarning(logCategoryHcsPlatform) << platform << "Cannot send message: '"
+            << rawMessage << "', error: '" << errorString << '\'';
+    }
+}
+
+QJsonObject PlatformController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = platforms_.constBegin(); it != platforms_.constEnd(); ++it) {
         Platform::ControllerType controllerType = it.value()->controllerType();
@@ -122,14 +144,6 @@ QString PlatformController::createPlatformsList() {
         }
         arr.append(item);
     }
-    QJsonObject notif {
-        { JSON_LIST, arr },
-        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
-    };
-    QJsonObject msg {
-        { JSON_HCS_NOTIFICATION, notif }
-    };
-    QJsonDocument doc(msg);
 
-    return doc.toJson(QJsonDocument::Compact);
+    return QJsonObject{{JSON_LIST, arr}};
 }

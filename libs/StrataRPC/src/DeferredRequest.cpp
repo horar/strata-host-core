@@ -2,10 +2,8 @@
 
 using namespace strata::strataRPC;
 
-DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id), timer_(this)
+DeferredRequest::DeferredRequest(const int &id, QObject *parent) : QObject(parent), id_(id)
 {
-    timer_.setSingleShot(true);
-    connect(&timer_, &QTimer::timeout, this, &DeferredRequest::requestTimeoutHandler);
 }
 
 DeferredRequest::~DeferredRequest()
@@ -25,19 +23,4 @@ void DeferredRequest::callSuccessCallback(const QJsonObject &jsonPayload)
 void DeferredRequest::callErrorCallback(const QJsonObject &jsonPayload)
 {
     emit finishedWithError(jsonPayload);
-}
-
-void DeferredRequest::startTimer()
-{
-    timer_.start(REQUEST_TIMEOUT);
-}
-
-void DeferredRequest::stopTimer()
-{
-    timer_.stop();
-}
-
-void DeferredRequest::requestTimeoutHandler()
-{
-    emit requestTimedout(id_);
 }

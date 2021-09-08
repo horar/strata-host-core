@@ -2,6 +2,7 @@
 
 #include <StrataRPC/DeferredRequest.h>
 #include <StrataRPC/Message.h>
+#include <QDateTime>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
@@ -15,11 +16,13 @@ struct Request {
      * @param [in] payload QJsonObject of the request payload.
      * @param [in] deferredRequest deferredRequest of the request.
      */
-    Request(QString method, QJsonObject payload, int messageId, DeferredRequest *deferredRequest)
+    Request(const QString &method, const QJsonObject &payload, const int &messageId,
+            DeferredRequest *deferredRequest)
         : method_(method),
           payload_(payload),
           messageId_(messageId),
-          deferredRequest_(deferredRequest)
+          deferredRequest_(deferredRequest),
+          timestamp_(QDateTime::currentMSecsSinceEpoch())
     {
     }
 
@@ -39,6 +42,7 @@ struct Request {
     QJsonObject payload_;
     int messageId_;
     DeferredRequest *deferredRequest_;
+    qint64 timestamp_;
 };
 
 }  // namespace strata::strataRPC

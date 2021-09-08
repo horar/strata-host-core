@@ -15,7 +15,7 @@ Menu {
 
     MenuItem {
         text: "Remove from Qrc"
-        enabled: model.inQrc
+        enabled: model.inQrc && renameFileMenuItem.enabled
         onTriggered: {
             treeModel.removeFromQrc(styleData.index)
             fileContextMenu.dismiss()
@@ -23,16 +23,35 @@ Menu {
     }
 
     MenuItem {
+        id: renameFileMenuItem
         text: "Rename File"
-        enabled: !(model.filename === "Control.qml" && SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)) === SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+        enabled: {
+            if (model.filetype === "rcc") {
+                // If file has rcc extension, disable rename/remove from qrc/delete
+                return false
+            } else if (model.filename === "Control.qml" && SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)) === SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory, false)) {
+                // If file is Control.qml in the project root, disable rename/remove from qrc/delete
+                return false
+            }
+            return true
+        }
         onTriggered: {
             treeView.selectItem(styleData.index)
-            model.editing = true
+
+            renameFilePopup.renameType = "File"
+            renameFilePopup.modelIndex = styleData.index
+            renameFilePopup.uid = model.uid
+            renameFilePopup.fileName = model.filename
+            renameFilePopup.fileExtension = model.filetype
+            renameFilePopup.directoryPath = model.filepath
+            renameFilePopup.open()
+            fileContextMenu.dismiss()
         }
     }
 
     MenuItem {
         text: "Delete File"
+        enabled: renameFileMenuItem.enabled
         onTriggered: {
             confirmDeleteFile.deleteType = "File"
             confirmDeleteFile.fileName = model.filename

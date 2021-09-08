@@ -7,7 +7,7 @@ Component {
     
     Row {
         id: wrapper
-        width: parent.width
+        width: ListView.view.width
         spacing: 20
         
         Label {

@@ -59,6 +59,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::QtLogger
     strata::SGUtilsCpp
     strata::SGJsonSyntaxHighlighter
+    strata::SGTextHighlighter
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

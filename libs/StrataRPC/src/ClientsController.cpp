@@ -91,7 +91,8 @@ Client ClientsController::getClient(const QByteArray &clientId)
     return clientsList_[std::distance(clientsList_.begin(), it)];
 }
 
-bool ClientsController::updateClientApiVersion(const QByteArray &clientId, ApiVersion newApiVersion)
+bool ClientsController::updateClientApiVersion(const QByteArray &clientId,
+                                               const ApiVersion &newApiVersion)
 {
     qCDebug(logCategoryStrataClientsController) << "Updating API Version. client id:" << clientId;
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientId](Client &client) {

@@ -1,6 +1,8 @@
 #include "SciPlatform.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <Mock/MockDeviceScanner.h>
+
 #include <SGUtilsCpp.h>
 #include <SGJsonFormatter.h>
 
@@ -18,8 +20,9 @@ SciPlatform::SciPlatform(
 {
     verboseName_ = "Unknown Board";
     status_ = PlatformStatus::Disconnected;
+    platformManager_ = platformManager;
 
-    mockDevice_ = new SciMockDevice(platformManager);
+    mockDevice_ = new SciMockDevice(platformManager_);
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
@@ -69,7 +72,13 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
         setDeviceType(platform_->deviceType());
         mockDevice_->mockSetDeviceId(deviceId_);
         if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
-            strata::device::DevicePtr device = platform_->getDevice();
+            auto scanner = platformManager_->getScanner(strata::device::Device::Type::MockDevice);
+            auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(scanner);
+            if (mockScanner == nullptr) {
+                qCCritical(logCategorySci) << "cannot get scanner for mock devices";
+                return;
+            }
+            strata::device::DevicePtr device = mockScanner->getMockDevice(deviceId_);
             mockDevice_->setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
         }
 
@@ -210,43 +219,33 @@ void SciPlatform::resetPropertiesFromDevice()
     setDeviceName(platform_->deviceName());
 }
 
-QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
+void SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 {
-    QVariantMap retStatus;
-
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
 
-        retStatus["error"] = "not_connected";
-        return retStatus;
+        emit sendMessageResultReceived(SendMessageErrorType::NotConnectedError, QVariantMap());
+        return;
     }
 
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
-    bool isJsonValid = parseError.error == QJsonParseError::NoError;
-
     if (onlyValidJson) {
-        if (isJsonValid == false) {
-            retStatus["error"] = "json_error";
-            retStatus["offset"] = parseError.offset;
-            retStatus["message"] = parseError.errorString();
-            return retStatus;
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+
+        if (parseError.error != QJsonParseError::NoError) {
+            QVariantMap data;
+            data["offset"] = parseError.offset;
+            data["message"] = parseError.errorString();
+
+            emit sendMessageResultReceived(SendMessageErrorType::JsonError, data);
+            return;
         }
     }
 
     //compact format as line break is end of input for serial library
     QString compactMsg = SGJsonFormatter::minifyJson(message);
 
-    bool result = platform_->sendMessage(compactMsg.toUtf8());
-    if (result) {
-        commandHistoryModel_->add(compactMsg, isJsonValid);
-        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-        retStatus["error"] = "no_error";
-    } else {
-        retStatus["error"] = "send_error";
-    }
-
-    return retStatus;
+    currentMessageId_ = platform_->sendMessage(compactMsg.toUtf8());
 }
 
 bool SciPlatform::programDevice(QString filePath, bool doBackup)
@@ -271,10 +270,49 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
 
-    flasherConnector_->flash(doBackup);
+    flasherConnector_->flash(doBackup, strata::Flasher::FinalAction::PreservePlatformState);
     setProgramInProgress(true);
 
     return true;
+}
+
+QString SciPlatform::saveDeviceFirmware(QString filePath) {
+    if (status_ != PlatformStatus::Ready) {
+        QString errorString(QStringLiteral("platform not ready"));
+        qCWarning(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    if (flasherConnector_.isNull() == false) {
+        QString errorString(QStringLiteral("flasherConnector already exists"));
+        qCWarning(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    if (filePath.isEmpty()) {
+        QString errorString(QStringLiteral("no file name specified"));
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isRelative()) {
+        QString errorString(QStringLiteral("cannot use relative path for backup file"));
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
+    flasherConnector_ = new strata::FlasherConnector(platform_, filePath, this);
+
+    connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &SciPlatform::flasherOperationStateChangedHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
+
+    flasherConnector_->backup(strata::Flasher::FinalAction::PreservePlatformState);
+    setProgramInProgress(true);
+
+    return QString();
 }
 
 void SciPlatform::storeCommandHistory(const QStringList &list)
@@ -298,9 +336,33 @@ void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage mes
     filterSuggestionModel_->add(message.raw());
 }
 
-void SciPlatform::messageToDeviceHandler(QByteArray rawMessage)
+void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, uint msgNumber, QString errorString)
 {
-    scrollbackModel_->append(rawMessage, true);
+    if (currentMessageId_ != msgNumber) {
+        //message not sent by user manually
+        if (errorString.isEmpty()) {
+            scrollbackModel_->append(rawMessage, true);
+        }
+
+        return;
+    }
+
+    SendMessageErrorType errorType = SendMessageErrorType::NoError;
+    QVariantMap result;
+
+    if (errorString.isEmpty()) {
+        commandHistoryModel_->add(SGJsonFormatter::minifyJson(rawMessage));
+        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+        scrollbackModel_->append(rawMessage, true);
+    } else {
+        errorType = SendMessageErrorType::PlatformError;
+        result.insert("error_string", errorString);
+
+        qCWarning(logCategorySci) << platform_ << "Error '" << errorString
+            << "' occured while sending message '" << rawMessage << '\'';
+    }
+
+    emit sendMessageResultReceived(errorType, result);
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)

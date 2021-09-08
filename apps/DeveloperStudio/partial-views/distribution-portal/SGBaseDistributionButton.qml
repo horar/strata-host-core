@@ -43,10 +43,10 @@ RowLayout {
     Rectangle {
         id: providerBackground
         color: !providerMouseArea.containsMouse && !providerPopup.opened
-               ? Theme.palette.green : providerMouseArea.pressed && !providerPopup.opened
-                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+               ? Theme.palette.onsemiOrange : providerMouseArea.pressed && !providerPopup.opened
+                 ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
         radius: 10
-        Layout.preferredWidth: textSize.width + textSize.height
+        Layout.preferredWidth: iconMouse.enabled ? textSize.width + textSize.height : iconBackground.width + textSize.width + textSize.height
         Layout.fillWidth: true
         implicitHeight: parent.height
 
@@ -67,6 +67,7 @@ RowLayout {
             width: providerBackground.width/2
             height: providerBackground.height
             color: providerBackground.color
+            visible: iconMouse.enabled
         }
 
         SGText {
@@ -91,7 +92,7 @@ RowLayout {
             cursorShape: Qt.PointingHandCursor
 
             onClicked:  {
-                !providerPopup.opened ?  providerPopup.popOpen() : providerPopup.popClose()
+                !providerPopup.opened ? providerPopup.popOpen() : providerPopup.popClose()
             }
         }
 
@@ -141,10 +142,11 @@ RowLayout {
         id: iconBackground
         radius: 10
         color: !iconMouse.containsMouse
-               ? Theme.palette.green : iconMouse.pressed
-                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+               ? Theme.palette.onsemiOrange : iconMouse.pressed
+                 ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
         implicitWidth: height
         implicitHeight: parent.height
+        visible: iconMouse.enabled
 
         Rectangle {
             // square off left side
@@ -156,11 +158,9 @@ RowLayout {
         SGIcon {
             id: urlIcon
             source: 'qrc:/partial-views/distribution-portal/images/arrow-circle-right.svg'
-            opacity: iconMouse.enabled ? 1 : 0.3
             iconColor: 'white'
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            enabled: iconMouse.enabled
             anchors.fill: iconBackground
             anchors.margins: 5
         }

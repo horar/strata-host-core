@@ -59,24 +59,22 @@ Rectangle {
             tooltipDescription: "View/use control view"
 
             onClicked: {
-                if (viewStack.currentIndex !== 2) {
-                    viewStack.currentIndex = 2
-                }
+                viewStack.currentIndex = 2
             }
         }
 
         SGSideNavItem {
             iconText: "Debug"
             iconSource: "qrc:/sgimages/tools.svg"
-            enabled: viewStack.currentIndex === 2 && debugPanel.visible
-            selected: debugPanel.expanded
+            enabled: viewStack.currentIndex === 2 && debugPanel.debugVisible
+            selected: isDebugMenuOpen
             tooltipDescription: "Toggle debug panel"
 
             onClicked: {
-                if (debugPanel.expanded) {
-                    debugPanel.collapse()
+                if (debugMenuWindow) {
+                    newWindowDebugMenuLoader.item.raise()
                 } else {
-                    debugPanel.expand()
+                    isDebugMenuOpen = !isDebugMenuOpen
                 }
             }
         }
@@ -89,7 +87,11 @@ Rectangle {
             tooltipDescription: "Toggle logger panel"
 
             onClicked: {
-                isConsoleLogOpen = !isConsoleLogOpen
+                if (popupWindow) {
+                    newWindowLoader.item.raise()
+                } else {
+                    isConsoleLogOpen = !isConsoleLogOpen
+                }
             }
 
             SGConsoleLogNavigationIcon {
@@ -101,7 +103,7 @@ Rectangle {
         }
 
         SGSideNavItem {
-            iconText: "Platform Interface Generator"
+            iconText: "Platform Interface Generator" + (platformInterfaceGenerator.unsavedChanges ? "*" : "")
             iconSource: "qrc:/partial-views/control-view-creator/components/PlatformInterfaceGeneratorIcon.svg"
             selected: viewStack.currentIndex === 3
             enabled: true
@@ -126,4 +128,3 @@ Rectangle {
         }
     }
 }
-

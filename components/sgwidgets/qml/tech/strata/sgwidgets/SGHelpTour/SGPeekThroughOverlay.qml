@@ -4,7 +4,6 @@ import tech.strata.sgwidgets 0.9
 Item {
      id: root
      visible: false
-     z: 50
      anchors.fill: parent
 
      function setTarget(target, fill) {

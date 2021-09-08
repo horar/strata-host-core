@@ -7,6 +7,11 @@
 
 namespace strata::strataRPC
 {
+/**
+ * Enum to describe ServerConnector errors
+ */
+enum class ServerConnectorError : short { FailedToInitialize, FailedToSend };
+
 class ServerConnector : public QObject
 {
     Q_OBJECT
@@ -17,7 +22,7 @@ public:
      * ServerConnector constructor
      * @param [in] serverAddress sets the server address
      */
-    ServerConnector(QString serverAddress, QObject *parent = nullptr)
+    ServerConnector(const QString &serverAddress, QObject *parent = nullptr)
         : QObject(parent), connector_(nullptr), serverAddress_(serverAddress)
     {
     }
@@ -27,23 +32,22 @@ public:
      */
     ~ServerConnector();
 
+public slots:
     /**
      * initialize the client's zmq connector and star it. Also this connects QSocketNotifier
      * signals.
      * @return True if the initialization is successful, False otherwise.
+     * @note On success, connected signal will be emitted.
+     * @note On failure, errorOccurred signal will be emitted.
      */
-    bool initilizeConnector();
-
-    /**
-     * Empties the receive buffer and emits newMessageReceived signal for each new message.
-     */
-    void readMessages();
+    bool initialize();
 
     /**
      * Sends a message to a client.
      * @param [in] clientId client id to send the message to.
      * @param [in] message QByteArray of the message
      * @return True if the message was sent successfully, False otherwise.
+     * @note On failure, errorOccurred signal will be emitted.
      */
     bool sendMessage(const QByteArray &clientId, const QByteArray &message);
 
@@ -53,7 +57,24 @@ signals:
      * @param [in] clientId sender client id.
      * @param [in] message QByteArray of the new message.
      */
-    void newMessageReceived(const QByteArray &clientId, const QByteArray &message);
+    void messageReceived(const QByteArray &clientId, const QByteArray &message);
+
+    /**
+     * Emitted when an error has occurred.
+     * @param [in] errorType error category description.
+     * @param [in] errorMessage QString of the actual error.
+     */
+    void errorOccurred(const ServerConnectorError &errorType, const QString &errorMessage);
+
+    /**
+     * Emitted when the client connector was initialized successfully.
+     */
+    void initialized();
+
+    /**
+     * Private signal emitted when there is unhandled socket readReady event.
+     */
+    void messagesQueued(QPrivateSignal);
 
 private slots:
     /**
@@ -66,9 +87,16 @@ private slots:
     void readNewMessages(/*int socket*/);
 
 private:
+    /**
+     * Empties the receive buffer and emits messageReceived signal for each new message.
+     */
+    void readMessages();
+
     std::unique_ptr<strata::connector::Connector> connector_;
     QSocketNotifier *readSocketNotifier_;
     QString serverAddress_;
 };
 
 }  // namespace strata::strataRPC
+
+Q_DECLARE_METATYPE(strata::strataRPC::ServerConnectorError);

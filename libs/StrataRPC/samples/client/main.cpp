@@ -32,8 +32,11 @@ int main(int argc, char *argv[])
         clientId = parser.value("i");
     }
 
-    QQmlApplicationEngine engine;
+    // make sure that objects in context properties are declared before engine, to maintain proper order of destruction
     std::unique_ptr<Client> client_(new Client(clientId));
+
+    QQmlApplicationEngine engine;
+
     engine.rootContext()->setContextProperty("Client", client_.get());
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

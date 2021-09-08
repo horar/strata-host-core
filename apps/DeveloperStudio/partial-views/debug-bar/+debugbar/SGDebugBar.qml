@@ -11,7 +11,6 @@ import tech.strata.signals 1.0
 import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -39,9 +38,15 @@ Item {
             layoutDirection: Qt.RightToLeft
             spacing: 2
 
-            // starta view debug button chooser
+            // strata view debug button chooser
             RowLayout {
                 id: comboboxRow
+
+                onXChanged: {
+                    if (visible) {
+                        viewDebugPopup.updatePos()
+                    }
+                }
 
                 Label {
                     text: qsTr("View:")
@@ -52,6 +57,7 @@ Item {
                     id: viewCombobox
                     delegate: viewButtonDelegate
                     model: viewFolderModel
+                    popup: viewDebugPopup
                     textRole: "fileName"
 
                     onCurrentIndexChanged: {
@@ -63,6 +69,33 @@ Item {
                             }
                         } else {
                             displayText = currentText.replace("views-", "").slice(0, -4)
+                        }
+                    }
+
+                    Popup {
+                        id: viewDebugPopup                      
+                        width: commandBar.width
+                        y: viewCombobox.height
+                        padding: 0
+                        background: Rectangle {
+                            color: "dimgrey"
+                        }
+
+                        onVisibleChanged: {
+                            updatePos()
+                        }
+
+                        function updatePos() {
+                            let pos = viewCombobox.mapToItem(commandBar, 0, 0)
+                            x = -pos.x
+                        }
+
+                        contentItem: GridView {
+                            cellHeight: 25
+                            cellWidth: (commandBar.width / 7) - 0.1
+                            implicitHeight: contentHeight
+                            model: viewCombobox.popup.visible ? viewCombobox.delegateModel : null
+                            currentIndex: viewCombobox.highlightedIndex
                         }
                     }
 
@@ -91,8 +124,8 @@ Item {
 
                         Button {
                             id: selectButton
-                            width: viewCombobox.width
-                            height: 20
+                            width: viewDebugPopup.contentItem.cellWidth - 1
+                            height: viewDebugPopup.contentItem.cellHeight - 1
                             // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
                             text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
@@ -214,38 +247,6 @@ Item {
                 }
             }
 
-            Button {
-                id: serverChange
-                enabled: sdsModel.urls.testAuthServer !== ""
-                onClicked: {
-                    if (Rest.url !== sdsModel.urls.authServer) {
-                        Rest.url = sdsModel.urls.authServer
-                    } else {
-                        Rest.url = sdsModel.urls.testAuthServer
-                    }
-                    Signals.serverChanged()
-                }
-
-                Component.onCompleted: {
-                    setButtonText()
-                }
-
-                function setButtonText () {
-                    if (Rest.url !== sdsModel.urls.authServer ) {
-                        text = "Switch to Prod Auth Server"
-                    } else {
-                        text = "Switch to Test Auth Server"
-                    }
-                }
-
-                Connections {
-                    target: Signals
-                    onServerChanged: {
-                        serverChange.setButtonText()
-                    }
-                }
-            }
-
             RowLayout {
                 Label {
                     text: qsTr("Log level:")
@@ -322,7 +323,9 @@ Item {
         Connections {
             target: sdsModel
             onNotifyQmlError: {
-                qmlErrorModel.append({"data" : notifyQmlError})
+                if (sdsModel.qtLogger.visualEditorReloading === false) {
+                    qmlErrorModel.append({"data" : notifyQmlError})
+                }
             }
         }
     }

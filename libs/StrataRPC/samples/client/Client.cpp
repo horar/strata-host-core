@@ -17,8 +17,13 @@ Client::Client(QString clientId, QObject *parent)
     qCInfo(logCategoryStrataClientSample).nospace().noquote()
         << "Client ID 0x" << clientId.toUtf8().toHex();
 
-    connect(strataClient_.get(), &StrataClient::clientConnected, this, [this]() {
+    connect(strataClient_.get(), &StrataClient::connected, this, [this]() {
         connectionStatus_ = true;
+        emit connectionStatusUpdated();
+    });
+
+    connect(strataClient_.get(), &StrataClient::disconnected, this, [this]() {
+        connectionStatus_ = false;
         emit connectionStatusUpdated();
     });
 
@@ -58,16 +63,13 @@ QString Client::getServerTime() const
 void Client::connectToServer()
 {
     qCDebug(logCategoryStrataClientSample) << "Connecting to the server.";
-    strataClient_->connectServer();
+    strataClient_->connect();
 }
 
 void Client::disconnectServer()
 {
     qCDebug(logCategoryStrataClientSample) << "Disconnecting from the server.";
-    if (true == strataClient_->disconnectServer()) {
-        connectionStatus_ = false;
-        emit connectionStatusUpdated();
-    }
+    strataClient_->disconnect();
 }
 
 void Client::closeServer()

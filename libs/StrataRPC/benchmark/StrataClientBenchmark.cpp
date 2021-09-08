@@ -2,11 +2,13 @@
 
 #include <QMetaObject>
 
+QTEST_MAIN(StrataClientBenchmark)
+
 void StrataClientBenchmark::benchmarkLargeNumberOfHandlers()
 {
     int totalNumberOfHandlers = 1000;
-    StrataClient client(address_, this);
-    client.connectServer();
+    StrataClient client(address_, "", this);
+    client.connect();
 
     for (int i = 0; i < totalNumberOfHandlers; i++) {
         client.registerHandler(QString::number(i), [](const QJsonObject &) { return; });
@@ -22,7 +24,7 @@ void StrataClientBenchmark::benchmarkLargeNumberOfHandlers()
 
 void StrataClientBenchmark::benchmarkSendRequest()
 {
-    StrataClient client(address_, this);
+    StrataClient client(address_, "", this);
 
     QBENCHMARK
     {
@@ -32,7 +34,7 @@ void StrataClientBenchmark::benchmarkSendRequest()
 
 void StrataClientBenchmark::benchmarkSendNotification()
 {
-    StrataClient client(address_, this);
+    StrataClient client(address_, "", this);
 
     QBENCHMARK
     {

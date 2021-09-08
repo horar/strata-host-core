@@ -2,7 +2,5 @@
     <qresource prefix="/">
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
-        <file>platformInterface.json</file>
-        <file>DebugMenu.qml</file>
     </qresource>
 </RCC>

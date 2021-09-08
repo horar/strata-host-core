@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
+import Qt.labs.platform 1.1 as QtLabsPlatform
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -25,13 +26,14 @@ import tech.strata.notifications 1.0
 SGWidgets.SGMainWindow {
     id: mainWindow
 
+    readonly property int defaultWidth: 1024
+    readonly property int defaultHeight: 768-40 // -40 for Win10 taskbar height
+
     visible: true
-    x: Screen.width / 2 - mainWindow.width / 2
-    y: Screen.height / 2 - mainWindow.height / 2
-    width: 1200
-    height: 900
-    minimumHeight: 768-40 // -40 for Win10 taskbar height
-    minimumWidth: 1024
+    width: defaultWidth
+    height: defaultHeight
+    minimumHeight: defaultHeight
+    minimumWidth: defaultWidth
     title: Qt.application.displayName
 
     property alias notificationsInbox: notificationsInbox
@@ -41,8 +43,22 @@ SGWidgets.SGMainWindow {
 
     function resetWindowSize()
     {
-        mainWindow.width = 1200
-        mainWindow.height = 900
+        if (mainWindow.visibility === Window.FullScreen) {
+            mainWindow.showNormal()
+        }
+
+        mainWindow.width = defaultWidth
+        mainWindow.height = defaultHeight
+    }
+
+    QtLabsPlatform.Menu {
+        QtLabsPlatform.MenuItem {
+            text: qsTr("&About")
+            role: QtLabsPlatform.MenuItem.AboutRole
+            onTriggered:  {
+                showAboutWindow()
+            }
+        }
     }
 
     Shortcut {
@@ -88,6 +104,7 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        // QTBUG-45262 - 'close.accepted = false' is ignored on MacOS; fixed in further 5.14 releases
         if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose(function (){mainWindow.close()})) {
             close.accepted = false
             return
@@ -131,7 +148,7 @@ SGWidgets.SGMainWindow {
                                                      "all",
                                                      {
                                                          "singleton": true,
-                                                         "timeout":0
+                                                         "timeout": 0
                                                      })
                     hcsReconnecting = false
                 }
@@ -231,6 +248,10 @@ SGWidgets.SGMainWindow {
                 PlatformSelection.parseConnectedPlatforms(list)
             }
         }
+    }
+
+    function showAboutWindow() {
+        SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
     SGDebugBar {

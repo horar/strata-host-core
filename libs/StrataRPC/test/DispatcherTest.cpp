@@ -2,6 +2,8 @@
 
 #include "DispatcherTest.h"
 
+QTEST_MAIN(DispatcherTest)
+
 DispatcherTest::DispatcherTest()
 {
     messageList_.push_back(

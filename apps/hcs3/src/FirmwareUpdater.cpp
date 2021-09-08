@@ -130,7 +130,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
-    flasherConnector_->flash(true);
+    flasherConnector_->flash(true, strata::Flasher::FinalAction::StartApplication);
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
@@ -191,6 +191,7 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
         break;
     case FlasherConnector::State::Failed :
     case FlasherConnector::State::NoFirmware :
+    case FlasherConnector::State::BadFirmware :
         updStatus = FirmwareUpdateController::UpdateStatus::Failure;
         break;
     }

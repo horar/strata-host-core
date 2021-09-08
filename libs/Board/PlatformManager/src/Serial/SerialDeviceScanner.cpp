@@ -13,18 +13,19 @@ SerialDeviceScanner::SerialDeviceScanner()
 }
 
 SerialDeviceScanner::~SerialDeviceScanner() {
-    if (timer_.isActive()) {
+    if (timer_.isActive() || (deviceIds_.size() != 0)) {
         SerialDeviceScanner::deinit();
     }
 }
 
-void SerialDeviceScanner::init() {
-    // If the timer is already running, it will be stopped and restarted
-    timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
+void SerialDeviceScanner::init(quint32 flags) {
+    if ((flags & SerialDeviceScanner::DisableAutomaticScan) == 0) {
+        startAutomaticScan();
+    }
 }
 
 void SerialDeviceScanner::deinit() {
-    timer_.stop();
+    stopAutomaticScan();
 
     for (const auto& deviceId : deviceIds_) {
         emit deviceLost(deviceId);
@@ -32,6 +33,36 @@ void SerialDeviceScanner::deinit() {
 
     deviceIds_.clear();
     portNames_.clear();
+}
+
+void SerialDeviceScanner::setProperties(quint32 flags) {
+    if (flags & SerialDeviceScanner::DisableAutomaticScan) {
+        stopAutomaticScan();
+    }
+}
+
+void SerialDeviceScanner::unsetProperties(quint32 flags) {
+    if (flags & SerialDeviceScanner::DisableAutomaticScan) {
+        startAutomaticScan();
+    }
+}
+
+void SerialDeviceScanner::startAutomaticScan() {
+    if (timer_.isActive()) {
+        qCWarning(logCategoryDeviceScanner) << "Device scan is already running.";
+    } else {
+        qCDebug(logCategoryDeviceScanner) << "Starting device scan.";
+        timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
+    }
+}
+
+void SerialDeviceScanner::stopAutomaticScan() {
+    if (timer_.isActive()) {
+        qCDebug(logCategoryDeviceScanner) << "Stopping device scan.";
+        timer_.stop();
+    } else {
+        qCWarning(logCategoryDeviceScanner) << "Device scan is already stopped.";
+    }
 }
 
 void SerialDeviceScanner::checkNewSerialDevices() {
@@ -64,7 +95,7 @@ void SerialDeviceScanner::checkNewSerialDevices() {
         }
 #endif
         // device ID must be int because of integration with QML
-        const QByteArray deviceId = SerialDevice::createDeviceId(portName);
+        const QByteArray deviceId = createDeviceId(SerialDevice::createUniqueHash(portName));
         auto [iter, success] = detectedDeviceIds.emplace(deviceId);
         if (success == false) {
             // Error: hash already exists!
@@ -127,7 +158,7 @@ bool SerialDeviceScanner::addSerialDevice(const QByteArray& deviceId) {
         return false;
     }
 
-    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort));
+    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort), -1);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
     qCInfo(logCategoryDeviceScanner).nospace().noquote()

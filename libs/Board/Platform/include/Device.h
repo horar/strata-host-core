@@ -30,8 +30,8 @@ namespace strata::device {
 
             // [WARNING] - device does not have to be disconnected
 
-            DeviceBusy,         // device is currently locked by another operation (possible cause: more than 1 operation ongoing)
             DeviceFailedToOpen, // device failed to open (possible cause: port open in another application)
+            DeviceFailedToOpenGoingToRetry, // device failed to open, going to retry (possible cause: port open in another application)
 
             // [ERROR] - device should be disconnected
 
@@ -46,7 +46,9 @@ namespace strata::device {
         enum class Type {
             SerialDevice,
             MockDevice,
-            TcpDevice
+            TcpDevice,
+            BLEDevice
+            // IMPORTANT: If adding new values, add them to allScannerTypes_ in DeviceScanner.cpp as well.
         };
         Q_ENUM(Type)
 
@@ -77,9 +79,14 @@ namespace strata::device {
         /**
          * Send message to device. Emits deviceError() signal in case of failure.
          * @param msg message to be written to device
-         * @return true if message can be sent, otherwise false
+         * @return serial number of the sent message
          */
-        virtual bool sendMessage(const QByteArray& msg) = 0;
+        virtual unsigned sendMessage(const QByteArray& msg) = 0;
+
+        /**
+         * Returns serial number for next message.
+         */
+        virtual unsigned nextMessageNumber() final;
 
         /**
          * Get device ID.
@@ -127,10 +134,12 @@ namespace strata::device {
         void messageReceived(QByteArray msg);
 
         /**
-         * Emitted when message was written to device.
+         * Emitted when message was written to device or some problem occured and message cannot be written.
          * @param msg writen message to device
+         * @param msgNum serial number of the sent message
+         * @param errStr error string if message cannot be sent, empty (null) when everything is OK
          */
-        void messageSent(QByteArray msg);
+        void messageSent(QByteArray msg, unsigned msgNum, QString errStr);
 
         /**
          * Emitted when error occured during communication or connection.
@@ -143,5 +152,8 @@ namespace strata::device {
         const QByteArray deviceId_;
         const QString deviceName_;  // name given by system (e.g. COM3)
         const Type deviceType_;
+
+    private:
+        unsigned messageNumber_;
     };
 }  // namespace

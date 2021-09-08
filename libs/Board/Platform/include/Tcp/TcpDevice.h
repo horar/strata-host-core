@@ -20,7 +20,7 @@ public:
      * @param deviceAddress IP address of the tcp device.
      * @param tcpPort Open tcp port of the device.
      */
-    TcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
+    TcpDevice(const QByteArray& deviceId, QHostAddress deviceAddress, quint16 tcpPort);
 
     /**
      * TcpDevice destructor.
@@ -39,11 +39,11 @@ public:
     virtual void close() override;
 
     /**
-     * Send message asynchronously to tcp device. Emits deviceError in case of failure.
+     * Send message asynchronously to tcp device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray &message) override;
+    virtual unsigned sendMessage(const QByteArray &message) override;
 
     /**
      * return the status of the tcp device.
@@ -57,10 +57,12 @@ public:
     virtual void resetReceiving() override;
 
     /**
-     * Creates device ID based on it's IP address.
-     * @return QByteArray of the generated device ID.
+     * Creates unique hash for the device, based on it's IP address.
+     * Will be used to generate device ID.
+     * @param hostAddress address of the connected device.
+     * @return unique hash bytes.
      */
-    static QByteArray createDeviceId(QHostAddress hostAddress);
+    static QByteArray createUniqueHash(QHostAddress hostAddress);
 
 signals:
     void deviceDisconnected();

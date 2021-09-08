@@ -7,6 +7,7 @@
 #include <Operations/SetPlatformId.h>
 #include <Operations/SetAssistedPlatformId.h>
 #include <PlatformOperationsStatus.h>
+#include <Serial/SerialDeviceScanner.h>
 
 #include <QDir>
 #include <QSettings>
@@ -14,6 +15,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+using strata::device::scanner::SerialDeviceScanner;
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
@@ -25,7 +27,7 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-    platformManager_.init(strata::device::Device::Type::SerialDevice);
+    platformManager_.addScanner(strata::device::Device::Type::SerialDevice, SerialDeviceScanner::DisableAutomaticScan);
 
     connect(&platformManager_, &strata::PlatformManager::platformRecognized, this, &PrtModel::deviceInfoChangeHandler);
     connect(&platformManager_, &strata::PlatformManager::platformAboutToClose, this, &PrtModel::deviceDisconnectedHandler);
@@ -35,6 +37,8 @@ PrtModel::PrtModel(QObject *parent)
 
 PrtModel::~PrtModel()
 {
+    // do not listen to platformManager_ signals when going to destroy it
+    disconnect(&platformManager_, nullptr, this, nullptr);
 }
 
 int PrtModel::deviceCount() const
@@ -155,7 +159,7 @@ void PrtModel::programDevice()
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &PrtModel::flasherProgress);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &PrtModel::flasherFinishedHandler);
 
-    flasherConnector_->flash(false);
+    flasherConnector_->flash(false, strata::Flasher::FinalAction::StartApplication);
 }
 
 void PrtModel::downloadBinaries(
@@ -290,6 +294,22 @@ void PrtModel::clearBinaries()
 void PrtModel::abortDownload()
 {
     downloadManager_.abortAll(downloadJobId_);
+}
+
+void PrtModel::startDeviceScan()
+{
+    auto serialScanner = std::dynamic_pointer_cast<SerialDeviceScanner>(platformManager_.getScanner(strata::device::Device::Type::SerialDevice));
+    if (serialScanner) {
+        serialScanner->init();
+    }
+}
+
+void PrtModel::stopDeviceScan()
+{
+    auto serialScanner = std::dynamic_pointer_cast<SerialDeviceScanner>(platformManager_.getScanner(strata::device::Device::Type::SerialDevice));
+    if (serialScanner) {
+        serialScanner->deinit();
+    }
 }
 
 void PrtModel::setPlatformId(
@@ -446,6 +466,10 @@ void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recogniz
     Q_UNUSED(recognized)
 
     strata::platform::PlatformPtr platform = platformManager_.getPlatform(deviceId);
+    if (platform == nullptr) {
+        qCWarning(logCategoryPrt).noquote() << "Platform not found by its id" << deviceId;
+        return;
+    }
 
     if (platformList_.indexOf(platform) < 0) {
         //new platform connected

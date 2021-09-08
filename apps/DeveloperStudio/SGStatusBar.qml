@@ -37,7 +37,7 @@ Rectangle {
     property string last_name: ""
 
     property color backgroundColor: "#3a3a3a"
-    property color menuColor: Theme.palette.green
+    property color menuColor: Theme.palette.onsemiOrange
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
 
@@ -104,9 +104,9 @@ Rectangle {
             Layout.preferredHeight:40
             Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
+            color: platformSelectorMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.onsemiOrange : "#444"
 
-            property color menuColor: Theme.palette.green
+            property color menuColor: Theme.palette.onsemiOrange
 
             SGText {
                 color: "white"
@@ -139,7 +139,7 @@ Rectangle {
 
             visible: platformTabListView.contentWidth > platformTabListView.width
 
-            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : "#444"
 
             onEnabledChanged: {
                 if (enabled == false) {
@@ -246,6 +246,7 @@ Rectangle {
                 id: delegate
                 width: platformTabListView.platformTabWidth +
                        (index == (platformTabListView.count - 1) ? platformTabListView.platformTabWidthRemainder : 0)
+                state: platformTabListView.state;
             }
             orientation: ListView.Horizontal
             spacing: 1
@@ -327,7 +328,7 @@ Rectangle {
 
             visible: platformTabListView.contentWidth > platformTabListView.width
 
-            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : "#444"
 
             onEnabledChanged: {
                 if (enabled == false) {
@@ -381,9 +382,10 @@ Rectangle {
         }
     }
 
-    Item {
+    Rectangle {
         id: profileIconContainer
         width: height
+        radius: 5
 
         anchors {
             right: container.right
@@ -392,28 +394,25 @@ Rectangle {
             bottom: container.bottom
         }
 
-        Rectangle {
-            id: profileIcon
-            anchors {
-                centerIn: profileIconContainer
+        color: {
+            if (profileMenu.visible) {
+                return "grey"
+            } else if (profileIconHover.containsMouse) {
+                return "dimgrey"
+            } else {
+                return "transparent"
             }
-            height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
-            width: height
-            radius: height / 2
-            color: Theme.palette.green
+        }
 
-            Text {
-                id: profileInitial
-                text: first_name.charAt(0)
-                color: "white"
-                anchors {
-                    centerIn: profileIcon
-                }
-                font {
-                    family: Fonts.franklinGothicBold
-                    pixelSize: profileIconHover.containsMouse ? 24 : 20
-                }
+        SGIcon {
+            id: barIcon
+            height: parent.height - 20
+            width: height
+            anchors {
+                centerIn: parent
             }
+            source: "qrc:/sgimages/bars.svg"
+            iconColor: Theme.palette.white
         }
 
         Rectangle {
@@ -457,7 +456,11 @@ Rectangle {
             onPressed: pressAction()
 
             function pressAction() {
-                profileMenu.open()
+                if (profileMenu.visible) {
+                    profileMenu.close()
+                } else {
+                    profileMenu.open()
+                }
             }
         }
 
@@ -468,6 +471,7 @@ Rectangle {
             padding: 0
             topPadding: 10
             width: 140
+            closePolicy: Popup.CloseOnPressOutsideParent
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -484,7 +488,7 @@ Rectangle {
                     context.lineTo(width, height);
                     context.lineTo(0, height);
                     context.closePath();
-                    context.fillStyle = Theme.palette.green;
+                    context.fillStyle = Theme.palette.onsemiOrange;
                     context.fill();
                 }
             }
@@ -633,16 +637,20 @@ Rectangle {
         classId: "general-settings"
         user: NavigationControl.context.user_id
 
+        property bool firstLogin: true
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
-        // updated this so we can mitigate undefined variables
+
         function loadSettings() {
             const settings = readFile("general-settings.json")
 
+            if (settings.hasOwnProperty("firstLogin")) {
+                firstLogin = settings.firstLogin
+            }
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
             }
@@ -666,6 +674,7 @@ Rectangle {
 
         function saveSettings() {
             const settings = {
+                firstLogin: firstLogin,
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,

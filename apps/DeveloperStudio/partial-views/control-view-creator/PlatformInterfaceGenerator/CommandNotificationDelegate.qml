@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
@@ -6,7 +7,7 @@ import tech.strata.sgwidgets 1.0
 ColumnLayout {
     id: commandsColumn
 
-    width: parent.width
+    width: ListView.view.width
 
     property ListModel payloadModel: model.payload
     property var modelIndex: index
@@ -40,6 +41,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (cmdNotifName.text !== "") {
+                        unsavedChanges = true
+                    }
                     commandColumn.commandModel.remove(index)
                 }
             }
@@ -79,8 +83,12 @@ ColumnLayout {
             }
 
             onTextChanged: {
-                model.name = text
+                if (model.name === text) {
+                    return
+                }
+                unsavedChanges = true
 
+                model.name = text
                 if (text.length > 0) {
                     finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
                 } else {
@@ -160,5 +168,35 @@ ColumnLayout {
         Layout.topMargin: 10
         visible: index !== commandsListView.count - 1
         color: "black"
+    }
+
+    Component {
+        id: defaultValue
+
+        Item {
+            id: defaultValueContainer
+            property int leftMargin: 20
+            property int rightMargin: 0
+            property alias text: textField.text
+
+            RowLayout {
+                anchors {
+                    fill: parent
+                    rightMargin: parent.rightMargin
+                }
+
+                Text {
+                    Layout.leftMargin: leftMargin
+                    text: "Default Value:"
+                }
+
+                TextField {
+                    id: textField
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    selectByMouse: true
+                }
+            }
+        }
     }
 }

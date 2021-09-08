@@ -1,6 +1,5 @@
 #include "SciMockDeviceModel.h"
 #include <Mock/MockDevice.h>
-#include <Mock/MockDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
 using strata::PlatformManager;
@@ -8,6 +7,7 @@ using strata::device::Device;
 using strata::device::MockDevice;
 using strata::device::scanner::DeviceScanner;
 using strata::device::scanner::MockDeviceScanner;
+using strata::device::scanner::MockDeviceScannerPtr;
 using strata::platform::PlatformPtr;
 
 SciMockDeviceModel::SciMockDeviceModel(PlatformManager *platformManager):
@@ -21,17 +21,19 @@ SciMockDeviceModel::~SciMockDeviceModel()
 
 void SciMockDeviceModel::clear()
 {
-    beginResetModel();
+    if (platforms_.empty() == false) {
+        beginResetModel();
 
-    platforms_.clear();
+        platforms_.clear();
 
-    endResetModel();
-    emit countChanged();
+        endResetModel();
+        emit countChanged();
+    }
 }
 
 void SciMockDeviceModel::init()
 {
-    scanner_ = platformManager_->getScanner(Device::Type::MockDevice);
+    scanner_ = std::dynamic_pointer_cast<MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
 
     if (scanner_ == nullptr) {
         qCCritical(logCategorySci) << "Received empty Mock Scanner pointer:" << scanner_.get();
@@ -72,19 +74,19 @@ void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
     qCDebug(logCategorySci) << "Device not present in the mock model:" << deviceId;
 }
 
-bool SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByteArray& deviceId)
+QString SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByteArray& deviceId)
 {
     if (scanner_ == nullptr) {
-        return false;
+        return QString("Scanner for mock devices does not exist.");
     }
 
-    if (static_cast<MockDeviceScanner*>(scanner_.get())->
-            mockDeviceDetected(deviceId, deviceName, false) == true) {
+    QString errorString = scanner_->mockDeviceDetected(deviceId, deviceName, false);
+
+    if (errorString.isEmpty()) {
         ++latestMockIdx_;
-        return true;
     }
 
-    return false;
+    return errorString;
 }
 
 bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
@@ -93,7 +95,7 @@ bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
         return false;
     }
 
-    return static_cast<MockDeviceScanner*>(scanner_.get())->mockDeviceLost(deviceId);
+    return scanner_->mockDeviceLost(deviceId);
 }
 
 void SciMockDeviceModel::disconnectAllMockDevices() {
@@ -101,7 +103,7 @@ void SciMockDeviceModel::disconnectAllMockDevices() {
         return;
     }
 
-    return static_cast<MockDeviceScanner*>(scanner_.get())->mockAllDevicesLost();
+    return scanner_->mockAllDevicesLost();
 }
 
 QString SciMockDeviceModel::getLatestMockDeviceName() const {
@@ -109,7 +111,11 @@ QString SciMockDeviceModel::getLatestMockDeviceName() const {
 }
 
 QByteArray SciMockDeviceModel::getMockDeviceId(const QString& deviceName) const {
-    return MockDevice::createDeviceId(deviceName);
+    if (scanner_ == nullptr) {
+        return QByteArray();
+    }
+
+    return scanner_->mockCreateDeviceId(deviceName);
 }
 
 QVariant SciMockDeviceModel::data(const QModelIndex &index, int role) const

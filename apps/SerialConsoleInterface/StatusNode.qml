@@ -111,7 +111,9 @@ Item {
                     if (nodeState === StatusNode.Succeed) {
                         return Theme.palette.green
                     } else if (nodeState === StatusNode.Failed) {
-                        return  TangoTheme.palette.error
+                        return TangoTheme.palette.error
+                    } else if (nodeState === StatusNode.SucceedWithWarning) {
+                        return TangoTheme.palette.warning
                     }
 
                     return "transparent"
@@ -148,7 +150,7 @@ Item {
                     } else if (nodeState === StatusNode.SucceedWithWarning) {
                         return TangoTheme.palette.warning
                     } else if (nodeState === StatusNode.Failed) {
-                        return  TangoTheme.palette.error
+                        return TangoTheme.palette.error
                     }
 
                     return "grey"

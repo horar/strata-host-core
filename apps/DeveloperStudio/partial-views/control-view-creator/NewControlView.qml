@@ -35,7 +35,6 @@ Item {
             id: alertMessage
             Layout.preferredWidth: parent.width * 0.7
             interval: 0
-            z: 100
             color: "red"
         }
 
@@ -301,10 +300,9 @@ Item {
     }
 
     function createControlView() {
-        let path = fileOutput.text.trim();
-        if (path.startsWith("file:")) {
-            // type is url
-            path = SGUtilsCpp.urlToLocalFile(path);
+        let path = fileOutput.text.trim()
+        if (!SGUtilsCpp.isFile(path)) {
+            path = SGUtilsCpp.urlToLocalFile(path)
         }
 
         if (!SGUtilsCpp.exists(path)) {
@@ -334,7 +332,6 @@ Item {
         viewStack.currentIndex = 1
         controlViewCreatorRoot.projectInitialization = true
         controlViewCreatorRoot.recompileControlViewQrc();
-
         projectName.text = ""
         fileOutput.text = ""
     }

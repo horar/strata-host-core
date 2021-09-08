@@ -59,8 +59,8 @@ Item {
 
         Item {
             id: tagTextWrapper
-            height: sizeByMask ? metrics.boundingRect.height : tagText.contentHeight
-            width: sizeByMask ? metrics.boundingRect.width : tagText.contentWidth
+            height: sizeByMask ? Math.ceil(metrics.height) : tagText.contentHeight
+            width: sizeByMask ? Math.ceil(metrics.width) : tagText.contentWidth
             anchors {
                 verticalCenter: parent.verticalCenter
             }

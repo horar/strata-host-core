@@ -10,7 +10,7 @@
 [submodule "extern/qtmqtt"]
 	path = extern/qtmqtt
 	url = https://github.com/qt/qtmqtt.git
-	ignore = dirty
+	ignore = all
 [submodule "extern/couchbase-lite-C"]
 	path = extern/couchbase-lite-C
 	url = https://github.com/stratadeveloperstudio/couchbase-lite-C.git
@@ -22,10 +22,6 @@
 [submodule "extern/cppzmq"]
 	path = extern/cppzmq
 	url = https://github.com/zeromq/cppzmq.git
-	ignore = dirty
-[submodule "extern/libevent"]
-	path = extern/libevent
-	url = https://github.com/libevent/libevent.git
 	ignore = dirty
 [submodule "strata-cmake-modules"]
 	path = strata-cmake-modules

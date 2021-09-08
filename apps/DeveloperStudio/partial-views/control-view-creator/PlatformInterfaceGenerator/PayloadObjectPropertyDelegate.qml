@@ -25,6 +25,7 @@ ColumnLayout {
             Layout.preferredWidth: 15
             padding: 0
             hoverEnabled: true
+            visible: parentListModel.count > 1
 
             icon {
                 source: "qrc:/sgimages/times.svg"
@@ -46,6 +47,9 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
+                    if (propertyKey.text !== "") {
+                        unsavedChanges = true
+                    }
                     parentListModel.remove(modelIndex)
                 }
             }
@@ -53,9 +57,10 @@ ColumnLayout {
 
         TextField {
             id: propertyKey
-            Layout.preferredWidth: 150
+            Layout.fillWidth: true
             Layout.preferredHeight: 30
             placeholderText: "Key"
+            selectByMouse: true
             validator: RegExpValidator {
                 regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
             }
@@ -77,13 +82,17 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
-                text = model.key
+                text = model.name
                 forceActiveFocus()
             }
 
             onTextChanged: {
-                model.key = text
+                if (model.name === text) {
+                    return
+                }
+                unsavedChanges = true
 
+                model.name = text
                 if (text.length > 0) {
                     model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
                 } else {
@@ -104,42 +113,35 @@ ColumnLayout {
             }
 
             onActivated: {
+                if (indexSelected === index) {
+                    return
+                }
+                unsavedChanges = true
+
                 type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
                 indexSelected = index
             }
         }
+    }
 
-        RoundButton {
-            id: addPropertyToObjectButton
-            Layout.preferredHeight: 25
-            Layout.preferredWidth: 25
-            hoverEnabled: true
-            visible: modelIndex === parentListModel.count - 1
+    Loader {
+        sourceComponent: defaultValue
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
+        active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
+        visible: active
 
-            icon {
-                source: "qrc:/sgimages/plus.svg"
-                color: addPropToButtonMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
-                height: 20
-                width: 20
-                name: "add"
+        onItemChanged: {
+            if (item) {
+                item.leftMargin = 20 * 2
+                item.rightMargin = 30
+                item.text = model.value
+                item.textChanged.connect(textChanged)
             }
+        }
 
-            Accessible.name: "Add property to Object"
-            Accessible.role: Accessible.Button
-            Accessible.onPressAction: {
-                addPropToButtonMouseArea.clicked()
-            }
-
-            MouseArea {
-                id: addPropToButtonMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    parentListModel.append({"key": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
-                    commandsListView.contentY += 40
-                }
-            }
+        function textChanged() {
+            model.value = item.text
         }
     }
 
@@ -184,5 +186,29 @@ ColumnLayout {
             }
         }
     }
-}
 
+    Button {
+        id: addPropertyButton
+        text: "Add Property To Object"
+        Layout.alignment: Qt.AlignHCenter
+        visible: modelIndex === parentListModel.count - 1
+
+        Accessible.name: addPropertyButton.text
+        Accessible.role: Accessible.Button
+        Accessible.onPressAction: {
+            addPropertyButtonMouseArea.clicked()
+        }
+
+        MouseArea {
+            id: addPropertyButtonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked: {
+                parentListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel, "value":"0"})
+                commandsListView.contentY += 40
+            }
+        }
+    }
+}

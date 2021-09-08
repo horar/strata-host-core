@@ -35,7 +35,7 @@ public:
     int maximumCount() const;
     void setMaximumCount(int maximumCount);
 
-    void add(const QString &message, bool isJsonValid);
+    void add(const QString &message);
     void populate(const QStringList &list);
     QStringList getCommandList() const;
     Q_INVOKABLE bool removeAt(int row);

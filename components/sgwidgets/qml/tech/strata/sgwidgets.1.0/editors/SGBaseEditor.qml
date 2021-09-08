@@ -82,8 +82,20 @@ FocusScope {
         onValidationReadyChanged: {
             delegate.validate()
         }
+    }
 
-        onEnabledChanged: {
+    /* We cannot connect to 'enabled' property of loader.item in Connections directly
+       because Connections has this property. */
+    property bool editorEnabled: {
+        if (loader.status === Loader.Ready) {
+            return loader.item.enabled
+        }
+
+        return false
+    }
+
+    onEditorEnabledChanged: {
+        if (inputValidation) {
             delegate.validate()
         }
     }

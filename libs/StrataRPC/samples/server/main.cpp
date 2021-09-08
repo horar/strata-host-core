@@ -16,11 +16,10 @@ int main(int argc, char* argv[])
     const strata::loggers::QtLoggerSetup loggerInitialization(theApp);
 
     std::shared_ptr<Server> server_(new Server);
-    if (!server_->init()) {
-        return -1;
-    }
-
     QObject::connect(server_.get(), &Server::appDone, &theApp, &QCoreApplication::exit);
+
+    server_->init();
     server_->start();
+
     return theApp.exec();
 }

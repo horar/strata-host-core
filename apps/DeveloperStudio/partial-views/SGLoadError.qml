@@ -10,10 +10,10 @@ Rectangle {
     }
     color: "#ddd"
 
+    property alias error_intro: errorIntro.text
     property alias error_message: error.text
 
     ColumnLayout {   
-        
         anchors {
             fill: loadError
             margins: 20

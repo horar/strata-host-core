@@ -69,7 +69,7 @@ public:
 
     /**
      * @brief debugMenuSource Gets the debug menu source
-     * @return Returns the path to the debug menu. If it doesn't exist, it returns "".
+     * @return Returns the path to the debug menu platformInterface.json source. If it doesn't exist, it returns "".
      */
     QUrl debugMenuSource() const;
 
@@ -258,7 +258,7 @@ public:
      * @param url The path to the file or directory
      * @return true if file is in pathsInTree_
      */
-    Q_INVOKABLE bool containsPath(const QUrl url);
+    Q_INVOKABLE bool containsPath(const QString url);
 
     /***
      * SIGNALS
@@ -356,7 +356,7 @@ Item {
     // String literal for creating a VE-enabled QML file
     const QString veQMLFile_ = R"veQMLFile(import QtQuick 2.12
 
-import tech.strata.sgwidgets 1.0
+import tech.strata.sglayout 1.0
 
 UIBase { // start_uibase
     columnCount: 20

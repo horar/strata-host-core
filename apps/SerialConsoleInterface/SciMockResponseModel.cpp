@@ -1,13 +1,12 @@
 #include "SciMockResponseModel.h"
 #include "logging/LoggingQtCategories.h"
 
-using strata::device::MockResponse;
+using namespace strata::device;
 
 SciMockResponseModel::SciMockResponseModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     setModelRoles();
-    setModelData();
 }
 
 SciMockResponseModel::~SciMockResponseModel()
@@ -105,26 +104,16 @@ void SciMockResponseModel::setModelRoles()
     }
 }
 
-void SciMockResponseModel::setModelData()
+void SciMockResponseModel::updateModelData(const MockVersion& version, const MockCommand& command)
 {
+    beginResetModel();
+
     responses_.clear();
-    responses_.push_back({MockResponse::Normal, "Normal"});
-    responses_.push_back({MockResponse::No_payload, "No Payload"});
-    responses_.push_back({MockResponse::No_JSON, "No JSON"});
-    responses_.push_back({MockResponse::Nack, "Nack"});
-    responses_.push_back({MockResponse::Invalid, "Invalid"});
-    responses_.push_back({MockResponse::Platform_config_embedded_app, "Platform Config: Embedded App"});
-    responses_.push_back({MockResponse::Platform_config_assisted_app, "Platform Config: Assisted App"});
-    responses_.push_back({MockResponse::Platform_config_assisted_no_board, "Platform Config: Assisted No Board"});
-    responses_.push_back({MockResponse::Platform_config_embedded_bootloader, "Platform Config: Embedded Bootloader"});
-    responses_.push_back({MockResponse::Platform_config_assisted_bootloader, "Platform Config: Assisted Bootloader"});
-    responses_.push_back({MockResponse::Flash_firmware_resend_chunk, "Flash Firmware: Resend Chunk"});
-    responses_.push_back({MockResponse::Flash_firmware_memory_error, "Flash Firmware: Memory Error"});
-    responses_.push_back({MockResponse::Flash_firmware_invalid_cmd_sequence, "Flash Firmware: Invalid Cmd Sequence"});
-    responses_.push_back({MockResponse::Flash_firmware_invalid_value, "Flash Firmware: Invalid Value"});
-    responses_.push_back({MockResponse::Start_flash_firmware_invalid, "Start Flash Firmware: Invalid"});
-    responses_.push_back({MockResponse::Start_flash_firmware_too_large, "Start Flash Firmware: Firmware too large"});
-    responses_.push_back({MockResponse::Start_flash_firmware_invalid_command, "Start Flash Firmware: Invalid command"});
-    responses_.push_back({MockResponse::Backup_firmware_no_fw, "Backup Firmware: No firmware"});
-    responses_.push_back({MockResponse::Start_backup_firmware_no_fw, "Start Backup Firmware: No firmware"});
+    QList<MockResponse> responses = mockSupportedResponses(version, command);
+    foreach(auto response, responses) {
+        responses_.push_back({response, mockResponseConvertEnumToString(response)});
+    }
+
+    endResetModel();
+    emit countChanged();
 }

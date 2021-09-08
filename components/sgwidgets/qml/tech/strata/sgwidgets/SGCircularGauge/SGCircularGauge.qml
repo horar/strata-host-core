@@ -75,7 +75,7 @@ Item {
 
         CircularGauge {
             id: ticksBackground
-            z: -1
+            z: -1 // to have tickmarks appear behind the gauge
             width: gauge.width
             height: gauge.height
             anchors {

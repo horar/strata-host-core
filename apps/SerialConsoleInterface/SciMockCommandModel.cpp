@@ -7,7 +7,6 @@ SciMockCommandModel::SciMockCommandModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     setModelRoles();
-    setModelData();
 }
 
 SciMockCommandModel::~SciMockCommandModel()
@@ -104,20 +103,16 @@ void SciMockCommandModel::setModelRoles()
     }
 }
 
-void SciMockCommandModel::setModelData()
+void SciMockCommandModel::updateModelData(const MockVersion& version)
 {
+    beginResetModel();
+
     commands_.clear();
-    commands_.push_back({MockCommand::Any_command, "Any Command"});
-    commands_.push_back({MockCommand::Get_firmware_info, CMD_GET_FIRMWARE_INFO});
-    commands_.push_back({MockCommand::Request_platform_id, CMD_REQUEST_PLATFORM_ID});
-    commands_.push_back({MockCommand::Start_bootloader, CMD_START_BOOTLOADER});
-    commands_.push_back({MockCommand::Start_application, CMD_START_APPLICATION});
-    commands_.push_back({MockCommand::Flash_firmware, CMD_FLASH_FIRMWARE});
-    commands_.push_back({MockCommand::Flash_bootloader, CMD_FLASH_BOOTLOADER});
-    commands_.push_back({MockCommand::Start_flash_firmware, CMD_START_FLASH_FIRMWARE});
-    commands_.push_back({MockCommand::Start_flash_bootloader, CMD_START_FLASH_BOOTLOADER});
-    commands_.push_back({MockCommand::Set_assisted_platform_id, CMD_SET_ASSISTED_PLATFORM_ID});
-    commands_.push_back({MockCommand::Set_platform_id, CMD_SET_PLATFORM_ID});
-    commands_.push_back({MockCommand::Start_backup_firmware, CMD_START_BACKUP_FIRMWARE});
-    commands_.push_back({MockCommand::Backup_firmware, CMD_BACKUP_FIRMWARE});
+    QList<MockCommand> commands = mockSupportedCommands(version);
+    foreach(auto command, commands) {
+        commands_.push_back({command, mockCommandConvertEnumToString(command)});
+    }
+
+    endResetModel();
+    emit countChanged();
 }

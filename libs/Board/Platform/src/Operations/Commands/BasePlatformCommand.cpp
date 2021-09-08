@@ -15,6 +15,7 @@ BasePlatformCommand::BasePlatformCommand(const PlatformPtr& platform, const QStr
     : cmdName_(commandName),
       cmdType_(cmdType),
       platform_(platform),
+      lastMsgNumber_(0),
       ackOk_(false),
       status_(operation::DEFAULT_STATUS),
       ackTimeout_(ACK_TIMEOUT),
@@ -36,8 +37,9 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
     }
 
     if (deviceSignalsConnected_ == false) {
-        connect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse, Qt::QueuedConnection);
-        connect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError, Qt::QueuedConnection);
+        connect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse);
+        connect(platform_.get(), &Platform::messageSent, this, &BasePlatformCommand::handleMessageSent);
+        connect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError);
         deviceSignalsConnected_ = true;
     }
 
@@ -50,13 +52,9 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
 
     ackOk_ = false;  // "ok" ACK for this command
 
-    if (platform_->sendMessage(this->message(), lockId)) {
-        responseTimer_.setInterval(ackTimeout_);
-        responseTimer_.start();
-    } else {
-        qCCritical(logCategoryPlatformCommand) << platform_ << QStringLiteral("Cannot send '") + cmdName_ + QStringLiteral("' command.");
-        finishCommand(CommandResult::Unsent);
-    }
+    responseTimer_.setInterval(ackTimeout_);
+    responseTimer_.start();
+    lastMsgNumber_ = platform_->sendMessage(this->message(), lockId);
 }
 
 // If method 'sendCommand' is overriden, check if this method is still valid.
@@ -183,8 +181,23 @@ void BasePlatformCommand::handleResponseTimeout()
     finishCommand(this->onTimeout());
 }
 
+void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, unsigned msgNumber, QString errStr)
+{
+    Q_UNUSED(rawMessage)
+    if ((errStr.isEmpty() == false) && (msgNumber == lastMsgNumber_)) {
+        responseTimer_.stop();
+        qCCritical(logCategoryPlatformCommand) << platform_ << QStringLiteral("Cannot send '")
+            << cmdName_ << QStringLiteral("' command. Error: '") << errStr << '\'';
+        finishCommand(CommandResult::Unsent);
+    }
+}
+
 void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
+    if (errCode == device::Device::ErrorCode::NoError) {
+        return;
+    }
+
     responseTimer_.stop();
     qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;
 
@@ -202,6 +215,7 @@ void BasePlatformCommand::finishCommand(CommandResult result)
     // so there is no need to disconnect slots (little optimization).
     if ((result != CommandResult::RepeatAndWait) && deviceSignalsConnected_) {
         disconnect(platform_.get(), &Platform::messageReceived, this, &BasePlatformCommand::handleDeviceResponse);
+        disconnect(platform_.get(), &Platform::messageSent, this, &BasePlatformCommand::handleMessageSent);
         disconnect(platform_.get(), &Platform::deviceError, this, &BasePlatformCommand::handleDeviceError);
         deviceSignalsConnected_ = false;
     }

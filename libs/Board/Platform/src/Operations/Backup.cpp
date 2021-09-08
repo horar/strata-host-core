@@ -51,6 +51,11 @@ int Backup::totalChunks() const
     return cmdStartBackup_->totalChunks();
 }
 
+uint Backup::backupSize() const
+{
+    return cmdStartBackup_->backupSize();
+}
+
 QVector<quint8> Backup::recentBackupChunk() const
 {
     return chunk_;

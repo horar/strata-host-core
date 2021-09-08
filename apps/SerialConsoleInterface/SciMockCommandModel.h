@@ -28,6 +28,7 @@ public:
         QString name_;
     };
 
+    void updateModelData(const strata::device::MockVersion& version);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
@@ -41,7 +42,6 @@ protected:
 private:
     void clear();
     void setModelRoles();
-    void setModelData();
 
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;

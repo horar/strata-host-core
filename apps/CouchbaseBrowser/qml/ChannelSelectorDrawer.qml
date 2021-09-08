@@ -73,7 +73,7 @@ ColumnLayout {
         delegate: Component {
             Rectangle  {
                 id: background
-                width: parent.width - 10
+                width: ListView.view.width - 10
                 height: 30
 
                 color: isLabel ? "transparent" : (checked ? "#612b00" : "#b55400")

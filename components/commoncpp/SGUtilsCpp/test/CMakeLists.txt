@@ -1,13 +1,13 @@
-add_executable(${PROJECT_NAME}-test
+add_executable(test-${PROJECT_NAME}
     main.cpp
     SGUtilsCpp-test.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}-test
+target_link_libraries(test-${PROJECT_NAME}
     PRIVATE SGUtilsCpp
     PRIVATE gtest::gtest
 )
 
-add_test(NAME ${PROJECT_NAME}-test
-    COMMAND ${PROJECT_NAME}-test
+add_test(NAME test-${PROJECT_NAME}
+    COMMAND test-${PROJECT_NAME}
 )

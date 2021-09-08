@@ -12,14 +12,12 @@ Rectangle {
     id: root
     anchors.fill: parent
     color: "#eee"
-    z: 3
 
     signal clicked()
 
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
-        z: 5
 
         Rectangle {
             id: topBar
@@ -46,6 +44,13 @@ Rectangle {
                         Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
 
+                        Rectangle {
+                            anchors.centerIn: parent
+                            height: 16
+                            width: 5
+                            color: "white"
+                        }
+
                         SGIcon {
                             anchors.centerIn: parent
                             source: "qrc:/sgimages/exclamation-triangle.svg"
@@ -53,14 +58,6 @@ Rectangle {
                             height: 25
                             width: height
                             enabled: consoleLogWarningCount > 0
-
-                            Rectangle {
-                                anchors.centerIn: parent
-                                height: 16
-                                width: 5
-                                z: -1
-                                color: "white"
-                            }
                         }
                     }
 
@@ -76,6 +73,13 @@ Rectangle {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
 
+                        Rectangle {
+                            anchors.centerIn: parent
+                            height: 16
+                            width: 5
+                            color: "white"
+                        }
+
                         SGIcon {
                             anchors.centerIn: parent
                             source: "qrc:/sgimages/exclamation-circle.svg"
@@ -83,14 +87,6 @@ Rectangle {
                             height: 25
                             width: height
                             enabled: consoleLogErrorCount > 0
-
-                            Rectangle {
-                                anchors.centerIn: parent
-                                height: 16
-                                width: 5
-                                z: -1
-                                color: "white"
-                            }
                         }
                     }
 
@@ -156,12 +152,26 @@ Rectangle {
                     Layout.alignment: Qt.AlignRight
 
                     SGControlViewIconButton {
+                        id: openWindow
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
+                        source: popupWindow ? "qrc:/sgimages/sign-out.svg" : "qrc:/sgimages/sign-in.svg"
+
+                        onClicked:  {
+                            popupWindow = !popupWindow
+                        }
+                    }
+
+                    SGControlViewIconButton {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
                         source: "qrc:/sgimages/times.svg"
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
+                            if (popupWindow) {
+                                popupWindow = false
+                            }
                             root.clicked()
                         }
                     }

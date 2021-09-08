@@ -35,7 +35,9 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGVersionUtils
     strata::SGJLinkConnector
     strata::SGJsonSyntaxHighlighter
+    strata::SGTextHighlighter
     strata::SGTranslator
+    strata::SGConversion
     mqtt::mqtt
 )
 

@@ -11,10 +11,11 @@ public:
     QByteArray message() override;
     bool processNotification(const rapidjson::Document& doc, CommandResult& result) override;
     int totalChunks() const;
+    uint backupSize() const;
 private:
     uint chunks_;
-    /* these values ​​are not used yet
     uint size_;
+    /* this value is not used yet
     QString md5_;
     */
 };

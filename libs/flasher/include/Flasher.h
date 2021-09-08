@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QFile>
+#include <QSaveFile>
 
 #include <memory>
 #include <functional>
@@ -30,6 +31,7 @@ class Flasher : public QObject
         enum class Result {
             Ok,          // successfully done
             NoFirmware,  // device has no firmware
+            BadFirmware, // firmware is bad - it cannot start
             Error,       // error during firmware / bootloader operation
             Disconnect,  // device disconnected
             Timeout,     // command timed out
@@ -51,6 +53,17 @@ class Flasher : public QObject
             IdentifyBoard
         };
         Q_ENUM(State)
+
+        /*!
+         * The FinalAction enum for Flasher methods.
+         */
+        enum class FinalAction {
+            StartApplication,  // start application
+            StayInBootloader,  // stay in bootloader mode
+            PreservePlatformState,  // preserve initial platform state:
+                                    //  start application if it was running before
+                                    //  or otherwise stay in bootloader mode
+        };
 
         /*!
          * Flasher constructor.
@@ -83,9 +96,9 @@ class Flasher : public QObject
 
         /*!
          * Flash firmware.
-         * \param startApplication if set to true start application after flashing
+         * \param finalAction value from FinalAction enum, defines what to do after flash
          */
-        void flashFirmware(bool startApplication = true);
+        void flashFirmware(FinalAction finalAction);
 
         /*!
          * Flash bootloader.
@@ -94,15 +107,15 @@ class Flasher : public QObject
 
         /*!
          * Backup firmware.
-         * \param startApplication if set to true start application after backup
+         * \param finalAction value from FinalAction enum, defines what to do after backup
          */
-        void backupFirmware(bool startApplication = true);
+        void backupFirmware(FinalAction finalAction);
 
         /*!
          * Set firmware class ID (without flashing firmware).
-         * \param startApplication if set to true start application after setting firmware class ID
+         * \param finalAction value from FinalAction enum, defines what to do after setting firmware class ID
          */
-        void setFwClassId(bool startApplication = true);
+        void setFwClassId(FinalAction finalAction);
 
         /*!
          * Cancel flash firmware operation.
@@ -206,6 +219,14 @@ class Flasher : public QObject
 
         typedef std::unique_ptr<platform::operation::BasePlatformOperation, void(*)(platform::operation::BasePlatformOperation*)> OperationPtr;
 
+        enum class FlasherActivity {
+            FlashFirmware,
+            FlashBootloader,
+            BackupFirmware,
+            SetFwClassId
+        };
+        FlasherActivity activity_;
+
         struct FlasherOperation {
             FlasherOperation(OperationPtr&& platformOperation,
                              State stateOfFlasher,
@@ -222,7 +243,11 @@ class Flasher : public QObject
 
         platform::PlatformPtr platform_;
 
-        QFile binaryFile_;
+        FinalAction finalAction_;
+
+        const QString fileName_;
+        QFile sourceFile_;
+        QSaveFile destinationFile_;
         QString fileMD5_;
         bool fileFlashed_;
 
@@ -231,14 +256,9 @@ class Flasher : public QObject
         int chunkNumber_;
         int chunkCount_;
         int chunkProgress_;
-
-        enum class Action {
-            FlashFirmware,
-            FlashBootloader,
-            BackupFirmware,
-            SetFwClassId
-        };
-        Action action_;
+        int expectedBackupChunkNumber_;
+        uint actualBackupSize_;
+        uint expectedBackupSize_;
 };
 
 }  // namespace

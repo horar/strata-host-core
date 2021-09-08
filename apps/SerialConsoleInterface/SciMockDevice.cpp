@@ -1,4 +1,5 @@
 #include "SciMockDevice.h"
+#include <Mock/MockDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
 using strata::PlatformManager;
@@ -28,11 +29,16 @@ void SciMockDevice::setMockDevice(const strata::device::MockDevicePtr& mockDevic
         emit canReopenMockDeviceChanged();
         if (mockDevice_ != nullptr) {
             emit openEnabledChanged();
-            emit legacyModeChanged();
             emit autoResponseChanged();
+            emit mockVersionChanged();
+            QList<MockCommand> commands = strata::device::mockSupportedCommands(mockGetVersion());
+            if ((commands.empty() == false) && (commands.contains(currentCommand_) == false)) {
+                currentCommand_ = commands.first();
+            }
+            mockCommandModel_.updateModelData(mockGetVersion());
+            mockResponseModel_.updateModelData(mockGetVersion(), currentCommand_);
             emit mockCommandChanged();
             emit mockResponseChanged();
-            emit mockVersionChanged();
         }
     }
 }
@@ -50,7 +56,13 @@ bool SciMockDevice::reopenMockDevice()
         return false;
     }
 
-    DevicePtr device = platform->getDevice();
+    auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
+    if (mockScanner == nullptr) {
+        qCCritical(logCategorySci) << "Cannot get scanner for mock devices.";
+        return false;
+    }
+
+    DevicePtr device = mockScanner->getMockDevice(deviceId_);
     if (device == nullptr) {
         qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId_;
         return false;
@@ -64,7 +76,8 @@ bool SciMockDevice::reopenMockDevice()
 
     if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
         mockDevice->mockSetOpenEnabled(true);
-        qCDebug(logCategorySci) << "Mock Device configured to open during next interval:" << deviceId_;
+        mockDevice->open();
+        qCDebug(logCategorySci) << "Mock Device reopened:" << deviceId_;
         emit canReopenMockDeviceChanged();
         return true;
     }
@@ -85,7 +98,13 @@ bool SciMockDevice::canReopenMockDevice() const {
         return false;
     }
 
-    const DevicePtr device = platform->getDevice();
+    auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
+    if (mockScanner == nullptr) {
+        qCCritical(logCategorySci) << "Cannot get scanner for mock devices.";
+        return false;
+    }
+
+    const DevicePtr device = mockScanner->getMockDevice(deviceId_);
     if (device == nullptr) {
         qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId_;
         return false;
@@ -130,15 +149,6 @@ bool SciMockDevice::mockIsOpenEnabled() const
     return mockDevice_->mockIsOpenEnabled();
 }
 
-bool SciMockDevice::mockIsLegacy() const
-{
-    if (mockDevice_ == nullptr) {
-        return false;
-    }
-
-    return mockDevice_->mockIsLegacy();
-}
-
 bool SciMockDevice::mockIsAutoResponse() const
 {
     if (mockDevice_ == nullptr) {
@@ -150,11 +160,7 @@ bool SciMockDevice::mockIsAutoResponse() const
 
 MockCommand SciMockDevice::mockGetCommand() const
 {
-    if (mockDevice_ == nullptr) {
-        return MockCommand::Any_command;
-    }
-
-    return mockDevice_->mockGetCommand();
+    return currentCommand_;
 }
 
 MockResponse SciMockDevice::mockGetResponse() const
@@ -163,7 +169,7 @@ MockResponse SciMockDevice::mockGetResponse() const
         return MockResponse::Normal;
     }
 
-    return mockDevice_->mockGetResponse();
+    return mockDevice_->mockGetResponseForCommand(currentCommand_);
 }
 
 MockVersion SciMockDevice::mockGetVersion() const
@@ -189,15 +195,6 @@ void SciMockDevice::mockSetOpenEnabled(bool enabled)
     }
 }
 
-void SciMockDevice::mockSetLegacy(bool isLegacy)
-{
-    if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetLegacy(isLegacy) == true) {
-            emit legacyModeChanged();
-        }
-    }
-}
-
 void SciMockDevice::mockSetAutoResponse(bool autoResponse)
 {
     if (mockDevice_ != nullptr) {
@@ -207,29 +204,38 @@ void SciMockDevice::mockSetAutoResponse(bool autoResponse)
     }
 }
 
-void SciMockDevice::mockSetCommand(MockCommand command)
+void SciMockDevice::mockSetVersion(MockVersion version)
 {
     if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetCommand(command) == true) {
-            emit mockCommandChanged();
+        if (mockDevice_->mockSetVersion(version) == true) {
+            QList<MockCommand> commands = strata::device::mockSupportedCommands(version);
+            if ((commands.empty() == false) && (commands.contains(currentCommand_) == false)) {
+                currentCommand_ = commands.first();
+            }
+            mockCommandModel_.updateModelData(version);
+            mockResponseModel_.updateModelData(version, currentCommand_);
+            emit mockVersionChanged();
+            emit mockCommandChanged();  // update indexes due to model change
+            emit mockResponseChanged(); // update indexes due to model change
         }
+    }
+}
+
+void SciMockDevice::mockSetCommand(MockCommand command)
+{
+    if (currentCommand_ != command) {
+        currentCommand_ = command;
+        mockResponseModel_.updateModelData(mockDevice_->mockGetVersion(), currentCommand_);
+        emit mockCommandChanged();
+        emit mockResponseChanged(); // update indexes due to model change
     }
 }
 
 void SciMockDevice::mockSetResponse(MockResponse response)
 {
     if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetResponse(response) == true) {
+        if (mockDevice_->mockSetResponseForCommand(response, currentCommand_) == true) {
             emit mockResponseChanged();
-        }
-    }
-}
-
-void SciMockDevice::mockSetVersion(MockVersion version)
-{
-    if (mockDevice_ != nullptr) {
-        if (mockDevice_->mockSetVersion(version) == true) {
-            emit mockVersionChanged();
         }
     }
 }

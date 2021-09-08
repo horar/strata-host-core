@@ -840,7 +840,7 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
                 continue;
             }
 
-            if (info.fileName() == "DebugMenu.qml") {
+            if (info.fileName() == "platformInterface.json") {
                 setDebugMenuSource(QUrl::fromLocalFile(info.filePath()));
             }
 
@@ -1111,8 +1111,8 @@ void SGQrcTreeModel::handleExternalFileDeleted(const QString uid)
     startSave();
 }
 
-bool SGQrcTreeModel::containsPath(const QUrl url)
+bool SGQrcTreeModel::containsPath(const QString url)
 {
-    QUrl localUrl = QUrl::fromLocalFile(url.toString());
+    QUrl localUrl = QUrl::fromLocalFile(url);
     return pathsInTree_.contains(localUrl);
 }

@@ -39,7 +39,7 @@ ColumnLayout {
         model: []
         delegate: Component {
             Rectangle  {
-                width: parent.width - 10
+                width: ListView.view.width - 10
                 height: visible ? 30 : 0
 
                 visible: model.modelData.toLowerCase().includes(searchbox.userInput.toLowerCase())

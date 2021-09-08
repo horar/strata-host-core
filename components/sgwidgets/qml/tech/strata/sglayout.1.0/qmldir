@@ -1,0 +1,26 @@
+module tech.strata.sglayout
+
+LayoutButton 1.0 widgets/Button/LayoutButton.qml
+LayoutDivider 1.0 widgets/Divider/LayoutDivider.qml
+LayoutRectangle 1.0 widgets/Rectangle/LayoutRectangle.qml
+LayoutSGIcon 1.0 widgets/SGIcon/LayoutSGIcon.qml
+LayoutText 1.0 widgets/Text/LayoutText.qml
+LayoutSGSwitch 1.0 widgets/Switch/LayoutSGSwitch.qml
+LayoutSGInfoBox 1.0 widgets/InfoBox/LayoutSGInfoBox.qml
+LayoutSGCircularGauge 1.0 widgets/CircularGauge/LayoutSGCircularGauge.qml
+LayoutSGStatusLight 1.0 widgets/StatusLight/LayoutSGStatusLight.qml
+LayoutSGComboBox 1.0 widgets/ComboBox/LayoutSGComboBox.qml
+LayoutSGGraph 1.0 widgets/Graph/LayoutSGGraph.qml
+LayoutSGSlider 1.0 widgets/Slider/LayoutSGSlider.qml
+LayoutSGButtonStrip 1.0 widgets/ButtonStrip/LayoutSGButtonStrip.qml
+LayoutRadioButtons 1.0 widgets/RadioButtons/LayoutRadioButtons.qml
+LayoutSGStatusLogBox 1.0 widgets/StatusLogBox/LayoutSGStatusLogBox.qml
+LayoutItem 1.0 widgets/Item/LayoutItem.qml
+
+LayoutContainer 1.0 LayoutContainer.qml
+LayoutInfo 1.0 LayoutInfo.qml
+
+UIBase 1.0 UIBase.qml
+
+depends tech.strata.theme 1.0
+depends tech.strata.sgwidgets 1.0

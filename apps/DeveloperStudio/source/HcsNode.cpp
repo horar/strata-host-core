@@ -6,8 +6,6 @@
 
 HcsNode::HcsNode(QObject *parent) : QObject(parent)
 {
-    replicaNode_.setHeartbeatInterval(10000);
-
     initConnections();
 }
 
@@ -52,7 +50,7 @@ void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
     setHcsConnected(state == QRemoteObjectReplica::Valid);
 }
 
-void HcsNode::shutdownService()
+void HcsNode::shutdownService(unsigned hcsIdentifier)
 {
     if ((replica_->isReplicaValid() == false) && ((replica_->isInitialized() == true) || (replica_.data()->waitForSource(500) == false))) {
         qCWarning(logCategoryStrataDevStudioNode) << "can't shutdown, not connected to HCS";
@@ -60,7 +58,7 @@ void HcsNode::shutdownService()
     }
 
     qCDebug(logCategoryStrataDevStudioNode) << "requesting HCS to shut down";
-    replica_->shutdown_cb();
+    replica_->shutdown_cb(hcsIdentifier);
 }
 
 void HcsNode::setHcsConnected(bool hcsConnected)

@@ -14,7 +14,7 @@ class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
 class PlatformInterfaceGenerator;
-class DebugMenuGenerator;
+class VisualEditorUndoStack;
 
 class SDSModel: public QObject
 {
@@ -27,7 +27,7 @@ class SDSModel: public QObject
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
-    Q_PROPERTY(DebugMenuGenerator* debugMenuGenerator READ debugMenuGenerator CONSTANT)
+    Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
 
@@ -44,7 +44,7 @@ public:
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
-    DebugMenuGenerator* debugMenuGenerator() const;
+    VisualEditorUndoStack* visualEditorUndoStack() const;
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
     /*Temporary solution until strata monitor is done*/
@@ -71,11 +71,11 @@ private:
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
-    DebugMenuGenerator *debugMenuGenerator_{nullptr};
+    VisualEditorUndoStack *visualEditorUndoStack_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
     QPointer<QProcess> hcsProcess_;
-    bool externalHcsConnected_{false};
+    const unsigned hcsIdentifier_;
 
     void setHcsConnected(bool hcsConnected);
 };

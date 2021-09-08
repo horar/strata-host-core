@@ -20,12 +20,23 @@ Item {
     }
 
     Rectangle {
+        id: textArea
+        color: Theme.palette.onsemiOrange
+        height: 30
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: iconContainer.horizontalCenter
+            right: parent.right
+        }
+        radius: 5
+    }
+
+    Rectangle {
         id: iconContainer
         color: "black"
         radius: implicitHeight/2
         implicitHeight: segmentCategoryList.delegateHeight
         implicitWidth: implicitHeight
-        z:1
 
         SGIcon {
             source: model.iconSource
@@ -36,18 +47,6 @@ Item {
                 centerIn: parent
             }
         }
-    }
-
-    Rectangle {
-        id: textArea
-        color: Theme.palette.green
-        height: 30
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: iconContainer.horizontalCenter
-            right: parent.right
-        }
-        radius: 5
     }
 
     ColumnLayout {

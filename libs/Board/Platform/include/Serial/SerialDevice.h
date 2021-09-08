@@ -7,6 +7,7 @@
 #include <Device.h>
 
 #include <QSerialPort>
+#include <QTimer>
 
 namespace strata::device {
 
@@ -22,16 +23,18 @@ public:
      * SerialDevice constructor
      * @param deviceId device ID
      * @param name device name
+     * @param openRetries count of retries if 'open()' fails; default = 0, unlimited = -1 (negative number)
      */
-    SerialDevice(const QByteArray& deviceId, const QString& name);
+    SerialDevice(const QByteArray& deviceId, const QString& name, int openRetries = 0);
 
     /**
      * SerialDevice constructor
      * @param deviceId device ID
      * @param name device name
      * @param port already existing serial port
+     * @param openRetries count of retries if 'open()' fails; default = 0, unlimited = -1 (negative number)
      */
-    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port);
+    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port, int openRetries = 0);
 
     /**
      * SerialDevice destructor
@@ -57,18 +60,19 @@ public:
     static SerialPortPtr establishPort(const QString& portName);
 
     /**
-     * Create ID for serial device
-     * @param portName system name of serial port
-     * @return ID for serial device
+     * Creates unique hash for serial device, based on port name.
+     * Will be used to generate device ID.
+     * @param portName system name of serial port.
+     * @return unique hash.
      */
-    static QByteArray createDeviceId(const QString& portName);
+    static QByteArray createUniqueHash(const QString& portName);
 
     /**
-     * Send message to serial device. Emits deviceError in case of failure.
+     * Send message to serial device. Emits messageSent.
      * @param data message to be written to device
-     * @return true if message can be sent, otherwise false
+     * @return serial number of the sent message
      */
-    virtual bool sendMessage(const QByteArray& data) override;
+    virtual unsigned sendMessage(const QByteArray& data) override;
 
     /**
      * Check if serial device is connected (communication with it is possible - device
@@ -83,18 +87,26 @@ public:
      */
     virtual void resetReceiving() override;
 
+    /**
+     * Set count of retries if 'open()' fails.
+     * @param retries retries count (default = 0), -1 (negative number) = unlimited
+     */
+    void setOpenRetries(int retries);
+
 private slots:
     void readMessage();
     void handleError(QSerialPort::SerialPortError error);
 
 private:
-    void initSerialDevice();
-    ErrorCode translateQSerialPortError(QSerialPort::SerialPortError error);
+    void initSerialDevice(int openRetries);
 
     SerialPortPtr serialPort_;
     std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 
     bool connected_;
+
+    QTimer openRetryTimer_;
+    int openRetries_;
 };
 
 }  // namespace

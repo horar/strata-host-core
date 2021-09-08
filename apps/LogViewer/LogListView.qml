@@ -17,7 +17,6 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
-    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -41,6 +40,8 @@ Item {
     property bool showMarks: false
     property bool searchingMode: false
 
+    signal delegateSelected(int index)
+
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
     }
@@ -49,8 +50,8 @@ Item {
         logListView.positionViewAtEnd();
     }
 
-    function copyToClipboard(textElement) {
-        CommonCPP.SGUtilsCpp.copyToClipboard(textElement.text)
+    function copyToClipboard(text) {
+        CommonCPP.SGUtilsCpp.copyToClipboard(text)
     }
 
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
@@ -165,47 +166,6 @@ Item {
             Divider {
                 visible: markIconVisible
                 color: "transparent"
-            }
-
-            Item {
-                id: indexHeader
-                Layout.preferredHeight: indexHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: textMetricsIndex.boundingRect.width + cellWidthSpacer
-                Layout.minimumWidth: textMetricsIndex.boundingRect.width
-                Layout.maximumWidth: logListView.width/2
-                Layout.leftMargin: handleSpacer
-                Layout.fillWidth: true
-
-                visible: indexColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (indexDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
-
-                SGWidgets.SGText {
-                    id: indexHeaderText
-                    anchors {
-                        left: indexHeader.left
-                        verticalCenter: parent.verticalCenter
-                    }
-                    font.family: "monospace"
-                    text: qsTr("Index")
-                    elide: Text.ElideRight
-                }
-            }
-
-            Divider {
-                id: indexDivider
-                Layout.fillHeight: true
-                visible: indexColumnVisible
-                clickable: true
-
-                mouseArea.onMouseXChanged: {
-                    indexHeader.width = indexHeader.width + mouseX
-                }
             }
 
             Item {
@@ -442,6 +402,8 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.bottomMargin: horizontalScrollbar.visible ? horizontalScrollbar.height : 0
+        anchors.rightMargin: verticalScrollbar.visible ? verticalScrollbar.width : 0
         flickableDirection: Flickable.HorizontalAndVerticalFlick
         boundsMovement: Flickable.StopAtBounds
         boundsBehavior: Flickable.DragAndOvershootBounds
@@ -449,15 +411,37 @@ Item {
         highlightMoveVelocity: -1
         clip: true
 
+        Behavior on anchors.rightMargin { NumberAnimation {}}
+        Behavior on anchors.bottomMargin { NumberAnimation {}}
+
         ScrollBar.vertical: ScrollBar {
-            minimumSize: 0.1
+            id: verticalScrollbar
+            parent: logListView.parent
+            anchors {
+                top: logListView.top
+                left: logListView.right
+                bottom: logListView.bottom
+            }
+            width: 8
+
             policy: ScrollBar.AlwaysOn
+            minimumSize: 0.1
+            visible: logListView.height < logListView.contentHeight
         }
 
         ScrollBar.horizontal: ScrollBar {
             id: horizontalScrollbar
+            parent: logListView.parent
+            anchors {
+                top: logListView.bottom
+                left: logListView.left
+                right: logListView.right
+            }
+            height: 8
+
+            policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
-            policy: ScrollBar.AsNeeded
+            visible: logListView.width < logListView.contentWidth
         }
 
         onContentYChanged: {
@@ -568,7 +552,25 @@ Item {
                         id: copyAction
                         text: qsTr("Copy")
                         onTriggered: {
-                            copyToClipboard(msg)
+                            let line = []
+                            let delimiter = " , "
+
+                            if (ts.text) {
+                                line.push(ts.text)
+                            }
+                            if (pid.text) {
+                                line.push(pid.text)
+                            }
+                            if (tid.text) {
+                                line.push(tid.text)
+                            }
+                            if (level.text) {
+                                line.push(level.text)
+                            }
+                            if (msg.text) {
+                                line.push(msg.text.trim())
+                            }
+                            copyToClipboard(line.join(delimiter))
                         }
                     }
 
@@ -586,6 +588,7 @@ Item {
                     onPressed: {
                         logViewWrapper.forceActiveFocus()
                         currentIndex = index
+                        delegateSelected(index)
                     }
 
                     onReleased: {
@@ -628,42 +631,6 @@ Item {
                             delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
                         }
                     }
-                }
-
-                SGWidgets.SGText {
-                    id: indexText
-                    width: indexHeader.width
-                    text: {
-                        //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
-                        var hackVariable = markedModel.sourceModel.count
-                        var sourceIndex = logSortFilterModel.mapIndexToSource(model.index)
-                        if (sourceIndex < 0) {
-                            console.error(Logger.logviewerCategory, "Index out of scope.")
-                            return ""
-                        }
-                        if (showMarks) {
-                            if (markedModel.mapIndexToSource(sourceIndex) + 1 < 0) {
-                                console.error(Logger.logviewerCategory, "Index out of scope.")
-                                return ""
-                            }
-                            return markedModel.mapIndexToSource(sourceIndex) + 1
-                        } else {
-                            if (searchingMode) {
-                                if (searchResultModel.mapIndexToSource(sourceIndex) + 1 < 0) {
-                                    console.error(Logger.logviewerCategory, "Index out of scope.")
-                                    return ""
-                                }
-                                return searchResultModel.mapIndexToSource(sourceIndex) + 1
-                            }
-                            return sourceIndex + 1
-                        }
-                    }
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    visible: indexColumnVisible
-
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                 }
 
                 SGWidgets.SGText {
