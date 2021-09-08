@@ -6,11 +6,9 @@ import tech.strata.signals 1.0
 
 import "../"
 
-Item {
+QtObject {
     // All deprecated functions needed for PIG
-    DeprecatedFunctions {
-        id: deprecatedFunctions
-    }
+     property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
     
     /**
       * checkForAllValid checks if all fields are valid (no empty or duplicate entries)

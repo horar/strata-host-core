@@ -12,7 +12,7 @@ import "../"
     * When the user generates again, their PI.json file be updated to APIv1
 /*******************************************************************************************/
 
-Item {
+QtObject {
     /**
       * This function creates the model from a JSON object (used when importing a JSON file)
     **/
