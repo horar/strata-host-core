@@ -11,6 +11,7 @@ Item {
 
     property int currentPage: PrtMain.LoginPage
     property alias prtModel: prtModel
+    property QtObject taskbarButtonHelper
 
     enum LoginStatus {
         LoginPage,
@@ -121,6 +122,7 @@ Item {
         ProgramDeviceWizard {
             focus: true
             prtModel: prtMain.prtModel
+            taskbarButton: prtMain.taskbarButtonHelper
 
             StackView.onActivated: {
                 prtModel.startDeviceScan()
