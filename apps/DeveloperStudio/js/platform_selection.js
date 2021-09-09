@@ -530,6 +530,10 @@ function generateUnknownListing (platform) {
     let class_id = String(platform.class_id)
     let opn = "Class id: " + class_id
     let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
+
+    if (platform.verbose_name) {
+        return generateErrorListing(platform, platform.verbose_name, class_id, opn, description)
+    }
     return generateErrorListing(platform, "Unknown Platform", class_id, opn, description)
 }
 
