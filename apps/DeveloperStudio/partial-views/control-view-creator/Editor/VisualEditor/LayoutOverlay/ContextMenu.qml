@@ -17,6 +17,12 @@ Popup {
         }
     }
 
+    property bool multipleItemsSelected
+
+    onOpened: {
+        multipleItemsSelected = visualEditor.selectedMultiObjectsUuid.length > 1
+    }
+
     onClosed: {
         contextLoader.active = false
     }
@@ -55,25 +61,25 @@ Popup {
         }
 
         ContextMenuButton {
-            text: "Duplicate"
+            text: multipleItemsSelected ? "Duplicate Selected" : "Duplicate"
             onClicked: {
-                visualEditor.functions.duplicateControl(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.duplicateControlSelected()
                 contextMenu.close()
             }
         }
 
         ContextMenuButton {
-            text: "Bring To Front"
+            text: multipleItemsSelected ? "Bring Selected To Front" : "Bring To Front"
             onClicked: {
-                visualEditor.functions.bringToFront(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.bringToFrontSelected()
                 contextMenu.close()
             }
         }
 
         ContextMenuButton {
-            text: "Delete"
+            text: multipleItemsSelected ? "Delete Selected" : "Delete"
             onClicked: {
-                visualEditor.functions.removeControl(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.removeControlSelected()
                 contextMenu.close()
             }
         }
