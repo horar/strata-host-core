@@ -17,6 +17,7 @@ FocusScope {
 
     property bool disableAllFiltering: false
     property var filterList: []
+    property bool filteringIsActive: filterList.length > 0 && disableAllFiltering == false
     property bool automaticScroll: true
 
     property bool hexViewShown: false
@@ -224,6 +225,7 @@ FocusScope {
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
+                        showActiveFlag: platformDelegate.filteringIsActive
                     }
 
                     SGWidgets.SGIconButton {
@@ -250,6 +252,8 @@ FocusScope {
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: showExportView()
+                        showActiveFlag: model.platform.scrollbackModel.autoExportIsActive && showErrorFlag === false
+                        showErrorFlag: model.platform.scrollbackModel.autoExportErrorString.length > 0
                     }
 
                     VerticalDivider {
@@ -306,31 +310,6 @@ FocusScope {
                         visible: filteredCount > 0
 
                         property int filteredCount: scrollbackModel.count - scrollbackView.count
-                    }
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        text: {
-                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return "EXPORT FAILED"
-                            } else if (model.platform.scrollbackModel.autoExportIsActive) {
-                                return "Export"
-                            }
-
-                            return ""
-                        }
-                        visible: text.length
-
-                        font.bold: true
-                        textColor: "white"
-                        color: {
-                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return TangoTheme.palette.error
-                            }
-
-                            return TangoTheme.palette.plum1
-                        }
                     }
 
                     SGWidgets.SGTag {
