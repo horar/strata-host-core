@@ -179,7 +179,7 @@ SGWidgets.SGWindow {
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
-                    contentHeight: infoText.height + copirightText.height + disclaimerTextLabel.height
+                    contentHeight: infoText.height + copyrightText.height + disclaimerTextLabel.height
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
@@ -203,7 +203,7 @@ SGWidgets.SGWindow {
                     }
 
                     SGWidgets.SGText {
-                        id: copirightText
+                        id: copyrightText
                         width: parent.width
                         padding: baseSpacing
                         anchors.top: infoText.bottom
@@ -220,7 +220,7 @@ SGWidgets.SGWindow {
                         id: disclaimerTextLabel
                         width: parent.width
                         padding: baseSpacing
-                        anchors.top: copirightText.bottom
+                        anchors.top: copyrightText.bottom
 
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
