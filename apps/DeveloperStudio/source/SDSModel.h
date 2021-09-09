@@ -16,8 +16,9 @@ class SGNewControlView;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
 
-namespace strata::strataRPC {
-    class StrataClient;
+namespace strata::strataRPC
+{
+class StrataClient;
 }
 
 class SDSModel: public QObject

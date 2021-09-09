@@ -1,16 +1,18 @@
 #ifndef DOWNLOAD_DOCUMENT_LIST_MODEL_H
 #define DOWNLOAD_DOCUMENT_LIST_MODEL_H
 
-#include <PlatformInterface/core/CoreInterface.h>
-#include <StrataRPC/StrataClient.h>
-
 #include <QAbstractListModel>
 #include <QJsonArray>
 #include <QList>
 #include <QUrl>
 
 /* forward declarations */
+class CoreInterface;
 struct DownloadDocumentItem;
+namespace strata::strataRPC
+{
+class StrataClient;
+}
 
 class DownloadDocumentListModel: public QAbstractListModel
 {
