@@ -13,7 +13,6 @@ class CoreInterface;
 class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
-class FirmwareManager;
 class ProgramFirmware;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
@@ -28,7 +27,6 @@ class SDSModel: public QObject
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
-    Q_PROPERTY(FirmwareManager* firmwareManager READ firmwareManager CONSTANT)
     Q_PROPERTY(ProgramFirmware* programFirmware READ programFirmware CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
     Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
@@ -47,7 +45,6 @@ public:
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
-    FirmwareManager* firmwareManager() const;
     ProgramFirmware* programFirmware() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
     VisualEditorUndoStack* visualEditorUndoStack() const;
@@ -76,7 +73,6 @@ private:
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
-    FirmwareManager *firmwareManager_{nullptr};
     ProgramFirmware *programFirmware_{nullptr};
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
     VisualEditorUndoStack *visualEditorUndoStack_{nullptr};

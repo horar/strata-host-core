@@ -31,7 +31,6 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "RunGuard.h"
-#include "FirmwareManager.h"
 #include "ProgramFirmware.h"
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
@@ -151,7 +150,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
-    qmlRegisterUncreatableType<FirmwareManager>("tech.strata.FirmwareManager", 1, 0, "FirmwareManager", "You can't instantiate FirmwareManager in QML");
     qmlRegisterUncreatableType<ProgramFirmware>("tech.strata.ProgramFirmware", 1, 0, "ProgramFirmware", "You can't instantiate ProgramFirmware in QML");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};

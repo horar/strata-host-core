@@ -187,7 +187,7 @@ ColumnLayout {
 
                         Component.onCompleted: {
                             if (firmwareColumn.flashingInProgress === false) {
-                                let payload = sdsModel.firmwareManager.acquireUpdateFirmwareData(platformStack.device_id, model.uri, model.md5)
+                                let payload = sdsModel.programFirmware.acquireProgramFirmwareData(platformStack.device_id, model.uri, model.md5)
                                 if((payload.status !== undefined) && (payload.progress !== undefined)) {
                                     startFlash(true)
                                     processUpdateFirmwareJobProgress(payload.status, payload.progress)
@@ -212,14 +212,14 @@ ColumnLayout {
                                 firmwareRepeater.resetDescriptions()
 
                                 if (already_started ||
-                                    (sdsModel.firmwareManager.updateFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
+                                    (sdsModel.programFirmware.programSpecificFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
                                     flashingInProgress = true
                                     description.text = "Do not unplug your board during this process"
                                     flashStatus.visible = true
                                     activeFirmware = flashStatus
                                 } else {
                                     let error_string = "Unable to start flashing"
-                                    processUpdateFirmwareJobFinished(firmwareRow.updateFirmwareJobId, "Update Firmware failed: " + error_string, error_string)
+                                    processUpdateFirmwareJobFinished(error_string)
                                 }
                             }
                         }
@@ -229,13 +229,16 @@ ColumnLayout {
                             fillBar.width = Qt.binding(() => barBackground.width * progress) // must be bound in case of resize
                         }
 
-                        function processUpdateFirmwareJobFinished(status, error_string) {
+                        function processUpdateFirmwareJobFinished(error_string) {
+                            let descriptionSuffix = "finished."
+
                             if (error_string.length !== 0) {
+                                descriptionSuffix = "failed: " + error_string
                                 notifyFwUpdateFailed(error_string)
                             }
 
                             resetState()
-                            description.text = status
+                            description.text = "Update firmware " + descriptionSuffix
                             flashingInProgress = false
                             activeFirmware = null
                             firmwareRepeater.resetDescriptions.connect(resetDescription)
@@ -265,31 +268,6 @@ ColumnLayout {
                                     height: barBackground.height
                                     width: 0
                                     color: "lime"
-                                }
-
-                                RowLayout {
-                                    // Hash marks separating state progress
-                                    anchors {
-                                        fill: parent
-                                    }
-
-                                    Repeater {
-                                        model: 4
-
-                                        Item {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            Rectangle {
-                                                height: parent.height
-                                                width: 2
-                                                anchors {
-                                                    horizontalCenter: parent.right
-                                                }
-                                                visible: index !== 3
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }

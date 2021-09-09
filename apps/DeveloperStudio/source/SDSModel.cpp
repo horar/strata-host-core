@@ -7,7 +7,6 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
-#include "FirmwareManager.h"
 #include "ProgramFirmware.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -30,7 +29,6 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      firmwareManager_(new FirmwareManager(coreInterface_, this)),
       programFirmware_(new ProgramFirmware(coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
@@ -54,8 +52,6 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
-//    delete programControllerManager_;
-    delete firmwareManager_;
     delete programFirmware_;
     delete urlConfig_;
 }
@@ -188,11 +184,6 @@ ResourceLoader *SDSModel::resourceLoader() const
 SGNewControlView *SDSModel::newControlView() const
 {
     return newControlView_;
-}
-
-FirmwareManager *SDSModel::firmwareManager() const
-{
-    return firmwareManager_;
 }
 
 ProgramFirmware *SDSModel::programFirmware() const
