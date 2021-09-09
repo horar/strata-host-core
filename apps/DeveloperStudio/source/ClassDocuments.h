@@ -6,10 +6,14 @@
 #include <QString>
 #include <QDebug>
 #include <QJsonObject>
-#include <StrataRPC/StrataClient.h>
 #include "DownloadDocumentListModel.h"
 #include <DocumentListModel.h>
 #include <VersionedListModel.h>
+
+namespace strata::strataRPC
+{
+class StrataClient;
+}
 
 class ClassDocuments : public QObject
 {

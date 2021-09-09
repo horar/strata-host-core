@@ -1,4 +1,5 @@
 #include "ClassDocuments.h"
+#include <StrataRPC/StrataClient.h>
 
 #include "logging/LoggingQtCategories.h"
 

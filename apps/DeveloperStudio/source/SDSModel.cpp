@@ -11,6 +11,7 @@
 #include "FirmwareManager.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
 
 #include <QThread>
 

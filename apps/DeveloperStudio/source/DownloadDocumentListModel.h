@@ -10,7 +10,13 @@
 #include <QUrl>
 
 /* forward declarations */
+class CoreInterface;
 struct DownloadDocumentItem;
+
+namespace strata::strataRPC
+{
+class StrataClient;
+}
 
 class DownloadDocumentListModel: public QAbstractListModel
 {

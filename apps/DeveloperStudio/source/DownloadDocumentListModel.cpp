@@ -1,11 +1,15 @@
 #include <DownloadDocumentListModel.h>
+#include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+
+#include "logging/LoggingQtCategories.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileInfo>
 #include <QDir>
 #include <QVector>
 #include <QDebug>
-#include "logging/LoggingQtCategories.h"
 
 DownloadDocumentListModel::DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
                                                      CoreInterface *coreInterface, QObject *parent)

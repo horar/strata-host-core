@@ -8,8 +8,6 @@
 
 #include <QtLogger.h>
 
-#include <StrataRPC/StrataClient.h>
-
 class DocumentManager;
 class CoreInterface;
 class HcsNode;
@@ -19,6 +17,11 @@ class ProgramControllerManager;
 class FirmwareManager;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
+
+namespace strata::strataRPC
+{
+class StrataClient;
+}
 
 class SDSModel: public QObject
 {
