@@ -43,7 +43,7 @@ Button {
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
         radius: 2
-        color: !root.hovered ? Theme.palette.green : root.pressed ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+        color: !root.hovered ? Theme.palette.onsemiOrange : root.pressed ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
     }
 
     Accessible.onPressAction: function() {

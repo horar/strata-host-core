@@ -22,10 +22,11 @@ LayoutContainer {
         MouseArea {
             id: mouse
             enabled: false
+            visible: enabled
             anchors {
                 fill: parent
             }
-            hoverEnabled: true
+            hoverEnabled: false
             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
             onClicked:  {

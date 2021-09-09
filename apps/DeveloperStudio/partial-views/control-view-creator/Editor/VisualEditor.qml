@@ -16,7 +16,7 @@ ColumnLayout {
     spacing: 0
 
     property bool fileValid: false
-    property string error: ""
+    property bool hasErrors: false
     property bool layoutDebugMode: true
     property var overlayObjects: []
     property string file: ""
@@ -36,15 +36,7 @@ ColumnLayout {
     property alias functions: functions
 
     Component.onCompleted: {
-        offsetCheckFile.start()
-    }
-
-    // Hack to force checkfile to happen asynchronously from Monaco initialization
-    // otherwise debugBar warnings append late and are not captured by sdsModel.qtLogger disable during VE load
-    Timer {
-        id: offsetCheckFile
-        interval: 1
-        onTriggered: functions.checkFile()
+        functions.checkFile()
     }
 
     onVisibleChanged: {
@@ -74,12 +66,6 @@ ColumnLayout {
             id: loader
             anchors {
                 fill: parent
-            }
-
-            onStatusChanged: {
-                if (loader.status == Loader.Error) {
-                    visualEditor.error = "Error occurred checking this file, see logs"
-                }
             }
         }
 
