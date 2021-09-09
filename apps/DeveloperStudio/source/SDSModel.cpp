@@ -39,7 +39,6 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
-    strataClient_->connect();
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
     if (urlConfig_->parseUrl() == false) {
         delete urlConfig_;
@@ -271,6 +270,13 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     }
 
     hcsConnected_ = hcsConnected;
+
+    if (true == hcsConnected_) {
+        strataClient_->connect();
+    } else {
+        strataClient_->disconnect();
+    }
+
     emit hcsConnectedChanged();
 }
 
