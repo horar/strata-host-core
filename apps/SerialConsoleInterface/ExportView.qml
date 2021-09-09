@@ -160,7 +160,14 @@ FocusScope {
                     topMargin: baseSpacing
                 }
 
-                text: model.platform.scrollbackModel.autoExportErrorString
+                text: {
+                    if (model.platform.scrollbackModel.autoExportErrorString) {
+                        return "Export Failed: " + model.platform.scrollbackModel.autoExportErrorString
+                    }
+
+                    return ""
+                }
+
                 font.bold: true
                 textColor: "white"
                 mask: "A"
