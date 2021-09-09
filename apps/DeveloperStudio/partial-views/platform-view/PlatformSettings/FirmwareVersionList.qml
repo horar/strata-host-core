@@ -188,10 +188,29 @@ ColumnLayout {
                         Component.onCompleted: {
                             if (firmwareColumn.flashingInProgress === false) {
                                 let payload = sdsModel.programFirmware.acquireProgramFirmwareData(platformStack.device_id, model.uri, model.md5)
-                                if((payload.status !== undefined) && (payload.progress !== undefined)) {
+                                if ((payload.status !== undefined) && (payload.progress !== undefined)) {
                                     startFlash(true)
                                     processUpdateFirmwareJobProgress(payload.status, payload.progress)
                                 }
+                            }
+                        }
+
+                        Connections {
+                            target: sdsModel.programFirmware
+
+                            onJobStarted: {
+                                if (firmwareColumn.flashingInProgress === false
+                                    && deviceId === platformStack.device_id
+                                    && firmwareUri === model.uri
+                                    && firmwareMD5 === model.md5)
+                                {
+                                    let payload = sdsModel.programFirmware.acquireProgramFirmwareData(deviceId, firmwareUri, firmwareMD5)
+                                    if ((payload.status !== undefined) && (payload.progress !== undefined)) {
+                                        flashStatus.startFlash(true)
+                                        flashStatus.processUpdateFirmwareJobProgress(payload.status, payload.progress)
+                                    }
+                                }
+
                             }
                         }
 

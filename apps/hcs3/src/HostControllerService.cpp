@@ -507,9 +507,10 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
             firmwareData.firmwareClassId = platform->firmwareClassId();
         }
 
+        QString path;
         if (message.payload.contains("path") || message.payload.contains("md5")) {
             //use provided firmware
-            QString path = message.payload.value("path").toString();
+            path = message.payload.value("path").toString();
             if (path.isEmpty()) {
                 errorString = "path attribute is empty or has bad format";
                 break;
@@ -535,7 +536,8 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
                 break;
             }
 
-            firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware->partialUri);
+            path = firmware->partialUri;
+            firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
             firmwareData.firmwareMD5 = firmware->md5;
         }
 
@@ -543,7 +545,9 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
 
         QJsonObject payloadBody {
             { "job_id", firmwareData.jobUuid },
-            { "device_id", QLatin1String(firmwareData.deviceId) }
+            { "device_id", QLatin1String(firmwareData.deviceId) },
+            { "path", path },
+            { "md5", firmwareData.firmwareMD5 }
         };
 
         strataServer_->notifyClient(message, QJsonObject{{"payload", payloadBody}},
@@ -603,7 +607,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
             errorString = "No compatible firmware for your combination of controller and platform";
             break;
         }
-        firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware->partialUri);
+        firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(firmware->partialUri));
         firmwareData.firmwareMD5 = firmware->md5;
 
         QString currentMD5; // get md5 accorging to old fw_class_id and fw version
@@ -629,7 +633,9 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
 
         QJsonObject payloadBody {
             { "job_id", firmwareData.jobUuid },
-            { "device_id", QLatin1String(firmwareData.deviceId) }
+            { "device_id", QLatin1String(firmwareData.deviceId) },
+            { "path", firmware->partialUri },
+            { "md5", firmwareData.firmwareMD5 }
         };
         strataServer_->notifyClient(message, QJsonObject{{"payload", payloadBody}},
                                     strataRPC::ResponseType::Response);

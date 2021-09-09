@@ -26,8 +26,10 @@ public:
     Q_INVOKABLE QJsonObject acquireProgramFirmwareData(QString deviceId, QString firmwareUri, QString firmwareMD5) const;
 
 signals:
+    void jobStarted(QString deviceId, QString firmwareUri, QString firmwareMD5);
     void jobProgressUpdate(QString deviceId, QString status, float progress);
-    void jobStatusChanged(QString deviceId, QString status, QString errorString);
+    void jobFinished(QString deviceId, QString errorString);
+    void jobError(QString deviceId, QString errorString);
 
 private slots:
     void replyHandler(QJsonObject payload);
@@ -76,21 +78,19 @@ private:
 
     void flashFirmware(const QString& deviceId, const QString& firmwareUri, const QString& firmwareMD5, bool specific);
 
-    bool programAssistedController(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload);
-    bool programFirmware(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload);
-    bool backupAndProgram(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload);
+    bool programAssistedController(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
+    bool programFirmware(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
+    bool backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
 
-    void simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload, float progress);
-    void progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload);
-    void finishedJob(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload);
+    void simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload, float progress);
+    void progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
+    void finishedJob(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
 
     QString acquireErrorString(const QJsonObject& payload) const;
     JobType acquireJobType(const QJsonObject& payload) const;
     JobStatus acquireJobStatus(const QJsonObject& payload) const;
 
-    void notifyProgressChange(const QHash<QString,FlashingData>::Iterator& deviceIter, JobType jobType, float progress);
-    void notifyFailure(const QString& deviceId, const QString& errorString);
-    void notifyFinish(const QString& deviceId, const QString& errorString);
+    void notifyProgressChange(const QHash<QString,FlashingData>::Iterator deviceIter, JobType jobType, float progress);
 
     float resolveOverallProgress(Action action, JobType jobType, float progress) const;
     QString resolveStatus(JobType jobType, float progress) const;

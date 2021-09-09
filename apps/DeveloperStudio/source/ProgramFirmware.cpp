@@ -127,33 +127,38 @@ void ProgramFirmware::replyHandler(QJsonObject payload)
         return;
     }
 
-    auto requestedId = requestedDevices_.find(deviceId);
-    if (requestedId == requestedDevices_.end()) {
-        qCCritical(logCategoryStrataDevStudio) << "Reply for unknown device ID" << deviceId;
+    auto requestedDevice = requestedDevices_.find(deviceId);
+    if (requestedDevice == requestedDevices_.end()) {
+        // not our request
         return;
     }
 
     if (payload.contains(QStringLiteral("error_string"))) {
         const QString errorString = acquireErrorString(payload);
-        notifyFailure(deviceId, errorString);
-        notifyFinish(deviceId, errorString);
-        requestedDevices_.erase(requestedId);
+        emit jobError(deviceId, errorString);
+        emit jobFinished(deviceId, errorString);
+        requestedDevices_.erase(requestedDevice);
         return;
+    }
+
+    if (requestedDevice.value().uri.isEmpty()) {
+        requestedDevice.value().uri = payload.value(QStringLiteral("path")).toString();
+    }
+    if (requestedDevice.value().md5.isEmpty()) {
+        requestedDevice.value().md5 = payload.value(QStringLiteral("md5")).toString();
     }
 
     const QString jobId = payload.value(QStringLiteral("job_id")).toString();
     if (jobId.isEmpty()) {
-        const QString errorString = QStringLiteral("Bad reply, job ID is missing, device ID ") + deviceId;
-        qCCritical(logCategoryStrataDevStudio).noquote() << errorString;
-        notifyFailure(deviceId, errorString);
-        notifyFinish(deviceId, errorString);
-        requestedDevices_.erase(requestedId);
+        const QString errorString = QStringLiteral("Bad reply, job ID is missing.");
+        qCCritical(logCategoryStrataDevStudio).noquote() << errorString << "Device ID:" << deviceId;
+        emit jobError(deviceId, errorString);
         return;
     }
 
     jobIdHash_.insert(jobId, deviceId);
 
-    emit jobStatusChanged(deviceId, QStringLiteral("running"), QString());
+    emit jobStarted(deviceId, requestedDevice.value().uri, requestedDevice.value().md5);
 }
 
 void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
@@ -177,8 +182,8 @@ void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
     auto deviceIter = requestedDevices_.find(deviceId);
     if (deviceIter == requestedDevices_.end()) {
         const QString errorString = QStringLiteral("Unexpected internal error");
-        notifyFailure(deviceId, errorString);
-        notifyFinish(deviceId, errorString);
+        emit jobError(deviceId, errorString);
+        emit jobFinished(deviceId, errorString);
         jobIdHash_.erase(jobIter);
     }
 
@@ -203,7 +208,7 @@ void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
     }
 }
 
-bool ProgramFirmware::programAssistedController(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload)
+bool ProgramFirmware::programAssistedController(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
 
@@ -227,14 +232,14 @@ bool ProgramFirmware::programAssistedController(const QHash<QString,FlashingData
         finished = true;
         break;
     default :
-        logError(QStringLiteral("Unknown job type"), deviceIter.key(), Action::ProgramAssisted, JobType::Unknown);
+        logError(QStringLiteral("Unknown job type"), deviceIter.key(), deviceIter.value().action, jobType);
         break;
     }
 
     return finished;
 }
 
-bool ProgramFirmware::programFirmware(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload)
+bool ProgramFirmware::programFirmware(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> Flash -> Finished
 
@@ -254,14 +259,14 @@ bool ProgramFirmware::programFirmware(const QHash<QString,FlashingData>::Iterato
         finished = true;
         break;
     default :
-        logError(QStringLiteral("Unknown job type"), deviceIter.key(), Action::ProgramAssisted, JobType::Unknown);
+        logError(QStringLiteral("Unknown job type"), deviceIter.key(), deviceIter.value().action, jobType);
         break;
     }
 
     return finished;
 }
 
-bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload)
+bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> Backup -> Flash -> (Restore) -> Finished
 
@@ -283,26 +288,26 @@ bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterat
         finished = true;
         break;
     default :
-        logError(QStringLiteral("Unknown job type"), deviceIter.key(), Action::ProgramAssisted, JobType::Unknown);
+        logError(QStringLiteral("Unknown job type"), deviceIter.key(), deviceIter.value().action, jobType);
         break;
     }
 
     return finished;
 }
 
-void ProgramFirmware::simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload, float progress)
+void ProgramFirmware::simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload, float progress)
 {
     const JobStatus jobStatus = acquireJobStatus(payload);
     if (jobStatus == JobStatus::Running) {
         notifyProgressChange(deviceIter, jobType, progress);
     } else if (jobStatus == JobStatus::Failure) {
-        notifyFailure(deviceIter.key(), acquireErrorString(payload));
+        emit jobError(deviceIter.key(), acquireErrorString(payload));
     } else {
         logError(QStringLiteral("Unknown job status"), deviceIter.key(), deviceIter.value().action, jobType);
     }
 }
 
-void ProgramFirmware::progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload)
+void ProgramFirmware::progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     const JobStatus jobStatus = acquireJobStatus(payload);
     if (jobStatus == JobStatus::Running) {
@@ -322,13 +327,13 @@ void ProgramFirmware::progressJob(JobType jobType, const QHash<QString,FlashingD
 
         notifyProgressChange(deviceIter, jobType, progress);
     } else if (jobStatus == JobStatus::Failure) {
-        notifyFailure(deviceIter.key(), acquireErrorString(payload));
+        emit jobError(deviceIter.key(), acquireErrorString(payload));
     } else {
         logError(QStringLiteral("Unknown job status"), deviceIter.key(), deviceIter.value().action, jobType);
     }
 }
 
-void ProgramFirmware::finishedJob(const QHash<QString,FlashingData>::Iterator& deviceIter, const QJsonObject& payload)
+void ProgramFirmware::finishedJob(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     QString errorString;
     const JobStatus jobStatus = acquireJobStatus(payload);
@@ -336,12 +341,12 @@ void ProgramFirmware::finishedJob(const QHash<QString,FlashingData>::Iterator& d
         notifyProgressChange(deviceIter, JobType::Finished, 1.0f);
     } else if (jobStatus == JobStatus::Failure || jobStatus == JobStatus::Unsuccess) {
         errorString = acquireErrorString(payload);
-        notifyFailure(deviceIter.key(), errorString);
+        emit jobError(deviceIter.key(), errorString);
     } else {
         errorString = QStringLiteral("Unknown job finish status");
         logError(errorString, deviceIter.key(), deviceIter.value().action, JobType::Finished);
     }
-    notifyFinish(deviceIter.key(), errorString);
+    emit jobFinished(deviceIter.key(), errorString);
 }
 
 QString ProgramFirmware::acquireErrorString(const QJsonObject& payload) const
@@ -396,7 +401,7 @@ ProgramFirmware::JobStatus ProgramFirmware::acquireJobStatus(const QJsonObject& 
     return JobStatus::Unknown;
 }
 
-void ProgramFirmware::notifyProgressChange(const QHash<QString,FlashingData>::Iterator& deviceIter, JobType jobType, float progress)
+void ProgramFirmware::notifyProgressChange(const QHash<QString,FlashingData>::Iterator deviceIter, JobType jobType, float progress)
 {
     float overallProgress = resolveOverallProgress(deviceIter.value().action, jobType, progress);
     QString status = resolveStatus(jobType, progress);
@@ -410,25 +415,25 @@ void ProgramFirmware::notifyProgressChange(const QHash<QString,FlashingData>::It
 float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, float progress) const
 {
     // 0.99 together
-    const float downloadRange = 0.15f;
-    const float prepareRange = 0.10f;
+    const float downloadRange = 0.10f;
+    const float prepareRange = 0.05f;
     float clearDataRange = 0.0f, backupRange = 0.0f, programRange = 0.0f, setDataRange = 0.0f;
 
     switch (action) {
     case Action::ProgramAssisted :
         // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
         clearDataRange = 0.02f;
-        programRange = 0.70f;
+        programRange = 0.80f;
         setDataRange = 0.02f;
         break;
     case Action::ProgramEmbedded :
         // Download -> Prepare -> Flash -> Finished
-        programRange = 0.74f;
+        programRange = 0.84f;
         break;
     case Action::ProgramSpecificFirmware :
         // Download -> Prepare -> Backup -> Flash -> (Restore) -> Finished
-        backupRange = 0.37f;
-        programRange = 0.37f;
+        backupRange = 0.42f;
+        programRange = 0.42f;
         break;
     }
 
@@ -506,16 +511,6 @@ QString ProgramFirmware::resolveStatus(JobType jobType, float progress) const
     }
 
     return status;
-}
-
-void ProgramFirmware::notifyFailure(const QString& deviceId, const QString& errorString)
-{
-    emit jobStatusChanged(deviceId, QStringLiteral("failure"), errorString);
-}
-
-void ProgramFirmware::notifyFinish(const QString& deviceId, const QString& errorString)
-{
-    emit jobStatusChanged(deviceId, QStringLiteral("finished"), errorString);
 }
 
 void ProgramFirmware::logError(const QString& errorString, const QString& deviceId, Action action, JobType jobType)

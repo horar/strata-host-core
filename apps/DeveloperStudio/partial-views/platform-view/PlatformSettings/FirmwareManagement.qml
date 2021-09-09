@@ -35,13 +35,15 @@ ColumnLayout {
             }
         }
 
-        onJobStatusChanged: {
+        onJobFinished: {
             if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
-                if (status === "finished") {
-                    firmwareColumn.activeFirmware.processUpdateFirmwareJobFinished(errorString)
-                } else if (status === "failure") {
-                    console.warn(Logger.devStudioCategory, "Failure during firmware flashing:", errorString)
-                }
+                firmwareColumn.activeFirmware.processUpdateFirmwareJobFinished(errorString)
+            }
+        }
+
+        onJobError: {
+            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
+                console.warn(Logger.devStudioCategory, "Failure during firmware flashing:", errorString)
             }
         }
     }
