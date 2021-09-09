@@ -72,6 +72,7 @@ Item {
 
         Shortcut {
             sequence: "Ctrl+R"
+            enabled: editor.fileTreeModel.url.toString() !== ''
             onActivated: {
                 if (cvcUserSettings.openViewOnBuild) {
                     viewStack.currentIndex = 2
