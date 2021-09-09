@@ -62,12 +62,13 @@ Item {
             color: "#666"
         }
 
-        BusyIndicator {
-            running: visible
+        AnimatedImage {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: loadingText.top
             }
+            playing: visible
+            source: "qrc:/images/loading.gif"
         }
     }
 
