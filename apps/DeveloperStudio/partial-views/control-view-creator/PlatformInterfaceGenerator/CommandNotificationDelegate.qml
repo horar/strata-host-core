@@ -104,7 +104,7 @@ Rectangle {
 
                     model.name = text
                     if (text.length > 0) {
-                        finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
+                        functions.checkForDuplicateIds(commandsListView.modelIndex)
                     } else {
                         model.valid = false
                     }

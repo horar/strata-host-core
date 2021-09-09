@@ -116,7 +116,7 @@ Rectangle {
 
                     model.name = text
                     if (text.length > 0) {
-                        model.valid = finishedModel.checkForDuplicateObjectPropertyNames(objectPropertyContainer.parentListModel, modelIndex)
+                        model.valid = functions.checkForDuplicateObjectPropertyNames(objectPropertyContainer.parentListModel, modelIndex)
                     } else {
                         model.valid = false
                     }
