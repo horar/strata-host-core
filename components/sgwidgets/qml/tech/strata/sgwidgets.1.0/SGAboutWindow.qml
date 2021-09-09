@@ -179,7 +179,7 @@ SGWidgets.SGWindow {
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
-                    contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
+                    contentHeight: infoText.height + copirightText.height + disclaimerTextLabel.height
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
@@ -206,11 +206,8 @@ SGWidgets.SGWindow {
                         id: copirightText
                         width: parent.width
                         padding: baseSpacing
+                        anchors.top: infoText.bottom
 
-                        anchors {
-                            top: infoText.bottom
-                            margins: baseSpacing
-                        }
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
                         text: Qt.application.name + " is part of Strata development kit.\n" +
@@ -223,10 +220,7 @@ SGWidgets.SGWindow {
                         id: disclaimerTextLabel
                         width: parent.width
                         padding: baseSpacing
-                        anchors {
-                            top: copirightText.bottom
-                            margins: baseSpacing
-                        }
+                        anchors.top: copirightText.bottom
 
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
@@ -247,7 +241,7 @@ SGWidgets.SGWindow {
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
-                    contentHeight: disclaimerTextLabel.height + attributionTextLabel.height
+                    contentHeight: attributionTextLabel.height
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
@@ -263,9 +257,7 @@ SGWidgets.SGWindow {
                         width: parent.width
                         padding: baseSpacing
 
-                        anchors {
-                            topMargin: 2*baseSpacing
-                        }
+                        anchors.topMargin: 2*baseSpacing
 
                         wrapMode: Text.Wrap
                         font.italic: true
