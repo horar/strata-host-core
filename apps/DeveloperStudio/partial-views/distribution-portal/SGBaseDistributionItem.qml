@@ -28,8 +28,8 @@ Button {
         id: itemBackground
         opacity: enabled ? 1 : 0.3
         color: !itemRoot.hovered ?
-                   Qt.darker(Theme.palette.green, 1.15) : itemRoot.pressed ?
-                       Qt.lighter(Theme.palette.green, 1.15) : Theme.palette.green
+                   Qt.darker(Theme.palette.onsemiOrange, 1.15) : itemRoot.pressed ?
+                       Qt.lighter(Theme.palette.onsemiOrange, 1.15) : Theme.palette.onsemiOrange
         clip: true
     }
 
