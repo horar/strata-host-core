@@ -13,11 +13,11 @@ Rectangle {
     implicitWidth: parent.width
     color: {
         if (delegateMouse.containsMouse) {
-            return Qt.lighter(Theme.palette.green, 1.15)
+            return Qt.lighter(Theme.palette.onsemiOrange, 1.15)
         } else if (model.selected) {
-            return Qt.darker(Theme.palette.green, 1.15)
+            return Qt.darker(Theme.palette.onsemiOrange, 1.15)
         } else {
-            return Theme.palette.green
+            return Theme.palette.onsemiOrange
         }
     }
     clip: true

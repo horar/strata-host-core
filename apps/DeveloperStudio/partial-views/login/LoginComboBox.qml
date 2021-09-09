@@ -78,7 +78,7 @@ ComboBox {
             visible: root.enabled && root.editable && !root.flat
             color: root.boxColor
             border.width: root.activeFocus ? 1 : 0
-            border.color:  root.activeFocus ? Theme.palette.green : "#40000000"
+            border.color:  root.activeFocus ? Theme.palette.onsemiOrange : "#40000000"
         }
         onAccepted: parent.focus = false
         Keys.forwardTo: root

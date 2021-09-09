@@ -206,7 +206,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: Theme.palette.green
+                        border.color: Theme.palette.onsemiOrange
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
@@ -216,7 +216,7 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the onsemi <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"

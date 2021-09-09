@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     }
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
+    QGuiApplication::setApplicationDisplayName(QStringLiteral("onsemi: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         QStringLiteral("Strata Developer Studio\n\n"
                        "A cloud-connected development platform that provides a seamless,"
                        "personalized and secure environment for engineers to evaluate and design "
-                       "with ON Semiconductor technologies."));
+                       "with onsemi technologies."));
     parser.addOption({{QStringLiteral("f")},
                       QObject::tr("Optional configuration <filename>"),
                       QObject::tr("filename"),

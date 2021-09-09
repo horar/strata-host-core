@@ -1,5 +1,4 @@
-#ifndef SGQWTPLOT_H
-#define SGQWTPLOT_H
+#pragma once
 
 #include <QtQuick>
 #include <QPointF>
@@ -17,8 +16,6 @@
 #include <qwt/qwt_plot_grid.h>
 #include <qwt/qwt_symbol.h>
 #include <qwt/qwt_legend.h>
-
-#include <QDebug>
 
 //forward declaration
 class SGQWTPlotCurve;
@@ -58,7 +55,6 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(QColor yLeftAxisColor MEMBER yLeftAxisColor_ WRITE setYLeftAxisColor NOTIFY yLeftAxisColorChanged)
     Q_PROPERTY(QColor xAxisColor MEMBER xAxisColor_ WRITE setXAxisColor NOTIFY xAxisColorChanged)
     Q_PROPERTY(bool legend READ legend WRITE insertLegend NOTIFY legendChanged)
-
 
 public:
     SGQWTPlot(QQuickItem* parent = nullptr);
@@ -192,7 +188,9 @@ private slots:
     void updatePlotSize();
 };
 
-
+/*-----------------------
+    SGQWTPlotCurve Class
+------------------------*/
 
 class SGQWTPlotCurve : public QObject
 {
@@ -217,7 +215,7 @@ public:
     Q_INVOKABLE int count();
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
-    Q_INVOKABLE void setSymbol(int newStyle , QColor color ,  int penStyle , int size);
+    Q_INVOKABLE void setSymbol(int newStyle, QColor color, int penStyle, int size);
     Q_INVOKABLE int closestXAxisPointIndex(double xVal);
 
 protected:
@@ -248,9 +246,11 @@ private:
     QString name();
     bool yAxisLeft();
     void setYAxisLeft(bool yleftAxis);
-
 };
 
+/*-----------------------
+    SGQWTPlotCurveData Class
+------------------------*/
 
 class SGQWTPlotCurveData : public QwtSeriesData<QPointF>
 {
@@ -265,5 +265,3 @@ public:
 private:
     const QVector<QPointF>* container_;
 };
-
-#endif // SGQWTPLOT_H
