@@ -12,13 +12,19 @@
 #include <DocumentListModel.h>
 #include <QMap>
 
+namespace strata::strataRPC
+{
+class StrataClient;
+}
+
 class DocumentManager : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(DocumentManager)
 
 public:
-    DocumentManager(CoreInterface *coreInterface, QObject *parent=nullptr);
+    DocumentManager(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface_,
+                    QObject *parent = nullptr);
 
     virtual ~DocumentManager();
 
@@ -40,6 +46,7 @@ private slots:
     void platformMetaDataHandler(QJsonObject data);
 
 private:
+    strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;
 
     void init();
