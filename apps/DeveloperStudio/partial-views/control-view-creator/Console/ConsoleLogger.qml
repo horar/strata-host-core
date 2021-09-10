@@ -97,6 +97,38 @@ Item {
             active: true
         }
 
+        // Copy shortcut, will copy the selected text into the user's clipboard
+        Shortcut {
+            sequence: StandardKey.Copy
+
+            property TextEdit selection: TextEdit {}
+
+            onActivated: {
+                // loop over every index in model and look for selected text
+                for (var i = 0; i < consoleLogs.model.count; i++) {
+                    var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
+                    if (listElement.selection) {
+                        selection.text += (listElement.selection + "\n") // adds only the selected text
+                    }
+                }
+                selection.selectAll() // everything in selection is confirmed to be highlighted text
+                selection.copy() // copies to user's clipboard
+                selection.text = "" // resets selection.text
+            }
+        }
+
+        // Select all shortcut, will highlight all the text in the console. Then the user can copy all.
+        Shortcut {
+            sequence: StandardKey.SelectAll
+
+            onActivated: {
+                for (var i = 0; i < consoleLogs.model.count; i++) {
+                    var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
+                    listElement.state = "allSelected" // sets state of every index to allSelected
+                }
+            }
+        }
+
         delegate: Item  {
             id: consoleDelegate
             height: consoleMessage.height
