@@ -68,7 +68,7 @@ Rectangle {
                 Layout.preferredHeight: 30
                 Layout.fillWidth: true
                 selectByMouse: true
-                persistentSelection: true   // must deselect manually
+                persistentSelection: true // must deselect manually
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
 
                 validator: RegExpValidator {
@@ -78,17 +78,15 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            border.width = 2
-                            return "#D10000";
+                            return "#D10000"
                         } else if (cmdNotifName.activeFocus) {
-                            border.width = 2
                             return palette.highlight
                         } else {
-                            border.width = 1
                             return "lightgrey"
                         }
                     }
-                    border.width: 2
+
+                    border.width: (!model.valid || cmdNotifName.activeFocus) ? 2 : 1
                 }
 
                 Component.onCompleted: {
@@ -111,7 +109,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
                         cmdNotifName.deselect()
                     }
                 }
@@ -125,14 +123,17 @@ Rectangle {
                     }
                     onReleased: {
                         if (containsMouse) {
-                            contextMenuPopup.popup(null)
+                            contextMenuPopupLoader.active = true
+                            contextMenuPopupLoader.item.textEditor = cmdNotifName
+                            contextMenuPopupLoader.item.popup(null)
                         }
                     }
                 }
 
-                SGContextMenuEditActions {
-                    id: contextMenuPopup
-                    textEditor: cmdNotifName
+                Loader {
+                    id: contextMenuPopupLoader
+                    active: false
+                    sourceComponent: contextMenuPopupComponent
                 }
             }
         }
@@ -140,7 +141,6 @@ Rectangle {
         /*****************************************
         * This Repeater corresponds to each property in the payload
         *****************************************/
-
         Repeater {
             id: payloadRepeater
             model: commandsColumn.payloadModel
@@ -185,7 +185,7 @@ Rectangle {
 
             property int leftMargin: 20
             property int rightMargin: 0
-            property alias text: textField.text
+            property alias text: defaultValueTextField.text
 
             RowLayout {
                 anchors {
@@ -199,11 +199,36 @@ Rectangle {
                 }
 
                 TextField {
-                    id: textField
+                    id: defaultValueTextField
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     selectByMouse: true
+                    persistentSelection: true // must deselect manually
                 }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+
+                onClicked: {
+                    defaultValueTextField.forceActiveFocus()
+                }
+
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopupLoader.active = true
+                        contextMenuPopupLoader.item.textEditor = defaultValueTextField
+                        contextMenuPopupLoader.item.popup(null)
+                    }
+                }
+            }
+
+            Loader {
+                id: contextMenuPopupLoader
+                active: false
+                sourceComponent: contextMenuPopupComponent
             }
         }
     }
