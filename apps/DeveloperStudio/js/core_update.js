@@ -6,6 +6,7 @@
 var isInitialized = false
 var coreInterface
 var updateLoader
+var strataClient
 
 var update_info_string = ""
 var compact_update_info_string = ""
@@ -22,9 +23,10 @@ var update_alerticon
 var dontaskagain_checked = false
 var one_day = 86400000 // one day in ms
 
-function initialize (newCoreInterface, newUpdateLoader) {
-    coreInterface = newCoreInterface
-    updateLoader = newUpdateLoader
+function initialize (newSdsModel) {
+    coreInterface = newSdsModel.coreInterface
+    updateLoader = newSdsModel.updateLoader
+    strataClient = newSdsModel.strataClient
     settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
     getUserNotificationModeFromINIFile()
     getLastKnownNotificationTimestampFromINIFile()
@@ -33,10 +35,7 @@ function initialize (newCoreInterface, newUpdateLoader) {
 }
 
 function getUpdateInformation () {
-    const get_updates_info = {
-        "hcs::cmd": "check_for_updates"
-    }
-    coreInterface.sendCommand(JSON.stringify(get_updates_info));
+    strataClient.sendRequest("check_for_updates",{});
 }
 
 function parseUpdateInfo (payload) {

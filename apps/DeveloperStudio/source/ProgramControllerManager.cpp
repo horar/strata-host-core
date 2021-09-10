@@ -4,15 +4,15 @@
 #include <QJsonDocument>
 
 ProgramControllerManager::ProgramControllerManager(
+        strata::strataRPC::StrataClient *strataClient,
         CoreInterface *coreInterface,
         QObject *parent)
     : QObject(parent),
+      strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
-    connect(coreInterface_, &CoreInterface::programControllerReply, this, &ProgramControllerManager::replyHandler);
-    connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
+    strataClient_->registerHandler("program_controller_job", std::bind(&ProgramControllerManager::jobUpdateHandler, this, std::placeholders::_1));
 
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramControllerManager::replyHandler);
     connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
 }
 
@@ -20,39 +20,38 @@ ProgramControllerManager::~ProgramControllerManager()
 {
 }
 
-
 void ProgramControllerManager::programAssisted(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
+    auto deferredRequest = strataClient_->sendRequest("program_controller", cmdPayloadObject);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "program_controller");
-    cmdMessageObject.insert("payload", cmdPayloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio) << "Failed to send program_controller request";
+        return;
+    }
 
     requestedDeviceIds_.append(deviceId);
 
-    coreInterface_->sendCommand(strJson);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &ProgramControllerManager::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &ProgramControllerManager::replyHandler);
 }
 
 void ProgramControllerManager::programEmbedded(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id", deviceId);
+    auto deferredRequest = strataClient_->sendRequest("update_firmware", cmdPayloadObject);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "update_firmware");
-    cmdMessageObject.insert("payload", cmdPayloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio) << "Failed to send update_firmware request";
+        return;
+    }
 
     requestedDeviceIds_.append(deviceId);
 
-    coreInterface_->sendCommand(strJson);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &ProgramControllerManager::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &ProgramControllerManager::replyHandler);
 }
 
 void ProgramControllerManager::replyHandler(QJsonObject payload)

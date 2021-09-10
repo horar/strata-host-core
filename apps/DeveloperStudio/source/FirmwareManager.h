@@ -1,5 +1,6 @@
 #pragma once
 
+#include <StrataRPC/StrataClient.h>
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QObject>
@@ -14,7 +15,7 @@ class FirmwareManager: public QObject
     Q_DISABLE_COPY(FirmwareManager)
 
 public:
-    FirmwareManager(CoreInterface *coreInterface, QObject *parent = nullptr);
+    FirmwareManager(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface, QObject *parent = nullptr);
     ~FirmwareManager();
 
     enum ProgressState {
@@ -46,6 +47,7 @@ private slots:
     void jobUpdateHandler(QJsonObject payload);
 
 private:
+    strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;
     QMap<QString, FlashingData> deviceData_;
     QHash<QString /*jobId*/, QString /*deviceId*/> jobIdHash_;

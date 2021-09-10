@@ -14,6 +14,8 @@
 #include <QSslSocket>
 
 #include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+#include <StrataRPC/DeferredRequest.h>
 
 #include "Version.h"
 #include "Timestamp.h"
@@ -153,6 +155,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
     qmlRegisterUncreatableType<ProgramControllerManager>("tech.strata.ProgramControllerManager", 1, 0, "ProgramControllerManager", "You can't instantiate ProgramControllerManager in QML");
     qmlRegisterUncreatableType<FirmwareManager>("tech.strata.FirmwareManager", 1, 0, "FirmwareManager", "You can't instantiate FirmwareManager in QML");
+    qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
+    qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
@@ -168,7 +172,7 @@ int main(int argc, char *argv[])
 
     const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
     if (supportedPLugins.empty() == false) {
-        qCDebug(logCategoryStrataDevStudio) << "Supportrd plugins:" << supportedPLugins.join(", ");
+        qCDebug(logCategoryStrataDevStudio) << "Supported plugins:" << supportedPLugins.join(", ");
         selector.setExtraSelectors(supportedPLugins);
     }
 

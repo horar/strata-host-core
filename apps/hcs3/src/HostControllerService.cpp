@@ -546,8 +546,7 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
             { "device_id", QLatin1String(firmwareData.deviceId) }
         };
 
-        strataServer_->notifyClient(message, QJsonObject{{"payload", payloadBody}},
-                                    strataRPC::ResponseType::Response);
+        strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Response);
 
         updateController_.changeFirmware(firmwareData);
 
@@ -563,8 +562,7 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
         { "device_id", QLatin1String(firmwareData.deviceId) }
     };
 
-    strataServer_->notifyClient(message, QJsonObject{{"payload", payloadBody}},
-                                strataRPC::ResponseType::Error);
+    strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Error);
 }
 
 void HostControllerService::processCmdProgramController(const strataRPC::Message &message)
@@ -631,8 +629,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
             { "job_id", firmwareData.jobUuid },
             { "device_id", QLatin1String(firmwareData.deviceId) }
         };
-        strataServer_->notifyClient(message, QJsonObject{{"payload", payloadBody}},
-                                    strataRPC::ResponseType::Response);
+        strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Response);
 
         if (currentMD5 != firmwareData.firmwareMD5
                 || firmwareData.firmwareMD5.isEmpty()
@@ -653,30 +650,40 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
         { "error_string", errorString },
         { "device_id", QLatin1String(firmwareData.deviceId) }
     };
-    strataServer_->notifyClient(message, QJsonObject{{"payload", payloadBody}},
-                                strataRPC::ResponseType::Error);
+    strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Error);
 }
 
 void HostControllerService::processCmdDownlodView(const strataRPC::Message &message)
 {
     QString url = message.payload.value("url").toString();
     if (url.isEmpty()) {
-        qCWarning(logCategoryHcs) << "url attribute is empty or has bad format";
+        QString errorMessage(QStringLiteral("url attribute is empty or has bad format"));
+        qCWarning(logCategoryHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
 
     QString md5 = message.payload.value("md5").toString();
     if (md5.isEmpty()) {
-        qCWarning(logCategoryHcs) << "md5 attribute is empty or has bad format";
+        QString errorMessage(QStringLiteral("md5 attribute is empty or has bad format"));
+        qCWarning(logCategoryHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
 
     QString classId = message.payload.value("class_id").toString();
     if (classId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "class_id attribute is empty or has bad format";
+        QString errorMessage(QStringLiteral("class_id attribute is empty or has bad format"));
+        qCWarning(logCategoryHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
 
+    strataServer_->notifyClient(message, QJsonObject{{"message", "view download requested"}},
+                                strataRPC::ResponseType::Response);
     storageManager_.requestDownloadControlView(message.clientID, url, md5, classId);
 }
 
@@ -762,8 +769,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
             ? hcsNotificationType::programControllerJob
             : hcsNotificationType::updateFirmwareJob;
 
-    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type),
-                                QJsonObject{{"payload", payload}},
+    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type), payload,
                                 strataRPC::ResponseType::Notification);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&

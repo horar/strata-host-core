@@ -4,12 +4,13 @@
 #include <QJsonDocument>
 
 FirmwareManager::FirmwareManager(
+        strata::strataRPC::StrataClient *strataClient,
         CoreInterface *coreInterface,
         QObject *parent)
     : QObject(parent),
+      strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &FirmwareManager::replyHandler);
     connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &FirmwareManager::jobUpdateHandler);
 }
 
@@ -35,16 +36,18 @@ bool FirmwareManager::updateFirmware(QString deviceId, QString uri, QString md5)
     cmdPayloadObject.insert("path", uri);
     cmdPayloadObject.insert("md5", md5);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "update_firmware");
-    cmdMessageObject.insert("payload", cmdPayloadObject);
+    auto deferredRequest = strataClient_->sendRequest("update_firmware", cmdPayloadObject);
 
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio) << "Failed to send update_firmware request";
+        return false;
+    }
 
     deviceData_.insert(deviceId, {uri, md5, QString(), QString(), QString(), 0.0});
 
-    coreInterface_->sendCommand(strJson);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &FirmwareManager::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &FirmwareManager::replyHandler);
+
     return true;
 }
 

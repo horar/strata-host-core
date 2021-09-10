@@ -11,6 +11,7 @@
 #include "FirmwareManager.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
 
 #include <QThread>
 
@@ -26,12 +27,13 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
-      documentManager_(new DocumentManager(coreInterface_, this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), "", this)),
+      coreInterface_(new CoreInterface(strataClient_, this)),
+      documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      programControllerManager_(new ProgramControllerManager(coreInterface_, this)),
-      firmwareManager_(new FirmwareManager(coreInterface_, this)),
+      programControllerManager_(new ProgramControllerManager(strataClient_, coreInterface_, this)),
+      firmwareManager_(new FirmwareManager(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
@@ -57,6 +59,7 @@ SDSModel::~SDSModel()
     delete programControllerManager_;
     delete firmwareManager_;
     delete urlConfig_;
+    delete strataClient_;
 }
 
 bool SDSModel::startHcs()
@@ -219,6 +222,11 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
     return std::addressof(strata::loggers::QtLogger::instance());
 }
 
+strata::strataRPC::StrataClient *SDSModel::strataClient() const
+{
+    return strataClient_;
+}
+
 void SDSModel::shutdownService()
 {
     remoteHcsNode_->shutdownService(hcsIdentifier_);
@@ -263,6 +271,13 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     }
 
     hcsConnected_ = hcsConnected;
+
+    if (true == hcsConnected_) {
+        strataClient_->connect();
+    } else {
+        strataClient_->disconnect();
+    }
+
     emit hcsConnectedChanged();
 }
 

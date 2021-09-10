@@ -95,7 +95,7 @@ public:
      * @return pointer to DeferredRequest to connect callbacks, on failure, this will return
      * nullptr
      */
-    DeferredRequest *sendRequest(const QString &method, const QJsonObject &payload);
+    Q_INVOKABLE DeferredRequest *sendRequest(const QString &method, const QJsonObject &payload);
 
     /**
      * Sends a notification to the server.
@@ -104,7 +104,7 @@ public:
      * @param [in] payload QJsonObject of the request payload.
      * @return True if the notification was sent successfully, false otherwise.
      */
-    bool sendNotification(const QString &method, const QJsonObject &payload);
+    Q_INVOKABLE bool sendNotification(const QString &method, const QJsonObject &payload);
 
 signals:
     /**

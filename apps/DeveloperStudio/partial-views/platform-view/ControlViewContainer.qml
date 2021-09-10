@@ -161,17 +161,14 @@ Item {
             }
 
             let downloadCommand = {
-                "hcs::cmd": "download_view",
-                "payload": {
-                    "url": controlViewList.uri(latestVersionIndex),
-                    "md5": controlViewList.md5(latestVersionIndex),
-                    "class_id": platformStack.class_id
-                }
+                "url": controlViewList.uri(latestVersionIndex),
+                "md5": controlViewList.md5(latestVersionIndex),
+                "class_id": platformStack.class_id
             };
 
             activeDownloadUri = controlViewList.uri(latestVersionIndex)
 
-            coreInterface.sendCommand(JSON.stringify(downloadCommand));
+            sdsModel.strataClient.sendRequest("download_view", downloadCommand);
         }
     }
 
