@@ -66,8 +66,7 @@ Item {
                 height: width
                 anchors {
                     bottom: parent.bottom
-                    bottomMargin: -wrapper.spacing
-                    horizontalCenter: parent.horizontalCenter
+                    left: parent.left
                 }
 
                 visible: showErrorFlag || showActiveFlag
