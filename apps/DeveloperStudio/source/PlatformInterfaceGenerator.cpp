@@ -10,13 +10,11 @@
 #include <QJsonParseError>
 #include <QDateTime>
 
-QString PlatformInterfaceGenerator::lastError_ = QString();
-
 PlatformInterfaceGenerator::PlatformInterfaceGenerator(QObject *parent) : QObject(parent) {}
 
 PlatformInterfaceGenerator::~PlatformInterfaceGenerator() {}
 
-QString PlatformInterfaceGenerator::lastError()
+QString PlatformInterfaceGenerator::lastError() const
 {
     return lastError_;
 }
@@ -142,7 +140,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
     return true;
 }
 
-QString PlatformInterfaceGenerator::generateImports()
+QString PlatformInterfaceGenerator::generateImports() const
 {
     QString imports = "import QtQuick 2.12\n";
     imports += "import QtQuick.Controls 2.12\n";
@@ -379,12 +377,12 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
     childrenDocumentationBody += documentation;
 }
 
-QString PlatformInterfaceGenerator::generateComment(const QString &commentText, int indentLevel)
+QString PlatformInterfaceGenerator::generateComment(const QString &commentText, int indentLevel) const
 {
     return insertTabs(indentLevel) + "// " + commentText + "\n";
 }
 
-QString PlatformInterfaceGenerator::generateCommentHeader(const QString &commentText, int indentLevel)
+QString PlatformInterfaceGenerator::generateCommentHeader(const QString &commentText, int indentLevel) const
 {
     QString comment = insertTabs(indentLevel) + "/******************************************************************\n";
     comment += insertTabs(indentLevel) + "  * " + commentText + "\n";
@@ -392,7 +390,7 @@ QString PlatformInterfaceGenerator::generateCommentHeader(const QString &comment
     return comment;
 }
 
-QString PlatformInterfaceGenerator::insertTabs(const int num, const int spaces)
+QString PlatformInterfaceGenerator::insertTabs(const int num, const int spaces) const
 {
     QString text = "";
     for (int tabs = 0; tabs < num; ++tabs) {
@@ -460,7 +458,7 @@ QString PlatformInterfaceGenerator::getPropertyValue(const QJsonObject &object, 
     }
 }
 
-void PlatformInterfaceGenerator::removeReservedKeywords(QStringList &paramsList)
+void PlatformInterfaceGenerator::removeReservedKeywords(QStringList &paramsList) const
 {
     for (QString param : paramsList) {
         if (param == "function") {
