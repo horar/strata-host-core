@@ -23,6 +23,11 @@
     <script src="./min/vs/editor/editor.main.nls.js"></script>
     <script src="./min/vs/editor/editor.main.js"></script>
     <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="./model/qtItemModel.js" type="text/javascript"></script>
+    <script src="./model/qtQuickModel.js" type="text/javascript"></script>
+    <script src="./utils/search.js" type="text/javascript"></script>
+    <script src="./utils/helper.js" type="text/javascript"></script>
+    <script src="./utils/suggestions.js" type="text/javascript"></script>
     <script src="./qtQuickTypes.js" type="text/javascript"></script>
     <script src="./qtQuick.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -30,8 +35,10 @@
             // all published objects are available in channel.objects under
             // the identifier set in their attached WebChannel.id property
             var link = channel.objects.valueLink;
-            window.link = link
+            window.link = link;
+
             link.setValue.connect(function (value) {
+                window.link.setFinished(false)
                 editor.setValue(value);
             });
 
@@ -52,7 +59,7 @@
             })
 
             link.undo.connect(function () {
-                editor.trigger('undoClicked', 'undo');
+                editor.getModel().undo()
             });
 
             link.resetContainer.connect(function (height, width) {
@@ -62,22 +69,20 @@
             })
 
             link.redo.connect(function () {
-                editor.trigger('redoClicked', 'redo');
-            });
-
-            editor.getModel().onDidChangeContent((event) => {
-                link.fileText = editor.getValue();
-                link.setVersionId(editor.getModel().getAlternativeVersionId());
-                
+                editor.getModel().redo()
             });
         });
     </script>
     <script>
-        if(!isInitialized){
-            registerQmlAsLanguage()
-        } else {
-            editor.dispose()
-        } 
+        document.onreadystatechange = function() {
+            if (document.readyState === 'interactive') {
+                if(editor !== null){
+                    editor.dispose()
+                }
+                initEditor()
+                registerQmlProvider()
+            } else if (document.readyState === 'complete') {}
+        }
     </script>
 </body>
 

@@ -16,7 +16,7 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     setForegroundColor("black");
 
     qwtGrid_->attach(qwtPlot);
-    //Setting the default values for x,y axises and color of grid lines.
+    //Setting the default values for x,y axes and color of grid lines.
     qwtGrid_->enableX(xGrid_);
     qwtGrid_->enableY(yGrid_);
     qwtGrid_->enableXMin(xMinorGrid_);
@@ -31,7 +31,6 @@ SGQWTPlot::~SGQWTPlot()
 
     delete qwtPlot;
     qwtPlot = nullptr;
-
 }
 
 void SGQWTPlot::paint(QPainter* painter)
@@ -76,6 +75,7 @@ void SGQWTPlot::shiftYAxis(double offset)
     double yMin = this->yMin() + offset;
     double yMax = this->yMax() + offset;
     qwtPlot->setAxisScale(qwtPlot->yLeft, yMin, yMax);
+
     if (autoUpdate_) {
         update();
     }
@@ -86,22 +86,24 @@ void SGQWTPlot::shiftYAxisRight(double offset)
     double yMinRight = this->yRightMin() + offset;
     double yMaxRight = this->yRightMax() + offset;
     qwtPlot->setAxisScale(qwtPlot->yRight, yMinRight, yMaxRight);
+
     if (autoUpdate_) {
         update();
     }
 }
 
-bool SGQWTPlot :: yRightVisible()
+bool SGQWTPlot::yRightVisible()
 {
     return yRightVisible_;
 }
 
-void SGQWTPlot :: setYRightVisible(bool showYRightAxis)
+void SGQWTPlot::setYRightVisible(bool showYRightAxis)
 {
-    if(yRightVisible_ != showYRightAxis) {
+    if (yRightVisible_ != showYRightAxis) {
         yRightVisible_ = showYRightAxis;
         qwtPlot->enableAxis(qwtPlot->yRight,showYRightAxis);
         emit yRightVisibleChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -113,6 +115,7 @@ void SGQWTPlot::autoScaleXAxis()
     qwtPlot->setAxisAutoScale(qwtPlot->xBottom);
     emit xMinChanged();
     emit xMaxChanged();
+
     if (autoUpdate_) {
         update();
     }
@@ -127,6 +130,7 @@ void SGQWTPlot::autoScaleYAxis()
     emit yMaxChanged();
     emit yRightMinChanged();
     emit yRightMaxChanged();
+
     if (autoUpdate_) {
         update();
     }
@@ -168,65 +172,64 @@ int SGQWTPlot::getCount()
     return curves_.count();
 }
 
-
-void SGQWTPlot :: setXGrid(bool showGrid)
+void SGQWTPlot::setXGrid(bool showGrid)
 {
-    if(xGrid_ != showGrid) {
+    if (xGrid_ != showGrid) {
         xGrid_ = showGrid;
         qwtGrid_->enableX(xGrid_);
-
         emit xGridChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-bool SGQWTPlot :: xGrid()
+bool SGQWTPlot::xGrid()
 {
     return xGrid_;
 }
 
-void SGQWTPlot :: setYGrid(bool showGrid)
+void SGQWTPlot::setYGrid(bool showGrid)
 {
-    if(yGrid_ != showGrid) {
+    if (yGrid_ != showGrid) {
         yGrid_ = showGrid;
         qwtGrid_->enableY(yGrid_);
-
         emit yGridChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-bool SGQWTPlot :: yGrid()
+bool SGQWTPlot::yGrid()
 {
     return yGrid_;
 }
 
-void SGQWTPlot :: setXMinorGrid(bool showGrid)
+void SGQWTPlot::setXMinorGrid(bool showGrid)
 {
-    if(xMinorGrid_ != showGrid) {
+    if (xMinorGrid_ != showGrid) {
         xMinorGrid_ = showGrid;
         setXGrid(xMinorGrid_);
         qwtGrid_->enableXMin(xMinorGrid_);
-
         emit xMinorGridChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-bool SGQWTPlot :: xMinorGrid()
+bool SGQWTPlot::xMinorGrid()
 {
     return xMinorGrid_;
 }
 
-void SGQWTPlot :: setYMinorGrid(bool showGrid)
+void SGQWTPlot::setYMinorGrid(bool showGrid)
 {
-    if(yMinorGrid_ != showGrid) {
+    if (yMinorGrid_ != showGrid) {
         yMinorGrid_ = showGrid;
         setYGrid(yMinorGrid_);
         qwtGrid_->enableYMin(yMinorGrid_);
@@ -238,19 +241,18 @@ void SGQWTPlot :: setYMinorGrid(bool showGrid)
     }
 }
 
-bool SGQWTPlot :: yMinorGrid()
+bool SGQWTPlot::yMinorGrid()
 {
     return yMinorGrid_;
 }
 
-
-void SGQWTPlot :: setGridColor(QColor newColor)
+void SGQWTPlot::setGridColor(QColor newColor)
 {
     if (gridColor_ != newColor) {
         gridColor_ = newColor;
-        qwtGrid_->setPen(QPen(gridColor_,0,Qt::DotLine));
-
+        qwtGrid_->setPen(QPen(gridColor_, 0, Qt::DotLine));
         emit gridColorChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -261,6 +263,7 @@ void SGQWTPlot::setXMin(double value)
 {
     qwtPlot->setAxisScale( qwtPlot->xBottom, value, xMax());
     emit xMinChanged();
+
     if (autoUpdate_) {
         update();
     } else {
@@ -277,6 +280,7 @@ void SGQWTPlot::setXMax(double value)
 {
     qwtPlot->setAxisScale( qwtPlot->xBottom, xMin(), value);
     emit xMaxChanged();
+
     if (autoUpdate_) {
         update();
     } else {
@@ -293,6 +297,7 @@ void SGQWTPlot::setYMin(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yLeft, value, yMax());
     emit yMinChanged();
+
     if (autoUpdate_) {
         update();
     } else {
@@ -307,9 +312,9 @@ double SGQWTPlot::yMin()
 
 void SGQWTPlot::setYMax(double value)
 {
-
     qwtPlot->setAxisScale(qwtPlot->yLeft, yMin(), value);
     emit yMaxChanged();
+
     if (autoUpdate_) {
         update();
     } else {
@@ -326,6 +331,7 @@ void SGQWTPlot::setYRightMin(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yRight, value, yRightMax());
     emit yRightMinChanged();
+
     if (autoUpdate_) {
         update();
     } else {
@@ -342,6 +348,7 @@ void SGQWTPlot::setYRightMax(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yRight, yRightMin(), value);
     emit yRightMaxChanged();
+
     if (autoUpdate_) {
         update();
     } else {
@@ -364,6 +371,7 @@ void SGQWTPlot::setXTitle(QString title)
     if (title != xTitle()){
         qwtPlot->setAxisTitle(qwtPlot->xBottom, title);
         emit xTitleChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -372,7 +380,7 @@ void SGQWTPlot::setXTitle(QString title)
 
 void SGQWTPlot::setXTitlePixelSize(int pixelSize)
 {
-    if (pixelSize != this->xTitlePixelSize()){
+    if (pixelSize != this->xTitlePixelSize()) {
         QwtText title = qwtPlot->axisTitle(qwtPlot->xBottom);
         QFont titleFont = title.font();
         titleFont.setPixelSize(pixelSize);
@@ -398,9 +406,10 @@ QString SGQWTPlot::yTitle()
 
 void SGQWTPlot::setYTitle(QString title)
 {
-    if (title != yTitle()){
+    if (title != yTitle()) {
         qwtPlot->setAxisTitle(qwtPlot->yLeft, title);
         emit yTitleChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -409,7 +418,7 @@ void SGQWTPlot::setYTitle(QString title)
 
 void SGQWTPlot::setYTitlePixelSize(int pixelSize)
 {
-    if (pixelSize != this->yTitlePixelSize()){
+    if (pixelSize != this->yTitlePixelSize()) {
         QwtText title = qwtPlot->axisTitle(qwtPlot->yLeft);
         QFont titleFont = title.font();
         titleFont.setPixelSize(pixelSize);
@@ -435,9 +444,10 @@ QString SGQWTPlot::yRightTitle()
 
 void SGQWTPlot::setYRightTitle(QString title)
 {
-    if (title != yRightTitle()){
+    if (title != yRightTitle()) {
         qwtPlot->setAxisTitle(qwtPlot->yRight, title);
         emit yRightTitleChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -446,7 +456,7 @@ void SGQWTPlot::setYRightTitle(QString title)
 
 void SGQWTPlot::setYRightTitlePixelSize(int pixelSize)
 {
-    if (pixelSize != this->yRightTitlePixelSize()){
+    if (pixelSize != this->yRightTitlePixelSize()) {
         QwtText title = qwtPlot->axisTitle(qwtPlot->yRight);
         QFont titleFont = title.font();
         titleFont.setPixelSize(pixelSize);
@@ -475,6 +485,7 @@ void SGQWTPlot::setTitle(QString title)
     if (title != this->title()){
         qwtPlot->setTitle(title);
         emit titleChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -483,7 +494,7 @@ void SGQWTPlot::setTitle(QString title)
 
 void SGQWTPlot::setTitlePixelSize(int pixelSize)
 {
-    if (pixelSize != this->titlePixelSize()){
+    if (pixelSize != this->titlePixelSize()) {
         QwtTextLabel* titleLabel = qwtPlot->titleLabel();
         QFont titleFont = titleLabel->font();
         titleFont.setPixelSize(pixelSize);
@@ -503,7 +514,7 @@ int SGQWTPlot::titlePixelSize()
 
 void SGQWTPlot::setBackgroundColor(QColor newColor)
 {
-    if (backgroundColor_ != newColor){
+    if (backgroundColor_ != newColor) {
         backgroundColor_ = newColor;
         QPalette palette = qwtPlot->palette();
         palette.setColor(QPalette::Window, backgroundColor_);
@@ -520,7 +531,7 @@ void SGQWTPlot::setBackgroundColor(QColor newColor)
 
 void SGQWTPlot::setForegroundColor(QColor newColor)
 {
-    if (foregroundColor_ != newColor){
+    if (foregroundColor_ != newColor) {
         foregroundColor_ = newColor;
 
         QwtText title = qwtPlot->title();
@@ -530,8 +541,8 @@ void SGQWTPlot::setForegroundColor(QColor newColor)
         setYLeftAxisColor(foregroundColor_);
         setXAxisColor(foregroundColor_);
         setYRightAxisColor(foregroundColor_);
-
         emit foregroundColorChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -540,18 +551,19 @@ void SGQWTPlot::setForegroundColor(QColor newColor)
 
 void SGQWTPlot::setXLogarithmic(bool logarithmic)
 {
-    if (logarithmic != xLogarithmic_){
+    if (logarithmic != xLogarithmic_) {
         xLogarithmic_ = logarithmic;
-        if (xLogarithmic_){
+        if (xLogarithmic_) {
             qwtPlot->setAxisScaleEngine(qwtPlot->xBottom, new QwtLogScaleEngine(10));
-            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom,10);
-            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom,10);
+            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom, 10);
+            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom, 10);
         } else {
             qwtPlot->setAxisScaleEngine(qwtPlot->xBottom, new QwtLinearScaleEngine(10));
-            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom,5);
-            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom,5);
+            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom, 5);
+            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom, 5);
         }
         emit xLogarithmicChanged();
+
         if (autoUpdate_) {
             update();
         }
@@ -560,97 +572,96 @@ void SGQWTPlot::setXLogarithmic(bool logarithmic)
 
 void SGQWTPlot::setYLogarithmic(bool logarithmic)
 {
-    if (logarithmic != yLogarithmic_){
+    if (logarithmic != yLogarithmic_) {
         yLogarithmic_ = logarithmic;
-        if (yLogarithmic_){
+        if (yLogarithmic_) {
             qwtPlot->setAxisScaleEngine(qwtPlot->yRight, new QwtLogScaleEngine(10));
             qwtPlot->setAxisScaleEngine(qwtPlot->yLeft, new QwtLogScaleEngine(10));
-            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft,10);
-            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft,10);
+            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft, 10);
+            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft, 10);
         } else {
             qwtPlot->setAxisScaleEngine(qwtPlot->yRight, new QwtLinearScaleEngine(10));
             qwtPlot->setAxisScaleEngine(qwtPlot->yLeft, new QwtLinearScaleEngine(10));
-            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft,5);
-            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft,5);
+            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft, 5);
+            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft, 5);
         }
         emit yLogarithmicChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-void SGQWTPlot :: setYRightAxisColor(QColor newColor)
+void SGQWTPlot::setYRightAxisColor(QColor newColor)
 {
     if (yRightAxisColor_ != newColor) {
         yRightAxisColor_ = newColor;
-        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::yRight);
+        QwtScaleWidget *qwtsw_ = qwtPlot->axisWidget(QwtPlot::yRight);
         QPalette palette = qwtsw_->palette();
-        palette.setColor(QPalette::WindowText, yRightAxisColor_);	// for ticks
-        palette.setColor(QPalette::Text, yRightAxisColor_);           //for  ticks' labels
+        palette.setColor(QPalette::WindowText, yRightAxisColor_); // for ticks
+        palette.setColor(QPalette::Text, yRightAxisColor_);       // for ticks' labels
         qwtsw_->setPalette(palette);
-
         emit yRightAxisColorChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
+void SGQWTPlot::setYLeftAxisColor(QColor newColor)
 {
-
     if (yLeftAxisColor_ != newColor) {
         yLeftAxisColor_ = newColor;
-        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::yLeft);
+        QwtScaleWidget *qwtsw_ = qwtPlot->axisWidget(QwtPlot::yLeft);
         QPalette palette = qwtsw_->palette();
-        palette.setColor(QPalette::WindowText, yLeftAxisColor_);	// for ticks
-        palette.setColor(QPalette::Text, yLeftAxisColor_);           //for  ticks' labels
+        palette.setColor(QPalette::WindowText, yLeftAxisColor_); // for ticks
+        palette.setColor(QPalette::Text, yLeftAxisColor_);       // for  ticks' labels
         qwtsw_->setPalette(palette);
-
         emit yLeftAxisColorChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-void SGQWTPlot :: setXAxisColor(QColor newColor)
+void SGQWTPlot::setXAxisColor(QColor newColor)
 {
     if (xAxisColor_ != newColor) {
         xAxisColor_ = newColor;
-        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::xBottom);
+        QwtScaleWidget *qwtsw_ = qwtPlot->axisWidget(QwtPlot::xBottom);
         QPalette palette = qwtsw_->palette();
-        palette.setColor(QPalette::WindowText, xAxisColor_);	// for ticks
-        palette.setColor(QPalette::Text, xAxisColor_);           //for  ticks' labels
+        palette.setColor(QPalette::WindowText, xAxisColor_); // for ticks
+        palette.setColor(QPalette::Text, xAxisColor_);       // for  ticks' labels
         qwtsw_->setPalette(palette);
-
         emit xAxisColorChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-void SGQWTPlot :: insertLegend(bool legend)
+void SGQWTPlot::insertLegend(bool legend)
 {
-    if(legend_ != legend) {
+    if (legend_ != legend) {
         legend_ = legend;
-        if(legend) {
-            qwtPlot->insertLegend(new QwtLegend(),QwtPlot::BottomLegend);
-        }
-        else {
+        if (legend) {
+            qwtPlot->insertLegend(new QwtLegend(), QwtPlot::BottomLegend);
+        } else {
             qwtPlot->insertLegend(0);
         }
-
         emit legendChanged();
+
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-bool SGQWTPlot :: legend()
+bool SGQWTPlot::legend()
 {
     return legend_;
 }
@@ -723,7 +734,7 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     curve_->setStyle(QwtPlotCurve::Lines);
     curve_->setRenderHint(QwtPlotItem::RenderAntialiased);
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
-    curve_->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
+    curve_->setPaintAttribute(QwtPlotCurve::FilterPoints, true);
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
 }
 
@@ -734,7 +745,7 @@ SGQWTPlotCurve::~SGQWTPlotCurve()
 
 void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 {
-    if (graph_ != graph){
+    if (graph_ != graph) {
         setParent(graph);
         graph->updateCurveList();
         if (graph_ != nullptr) {
@@ -771,7 +782,7 @@ SGQWTPlot* SGQWTPlotCurve::graph()
 
 void SGQWTPlotCurve::setName(QString name)
 {
-    if (name != this->name()){
+    if (name != this->name()) {
         curve_->setTitle(name);
         if (autoUpdate_) {
             update();
@@ -807,9 +818,9 @@ QColor SGQWTPlotCurve::color()
 
 void SGQWTPlotCurve::setYAxisLeft(bool yleftAxis)
 {
-    if (yAxisLeft_ != yleftAxis){
+    if (yAxisLeft_ != yleftAxis) {
         yAxisLeft_ = yleftAxis;
-        if(!yleftAxis){
+        if (!yleftAxis) {
             curve_->setYAxis(QwtPlot::yRight);
         }
         if (autoUpdate_) {
@@ -833,7 +844,7 @@ void SGQWTPlotCurve::update()
 
 void SGQWTPlotCurve::append(double x, double y)
 {
-    curveData_.append(QPointF(x,y));
+    curveData_.append(QPointF(x, y));
     if (autoUpdate_) {
         update();
     }
@@ -875,8 +886,8 @@ QPointF SGQWTPlotCurve::at(int index)
     if (index < curveData_.count()) {
         return curveData_[index];
     } else {
-        qCWarning(logCategoryQWTPlot) << "Index Invalid " << index << " return 0,0" ;
-        return QPointF(0,0);
+        qCWarning(logCategoryQWTPlot) << "Index Invalid" << index << "return 0,0";
+        return QPointF(0, 0);
     }
 }
 
@@ -887,31 +898,71 @@ int SGQWTPlotCurve::count()
 
 void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
 {
-    for (int i = 0; i < curveData_.length(); i++ ){
-        curveData_[i].setX(curveData_[i].x()+(offsetX));
-        curveData_[i].setY(curveData_[i].y()+(offsetY));
+    for (int i = 0; i < curveData_.length(); i++) {
+        curveData_[i].setX(curveData_[i].x() + (offsetX));
+        curveData_[i].setY(curveData_[i].y() + (offsetY));
     }
     if (autoUpdate_) {
         update();
     }
 }
 
-void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int size)
+void SGQWTPlotCurve::setSymbol(int newStyle, QColor color, int penStyle, int size)
 {
-    curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle),QBrush(color),QPen(penStyle),QSize(size,size)));
+    curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle), QBrush(color), QPen(penStyle), QSize(size, size)));
 
     if (autoUpdate_) {
         update();
     }
-    return;
+}
+
+// Given any value from the X axis of the graph, find the point in the curve with the nearest X value and return its index
+int SGQWTPlotCurve::closestXAxisPointIndex(double xVal) {
+    double diff;
+    QPointF currentPoint = QPointF(0,0);
+
+    // error check to ensure there is a curve with points
+    if (curveData_.count() == 0) {
+        return -1; // return -1 if there is no curve
+    }
+
+    int right = curveData_.count() - 1;
+    int left = 0;
+    int mid = 0;
+
+    // loop until there are only two points remaining
+    // binary search
+    while (right - left > 1) {
+        mid = (left + right) / 2;
+        currentPoint = curveData_.at(mid);
+        diff = (currentPoint.x() - xVal);
+        if (diff == 0) {
+            return mid;
+        } else if (diff < 0) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+
+    // once only two points remain, determines which is the mouse closer to
+    QPointF leftVal = curveData_.at(left);
+    QPointF rightVal = curveData_.at(right);
+    double lDiff = abs(leftVal.x() - xVal);
+    double rDiff = abs(rightVal.x() - xVal);
+
+    if (lDiff < rDiff) {
+        return left;
+    } else {
+        return right;
+    }
 }
 
 /*-----------------------
     SGQWTPlotCurveData Class
 ------------------------*/
 
-SGQWTPlotCurveData::SGQWTPlotCurveData(const QVector<QPointF> *container) :
-    container_(container)
+SGQWTPlotCurveData::SGQWTPlotCurveData(const QVector<QPointF> *container) : container_(container)
 {
 }
 

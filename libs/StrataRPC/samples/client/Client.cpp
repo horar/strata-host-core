@@ -15,7 +15,7 @@ Client::Client(QString clientId, QObject *parent)
       serverTime_()
 {
     qCInfo(logCategoryStrataClientSample).nospace().noquote()
-        << "Client ID 0x" << clientId.toUtf8().toHex();
+        << "ClientID 0x" << clientId.toUtf8().toHex();
 
     connect(strataClient_.get(), &StrataClient::connected, this, [this]() {
         connectionStatus_ = true;

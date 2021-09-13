@@ -73,7 +73,7 @@ Rectangle {
            }
            return root.editing ? "Save" : "Edit"
        }
-       color: Theme.palette.green
+       color: Theme.palette.onsemiOrange
 
        MouseArea {
            anchors.fill: parent

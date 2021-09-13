@@ -74,7 +74,7 @@ SGStrataPopup {
 
                     Text {
                         id: feedbackText1
-                        text: "ON Semiconductor would appreciate feedback on product usability, features, collateral, and quality of service. Please use this form to directly submit your feedback to our team."
+                        text: "onsemi would appreciate feedback on product usability, features, collateral, and quality of service. Please use this form to directly submit your feedback to our team."
                         font {
                             pixelSize: 15
                             family: Fonts.franklinGothicBook

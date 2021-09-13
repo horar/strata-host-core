@@ -265,6 +265,11 @@ public:
      */
     Q_INVOKABLE bool containsPath(const QString url);
 
+    /**
+     * @brief reloadQrcModel force the Qrc model to be reloaded. public/QML-invocable call to createModel()
+     */
+    Q_INVOKABLE void reloadQrcModel();
+
     /***
      * SIGNALS
      ***/

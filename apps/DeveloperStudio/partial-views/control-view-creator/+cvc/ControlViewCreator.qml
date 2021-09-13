@@ -275,7 +275,7 @@ Rectangle {
         padding: 0
         closePolicy: Popup.NoAutoClose
 
-        acceptButtonColor: Theme.palette.green
+        acceptButtonColor: Theme.palette.onsemiOrange
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Clean"
         cancelButtonText: "Cancel"
@@ -425,7 +425,7 @@ Rectangle {
                 openViewOnBuild = settings.openViewOnBuild
             }
             if (settings.hasOwnProperty("reloadViewExternalChanges")) {
-                openViewOnBuild = settings.reloadViewExternalChanges
+                reloadViewExternalChanges = settings.reloadViewExternalChanges
             }
         }
 

@@ -93,7 +93,7 @@ Item {
                         implicitWidth: 6
                         implicitHeight: 6
                         radius: 5
-                        color: Theme.palette.green
+                        color: Theme.palette.onsemiOrange
                         transform: [
                             Translate {
                                 y: -Math.min(item.width, item.height) * 0.5 + 3

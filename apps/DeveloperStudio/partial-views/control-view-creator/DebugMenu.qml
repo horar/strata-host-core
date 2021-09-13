@@ -282,16 +282,15 @@ Rectangle {
             delete json["payload"]
         }
         if (json.hasOwnProperty("cmd")) {
-            json.device_id = controlViewCreatorRoot.debugPlatform.deviceId
-            coreInterface.sendCommand(JSON.stringify(json))
-            console.log("DebugMenu - command sent:", JSON.stringify(json, null, 2))
+            console.log("DebugMenu - sending command:", JSON.stringify(json, null, 2))
+            coreInterface.sendNotification("platform_message", {"device_id": controlViewCreatorRoot.debugPlatform.device_id, "message": JSON.stringify(json)})
         } else {
             let notification = {
                 "notification": json
             }
             let wrapper = { "device_id": Constants.NULL_DEVICE_ID, "message": JSON.stringify(notification) }
+            console.log("DebugMenu - sending notification:", JSON.stringify(json, null, 2))
             coreInterface.notification(JSON.stringify(wrapper))
-            console.log("DebugMenu - notification sent:", JSON.stringify(json, null, 2))
         }
     }
 

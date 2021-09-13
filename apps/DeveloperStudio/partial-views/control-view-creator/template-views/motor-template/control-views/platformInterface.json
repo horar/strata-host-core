@@ -1,0 +1,1211 @@
+{
+    "commands": [
+        {
+            "cmd": "control_props"
+        },
+        {
+            "cmd": "run",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "cmd": "brake",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "cmd": "direction",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "cmd": "target_speed",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                }
+            ]
+        },
+        {
+            "cmd": "acceleration",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                }
+            ]
+        },
+        {
+            "cmd": "toggle",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "cmd": "slider",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 2380
+                }
+            ]
+        },
+        {
+            "cmd": "infobox_integer",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 11
+                }
+            ]
+        },
+        {
+            "cmd": "infobox_double",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 11.11
+                }
+            ]
+        },
+        {
+            "cmd": "infobox_string",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "string",
+                    "value": "Pass"
+                }
+            ]
+        },
+        {
+            "cmd": "combobox",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                }
+            ]
+        }
+    ],
+    "notifications": [
+        {
+            "value": "target_speed",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "acceleration",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 2
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "run",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "brake",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "direction",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "warning_1",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Warning 1"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "warning_2",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Warning 2"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "warning_3",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Warning 3"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": false
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "title",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Title"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "subtitle",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Subtitle"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "actual_speed",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Caption"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "board_temp",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Caption"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "input_voltage",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Caption"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "status_log",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Status Log"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 1
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "toggle",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Toggle"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": true
+                },
+                {
+                    "name": "values",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "string",
+                            "value": "True"
+                        },
+                        {
+                            "type": "string",
+                            "value": "False"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "value": "slider",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "Slider"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 10000
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 10
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 2380
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "infobox_integer",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "InfoBox Integer"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 11
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "infobox_double",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "InfoBox Double"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "double",
+                    "value": 11.11
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "infobox_string",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "InfoBox String"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": "Unit"
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "value": "Pass"
+                },
+                {
+                    "name": "values",
+                    "type": "array-dynamic-sized",
+                    "value": []
+                }
+            ]
+        },
+        {
+            "value": "combobox",
+            "payload": [
+                {
+                    "name": "caption",
+                    "type": "string",
+                    "value": "ComboBox"
+                },
+                {
+                    "name": "scales",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        },
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "states",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "int",
+                            "value": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "unit",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "values",
+                    "type": "array-static-sized",
+                    "value": [
+                        {
+                            "type": "string",
+                            "value": "Item 1"
+                        },
+                        {
+                            "type": "string",
+                            "value": "Item 2"
+                        },
+                        {
+                            "type": "string",
+                            "value": "Item 3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "value": "advanced_view_tab",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "bool",
+                    "value": false
+                }
+            ]
+        }
+    ]
+}

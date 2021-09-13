@@ -279,6 +279,7 @@ Item {
                 scrollbackModel: model.platform.scrollbackModel
                 commandHistoryModel: model.platform.commandHistoryModel
                 filterSuggestionModel: model.platform.filterSuggestionModel
+                tabBorderColor: tabBar.tabBorderColor
             }
         }
     }
