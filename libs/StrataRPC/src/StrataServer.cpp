@@ -260,32 +260,26 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
                                 const ResponseType responseType)
 {
-    QByteArray serverMessage;
-
     switch (clientsController_->getClientApiVersion(clientMessage.clientID)) {
         case ApiVersion::v1:
             qCDebug(logCategoryStrataServer) << "Building message for API v1";
-            serverMessage = buildServerMessageAPIv1(clientMessage, jsonObject, responseType);
-            if (serverMessage == "") {
-                return;
-            }
+            emit sendMessage(clientMessage.clientID,
+                             buildServerMessageAPIv1(clientMessage, jsonObject, responseType));
             break;
 
         case ApiVersion::v2:
             qCDebug(logCategoryStrataServer) << "Building message for API v2";
-            serverMessage = buildServerMessageAPIv2(clientMessage, jsonObject, responseType);
+            emit sendMessage(clientMessage.clientID,
+                             buildServerMessageAPIv2(clientMessage, jsonObject, responseType));
             break;
 
         case ApiVersion::none:
             QString errorMessage(
                 QStringLiteral("Unsupported API version or client is not registered."));
-            qCCritical(logCategoryStrataServer) << errorMessage;
+            qCCritical(logCategoryStrataServer).noquote() << errorMessage;
             emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-            return;
             break;
     }
-
-    emit sendMessage(clientMessage.clientID, serverMessage);
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
@@ -418,10 +412,7 @@ QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
             break;
     }
 
-    QJsonDocument jsonDocument(jsonObject);
-    QByteArray jsonByteArray = jsonDocument.toJson(QJsonDocument::JsonFormat::Compact);
-
-    return jsonByteArray;
+    return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
 }
 
 QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
@@ -433,6 +424,10 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
     QJsonObject tempPayload(payload);
 
     switch (responseType) {
+        case ResponseType::Error:
+            qCDebug(logCategoryStrataServer) << "Error messages are not supported in API v1.";
+            // send error as notification
+            [[fallthrough]];
         case ResponseType::Notification:
         case ResponseType::Response:
             // determine the notification type
@@ -450,20 +445,12 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
             jsonObject.insert(notificationType, tempPayload);
             break;
 
-        case ResponseType::Error:
-            qCDebug(logCategoryStrataServer) << "Error messages are not supported in API v1.";
-            return "";
-            break;
-
         case ResponseType::PlatformMessage:
             jsonObject.insert("notification", payload);
             break;
     }
 
-    QJsonDocument jsonDocument(jsonObject);
-    QByteArray jsonByteArray = jsonDocument.toJson(QJsonDocument::JsonFormat::Compact);
-
-    return jsonByteArray;
+    return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
 }
 
 void StrataServer::dispatchHandler(const Message &clientMessage)
@@ -484,10 +471,10 @@ void StrataServer::connectorErrorHandler(const ServerConnectorError &errorType,
 {
     switch (errorType) {
         case ServerConnectorError::FailedToInitialize:
-            errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
+            emit errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
             break;
         case ServerConnectorError::FailedToSend:
-            errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+            emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
             break;
     }
 }
