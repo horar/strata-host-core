@@ -33,8 +33,7 @@ Item {
 
                 /** TO USE IT IN CONTROL VIEW: do the following:
                  platformInterface.commands[command].update(commandQueue.get(0).value) **/
-            }
-            else {
+            } else {
                 logs.append({ log: "sending:" + command }) //For Demo Only
 
                 /** TO USE IT IN CONTROL VIEW: do the following:
