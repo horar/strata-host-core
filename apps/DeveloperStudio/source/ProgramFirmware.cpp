@@ -419,14 +419,14 @@ float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, fl
     // 0.99 together
     constexpr float downloadRange = 0.10f;
     constexpr float prepareRange = 0.05f;
-    float clearDataRange = 0.0f, backupRange = 0.0f, programRange = 0.0f, setDataRange = 0.0f;
+    float backupRange = 0.0f, clearDataRange = 0.0f, programRange = 0.0f, setDataRange = 0.0f;
 
     switch (action) {
     case Action::ProgramAssisted :
         // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
-        clearDataRange = 0.02f;
-        programRange = 0.80f;
-        setDataRange = 0.02f;
+        clearDataRange = 0.01f;
+        programRange = 0.82f;
+        setDataRange = 0.01f;
         break;
     case Action::ProgramEmbedded :
         // Download -> Prepare -> Flash -> Finished
@@ -434,10 +434,10 @@ float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, fl
         break;
     case Action::ProgramSpecificFirmware :
         // Download -> Prepare -> Backup -> (ClearFwClassId) -> Flash -> (Restore) -> (SetFwClassId) -> Finished
-        backupRange = 0.40f;
-        clearDataRange = 0.02f;
-        programRange = 0.40f;
-        setDataRange = 0.02f;
+        backupRange = 0.41f;
+        clearDataRange = 0.01f;
+        programRange = 0.41f;
+        setDataRange = 0.01f;
         break;
     }
 
@@ -450,18 +450,18 @@ float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, fl
     case JobType::Prepare :
         overallProgress = downloadRange + (prepareRange * progress);
         break;
-    case JobType::ClearFwClassId :
-        overallProgress = downloadRange + prepareRange + (clearDataRange * progress);
-        break;
     case JobType::Backup :
-        overallProgress = downloadRange + prepareRange + clearDataRange + (backupRange * progress);
+        overallProgress = downloadRange + prepareRange + (backupRange * progress);
+        break;
+    case JobType::ClearFwClassId :
+        overallProgress = downloadRange + prepareRange + backupRange + (clearDataRange * progress);
         break;
     case JobType::Flash :
     case JobType::Restore :
-        overallProgress = downloadRange + prepareRange + clearDataRange + backupRange + (programRange * progress);
+        overallProgress = downloadRange + prepareRange + backupRange + clearDataRange + (programRange * progress);
         break;
     case JobType::SetFwClassId :
-        overallProgress = downloadRange + prepareRange + clearDataRange + backupRange + programRange + (setDataRange * progress);
+        overallProgress = downloadRange + prepareRange + backupRange + clearDataRange + programRange + (setDataRange * progress);
         break;
     case JobType::Finished :
         overallProgress = 1.0f;

@@ -48,8 +48,8 @@ private:
     enum class JobType {
         Download,
         Prepare,
-        ClearFwClassId,
         Backup,
+        ClearFwClassId,
         Flash,
         Restore,
         SetFwClassId,
