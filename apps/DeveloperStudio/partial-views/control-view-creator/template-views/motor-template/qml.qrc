@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Control.qml</file>
+        <file>control-views/SideBar.qml</file>
+        <file>images/brake.svg</file>
+        <file>images/play-solid.svg</file>
+        <file>images/redo-alt-solid.svg</file>
+        <file>images/stop-solid.svg</file>
+        <file>images/tach.svg</file>
+        <file>images/undo.svg</file>
+        <file>widgets/FaultLight.qml</file>
+        <file>widgets/IconButton.qml</file>
+        <file>widgets/SliderPopup.qml</file>
+        <file>control-views/Basic.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/Advanced.qml</file>
+        <file>settings/Alternate Configuration.json</file>
+        <file>settings/Platform Interface Defaults.json</file>
+        <file>settings/All Disabled.json</file>
+    </qresource>
+</RCC>

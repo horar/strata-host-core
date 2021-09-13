@@ -10,6 +10,7 @@
 var isInitialized = false
 var sdsModel
 var coreInterface
+var strataClient
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
@@ -35,6 +36,7 @@ function initialize (newSdsModel) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     sdsModel = newSdsModel
     coreInterface = newSdsModel.coreInterface;
+    strataClient = newSdsModel.strataClient
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
     createPlatformActions()
@@ -47,11 +49,7 @@ function disablePlatformNotifications(){
 
 function getPlatformList () {
     platformSelectorModel.platformListStatus = "loading"
-    const get_dynamic_plat_list = {
-        "hcs::cmd": "dynamic_platform_list",
-        "payload": {}
-    }
-    coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
+    strataClient.sendRequest("dynamic_platform_list", {})
 }
 
 /*
@@ -119,7 +117,7 @@ function generatePlatformSelectorModel(platform_list_json) {
         generatePlatform(platform)
     }
 
-    parseConnectedPlatforms(coreInterface.connected_platform_list_)
+    parseConnectedPlatforms(coreInterface.connectedPlatformList_)
     platformSelectorModel.platformListStatus = "loaded"
 }
 

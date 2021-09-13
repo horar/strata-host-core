@@ -330,17 +330,14 @@ ColumnLayout {
                         }
 
                         function startDownload() {
-                            let updateCommand = {
-                                "hcs::cmd": "download_view",
-                                "payload": {
-                                    "url": software.latestVersion.uri,
-                                    "md5": software.latestVersion.md5,
-                                    "class_id": platformStack.class_id
-                                }
+                            let updateCommandPayload = {
+                                "url": software.latestVersion.uri,
+                                "md5": software.latestVersion.md5,
+                                "class_id": platformStack.class_id
                             }
                             activeDownloadUri = software.latestVersion.uri
                             progressBar.reset();
-                            coreInterface.sendCommand(JSON.stringify(updateCommand));
+                            sdsModel.strataClient.sendRequest("download_view", updateCommandPayload);
                         }
                     }
                 }

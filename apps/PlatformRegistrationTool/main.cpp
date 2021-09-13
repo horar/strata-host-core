@@ -8,6 +8,7 @@
 #include <QResource>
 #include <QDir>
 #include <QIcon>
+#include <QQmlFileSelector>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
     loadResources();
 
     QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
 
     addImportPaths(&engine);
 

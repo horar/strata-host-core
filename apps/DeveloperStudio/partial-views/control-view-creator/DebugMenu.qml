@@ -221,12 +221,12 @@ Rectangle {
                                     console.log("NOTIFICATION", JSON.stringify(notification, null, 2))
                                     coreInterface.notification(JSON.stringify(wrapper))
                                 } else {
-                                    let command = { "cmd": model.name, "device_id": controlViewCreatorRoot.debugPlatform.device_id }
+                                    let command = {"cmd": model.name}
                                     if (payload) {
                                         command["payload"] = payload;
                                     }
                                     console.log("COMMAND", JSON.stringify(command, null, 2))
-                                    coreInterface.sendCommand(JSON.stringify(command))
+                                    coreInterface.sendNotification("platform_message", {"device_id": controlViewCreatorRoot.debugPlatform.device_id, "message": JSON.stringify(command)});
                                 }
                             }
                         }

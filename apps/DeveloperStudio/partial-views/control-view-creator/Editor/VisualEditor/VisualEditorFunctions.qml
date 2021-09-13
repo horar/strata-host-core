@@ -342,19 +342,35 @@ QtObject {
         saveFile()
     }
 
-    function resizeItem(uuid, newX, newY, addToUndoCommandStack = true) {
-        const oldX = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
-        const oldY = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
+    function resizeItem(uuid, newColumnsWide, newRowsTall, addToUndoCommandStack = true, save = true) {
+        if (newColumnsWide < 1 || newRowsTall < 1) {
+            return
+        }
 
-        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newX, "", false)
-        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newY, "", false)
+        const oldColumnsWide = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
+        const oldRowsTall = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
+
+        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newColumnsWide, "", false)
+        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newRowsTall, "", false)
 
         // undo/redo
         if (addToUndoCommandStack) {
-            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newX, newY, oldX, oldY)
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newColumnsWide, newRowsTall, oldColumnsWide, oldRowsTall)
         }
+        if (save) {
+            saveFile()
+        }
+    }
 
-        visualEditor.functions.saveFile(file, fileContents)
+    function resizeGroup(offsetX, offsetY) {
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
+                continue
+            }
+            resizeItem(obj.layoutInfo.uuid, obj.layoutInfo.columnsWide + offsetX, obj.layoutInfo.rowsTall + offsetY, true, false)
+        }
+        saveFile()
     }
 
     // returns object contents between tags
@@ -483,7 +499,12 @@ QtObject {
         visualEditor.multiObjectsDragged(objectInitiated, x, y)
     }
 
-    // calculates maximum offsets for multi-item target rectangle
+    // emits multiObjectsResizeDragged signal to all layout items
+    function resizeDragGroup(objectInitiated, width, height) {
+        visualEditor.multiObjectsResizeDragged(objectInitiated, width, height)
+    }
+
+    // calculates maximum offsets for multi-item target rectangle for item moving
     function getMultiItemTargetRectLimits() {
         var minX = overlayContainer.columnCount
         var maxX = overlayContainer.columnCount
@@ -498,6 +519,27 @@ QtObject {
             maxX = Math.min(maxX, obj.layoutInfo.xColumns)
             minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
             maxY = Math.min(maxY, obj.layoutInfo.yRows)
+            minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
+        }
+
+        return [maxX, minX, maxY, minY]
+    }
+
+    // calculates maximum offsets for multi-item target rectangle for item resizing
+    function getMultiItemTargetResizeRectLimits() {
+        var minX = overlayContainer.columnCount
+        var maxX = overlayContainer.columnCount * overlayContainer.columnSize
+        var minY = overlayContainer.rowCount
+        var maxY = overlayContainer.rowCount * overlayContainer.rowSize
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
+                continue
+            }
+            maxX = Math.min(maxX, obj.layoutInfo.columnsWide)
+            minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
+            maxY = Math.min(maxY, obj.layoutInfo.rowsTall)
             minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
         }
 

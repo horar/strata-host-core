@@ -354,7 +354,7 @@ Item {
                             right: clearIcon.left
                             rightMargin: 10
                         }
-                        color: Theme.palette.green
+                        color: Theme.palette.onsemiOrange
                         font.bold: true
                         selectByMouse: true
                         clip: true
@@ -587,7 +587,7 @@ Item {
                     // intended to demonstrate that we have many categories
                     SGWidgets09.SGToolTipPopup {
                         id: categoryHighlightPopup
-                        color: Qt.lighter(Theme.palette.green, 1.15)
+                        color: Qt.lighter(Theme.palette.onsemiOrange, 1.15)
                         anchors {
                             bottom: parent.top
                             horizontalCenter: parent.horizontalCenter

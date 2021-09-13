@@ -1,4 +1,5 @@
 #include "DocumentManager.h"
+#include <StrataRPC/StrataClient.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -10,23 +11,18 @@
 #include <QDir>
 #include <QList>
 
-DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
-    : QObject(parent),
-      coreInterface_(coreInterface)
+DocumentManager::DocumentManager(strata::strataRPC::StrataClient *strataClient,
+                                 CoreInterface *coreInterface, QObject *parent)
+    : QObject(parent), strataClient_(strataClient), coreInterface_(coreInterface)
 {
-    qCDebug(logCategoryDocumentManager) << "core interface";
-    /*
-        Register document handler with CoreInterface
-        This will also send a command to Nimbus
-    */
-    coreInterface->registerDataSourceHandler("document_progress",
-                                            std::bind(&DocumentManager::documentProgressHandler,
-                                            this, std::placeholders::_1));
-
-    coreInterface->registerDataSourceHandler("document",
-                                            std::bind(&DocumentManager::loadDocumentHandler,
-                                            this, std::placeholders::_1));
-    connect(coreInterface_, &CoreInterface::platformMetaData, this, &DocumentManager::platformMetaDataHandler);
+    strataClient_->registerHandler(
+        "document_progress",
+        std::bind(&DocumentManager::documentProgressHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "document", std::bind(&DocumentManager::loadDocumentHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "platform_meta_data",
+        std::bind(&DocumentManager::platformMetaDataHandler, this, std::placeholders::_1));
 
     init();
 }
@@ -39,7 +35,7 @@ DocumentManager::~DocumentManager ()
 ClassDocuments *DocumentManager::getClassDocuments(const QString &classId)
 {
     if (classes_.contains(classId) == false) {
-        ClassDocuments* classDocs = new ClassDocuments(classId, coreInterface_, this);
+        ClassDocuments *classDocs = new ClassDocuments(classId, strataClient_, coreInterface_, this);
         classes_[classId] = classDocs;
     }
     else if (classes_[classId]->errorString() != ""){

@@ -18,7 +18,7 @@ Rectangle {
     id: controlViewCreatorContainer
     height: container.height
     width: controlViewCreatorRow.implicitWidth
-    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.green : "#444"
+    color: controlViewCreatorMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.onsemiOrange : "#444"
     state: "debug"
 
     MouseArea {
@@ -58,7 +58,7 @@ Rectangle {
             Layout.preferredHeight: controlViewCreatorContainer.height
             Layout.preferredWidth: Layout.preferredHeight
             Layout.alignment: Qt.AlignRight
-            color:controlViewCreatorMouse.containsMouse ? Theme.palette.green : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.green : "#444"
+            color:controlViewCreatorMouse.containsMouse ? Theme.palette.onsemiOrange : closeArea.containsMouse  ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.onsemiOrange : "#444"
 
             SGIcon {
                 id: timesSignIcon
