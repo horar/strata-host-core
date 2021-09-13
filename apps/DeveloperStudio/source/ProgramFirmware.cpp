@@ -212,6 +212,8 @@ bool ProgramFirmware::programAssistedController(const QHash<QString,FlashingData
 {
     // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
 
+    // If the firmware that should be flashed is the same as the current firmware on the platform, the 'Flash' step will be skipped.
+
     bool finished = false;
     const JobType jobType = acquireJobType(payload);
 
@@ -268,7 +270,10 @@ bool ProgramFirmware::programFirmware(const QHash<QString,FlashingData>::Iterato
 
 bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
-    // Download -> Prepare -> Backup -> Flash -> (Restore) -> Finished
+    // Download -> Prepare -> Backup -> (ClearFwClassId) -> Flash -> (Restore) -> (SetFwClassId) -> Finished
+
+    // If flashing assisted platfomr, there are 'ClearFwClassId' and 'SetFwClassId' steps.
+    // If 'Flash' fails, backed up firmware is restored (flashed back to platform).
 
     bool finished = false;
     const JobType jobType = acquireJobType(payload);
@@ -276,6 +281,10 @@ bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterat
     switch (jobType) {
     case JobType::Prepare :
         simpleJob(jobType, deviceIter, payload, 0.5f);
+        break;
+    case JobType::ClearFwClassId :
+    case JobType::SetFwClassId :
+        simpleJob(jobType, deviceIter, payload, 1.0f);
         break;
     case JobType::Download :
     case JobType::Backup :
@@ -415,8 +424,8 @@ void ProgramFirmware::notifyProgressChange(const QHash<QString,FlashingData>::It
 float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, float progress) const
 {
     // 0.99 together
-    const float downloadRange = 0.10f;
-    const float prepareRange = 0.05f;
+    constexpr float downloadRange = 0.10f;
+    constexpr float prepareRange = 0.05f;
     float clearDataRange = 0.0f, backupRange = 0.0f, programRange = 0.0f, setDataRange = 0.0f;
 
     switch (action) {
@@ -431,9 +440,11 @@ float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, fl
         programRange = 0.84f;
         break;
     case Action::ProgramSpecificFirmware :
-        // Download -> Prepare -> Backup -> Flash -> (Restore) -> Finished
-        backupRange = 0.42f;
-        programRange = 0.42f;
+        // Download -> Prepare -> Backup -> (ClearFwClassId) -> Flash -> (Restore) -> (SetFwClassId) -> Finished
+        backupRange = 0.40f;
+        clearDataRange = 0.02f;
+        programRange = 0.40f;
+        setDataRange = 0.02f;
         break;
     }
 
