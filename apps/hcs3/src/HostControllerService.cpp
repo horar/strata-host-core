@@ -823,7 +823,7 @@ constexpr const char* HostControllerService::hcsNotificationTypeToString(hcsNoti
     case hcsNotificationType::updateFirmware:
         type = "update_firmware";
         break;
-   case hcsNotificationType::updateFirmwareJob:
+    case hcsNotificationType::updateFirmwareJob:
         type = "update_firmware_job";
         break;
     case hcsNotificationType::programController:

@@ -1,18 +1,19 @@
 #include "ProgramFirmware.h"
 
+#include <StrataRPC/StrataClient.h>
+
 #include "logging/LoggingQtCategories.h"
 #include <QJsonDocument>
 
 ProgramFirmware::ProgramFirmware(
+        strata::strataRPC::StrataClient *strataClient,
         CoreInterface *coreInterface,
         QObject *parent)
     : QObject(parent),
+      strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
-    connect(coreInterface_, &CoreInterface::programControllerReply, this, &ProgramFirmware::replyHandler);
     connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramFirmware::jobUpdateHandler);
-
-    connect(coreInterface_, &CoreInterface::updateFirmwareReply, this, &ProgramFirmware::replyHandler);
     connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramFirmware::jobUpdateHandler);
 }
 
@@ -30,16 +31,7 @@ bool ProgramFirmware::programAssisted(QString deviceId)
         { "device_id", deviceId }
     };
 
-    QJsonObject cmdMessageObject {
-        { "hcs::cmd", "program_controller" },
-        { "payload", cmdPayloadObject }
-    };
-
-    QJsonDocument doc(cmdMessageObject);
-
-    coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
-
-    return true;
+    return sendCommand(deviceId, QStringLiteral("program_controller"), cmdPayloadObject);
 }
 
 bool ProgramFirmware::programEmbedded(QString deviceId)
@@ -48,9 +40,11 @@ bool ProgramFirmware::programEmbedded(QString deviceId)
         return false;
     }
 
-    flashFirmware(deviceId, QString(), QString(), false);
+    QJsonObject cmdPayloadObject {
+        { "device_id", deviceId }
+    };
 
-    return true;
+    return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
 }
 
 bool ProgramFirmware::programSpecificFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
@@ -59,30 +53,13 @@ bool ProgramFirmware::programSpecificFirmware(QString deviceId, QString firmware
         return false;
     }
 
-    flashFirmware(deviceId, firmwareUri, firmwareMD5, true);
-
-    return true;
-}
-
-void ProgramFirmware::flashFirmware(const QString& deviceId, const QString& firmwareUri, const QString& firmwareMD5, bool specific)
-{
     QJsonObject cmdPayloadObject {
-        { "device_id", deviceId }
+        { "device_id", deviceId },
+        { "path", firmwareUri },
+        { "md5", firmwareMD5 }
     };
 
-    if (specific) {
-        cmdPayloadObject.insert("path", firmwareUri);
-        cmdPayloadObject.insert("md5", firmwareMD5);
-    }
-
-    QJsonObject cmdMessageObject {
-        { "hcs::cmd", "update_firmware" },
-        { "payload", cmdPayloadObject }
-    };
-
-    QJsonDocument doc(cmdMessageObject);
-
-    coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
+    return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
 }
 
 bool ProgramFirmware::requestDevice(const QString& deviceId, Action action, const QString& firmwareUri, const QString& firmwareMD5)
@@ -98,6 +75,22 @@ bool ProgramFirmware::requestDevice(const QString& deviceId, Action action, cons
     }
 
     requestedDevices_.insert(deviceId, FlashingData(action, firmwareUri, firmwareMD5));
+
+    return true;
+}
+
+bool ProgramFirmware::sendCommand(const QString& deviceId, const QString& command, const QJsonObject& payload)
+{
+    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
+
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
+        requestedDevices_.remove(deviceId);
+        return false;
+    }
+
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &ProgramFirmware::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &ProgramFirmware::replyHandler);
 
     return true;
 }
