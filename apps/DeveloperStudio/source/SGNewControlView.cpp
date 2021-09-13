@@ -1,17 +1,11 @@
 #include "SGNewControlView.h"
-
 #include "SGUtilsCpp.h"
-
-#include <QDebug>
-#include <QString>
-#include <QFileInfo>
-#include <QUrl>
+#include "logging/LoggingQtCategories.h"
 
 #include <QRegularExpression>
 
 SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 {
-
 }
 
 /***
@@ -57,39 +51,28 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
     foreach (QString oldFile, oldDir.entryList(QDir::Files)) {
         QFileInfo from(oldDir, oldFile);
         QFileInfo to(newDir, oldFile);
-        if (QFile::exists(to.absoluteFilePath())) {
-            // Overwrites the files while true
-            if (resolveConflict) {
-                if (!QFile::remove(to.absoluteFilePath())) {
-                    qCritical() << "The file" << to.absoluteFilePath() << "could not be removed";
-                    return false;
-                }
-            }
+
+        // Attempt to remove file with the same name in destination directory (if exists)
+        if (QFile::exists(to.absoluteFilePath()) && resolveConflict && !QFile::remove(to.absoluteFilePath())) {
+            qCCritical(logCategoryControlViewCreator) << "The file" << to.absoluteFilePath() << "could not be removed";
+            return false;
         }
 
-        // Ensures we copy every file
+        // Attempt to copy file from old directory to destination directory
         if (!QFile::copy(from.absoluteFilePath(), to.absoluteFilePath())) {
-            qCritical() << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
+            qCCritical(logCategoryControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
             return false;
         }
 
         // We need this because copying files from a qresource path yields a readonly file by default
         QFile::setPermissions(to.absoluteFilePath(), QFileDevice::WriteUser | QFileDevice::ReadUser);
 
-        // Checks if is qrc file, rename qrc file
         if (to.fileName() == "qml.qrc") {
-            const QString oldQrcPath = rootPath_ + oldFile;
-            const QString newQrcPath = rootPath_ + "qml-views-" + projectName_ + ".qrc";
-
-            // Rename qrc file to 'qml-views-<projectName>.qrc'
-            QFile::rename(oldQrcPath, newQrcPath);
-
-            qrcPath_ = newQrcPath;
-            qDebug() << "qrc path" << qrcPath_;
-        }
-
-        // Checks if is CMakeLists.txt file, replace project name
-        if (to.fileName() == "CMakeLists.txt") {
+            // Checks if is qml.qrc file, set qrcPath_
+            qrcPath_ = rootPath_ + oldFile;
+            qCDebug(logCategoryControlViewCreator) << "QRC path:" << qrcPath_;
+        } else if (to.fileName() == "CMakeLists.txt") {
+            // Checks if is CMakeLists.txt file, replace project name
             replaceProjectNameInCMakeListsFile(to.absoluteFilePath());
         }
     }
@@ -99,18 +82,19 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
         QFileInfo from(oldDir, copyDir);
         QFileInfo to(newDir, copyDir);
 
+        // Make path to the new directory
+        QDir root = QDir::root();
+        if (!root.mkpath(to.absoluteFilePath())) {
+            qCCritical(logCategoryControlViewCreator) << "Unable to add new directory";
+            return false;
+        }
+
         QFileInfo fromRes(from.absoluteFilePath());
         QDir fromDir(fromRes.absoluteFilePath());
         QDir toDir(to.absoluteFilePath());
-        // Had to add this in so that we could make a path to the new directory
-        QDir root = QDir::root();
-        if (!root.mkpath(to.absoluteFilePath())) {
-            qCritical() << "Unable to add new directory";
-            return false;
-        }
         // Recursive call to traverse the whole directory
-        if (copyFiles(fromDir, toDir, resolveConflict) == false) {
-            qCritical() << "The directory is unable to recursively add files and dirs to new directory" << oldDir.path();
+        if (!copyFiles(fromDir, toDir, resolveConflict)) {
+            qCCritical(logCategoryControlViewCreator) << "The directory is unable to recursively add files and dirs to new directory" << oldDir.path();
             return false;
         }
     }
@@ -125,16 +109,16 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
 void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeListsFilePath) {
     QFile cmakeInFile(cmakeListsFilePath);
     if (!cmakeInFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qCritical() << "Failed to edit CMakeLists template file with project name";
+        qCCritical(logCategoryControlViewCreator) << "Failed to edit CMakeLists template file with project name";
         return;
     }
-    QString cmakeText = cmakeInFile.readAll();
 
-    // These regular expressions will be found in the input file (CMakeLists.txt file)
+    // This regular expression will be found in the input file (CMakeLists.txt file)
     QRegularExpression re("template");
 
     // Replace regular expressions with projectName_
     QString replacementText(projectName_);
+    QString cmakeText = cmakeInFile.readAll();
     cmakeText.replace(re, replacementText);
 
     // Save new CMakeLists.txt file in same path
@@ -143,7 +127,7 @@ void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeLi
         QTextStream out(&cmakeOutFile);
         out << cmakeText;
     } else {
-        qCritical() << "Failed to edit CMakeLists template file with project name";
+        qCCritical(logCategoryControlViewCreator) << "Failed to edit CMakeLists template file with project name";
     }
 
     cmakeInFile.close();
