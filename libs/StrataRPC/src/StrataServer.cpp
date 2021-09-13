@@ -104,7 +104,7 @@ void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray 
 
     Message clientMessage;
     clientMessage.clientID = clientId;
-    ApiVersion apiVersion;
+    ApiVersion apiVersion = ApiVersion::none;
 
     Client client = clientsController_->getClient(clientMessage.clientID);
 
@@ -119,7 +119,6 @@ void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray 
                 apiVersion = ApiVersion::v2;
                 qCDebug(logCategoryStrataServer) << "API v2";
             } else {
-                apiVersion = ApiVersion::none;
                 QString errorMessage(QStringLiteral("Unknown API."));
                 qCCritical(logCategoryStrataServer) << errorMessage;
                 emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
