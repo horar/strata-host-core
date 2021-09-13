@@ -97,38 +97,6 @@ Item {
             active: true
         }
 
-        // Copy shortcut, will copy the selected text into the user's clipboard
-        Shortcut {
-            sequence: StandardKey.Copy
-
-            property TextEdit selection: TextEdit {}
-
-            onActivated: {
-                // loop over every index in model and look for selected text
-                for (var i = 0; i < consoleLogs.model.count; i++) {
-                    var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
-                    if (listElement.selection) {
-                        selection.text += (listElement.selection + "\n") // adds only the selected text
-                    }
-                }
-                selection.selectAll() // everything in selection is confirmed to be highlighted text
-                selection.copy() // copies to user's clipboard
-                selection.text = "" // resets selection.text
-            }
-        }
-
-        // Select all shortcut, will highlight all the text in the console. Then the user can copy all.
-        Shortcut {
-            sequence: StandardKey.SelectAll
-
-            onActivated: {
-                for (var i = 0; i < consoleLogs.model.count; i++) {
-                    var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
-                    listElement.state = "allSelected" // sets state of every index to allSelected
-                }
-            }
-        }
-
         delegate: Item  {
             id: consoleDelegate
             height: consoleMessage.height
@@ -297,6 +265,104 @@ Item {
             height: 1
             Drag.active: consoleMouseArea.drag.active
             Component.onCompleted: dragitem.parent = consoleMouseArea
+        }
+
+        TextEdit {
+            id: copyHelp // Use TextEdit functions to copy and select all in the console log.
+        }
+
+        Loader {
+            id: contextMenu
+            anchors.fill: parent
+
+            sourceComponent: Item {
+                property alias contextMenuVisible: contextMenuEdit.visible
+
+                SGAbstractContextMenu {
+                    id: contextMenuEdit
+
+                    Action {
+                        id: copyAction
+                        text: qsTr("Copy")
+                        onTriggered: {
+                            consoleLogs.copySelected()
+                        }
+                    }
+
+                    Action {
+                        id: selectAction
+                        text: qsTr("Select All")
+                        onTriggered: {
+                            consoleLogs.selectAll()
+                        }
+                    }
+
+                    onClosed: {
+                        consoleLogs.forceActiveFocus()
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.IBeamCursor
+                    acceptedButtons: Qt.RightButton
+
+                    onReleased: {
+                        if (containsMouse) {
+                            contextMenuEdit.popup(null)
+                        }
+                    }
+
+                    onClicked: {
+                        consoleLogs.forceActiveFocus()
+                    }
+                }
+            }
+        }
+
+        // Copy shortcut
+        Shortcut {
+            sequence: StandardKey.Copy
+
+            onActivated: {
+                consoleLogs.copySelected()
+            }
+        }
+
+        // Select all shortcut
+        Shortcut {
+            sequence: StandardKey.SelectAll
+
+            onActivated: {
+                consoleLogs.selectAll()
+            }
+        }
+
+        // Copy the selected text into the user's clipboard
+        function copySelected() {
+            // loop over every index in model and look for selected text
+            for (var i = 0; i < consoleLogs.model.count; i++) {
+                var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
+                if (listElement.selection) {
+                    // adds selected text to text field of copyHelp
+                    if (copyHelp.text) {
+                        copyHelp.text += ('\n' + listElement.selection)
+                    } else {
+                        copyHelp.text += (listElement.selection)
+                    }
+                }
+            }
+            copyHelp.selectAll()
+            copyHelp.copy()
+            copyHelp.text = "" // resets copyHelp.text
+        }
+
+        // Highlight all the text in the console. Then the user can copy all.
+        function selectAll() {
+            for (var i = 0; i < consoleLogs.model.count; i++) {
+                var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
+                listElement.state = "allSelected" // sets state of every index to allSelected
+            }
         }
     }
 
