@@ -179,6 +179,7 @@ SGWidgets.SGMainWindow {
         onJobStarted: {
             PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", true)
             PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0.0)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", "")
         }
 
         onJobProgressUpdate: {
