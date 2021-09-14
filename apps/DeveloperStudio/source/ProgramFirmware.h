@@ -4,7 +4,6 @@
 
 #include <QObject>
 #include <QHash>
-#include <QPair>
 #include <QString>
 #include <QJsonObject>
 
@@ -43,7 +42,7 @@ private:
     enum class Action {
         ProgramAssisted,
         ProgramEmbedded,
-        ProgramSpecificFirmware,
+        ProgramSpecificFirmware
     };
     enum class JobType {
         Download,
@@ -65,14 +64,14 @@ private:
     };
 
     struct FlashingData {
-        QString uri;
-        QString md5;
+        QString firmwareUri;
+        QString firmwareMd5;
         QString status;
         Action action;
         float progress;
         FlashingData(Action a, const QString& uri, const QString& md5) :
-            uri(uri),
-            md5(md5),
+            firmwareUri(uri),
+            firmwareMd5(md5),
             action(a),
             progress(0.0f)
         { }

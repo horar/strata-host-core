@@ -104,7 +104,7 @@ QJsonObject ProgramFirmware::acquireProgramFirmwareData(QString deviceId, QStrin
         return payload;
     }
 
-    if ((deviceIter.value().uri == firmwareUri) && (deviceIter.value().md5 == firmwareMD5)) {
+    if ((deviceIter.value().firmwareUri == firmwareUri) && (deviceIter.value().firmwareMd5 == firmwareMD5)) {
         payload.insert("status", deviceIter.value().status);
         payload.insert("progress", deviceIter.value().progress);
     }
@@ -134,11 +134,11 @@ void ProgramFirmware::replyHandler(QJsonObject payload)
         return;
     }
 
-    if (requestedDevice.value().uri.isEmpty()) {
-        requestedDevice.value().uri = payload.value(QStringLiteral("path")).toString();
+    if (requestedDevice.value().firmwareUri.isEmpty()) {
+        requestedDevice.value().firmwareUri = payload.value(QStringLiteral("path")).toString();
     }
-    if (requestedDevice.value().md5.isEmpty()) {
-        requestedDevice.value().md5 = payload.value(QStringLiteral("md5")).toString();
+    if (requestedDevice.value().firmwareMd5.isEmpty()) {
+        requestedDevice.value().firmwareMd5 = payload.value(QStringLiteral("md5")).toString();
     }
 
     const QString jobId = payload.value(QStringLiteral("job_id")).toString();
@@ -151,7 +151,7 @@ void ProgramFirmware::replyHandler(QJsonObject payload)
 
     jobIdHash_.insert(jobId, deviceId);
 
-    emit jobStarted(deviceId, requestedDevice.value().uri, requestedDevice.value().md5);
+    emit jobStarted(deviceId, requestedDevice.value().firmwareUri, requestedDevice.value().firmwareMd5);
 }
 
 void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
@@ -180,7 +180,7 @@ void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
         jobIdHash_.erase(jobIter);
     }
 
-    bool finished;
+    bool finished = false;
     const Action action = deviceIter.value().action;
 
     switch (action) {
