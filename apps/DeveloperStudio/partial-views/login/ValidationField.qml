@@ -59,8 +59,6 @@ TextField {
         layer.effect: DropShadow {
             horizontalOffset: 0
             verticalOffset: 2
-            radius: 5.0
-            samples: 10
             color: "#40000000"
         }
 

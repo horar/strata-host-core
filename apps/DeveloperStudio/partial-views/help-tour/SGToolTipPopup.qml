@@ -72,10 +72,8 @@ Popup {
             layer.effect:  DropShadow {
                 horizontalOffset: 1.5
                 verticalOffset: 1.5
-                radius: 6.0
                 samples: 13
                 color: "#88000000"
-                visible: root.visible
             }
         }
 

@@ -98,7 +98,6 @@ Item {
                         layer.effect: DropShadow {
                             horizontalOffset: 10
                             verticalOffset: 10
-                            radius: 8.0
                             samples: 17
                             color: "#40000000"
                         }

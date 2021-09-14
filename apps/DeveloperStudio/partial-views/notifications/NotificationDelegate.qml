@@ -18,7 +18,7 @@ MouseArea { // MouseArea is needed to prevent any cursor hover effects from item
     property int modelIndex
     property int shadowVerticalOffset: 3
     property int shadowHorizontalOffset: 1
-    property int shadowRadius: 8
+    property int shadowRadius: 9
 
     Component.onCompleted: {
         opacity = 1
@@ -45,9 +45,6 @@ MouseArea { // MouseArea is needed to prevent any cursor hover effects from item
             color: Qt.rgba(0, 0, 0, .5)
             horizontalOffset: shadowHorizontalOffset
             verticalOffset: shadowVerticalOffset
-            radius: shadowRadius
-            smooth: true
-            samples: radius*2
         }
 
         Timer {
