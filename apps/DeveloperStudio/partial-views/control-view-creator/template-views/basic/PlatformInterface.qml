@@ -24,7 +24,6 @@ PlatformInterfaceBase {
 
     QtObject {
         id: notifications
-
     }
 
     /******************************************************************
