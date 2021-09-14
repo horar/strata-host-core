@@ -14,20 +14,20 @@ Popup {
     focus: true
     padding: 0
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    background: Rectangle {
+        layer.enabled: true
+        layer.effect: DropShadow {
+            horizontalOffset: 1
+            verticalOffset: 3
+            radius: 15.0
+            samples: 30
+            color: "#cc000000"
+        }
+    }
 
     property alias url: webview.url
 
-    DropShadow {
-        width: webPopup.width
-        height: webPopup.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: 30
-        color: "#cc000000"
-        source: webPopup.background
-        cached: true
-    }
+    
 
     Rectangle {
         id: popupContainer

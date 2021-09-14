@@ -90,33 +90,21 @@ Item {
                     width: Math.max(loginContainer.width, loginArea.width)
                     height: Math.max(loginContainer.height, loginArea.height)
 
-                    Item {
+                    Rectangle {
                         id: loginContainer
                         width: 800
                         height: loginContainerColumn.height + 40
-                        anchors {
-                            centerIn: parent
-                            verticalCenterOffset: -50
-                        }
-
-                        Rectangle {
-                            id: loginBackground
-                            color: "white"
-                            anchors {
-                                fill: parent
-                            }
-                            visible: false
-                            radius: 10
-                        }
-
-                        DropShadow {
-                            anchors.fill: loginBackground
-                            source: loginBackground
+                        layer.enabled: true
+                        layer.effect: DropShadow {
                             horizontalOffset: 10
                             verticalOffset: 10
                             radius: 8.0
                             samples: 17
                             color: "#40000000"
+                        }
+                        anchors {
+                            centerIn: parent
+                            verticalCenterOffset: -50
                         }
 
                         ColumnLayout {

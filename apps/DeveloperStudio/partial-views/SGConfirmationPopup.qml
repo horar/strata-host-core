@@ -14,6 +14,16 @@ Popup {
     modal: true
     padding: 0
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    background: Rectangle {
+        layer.enabled: true
+        layer.effect: DropShadow {
+            horizontalOffset: 1
+            verticalOffset: 3
+            radius: 15.0
+            samples: 30
+            color: "#cc000000"
+        }
+    }
 
     property alias titleText: confirmTitle.text
     property alias popupText: confirmText.text
@@ -46,18 +56,6 @@ Popup {
 
     onPopupClosed: {
         close();
-    }
-
-    DropShadow {
-        width: root.width
-        height: root.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: 30
-        color: "#cc000000"
-        source: root.background
-        cached: true
     }
 
     Rectangle {
