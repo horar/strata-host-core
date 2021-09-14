@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 TextEdit {
     id: msgText
@@ -14,6 +15,7 @@ TextEdit {
     selectByMouse: false // selection determined by dragArea
     selectionColor: Theme.palette.highlight
     persistentSelection: true
+    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontMultiplier
 
     property bool current: false
 

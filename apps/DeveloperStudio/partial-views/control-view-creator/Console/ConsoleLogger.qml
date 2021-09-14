@@ -269,54 +269,46 @@ Item {
 
         TextEdit {
             id: copyHelp // Use TextEdit functions to copy and select all in the console log.
+            visible: false
         }
 
-        Loader {
-            id: contextMenu
+        SGAbstractContextMenu {
+            id: contextMenuEdit
+
+            Action {
+                id: copyAction
+                text: qsTr("Copy")
+                onTriggered: {
+                    consoleLogs.copySelected()
+                }
+            }
+
+            Action {
+                id: selectAction
+                text: qsTr("Select All")
+                onTriggered: {
+                    consoleLogs.selectAll()
+                }
+            }
+
+            onClosed: {
+                consoleLogs.forceActiveFocus()
+            }
+        }
+
+        MouseArea {
             anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.RightButton
 
-            sourceComponent: Item {
-                property alias contextMenuVisible: contextMenuEdit.visible
-
-                SGAbstractContextMenu {
-                    id: contextMenuEdit
-
-                    Action {
-                        id: copyAction
-                        text: qsTr("Copy")
-                        onTriggered: {
-                            consoleLogs.copySelected()
-                        }
-                    }
-
-                    Action {
-                        id: selectAction
-                        text: qsTr("Select All")
-                        onTriggered: {
-                            consoleLogs.selectAll()
-                        }
-                    }
-
-                    onClosed: {
-                        consoleLogs.forceActiveFocus()
-                    }
+            onReleased: {
+                if (containsMouse) {
+                    contextMenuEdit.popup(null)
                 }
+            }
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.IBeamCursor
-                    acceptedButtons: Qt.RightButton
-
-                    onReleased: {
-                        if (containsMouse) {
-                            contextMenuEdit.popup(null)
-                        }
-                    }
-
-                    onClicked: {
-                        consoleLogs.forceActiveFocus()
-                    }
-                }
+            onClicked: {
+                consoleLogs.forceActiveFocus()
             }
         }
 
