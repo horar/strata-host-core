@@ -16,6 +16,11 @@ class SGNewControlView;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
 
+namespace strata::strataRPC
+{
+class StrataClient;
+}
+
 class SDSModel: public QObject
 {
     Q_OBJECT
@@ -30,6 +35,7 @@ class SDSModel: public QObject
     Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
+    Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -47,6 +53,7 @@ public:
     VisualEditorUndoStack* visualEditorUndoStack() const;
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
+    strata::strataRPC::StrataClient *strataClient() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -66,6 +73,7 @@ private slots:
 
 private:
     bool hcsConnected_ = false;
+    strata::strataRPC::StrataClient *strataClient_{nullptr};
     CoreInterface *coreInterface_{nullptr};
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};

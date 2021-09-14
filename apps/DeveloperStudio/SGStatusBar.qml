@@ -697,6 +697,6 @@ Rectangle {
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
         Authenticator.logout()
         PlatformSelection.logout()
-        sdsModel.coreInterface.unregisterClient()
+        sdsModel.strataClient.sendRequest("unregister", {})
     }
 }

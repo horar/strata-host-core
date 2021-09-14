@@ -98,7 +98,7 @@ SGWidgets.SGMainWindow {
         NavigationControl.init(statusBarLoader, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
-            PlatformSelection.initialize(sdsModel.coreInterface)
+            PlatformSelection.initialize(sdsModel.coreInterface, sdsModel.strataClient)
         }
         initialized()
     }
@@ -121,7 +121,7 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.coreInterface.unregisterClient();
+                                           sdsModel.strataClient.sendRequest("unregister", {});
                                            if (SessionUtils.settings.rememberMe === false) {
                                                SessionUtils.settings.clear()
                                            }
@@ -235,17 +235,17 @@ SGWidgets.SGMainWindow {
         target: sdsModel.coreInterface
 
         onPlatformListChanged: {
-            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", platformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.generatePlatformSelectorModel(list)
+                PlatformSelection.generatePlatformSelectorModel(platformList)
             }
         }
 
         onConnectedPlatformListChanged: {
-            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", connectedPlatformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
-                PlatformSelection.parseConnectedPlatforms(list)
+                PlatformSelection.parseConnectedPlatforms(connectedPlatformList)
             }
         }
     }

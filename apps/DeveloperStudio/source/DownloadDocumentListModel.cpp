@@ -1,17 +1,20 @@
 #include <DownloadDocumentListModel.h>
+#include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+
+#include "logging/LoggingQtCategories.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileInfo>
 #include <QDir>
 #include <QVector>
 #include <QDebug>
-#include "logging/LoggingQtCategories.h"
 
-DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterface, QObject *parent)
-    : QAbstractListModel(parent),
-      coreInterface_(coreInterface)
+DownloadDocumentListModel::DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
+                                                     CoreInterface *coreInterface, QObject *parent)
+    : QAbstractListModel(parent), strataClient_(strataClient), coreInterface_(coreInterface)
 {
-
     connect(coreInterface_, &CoreInterface::downloadPlatformFilepathChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
     connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileProgress, this, &DownloadDocumentListModel::singleDownloadProgressHandler);
     connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileFinished, this, &DownloadDocumentListModel::singleDownloadFinishedHandler);
@@ -187,15 +190,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
         {"destination_dir", saveUrl.path()}
     };
 
-    QJsonObject message
-    {
-        {"hcs::cmd", "download_files"},
-        {"payload", payload},
-    };
-
-    doc.setObject(message);
-
-    coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
+    strataClient_->sendRequest("download_files", payload);
 
     emit downloadInProgressChanged();
 }
