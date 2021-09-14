@@ -7,7 +7,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
 
-import "ConsoleMessages"
+import "console-messages"
 
 Item {
     id: root

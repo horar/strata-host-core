@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
-import "./WebPopup"
+import "./web-popup"
 
 Popup {
     id: webPopup

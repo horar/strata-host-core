@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.3
 
 import tech.strata.sgwidgets 1.0
 import ".."
-import "../LayoutPopupContext"
+import "../layout-popup-context"
 
 ColumnLayout {
     spacing: 1

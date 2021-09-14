@@ -7,8 +7,8 @@ import tech.strata.commoncpp 1.0
 import tech.strata.SGQrcTreeModel 1.0
 import tech.strata.SGFileTabModel 1.0
 
-import "Editor/"
-import "Sidebar/"
+import "editor/"
+import "sidebar/"
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "../"
 

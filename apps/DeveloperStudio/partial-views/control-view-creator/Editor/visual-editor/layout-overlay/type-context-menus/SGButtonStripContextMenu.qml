@@ -5,19 +5,19 @@ import QtQuick.Dialogs 1.3
 
 import tech.strata.sgwidgets 1.0
 import ".."
-import "../LayoutPopupContext"
+import "../layout-popup-context"
 
 ColumnLayout {
     spacing: 1
 
     ContextMenuButton {
-        text: "Set Title"
+        text: "Set Orientation"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
             menuLoader.active = true
-            menuLoader.item.text = layoutOverlayRoot.sourceItem.title
-            menuLoader.item.sourceProperty = "title"
+            menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
+            menuLoader.item.label = "Select the orientation."
             contextMenu.close()
         }
     }
