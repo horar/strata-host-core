@@ -46,7 +46,7 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     }
 
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
-    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
+    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription}
 
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
