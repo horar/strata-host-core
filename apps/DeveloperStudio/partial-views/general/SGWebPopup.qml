@@ -26,8 +26,6 @@ Popup {
 
     property alias url: webview.url
 
-    
-
     Rectangle {
         id: popupContainer
         width: webPopup.width
