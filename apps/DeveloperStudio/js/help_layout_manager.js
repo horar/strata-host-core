@@ -72,7 +72,6 @@ function createView(device_id) {
         "view_tours" : []
     }
     views.push(view)
-    return
 }
 
 function createTour(viewIndex, tourName) {
