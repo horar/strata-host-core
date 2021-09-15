@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Title"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
             menuLoader.item.sourceProperty = "title"
@@ -26,7 +26,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set X Title"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
             menuLoader.item.sourceProperty = "xTitle"
@@ -39,7 +39,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Y Title"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
             menuLoader.item.sourceProperty = "yTitle"
@@ -52,7 +52,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set X Min"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMin
             menuLoader.item.sourceProperty = "xMin"
@@ -70,7 +70,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set X Max"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMax
             menuLoader.item.sourceProperty = "xMax"
@@ -88,7 +88,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Y Min"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMin
             menuLoader.item.sourceProperty = "yMin"
@@ -106,7 +106,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Y Max"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMax
             menuLoader.item.sourceProperty = "yMax"
@@ -124,7 +124,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set GridColor"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.color = layoutOverlayRoot.sourceItem.gridColor
             menuLoader.item.sourceProperty = "gridColor"
@@ -136,7 +136,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Show/hide X Grid"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.xGrid
             menuLoader.item.label = "Toggle switch to show/hide X Grid"
@@ -149,7 +149,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Show/hide Y Grid"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.yGrid
             menuLoader.item.label = "Toggle switch to show/hide Y Grid"

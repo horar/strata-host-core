@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set From Value"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fromText.text
             menuLoader.item.sourceProperty = "from"
@@ -31,7 +31,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set To Value"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.toText.text
             menuLoader.item.sourceProperty = "to"
@@ -49,7 +49,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Text Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
@@ -61,7 +61,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set InputBox Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "inputBox.boxColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.inputBox.boxColor

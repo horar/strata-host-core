@@ -27,11 +27,14 @@
         <file alias="sidebar/RenameFilePopup.qml">partial-views/control-view-creator/sidebar/RenameFilePopup.qml</file>
         <file alias="ConfirmClosePopup.qml">partial-views/control-view-creator/ConfirmClosePopup.qml</file>
         <file alias="utils/template_selection.js">partial-views/control-view-creator/utils/template_selection.js</file>
+        <file alias="console/ContextMenu.qml">partial-views/control-view-creator/console/ContextMenu.qml</file>
+        <file alias="console/ConsoleLogList.qml">partial-views/control-view-creator/console/ConsoleLogList.qml</file>
         <file alias="console/ConsoleLogger.qml">partial-views/control-view-creator/console/ConsoleLogger.qml</file>
         <file alias="console/ConsoleContainer.qml">partial-views/control-view-creator/console/ConsoleContainer.qml</file>
         <file alias="console/ViewConsoleContainer.qml">partial-views/control-view-creator/console/ViewConsoleContainer.qml</file>
         <file alias="console/NewWindowConsoleLog.qml">partial-views/control-view-creator/console/NewWindowConsoleLog.qml</file>
         <file alias="components/SGControlViewButton.qml">partial-views/control-view-creator/components/SGControlViewButton.qml</file>
+        <file alias="console/console-messages/ConsoleDelegate.qml">partial-views/control-view-creator/console/console-messages/ConsoleDelegate.qml</file>
         <file alias="console/console-messages/ConsoleMessage.qml">partial-views/control-view-creator/console/console-messages/ConsoleMessage.qml</file>
         <file alias="console/console-messages/ConsoleTime.qml">partial-views/control-view-creator/console/console-messages/ConsoleTime.qml</file>
         <file alias="console/console-messages/ConsoleTypes.qml">partial-views/control-view-creator/console/console-messages/ConsoleTypes.qml</file>

@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Orientation"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
@@ -25,7 +25,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set RadioButton Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "radioColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.radioColor
@@ -37,7 +37,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Text Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
@@ -49,7 +49,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set radioSize"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "radioSize"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radioSize
@@ -67,7 +67,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set fontSizeMultiplier"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "fontSizeMultiplier"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fontSizeMultiplier

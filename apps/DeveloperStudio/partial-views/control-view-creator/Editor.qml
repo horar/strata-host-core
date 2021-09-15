@@ -297,7 +297,7 @@ Item {
                                             case "jpeg":
                                             case "png":
                                             case "gif":
-                                                return "./Editor/ImageContainer.qml"
+                                                return "./editor/ImageContainer.qml"
                                             case "qml":
                                             case "csv":
                                             case "html":
@@ -305,9 +305,9 @@ Item {
                                             case "json":
                                             case "qrc":
                                             case "ts":
-                                                return "./Editor/TextEditorContainer.qml"
+                                                return "./editor/TextEditorContainer.qml"
                                             default:
-                                                return "./Editor/UnsupportedFileType.qml"
+                                                return "./editor/UnsupportedFileType.qml"
                                         }
                                     }
                                 }
