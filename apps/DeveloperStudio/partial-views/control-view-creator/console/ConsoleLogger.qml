@@ -23,9 +23,9 @@ Item {
     }
 
     onFontMultiplierChanged: {
-        if(fontMultiplier >= 2.5){
+        if (fontMultiplier >= 2.5) {
             fontMultiplier = 2.5
-        } else if(fontMultiplier <= 0.8){
+        } else if (fontMultiplier <= 0.8) {
             fontMultiplier = 0.8
         }
     }
@@ -51,7 +51,7 @@ Item {
         sortEnabled: true
         invokeCustomFilter: true
 
-        function filterAcceptsRow(row){
+        function filterAcceptsRow(row) {
             var item = sourceModel.get(row)
             var notFilter = true
             var containFilterText = true
@@ -59,7 +59,7 @@ Item {
             if  (filterTypeWarning || filterTypeError) {
                 if (filterTypeError && filterTypeWarning) {
                     notFilter = (item.type === "warning") || (item.type === "error")
-                } else if(filterTypeWarning) {
+                } else if (filterTypeWarning) {
                     notFilter = (item.type === "warning")
                 } else {
                     notFilter = (item.type === "error")
@@ -77,11 +77,11 @@ Item {
             }
         }
 
-        function containsFilterText(item){
+        function containsFilterText(item) {
             var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
 
             if (searchBox.useCase) {
-                if(searchMsg.includes(searchText)){
+                if (searchMsg.includes(searchText)) {
                     return true
                 } else {
                     return false
@@ -102,8 +102,9 @@ Item {
     Connections {
         id: srcConnection
         target: sdsModel.qtLogger
+
         onLogMsg: {
-            if(controlViewCreatorRoot.visible && editor.fileTreeModel.url.toString() !== "" && msg){
+            if (controlViewCreatorRoot.visible && editor.fileTreeModel.url.toString() !== "" && msg) {
                 consoleModel.append({
                                         time: timestamp(),
                                         type: getMsgType(type),
@@ -119,8 +120,7 @@ Item {
 
                 if (type === 1) {
                     consoleLogWarningCount += 1
-                }
-                if (type === 2) {
+                } else if (type === 2) {
                     consoleLogErrorCount += 1
                 }
             }
@@ -143,14 +143,16 @@ Item {
 
     function getMsgType(type) {
         switch (type) {
-            case 0: 
+            case 0:
                 return "debug"
-            case 1: 
+            case 1:
                 return "warning"
-        	case 2: 
+            case 2:
                 return "error"
-        	case 4: 
+            case 4:
                 return "info"
+            default:
+                console.error(Logger.devStudioCategory, "Received invalid log message type.")
         }
     }
 
