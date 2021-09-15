@@ -5,17 +5,17 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
-SGTextEdit {
+TextEdit {
     id: msgText
-    fontSizeMultiplier: fontMultiplier
     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
     color: current ? "black" : "#777"
     readOnly: true
     selectByMouse: false // selection determined by dragArea
     selectionColor: Theme.palette.highlight
-    contextMenuEnabled: true
     persistentSelection: true
+    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontMultiplier
 
     property bool current: false
 
