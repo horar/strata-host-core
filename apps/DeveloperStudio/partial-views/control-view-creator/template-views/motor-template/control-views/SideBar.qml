@@ -18,7 +18,7 @@ Rectangle {
     Layout.fillHeight: true
 
     // ======================== UI Initialization ======================== //
-    
+
     Component.onCompleted: {
 
         // ------------------------ Help Messages ------------------------ //
@@ -29,7 +29,7 @@ Rectangle {
         Help.registerTarget(brakeButton, "Click the brake icon to brake the motor. This feature may be disabled for certain motor controllers.", 4, "BasicControlHelp")
         Help.registerTarget(directionButton, "Click this icon to change the direction of the motor. The direction control icon will be disabled while the motor is spinning. The direction is from the perspective of the load. An incorrect hall polarity configuration could render the rotation direction invalid.", 5, "BasicControlHelp")
         Help.registerTarget(warnings, "Warnings and errors are shown here for events such as Over Current Protection (OCP).", 6, "BasicControlHelp")
-        
+
     }
 
     // ======================== UI Objects ======================== //
@@ -62,7 +62,7 @@ Rectangle {
             iconOpacity: speedPop.visible ? .5 : 1
 
             onClicked:  {
-                speedPop.visible = !speedPop.visible                
+                speedPop.visible = !speedPop.visible
             }
 
             SliderPopup {
@@ -75,7 +75,7 @@ Rectangle {
                 to: platformInterface.notifications.target_speed.scales.index_0
                 from: platformInterface.notifications.target_speed.scales.index_1
                 stepSize: platformInterface.notifications.target_speed.scales.index_2
-                // states.index_0 for non-arrays, SGSlider automatically sets opacity 
+                // states.index_0 for non-arrays, SGSlider automatically sets opacity
                 // i.e., state = Disabled (not grayed) set to state = Disabled and Grayed Out
                 enabled: !Boolean(platformInterface.notifications.target_speed.states.index_0)
 
@@ -101,7 +101,7 @@ Rectangle {
             onClicked:  {
                 accelPop.visible = !accelPop.visible
             }
-                
+
             SliderPopup {
                 id: accelPop
                 x: parent.width + sideBarColumn.anchors.margins
@@ -112,7 +112,7 @@ Rectangle {
                 to: platformInterface.notifications.acceleration.scales.index_0
                 from: platformInterface.notifications.acceleration.scales.index_1
                 stepSize: platformInterface.notifications.acceleration.scales.index_2
-                // states.index_0 for non-arrays, SGSlider automatically sets opacity 
+                // states.index_0 for non-arrays, SGSlider automatically sets opacity
                 // i.e., state = Disabled (not grayed) set to state = Disabled and Grayed Out
                 enabled: !Boolean(platformInterface.notifications.acceleration.states.index_0)
 
@@ -120,7 +120,7 @@ Rectangle {
                     console.log("onUserSet:", value)
                     platformInterface.commands.acceleration.update(accelPop.value)
                 }
-                
+
             }
         }
 
@@ -134,7 +134,7 @@ Rectangle {
             toolTipText: platformInterface.notifications.run.caption
 
             property bool run: false
-            
+
             // states
             Connections {
                 target: platformInterface.notifications.run
@@ -148,7 +148,7 @@ Rectangle {
                     }
                     // Ensure direction button is disabled when control_props enables motor
                     directionButton.enabled = !runButton.run
-                    directionButton.opacity = !runButton.run ? 1 : .5  
+                    directionButton.opacity = !runButton.run ? 1 : .5
                 }
             }
 
@@ -166,7 +166,7 @@ Rectangle {
             source: "qrc:/images/brake.svg"
             iconColor: brake ? "yellow" : "white"
             toolTipText: platformInterface.notifications.brake.caption
-            
+
             property bool brake: false
 
             // states
@@ -221,7 +221,7 @@ Rectangle {
                 target: runButton
                 onClicked: {
                     directionButton.enabled = !runButton.run
-                    directionButton.opacity = !runButton.run ? 1 : .5                    
+                    directionButton.opacity = !runButton.run ? 1 : .5
                 }
             }
 
