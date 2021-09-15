@@ -398,7 +398,7 @@ ColumnLayout {
                         return ""
                     case 1:
                         menuLoaded = true
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/visual-editorMenu.qml"
+                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/VisualEditorMenu.qml"
                 }
             }
         }
