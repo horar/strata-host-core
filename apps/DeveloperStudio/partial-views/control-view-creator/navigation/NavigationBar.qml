@@ -66,7 +66,7 @@ Rectangle {
         SGSideNavItem {
             iconText: "Debug"
             iconSource: "qrc:/sgimages/tools.svg"
-            enabled: viewStack.currentIndex === 2 && debugPanel.debugVisible
+            enabled: viewStack.currentIndex === 2
             selected: isDebugMenuOpen
             tooltipDescription: "Toggle debug panel"
 
@@ -99,6 +99,7 @@ Rectangle {
                 width: 22
                 count: consoleLogErrorCount + consoleLogWarningCount
                 type: consoleLogErrorCount > 0 ? "error" : consoleLogWarningCount > 0 ? "warning" : "error"
+                color: "dark grey"
             }
         }
 
