@@ -23,4 +23,9 @@ const data = [
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/motor-template.jpg",
                    "path": ":/partial-views/control-view-creator/template-views/motor-template/"
                },
+               {
+                   "name": "Command Queue Template",
+                   "image": "qrc:/partial-views/control-view-creator/template-views/images/command-queue.jpg",
+                   "path": ":/partial-views/control-view-creator/template-views/command-queue/"
+               },
            ]

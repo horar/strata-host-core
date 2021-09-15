@@ -1,0 +1,18 @@
+{
+    "commands": [
+        {
+            "cmd": "get_data"
+        },
+        {
+            "cmd": "set_data",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                }
+            ]
+        }
+    ],
+    "notifications": []
+}
