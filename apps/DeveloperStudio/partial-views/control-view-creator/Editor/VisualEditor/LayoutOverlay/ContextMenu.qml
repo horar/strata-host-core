@@ -109,15 +109,30 @@ Popup {
         }
 
         ContextMenuButton {
+            id: objectAlignButton
             text: "Object Alignment"
-            onClicked: {
-                alignmentPopup.open()
-            }
+            chevron: true
 
+            MouseArea {
+                anchors.fill: objectAlignButton
+                onClicked: {
+                    // if popup will spawn past edge of window, place it on the opposite side of the click
+                    if (((objectAlignButton.width + mouse.y + alignmentPopup.height) + layoutOverlayRoot.y) > layoutOverlayRoot.parent.height) {
+                        alignmentPopup.y = objectAlignButton.y - alignmentPopup.height
+                    } else {
+                        alignmentPopup.y = objectAlignButton.height
+                    }
+                    if (((objectAlignButton.width + mouse.x + alignmentPopup.width) + layoutOverlayRoot.x) > layoutOverlayRoot.parent.width) {
+                        alignmentPopup.x = objectAlignButton.x - alignmentPopup.width
+                    } else {
+                        alignmentPopup.x = objectAlignButton.width
+                    }
+                    alignmentPopup.open()
+                }
+            }
             Popup {
                 id: alignmentPopup
                 x: parent.width
-                y: parent.y - height
                 padding: 0
                 background: Rectangle {
                     layer.enabled: true
@@ -135,16 +150,7 @@ Popup {
                     spacing: 1
 
                     ContextMenuButton {
-                        text: "Bottom"
-
-                        onClicked: {
-                            visualEditor.functions.alignItem("bottom", layoutOverlayRoot.layoutInfo.uuid)
-                            contextMenu.close()
-                        }
-                    }
-
-                    ContextMenuButton {
-                        text: "Horizontal Center"
+                        text: "Horizontal Center (approx.)"
 
                         onClicked: {
                             visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
@@ -153,34 +159,7 @@ Popup {
                     }
 
                     ContextMenuButton {
-                        text: "Left"
-
-                        onClicked: {
-                            visualEditor.functions.alignItem("left", layoutOverlayRoot.layoutInfo.uuid)
-                            contextMenu.close()
-                        }
-                    }
-
-                    ContextMenuButton {
-                        text: "Right"
-
-                        onClicked: {
-                            visualEditor.functions.alignItem("right", layoutOverlayRoot.layoutInfo.uuid)
-                            contextMenu.close()
-                        }
-                    }
-
-                    ContextMenuButton {
-                        text: "Top"
-
-                        onClicked: {
-                            visualEditor.functions.alignItem("top", layoutOverlayRoot.layoutInfo.uuid)
-                            contextMenu.close()
-                        }
-                    }
-
-                    ContextMenuButton {
-                        text: "Vertical Center"
+                        text: "Vertical Center (approx.)"
 
                         onClicked: {
                             visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
