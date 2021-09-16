@@ -594,7 +594,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
         }
 
         firmwareData.firmwareClassId = platform->classId(); // class_id becomes the new fw_class_id
-        QString controllerClassId = platform->controllerClassId();
+        const QString controllerClassId = platform->controllerClassId();
         if (firmwareData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
             errorString = "Platform has no classId or controllerClassId";
             break;
@@ -607,6 +607,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
         }
         firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(firmware->partialUri));
         firmwareData.firmwareMD5 = firmware->md5;
+        const QString path = firmware->partialUri;
 
         QString currentMD5; // get md5 accorging to old fw_class_id and fw version
         if (platform->applicationVer().isEmpty() == false
@@ -632,7 +633,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
         QJsonObject payloadBody {
             { "job_id", firmwareData.jobUuid },
             { "device_id", QLatin1String(firmwareData.deviceId) },
-            { "path", firmware->partialUri },
+            { "path", path },
             { "md5", firmwareData.firmwareMD5 }
         };
         strataServer_->notifyClient(message, payloadBody, strataRPC::ResponseType::Response);
