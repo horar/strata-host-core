@@ -21,6 +21,7 @@ RowLayout {
 
     CheckBox {
         id: checkBox
+        palette.highlight: Theme.palette.onsemiOrange
     }
 
     SGText {

@@ -16,6 +16,7 @@ import Qt.labs.settings 1.1
 import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/constants.js" as Constants
@@ -471,6 +472,8 @@ Window {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 enabled: !platformRow.connected
+                                palette.highlight: Theme.palette.onsemiOrange
+
                                 
                                 property bool textChanged: false
 
@@ -653,6 +656,7 @@ Window {
                             Layout.preferredWidth: versionFiller.width
                             placeholderText: "Firmware version #.#.#"
                             text: platformRow.firmware_version
+                            palette.highlight: Theme.palette.onsemiOrange
 
                             property bool textChanged: false
 
@@ -678,6 +682,7 @@ Window {
                             placeholderText: "Bootloader version #.#.#"
                             text: platformRow.bootloader_version
                             enabled: !platformRow.connected
+                            palette.highlight: Theme.palette.onsemiOrange
 
                             property bool textChanged: false
 
