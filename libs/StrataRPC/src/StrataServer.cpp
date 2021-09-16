@@ -476,7 +476,7 @@ void StrataServer::dispatchHandler(const Message &clientMessage)
         return;
     }
 
-    qCDebug(logCategoryStrataServer) << "Handler executed.";
+    // qCDebug(logCategoryStrataServer) << "Handler executed.";
 }
 
 void StrataServer::connectorErrorHandler(const ServerConnectorError &errorType,
