@@ -30,7 +30,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     strata::SGUserSettings
     strata::SGUtilsCpp
-    strata::SGQWTPlot
+    strata::SGQwtPlot
     strata::SGSortFilterProxyModel
     strata::SGVersionUtils
     strata::SGJLinkConnector

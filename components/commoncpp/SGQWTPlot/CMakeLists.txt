@@ -1,4 +1,4 @@
-project(SGQWTPlot
+project(SGQwtPlot
     VERSION 1.0
     LANGUAGES CXX
 )
@@ -9,13 +9,13 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME}
-    include/SGQWTPlot.h
-    include/SGQWTPlotCurve.h
-    include/SGQWTPlotCurveData.h
+    include/SGQwtPlot.h
+    include/SGQwtPlotCurve.h
+    include/SGQwtPlotCurveData.h
 
-    src/SGQWTPlot.cpp
-    src/SGQWTPlotCurve.cpp
-    src/SGQWTPlotCurveData.cpp
+    src/SGQwtPlot.cpp
+    src/SGQwtPlotCurve.cpp
+    src/SGQwtPlotCurveData.cpp
 
     src/logging/LoggingQtCategories.cpp
 )

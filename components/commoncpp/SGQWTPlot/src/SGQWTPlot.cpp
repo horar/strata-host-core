@@ -1,13 +1,13 @@
-#include "SGQWTPlot.h"
+#include "SGQwtPlot.h"
 #include "logging/LoggingQtCategories.h"
 
-SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
+SGQwtPlot::SGQwtPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
     setFlag(QQuickItem::ItemHasContents, true);
     setAcceptedMouseButtons(Qt::AllButtons);
 
-    connect(this, &QQuickPaintedItem::widthChanged, this, &SGQWTPlot::updatePlotSize);
-    connect(this, &QQuickPaintedItem::heightChanged, this, &SGQWTPlot::updatePlotSize);
+    connect(this, &QQuickPaintedItem::widthChanged, this, &SGQwtPlot::updatePlotSize);
+    connect(this, &QQuickPaintedItem::heightChanged, this, &SGQwtPlot::updatePlotSize);
 
     qwtPlot = new QwtPlot();
     qwtGrid_ = new QwtPlotGrid();
@@ -24,7 +24,7 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     setGridColor("lightgrey");
 }
 
-SGQWTPlot::~SGQWTPlot()
+SGQwtPlot::~SGQwtPlot()
 {
     delete qwtGrid_;
     qwtGrid_ = nullptr;
@@ -33,7 +33,7 @@ SGQWTPlot::~SGQWTPlot()
     qwtPlot = nullptr;
 }
 
-void SGQWTPlot::paint(QPainter* painter)
+void SGQwtPlot::paint(QPainter* painter)
 {
     if (qwtPlot != nullptr) {
         QPixmap picture(boundingRect().size().toSize());
@@ -45,7 +45,7 @@ void SGQWTPlot::paint(QPainter* painter)
     }
 }
 
-void SGQWTPlot::initialize()
+void SGQwtPlot::initialize()
 {
     // after replot() we need to call update() - so disable auto replot
     qwtPlot->setAutoReplot(false);
@@ -53,13 +53,13 @@ void SGQWTPlot::initialize()
     update();
 }
 
-void SGQWTPlot::update()
+void SGQwtPlot::update()
 {
     qwtPlot->replot();
     QQuickPaintedItem::update();
 }
 
-void SGQWTPlot::shiftXAxis(double offset)
+void SGQwtPlot::shiftXAxis(double offset)
 {
     double xMin = this->xMin() + offset;
     double xMax = this->xMax() + offset;
@@ -70,7 +70,7 @@ void SGQWTPlot::shiftXAxis(double offset)
     }
 }
 
-void SGQWTPlot::shiftYAxis(double offset)
+void SGQwtPlot::shiftYAxis(double offset)
 {
     double yMin = this->yMin() + offset;
     double yMax = this->yMax() + offset;
@@ -81,7 +81,7 @@ void SGQWTPlot::shiftYAxis(double offset)
     }
 }
 
-void SGQWTPlot::shiftYAxisRight(double offset)
+void SGQwtPlot::shiftYAxisRight(double offset)
 {
     double yMinRight = this->yRightMin() + offset;
     double yMaxRight = this->yRightMax() + offset;
@@ -92,12 +92,12 @@ void SGQWTPlot::shiftYAxisRight(double offset)
     }
 }
 
-bool SGQWTPlot::yRightVisible()
+bool SGQwtPlot::yRightVisible()
 {
     return yRightVisible_;
 }
 
-void SGQWTPlot::setYRightVisible(bool showYRightAxis)
+void SGQwtPlot::setYRightVisible(bool showYRightAxis)
 {
     if (yRightVisible_ != showYRightAxis) {
         yRightVisible_ = showYRightAxis;
@@ -110,7 +110,7 @@ void SGQWTPlot::setYRightVisible(bool showYRightAxis)
     }
 }
 
-void SGQWTPlot::autoScaleXAxis()
+void SGQwtPlot::autoScaleXAxis()
 {
     qwtPlot->setAxisAutoScale(qwtPlot->xBottom);
     emit xMinChanged();
@@ -122,7 +122,7 @@ void SGQWTPlot::autoScaleXAxis()
 }
 
 
-void SGQWTPlot::autoScaleYAxis()
+void SGQwtPlot::autoScaleYAxis()
 {
     qwtPlot->setAxisAutoScale(qwtPlot->yLeft);
     qwtPlot->setAxisAutoScale(qwtPlot->yRight);
@@ -136,14 +136,14 @@ void SGQWTPlot::autoScaleYAxis()
     }
 }
 
-SGQWTPlotCurve* SGQWTPlot::createCurve(QString name)
+SGQwtPlotCurve* SGQwtPlot::createCurve(QString name)
 {
-    SGQWTPlotCurve* curve = new SGQWTPlotCurve(name);
+    SGQwtPlotCurve* curve = new SGQwtPlotCurve(name);
     curve->setGraph(this);
     return curve;
 }
 
-SGQWTPlotCurve* SGQWTPlot::curve(int index)
+SGQwtPlotCurve* SGQwtPlot::curve(int index)
 {
     if (index >= curves_.length() || index < 0) {
         qCWarning(logCategoryQWTPlot) << "Index out of range:" << index;
@@ -152,27 +152,27 @@ SGQWTPlotCurve* SGQWTPlot::curve(int index)
     return curves_[index];
 }
 
-void SGQWTPlot::removeCurve(SGQWTPlotCurve* curve)
+void SGQwtPlot::removeCurve(SGQwtPlotCurve* curve)
 {
     curve->unsetGraph();
     delete curve;
     updateCurveList();
 }
 
-void SGQWTPlot::removeCurve(int index)
+void SGQwtPlot::removeCurve(int index)
 {
-    SGQWTPlotCurve *curve = SGQWTPlot::curve(index);
+    SGQwtPlotCurve *curve = SGQwtPlot::curve(index);
     if (curve != nullptr) {
         removeCurve(curve);
     }
 }
 
-int SGQWTPlot::getCount()
+int SGQwtPlot::getCount()
 {
     return curves_.count();
 }
 
-void SGQWTPlot::setXGrid(bool showGrid)
+void SGQwtPlot::setXGrid(bool showGrid)
 {
     if (xGrid_ != showGrid) {
         xGrid_ = showGrid;
@@ -185,12 +185,12 @@ void SGQWTPlot::setXGrid(bool showGrid)
     }
 }
 
-bool SGQWTPlot::xGrid()
+bool SGQwtPlot::xGrid()
 {
     return xGrid_;
 }
 
-void SGQWTPlot::setYGrid(bool showGrid)
+void SGQwtPlot::setYGrid(bool showGrid)
 {
     if (yGrid_ != showGrid) {
         yGrid_ = showGrid;
@@ -203,12 +203,12 @@ void SGQWTPlot::setYGrid(bool showGrid)
     }
 }
 
-bool SGQWTPlot::yGrid()
+bool SGQwtPlot::yGrid()
 {
     return yGrid_;
 }
 
-void SGQWTPlot::setXMinorGrid(bool showGrid)
+void SGQwtPlot::setXMinorGrid(bool showGrid)
 {
     if (xMinorGrid_ != showGrid) {
         xMinorGrid_ = showGrid;
@@ -222,12 +222,12 @@ void SGQWTPlot::setXMinorGrid(bool showGrid)
     }
 }
 
-bool SGQWTPlot::xMinorGrid()
+bool SGQwtPlot::xMinorGrid()
 {
     return xMinorGrid_;
 }
 
-void SGQWTPlot::setYMinorGrid(bool showGrid)
+void SGQwtPlot::setYMinorGrid(bool showGrid)
 {
     if (yMinorGrid_ != showGrid) {
         yMinorGrid_ = showGrid;
@@ -241,12 +241,12 @@ void SGQWTPlot::setYMinorGrid(bool showGrid)
     }
 }
 
-bool SGQWTPlot::yMinorGrid()
+bool SGQwtPlot::yMinorGrid()
 {
     return yMinorGrid_;
 }
 
-void SGQWTPlot::setGridColor(QColor newColor)
+void SGQwtPlot::setGridColor(QColor newColor)
 {
     if (gridColor_ != newColor) {
         gridColor_ = newColor;
@@ -259,7 +259,7 @@ void SGQWTPlot::setGridColor(QColor newColor)
     }
 }
 
-void SGQWTPlot::setXMin(double value)
+void SGQwtPlot::setXMin(double value)
 {
     qwtPlot->setAxisScale( qwtPlot->xBottom, value, xMax());
     emit xMinChanged();
@@ -271,12 +271,12 @@ void SGQWTPlot::setXMin(double value)
     }
 }
 
-double SGQWTPlot::xMin()
+double SGQwtPlot::xMin()
 {
     return qwtPlot->axisScaleDiv(qwtPlot->xBottom).lowerBound();
 }
 
-void SGQWTPlot::setXMax(double value)
+void SGQwtPlot::setXMax(double value)
 {
     qwtPlot->setAxisScale( qwtPlot->xBottom, xMin(), value);
     emit xMaxChanged();
@@ -288,12 +288,12 @@ void SGQWTPlot::setXMax(double value)
     }
 }
 
-double SGQWTPlot::xMax()
+double SGQwtPlot::xMax()
 {
     return qwtPlot->axisScaleDiv(qwtPlot->xBottom).upperBound();
 }
 
-void SGQWTPlot::setYMin(double value)
+void SGQwtPlot::setYMin(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yLeft, value, yMax());
     emit yMinChanged();
@@ -305,12 +305,12 @@ void SGQWTPlot::setYMin(double value)
     }
 }
 
-double SGQWTPlot::yMin()
+double SGQwtPlot::yMin()
 {
     return qwtPlot->axisScaleDiv(qwtPlot->yLeft).lowerBound();
 }
 
-void SGQWTPlot::setYMax(double value)
+void SGQwtPlot::setYMax(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yLeft, yMin(), value);
     emit yMaxChanged();
@@ -322,12 +322,12 @@ void SGQWTPlot::setYMax(double value)
     }
 }
 
-double SGQWTPlot::yMax()
+double SGQwtPlot::yMax()
 {
     return qwtPlot->axisScaleDiv(qwtPlot->yLeft).upperBound();
 }
 
-void SGQWTPlot::setYRightMin(double value)
+void SGQwtPlot::setYRightMin(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yRight, value, yRightMax());
     emit yRightMinChanged();
@@ -339,12 +339,12 @@ void SGQWTPlot::setYRightMin(double value)
     }
 }
 
-double SGQWTPlot::yRightMin()
+double SGQwtPlot::yRightMin()
 {
     return qwtPlot->axisScaleDiv(qwtPlot->yRight).lowerBound();
 }
 
-void SGQWTPlot::setYRightMax(double value)
+void SGQwtPlot::setYRightMax(double value)
 {
     qwtPlot->setAxisScale(qwtPlot->yRight, yRightMin(), value);
     emit yRightMaxChanged();
@@ -356,17 +356,17 @@ void SGQWTPlot::setYRightMax(double value)
     }
 }
 
-double SGQWTPlot::yRightMax()
+double SGQwtPlot::yRightMax()
 {
     return qwtPlot->axisScaleDiv(qwtPlot->yRight).upperBound();
 }
 
-QString SGQWTPlot::xTitle()
+QString SGQwtPlot::xTitle()
 {
     return qwtPlot->axisTitle(qwtPlot->xBottom).text();
 }
 
-void SGQWTPlot::setXTitle(QString title)
+void SGQwtPlot::setXTitle(QString title)
 {
     if (title != xTitle()){
         qwtPlot->setAxisTitle(qwtPlot->xBottom, title);
@@ -378,7 +378,7 @@ void SGQWTPlot::setXTitle(QString title)
     }
 }
 
-void SGQWTPlot::setXTitlePixelSize(int pixelSize)
+void SGQwtPlot::setXTitlePixelSize(int pixelSize)
 {
     if (pixelSize != this->xTitlePixelSize()) {
         QwtText title = qwtPlot->axisTitle(qwtPlot->xBottom);
@@ -394,17 +394,17 @@ void SGQWTPlot::setXTitlePixelSize(int pixelSize)
     }
 }
 
-int SGQWTPlot::xTitlePixelSize()
+int SGQwtPlot::xTitlePixelSize()
 {
     return qwtPlot->axisTitle(qwtPlot->xBottom).font().pixelSize();
 }
 
-QString SGQWTPlot::yTitle()
+QString SGQwtPlot::yTitle()
 {
     return qwtPlot->axisTitle(qwtPlot->yLeft).text();
 }
 
-void SGQWTPlot::setYTitle(QString title)
+void SGQwtPlot::setYTitle(QString title)
 {
     if (title != yTitle()) {
         qwtPlot->setAxisTitle(qwtPlot->yLeft, title);
@@ -416,7 +416,7 @@ void SGQWTPlot::setYTitle(QString title)
     }
 }
 
-void SGQWTPlot::setYTitlePixelSize(int pixelSize)
+void SGQwtPlot::setYTitlePixelSize(int pixelSize)
 {
     if (pixelSize != this->yTitlePixelSize()) {
         QwtText title = qwtPlot->axisTitle(qwtPlot->yLeft);
@@ -432,17 +432,17 @@ void SGQWTPlot::setYTitlePixelSize(int pixelSize)
     }
 }
 
-int SGQWTPlot::yTitlePixelSize()
+int SGQwtPlot::yTitlePixelSize()
 {
     return qwtPlot->axisTitle(qwtPlot->yLeft).font().pixelSize();
 }
 
-QString SGQWTPlot::yRightTitle()
+QString SGQwtPlot::yRightTitle()
 {
     return qwtPlot->axisTitle(qwtPlot->yRight).text();
 }
 
-void SGQWTPlot::setYRightTitle(QString title)
+void SGQwtPlot::setYRightTitle(QString title)
 {
     if (title != yRightTitle()) {
         qwtPlot->setAxisTitle(qwtPlot->yRight, title);
@@ -454,7 +454,7 @@ void SGQWTPlot::setYRightTitle(QString title)
     }
 }
 
-void SGQWTPlot::setYRightTitlePixelSize(int pixelSize)
+void SGQwtPlot::setYRightTitlePixelSize(int pixelSize)
 {
     if (pixelSize != this->yRightTitlePixelSize()) {
         QwtText title = qwtPlot->axisTitle(qwtPlot->yRight);
@@ -470,17 +470,17 @@ void SGQWTPlot::setYRightTitlePixelSize(int pixelSize)
     }
 }
 
-int SGQWTPlot::yRightTitlePixelSize()
+int SGQwtPlot::yRightTitlePixelSize()
 {
     return qwtPlot->axisTitle(qwtPlot->yRight).font().pixelSize();
 }
 
-QString SGQWTPlot::title()
+QString SGQwtPlot::title()
 {
     return qwtPlot->title().text();
 }
 
-void SGQWTPlot::setTitle(QString title)
+void SGQwtPlot::setTitle(QString title)
 {
     if (title != this->title()){
         qwtPlot->setTitle(title);
@@ -492,7 +492,7 @@ void SGQWTPlot::setTitle(QString title)
     }
 }
 
-void SGQWTPlot::setTitlePixelSize(int pixelSize)
+void SGQwtPlot::setTitlePixelSize(int pixelSize)
 {
     if (pixelSize != this->titlePixelSize()) {
         QwtTextLabel* titleLabel = qwtPlot->titleLabel();
@@ -507,12 +507,12 @@ void SGQWTPlot::setTitlePixelSize(int pixelSize)
     }
 }
 
-int SGQWTPlot::titlePixelSize()
+int SGQwtPlot::titlePixelSize()
 {
     return qwtPlot->titleLabel()->font().pixelSize();
 }
 
-void SGQWTPlot::setBackgroundColor(QColor newColor)
+void SGQwtPlot::setBackgroundColor(QColor newColor)
 {
     if (backgroundColor_ != newColor) {
         backgroundColor_ = newColor;
@@ -529,7 +529,7 @@ void SGQWTPlot::setBackgroundColor(QColor newColor)
     }
 }
 
-void SGQWTPlot::setForegroundColor(QColor newColor)
+void SGQwtPlot::setForegroundColor(QColor newColor)
 {
     if (foregroundColor_ != newColor) {
         foregroundColor_ = newColor;
@@ -549,7 +549,7 @@ void SGQWTPlot::setForegroundColor(QColor newColor)
     }
 }
 
-void SGQWTPlot::setXLogarithmic(bool logarithmic)
+void SGQwtPlot::setXLogarithmic(bool logarithmic)
 {
     if (logarithmic != xLogarithmic_) {
         xLogarithmic_ = logarithmic;
@@ -570,7 +570,7 @@ void SGQWTPlot::setXLogarithmic(bool logarithmic)
     }
 }
 
-void SGQWTPlot::setYLogarithmic(bool logarithmic)
+void SGQwtPlot::setYLogarithmic(bool logarithmic)
 {
     if (logarithmic != yLogarithmic_) {
         yLogarithmic_ = logarithmic;
@@ -593,7 +593,7 @@ void SGQWTPlot::setYLogarithmic(bool logarithmic)
     }
 }
 
-void SGQWTPlot::setYRightAxisColor(QColor newColor)
+void SGQwtPlot::setYRightAxisColor(QColor newColor)
 {
     if (yRightAxisColor_ != newColor) {
         yRightAxisColor_ = newColor;
@@ -610,7 +610,7 @@ void SGQWTPlot::setYRightAxisColor(QColor newColor)
     }
 }
 
-void SGQWTPlot::setYLeftAxisColor(QColor newColor)
+void SGQwtPlot::setYLeftAxisColor(QColor newColor)
 {
     if (yLeftAxisColor_ != newColor) {
         yLeftAxisColor_ = newColor;
@@ -627,7 +627,7 @@ void SGQWTPlot::setYLeftAxisColor(QColor newColor)
     }
 }
 
-void SGQWTPlot::setXAxisColor(QColor newColor)
+void SGQwtPlot::setXAxisColor(QColor newColor)
 {
     if (xAxisColor_ != newColor) {
         xAxisColor_ = newColor;
@@ -644,7 +644,7 @@ void SGQWTPlot::setXAxisColor(QColor newColor)
     }
 }
 
-void SGQWTPlot::insertLegend(bool legend)
+void SGQwtPlot::insertLegend(bool legend)
 {
     if (legend_ != legend) {
         legend_ = legend;
@@ -661,25 +661,25 @@ void SGQWTPlot::insertLegend(bool legend)
     }
 }
 
-bool SGQWTPlot::legend()
+bool SGQwtPlot::legend()
 {
     return legend_;
 }
 
-void SGQWTPlot::updatePlotSize()
+void SGQwtPlot::updatePlotSize()
 {
     if (qwtPlot != nullptr) {
         qwtPlot->setGeometry(0, 0, static_cast<int>(width()), static_cast<int>(height()));
     }
 }
 
-void SGQWTPlot::updateCurveList()
+void SGQwtPlot::updateCurveList()
 {
-    curves_ = findChildren<SGQWTPlotCurve*>();
+    curves_ = findChildren<SGQwtPlotCurve*>();
     emit countChanged();
 }
 
-QPointF SGQWTPlot::mapToValue(QPointF point)
+QPointF SGQwtPlot::mapToValue(QPointF point)
 {
     qwtPlot->updateLayout();
     QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
@@ -690,7 +690,7 @@ QPointF SGQWTPlot::mapToValue(QPointF point)
     return QPointF(xValue, yValue);
 }
 
-QPointF SGQWTPlot::mapToValueYRight(QPointF point)
+QPointF SGQwtPlot::mapToValueYRight(QPointF point)
 {
     qwtPlot->updateLayout();
     QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
@@ -701,7 +701,7 @@ QPointF SGQWTPlot::mapToValueYRight(QPointF point)
     return QPointF(xValue, yValue);
 }
 
-QPointF SGQWTPlot::mapToPosition(QPointF point)
+QPointF SGQwtPlot::mapToPosition(QPointF point)
 {
     qwtPlot->updateLayout();
     QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
@@ -712,7 +712,7 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
     return QPointF(xPos, yPos);
 }
 
-QPointF SGQWTPlot::mapToPositionYRight(QPointF point)
+QPointF SGQwtPlot::mapToPositionYRight(QPointF point)
 {
     qwtPlot->updateLayout();
     QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);

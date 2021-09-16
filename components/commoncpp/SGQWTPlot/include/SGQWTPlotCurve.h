@@ -1,24 +1,24 @@
 #pragma once
 
-#include "SGQWTPlot.h"
-#include "SGQWTPlotCurveData.h"
+#include "SGQwtPlot.h"
+#include "SGQwtPlotCurveData.h"
 
-class SGQWTPlot;
+class SGQwtPlot;
 
-class SGQWTPlotCurve : public QObject
+class SGQwtPlotCurve : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SGQWTPlotCurve)
+    Q_DISABLE_COPY(SGQwtPlotCurve)
 
-    Q_PROPERTY(SGQWTPlot* graph READ graph WRITE setGraph NOTIFY graphChanged)
+    Q_PROPERTY(SGQwtPlot* graph READ graph WRITE setGraph NOTIFY graphChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(bool autoUpdate MEMBER autoUpdate_ NOTIFY autoUpdateChanged)
     Q_PROPERTY(bool yAxisLeft READ yAxisLeft WRITE setYAxisLeft NOTIFY yAxisLeftChanged)
 
 public:
-    SGQWTPlotCurve(QString name = "", QObject* parent = nullptr);
-    virtual ~SGQWTPlotCurve();
+    SGQwtPlotCurve(QString name = "", QObject* parent = nullptr);
+    virtual ~SGQwtPlotCurve();
 
     Q_INVOKABLE void append(double x, double y);
     Q_INVOKABLE void appendList(const QVariantList &list);
@@ -32,7 +32,7 @@ public:
     Q_INVOKABLE int closestXAxisPointIndex(double xVal);
 
 protected:
-    void setGraph(SGQWTPlot* graph);
+    void setGraph(SGQwtPlot* graph);
     void unsetGraph();
 
 signals:
@@ -43,16 +43,16 @@ signals:
     void yAxisLeftChanged();
 
 private:
-    friend class SGQWTPlot;
+    friend class SGQwtPlot;
 
     QwtPlotCurve* curve_;
     QVector<QPointF> curveData_;
-    SGQWTPlot* graph_ = nullptr;
+    SGQwtPlot* graph_ = nullptr;
     QwtPlot* plot_ = nullptr;
     bool autoUpdate_ = true;
     bool yAxisLeft_ = true;
 
-    SGQWTPlot* graph();
+    SGQwtPlot* graph();
     void setColor(QColor color);
     QColor color();
     void setName(QString name);

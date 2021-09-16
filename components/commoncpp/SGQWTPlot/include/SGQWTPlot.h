@@ -17,14 +17,14 @@
 #include <qwt/qwt_symbol.h>
 #include <qwt/qwt_legend.h>
 
-#include "SGQWTPlotCurve.h"
+#include "SGQwtPlotCurve.h"
 
-class SGQWTPlotCurve;
+class SGQwtPlotCurve;
 
-class SGQWTPlot : public QQuickPaintedItem
+class SGQwtPlot : public QQuickPaintedItem
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SGQWTPlot)
+    Q_DISABLE_COPY(SGQwtPlot)
 
     Q_PROPERTY(double xMin READ xMin WRITE setXMin NOTIFY xMinChanged)
     Q_PROPERTY(double xMax READ xMax WRITE setXMax NOTIFY xMaxChanged)
@@ -58,8 +58,8 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool legend READ legend WRITE insertLegend NOTIFY legendChanged)
 
 public:
-    SGQWTPlot(QQuickItem* parent = nullptr);
-    virtual ~SGQWTPlot();
+    SGQwtPlot(QQuickItem* parent = nullptr);
+    virtual ~SGQwtPlot();
 
     Q_INVOKABLE void initialize();
     Q_INVOKABLE void update();
@@ -68,9 +68,9 @@ public:
     Q_INVOKABLE void shiftYAxisRight(double offset);
     Q_INVOKABLE void autoScaleXAxis();
     Q_INVOKABLE void autoScaleYAxis();
-    Q_INVOKABLE SGQWTPlotCurve* createCurve(QString name);
-    Q_INVOKABLE SGQWTPlotCurve* curve(int index);
-    Q_INVOKABLE void removeCurve(SGQWTPlotCurve* curve);
+    Q_INVOKABLE SGQwtPlotCurve* createCurve(QString name);
+    Q_INVOKABLE SGQwtPlotCurve* curve(int index);
+    Q_INVOKABLE void removeCurve(SGQwtPlotCurve* curve);
     Q_INVOKABLE void removeCurve(int index);
     Q_INVOKABLE QPointF mapToValue(QPointF point);
     Q_INVOKABLE QPointF mapToValueYRight(QPointF point);
@@ -165,9 +165,9 @@ signals:
     void legendChanged();
 
 private:
-    friend class SGQWTPlotCurve;
+    friend class SGQwtPlotCurve;
 
-    QList<SGQWTPlotCurve*> curves_;
+    QList<SGQwtPlotCurve*> curves_;
     QwtPlotGrid * qwtGrid_  = nullptr;
 
     bool xLogarithmic_ = false;

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SGQWTPlotCurve.h"
+#include "SGQwtPlotCurve.h"
 
-class SGQWTPlotCurveData : public QwtSeriesData<QPointF>
+class SGQwtPlotCurveData : public QwtSeriesData<QPointF>
 {
 public:
-    SGQWTPlotCurveData(const QVector<QPointF> *container);
+    SGQwtPlotCurveData(const QVector<QPointF> *container);
 
     // QwtSeriesData interface
     size_t size() const;

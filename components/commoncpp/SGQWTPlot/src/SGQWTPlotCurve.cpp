@@ -1,22 +1,22 @@
-#include "SGQWTPlotCurve.h"
+#include "SGQwtPlotCurve.h"
 #include "logging/LoggingQtCategories.h"
 
-SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
+SGQwtPlotCurve::SGQwtPlotCurve(QString name, QObject* parent) : QObject(parent)
 {
     curve_ = new QwtPlotCurve(name);
     curve_->setStyle(QwtPlotCurve::Lines);
     curve_->setRenderHint(QwtPlotItem::RenderAntialiased);
-    curve_->setData(new SGQWTPlotCurveData(&curveData_));
+    curve_->setData(new SGQwtPlotCurveData(&curveData_));
     curve_->setPaintAttribute(QwtPlotCurve::FilterPoints, true);
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
 }
 
-SGQWTPlotCurve::~SGQWTPlotCurve()
+SGQwtPlotCurve::~SGQwtPlotCurve()
 {
     // QwtPlot class deletes attached QwtPlotItems (i.e. curve_)
 }
 
-void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
+void SGQwtPlotCurve::setGraph(SGQwtPlot *graph)
 {
     if (graph_ != graph) {
         setParent(graph);
@@ -38,7 +38,7 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
     }
 }
 
-void SGQWTPlotCurve::unsetGraph()
+void SGQwtPlotCurve::unsetGraph()
 {
     curve_->detach();
     if (autoUpdate_) {
@@ -48,12 +48,12 @@ void SGQWTPlotCurve::unsetGraph()
     graph_ = nullptr;
 }
 
-SGQWTPlot* SGQWTPlotCurve::graph()
+SGQwtPlot* SGQwtPlotCurve::graph()
 {
     return graph_;
 }
 
-void SGQWTPlotCurve::setName(QString name)
+void SGQwtPlotCurve::setName(QString name)
 {
     if (name != this->name()) {
         curve_->setTitle(name);
@@ -64,12 +64,12 @@ void SGQWTPlotCurve::setName(QString name)
     }
 }
 
-QString SGQWTPlotCurve::name()
+QString SGQwtPlotCurve::name()
 {
     return curve_->title().text();
 }
 
-void SGQWTPlotCurve::setColor(QColor color)
+void SGQwtPlotCurve::setColor(QColor color)
 {
     if (color != this->color()){
         QwtText title = curve_->title().text();
@@ -84,12 +84,12 @@ void SGQWTPlotCurve::setColor(QColor color)
     }
 }
 
-QColor SGQWTPlotCurve::color()
+QColor SGQwtPlotCurve::color()
 {
     return curve_->pen().color();
 }
 
-void SGQWTPlotCurve::setYAxisLeft(bool yleftAxis)
+void SGQwtPlotCurve::setYAxisLeft(bool yleftAxis)
 {
     if (yAxisLeft_ != yleftAxis) {
         yAxisLeft_ = yleftAxis;
@@ -103,19 +103,19 @@ void SGQWTPlotCurve::setYAxisLeft(bool yleftAxis)
     }
 }
 
-bool SGQWTPlotCurve::yAxisLeft()
+bool SGQwtPlotCurve::yAxisLeft()
 {
     return yAxisLeft_;
 }
 
-void SGQWTPlotCurve::update()
+void SGQwtPlotCurve::update()
 {
     if (graph_ != nullptr) {
         graph_->update();
     }
 }
 
-void SGQWTPlotCurve::append(double x, double y)
+void SGQwtPlotCurve::append(double x, double y)
 {
     curveData_.append(QPointF(x, y));
     if (autoUpdate_) {
@@ -123,7 +123,7 @@ void SGQWTPlotCurve::append(double x, double y)
     }
 }
 
-void SGQWTPlotCurve::appendList(const QVariantList &list)
+void SGQwtPlotCurve::appendList(const QVariantList &list)
 {
     bool autoUpdateCache = autoUpdate_;
     autoUpdate_ = false;
@@ -136,7 +136,7 @@ void SGQWTPlotCurve::appendList(const QVariantList &list)
     }
 }
 
-void SGQWTPlotCurve::remove(int index)
+void SGQwtPlotCurve::remove(int index)
 {
     if(index < curveData_.count() && index > -1) {
         curveData_.remove(index);
@@ -146,7 +146,7 @@ void SGQWTPlotCurve::remove(int index)
     }
 }
 
-void SGQWTPlotCurve::clear()
+void SGQwtPlotCurve::clear()
 {
     curveData_.clear();
     if (autoUpdate_) {
@@ -154,7 +154,7 @@ void SGQWTPlotCurve::clear()
     }
 }
 
-QPointF SGQWTPlotCurve::at(int index)
+QPointF SGQwtPlotCurve::at(int index)
 {
     if (index < curveData_.count()) {
         return curveData_[index];
@@ -164,12 +164,12 @@ QPointF SGQWTPlotCurve::at(int index)
     }
 }
 
-int SGQWTPlotCurve::count()
+int SGQwtPlotCurve::count()
 {
     return curveData_.count();
 }
 
-void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
+void SGQwtPlotCurve::shiftPoints(double offsetX, double offsetY)
 {
     for (int i = 0; i < curveData_.length(); i++) {
         curveData_[i].setX(curveData_[i].x() + (offsetX));
@@ -180,7 +180,7 @@ void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
     }
 }
 
-void SGQWTPlotCurve::setSymbol(int newStyle, QColor color, int penStyle, int size)
+void SGQwtPlotCurve::setSymbol(int newStyle, QColor color, int penStyle, int size)
 {
     curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle), QBrush(color), QPen(penStyle), QSize(size, size)));
 
@@ -190,7 +190,7 @@ void SGQWTPlotCurve::setSymbol(int newStyle, QColor color, int penStyle, int siz
 }
 
 // Given any value from the X axis of the graph, find the point in the curve with the nearest X value and return its index
-int SGQWTPlotCurve::closestXAxisPointIndex(double xVal) {
+int SGQwtPlotCurve::closestXAxisPointIndex(double xVal) {
     double diff;
     QPointF currentPoint = QPointF(0,0);
 

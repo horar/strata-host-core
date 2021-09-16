@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
-SGQWTPlot {
+SGQwtPlot {
     id: sgGraph
 
     Component.onCompleted: {

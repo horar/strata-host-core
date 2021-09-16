@@ -1,20 +1,20 @@
-#include "SGQWTPlotCurveData.h"
+#include "SGQwtPlotCurveData.h"
 
-SGQWTPlotCurveData::SGQWTPlotCurveData(const QVector<QPointF> *container) : container_(container)
+SGQwtPlotCurveData::SGQwtPlotCurveData(const QVector<QPointF> *container) : container_(container)
 {
 }
 
-size_t SGQWTPlotCurveData::size() const
+size_t SGQwtPlotCurveData::size() const
 {
     return static_cast<size_t>(container_->size());
 }
 
-QPointF SGQWTPlotCurveData::sample(size_t i) const
+QPointF SGQwtPlotCurveData::sample(size_t i) const
 {
     return container_->at(static_cast<int>(i));
 }
 
-QRectF SGQWTPlotCurveData::boundingRect() const
+QRectF SGQwtPlotCurveData::boundingRect() const
 {
     return qwtBoundingRect(*this);
 }
