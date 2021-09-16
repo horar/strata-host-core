@@ -9,7 +9,7 @@ import QtQml 2.0
 
 
 import "../components"
-import "../Console"
+import "../console"
 
 Item {
     id: consoleLog

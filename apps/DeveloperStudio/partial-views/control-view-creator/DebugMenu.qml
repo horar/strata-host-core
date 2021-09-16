@@ -8,7 +8,7 @@ import tech.strata.signals 1.0
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0
 
-import "./DebugMenu"
+import "debug-menu"
 
 Rectangle {
     id: debugMenuRoot

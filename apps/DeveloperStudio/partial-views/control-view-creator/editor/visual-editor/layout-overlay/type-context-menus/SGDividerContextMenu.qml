@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.3
 
 import tech.strata.sgwidgets 1.0
 import ".."
-import "../LayoutPopupContext"
+import "../layout-popup-context"
 
 ColumnLayout {
     spacing: 1
@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Divider Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "color"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.color
@@ -25,7 +25,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Thickness"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "thickness"
             menuLoader.item.text = layoutOverlayRoot.sourceItem.thickness
@@ -42,7 +42,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Orientation"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ComboBoxPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"
             menuLoader.item.open()
