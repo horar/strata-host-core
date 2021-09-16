@@ -82,13 +82,11 @@ QtObject {
                 for (let k = 0; k < objectPropertiesModel.count; k++) {
                     let tmpValid = checkForDuplicateObjectPropertyNames(objectPropertiesModel, k)
                     if (!tmpValid) {
-                        valid = false
                         allValid = false
                         objectPropertiesModel.setProperty(k, "valid", false)
 
-                        console.error("Duplicate or empty property key in payload property '" + payload.get(i).name + "' found")
-
                         if (shortCircuit) {
+                            console.error("Duplicate or empty property key in payload property '" + payload.get(i).name + "' found")
                             return false
                         }
                     }

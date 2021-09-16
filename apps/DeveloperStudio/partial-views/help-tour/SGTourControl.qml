@@ -20,7 +20,7 @@ Item {
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus(); // focus on this to catch Keys below
-        } else if(focus){
+        } else if (focus){
             focus = false
         }
     }
@@ -72,14 +72,9 @@ Item {
             id: helpText
             color:"grey"
             fontSizeMultiplier: 1.25 //* root.fontSizeMultiplier
-            text: " "
+            text: (root.index + 1) + "/" + Help.tour_count
             anchors {
                 horizontalCenter: column.horizontalCenter
-            }
-            onVisibleChanged: {
-                if (visible) {
-                    text = (root.index + 1) + "/" + Help.tour_count
-                }
             }
         }
 

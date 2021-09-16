@@ -8,7 +8,7 @@ import tech.strata.commoncpp 1.0
 import QtTest 1.1
 
 UIBase { // start_uibase
-    
+
     // ======================== General Settings ======================== //
 
     columnCount: 30
@@ -17,7 +17,7 @@ UIBase { // start_uibase
     // ======================== Aliases ======================== //
 
     // ======================== UI Initialization ======================== //
-    
+
     Component.onCompleted: {
 
         // ------------------------ Help Messages ------------------------ //
@@ -38,8 +38,8 @@ UIBase { // start_uibase
 
         // -------------- Other Startup Tasks -------------- //
         // Such as synchronizing the UI and firmware
-    
-    }    
+
+    }
 
     // ======================== UI Objects ======================== //
 
@@ -114,21 +114,21 @@ UIBase { // start_uibase
         layoutInfo.rowsTall: 2
         layoutInfo.xColumns: 7
         layoutInfo.yRows: 9
- 
+
         checkedLabel: platformInterface.notifications.toggle.values.index_0
         uncheckedLabel: platformInterface.notifications.toggle.values.index_1
         labelsInside: true
 
         checked: platformInterface.notifications.toggle.value
         // states = 1 not applicable as enabled changes opacity
-        enabled: !Boolean(platformInterface.notifications.toggle.states.index_0) 
-        
+        enabled: !Boolean(platformInterface.notifications.toggle.states.index_0)
+
         onToggled: {
             console.log("Toggle switched:", checked)
             platformInterface.notifications.toggle.value = checked
             platformInterface.commands.toggle.update(checked)
         }
-        
+
     } // end_d68f2
 
     LayoutText { // start_65728
@@ -173,7 +173,7 @@ UIBase { // start_uibase
         to: platformInterface.notifications.slider.scales.index_0
         stepSize: platformInterface.notifications.slider.scales.index_2
         // states = 1 not applicable as enabled changes opacity
-        enabled: !Boolean(platformInterface.notifications.slider.states.index_0) 
+        enabled: !Boolean(platformInterface.notifications.slider.states.index_0)
 
         live: false
         inputBox.readOnly: true
@@ -390,12 +390,12 @@ UIBase { // start_uibase
         currentIndex: platformInterface.notifications.combobox.value
         // states = 1 not applicable as enabled changes opacity
         enabled: !Boolean(platformInterface.notifications.combobox.states.index_0)
-        
+
         onActivated: {
             console.log("ComboBox activated:", currentIndex, currentText)
             platformInterface.notifications.combobox.value = currentIndex
             platformInterface.commands.combobox.update(currentIndex)
-        }        
+        }
     } // end_f5402
 
     LayoutText { // start_b10f9
@@ -447,7 +447,7 @@ UIBase { // start_uibase
             platformInterface.notifications.slider.scales.index_1 = config.slider.scales[1]
             platformInterface.notifications.slider.scales.index_2 = config.slider.scales[2]
             platformInterface.notifications.slider.states.index_0 = config.slider.states[0]
-            platformInterface.notifications.slider.value = config.slider.value            
+            platformInterface.notifications.slider.value = config.slider.value
             platformInterface.notifications.slider.values.index_0 = config.slider.values[0]
             platformInterface.notifications.slider.unit = config.slider.unit
             platformInterface.commands.slider.update(platformInterface.notifications.slider.value)
@@ -458,7 +458,7 @@ UIBase { // start_uibase
             platformInterface.notifications.infobox_integer.scales.index_1 = config.infobox_integer.scales[1]
             platformInterface.notifications.infobox_integer.scales.index_2 = config.infobox_integer.scales[2]
             platformInterface.notifications.infobox_integer.states.index_0 = config.infobox_integer.states[0]
-            platformInterface.notifications.infobox_integer.value = config.infobox_integer.value            
+            platformInterface.notifications.infobox_integer.value = config.infobox_integer.value
             platformInterface.notifications.infobox_integer.values.index_0 = config.infobox_integer.values[0]
             platformInterface.notifications.infobox_integer.unit = config.infobox_integer.unit
             platformInterface.commands.infobox_integer.update(platformInterface.notifications.infobox_integer.value)
@@ -469,7 +469,7 @@ UIBase { // start_uibase
             platformInterface.notifications.infobox_double.scales.index_1 = config.infobox_double.scales[1]
             platformInterface.notifications.infobox_double.scales.index_2 = config.infobox_double.scales[2]
             platformInterface.notifications.infobox_double.states.index_0 = config.infobox_double.states[0]
-            platformInterface.notifications.infobox_double.value = config.infobox_double.value            
+            platformInterface.notifications.infobox_double.value = config.infobox_double.value
             platformInterface.notifications.infobox_double.values.index_0 = config.infobox_double.values[0]
             platformInterface.notifications.infobox_double.unit = config.infobox_double.unit
             platformInterface.commands.infobox_double.update(platformInterface.notifications.infobox_double.value)
@@ -480,7 +480,7 @@ UIBase { // start_uibase
             platformInterface.notifications.infobox_string.scales.index_1 = config.infobox_string.scales[1]
             platformInterface.notifications.infobox_string.scales.index_2 = config.infobox_string.scales[2]
             platformInterface.notifications.infobox_string.states.index_0 = config.infobox_string.states[0]
-            platformInterface.notifications.infobox_string.value = config.infobox_string.value            
+            platformInterface.notifications.infobox_string.value = config.infobox_string.value
             platformInterface.notifications.infobox_string.values.index_0 = config.infobox_string.values[0]
             platformInterface.notifications.infobox_string.unit = config.infobox_integer.unit
             platformInterface.commands.infobox_string.update(platformInterface.notifications.infobox_string.value)
@@ -500,7 +500,7 @@ UIBase { // start_uibase
             platformInterface.commands.combobox.update(platformInterface.notifications.combobox.value)
         }
     }
-    
+
     // This function save settings to a .json configurations on disk, later to be recalled into platform interface by user
     function saveSettings(settingsName) {
         sgUserSettings.writeFile(`${settingsName}.json`,
