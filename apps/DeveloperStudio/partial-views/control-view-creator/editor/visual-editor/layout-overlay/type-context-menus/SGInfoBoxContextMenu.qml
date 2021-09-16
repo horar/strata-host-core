@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.3
 
 import tech.strata.sgwidgets 1.0
 import ".."
-import "../LayoutPopupContext"
+import "../layout-popup-context"
 
 ColumnLayout {
     spacing: 1
@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Text"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.text
             menuLoader.item.sourceProperty = "text"
@@ -25,7 +25,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set PlaceholderText"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.placeholderText
             menuLoader.item.sourceProperty = "placeholderText"
@@ -38,7 +38,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set TextColor"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor
@@ -50,7 +50,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set BoxColor"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "boxColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.boxColor

@@ -8,8 +8,8 @@ import tech.strata.sglayout 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
-import "VisualEditor/LayoutOverlay"
-import "VisualEditor"
+import "visual-editor/layout-overlay"
+import "visual-editor"
 
 ColumnLayout {
     id: visualEditor

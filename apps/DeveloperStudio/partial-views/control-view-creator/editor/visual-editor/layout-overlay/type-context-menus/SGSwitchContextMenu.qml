@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.3
 
 import tech.strata.sgwidgets 1.0
 import ".."
-import "../LayoutPopupContext"
+import "../layout-popup-context"
 
 ColumnLayout {
     spacing: 1
@@ -13,7 +13,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Checked Label"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.checkedLabel
             menuLoader.item.sourceProperty = "checkedLabel"
@@ -25,7 +25,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Unchecked Label"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/TextPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.uncheckedLabel
             menuLoader.item.sourceProperty = "uncheckedLabel"
@@ -37,7 +37,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Groove Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "grooveColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.grooveColor
@@ -49,7 +49,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Groove FillColor"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "grooveFillColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.grooveFillColor
@@ -61,7 +61,7 @@ ColumnLayout {
     ContextMenuButton {
         text: "Set Text Color"
         onClicked: {
-            menuLoader.setSource("qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/ColorPopup.qml")
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
             menuLoader.item.color = layoutOverlayRoot.sourceItem.textColor

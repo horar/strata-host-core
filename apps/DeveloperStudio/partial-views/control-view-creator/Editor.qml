@@ -7,8 +7,8 @@ import tech.strata.commoncpp 1.0
 import tech.strata.SGQrcTreeModel 1.0
 import tech.strata.SGFileTabModel 1.0
 
-import "Editor/"
-import "Sidebar/"
+import "editor/"
+import "sidebar/"
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "../"
 
@@ -300,7 +300,7 @@ Item {
                                             case "jpeg":
                                             case "png":
                                             case "gif":
-                                                return "./Editor/ImageContainer.qml"
+                                                return "./editor/ImageContainer.qml"
                                             case "qml":
                                             case "csv":
                                             case "html":
@@ -308,9 +308,9 @@ Item {
                                             case "json":
                                             case "qrc":
                                             case "ts":
-                                                return "./Editor/TextEditorContainer.qml"
+                                                return "./editor/TextEditorContainer.qml"
                                             default:
-                                                return "./Editor/UnsupportedFileType.qml"
+                                                return "./editor/UnsupportedFileType.qml"
                                         }
                                     }
                                 }
