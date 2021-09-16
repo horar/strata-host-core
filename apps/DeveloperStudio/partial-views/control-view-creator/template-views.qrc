@@ -49,7 +49,6 @@
         <file>template-views/motor-template/Control.qml</file>
         <file>template-views/motor-template/qml.qrc</file>
         <file>template-views/images/motor-template.jpg</file>
-        <file>template-views/command-queue/control-views/BasicControl.qml</file>
         <file>template-views/command-queue/CMakeLists.txt</file>
         <file>template-views/command-queue/Control.qml</file>
         <file>template-views/command-queue/platformInterface.json</file>
