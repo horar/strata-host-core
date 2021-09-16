@@ -1,4 +1,4 @@
-project(command-queue
+project(template
     LANGUAGES NONE
 )
 
