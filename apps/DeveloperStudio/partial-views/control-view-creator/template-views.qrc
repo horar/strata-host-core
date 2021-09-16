@@ -8,6 +8,7 @@
         <file>template-views/template/qml.qrc</file>
         <file>template-views/template/control-views/AdvancedControl.qml</file>
         <file>template-views/template/control-views/BasicControl.qml</file>
+        <file>template-views/template/control-views/ViewCommunication.qml</file>
         <file>template-views/images/basic.jpg</file>
         <file>template-views/images/template.jpg</file>
         <file>template-views/template/control-views/images/StrataToBoard.png</file>
@@ -25,5 +26,29 @@
         <file>template-views/visual-editor/platformInterface.json</file>
         <file>template-views/template/platformInterface.json</file>
         <file>template-views/template/PlatformInterface.qml</file>
+        <file>template-views/motor-template/control-views/Advanced.qml</file>
+        <file>template-views/motor-template/control-views/Basic.qml</file>
+        <file>template-views/motor-template/control-views/DebugMenu.qml</file>
+        <file>template-views/motor-template/control-views/platformInterface.json</file>
+        <file>template-views/motor-template/control-views/PlatformInterface.qml</file>
+        <file>template-views/motor-template/control-views/SideBar.qml</file>
+        <file>template-views/motor-template/dev-tools/platform.py</file>
+        <file>template-views/motor-template/dev-tools/README.md</file>
+        <file>template-views/motor-template/images/brake.svg</file>
+        <file>template-views/motor-template/images/play-solid.svg</file>
+        <file>template-views/motor-template/images/redo-alt-solid.svg</file>
+        <file>template-views/motor-template/images/stop-solid.svg</file>
+        <file>template-views/motor-template/images/tach.svg</file>
+        <file>template-views/motor-template/images/undo.svg</file>
+        <file>template-views/motor-template/settings/All Disabled.json</file>
+        <file>template-views/motor-template/settings/Alternate Configuration.json</file>
+        <file>template-views/motor-template/settings/Platform Interface Defaults.json</file>
+        <file>template-views/motor-template/widgets/FaultLight.qml</file>
+        <file>template-views/motor-template/widgets/IconButton.qml</file>
+        <file>template-views/motor-template/widgets/SliderPopup.qml</file>
+        <file>template-views/motor-template/CMakeLists.txt</file>
+        <file>template-views/motor-template/Control.qml</file>
+        <file>template-views/motor-template/qml.qrc</file>
+        <file>template-views/images/motor-template.jpg</file>
     </qresource>
 </RCC>

@@ -37,7 +37,7 @@ Rectangle {
     property string last_name: ""
 
     property color backgroundColor: "#3a3a3a"
-    property color menuColor: Theme.palette.green
+    property color menuColor: Theme.palette.onsemiOrange
     property color alternateColor1: "#575757"
     property bool hasNotifications: criticalNotifications.count > 0
 
@@ -104,9 +104,9 @@ Rectangle {
             Layout.preferredHeight:40
             Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
+            color: platformSelectorMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.onsemiOrange : "#444"
 
-            property color menuColor: Theme.palette.green
+            property color menuColor: Theme.palette.onsemiOrange
 
             SGText {
                 color: "white"
@@ -139,7 +139,7 @@ Rectangle {
 
             visible: platformTabListView.contentWidth > platformTabListView.width
 
-            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : "#444"
 
             onEnabledChanged: {
                 if (enabled == false) {
@@ -328,7 +328,7 @@ Rectangle {
 
             visible: platformTabListView.contentWidth > platformTabListView.width
 
-            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : "#444"
 
             onEnabledChanged: {
                 if (enabled == false) {
@@ -488,7 +488,7 @@ Rectangle {
                     context.lineTo(width, height);
                     context.lineTo(0, height);
                     context.closePath();
-                    context.fillStyle = Theme.palette.green;
+                    context.fillStyle = Theme.palette.onsemiOrange;
                     context.fill();
                 }
             }
@@ -697,6 +697,6 @@ Rectangle {
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
         Authenticator.logout()
         PlatformSelection.logout()
-        sdsModel.coreInterface.unregisterClient()
+        sdsModel.strataClient.sendRequest("unregister", {})
     }
 }

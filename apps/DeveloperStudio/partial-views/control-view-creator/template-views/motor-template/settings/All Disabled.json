@@ -1,0 +1,97 @@
+{
+    "combobox": {
+        "caption": "ComboBox",
+        "scales": [
+            0,
+            0,
+            0
+        ],
+        "states": [
+            2
+        ],
+        "unit": "",
+        "value": 0,
+        "values": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+        ]
+    },
+    "infobox_double": {
+        "caption": "InfoBox Double",
+        "scales": [
+            0,
+            0,
+            0
+        ],
+        "states": [
+            2
+        ],
+        "unit": "Unit",
+        "value": 11.11,
+        "values": [
+        ]
+    },
+    "infobox_integer": {
+        "caption": "InfoBox Integer",
+        "scales": [
+            0,
+            0,
+            0
+        ],
+        "states": [
+            2
+        ],
+        "unit": "Unit",
+        "value": 11,
+        "values": [
+        ]
+    },
+    "infobox_string": {
+        "caption": "InfoBox String",
+        "scales": [
+            0,
+            0,
+            0
+        ],
+        "states": [
+            2
+        ],
+        "unit": "Unit",
+        "value": "Pass",
+        "values": [
+        ]
+    },
+    "slider": {
+        "caption": "Slider",
+        "scales": [
+            10000,
+            0,
+            10
+        ],
+        "states": [
+            2
+        ],
+        "unit": "Unit",
+        "value": 2380,
+        "values": [
+        ]
+    },
+    "toggle": {
+        "caption": "Toggle",
+        "scales": [
+            0,
+            0,
+            0
+        ],
+        "states": [
+            2
+        ],
+        "unit": "",
+        "value": true,
+        "values": [
+            "True",
+            "False"
+        ]
+    }
+}

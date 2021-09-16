@@ -17,6 +17,11 @@ Item {
     property double fontMultiplier: 1.0
     property string searchText: ""
 
+    function validateSearchText() {
+        consoleItems.invalidate()
+        consoleLogs.deselectAll()
+    }
+
     onFontMultiplierChanged: {
         if(fontMultiplier >= 2.5){
             fontMultiplier = 2.5
@@ -26,15 +31,7 @@ Item {
     }
 
     onSearchTextChanged: {
-        consoleItems.invalidate()
-        consoleLogs.deselectAll()
-    }
-
-    onVisibleChanged: {
-        if (!visible) {
-            consoleLogErrorCount = 0
-            consoleLogWarningCount = 0
-        }
+        validateSearchText()
     }
 
     ListView {
@@ -262,6 +259,96 @@ Item {
             Drag.active: consoleMouseArea.drag.active
             Component.onCompleted: dragitem.parent = consoleMouseArea
         }
+
+        TextEdit {
+            id: copyHelp // Use TextEdit functions to copy and select all in the console log.
+            visible: false
+        }
+
+        SGAbstractContextMenu {
+            id: contextMenuEdit
+
+            Action {
+                id: copyAction
+                text: qsTr("Copy")
+                onTriggered: {
+                    consoleLogs.copySelected()
+                }
+            }
+
+            Action {
+                id: selectAction
+                text: qsTr("Select All")
+                onTriggered: {
+                    consoleLogs.selectAll()
+                }
+            }
+
+            onClosed: {
+                consoleLogs.forceActiveFocus()
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.RightButton
+
+            onReleased: {
+                if (containsMouse) {
+                    contextMenuEdit.popup(null)
+                }
+            }
+
+            onClicked: {
+                consoleLogs.forceActiveFocus()
+            }
+        }
+
+        // Copy shortcut
+        Shortcut {
+            sequence: StandardKey.Copy
+
+            onActivated: {
+                consoleLogs.copySelected()
+            }
+        }
+
+        // Select all shortcut
+        Shortcut {
+            sequence: StandardKey.SelectAll
+
+            onActivated: {
+                consoleLogs.selectAll()
+            }
+        }
+
+        // Copy the selected text into the user's clipboard
+        function copySelected() {
+            // loop over every index in model and look for selected text
+            for (var i = 0; i < consoleLogs.model.count; i++) {
+                var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
+                if (listElement.selection) {
+                    // adds selected text to text field of copyHelp
+                    if (copyHelp.text) {
+                        copyHelp.text += ('\n' + listElement.selection)
+                    } else {
+                        copyHelp.text += (listElement.selection)
+                    }
+                }
+            }
+            copyHelp.selectAll()
+            copyHelp.copy()
+            copyHelp.text = "" // resets copyHelp.text
+        }
+
+        // Highlight all the text in the console. Then the user can copy all.
+        function selectAll() {
+            for (var i = 0; i < consoleLogs.model.count; i++) {
+                var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
+                listElement.state = "allSelected" // sets state of every index to allSelected
+            }
+        }
     }
 
     SGSortFilterProxyModel {
@@ -272,26 +359,44 @@ Item {
 
         function filterAcceptsRow(row){
             var item = sourceModel.get(row)
-            return containsFilterText(item)
+            var notFilter = true
+            var containFilterText = true
+
+            if  (filterTypeWarning || filterTypeError) {
+                if (filterTypeError && filterTypeWarning) {
+                    notFilter = (item.type === "warning") || (item.type === "error")
+                } else if(filterTypeWarning) {
+                    notFilter = (item.type === "warning")
+                } else {
+                    notFilter = (item.type === "error")
+                }
+            }
+
+            if (searchText !== "") {
+                containFilterText = containsFilterText(item)
+            }
+
+            if (!filterTypeWarning && !filterTypeError && searchText === "") {
+                return true
+            } else {
+                return containFilterText && notFilter
+            }
         }
 
         function containsFilterText(item){
-            if(searchText === ""){
-                return true
-            } else {
-                var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
-                if(searchBox.useCase) {
-                    if(searchMsg.includes(searchText)){
-                        return true
-                    } else {
-                        return false
-                    }
-                }
-                if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
+            var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
+
+            if (searchBox.useCase) {
+                if(searchMsg.includes(searchText)){
                     return true
                 } else {
                     return false
                 }
+            }
+            if (searchMsg.toLowerCase().includes(searchText.toLowerCase())) {
+                return true
+            } else {
+                return false
             }
         }
     }

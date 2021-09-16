@@ -21,7 +21,7 @@ add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
-    PUBLIC strata::HostControllerClient
+    PUBLIC strata::StrataRPC-StrataClient
     PRIVATE strata::QtLogger
 )
 

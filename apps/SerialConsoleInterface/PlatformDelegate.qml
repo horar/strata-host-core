@@ -14,10 +14,13 @@ FocusScope {
     property variant scrollbackModel
     property variant commandHistoryModel
     property variant filterSuggestionModel
+    property color tabBorderColor
 
     property bool disableAllFiltering: false
     property var filterList: []
+    property bool filteringIsActive: filterList.length > 0 && disableAllFiltering == false
     property bool automaticScroll: true
+    property bool scrollbackLimitReached: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
 
     property bool hexViewShown: false
 
@@ -153,10 +156,12 @@ FocusScope {
                 id: inputWrapper
                 height: leftButtonRow.y + leftButtonRow.height + 6
                 anchors {
-                    bottom: parent.bottom
+                    bottom: statusBar.top
+                    bottomMargin: 2
                     left: parent.left
+                    leftMargin: 6
                     right: parent.right
-                    margins: 6
+                    rightMargin: 6
                 }
 
                 focus: true
@@ -224,6 +229,7 @@ FocusScope {
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
+                        showActiveFlag: platformDelegate.filteringIsActive
                     }
 
                     SGWidgets.SGIconButton {
@@ -250,6 +256,8 @@ FocusScope {
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: showExportView()
+                        showActiveFlag: model.platform.scrollbackModel.autoExportIsActive && showErrorFlag === false
+                        showErrorFlag: model.platform.scrollbackModel.autoExportErrorString.length > 0
                     }
 
                     VerticalDivider {
@@ -285,62 +293,6 @@ FocusScope {
                         iconSize: toolButtonRow.iconHeight
                         visible: (model.platform.deviceType === Sci.SciPlatform.MockDevice)
                         onClicked: showMockSettingsView()
-                    }
-                }
-
-                Column {
-                    anchors {
-                        top: toolButtonRow.top
-                        right: parent.right
-                    }
-
-                    spacing: 4
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        sizeByMask: true
-                        mask: "Filtered: " + "9".repeat(filteredCount.toString().length)
-                        text: "Filtered: " + filteredCount
-                        font.bold: true
-                        visible: filteredCount > 0
-
-                        property int filteredCount: scrollbackModel.count - scrollbackView.count
-                    }
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        text: {
-                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return "EXPORT FAILED"
-                            } else if (model.platform.scrollbackModel.autoExportIsActive) {
-                                return "Export"
-                            }
-
-                            return ""
-                        }
-                        visible: text.length
-
-                        font.bold: true
-                        textColor: "white"
-                        color: {
-                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return TangoTheme.palette.error
-                            }
-
-                            return TangoTheme.palette.plum1
-                        }
-                    }
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        text: "Scrollback limit reached"
-                        visible: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
-                        font.bold: true
-                        color:  TangoTheme.palette.warning
-                        textColor: "white"
                     }
                 }
 
@@ -554,6 +506,75 @@ FocusScope {
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
+                    }
+                }
+            }
+
+            Item {
+                id: statusBar
+                height: statusBarRow.y + statusBarRow.height + 2
+                anchors {
+                    bottom: parent.bottom
+                    right: parent.right
+                    left: parent.left
+                    leftMargin: 6
+                    rightMargin: 6
+                }
+
+                Rectangle {
+                    id: statusBarDivider
+                    anchors.top: parent.top
+                    width: parent.width
+                    height: 1
+                    color: tabBorderColor
+                }
+
+                Row {
+                    id: statusBarRow
+                    anchors {
+                        top: statusBarDivider.bottom
+                        topMargin: 2
+                        right: parent.right
+                        rightMargin: 4
+                    }
+
+                    spacing: 8
+
+                    SGWidgets.SGTag {
+                        id: filterCountTag
+                        font.family: "monospace"
+                        visible: platformDelegate.filteringIsActive
+                        text: "Filtered: " + (scrollbackModel.count - scrollbackView.count).toString()
+                        color: "transparent"
+                    }
+
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: Math.floor(filterCountTag.height - 6)
+                        width: 1
+
+                        visible: filterCountTag.visible
+                        color: tabBorderColor
+                    }
+
+                    SGWidgets.SGTag {
+                        font.family: "monospace"
+                        text: "Messages: " + scrollbackModel.count + " / " + sciModel.platformModel.maxScrollbackCount
+                        color: {
+                            if (platformDelegate.scrollbackLimitReached) {
+                                return TangoTheme.palette.warning
+                            }
+
+                            return "transparent"
+                        }
+
+                        textColor: {
+                            if (platformDelegate.scrollbackLimitReached) {
+                                return "white"
+                            }
+
+                            return "black"
+                        }
                     }
                 }
             }

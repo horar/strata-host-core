@@ -96,8 +96,8 @@ Rectangle{
                     Rectangle {
                         // Strata Onsemi.com landing page button
                         color: !mouse.containsMouse
-                               ? Theme.palette.green : mouse.pressed
-                                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+                               ? Theme.palette.onsemiOrange : mouse.pressed
+                                 ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
                         radius: 10
                         Layout.preferredWidth: providerText.implicitWidth + providerText.height
                         Layout.maximumWidth: Layout.preferredWidth

@@ -9,7 +9,7 @@ Rectangle {
     id: buttonContainer
     Layout.fillWidth: true
     Layout.preferredHeight: iconTextGroup.implicitHeight + 10
-    color: selected ? Theme.palette.green : "transparent"
+    color: selected ? Theme.palette.onsemiOrange : "transparent"
     enabled: editor.fileTreeModel.url.toString() !== ""
 
     property alias iconText: imageText.text

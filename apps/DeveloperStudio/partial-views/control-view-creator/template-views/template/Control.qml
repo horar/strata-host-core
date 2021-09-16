@@ -7,76 +7,64 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 Item {
-    id: controlNavigation
-    anchors {
-        fill: parent
-    }
+    id: controlViewRoot
+    anchors.fill: parent
 
+    property alias tabBar: tabBar
     property string class_id // automatically populated for use when the control view is created with a connected board
 
-    PlatformInterface {
-        id: platformInterface
-    }
+    ColumnLayout {
+        anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-    TabBar {
-        id: navTabs
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+        PlatformInterface {
+            id: platformInterface
         }
 
-        TabButton {
-            id: basicButton
-            KeyNavigation.right: this
-            KeyNavigation.left: this
-            text: qsTr("Commands and Notifications")
-            onClicked: {
-                controlContainer.currentIndex = 0
+        TabBar {
+            id: tabBar
+            Layout.fillWidth: true
+
+            TabButton {
+                id: basicButton
+                text: "Commands and Notifications"
+            }
+
+            TabButton {
+                id: advancedButton
+                text: "Advanced View"
             }
         }
 
-        TabButton {
-            id: advancedButton
-            KeyNavigation.right: this
-            KeyNavigation.left: this
-            text: qsTr("Advanced")
-            onClicked: {
-                controlContainer.currentIndex = 1
+        StackLayout {
+            id: controlContainer
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            currentIndex: tabBar.currentIndex
+
+            BasicControl {
+                id: basic
             }
-        }
-    }
 
-    StackLayout {
-        id: controlContainer
-        anchors {
-            top: navTabs.bottom
-            bottom: controlNavigation.bottom
-            right: controlNavigation.right
-            left: controlNavigation.left
-        }
-
-        BasicControl {
-            id: basic
-        }
-
-        AdvancedControl {
-            id: advanced
+            AdvancedControl {
+                id: advanced
+            }
         }
     }
 
     SGIcon {
         id: helpIcon
         anchors {
-            right: controlContainer.right
-            rightMargin: 15
-            top: controlContainer.top
+            left: controlViewRoot.left
+            leftMargin: 15
+            bottom: controlViewRoot.bottom
             margins: 10
         }
         source: "qrc:/sgimages/question-circle.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        iconColor: helpMouse.containsMouse ? "dimgrey" : "grey"
         height: 25
-        width: 25
+        width: height
 
         MouseArea {
             id: helpMouse
@@ -96,3 +84,4 @@ Item {
         }
     }
 }
+

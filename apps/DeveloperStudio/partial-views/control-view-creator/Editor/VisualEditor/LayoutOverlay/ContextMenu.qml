@@ -17,6 +17,12 @@ Popup {
         }
     }
 
+    property bool multipleItemsSelected
+
+    onOpened: {
+        multipleItemsSelected = visualEditor.selectedMultiObjectsUuid.length > 1
+    }
+
     onClosed: {
         contextLoader.active = false
     }
@@ -55,23 +61,23 @@ Popup {
         }
 
         ContextMenuButton {
-            text: "Duplicate"
+            text: multipleItemsSelected ? "Duplicate Selected" : "Duplicate"
             onClicked: {
-                visualEditor.functions.duplicateControl(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.duplicateControlSelected()
                 contextMenu.close()
             }
         }
 
         ContextMenuButton {
-            text: "Bring To Front"
+            text: multipleItemsSelected ? "Bring Selected To Front" : "Bring To Front"
             onClicked: {
-                visualEditor.functions.bringToFront(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.bringToFrontSelected()
                 contextMenu.close()
             }
         }
 
         ContextMenuButton {
-            text: "Send To Back"
+            text: multipleItemsSelected ? "Bring Selected To Back" : "Send To Back"
             onClicked: {
                 visualEditor.functions.sendToBack(layoutOverlayRoot.layoutInfo.uuid)
                 contextMenu.close()
@@ -79,9 +85,9 @@ Popup {
         }
 
         ContextMenuButton {
-            text: "Delete"
+            text: multipleItemsSelected ? "Delete Selected" : "Delete"
             onClicked: {
-                visualEditor.functions.removeControl(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.removeControlSelected()
                 contextMenu.close()
             }
         }
@@ -111,6 +117,7 @@ Popup {
             Popup {
                 id: alignmentPopup
                 x: parent.width
+                y: parent.y - height
                 padding: 0
                 background: Rectangle {
                     layer.enabled: true

@@ -100,6 +100,11 @@ ColumnLayout {
             } else {
                 visualEditor.functions.checkFile()
             }
+
+            // Force QRC model reload if QRC file is changed and saved
+            if (model.filepath === treeModel.url) {
+                treeModel.reloadQrcModel()
+            }
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
             alertToast.show()
@@ -254,7 +259,9 @@ ColumnLayout {
 
             implicitHeight: menuRow.height - 10
 
-            Component.onCompleted: buttonGroup.addButton(this)
+            Component.onCompleted: {
+                buttonGroup.addButton(this)
+            }
 
             onCheckedChanged: {
                 if (checked) {
@@ -275,7 +282,9 @@ ColumnLayout {
                 enabled: visualEditor.fileValid
                 checked: viewStack.currentIndex === 1
 
-                Component.onCompleted: buttonGroup.addButton(this)
+                Component.onCompleted: {
+                    buttonGroup.addButton(this)
+                }
 
                 onCheckedChanged: {
                     if (checked) {
@@ -294,7 +303,7 @@ ColumnLayout {
 
                 ToolTip {
                     visible: toolTipMouse.containsMouse
-                    text: visualEditor.error
+                    text: "Visual Editor supports QML files only"
                 }
             }
         }
@@ -311,9 +320,9 @@ ColumnLayout {
             id: mainButtons
 
             model: [
-                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: menuLoader.active ? false : true, enabled: internalChanges },
-                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: menuLoader.active ? false : true, enabled: true },
-                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: menuLoader.active ? false : true, enabled: true }
+                { buttonType: "save", iconSource: "qrc:/sgimages/save.svg", visible: !menuLoader.active, enabled: internalChanges },
+                { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg", visible: !menuLoader.active, enabled: true },
+                { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg", visible: !menuLoader.active, enabled: true }
             ]
 
             delegate: Button {
@@ -536,8 +545,8 @@ ColumnLayout {
         signal setContainerHeight(string height)
         signal setContainerWidth(string width)
         signal resetContainer(string height, string width)
-        signal undo();
-        signal redo();
+        signal undo()
+        signal redo()
         signal goToUUID(string uuid)
 
         function setFinished(isFinished) {
@@ -548,7 +557,7 @@ ColumnLayout {
             setValue(value)
         }
 
-        function checkForErrors(flag,log) {
+        function checkForErrors(flag, log) {
             if (flag) {
                 console.error(log)
             }

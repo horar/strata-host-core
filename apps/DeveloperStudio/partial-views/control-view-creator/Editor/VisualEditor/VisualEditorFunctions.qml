@@ -58,21 +58,16 @@ QtObject {
 
     function checkFile() {
         if (visualEditor.file.toLowerCase().endsWith(".qml")) {
-            sdsModel.qtLogger.visualEditorReloading = true
-            loader.setSource(visualEditor.file)
-            sdsModel.qtLogger.visualEditorReloading = false
-
-            if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-                visualEditor.fileValid = true
-                unload(false)
-                return
-            }
+            visualEditor.fileValid = true
+        } else {
+            visualEditor.fileValid = false
         }
-        loadError()
     }
 
     function unload(reload = false) {
         loader.setSource("")
+        overlayContainer.rowCount = 0
+        overlayContainer.columnCount = 0
         for (let i = 0; i < overlayObjects.length; i++) {
             overlayObjects[i].destroy()
         }
@@ -82,38 +77,32 @@ QtObject {
     }
 
     function load() {
-        if (visualEditor.file.toLowerCase().endsWith(".qml")) {
-            fileContents = readFileContents(visualEditor.file)
-            sdsModel.qtLogger.visualEditorReloading = true
-            loader.setSource(visualEditor.file)
-            sdsModel.qtLogger.visualEditorReloading = false
-
-            if (loader.children[0] && loader.children[0].objectName === "UIBase") {
-                overlayContainer.rowCount = loader.children[0].rowCount
-                overlayContainer.columnCount = loader.children[0].columnCount
-                identifyChildren(loader.children[0])
-                visualEditor.fileValid = true
-            } else {
-                loadError()
-            }
+        fileContents = readFileContents(visualEditor.file)
+        sdsModel.qtLogger.visualEditorReloading = true
+        loader.setSource(visualEditor.file)
+        sdsModel.qtLogger.visualEditorReloading = false
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+            visualEditor.hasErrors = false
+            overlayContainer.rowCount = loader.children[0].rowCount
+            overlayContainer.columnCount = loader.children[0].columnCount
+            identifyChildren(loader.children[0])
         } else {
-            visualEditor.fileValid = false
-            visualEditor.error = "Visual Editor supports QML files only"
+            if (loader.sourceComponent.errorString().length > 0) {
+                loadError(loader.sourceComponent.errorString())
+            } else {
+                loadError("To use Visual Editor, file must contain UIBase as root object", false)
+            }
         }
     }
 
-    function loadError() {
+    function loadError(errorMsg, logError = true) {
         unload(false)
         loader.setSource("qrc:/partial-views/SGLoadError.qml")
-        if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-            console.log("Visual Editor disabled: file '" + SGUtilsCpp.urlToLocalFile(visualEditor.file) + "' does not derive from UIBase")
-            loader.item.error_intro = "Unable to display file"
-            loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use Visual Editor."
-            visualEditor.fileValid = false
-            visualEditor.error = "Visual Editor supports files derived from UIBase only"
-        } else {
-            loader.item.error_intro = "Unable to display file"
-            loader.item.error_message = "Build error, see logs"
+        visualEditor.hasErrors = true
+        loader.item.error_intro = "Visual Editor is disabled"
+        loader.item.error_message = errorMsg
+        if (logError) {
+            console.error("Visual Editor could not load: "+`${errorMsg}`)
         }
     }
 
@@ -145,14 +134,17 @@ QtObject {
         }
     }
 
-    function insertTextAtEndOfFile(text) {
+    function insertTextAtEndOfFile(text, save = true) {
         let regex = new RegExp(endOfObjectRegexString("uibase")) // insert text before file ending '} // end_uibase'
         let endOfFile = fileContents.match(regex)
         if (endOfFile === null) {
             return
         }
-        fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile);
-        saveFile()
+        fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile)
+
+        if (save) {
+            saveFile()
+        }
     }
 
     function insertTextAtBeginningOfFile(text) {
@@ -163,7 +155,7 @@ QtObject {
         saveFile()
     }
 
-    function removeControl(uuid, addToUndoCommandStack = true) {
+    function removeControl(uuid, addToUndoCommandStack = true, save = true, deselect = true) {
         const objectString = getObjectFromString(uuid)
         if (objectString === null) {
             return
@@ -174,11 +166,25 @@ QtObject {
         if (addToUndoCommandStack) {
             sdsModel.visualEditorUndoStack.removeItem(file, uuid, objectString)
         }
-
-        saveFile()
+        if (save) {
+            saveFile()
+        }
+        // remove the deleted item from selected-items array
+        if (deselect) {
+            removeUuidFromMultiObjectSelection(uuid)
+        }
     }
 
-    function duplicateControl(uuid) {
+    function removeControlSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            removeControl(selectedUuid, true, false, false)
+        }
+        saveFile()
+        visualEditor.selectedMultiObjectsUuid = []
+    }
+
+    function duplicateControl(uuid, save = true) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
@@ -228,16 +234,32 @@ QtObject {
             console.warn("Problem detected with layoutInfo in object " + newUuid)
         }
 
-        insertTextAtEndOfFile(copy)
+        insertTextAtEndOfFile(copy, save)
     }
 
-    function bringToFront(uuid) {
+    function duplicateControlSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            duplicateControl(selectedUuid, false)
+        }
+        saveFile()
+    }
+
+    function bringToFront(uuid, save = true) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
         }
         fileContents = fileContents.replace(copy, "\n")
-        insertTextAtEndOfFile(copy)
+        insertTextAtEndOfFile(copy, save)
+    }
+
+    function bringToFrontSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            bringToFront(selectedUuid, false)
+        }
+        saveFile()
     }
 
     function sendToBack(uuid) {
@@ -371,19 +393,35 @@ QtObject {
         saveFile()
     }
 
-    function resizeItem(uuid, newX, newY, addToUndoCommandStack = true) {
-        const oldX = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
-        const oldY = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
+    function resizeItem(uuid, newColumnsWide, newRowsTall, addToUndoCommandStack = true, save = true) {
+        if (newColumnsWide < 1 || newRowsTall < 1) {
+            return
+        }
 
-        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newX, "", false)
-        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newY, "", false)
+        const oldColumnsWide = getObjectPropertyValue(uuid, "layoutInfo.columnsWide")
+        const oldRowsTall = getObjectPropertyValue(uuid, "layoutInfo.rowsTall")
+
+        fileContents = setObjectProperty(uuid, "layoutInfo.columnsWide", newColumnsWide, "", false)
+        fileContents = setObjectProperty(uuid, "layoutInfo.rowsTall", newRowsTall, "", false)
 
         // undo/redo
         if (addToUndoCommandStack) {
-            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newX, newY, oldX, oldY)
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "resize", newColumnsWide, newRowsTall, oldColumnsWide, oldRowsTall)
         }
+        if (save) {
+            saveFile()
+        }
+    }
 
-        visualEditor.functions.saveFile(file, fileContents)
+    function resizeGroup(offsetX, offsetY) {
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
+                continue
+            }
+            resizeItem(obj.layoutInfo.uuid, obj.layoutInfo.columnsWide + offsetX, obj.layoutInfo.rowsTall + offsetY, true, false)
+        }
+        saveFile()
     }
 
     // returns object contents between tags
@@ -529,7 +567,12 @@ QtObject {
         visualEditor.multiObjectsDragged(objectInitiated, x, y)
     }
 
-    // calculates maximum offsets for multi-item target rectangle
+    // emits multiObjectsResizeDragged signal to all layout items
+    function resizeDragGroup(objectInitiated, width, height) {
+        visualEditor.multiObjectsResizeDragged(objectInitiated, width, height)
+    }
+
+    // calculates maximum offsets for multi-item target rectangle for item moving
     function getMultiItemTargetRectLimits() {
         var minX = overlayContainer.columnCount
         var maxX = overlayContainer.columnCount
@@ -544,6 +587,27 @@ QtObject {
             maxX = Math.min(maxX, obj.layoutInfo.xColumns)
             minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
             maxY = Math.min(maxY, obj.layoutInfo.yRows)
+            minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
+        }
+
+        return [maxX, minX, maxY, minY]
+    }
+
+    // calculates maximum offsets for multi-item target rectangle for item resizing
+    function getMultiItemTargetResizeRectLimits() {
+        var minX = overlayContainer.columnCount
+        var maxX = overlayContainer.columnCount * overlayContainer.columnSize
+        var minY = overlayContainer.rowCount
+        var maxY = overlayContainer.rowCount * overlayContainer.rowSize
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            if (!isUuidSelected(obj.layoutInfo.uuid)) {
+                continue
+            }
+            maxX = Math.min(maxX, obj.layoutInfo.columnsWide)
+            minX = Math.min(minX, overlayContainer.columnCount - obj.layoutInfo.xColumns - obj.layoutInfo.columnsWide)
+            maxY = Math.min(maxY, obj.layoutInfo.rowsTall)
             minY = Math.min(minY, overlayContainer.rowCount - obj.layoutInfo.yRows - obj.layoutInfo.rowsTall)
         }
 

@@ -68,6 +68,8 @@
         <file alias="components/MenuButton.qml">partial-views/control-view-creator/components/MenuButton.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/SwitchPopup.qml</file>
         <file alias="PlatformInterfaceGenerator/PlatformInterfaceGenerator.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PlatformInterfaceGenerator.qml</file>
+        <file alias="PlatformInterfaceGenerator/Functions.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/Functions.qml</file>
+        <file alias="PlatformInterfaceGenerator/DeprecatedFunctions.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/DeprecatedFunctions.qml</file>
         <file alias="PlatformInterfaceGenerator/AlertToast.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/AlertToast.qml</file>
         <file alias="PlatformInterfaceGenerator/CommandNotificationDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/CommandNotificationDelegate.qml</file>
         <file alias="PlatformInterfaceGenerator/PayloadArrayPropertyDelegate.qml">partial-views/control-view-creator/PlatformInterfaceGenerator/PayloadArrayPropertyDelegate.qml</file>
@@ -77,5 +79,11 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutPopupContext/GenericPopup.qml</file>
         <file alias="components/SGConsoleLogNavigationIcon.qml">partial-views/control-view-creator/components/SGConsoleLogNavigationIcon.qml</file>
         <file alias="components/SGControlViewCreatorSettingsPopup.qml">partial-views/control-view-creator/components/SGControlViewCreatorSettingsPopup.qml</file>
+        <file alias="DebugMenu/PayloadInput.qml">partial-views/control-view-creator/DebugMenu/PayloadInput.qml</file>
+        <file alias="DebugMenu/PayloadSwitch.qml">partial-views/control-view-creator/DebugMenu/PayloadSwitch.qml</file>
+        <file alias="DebugMenu/DebugDelegate.qml">partial-views/control-view-creator/DebugMenu/DebugDelegate.qml</file>
+        <file alias="DebugMenu/PayloadStaticObjectArray.qml">partial-views/control-view-creator/DebugMenu/PayloadStaticObjectArray.qml</file>
+        <file alias="DebugMenu/PayloadDynamicObjectArray.qml">partial-views/control-view-creator/DebugMenu/PayloadDynamicObjectArray.qml</file>
+        <file alias="DebugMenu/PayloadDelegate.qml">partial-views/control-view-creator/DebugMenu/PayloadDelegate.qml</file>
     </qresource>
 </RCC>
