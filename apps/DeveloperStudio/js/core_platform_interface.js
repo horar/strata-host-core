@@ -102,9 +102,8 @@ function data_source_handler (payload) {
 // -------------------------
 function send (command) {
     if (device_id) {
-        command.device_id = device_id
-        console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
-        coreInterface.sendCommand(JSON.stringify(command))
+        // console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
+        coreInterface.sendNotification("platform_message", { "device_id": device_id, "message": JSON.stringify(command) })
     }
     else {
         console.warn(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Device_id not set, command not sent: ", JSON.stringify(command));

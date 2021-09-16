@@ -92,7 +92,7 @@ template <class HandlerArgument>
 bool Dispatcher<HandlerArgument>::dispatch(const QString &handlerName,
                                            const HandlerArgument &argument)
 {
-    qCDebug(logCategoryStrataDispatcher) << "Dispatching " << handlerName;
+    // qCDebug(logCategoryStrataDispatcher) << "Dispatching " << handlerName;
 
     auto it = handlersList_.find(handlerName);
 

@@ -229,6 +229,11 @@ public:
     Q_INVOKABLE void stopWatchingPath(const QString &path);
 
     /**
+     * @brief stopWatchingAll Removes all file/dir paths from internal QFileSystemWatcher
+     */
+    Q_INVOKABLE void stopWatchingAll();
+
+    /**
      * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
      * @param path The path to the file or directory
      */
@@ -259,6 +264,11 @@ public:
      * @return true if file is in pathsInTree_
      */
     Q_INVOKABLE bool containsPath(const QString url);
+
+    /**
+     * @brief reloadQrcModel force the Qrc model to be reloaded. public/QML-invocable call to createModel()
+     */
+    Q_INVOKABLE void reloadQrcModel();
 
     /***
      * SIGNALS

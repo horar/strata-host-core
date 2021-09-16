@@ -12,8 +12,8 @@ import "navigation"
 import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
-import "Console"
-import "PlatformInterfaceGenerator"
+import "console"
+import "platform-interface-generator"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -275,7 +275,7 @@ Rectangle {
         padding: 0
         closePolicy: Popup.NoAutoClose
 
-        acceptButtonColor: Theme.palette.green
+        acceptButtonColor: Theme.palette.onsemiOrange
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Clean"
         cancelButtonText: "Cancel"

@@ -7,8 +7,8 @@ import tech.strata.commoncpp 1.0
 import tech.strata.SGQrcTreeModel 1.0
 import tech.strata.SGFileTabModel 1.0
 
-import "Editor/"
-import "Sidebar/"
+import "editor/"
+import "sidebar/"
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "../"
 
@@ -26,23 +26,21 @@ Item {
         id: treeModel
 
         onModelAboutToBeReset: {
-            openFilesModel.closeAll()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
-            editor.editQRCEnabled = true
         }
 
         onErrorParsing: {
-            parsingErrorRect.errorMessage = error;
+            parsingErrorRect.errorMessage = error
             parsingErrorRect.visible = true
             openProjectContainer.url = ""
         }
 
         onUrlChanged: {
-            if (debugMenuWindow) {
-                debugMenuWindow = false
-            }
+            debugMenuWindow = false
             isDebugMenuOpen = false
+            openFilesModel.closeAll()
+            editor.editQRCEnabled = true
         }
     }
 
@@ -54,7 +52,10 @@ Item {
         }
 
         onTabClosed: {
-            treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+            // always listen for debugMenuSource changes in order to update DebugMenu.qml
+            if (filepath !== fileTreeModel.debugMenuSource) {
+                treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+            }
         }
     }
 
@@ -64,7 +65,7 @@ Item {
         invokeCustomFilter: true
 
         function filterAcceptsRow(index) {
-            return sourceModel.get(index).connected;
+            return sourceModel.get(index).connected
         }
     }
 
@@ -74,6 +75,7 @@ Item {
 
         Shortcut {
             sequence: "Ctrl+R"
+            enabled: editor.fileTreeModel.url.toString() !== ''
             onActivated: {
                 if (cvcUserSettings.openViewOnBuild) {
                     viewStack.currentIndex = 2
@@ -293,22 +295,22 @@ Item {
 
                                     source: {
                                         switch (model.filetype) {
-                                        case "svg":
-                                        case "jpg":
-                                        case "jpeg":
-                                        case "png":
-                                        case "gif":
-                                            return "./Editor/ImageContainer.qml"
-                                        case "qml":
-                                        case "csv":
-                                        case "html":
-                                        case "txt":
-                                        case "json":
-                                        case "qrc":
-                                        case "ts":
-                                            return "./Editor/TextEditorContainer.qml"
-                                        default:
-                                            return "./Editor/UnsupportedFileType.qml"
+                                            case "svg":
+                                            case "jpg":
+                                            case "jpeg":
+                                            case "png":
+                                            case "gif":
+                                                return "./editor/ImageContainer.qml"
+                                            case "qml":
+                                            case "csv":
+                                            case "html":
+                                            case "txt":
+                                            case "json":
+                                            case "qrc":
+                                            case "ts":
+                                                return "./editor/TextEditorContainer.qml"
+                                            default:
+                                                return "./editor/UnsupportedFileType.qml"
                                         }
                                     }
                                 }
@@ -332,10 +334,10 @@ Item {
             confirmClosePopup.open()
             controlViewCreatorRoot.isConfirmCloseOpen = true
         } else {
-            if(model.filetype === "qrc") {
+            if (model.filepath === treeModel.url) {
                 editQRCEnabled = true
             }
-            openFilesModel.closeTabAt(index);
+            openFilesModel.closeTabAt(index)
         }
     }
 }

@@ -14,6 +14,8 @@ var internal_tour_index
 var views = [ ]
 var stackContainer
 var control_view_creator = null
+var help_object = null
+var font_size_multiplier = 1
 
 var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(bool tour_running)}', Qt.application, 'HelpUtility');
 
@@ -35,9 +37,6 @@ var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal
    Example:  Help.startHelpTour("motorVortexHelp")
 *******/
 
-// Runs up to 2 help views: 1 for Strata, and 1 for the current plaform listed in nav_control
-// Each view can run any number of help tours, assuming their names are unique to that view
-
 function registerTarget(helpTarget, targetDescription, index, tourName) {
     // find view and tour to append target to
     let tourLocation = locateTour(current_device_id, tourName)
@@ -47,20 +46,11 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     }
 
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
-    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
-
-    if (index === 0) {
-        // On registration, pre-load first helpObject before tour is opened
-        createHelpObject(tourTarget)
-    }
+    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription}
 
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
             // update tourTarget if it already exists (occurs when same platform disconnected and reconnected - must update object references)
-            if (tourTargetList[i].helpObject) {
-                tourTargetList[i].helpObject.destroy()
-            }
-
             tourTargetList[i] = tourTarget
             return
         }
@@ -76,13 +66,12 @@ function setDeviceId(device_id) {
     createView(device_id)
 }
 
-function createView(device_id ) {
+function createView(device_id) {
     let view = {
         "view_id": device_id,
         "view_tours" : []
     }
     views.push(view)
-    return [views.length-1, 0]
 }
 
 function createTour(viewIndex, tourName) {
@@ -133,76 +122,45 @@ function startHelpTour(tourName, device_id) {
     }
 
     current_tour_targets = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
-    let font_size_multiplier = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].font_size_multiplier
+    font_size_multiplier = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].font_size_multiplier
 
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
+    tour_running = true
+    utility.tour_runningChanged(tour_running)
 
-	for (let i = 0; i < tour_count; i++){
-        let tour_target = current_tour_targets[i]
-        if (tour_target.index === 0) {
-            tour_running = true
-            utility.tour_runningChanged(tour_running)
-            internal_tour_index = i
-            utility.internal_tour_indexChanged(i)
-        }
-        if (font_size_multiplier !== 1) {
-            tour_target.helpObject.fontSizeMultiplier = font_size_multiplier
-        }
-        if (tour_target.index === 1) {
-            // Pre-load second helpObject if not loaded already
-            if (tour_target.helpObject === null) {
-                createHelpObject(tour_target)
-            }
-        }
-    }
-
-    refreshView(internal_tour_index)
-    current_tour_targets[internal_tour_index]["helpObject"].visible = true
+    findTourStop(0)
 }
 
 function next(currentIndex) {
-    for (let i = 0; i < current_tour_targets.length; i++){
-        if (current_tour_targets[i]["index"] === currentIndex) {
-            current_tour_targets[i]["helpObject"].visible = false
-            if (current_tour_targets[i]["index"] === tour_count - 1) { //if last, end tour
-                tour_running = false
-                utility.tour_runningChanged(tour_running)
-
-                break
-            }
-        } else if (current_tour_targets[i]["index"] === currentIndex+1) {
-            refreshView(i)
-            current_tour_targets[i]["helpObject"].visible = true
-            internal_tour_index = i
-            utility.internal_tour_indexChanged(i)
-        } else if (current_tour_targets[i]["index"] === currentIndex+2) {
-            // Pre-load index+2 helpObject if not loaded already
-            if (!current_tour_targets[i]["helpObject"]) {
-                createHelpObject(current_tour_targets[i])
-            }
-        }
+    if (currentIndex === tour_count - 1) { // if last, end tour
+        closeTour()
+        return
     }
+    findTourStop(currentIndex + 1)
 }
 
 function prev(currentIndex) {
     if (currentIndex > 0) {
-        for (let i = 0; i < current_tour_targets.length; i++){
-            if (current_tour_targets[i]["index"] === currentIndex) {
-                current_tour_targets[i]["helpObject"].visible = false
-            } else if (current_tour_targets[i]["index"] === currentIndex-1) {
-                refreshView(i)
-                current_tour_targets[i]["helpObject"].visible = true
-                internal_tour_index = i
-                utility.internal_tour_indexChanged(i)
-            }
+        findTourStop(currentIndex - 1)
+    }
+}
+
+function findTourStop(index) {
+    for (let i = 0; i < current_tour_targets.length; i++){
+        if (current_tour_targets[i]["index"] === index) {
+            createHelpObject(current_tour_targets[i])
+            internal_tour_index = i
+            utility.internal_tour_indexChanged(i)
+            break
         }
     }
 }
 
 function closeTour() {
     if (tour_running) {
-        current_tour_targets[internal_tour_index]["helpObject"].visible = false
+        destroyHelpObject()
+        font_size_multiplier = 1
         tour_running = false
         utility.tour_runningChanged(tour_running)
     }
@@ -215,25 +173,19 @@ function registerWindow(windowTarget, stackContainerTarget) {
 
 function refreshView (i) {
     // set the target sizing on load
-    current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"]);
+    if (help_object) {
+        help_object.setTarget(current_tour_targets[i]["target"])
+    }
 }
 
 function destroyHelp() {
     // called on strata destruction & logout, remove all dynamically created objects
-    for (let i=views.length-1; i>=0; i--) {
-        killView(i)
-    }
+    views = []
+    destroyHelpObject()
     current_device_id = Constants.NULL_DEVICE_ID
 }
 
 function killView(index) {
-    for (let i=0; i<views[index].view_tours.length; i++) {
-        //        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
-        for (let j=0; j<views[index].view_tours[i].tour_targets.length; j++) {
-            if(views[index].view_tours[i].tour_targets[j].helpObject)
-                views[index].view_tours[i].tour_targets[j].helpObject.destroy()
-        }
-    }
     views.splice(index, 1)
 }
 
@@ -247,10 +199,21 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
 }
 
 function createHelpObject(tourTarget) {
-    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
-    tourStop.index = tourTarget.index
-    tourStop.description = tourTarget.description
-    tourTarget.helpObject = tourStop
+    destroyHelpObject()
+    help_object = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
+    help_object.index = tourTarget.index
+    help_object.description = tourTarget.description
+    help_object.setTarget(tourTarget.target)
+    if (font_size_multiplier !== 1) {
+        help_object.fontSizeMultiplier = font_size_multiplier
+    }
+}
+
+function destroyHelpObject() {
+    if (help_object !== null) {
+        help_object.destroy()
+        help_object = null
+    }
 }
 
 function resetDeviceIdTour (device_id) {

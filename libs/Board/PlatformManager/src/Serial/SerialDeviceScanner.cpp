@@ -49,7 +49,7 @@ void SerialDeviceScanner::unsetProperties(quint32 flags) {
 
 void SerialDeviceScanner::startAutomaticScan() {
     if (timer_.isActive()) {
-        qCWarning(logCategoryDeviceScanner) << "Device scan is already running.";
+        qCDebug(logCategoryDeviceScanner) << "Device scan is already running.";
     } else {
         qCDebug(logCategoryDeviceScanner) << "Starting device scan.";
         timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
@@ -61,7 +61,7 @@ void SerialDeviceScanner::stopAutomaticScan() {
         qCDebug(logCategoryDeviceScanner) << "Stopping device scan.";
         timer_.stop();
     } else {
-        qCWarning(logCategoryDeviceScanner) << "Device scan is already stopped.";
+        qCDebug(logCategoryDeviceScanner) << "Device scan is already stopped.";
     }
 }
 

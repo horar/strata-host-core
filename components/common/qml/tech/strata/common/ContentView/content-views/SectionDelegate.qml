@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: sectionDelegate
@@ -31,7 +32,7 @@ Item {
             bottom: parent.bottom
         }
 
-        color: "#33b13b"
+        color: Theme.palette.onsemiOrange
         height: 1
         width: parent.width
     }

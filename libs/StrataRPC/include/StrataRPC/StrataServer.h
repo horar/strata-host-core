@@ -82,7 +82,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                      const ResponseType &responseType);
+                      const ResponseType responseType);
 
     /**
      * Slot to send a message to a client. This overload is used to send unsolicited notifications
@@ -93,7 +93,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const QByteArray &clientId, const QString &handlerName,
-                      const QJsonObject &jsonObject, const ResponseType &responseType);
+                      const QJsonObject &jsonObject, const ResponseType responseType);
 
     /**
      * Slot to notify all connected clients.
@@ -183,7 +183,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     const ResponseType &responseType);
+                                                     const ResponseType responseType);
 
     /**
      * Build server message to be sent to clients using API v1.
@@ -196,7 +196,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     const ResponseType &responseType);
+                                                     const ResponseType responseType);
 
     /**
      * StrataServer handler for client registration.

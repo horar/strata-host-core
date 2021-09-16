@@ -1,4 +1,5 @@
 #include "ClassDocuments.h"
+#include <StrataRPC/StrataClient.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -10,11 +11,12 @@
 #include <QDir>
 #include <QList>
 
-ClassDocuments::ClassDocuments(QString classId, CoreInterface *coreInterface, QObject *parent)
+ClassDocuments::ClassDocuments(QString classId, strata::strataRPC::StrataClient *strataClient,
+                               CoreInterface *coreInterface, QObject *parent)
     : QObject(parent),
       classId_(classId),
-      coreInterface_(coreInterface),
-      downloadDocumentModel_(coreInterface, parent)
+      strataClient_(strataClient),
+      downloadDocumentModel_(strataClient, coreInterface, parent)
 {
     loadPlatformDocuments();
 }
@@ -70,7 +72,7 @@ void ClassDocuments::loadPlatformDocuments()
         setLoadingProgressPercentage(0);
         setLoading(true);
         setErrorString("");
-        coreInterface_->loadDocuments(classId_);
+        strataClient_->sendRequest("load_documents", QJsonObject{{"class_id", classId_}});
     }
 }
 

@@ -23,5 +23,9 @@
         <file>WorkflowNode.qml</file>
         <file>WorkflowNodeText.qml</file>
         <file>jsonSchemas.js</file>
+        <file alias="TaskbarButton.qml">TaskbarButtonDummy.qml</file>
+    </qresource>
+    <qresource prefix="/+windows">
+        <file>TaskbarButton.qml</file>
     </qresource>
 </RCC>

@@ -3,7 +3,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
      id: root
-     visible: false
      anchors.fill: parent
 
      property alias index: toolTipPopup.index

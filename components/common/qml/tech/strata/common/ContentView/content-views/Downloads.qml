@@ -424,7 +424,7 @@ Item {
             }
 
             background: Rectangle {
-                color: "#33b13b"
+                color: Theme.palette.onsemiOrange
                 implicitWidth: 100
                 implicitHeight: 40
             }
