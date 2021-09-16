@@ -1,5 +1,5 @@
 project(SGQWTPlot
-    VERSION 0.1
+    VERSION 1.0
     LANGUAGES CXX
 )
 
@@ -9,10 +9,15 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME}
-    src/SGQWTPlot.cpp
-    src/logging/LoggingQtCategories.cpp
-
     include/SGQWTPlot.h
+    include/SGQWTPlotCurve.h
+    include/SGQWTPlotCurveData.h
+
+    src/SGQWTPlot.cpp
+    src/SGQWTPlotCurve.cpp
+    src/SGQWTPlotCurveData.cpp
+
+    src/logging/LoggingQtCategories.cpp
 )
 
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
