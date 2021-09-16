@@ -769,7 +769,7 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
     }
     if (progress.status == FirmwareUpdateController::UpdateStatus::Failure ||
             progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
-        payload.insert("error_string", progress.error);
+        payload.insert("error_string", progress.lastError);
     }
     hcsNotificationType type = (progress.programController)
             ? hcsNotificationType::programControllerJob
