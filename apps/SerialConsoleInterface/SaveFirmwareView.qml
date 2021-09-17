@@ -193,29 +193,33 @@ FocusScope {
             }
         }
 
-        Row {
+        Column {
+            id: bottomColumn
+            anchors.bottom: content.bottom
+            anchors.left: content.left
             spacing: baseSpacing
-            anchors {
-                top: statusColumn.bottom
-                topMargin: 2*baseSpacing
-            }
-            SGWidgets.SGButton {
-                text: "Back"
-                icon.source: "qrc:/sgimages/chevron-left.svg"
-                enabled: saveFirmwareView.editable
-                onClicked: {
-                    closeView()
-                }
-            }
 
-            SGWidgets.SGButton {
-                id: saveFirmwareButton
-                text: "Save firmware"
-                icon.source: "qrc:/images/chip-download.svg"
-                enabled: saveFirmwareView.editable
-                         && model.platform.status === Sci.SciPlatform.Ready
-                onClicked: {
-                    startBackupProcess(saveFirmwarePathEdit.filePath)
+            Row {
+                spacing: baseSpacing
+
+                SGWidgets.SGButton {
+                    text: "Back"
+                    icon.source: "qrc:/sgimages/chevron-left.svg"
+                    enabled: saveFirmwareView.editable
+                    onClicked: {
+                        closeView()
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: saveFirmwareButton
+                    text: "Save firmware"
+                    icon.source: "qrc:/images/chip-download.svg"
+                    enabled: saveFirmwareView.editable
+                             && model.platform.status === Sci.SciPlatform.Ready
+                    onClicked: {
+                        startBackupProcess(saveFirmwarePathEdit.filePath)
+                    }
                 }
              }
          }
