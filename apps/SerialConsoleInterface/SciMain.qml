@@ -104,7 +104,7 @@ Item {
                 delegate: Item {
                     id: tabDelegate
                     width: tabBar.tabWidth
-                    height: statusLight.height + 10
+                    height: buttonText.height + deviceNameText.height + 16
 
                     property bool isFirst: index === 0
                     property bool isLast: index === tabRepeater.count - 1
