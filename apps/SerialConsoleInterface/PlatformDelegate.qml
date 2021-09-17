@@ -14,12 +14,17 @@ FocusScope {
     property variant scrollbackModel
     property variant commandHistoryModel
     property variant filterSuggestionModel
+    property color tabBorderColor
 
     property bool disableAllFiltering: false
     property var filterList: []
+    property bool filteringIsActive: filterList.length > 0 && disableAllFiltering == false
     property bool automaticScroll: true
+    property bool scrollbackLimitReached: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
 
     property bool hexViewShown: false
+
+    signal invalidateScrollbackFilterRequested()
 
     StackView {
         id: stackView
@@ -59,6 +64,13 @@ FocusScope {
                 onSendMessageResultReceived: {
                     messageEditor.messageSendInProgress = false
                     sendMessageResultHandler(type, data)
+                }
+            }
+
+            Connections {
+                target: platformDelegate
+                onInvalidateScrollbackFilterRequested: {
+                    scrollbackView.invalidateFilter()
                 }
             }
 
@@ -153,10 +165,12 @@ FocusScope {
                 id: inputWrapper
                 height: leftButtonRow.y + leftButtonRow.height + 6
                 anchors {
-                    bottom: parent.bottom
+                    bottom: statusBar.top
+                    bottomMargin: 2
                     left: parent.left
+                    leftMargin: 6
                     right: parent.right
-                    margins: 6
+                    rightMargin: 6
                 }
 
                 focus: true
@@ -223,7 +237,8 @@ FocusScope {
                         hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: openFilterDialog()
+                        showActiveFlag: platformDelegate.filteringIsActive
+                        onClicked: showFilterView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -250,6 +265,8 @@ FocusScope {
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: showExportView()
+                        showActiveFlag: model.platform.scrollbackModel.autoExportIsActive && showErrorFlag === false
+                        showErrorFlag: model.platform.scrollbackModel.autoExportErrorString.length > 0
                     }
 
                     VerticalDivider {
@@ -285,62 +302,6 @@ FocusScope {
                         iconSize: toolButtonRow.iconHeight
                         visible: (model.platform.deviceType === Sci.SciPlatform.MockDevice)
                         onClicked: showMockSettingsView()
-                    }
-                }
-
-                Column {
-                    anchors {
-                        top: toolButtonRow.top
-                        right: parent.right
-                    }
-
-                    spacing: 4
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        sizeByMask: true
-                        mask: "Filtered: " + "9".repeat(filteredCount.toString().length)
-                        text: "Filtered: " + filteredCount
-                        font.bold: true
-                        visible: filteredCount > 0
-
-                        property int filteredCount: scrollbackModel.count - scrollbackView.count
-                    }
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        text: {
-                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return "EXPORT FAILED"
-                            } else if (model.platform.scrollbackModel.autoExportIsActive) {
-                                return "Export"
-                            }
-
-                            return ""
-                        }
-                        visible: text.length
-
-                        font.bold: true
-                        textColor: "white"
-                        color: {
-                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return TangoTheme.palette.error
-                            }
-
-                            return TangoTheme.palette.plum1
-                        }
-                    }
-
-                    SGWidgets.SGTag {
-                        anchors.right: parent.right
-
-                        text: "Scrollback limit reached"
-                        visible: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
-                        font.bold: true
-                        color:  TangoTheme.palette.warning
-                        textColor: "white"
                     }
                 }
 
@@ -558,6 +519,75 @@ FocusScope {
                 }
             }
 
+            Item {
+                id: statusBar
+                height: statusBarRow.y + statusBarRow.height + 2
+                anchors {
+                    bottom: parent.bottom
+                    right: parent.right
+                    left: parent.left
+                    leftMargin: 6
+                    rightMargin: 6
+                }
+
+                Rectangle {
+                    id: statusBarDivider
+                    anchors.top: parent.top
+                    width: parent.width
+                    height: 1
+                    color: tabBorderColor
+                }
+
+                Row {
+                    id: statusBarRow
+                    anchors {
+                        top: statusBarDivider.bottom
+                        topMargin: 2
+                        right: parent.right
+                        rightMargin: 4
+                    }
+
+                    spacing: 8
+
+                    SGWidgets.SGTag {
+                        id: filterCountTag
+                        font.family: "monospace"
+                        visible: platformDelegate.filteringIsActive
+                        text: "Filtered: " + (scrollbackModel.count - scrollbackView.count).toString()
+                        color: "transparent"
+                    }
+
+                    Rectangle {
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: Math.floor(filterCountTag.height - 6)
+                        width: 1
+
+                        visible: filterCountTag.visible
+                        color: tabBorderColor
+                    }
+
+                    SGWidgets.SGTag {
+                        font.family: "monospace"
+                        text: "Messages: " + scrollbackModel.count + " / " + sciModel.platformModel.maxScrollbackCount
+                        color: {
+                            if (platformDelegate.scrollbackLimitReached) {
+                                return TangoTheme.palette.warning
+                            }
+
+                            return "transparent"
+                        }
+
+                        textColor: {
+                            if (platformDelegate.scrollbackLimitReached) {
+                                return "white"
+                            }
+
+                            return "black"
+                        }
+                    }
+                }
+            }
+
             //to show proper cursor when dragging
             MouseArea {
                 anchors.fill: parent
@@ -616,32 +646,6 @@ FocusScope {
                 toggleExpandButton.enabled = true
             }
 
-            function openFilterDialog() {
-                var dialog = SGWidgets.SGDialogJS.createDialog(
-                            ApplicationWindow.window,
-                            "qrc:/FilterDialog.qml",
-                            {
-                                "disableAllFiltering": disableAllFiltering,
-                                "filterSuggestionModel": filterSuggestionModel,
-                            })
-
-                var list = []
-
-                dialog.populateFilterData(filterList)
-
-                dialog.accepted.connect(function() {
-                    filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
-                    disableAllFiltering = dialog.disableAllFiltering
-
-                    console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
-                    console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
-
-                    scrollbackView.invalidateFilter()
-                })
-
-                dialog.open()
-            }
-
             function tryKeyboardAction(actionName, key) {
                 if (keyboardActionMatches(actionName, key)) {
                     var action = keyboardActions[actionName].action
@@ -693,6 +697,27 @@ FocusScope {
     }
 
     Component {
+        id: filterComponent
+
+        FilterView {
+            id: filterView
+            disableAllFiltering: platformDelegate.disableAllFiltering
+            filterSuggestionModel: platformDelegate.filterSuggestionModel
+            filterList: platformDelegate.filterList
+
+            onInvalidate: {
+                platformDelegate.filterList = JSON.parse(JSON.stringify(filterView.getFilterData()))
+                platformDelegate.disableAllFiltering = filterView.disableAllFiltering
+
+                console.log(Logger.sciCategory, "filters:", JSON.stringify(platformDelegate.filterList))
+                console.log(Logger.sciCategory, "disableAllFiltering", platformDelegate.disableAllFiltering)
+
+                platformDelegate.invalidateScrollbackFilterRequested()
+            }
+        }
+    }
+
+    Component {
         id: mockSettingsComponent
 
         MockSettingsView {
@@ -713,6 +738,10 @@ FocusScope {
 
     function showMockSettingsView() {
         stackView.push(mockSettingsComponent)
+    }
+
+    function showFilterView() {
+        stackView.push(filterComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {

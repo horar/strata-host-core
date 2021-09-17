@@ -138,6 +138,10 @@ QJsonObject PlatformController::createPlatformsList() {
         if (it.value()->hasClassId()) {
             item.insert(JSON_CLASS_ID, it.value()->classId());
         }
+        if (it.value()->name().isNull() == false) {
+            item.insert(JSON_VERBOSE_NAME, it.value()->name());
+        }
+
         if (controllerType == Platform::ControllerType::Assisted) {
             item.insert(JSON_CONTROLLER_CLASS_ID, it.value()->controllerClassId());
             item.insert(JSON_FW_CLASS_ID, it.value()->firmwareClassId());

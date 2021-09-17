@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
-import "PlatformSettings"
+import "platform-settings"
 import "../"
 import "qrc:/js/navigation_control.js" as NavigationControl
 

@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: control
@@ -13,6 +14,8 @@ Item {
     property color implicitIconColor: "black"
     property color alternativeIconColor: "white"
     property bool alternativeColorEnabled: false
+    property bool showActiveFlag: false
+    property bool showErrorFlag: false
 
     /* This is useful when you want to change text dynamically,
      * but dont want overall button width to be affected by text change.
@@ -57,6 +60,41 @@ Item {
             iconColor: control.alternativeColorEnabled ? control.alternativeIconColor : control.implicitIconColor
             color: control.alternativeColorEnabled ? "#555555" : implicitColor
             onClicked: control.clicked()
+
+            Rectangle {
+                width: 16
+                height: width
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                }
+
+                visible: showErrorFlag || showActiveFlag
+                radius: 2
+                color: {
+                    if (showErrorFlag) {
+                        return TangoTheme.palette.error
+                    }
+
+                    return TangoTheme.palette.chameleon2
+                }
+
+
+                SGWidgets.SGIcon {
+                    width: parent.width - 4
+                    height: width
+                    anchors.centerIn: parent
+
+                    iconColor: "white"
+                    source: {
+                        if (showErrorFlag) {
+                            return "qrc:/sgimages/exclamation.svg"
+                        }
+
+                        return "qrc:/sgimages/circle.svg"
+                    }
+                }
+            }
         }
 
         Item {

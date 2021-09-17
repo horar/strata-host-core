@@ -2,31 +2,21 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0
 import "components/"
 
 Item {
     id: root
-
-    property bool debugVisible: false
-    property alias mainContainer: mainContainer
-    property real rectWidth: 450
-
-    property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-
     anchors.fill: parent
 
-    onDebugMenuSourceChanged: {
-        if (debugMenuSource) {
-            debugVisible = true
-        } else {
-            debugVisible = false
-        }
-    }
+    property real rectWidth: 450
+    property real minWidth: 350
+    property alias mainContainer: mainContainer
 
     MouseArea {
         id: mainContainer
-        width: debugMenuWindow ? parent.width : Math.min(root.width, rectWidth)
+        width: debugMenuWindow ? parent.width : Math.min(root.width, Math.max(rectWidth, minWidth))
         height: parent.height
         anchors.right: parent.right
         clip: true
@@ -84,18 +74,18 @@ Item {
         }
 
         Loader {
+            id: debugLoader
             anchors {
                 top: topBar.bottom
                 right: parent.right
                 left: parent.left
                 bottom: parent.bottom
             } 
+            source: "qrc:/partial-views/control-view-creator/DebugMenu.qml"
 
             onVisibleChanged: {
-                if (visible) {
-                    setSource("qrc:/partial-views/control-view-creator/DebugMenu.qml", {source: editor.fileTreeModel.debugMenuSource})
-                } else {
-                    setSource("")
+                if (visible && active === false) {
+                    active = true
                 }
             }
         }

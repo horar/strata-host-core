@@ -6,6 +6,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.logger 1.0
 
 Item {
     id: controlViewContainer
@@ -15,6 +16,7 @@ Item {
     property var controlViewList: sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
     property bool controlLoaded: false
+    property real loadTime
 
     Loader {
         id: controlLoader
@@ -30,6 +32,7 @@ Item {
                 controlLoaded = true
                 loadingBarContainer.visible = false;
                 loadingBar.value = 0.0;
+                console.log(Logger.devStudioCategory, "Loaded control view in " + (Date.now() - loadTime)/1000 + " seconds")
             } else if (status === Loader.Error) {
                 // Tear Down creation context
                 delete NavigationControl.context.class_id
@@ -46,6 +49,23 @@ Item {
         fontSizeMultiplier: 2
         color: "#666"
         visible: controlLoader.status === Loader.Loading && loadingBarContainer.visible === false
+
+        SGText {
+            id: loadingText
+            anchors.centerIn: parent
+            text: "Loading Control View..."
+            fontSizeMultiplier: 2
+            color: "#666"
+        }
+
+        AnimatedImage {
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: loadingText.top
+            }
+            playing: visible
+            source: "qrc:/images/loading.gif"
+        }
     }
 
     Rectangle {
@@ -127,7 +147,7 @@ Item {
         Help.setDeviceId(platformStack.device_id)
         NavigationControl.context.class_id = platformStack.class_id
         NavigationControl.context.device_id = platformStack.device_id
-
+        loadTime = Date.now()
         controlLoader.setSource(control_filepath, Object.assign({}, NavigationControl.context))
     }
 

@@ -102,7 +102,7 @@ function data_source_handler (payload) {
 // -------------------------
 function send (command) {
     if (device_id) {
-        console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
+        // console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
         coreInterface.sendNotification("platform_message", { "device_id": device_id, "message": JSON.stringify(command) })
     }
     else {

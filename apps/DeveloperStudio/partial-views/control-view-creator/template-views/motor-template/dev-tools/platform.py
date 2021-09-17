@@ -24,7 +24,7 @@ def read_serial():
     while thread_running:
         out = ''
         while ser.inWaiting() > 0:
-            out += ser.read(1).decode("utf-8") 
+            out += ser.read(1).decode("utf-8")
         if out.find("get_firmware_info") != -1:
             ser.write('{"ack":"get_firmware_info","payload":{"return_value":true,"return_string":"commandvalid"}}\n'.encode())
             ser.write('{"notification":{"value":"get_firmware_info","payload":{"api_version":"2.0","active":"application","bootloader":{"version":"1.0.0","date":"20180401_123420"},"application":{"version":"1.0.0","date":"20180401_131410"}}}}\n'.encode())
@@ -60,7 +60,7 @@ def read_serial():
             print("\ncommand: " + out, end='')
             print(">> ", end='', flush=True)
 
-# wait for notification 
+# wait for notification
 def take_input():
     global thread_running
     while 1:

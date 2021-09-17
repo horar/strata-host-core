@@ -610,6 +610,10 @@ function insertMissingFirmwareListing(platform, class_id_string) {
 function generateUnknownListing (platform, class_id_string) {
     let opn = "Class id: " + class_id_string
     let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
+
+    if (platform.verbose_name) {
+        return generateErrorListing(platform, platform.verbose_name, class_id_string, opn, description)
+    }
     return generateErrorListing(platform, "Unknown Platform", class_id_string, opn, description)
 }
 
