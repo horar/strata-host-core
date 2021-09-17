@@ -138,7 +138,7 @@ FocusScope {
                 SGWidgets.SGText {
                     id: mockVersionComboBoxLabel
                     fontSizeMultiplier: 1.2
-                    text: "Communication Protocol Version:"
+                    text: "Communication Protocol:"
                 }
 
                 SGWidgets.SGComboBox {
