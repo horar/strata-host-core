@@ -329,7 +329,7 @@ function addConnectedPlatform(platform) {
                             insertProgramControllerListing(platform, class_id_string)
                         }
 
-                        sdsModel.programFirmware.programAssisted(platform.device_id)
+                        sdsModel.firmwareUpdater.programAssisted(platform.device_id)
                     } else {
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
                     }
@@ -342,7 +342,7 @@ function addConnectedPlatform(platform) {
             } else {
                 //uncompatible firmware installed
                 insertProgramControllerListing(platform, class_id_string)
-                sdsModel.programFirmware.programAssisted(platform.device_id)
+                sdsModel.firmwareUpdater.programAssisted(platform.device_id)
             }
         }
 
@@ -372,7 +372,7 @@ function addConnectedPlatform(platform) {
                         insertMissingFirmwareListing(platform, class_id_string)
                     }
 
-                    sdsModel.programFirmware.programEmbedded(platform.device_id)
+                    sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
                 } else {
                     connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                 }

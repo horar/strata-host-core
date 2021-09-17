@@ -11,14 +11,14 @@ namespace strata::strataRPC {
     class StrataClient;
 }
 
-class ProgramFirmware: public QObject
+class FirmwareUpdater: public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(ProgramFirmware)
+    Q_DISABLE_COPY(FirmwareUpdater)
 
 public:
-    ProgramFirmware(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface, QObject *parent = nullptr);
-    ~ProgramFirmware();
+    FirmwareUpdater(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface, QObject *parent = nullptr);
+    ~FirmwareUpdater();
 
     // program platform with newest firmware (no backup):
     Q_INVOKABLE bool programAssisted(QString deviceId);

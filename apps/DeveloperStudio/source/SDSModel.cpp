@@ -7,7 +7,7 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
-#include "ProgramFirmware.h"
+#include "FirmwareUpdater.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
@@ -31,7 +31,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      programFirmware_(new ProgramFirmware(strataClient_, coreInterface_, this)),
+      firmwareUpdater_(new FirmwareUpdater(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
@@ -54,7 +54,7 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
-    delete programFirmware_;
+    delete firmwareUpdater_;
     delete urlConfig_;
     delete strataClient_;
 }
@@ -189,9 +189,9 @@ SGNewControlView *SDSModel::newControlView() const
     return newControlView_;
 }
 
-ProgramFirmware *SDSModel::programFirmware() const
+FirmwareUpdater *SDSModel::firmwareUpdater() const
 {
-    return programFirmware_;
+    return firmwareUpdater_;
 }
 
 PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const

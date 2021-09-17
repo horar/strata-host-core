@@ -174,7 +174,7 @@ SGWidgets.SGMainWindow {
     }
 
     Connections {
-        target: sdsModel.programFirmware
+        target: sdsModel.firmwareUpdater
 
         onJobStarted: {
             PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", true)

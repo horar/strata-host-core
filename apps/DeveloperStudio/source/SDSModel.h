@@ -13,7 +13,7 @@ class CoreInterface;
 class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
-class ProgramFirmware;
+class FirmwareUpdater;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
 
@@ -32,7 +32,7 @@ class SDSModel: public QObject
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
-    Q_PROPERTY(ProgramFirmware* programFirmware READ programFirmware CONSTANT)
+    Q_PROPERTY(FirmwareUpdater* firmwareUpdater READ firmwareUpdater CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
     Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
@@ -51,7 +51,7 @@ public:
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
-    ProgramFirmware* programFirmware() const;
+    FirmwareUpdater* firmwareUpdater() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
     VisualEditorUndoStack* visualEditorUndoStack() const;
     strata::sds::config::UrlConfig* urls() const;
@@ -81,7 +81,7 @@ private:
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
-    ProgramFirmware *programFirmware_{nullptr};
+    FirmwareUpdater *firmwareUpdater_{nullptr};
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
     VisualEditorUndoStack *visualEditorUndoStack_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};

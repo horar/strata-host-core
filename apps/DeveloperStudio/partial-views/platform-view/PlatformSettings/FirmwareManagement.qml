@@ -27,7 +27,7 @@ ColumnLayout {
     }
 
     Connections {
-        target: sdsModel.programFirmware
+        target: sdsModel.firmwareUpdater
 
         onJobProgressUpdate: {
             if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {

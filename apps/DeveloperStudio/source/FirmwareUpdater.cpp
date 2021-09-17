@@ -1,11 +1,11 @@
-#include "ProgramFirmware.h"
+#include "FirmwareUpdater.h"
 
 #include <StrataRPC/StrataClient.h>
 
 #include "logging/LoggingQtCategories.h"
 #include <QJsonDocument>
 
-ProgramFirmware::ProgramFirmware(
+FirmwareUpdater::FirmwareUpdater(
         strata::strataRPC::StrataClient *strataClient,
         CoreInterface *coreInterface,
         QObject *parent)
@@ -13,15 +13,15 @@ ProgramFirmware::ProgramFirmware(
       strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
-    connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramFirmware::jobUpdateHandler);
-    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &ProgramFirmware::jobUpdateHandler);
+    connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &FirmwareUpdater::jobUpdateHandler);
+    connect(coreInterface_, &CoreInterface::updateFirmwareJobUpdate, this, &FirmwareUpdater::jobUpdateHandler);
 }
 
-ProgramFirmware::~ProgramFirmware()
+FirmwareUpdater::~FirmwareUpdater()
 {
 }
 
-bool ProgramFirmware::programAssisted(QString deviceId)
+bool FirmwareUpdater::programAssisted(QString deviceId)
 {
     if (requestDevice(deviceId, Action::ProgramAssisted, QString(), QString()) == false) {
         return false;
@@ -34,7 +34,7 @@ bool ProgramFirmware::programAssisted(QString deviceId)
     return sendCommand(deviceId, QStringLiteral("program_controller"), cmdPayloadObject);
 }
 
-bool ProgramFirmware::programEmbedded(QString deviceId)
+bool FirmwareUpdater::programEmbedded(QString deviceId)
 {
     if (requestDevice(deviceId, Action::ProgramEmbedded, QString(), QString()) == false) {
         return false;
@@ -47,7 +47,7 @@ bool ProgramFirmware::programEmbedded(QString deviceId)
     return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
 }
 
-bool ProgramFirmware::programSpecificFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
+bool FirmwareUpdater::programSpecificFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
 {
     if (requestDevice(deviceId, Action::ProgramSpecificFirmware, firmwareUri, firmwareMD5) == false) {
         return false;
@@ -62,7 +62,7 @@ bool ProgramFirmware::programSpecificFirmware(QString deviceId, QString firmware
     return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
 }
 
-bool ProgramFirmware::requestDevice(const QString& deviceId, Action action, const QString& firmwareUri, const QString& firmwareMD5)
+bool FirmwareUpdater::requestDevice(const QString& deviceId, Action action, const QString& firmwareUri, const QString& firmwareMD5)
 {
     if (deviceId.isEmpty()) {
         qCCritical(logCategoryStrataDevStudio) << "Bad request, device ID is empty.";
@@ -79,7 +79,7 @@ bool ProgramFirmware::requestDevice(const QString& deviceId, Action action, cons
     return true;
 }
 
-bool ProgramFirmware::sendCommand(const QString& deviceId, const QString& command, const QJsonObject& payload)
+bool FirmwareUpdater::sendCommand(const QString& deviceId, const QString& command, const QJsonObject& payload)
 {
     strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
 
@@ -89,13 +89,13 @@ bool ProgramFirmware::sendCommand(const QString& deviceId, const QString& comman
         return false;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &ProgramFirmware::replyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &ProgramFirmware::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &FirmwareUpdater::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &FirmwareUpdater::replyHandler);
 
     return true;
 }
 
-QJsonObject ProgramFirmware::acquireProgramFirmwareData(QString deviceId, QString firmwareUri, QString firmwareMD5) const
+QJsonObject FirmwareUpdater::acquireProgramFirmwareData(QString deviceId, QString firmwareUri, QString firmwareMD5) const
 {
     QJsonObject payload;
 
@@ -112,7 +112,7 @@ QJsonObject ProgramFirmware::acquireProgramFirmwareData(QString deviceId, QStrin
     return payload;
 }
 
-void ProgramFirmware::replyHandler(QJsonObject payload)
+void FirmwareUpdater::replyHandler(QJsonObject payload)
 {
     const QString deviceId = payload.value(QStringLiteral("device_id")).toString();
     if (deviceId.isEmpty()) {
@@ -154,7 +154,7 @@ void ProgramFirmware::replyHandler(QJsonObject payload)
     emit jobStarted(deviceId, requestedDevice.value().firmwareUri, requestedDevice.value().firmwareMd5);
 }
 
-void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
+void FirmwareUpdater::jobUpdateHandler(QJsonObject payload)
 {
     if ((payload.contains("job_id") == false) ||
         (payload.contains("job_type") == false) ||
@@ -201,7 +201,7 @@ void ProgramFirmware::jobUpdateHandler(QJsonObject payload)
     }
 }
 
-bool ProgramFirmware::programAssistedController(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+bool FirmwareUpdater::programAssistedController(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
 
@@ -234,7 +234,7 @@ bool ProgramFirmware::programAssistedController(const QHash<QString,FlashingData
     return finished;
 }
 
-bool ProgramFirmware::programFirmware(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+bool FirmwareUpdater::programFirmware(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> Flash -> Finished
 
@@ -261,7 +261,7 @@ bool ProgramFirmware::programFirmware(const QHash<QString,FlashingData>::Iterato
     return finished;
 }
 
-bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+bool FirmwareUpdater::backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> Backup -> (ClearFwClassId) -> Flash -> (Restore) -> (SetFwClassId) -> Finished
 
@@ -297,7 +297,7 @@ bool ProgramFirmware::backupAndProgram(const QHash<QString,FlashingData>::Iterat
     return finished;
 }
 
-void ProgramFirmware::simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload, float progress)
+void FirmwareUpdater::simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload, float progress)
 {
     const JobStatus jobStatus = acquireJobStatus(payload);
     if (jobStatus == JobStatus::Running) {
@@ -309,7 +309,7 @@ void ProgramFirmware::simpleJob(JobType jobType, const QHash<QString,FlashingDat
     }
 }
 
-void ProgramFirmware::progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+void FirmwareUpdater::progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     const JobStatus jobStatus = acquireJobStatus(payload);
     if (jobStatus == JobStatus::Running) {
@@ -335,7 +335,7 @@ void ProgramFirmware::progressJob(JobType jobType, const QHash<QString,FlashingD
     }
 }
 
-void ProgramFirmware::finishedJob(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+void FirmwareUpdater::finishedJob(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     QString errorString;
     const JobStatus jobStatus = acquireJobStatus(payload);
@@ -351,13 +351,13 @@ void ProgramFirmware::finishedJob(const QHash<QString,FlashingData>::Iterator de
     emit jobFinished(deviceIter.key(), errorString);
 }
 
-QString ProgramFirmware::acquireErrorString(const QJsonObject& payload) const
+QString FirmwareUpdater::acquireErrorString(const QJsonObject& payload) const
 {
     const QString errorString = payload.value(QStringLiteral("error_string")).toString();
     return errorString.isEmpty() ? QStringLiteral("Unknown error") : errorString;
 }
 
-ProgramFirmware::JobType ProgramFirmware::acquireJobType(const QJsonObject& payload) const
+FirmwareUpdater::JobType FirmwareUpdater::acquireJobType(const QJsonObject& payload) const
 {
     const QString jobType = payload.value("job_type").toString();
 
@@ -384,7 +384,7 @@ ProgramFirmware::JobType ProgramFirmware::acquireJobType(const QJsonObject& payl
     return JobType::Unknown;
 }
 
-ProgramFirmware::JobStatus ProgramFirmware::acquireJobStatus(const QJsonObject& payload) const
+FirmwareUpdater::JobStatus FirmwareUpdater::acquireJobStatus(const QJsonObject& payload) const
 {
     const QString jobStatus = payload.value(QStringLiteral("job_status")).toString();
 
@@ -403,7 +403,7 @@ ProgramFirmware::JobStatus ProgramFirmware::acquireJobStatus(const QJsonObject& 
     return JobStatus::Unknown;
 }
 
-void ProgramFirmware::notifyProgressChange(const QHash<QString,FlashingData>::Iterator deviceIter, JobType jobType, float progress)
+void FirmwareUpdater::notifyProgressChange(const QHash<QString,FlashingData>::Iterator deviceIter, JobType jobType, float progress)
 {
     float overallProgress = resolveOverallProgress(deviceIter.value().action, jobType, progress);
     QString status = resolveStatus(jobType, progress);
@@ -414,7 +414,7 @@ void ProgramFirmware::notifyProgressChange(const QHash<QString,FlashingData>::It
     emit jobProgressUpdate(deviceIter.key(), status, overallProgress);
 }
 
-float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, float progress) const
+float FirmwareUpdater::resolveOverallProgress(Action action, JobType jobType, float progress) const
 {
     // 0.99 together
     constexpr float downloadRange = 0.10f;
@@ -473,7 +473,7 @@ float ProgramFirmware::resolveOverallProgress(Action action, JobType jobType, fl
     return overallProgress;
 }
 
-QString ProgramFirmware::resolveStatus(JobType jobType, float progress) const
+QString FirmwareUpdater::resolveStatus(JobType jobType, float progress) const
 {
     QString status;
 
@@ -517,7 +517,7 @@ QString ProgramFirmware::resolveStatus(JobType jobType, float progress) const
     return status;
 }
 
-void ProgramFirmware::logError(const QString& errorString, const QString& deviceId, Action action, JobType jobType)
+void FirmwareUpdater::logError(const QString& errorString, const QString& deviceId, Action action, JobType jobType)
 {
     qCWarning(logCategoryStrataDevStudio).noquote().nospace() << errorString << ", device ID: " << deviceId
         << " (action " << static_cast<int>(action) << ", job type " << static_cast<int>(jobType) << ").";

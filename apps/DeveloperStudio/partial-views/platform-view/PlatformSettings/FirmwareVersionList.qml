@@ -187,7 +187,7 @@ ColumnLayout {
 
                         Component.onCompleted: {
                             if (firmwareColumn.flashingInProgress === false) {
-                                let payload = sdsModel.programFirmware.acquireProgramFirmwareData(platformStack.device_id, model.uri, model.md5)
+                                let payload = sdsModel.firmwareUpdater.acquireProgramFirmwareData(platformStack.device_id, model.uri, model.md5)
                                 if ((payload.status !== undefined) && (payload.progress !== undefined)) {
                                     startFlash(true)
                                     processUpdateFirmwareJobProgress(payload.status, payload.progress)
@@ -196,7 +196,7 @@ ColumnLayout {
                         }
 
                         Connections {
-                            target: sdsModel.programFirmware
+                            target: sdsModel.firmwareUpdater
 
                             onJobStarted: {
                                 if (firmwareColumn.flashingInProgress === false
@@ -204,7 +204,7 @@ ColumnLayout {
                                     && firmwareUri === model.uri
                                     && firmwareMD5 === model.md5)
                                 {
-                                    let payload = sdsModel.programFirmware.acquireProgramFirmwareData(deviceId, firmwareUri, firmwareMD5)
+                                    let payload = sdsModel.firmwareUpdater.acquireProgramFirmwareData(deviceId, firmwareUri, firmwareMD5)
                                     if ((payload.status !== undefined) && (payload.progress !== undefined)) {
                                         flashStatus.startFlash(true)
                                         flashStatus.processUpdateFirmwareJobProgress(payload.status, payload.progress)
@@ -231,7 +231,7 @@ ColumnLayout {
                                 firmwareRepeater.resetDescriptions()
 
                                 if (already_started ||
-                                    (sdsModel.programFirmware.programSpecificFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
+                                    (sdsModel.firmwareUpdater.programSpecificFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
                                     flashingInProgress = true
                                     description.text = "Do not unplug your board during this process"
                                     flashStatus.visible = true
