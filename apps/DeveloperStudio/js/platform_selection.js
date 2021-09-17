@@ -324,7 +324,6 @@ function addConnectedPlatform(platform) {
                         // if there is already listing for this platform, reuse it
                         let listing = getDeviceListing(class_id_string, platform.device_id)
                         if (listing) {
-                            listing.program_controller = true
                             connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
                         } else {
                             insertProgramControllerListing(platform, class_id_string)
@@ -368,7 +367,6 @@ function addConnectedPlatform(platform) {
                     // if there is already listing for this platform, reuse it
                     let listing = getDeviceListing(class_id_string, platform.device_id)
                     if (listing) {
-                        listing.program_controller = true
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                     } else {
                         insertMissingFirmwareListing(platform, class_id_string)
