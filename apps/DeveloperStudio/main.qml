@@ -174,18 +174,24 @@ SGWidgets.SGMainWindow {
     }
 
     Connections {
-        target: sdsModel.programControllerManager
+        target: sdsModel.firmwareUpdater
 
-        onJobStatusChanged: {
-            if (status === "running") {
-                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0)
-            } else if (status === "failure") {
-                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
-            }
+        onJobStarted: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", true)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0.0)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", "")
         }
 
         onJobProgressUpdate: {
             PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", progress)
+        }
+
+        onJobFinished: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", false)
+        }
+
+        onJobError: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
         }
     }
 

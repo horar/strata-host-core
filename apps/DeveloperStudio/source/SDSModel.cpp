@@ -7,8 +7,7 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
-#include "ProgramControllerManager.h"
-#include "FirmwareManager.h"
+#include "FirmwareUpdater.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
@@ -27,13 +26,12 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), "", this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), this)),
       coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      programControllerManager_(new ProgramControllerManager(strataClient_, coreInterface_, this)),
-      firmwareManager_(new FirmwareManager(strataClient_, coreInterface_, this)),
+      firmwareUpdater_(new FirmwareUpdater(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
@@ -56,8 +54,7 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
-    delete programControllerManager_;
-    delete firmwareManager_;
+    delete firmwareUpdater_;
     delete urlConfig_;
     delete strataClient_;
 }
@@ -192,14 +189,9 @@ SGNewControlView *SDSModel::newControlView() const
     return newControlView_;
 }
 
-ProgramControllerManager *SDSModel::programControllerManager() const
+FirmwareUpdater *SDSModel::firmwareUpdater() const
 {
-    return programControllerManager_;
-}
-
-FirmwareManager *SDSModel::firmwareManager() const
-{
-    return firmwareManager_;
+    return firmwareUpdater_;
 }
 
 PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const

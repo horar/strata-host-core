@@ -97,6 +97,12 @@ signals:
     void downloadControlViewProgress(const QJsonObject &payload);
 
     /**
+     * Signal emitted when program_controller_job notification is received.
+     * @param [in] payload QJsonObject of program_controller_job notification payload.
+     */
+    void programControllerJobUpdate(const QJsonObject &payload);
+
+    /**
      * Signal emitted when update_firmware_job notification is received.
      * @param [in] payload QJsonObject of update_firmware_job notification payload.
      */
@@ -134,6 +140,7 @@ private:
     void processUpdatesAvailableNotification(const QJsonObject &payload);
     void processDownloadViewFinishedNotification(const QJsonObject &payload);
     void processDownloadControlViewProgressNotification(const QJsonObject &payload);
+    void processProgramControllerJobNotification(const QJsonObject &payload);
     void processUpdateFirmwareJobNotification(const QJsonObject &payload);
     void processDownloadPlatformFilepathChangedNotification(const QJsonObject &payload);
     void processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload);

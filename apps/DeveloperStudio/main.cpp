@@ -33,8 +33,7 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "RunGuard.h"
-#include "ProgramControllerManager.h"
-#include "FirmwareManager.h"
+#include "FirmwareUpdater.h"
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 
@@ -153,8 +152,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
-    qmlRegisterUncreatableType<ProgramControllerManager>("tech.strata.ProgramControllerManager", 1, 0, "ProgramControllerManager", "You can't instantiate ProgramControllerManager in QML");
-    qmlRegisterUncreatableType<FirmwareManager>("tech.strata.FirmwareManager", 1, 0, "FirmwareManager", "You can't instantiate FirmwareManager in QML");
+    qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
 

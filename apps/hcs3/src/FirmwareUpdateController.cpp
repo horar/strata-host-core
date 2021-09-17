@@ -142,11 +142,12 @@ void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, 
         progress->complete = complete;
         progress->total = total;
     }
-    // UpdateOperation::Finished is special case - it has always empty errorString because
-    // this operation is bind to FlasherConnector 'finished' signal which doesn't have any
-    // error string. So, in this case preserve previous error string.
-    if (operation != UpdateOperation::Finished) {
-        progress->error = errorString;
+    // - UpdateOperation::Finished is special case - it has always empty errorString because
+    //   this operation is bind to FlasherConnector 'finished' signal which doesn't have any
+    //   error string. So, do nothing with last error string in this case.
+    // - Update last error string only if 'errorString' is not empty.
+    if ((operation != UpdateOperation::Finished) && (errorString.isEmpty() == false)) {
+        progress->lastError = errorString;
     }
 
     emit progressOfUpdate(deviceId, updateData->clientId, *progress);

@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.logger 1.0
 
 ColumnLayout {
     id: firmwareColumn
@@ -26,17 +27,23 @@ ColumnLayout {
     }
 
     Connections {
-        target: sdsModel.firmwareManager
+        target: sdsModel.firmwareUpdater
 
-        onUpdateFirmwareJobProgress: {
+        onJobProgressUpdate: {
             if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
                 firmwareColumn.activeFirmware.processUpdateFirmwareJobProgress(status, progress)
             }
         }
 
-        onUpdateFirmwareJobFinished: {
+        onJobFinished: {
             if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
-                firmwareColumn.activeFirmware.processUpdateFirmwareJobFinished(status, errorString)
+                firmwareColumn.activeFirmware.processUpdateFirmwareJobFinished(errorString)
+            }
+        }
+
+        onJobError: {
+            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
+                console.warn(Logger.devStudioCategory, "Failure during firmware flashing:", errorString)
             }
         }
     }

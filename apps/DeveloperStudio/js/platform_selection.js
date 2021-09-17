@@ -324,13 +324,12 @@ function addConnectedPlatform(platform) {
                         // if there is already listing for this platform, reuse it
                         let listing = getDeviceListing(class_id_string, platform.device_id)
                         if (listing) {
-                            listing.program_controller = true
                             connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
                         } else {
                             insertProgramControllerListing(platform, class_id_string)
                         }
 
-                        sdsModel.programControllerManager.programAssisted(platform.device_id)
+                        sdsModel.firmwareUpdater.programAssisted(platform.device_id)
                     } else {
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
                     }
@@ -343,7 +342,7 @@ function addConnectedPlatform(platform) {
             } else {
                 //uncompatible firmware installed
                 insertProgramControllerListing(platform, class_id_string)
-                sdsModel.programControllerManager.programAssisted(platform.device_id)
+                sdsModel.firmwareUpdater.programAssisted(platform.device_id)
             }
         }
 
@@ -368,13 +367,12 @@ function addConnectedPlatform(platform) {
                     // if there is already listing for this platform, reuse it
                     let listing = getDeviceListing(class_id_string, platform.device_id)
                     if (listing) {
-                        listing.program_controller = true
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                     } else {
                         insertMissingFirmwareListing(platform, class_id_string)
                     }
 
-                    sdsModel.programControllerManager.programEmbedded(platform.device_id)
+                    sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
                 } else {
                     connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                 }

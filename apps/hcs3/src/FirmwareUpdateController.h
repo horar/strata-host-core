@@ -74,7 +74,7 @@ public:
         UpdateStatus status;
         int complete;
         int total;
-        QString error;
+        QString lastError;  // last error which occurred during whole update process
         const QString jobUuid;
         const bool programController;
     };
