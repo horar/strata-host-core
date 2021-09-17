@@ -21,6 +21,10 @@ Item {
     onVisibleChanged: {
         if (!visible) {
             alertMessage.Layout.preferredHeight = 0
+        } else {
+            if (fileOutput.text === "") {
+                fileOutput.text = openProjectContainer.fileDialogFolder()
+            }
         }
     }
 
