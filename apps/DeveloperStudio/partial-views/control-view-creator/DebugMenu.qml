@@ -22,7 +22,10 @@ Rectangle {
     id: debugMenuRoot
     anchors.fill: parent
 
-    property var json: ({})
+    property var json: ({
+                            "notifications": [],
+                            "commands": []
+                        })
     property url source: editor.fileTreeModel.debugMenuSource
     property string errorString: "No platformInterface.json detected in project" // default state is no pi.json found
 
