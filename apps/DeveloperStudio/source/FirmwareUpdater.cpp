@@ -95,7 +95,12 @@ bool FirmwareUpdater::sendCommand(const QString& deviceId, const QString& comman
     return true;
 }
 
-QJsonObject FirmwareUpdater::acquireProgramFirmwareData(QString deviceId, QString firmwareUri, QString firmwareMD5) const
+bool FirmwareUpdater::isFirmwareUpdateInProgress(QString deviceId) const
+{
+    return requestedDevices_.contains(deviceId);
+}
+
+QJsonObject FirmwareUpdater::getFirmwareUpdateData(QString deviceId, QString firmwareUri, QString firmwareMD5) const
 {
     QJsonObject payload;
 

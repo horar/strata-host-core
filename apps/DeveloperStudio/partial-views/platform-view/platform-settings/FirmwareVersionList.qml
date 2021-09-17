@@ -6,6 +6,7 @@ import tech.strata.notifications 1.0
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.logger 1.0
 
 ColumnLayout {
     id: firmwareList
@@ -13,7 +14,6 @@ ColumnLayout {
     Layout.topMargin: 10
 
     property alias firmwareRepeater: firmwareRepeater
-    property alias firmwareVersions: firmwareVersions
 
     ColumnLayout{
         id: firmwareVersions
@@ -53,28 +53,58 @@ ColumnLayout {
             }
         }
 
+        Connections {
+            // Note: does not works if placed inside firmwareRepeater
+            target: sdsModel.firmwareUpdater
+
+            onJobFinished: {
+                if (firmwareRepeater.flashingDeviceInProgress && (deviceId === platformStack.device_id)) {
+                    firmwareRepeater.flashingDeviceInProgress = false
+                }
+            }
+
+            onJobError: {
+                if (firmwareRepeater.flashingDeviceInProgress && (deviceId === platformStack.device_id)) {
+                    console.warn(Logger.devStudioCategory, "Failure during firmware flashing:", errorString)
+                }
+            }
+        }
+
         Repeater {
             id: firmwareRepeater
             model: []
 
-            signal resetDescriptions()
+            property bool flashingDeviceInProgress: false // one of the firmwares is being flashed to this device
+
+            Component.onCompleted: {
+                firmwareRepeater.flashingDeviceInProgress = sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platformStack.device_id)
+            }
 
             delegate: Rectangle {
                 id: firmwareRow
-                Layout.preferredHeight: column.height
+                Layout.preferredHeight: firmwareColumn.height
                 Layout.fillWidth: true
-                objectName: "firmwareRow"
 
-                property bool flashingInProgress: false
-                property string updateFirmwareJobId
-                property alias description: description.text
+                property bool flashingFirmwareInProgress: false // this particular firmware is being flashed to device
 
-                onFlashingInProgressChanged: {
-                    firmwareColumn.flashingInProgress = flashingInProgress
+                Connections {
+                    target: sdsModel.firmwareUpdater
+
+                    onJobProgressUpdate: {
+                        if (firmwareRow.flashingFirmwareInProgress && (deviceId === platformStack.device_id)) {
+                            flashStatus.processUpdateFirmwareJobProgress(status, progress)
+                        }
+                    }
+
+                    onJobFinished: {
+                        if (firmwareRow.flashingFirmwareInProgress && (deviceId === platformStack.device_id)) {
+                            flashStatus.processUpdateFirmwareJobFinished(errorString)
+                        }
+                    }
                 }
 
                 ColumnLayout {
-                    id: column
+                    id: firmwareColumn
                     anchors.centerIn: parent
                     width: parent.width
 
@@ -99,16 +129,25 @@ ColumnLayout {
                         }
 
                         SGText {
-                            id: description
+                            id: firmwareDescription
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignRight
                             color: "#666"
                             elide: Text.ElideRight
                             wrapMode: Text.Wrap
                             horizontalAlignment: Text.AlignRight
-                            text: defaultText
+                            text: currentStatus !== "" ? currentStatus : (installMouse.enabled ? "Download and flash firmware" : "")
+                            property string currentStatus: ""
 
-                            property string defaultText: installMouse.enabled ? "Download and flash firmware" : ""
+                            Connections {
+                                target: firmwareRepeater
+
+                                onFlashingDeviceInProgressChanged: {
+                                    if (firmwareRepeater.flashingDeviceInProgress && firmwareDescription.currentStatus !== "") {
+                                        firmwareDescription.currentStatus = ""
+                                    }
+                                }
+                            }
                         }
 
                         Item {
@@ -123,7 +162,7 @@ ColumnLayout {
                                 }
                                 source: model.installed ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/download.svg"
                                 iconColor: {
-                                    if (platformStack.connected === false || firmwareColumn.flashingInProgress) {
+                                    if (platformStack.connected === false || firmwareRepeater.flashingDeviceInProgress) {
                                         return "#ddd" // disabled - light greyed out
                                     } else if (model.installed) {
                                         return "lime"
@@ -131,14 +170,14 @@ ColumnLayout {
                                         return "#666" // enabled - dark grey
                                     }
                                 }
-                                visible: firmwareRow.flashingInProgress === false
+                                visible: firmwareRow.flashingFirmwareInProgress === false
 
                                 MouseArea {
                                     id: installMouse
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    cursorShape: model.installed || firmwareColumn.flashingInProgress || platformStack.connected === false ? Qt.ArrowCursor : Qt.PointingHandCursor
-                                    enabled: model.installed === false && !firmwareColumn.flashingInProgress && platformStack.connected
+                                    cursorShape: model.installed || firmwareRepeater.flashingDeviceInProgress || platformStack.connected === false ? Qt.ArrowCursor : Qt.PointingHandCursor
+                                    enabled: model.installed === false && !firmwareRepeater.flashingDeviceInProgress && platformStack.connected
 
                                     onClicked: {
                                         if (platformStack.firmware_version !== "") {
@@ -186,12 +225,10 @@ ColumnLayout {
                         visible: false
 
                         Component.onCompleted: {
-                            if (firmwareColumn.flashingInProgress === false) {
-                                let payload = sdsModel.firmwareUpdater.acquireProgramFirmwareData(platformStack.device_id, model.uri, model.md5)
-                                if ((payload.status !== undefined) && (payload.progress !== undefined)) {
-                                    startFlash(true)
-                                    processUpdateFirmwareJobProgress(payload.status, payload.progress)
-                                }
+                            let payload = sdsModel.firmwareUpdater.getFirmwareUpdateData(platformStack.device_id, model.uri, model.md5)
+                            if ((payload.status !== undefined) && (payload.progress !== undefined)) {
+                                startFlash(true)
+                                processUpdateFirmwareJobProgress(payload.status, payload.progress)
                             }
                         }
 
@@ -204,48 +241,44 @@ ColumnLayout {
                                     && firmwareUri === model.uri
                                     && firmwareMD5 === model.md5)
                                 {
-                                    let payload = sdsModel.firmwareUpdater.acquireProgramFirmwareData(deviceId, firmwareUri, firmwareMD5)
+                                    let payload = sdsModel.firmwareUpdater.getFirmwareUpdateData(deviceId, firmwareUri, firmwareMD5)
                                     if ((payload.status !== undefined) && (payload.progress !== undefined)) {
                                         flashStatus.startFlash(true)
                                         flashStatus.processUpdateFirmwareJobProgress(payload.status, payload.progress)
                                     }
                                 }
-
                             }
                         }
 
                         function resetState() {
                             statusText.text = "Initializing..."
-                            fillBar.width = 0
+                            fillBar.progress = 0.0
                             fillBar.color = "lime"
                             flashStatus.visible = false
                         }
 
-                        function resetDescription() {
-                            description.text = Qt.binding(() => description.defaultText)
-                            firmwareRepeater.resetDescriptions.disconnect(resetDescription)
-                        }
-
                         function startFlash(already_started) {
-                            if (firmwareColumn.flashingInProgress === false) {
-                                firmwareRepeater.resetDescriptions()
+                            let success = already_started;
 
-                                if (already_started ||
-                                    (sdsModel.firmwareUpdater.programSpecificFirmware(platformStack.device_id, model.uri, model.md5) === true)) {
-                                    flashingInProgress = true
-                                    description.text = "Do not unplug your board during this process"
-                                    flashStatus.visible = true
-                                    activeFirmware = flashStatus
-                                } else {
-                                    let error_string = "Unable to start flashing"
-                                    processUpdateFirmwareJobFinished(error_string)
-                                }
+                            if ((already_started === false) &&
+                                (firmwareRepeater.flashingDeviceInProgress === false)) {
+                                success = sdsModel.firmwareUpdater.programSpecificFirmware(platformStack.device_id, model.uri, model.md5);
+                            }
+
+                            if (success) {
+                                firmwareRow.flashingFirmwareInProgress = true
+                                firmwareRepeater.flashingDeviceInProgress = true // call before changing the currentStatus
+                                firmwareDescription.currentStatus = "Do not unplug your board during this process"
+                                flashStatus.visible = true
+                            } else {
+                                let error_string = "Unable to start flashing"
+                                processUpdateFirmwareJobFinished(error_string)
                             }
                         }
 
                         function processUpdateFirmwareJobProgress(status, progress) {
                             statusText.text = status
-                            fillBar.width = Qt.binding(() => barBackground.width * progress) // must be bound in case of resize
+                            fillBar.progress = progress
                         }
 
                         function processUpdateFirmwareJobFinished(error_string) {
@@ -257,10 +290,8 @@ ColumnLayout {
                             }
 
                             resetState()
-                            description.text = "Update firmware " + descriptionSuffix
-                            flashingInProgress = false
-                            activeFirmware = null
-                            firmwareRepeater.resetDescriptions.connect(resetDescription)
+                            firmwareDescription.currentStatus = "Update firmware " + descriptionSuffix
+                            firmwareRow.flashingFirmwareInProgress = false
                         }
 
                         ColumnLayout {
@@ -285,8 +316,10 @@ ColumnLayout {
                                 Rectangle {
                                     id: fillBar
                                     height: barBackground.height
-                                    width: 0
+                                    width: barBackground.width * progress // must be bound in case of resize
                                     color: "lime"
+
+                                    property real progress : 0.0
                                 }
                             }
                         }
