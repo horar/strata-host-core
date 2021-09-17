@@ -147,6 +147,7 @@ Item {
 
                                 Text {
                                     id: commandText
+                                    color: "white"
                                     text: {
                                         let value = model.value
                                         if (value !== -1) {
@@ -163,8 +164,6 @@ Item {
                                             return JSON.stringify(command)
                                         }
                                     }
-
-                                    color: "white"
                                 }
                             }
                         }
@@ -181,7 +180,7 @@ Item {
                     anchors.fill: parent
                     spacing: 5
 
-                     Item {
+                    Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 20
 
@@ -235,7 +234,6 @@ Item {
                             onClicked: {
                                 logs.clear()
                             }
-
                         }
                     }
                 }
