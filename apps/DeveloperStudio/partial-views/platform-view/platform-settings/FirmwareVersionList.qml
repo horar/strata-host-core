@@ -82,7 +82,7 @@ ColumnLayout {
 
             delegate: Rectangle {
                 id: firmwareRow
-                Layout.preferredHeight: firmwareColumn.height
+                Layout.preferredHeight: firmwareDataColumn.height
                 Layout.fillWidth: true
 
                 property bool flashingFirmwareInProgress: false // this particular firmware is being flashed to device
@@ -104,7 +104,7 @@ ColumnLayout {
                 }
 
                 ColumnLayout {
-                    id: firmwareColumn
+                    id: firmwareDataColumn
                     anchors.centerIn: parent
                     width: parent.width
 
@@ -236,7 +236,7 @@ ColumnLayout {
                             target: sdsModel.firmwareUpdater
 
                             onJobStarted: {
-                                if (firmwareColumn.flashingInProgress === false
+                                if (firmwareRow.flashingFirmwareInProgress === false
                                     && deviceId === platformStack.device_id
                                     && firmwareUri === model.uri
                                     && firmwareMD5 === model.md5)
