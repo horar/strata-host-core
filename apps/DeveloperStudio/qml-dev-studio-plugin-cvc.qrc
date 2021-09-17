@@ -25,6 +25,7 @@
         <file alias="sidebar/FolderContextMenu.qml">partial-views/control-view-creator/sidebar/FolderContextMenu.qml</file>
         <file alias="sidebar/CreateFilePopup.qml">partial-views/control-view-creator/sidebar/CreateFilePopup.qml</file>
         <file alias="sidebar/RenameFilePopup.qml">partial-views/control-view-creator/sidebar/RenameFilePopup.qml</file>
+        <file alias="sidebar/CreateDirectoryPopup.qml">partial-views/control-view-creator/sidebar/CreateDirectoryPopup.qml</file>
         <file alias="ConfirmClosePopup.qml">partial-views/control-view-creator/ConfirmClosePopup.qml</file>
         <file alias="utils/template_selection.js">partial-views/control-view-creator/utils/template_selection.js</file>
         <file alias="console/ContextMenu.qml">partial-views/control-view-creator/console/ContextMenu.qml</file>

@@ -20,4 +20,12 @@ Menu {
             sideBarContextMenu.dismiss()
         }
     }
+
+    MenuItem {
+        text: "Create New Directory"
+        onTriggered: {
+            createDirectoryPopup.open()
+            sideBarContextMenu.dismiss()
+        }
+    }
 }

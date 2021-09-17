@@ -61,4 +61,13 @@ Menu {
             folderContextMenu.dismiss()
         }
     }
+
+    MenuItem {
+        text: "Create New Directory"
+        onTriggered: {
+            createDirectoryPopup.directoryPath = model.filepath
+            createDirectoryPopup.open()
+            folderContextMenu.dismiss()
+        }
+    }
 }
