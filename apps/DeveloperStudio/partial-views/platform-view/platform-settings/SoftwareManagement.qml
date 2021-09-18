@@ -89,15 +89,11 @@ ColumnLayout {
         // Check for preferred version and find it on disk
         const userPreferredVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
         if (userPreferredVersion) {
-            for (let i = 0; i < controlViewContainer.controlViewList.count; i++) {
-                const listing = controlViewContainer.controlViewList.get(i)
-                if (listing.version === userPreferredVersion.version && listing.filepath === userPreferredVersion.path) {
-                    // Successfully found user's preferred version on disk
-                    installedVersion = {
-                        "version": userPreferredVersion.version
-                    }
-                    return
+            if (SGUtilsCpp.exists(userPreferredVersion.path)) {
+                installedVersion = {
+                    "version": userPreferredVersion.version
                 }
+                return
             }
 
             // Preferred version not found on disk
