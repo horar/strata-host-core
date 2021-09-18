@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/cdc-logo.svg"));

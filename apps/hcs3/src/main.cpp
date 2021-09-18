@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setApplicationName(QStringLiteral("Host Controller Service"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
     QCoreApplication app(argc, argv);
 

@@ -279,7 +279,7 @@ Component.prototype.startMenuShortcutChanged = function (checked)
     console.log("startMenuShortcutChanged to : " + checked);
     if (checked == true) {
         installer.setValue("add_start_menu_shortcut", "true");
-        installer.setValue("StartMenuDir", "ON Semiconductor");
+        installer.setValue("StartMenuDir", "onsemi");
         if (systemInfo.productType == "windows") {
             installer.setDefaultPageVisible(QInstaller.StartMenuSelection, true);
         }
