@@ -2,6 +2,7 @@
 #define SGCSVUTILS_H
 #include <QObject>
 #include <QVariant>
+#include <QVariantList>
 
 class SGCSVUtils: public QObject
 {
@@ -24,9 +25,9 @@ public:
     }
 
     Q_INVOKABLE QVariant importFromFile(QString folderPath);
-    Q_INVOKABLE void appendRow(QVariant data);
-    Q_INVOKABLE QVariant getData();
-    Q_INVOKABLE void setData(QVariant data);
+    Q_INVOKABLE void appendRow(QVariantList data, QString fileName = QString("myFile.csv"));
+    Q_INVOKABLE QVariantList getData();
+    Q_INVOKABLE void setData(QVariantList data);
     Q_INVOKABLE void clear();
 
 signals:

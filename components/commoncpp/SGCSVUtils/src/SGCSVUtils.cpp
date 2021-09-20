@@ -14,32 +14,43 @@ SGCSVUtils::~SGCSVUtils()
     data_.clear();
 }
 
-QVariant SGCSVUtils::getData()
+QVariantList SGCSVUtils::getData()
 {
     return data_;
 }
 
-void SGCSVUtils::appendRow(QVariant data)
+void SGCSVUtils::appendRow(QVariantList data, QString fileName)
 {
-    data_.append(data);
     SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(outputPath_, "file.csv");
+    QString filePath = utils.joinFilePath(outputPath_, fileName);
     QString path = utils.urlToLocalFile(filePath);
-    utils.atomicWrite(path, data.toByteArray());
-
+    if (!utils.exists(path)) {
+       utils.createFile(path);
+    }
+    QVariantList list;
+    data_.append(data);
+    QString writeData = utils.readTextFileContent(path);
+    for (QVariant d: data) {
+        writeData += d.toString();
+        if (!data.endsWith(d)) {
+            writeData += ",";
+        }
+    }
+    writeData += "\n";
+    data_.append(writeData);
+    utils.atomicWrite(path, writeData);
 }
 
 QVariant SGCSVUtils::importFromFile(QString folderPath)
 {
     SGUtilsCpp utils;
-    QString readData = utils.readTextFileContent(folderPath);
-    data_.clear();
-    QStringList list = readData.split("\n");
-
-    for (QVariant varList: list) {
-        data_.append(varList);
+    QString path = utils.urlToLocalFile(folderPath);
+    if (!utils.exists(path)) {
+       utils.createFile(path);
     }
-
+    QString readData = utils.readTextFileContent(path);
+    data_.clear();
+    data_.append(readData);
     return data_;
 }
 
@@ -48,9 +59,9 @@ void SGCSVUtils::clear()
     data_.clear();
 }
 
-void SGCSVUtils::setData(QVariant data)
+void SGCSVUtils::setData(QVariantList data)
 {
     if (data_ != data) {
-        data_ = data.toList();
+        data_ = data;
     }
 }

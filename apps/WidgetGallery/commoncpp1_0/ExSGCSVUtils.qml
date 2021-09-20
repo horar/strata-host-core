@@ -31,9 +31,11 @@ ColumnLayout {
 
             SGWidgets.SGButton {
                 id: sgButton
-                text: "Open File Dialog"
+                text: "Open export folder dialog"
 
                 onClicked: {
+                    fileDialog.selectMultiple = false
+                    fileDialog.selectFolder = true
                     fileDialog.open()
                 }
             }
@@ -59,8 +61,9 @@ ColumnLayout {
                 text: "Import from File"
 
                 onClicked: {
-                    let data = csvUtil.importFromFile(fileDialog.fileUrl)
-                    console.info(data)
+                    fileDialog.selectMultiple = false
+                    fileDialog.selectFolder = false
+                    fileDialog.open()
                 }
             }
 
@@ -72,16 +75,24 @@ ColumnLayout {
                     console.info(data)
                 }
             }
+
+            SGWidgets.SGTextEdit {
+                id: textEdit
+                text: csvUtil.getData().toString()
+                readOnly: true
+            }
         }
     }
 
 
     FileDialog {
         id: fileDialog
-        selectMultiple: false
-        selectFolder: true
         onAccepted: {
             csvUtil.outputPath = fileDialog.fileUrl
+            if (!selectFolder) {
+                let data = csvUtil.importFromFile(csvUtil.outputPath)
+                console.info(data)
+            }
             close()
         }
     }

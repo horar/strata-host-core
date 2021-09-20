@@ -427,7 +427,8 @@ Module {
         }
         Method {
             name: "appendRow"
-             Parameter {name: "data"; type: "QVariant"}
+            Parameter {name: "data"; type: "QVariant"}
+            Parameter {name: "fileName"; type: "string"}
         }
     }
     Component {
