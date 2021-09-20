@@ -675,7 +675,7 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
     return success;
 }
 
-bool SGQrcTreeModel::createNewDirectory(const QString &path)
+bool SGQrcTreeModel::createNewFolder(const QString &path)
 {
     return QDir().mkdir(path);
 }

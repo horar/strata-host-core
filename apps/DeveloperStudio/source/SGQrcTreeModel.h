@@ -223,11 +223,11 @@ public:
     Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
     /**
-     * @brief createNewDirectory Creates new directory in specified path. Uses QDir::mkdir
-     * @param path Path to new directory
+     * @brief createNewFolder Creates new folder in specified path. Uses QDir::mkdir
+     * @param path Path to new folder
      * @return Returns true if successful, false otherwise
      */
-    Q_INVOKABLE bool createNewDirectory(const QString &path);
+    Q_INVOKABLE bool createNewFolder(const QString &path);
 
     /**
      * @brief stopWatchingPath Removes the `path` from internal QFileSystemWatcher

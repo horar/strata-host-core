@@ -22,9 +22,9 @@ Menu {
     }
 
     MenuItem {
-        text: "Create New Directory"
+        text: "Create New Folder"
         onTriggered: {
-            createDirectoryPopup.open()
+            createFolderPopup.open()
             sideBarContextMenu.dismiss()
         }
     }

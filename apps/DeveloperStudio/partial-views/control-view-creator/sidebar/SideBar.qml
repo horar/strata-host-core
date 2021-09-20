@@ -172,8 +172,8 @@ Item {
         visible: false
     }
 
-    CreateDirectoryPopup {
-        id: createDirectoryPopup
+    CreateFolderPopup {
+        id: createFolderPopup
         visible: false
     }
 
