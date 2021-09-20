@@ -183,8 +183,8 @@ Controller.prototype.FinishedPageCallback = function ()
     console.log("[GUI] FinishedPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
-        widget.MessageLabel.setText("ON Semiconductor\n\n"
-                                    + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
+        widget.MessageLabel.setText("onsemi\n\n"
+                                    + "Thank you for using onsemi. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
         var runItCheckBox = widget.findChild("RunItCheckBox");

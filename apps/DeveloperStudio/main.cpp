@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("onsemi: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
