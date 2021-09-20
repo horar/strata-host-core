@@ -1,13 +1,14 @@
+::=============================================================================
+:: Copyright (c) 2018-2021 onsemi.
+::
+:: All rights reserved. This software and/or documentation is licensed by onsemi under
+:: limited terms and conditions. The terms and conditions pertaining to the software and/or
+:: documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+:: Terms and Conditions of Sale, Section 8 Software”).
+::=============================================================================
 @echo off
 REM
 REM Simple build script for all 'host' targets
-REM
-REM Copyright (c) 2019-2020
-REM
-REM Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
-REM or copy at http://opensource.org/licenses/MIT)
-REM
-
 REM Notes:
 REM - in PowerShell invoke: "set-executionpolicy remotesigned" and select 'All'
 REM
