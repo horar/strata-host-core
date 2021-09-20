@@ -167,6 +167,13 @@ ColumnLayout {
         }
     }
 
+    Connections {
+        target: platformStack
+        onConnectedChanged: {
+            firmwareSortFilterModel.invalidate()
+        }
+    }
+
     FirmwareVersionList {
         id: firmwareList
     }
