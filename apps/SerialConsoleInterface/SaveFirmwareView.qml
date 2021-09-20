@@ -193,96 +193,100 @@ FocusScope {
             }
         }
 
-        Row {
+        Column {
+            id: bottomColumn
+            anchors.bottom: content.bottom
+            anchors.left: content.left
             spacing: baseSpacing
-            anchors {
-                top: statusColumn.bottom
-                topMargin: 2*baseSpacing
-            }
-            SGWidgets.SGButton {
-                text: "Back"
-                icon.source: "qrc:/sgimages/chevron-left.svg"
-                enabled: saveFirmwareView.editable
-                onClicked: {
-                    closeView()
+
+            Row {
+                spacing: baseSpacing
+
+                SGWidgets.SGButton {
+                    text: "Back"
+                    icon.source: "qrc:/sgimages/chevron-left.svg"
+                    enabled: saveFirmwareView.editable
+                    onClicked: {
+                        closeView()
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: saveFirmwareButton
+                    text: "Save firmware"
+                    icon.source: "qrc:/images/chip-download.svg"
+                    enabled: saveFirmwareView.editable
+                             && model.platform.status === Sci.SciPlatform.Ready
+                    onClicked: {
+                        startBackupProcess(saveFirmwarePathEdit.filePath)
+                    }
                 }
             }
+        }
+    }
 
-            SGWidgets.SGButton {
-                id: saveFirmwareButton
-                text: "Save firmware"
-                icon.source: "qrc:/images/chip-download.svg"
-                enabled: saveFirmwareView.editable
-                         && model.platform.status === Sci.SciPlatform.Ready
-                onClicked: {
-                    startBackupProcess(saveFirmwarePathEdit.filePath)
-                }
-             }
-         }
-     }
+    function startBackupProcess(firmwarePath) {
+        processingStatus = SaveFirmwareView.Setup
 
-     function startBackupProcess(firmwarePath) {
-         processingStatus = SaveFirmwareView.Setup
+        setupNode.nodeState = StatusNode.NotSet
+        preparationNode.nodeState = StatusNode.NotSet
+        backupNode.nodeState = StatusNode.NotSet
+        finishedNode.nodeState = StatusNode.NotSet
 
-         setupNode.nodeState = StatusNode.NotSet
-         preparationNode.nodeState = StatusNode.NotSet
-         backupNode.nodeState = StatusNode.NotSet
-         finishedNode.nodeState = StatusNode.NotSet
+        setupNode.subText = ""
+        preparationNode.subText = ""
+        backupNode.subText = ""
+        finishedNode.subText = ""
 
-         setupNode.subText = ""
-         preparationNode.subText = ""
-         backupNode.subText = ""
-         finishedNode.subText = ""
+        backupProgress = 0
 
-         backupProgress = 0
+        var errorString = model.platform.saveDeviceFirmware(firmwarePath)
+        if (errorString.length === 0) {
+            setupNode.nodeState = StatusNode.Succeed
+            Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(firmwarePath)
+        } else {
+            setupNode.nodeState = StatusNode.Failed
+            setupNode.subText = "Operation cannot start: " + errorString
+            setFinalState(FlasherConnector.Failed)
+        }
+    }
 
-         var errorString = model.platform.saveDeviceFirmware(firmwarePath)
-         if (errorString.length === 0) {
-             setupNode.nodeState = StatusNode.Succeed
-             Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(firmwarePath)
-         } else {
-             setupNode.nodeState = StatusNode.Failed
-             setupNode.subText = "Operation cannot start: " + errorString
-             setFinalState(FlasherConnector.Failed)
-         }
-     }
+    function setFinalState(result) {
+        if (result === FlasherConnector.Success) {
+            processingStatus = SaveFirmwareView.BackupSucceed
+            finishedNode.nodeState = StatusNode.Succeed
+            finishedNode.subText = "The device firmware is saved."
+        } else if (result === FlasherConnector.Unsuccess) {
+            processingStatus = SaveFirmwareView.BackupSucceed
+            finishedNode.nodeState = StatusNode.SucceedWithWarning
+            finishedNode.subText = "The saved file is not a valid firmware."
+        } else {
+            // FlasherConnector.Failure
+            processingStatus = SaveFirmwareView.BackupFailed
+            finishedNode.nodeState = StatusNode.Failed
+            finishedNode.subText = "Firmware was not saved successfully."
+        }
+    }
 
-     function setFinalState(result) {
-         if (result === FlasherConnector.Success) {
-             processingStatus = SaveFirmwareView.BackupSucceed
-             finishedNode.nodeState = StatusNode.Succeed
-             finishedNode.subText = "The device firmware is saved."
-         } else if (result === FlasherConnector.Unsuccess) {
-             processingStatus = SaveFirmwareView.BackupSucceed
-             finishedNode.nodeState = StatusNode.SucceedWithWarning
-             finishedNode.subText = "The saved file is not a valid firmware."
-         } else {
-             // FlasherConnector.Failure
-             processingStatus = SaveFirmwareView.BackupFailed
-             finishedNode.nodeState = StatusNode.Failed
-             finishedNode.subText = "Firmware was not saved successfully."
-         }
-     }
+    function closeView() {
+        StackView.view.pop();
+    }
 
-     function closeView() {
-         StackView.view.pop();
-     }
-
-     function currentTimestamp() {
-         let timestamp = ""
-         let date = new Date()
-         timestamp += date.getFullYear()
-         let val = date.getMonth() + 1
-         timestamp += (val <= 9) ? "0" + val : val
-         val = date.getDate()
-         timestamp += (val <= 9) ? "0" + val : val
-         timestamp += "_"
-         val = date.getHours()
-         timestamp += (val <= 9) ? "0" + val : val
-         val = date.getMinutes()
-         timestamp += (val <= 9) ? "0" + val : val
-         val = date.getSeconds()
-         timestamp += (val <= 9) ? "0" + val : val
-         return timestamp
-     }
+    function currentTimestamp() {
+        let timestamp = ""
+        let date = new Date()
+        timestamp += date.getFullYear()
+        let val = date.getMonth() + 1
+        timestamp += (val <= 9) ? "0" + val : val
+        val = date.getDate()
+        timestamp += (val <= 9) ? "0" + val : val
+        timestamp += "_"
+        val = date.getHours()
+        timestamp += (val <= 9) ? "0" + val : val
+        val = date.getMinutes()
+        timestamp += (val <= 9) ? "0" + val : val
+        val = date.getSeconds()
+        timestamp += (val <= 9) ? "0" + val : val
+        return timestamp
+    }
 }

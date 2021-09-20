@@ -35,7 +35,7 @@ Component.prototype.createOperations = function()
             console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
             console.log(e);
         }
-        var onsemiConfigFolder = programDataShortcut + "\\ON Semiconductor";
+        var onsemiConfigFolder = programDataShortcut + "\\onsemi";
         var sdsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio";
         component.addOperation("Mkdir", sdsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted

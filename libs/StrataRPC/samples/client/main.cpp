@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setApplicationName(QStringLiteral("strataRPC Client Sample"));
-    QApplication::setOrganizationName("ON Semiconductor");
+    QApplication::setOrganizationName("onsemi");
     QApplication app(argc, argv);
 
     QSettings::setDefaultFormat(QSettings::IniFormat);

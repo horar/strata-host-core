@@ -349,7 +349,7 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
                 qCCritical(logCategoryStrataServer) << errorMessage;
                 emit errorOccurred(ServerError::FailedToRegisterClient, errorMessage);
                 notifyClient(clientMessage,
-                             {{"massage", "Failed to register client, Unknown API Version."}},
+                             {{"message", "Failed to register client, Unknown API Version."}},
                              ResponseType::Error);
                 clientsController_->unregisterClient(clientMessage.clientID);
                 return;
@@ -365,7 +365,7 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
         QString errorMessage(QStringLiteral("Failed to register client."));
         qCCritical(logCategoryStrataServer) << errorMessage;
         emit errorOccurred(ServerError::FailedToRegisterClient, errorMessage);
-        notifyClient(clientMessage, {{"massage", errorMessage}}, ResponseType::Error);
+        notifyClient(clientMessage, {{"message", errorMessage}}, ResponseType::Error);
     }
 }
 
@@ -378,7 +378,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
             QStringLiteral("Failed to unregister client. Client is not registered."));
         qCCritical(logCategoryStrataServer) << errorMessage;
         emit errorOccurred(ServerError::FailedToUnregisterClient, errorMessage);
-        notifyClient(clientMessage, {{"massage", "Failed to unregister client"}},
+        notifyClient(clientMessage, {{"message", "Failed to unregister client"}},
                      ResponseType::Error);
     }
 }
@@ -425,6 +425,7 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
     switch (responseType) {
         case ResponseType::Error:
             qCDebug(logCategoryStrataServer) << "Error messages are not supported in API v1.";
+            jsonObject.insert("error", true);
             // send error as notification
             [[fallthrough]];
         case ResponseType::Notification:
@@ -458,7 +459,7 @@ void StrataServer::dispatchHandler(const Message &clientMessage)
         QString errorMessage(QStringLiteral("Handler not found."));
         qCCritical(logCategoryStrataServer) << errorMessage;
         emit errorOccurred(ServerError::HandlerNotFound, errorMessage);
-        notifyClient(clientMessage, {{"massage", errorMessage}}, ResponseType::Error);
+        notifyClient(clientMessage, {{"message", errorMessage}}, ResponseType::Error);
         return;
     }
 

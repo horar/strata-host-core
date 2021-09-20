@@ -526,6 +526,10 @@ function resetListing(selector_listing) {
     selector_listing.device_id = Constants.NULL_DEVICE_ID
     selector_listing.available = copyObject(classMap[selector_listing.class_id].original_listing.available)
 
+    selector_listing.program_controller = false
+    selector_listing.program_controller_progress = 0.0
+    selector_listing.program_controller_error_string = ""
+
     if (selector_listing.error) {
         // remove error listings that are not connected and no view_open
         selector_listing.visible = false

@@ -10,15 +10,15 @@ SGWidgets.SGMainWindow {
     visible: true
     height: defaultWindowHeight
     width: defaultWindowWidth
-    minimumHeight: 600
-    minimumWidth: 800
+    minimumHeight: 768
+    minimumWidth: 1024
 
     title: qsTr("Serial Console Interface")
 
     property variant settingsDialog: null
     property variant connectMockDeviceDialog: null
-    property int defaultWindowHeight: 600
-    property int defaultWindowWidth: 800
+    property int defaultWindowHeight: 768
+    property int defaultWindowWidth: 1024
 
     function resetWindowSize() {
         root.height = defaultWindowHeight

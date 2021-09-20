@@ -23,9 +23,9 @@ var update_alerticon
 var dontaskagain_checked = false
 var one_day = 86400000 // one day in ms
 
-function initialize (newSdsModel) {
+function initialize (newSdsModel, newUpdateLoader) {
     coreInterface = newSdsModel.coreInterface
-    updateLoader = newSdsModel.updateLoader
+    updateLoader = newUpdateLoader
     strataClient = newSdsModel.strataClient
     settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
     getUserNotificationModeFromINIFile()

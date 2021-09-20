@@ -8,7 +8,7 @@
 int main(int argc, char* argv[])
 {
     QCoreApplication::setApplicationName(QStringLiteral("strataRPC Server Sample"));
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QCoreApplication theApp(argc, argv);
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
