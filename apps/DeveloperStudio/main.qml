@@ -51,12 +51,14 @@ SGWidgets.SGMainWindow {
         mainWindow.height = defaultHeight
     }
 
-    QtLabsPlatform.Menu {
-        QtLabsPlatform.MenuItem {
-            text: qsTr("&About")
-            role: QtLabsPlatform.MenuItem.AboutRole
-            onTriggered:  {
-                showAboutWindow()
+    QtLabsPlatform.MenuBar {
+        QtLabsPlatform.Menu {
+            visible: Qt.platform.os === "osx" // only for MacOS which will place it in its own About menu
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&About")
+                onTriggered:  {
+                    showAboutWindow()
+                }
             }
         }
     }
