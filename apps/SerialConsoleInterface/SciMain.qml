@@ -192,7 +192,6 @@ Item {
                         }
                     }
 
-
                     Row {
                         id: buttonRow
 
