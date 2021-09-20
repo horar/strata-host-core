@@ -29,9 +29,10 @@ Item {
         }
 
         //addCommand: Appends commands to the queue.
-        function addCommand (command,value = "") {
+        function addCommand (command , containPayload = false, value = undefined) {
             commandQueue.append({
                                     "cmd": command,
+                                    "containPayload": containPayload,
                                     "value" : value
 
                                 })
@@ -44,18 +45,20 @@ Item {
             timer.running = false
             if (commandQueue.count > 0) {
                 let command = commandQueue.get(0).cmd
-                if(commandQueue.get(0).value !== "") {
+                if(commandQueue.get(0).containPayload) {
                     platformInterface.commands[command].update(commandQueue.get(0).value)
-                    logs.insert(0,{ log: "sending:" + JSON.stringify(platformInterface.commands[command]) }) //For Demo Only
+                    //For Demo Only
+                    logs.insert(0,{log: "sending:" + JSON.stringify(platformInterface.commands[command])})
                 } else {
                     platformInterface.commands[command].update()
-                    logs.insert(0,{ log: "sending:" + JSON.stringify(platformInterface.commands[command]) }) //For Demo Only
+                    //For Demo Only
+                    logs.insert(0,{log: "sending:" + JSON.stringify(platformInterface.commands[command])})
                 }
-
                 commandQueue.remove(0)
 
             } else {
-                logs.insert(0, { log: "no commands in queue " + count++ }) //For Demo Only
+                //For Demo Only
+                logs.insert(0, {log: "no commands in queue " + count++})
             }
 
             timer.start()
@@ -109,7 +112,7 @@ Item {
                             anchors.leftMargin: 10
 
                             onClicked: {
-                                commandQueueContainer.addCommand("set_data", 100)
+                                commandQueueContainer.addCommand("set_data", true, 100)
                             }
                         }
                     }
@@ -148,8 +151,8 @@ Item {
                                     id: commandText
                                     color: "white"
                                     text: {
-                                        let value = model.value
-                                        if (value !== -1) {
+                                        var value = model.containPayload
+                                        if (value === true) {
                                             let command = ({
                                                                cmd:  model.cmd,
                                                                value: model.value
