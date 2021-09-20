@@ -10,9 +10,6 @@ import tech.strata.logger 1.0
 ColumnLayout {
     id: firmwareColumn
 
-    property Item activeFirmware: null
-    property bool flashingInProgress: false
-
     Component.onCompleted: {
         firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
         firmwareSortFilterModel.sourceModel = firmwareListModel
@@ -24,28 +21,6 @@ ColumnLayout {
 
     onFirmwareCountChanged: {
         checkForNewerVersion()
-    }
-
-    Connections {
-        target: sdsModel.firmwareUpdater
-
-        onJobProgressUpdate: {
-            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
-                firmwareColumn.activeFirmware.processUpdateFirmwareJobProgress(status, progress)
-            }
-        }
-
-        onJobFinished: {
-            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
-                firmwareColumn.activeFirmware.processUpdateFirmwareJobFinished(errorString)
-            }
-        }
-
-        onJobError: {
-            if (firmwareColumn.activeFirmware && (deviceId === platformStack.device_id)) {
-                console.warn(Logger.devStudioCategory, "Failure during firmware flashing:", errorString)
-            }
-        }
     }
 
     Connections {

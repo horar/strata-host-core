@@ -26,7 +26,8 @@ public:
     // program platform with specific firmware:
     Q_INVOKABLE bool programSpecificFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5);
 
-    Q_INVOKABLE QJsonObject acquireProgramFirmwareData(QString deviceId, QString firmwareUri, QString firmwareMD5) const;
+    Q_INVOKABLE bool isFirmwareUpdateInProgress(QString deviceId) const;
+    Q_INVOKABLE QJsonObject getFirmwareUpdateData(QString deviceId, QString firmwareUri, QString firmwareMD5) const;
 
 signals:
     void jobStarted(QString deviceId, QString firmwareUri, QString firmwareMD5);
