@@ -54,7 +54,7 @@ Item {
                                 })
 
         }
-         /**
+        /**
           To add more parameter/payload to the command:
           1. update sendCommandPayload(command, numberOfPayload) by adding additional "else if" condition.
          **/
@@ -62,15 +62,14 @@ Item {
         function sendCommandPayload(command, numberOfPayload) {
             if(numberOfPayload === 1) {
                 platformInterface.commands[command].update(commandQueue.get(0).value1)
-            } else if(numberOfPayload === 2) {
+            }
+            if(numberOfPayload === 2) {
                 platformInterface.commands[command].update(commandQueue.get(0).value1,
                                                            commandQueue.get(0).value2)
-            } else if(numberOfPayload === 3) {
+            }  if(numberOfPayload === 3) {
                 platformInterface.commands[command].update(commandQueue.get(0).value1,
                                                            commandQueue.get(0).value2,
                                                            commandQueue.get(0).value3)
-            } else {
-                platformInterface.commands[command].update()
             }
         }
 
@@ -147,7 +146,7 @@ Item {
 
                         Button {
                             id: commandValue1
-                            text: "Add Command \n With Value"
+                            text: "Add Command \n With One Payload"
                             anchors.left: command.right
                             anchors.leftMargin: 10
 
@@ -157,7 +156,7 @@ Item {
                         }
 
                         Button {
-                            text: "Add Command \n With Values"
+                            text: "Add Command \n With Mutiple Payload"
                             anchors.left: commandValue1.right
                             anchors.leftMargin: 10
 
