@@ -12,7 +12,7 @@ FocusScope {
 
     property string exportFilePath
     property string autoExportFilePath
-    property int baseSpacing: 10
+    property int baseSpacing: 16
 
     InfoPopup {
         id: infoPopup
