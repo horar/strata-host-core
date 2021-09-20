@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -9,207 +10,170 @@ import "../"
 QtObject {
     // All deprecated functions needed for PIG
      property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
+
+    // Array containing JavaScript & QML keywords.
+    // Used to ensure users do not use a keyword in their naming convention
+     readonly property var jsReserved: ["abstract","arguments","await","boolean","break","byte","case","catch",
+        "char","class","const","continue","debugger","default","delete","do",
+        "double","else","enum","eval","export","extends","false","final","finally",
+        "float","for","function","goto","if","implements","import","in","instanceof",
+        "int","interface","let","long","native","new","null","package","private","protected",
+        "public","return","short","static","super","switch","synchronized","this","throw",
+        "throws","transient","true","try","typeof","var","void","volatile","while","with","yield"]
+
+    property var errorLog
     
     /**
       * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
     **/
     function checkForAllValid() {
-        // First loop through each command / notification and make sure there are no duplicate commands / notification names
-        // Then recursively go through each property to ensure that there are no duplicate object property names
+        // First loop through each command / notification and make sure there are no invalid flags
+        // Then recursively go through each property to ensure that there are no invalid flags
+        errorLog = ""
+        let allValid = true
         for (let i = 0; i < finishedModel.count; i++) {
             let commands = finishedModel.get(i).data
+            if (!checkAllValidFlag(commands)) {
+                allValid = false
+            }
             for (let k = 0; k < commands.count; k++) {
-                let valid = true
-                if (commands.get(k).name === "") {
-                    commands.setProperty(k, "valid", false)
-                    console.error("Empty", i === 0 ? "command" : "notification", "name at index", k)
-                    return false
-                }
-
-                for (let j = 0; j < commands.count; j++) {
-                    if (j !== k && commands.get(k).name === commands.get(j).name) {
-                        commands.setProperty(j, "valid", false)
-                        console.error("Duplicate", i === 0 ? "command" : "notification", "'" + commands.get(j).name + "' found")
-                        return false
-                    }
-                }
-
-                if (!checkForDuplicatePropertyNames(i, k, true)) {
-                    return false
+                let payload = commands.get(k).payload
+                if (!checkAllValidFlag(payload)) {
+                    allValid = false
                 }
             }
         }
-        return true
+        return allValid
     }
 
     /**
-      * checkForDuplicatePropertyNames checks for valid and duplicate property names in a command / notification
+      * checkAllValidFlag begins recursive checking of the valid property
     **/
-    function checkForDuplicatePropertyNames(typeIndex, commandIndex, shortCircuit = false) {
-        let commands = finishedModel.get(typeIndex).data
-        let payload = commands.get(commandIndex).payload
-
+    function checkAllValidFlag(payload) {
         let allValid = true
         for (let i = 0; i < payload.count; i++) {
-            let valid = true
-
-            if (payload.get(i).name === "") {
-                payload.setProperty(i, "valid", false)
+            let item = payload.get(i)
+            if (!item.valid) {
+                if (item.empty) {
+                    errorLog += "Empty key name found" + '\n'
+                } else if (item.keyword) {
+                    errorLog += "JavaScript keyword '" + item.name + "' found" + '\n'
+                } else if (item.duplicate) {
+                    errorLog += "Duplicate key name '" + item.name + "' found" + '\n'
+                }
                 allValid = false
-                if (shortCircuit) {
-                    console.error("Empty payload name at index", i)
-                    return false
-                }
-
-                continue
             }
-
-            for (let j = 0; j < payload.count; j++) {
-                if (j !== i && payload.get(i).name === payload.get(j).name) {
-                    valid = false
-                    allValid = false
-                    if (shortCircuit) {
-                        console.error("Duplicate payload key '" + payload.get(j).name + "' found")
-                        return false
-                    }
-                    break
-                }
+            if (!checkAllValidArrayObject(item)) {
+                allValid = false
             }
-
-            // If the payload property is an object, check to make sure there are no duplicate keys in that object
-            if (valid && payload.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                let objectPropertiesModel = payload.get(i).object
-                for (let k = 0; k < objectPropertiesModel.count; k++) {
-                    let tmpValid = checkForDuplicateObjectPropertyNames(objectPropertiesModel, k)
-                    if (!tmpValid) {
-                        allValid = false
-                        objectPropertiesModel.setProperty(k, "valid", false)
-
-                        if (shortCircuit) {
-                            console.error("Duplicate or empty property key in payload property '" + payload.get(i).name + "' found")
-                            return false
-                        }
-                    }
-                }
-            } else if (valid && payload.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                if (!checkForArrayValid(payload.get(i).array)) {
-                    valid = false
-                    allValid = false
-
-                    console.error("Duplicate or empty property key in payload property '" + payload.get(i).name + "' found")
-
-                    if (shortCircuit) {
-                        return false
-                    }
-                }
-            }
-
-            payload.setProperty(i, "valid", valid)
         }
         return allValid
     }
 
     /**
-      * checkForDuplicateObjectPropertyNames checks for duplicate keys in a given payload property that is of 'object' type
+      * checkForValidArrayObject checks if array/object is valid, and recursively checks its children
     **/
-    function checkForDuplicateObjectPropertyNames(objectPropertiesModel, index) {
-        let key = objectPropertiesModel.get(index).name
-
-        if (key === "") {
-            return false
-        }
-
-        for (let i = 0; i < objectPropertiesModel.count; i++) {
-            if (i !== index) {
-                let item = objectPropertiesModel.get(i)
-                if (item.name === key) {
-                    return false
-                }
-            }
-        }
-
-        // Now recurse through any children that are objects or arrays
-        for (let j = 0; j < objectPropertiesModel.count; j++) {
-            let item = objectPropertiesModel.get(j)
-
-            if (item.type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                for (let k = 0; k < item.array.count; k++) {
-                    if (item.array.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                        if (!checkForArrayValid(item.array.get(k).array)) {
-                            return false
-                        }
-                    } else if (item.array.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                        let subObject = item.array.get(k).object
-                        for (let m = 0; m < subObject.count; m++) {
-                            if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
-                                return false
-                            }
-                        }
-                    }
-                }
-            } else if (item.type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                for (let k = 0; k < item.object.count; k++) {
-                    if (item.object.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                        if (!checkForArrayValid(item.object.get(k).array)) {
-                            return false
-                        }
-                    } else if (item.object.get(k).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                        let subObject = item.object.get(k).object
-                        for (let m = 0; m < subObject.count; m++) {
-                            if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
-                                return false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true
-    }
-
-    /**
-      * checkForArrayValid checks if array/object is valid
-    **/
-    function checkForArrayValid(arrayModel) {
-        for (let i = 0; i < arrayModel.count; i++) {
-            if (arrayModel.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                if (!checkForArrayValid(arrayModel.get(i).array)) {
-                    return false
-                }
-            } else if (arrayModel.get(i).type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                let subObject = arrayModel.get(i).object
-                for (let m = 0; m < subObject.count; m++) {
-                    if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
-                        return false
-                    }
-                }
-            }
-        }
-
-        return true
-    }
-
-    /**
-      * checkForDuplicateIds checks for duplicate ids in either the "commands" or "notifications" array. Note that there can be duplicates between the commands and notifications.
-      * E.g.: Commands can have a cmd with name "test" and so can the notifications
-    **/
-    function checkForDuplicateIds(index) {
-        let commands = finishedModel.get(index).data
+    function checkAllValidArrayObject(model) {
+        let staticArray = sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
+        let staticObject = sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
         let allValid = true
-        for (let i = 0; i < commands.count; i++) {
-            let valid = true
-            for (let j = 0; j < commands.count; j++) {
-                if (j !== i && commands.get(i).name === commands.get(j).name) {
-                    valid = false
+
+        if (model.type === staticArray) {
+            for (let i = 0; i < model.array.count; i++) {
+                if (!checkAllValidArrayObject(model.array.get(i))) {
                     allValid = false
-                    break
                 }
             }
-            finishedModel.get(index).data.setProperty(i, "valid", valid)
+        } else if (model.type === staticObject) {
+            if (!checkAllValidFlag(model.object)) {
+                allValid = false
+            }
+        }
+        return allValid
+    }
+
+    /**
+      * checkForEmptyKey checks if the name is empty and sets a flag accordingly
+    **/
+    function checkForEmptyKey(payload, index) {
+        let valid = true
+        if (!payload.get(index).name) {
+            payload.setProperty(index, "empty", true)
+            valid = false
+        } else {
+            payload.setProperty(index, "empty", false)
+        }
+        return valid
+    }
+
+    /**
+      * checkForKeyword checks if the key name is a JS keyword and sets a flag
+    **/
+    function checkForKeyword(payload, index) {
+        let valid = true
+        if (jsReserved.includes(payload.get(index).name)) {
+            payload.setProperty(index, "keyword", true)
+            valid = false
+        } else {
+            payload.setProperty(index, "keyword", false)
+        }
+        return valid
+    }
+
+    /**
+      * checkForDuplicateKey checks if the the passed index is duplicate with another, and sets a flag
+      * The flag is used to minimize looping on the model.
+    **/
+    function checkForDuplicateKey(payload, index) {
+        let valid = true
+        for (let i = 0; i < payload.count; i++) {
+            if (i !== index && payload.get(index).name === payload.get(i).name) {
+                if (payload.get(i).name) {
+                    payload.setProperty(i, "duplicate", true)
+                    payload.setProperty(index, "duplicate", true)
+                    valid = false
+                }
+            }
+        }
+        return valid
+    }
+
+    /**
+      * checkForValidKey checks if a particular passed index is totally valid
+      * Also updates duplicates when they exist or not
+    **/
+    function checkForValidKey(payload, index) {
+        let valid = true
+        let changed = false
+        if (!checkForEmptyKey(payload, index)) {
+            valid = false
+        } else if (!checkForKeyword(payload, index)) {
+            valid = false
         }
 
-        return allValid
+        if (!checkForDuplicateKey(payload, index)) {
+            valid = false
+        } else if (payload.get(index).duplicate) {
+            changed = true
+            payload.setProperty(index, "duplicate", false)
+        }
+        payload.setProperty(index, "valid", valid)
+
+        if (valid === false || changed === true) {
+            for (let i = 0; i < payload.count; i++) {
+                if (payload.get(i).duplicate && i != index) {
+                    if (checkForDuplicateKey(payload, i)) {
+                        payload.setProperty(i, "duplicate", false)
+                    }
+                }
+                if (payload.get(i).empty || payload.get(i).keyword || payload.get(i).duplicate) {
+                    payload.setProperty(i, "valid", false)
+                } else {
+                    payload.setProperty(i, "valid", true)
+                }
+            }
+        }
+        return valid
     }
 
     /**

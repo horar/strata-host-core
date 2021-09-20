@@ -69,6 +69,8 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
+                        model.name = ""
+                        functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex)
                         objectPropertyContainer.parentListModel.remove(modelIndex)
                     }
                 }
@@ -102,8 +104,10 @@ Rectangle {
                 }
 
                 Component.onCompleted: {
-                    if(model.name) {
+                    if (model.name) {
                         text = model.name
+                    } else {
+                        model.valid = false
                     }
                     forceActiveFocus()
                 }
@@ -115,11 +119,7 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    if (text.length > 0) {
-                        model.valid = functions.checkForDuplicateObjectPropertyNames(objectPropertyContainer.parentListModel, modelIndex)
-                    } else {
-                        model.valid = false
-                    }
+                    functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex)
                 }
             }
 

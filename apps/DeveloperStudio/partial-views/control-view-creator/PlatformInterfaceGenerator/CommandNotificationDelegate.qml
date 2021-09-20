@@ -58,6 +58,9 @@ Rectangle {
                         if (cmdNotifName.text !== "") {
                             unsavedChanges = true
                         }
+                        model.name = ""
+                        let commands = finishedModel.get(commandsListView.modelIndex).data
+                        functions.checkForValidKey(commands, index)
                         commandColumn.commandModel.remove(index)
                     }
                 }
@@ -93,6 +96,9 @@ Rectangle {
 
                 Component.onCompleted: {
                     text = model.name
+                    if (!text) {
+                        model.valid = false
+                    }
                     forceActiveFocus()
                 }
 
@@ -103,11 +109,8 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    if (text.length > 0) {
-                        functions.checkForDuplicateIds(commandsListView.modelIndex)
-                    } else {
-                        model.valid = false
-                    }
+                    let commands = finishedModel.get(commandsListView.modelIndex).data
+                    functions.checkForValidKey(commands, index)
                 }
 
                 onActiveFocusChanged: {

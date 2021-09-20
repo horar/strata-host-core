@@ -96,6 +96,10 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
+                        model.name = ""
+                        let commands = finishedModel.get(commandsListView.modelIndex).data
+                        let payload = commands.get(commandsColumn.modelIndex).payload
+                        functions.checkForValidKey(payload, index)
                         payloadModel.remove(index)
                     }
                 }
@@ -132,6 +136,9 @@ Rectangle {
 
                 Component.onCompleted: {
                     text = model.name
+                    if (!text) {
+                        model.valid = false
+                    }
                     forceActiveFocus()
                 }
 
@@ -142,11 +149,9 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    if (text.length > 0) {
-                        functions.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
-                    } else {
-                        model.valid = false
-                    }
+                    let commands = finishedModel.get(commandsListView.modelIndex).data
+                    let payload = commands.get(commandsColumn.modelIndex).payload
+                    functions.checkForValidKey(payload, index)
                 }
 
                 onActiveFocusChanged: {

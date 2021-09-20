@@ -30,6 +30,9 @@ Item {
         "type": "cmd",
         "name": "",
         "valid": false,
+        "empty": true,
+        "keyword": false,
+        "duplicate": false,
         "payload": [],
         "editing": false
     })
@@ -38,6 +41,9 @@ Item {
         "type": "value",
         "name": "",
         "valid": false,
+        "empty": true,
+        "keyword": false,
+        "duplicate": false,
         "payload": [],
         "editing": false
 	})
@@ -47,6 +53,9 @@ Item {
         "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
         "indexSelected": 0,
         "valid": false,
+        "empty": true,
+        "keyword": false,
+        "duplicate": false,
         "array": [], // This is only filled if the type == "array"
         "object": [],
         "value": "0"
@@ -452,7 +461,7 @@ Item {
                     if (!generateButton.enabled) {
                         return "lightgrey"
                     }
-                    return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
+                    return (generateButtonMouseArea.containsMouse & generateButtonMouseArea.valid) ? Qt.darker("grey", 1.5) : "grey"
                 }
             }
 
@@ -463,32 +472,46 @@ Item {
                 verticalAlignment: Text.AlignVCenter
             }
 
+            ToolTip {
+                text: {
+                    var result = ""
+
+                    if (functions.errorLog){
+                        result = functions.errorLog
+                    } 
+                    return result
+                }
+                visible: generateButtonMouseArea.containsMouse && (!generateButtonMouseArea.valid)
+            }
+
             MouseArea {
                 id: generateButtonMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
-
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                
+                property var valid: functions.checkForAllValid()
+                
+                cursorShape: (containsMouse & valid) ? Qt.PointingHandCursor : Qt.ArrowCursor
 
                 onClicked: {
-                    let valid = functions.checkForAllValid()
                     if (!valid) {
-                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique."
+                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique and nonempty."
                         alertToast.textColor = "white"
                         alertToast.color = "#D10000"
                         alertToast.interval = 0
                         alertToast.show()
                         return
-                    }
+                    } else {
+                        // If the file already exists, prompt a popup confirming they want to overwrite
+                        alertToast.hide()
+                        let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
+                        if (SGUtilsCpp.isFile(fileName)) {
+                            confirmOverwriteDialog.open()
+                            return
+                        }
 
-                    // If the file already exists, prompt a popup confirming they want to overwrite
-                    let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
-                    if (SGUtilsCpp.isFile(fileName)) {
-                        confirmOverwriteDialog.open()
-                        return
+                        functions.generatePlatformInterface()
                     }
-
-                    functions.generatePlatformInterface()
                 }
             }
         }
