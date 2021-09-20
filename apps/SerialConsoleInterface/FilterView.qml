@@ -14,7 +14,7 @@ FocusScope {
     property bool disableAllFiltering
     property var filterList: []
     property bool showExample
-    property int baseSpacing: 10
+    property int baseSpacing: 16
 
     signal invalidate()
 
@@ -319,7 +319,7 @@ FocusScope {
             spacing: baseSpacing
 
             Row {
-                spacing: 16
+                spacing: baseSpacing
 
                 SGWidgets.SGButton {
                     id: addButton
@@ -370,7 +370,7 @@ FocusScope {
 
             Row {
                 id: buttonRow
-                spacing: 16
+                spacing: baseSpacing
 
                 SGWidgets.SGButton {
                     text: "Back"
