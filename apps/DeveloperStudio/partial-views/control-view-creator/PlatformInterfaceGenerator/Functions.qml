@@ -13,23 +13,31 @@ QtObject {
 
     // Array containing JavaScript & QML keywords.
     // Used to ensure users do not use a keyword in their naming convention
-     readonly property var jsReserved: ["abstract","arguments","await","boolean","break","byte","case","catch",
-        "char","class","const","continue","debugger","default","delete","do",
-        "double","else","enum","eval","export","extends","false","final","finally",
-        "float","for","function","goto","if","implements","import","in","instanceof",
-        "int","interface","let","long","native","new","null","package","private","protected",
-        "public","return","short","static","super","switch","synchronized","this","throw",
-        "throws","transient","true","try","typeof","var","void","volatile","while","with","yield"]
+     readonly property var jsReserved: ["abstract","arguments","await","bool","boolean","break",
+        "byte","case","catch","char","class","const","continue","debugger","default","delete",
+        "do","double","else","enum","enumeration","eval","export","extends","false","final","finally",
+        "float","for","function","get","goto","if","int","implements","import","in","instanceof",
+        "int","interface","let","list","long","native","new","null","package","private","protected","public",
+        "real","return","set","short","static","string","super","switch","synchronized","this","throw",
+        "throws","transient","true","try","typeof","url","var","void","volatile","while","with","yield"]
 
+    // various logs for the 3 errors that can be found. Empty key, JS key, and a duplicate key
     property var errorLog
+    property var emptyLog: []
+    property var jsLog: []
+    property var duplicateLog: []
     
     /**
-      * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
+      * checkForAllValid checks if all fields are valid (no empty, JS, or duplicate entries)
+      * Loop through each command / notification and make sure there are no invalid flags
+      * And recursively go through each property to ensure that there are no invalid flags
     **/
     function checkForAllValid() {
-        // First loop through each command / notification and make sure there are no invalid flags
-        // Then recursively go through each property to ensure that there are no invalid flags
-        errorLog = ""
+        // reset logs for each validation check
+        errorLog = "\n"
+        emptyLog = []
+        jsLog = []
+        duplicateLog = []
         let allValid = true
         for (let i = 0; i < finishedModel.count; i++) {
             let commands = finishedModel.get(i).data
@@ -43,27 +51,39 @@ QtObject {
                 }
             }
         }
+
+        // Update errorLog depending on the types of errors found from recursive checks
+        if (emptyLog.length > 0) {
+            errorLog += emptyLog.length + " Empty key name(s) found\n"
+        } 
+        if (jsLog.length > 0) {
+            errorLog += "JavaScript keyword '" + jsLog + "' found\n"
+        } 
+        if (duplicateLog.length > 0) {
+            errorLog += "Duplicate key name '" + duplicateLog + "' found\n"
+        }
+
         return allValid
     }
 
     /**
-      * checkAllValidFlag begins recursive checking of the valid property
+      * checkAllValidFlag begins recursive checking of the valid property and updates respective logs
     **/
     function checkAllValidFlag(payload) {
         let allValid = true
         for (let i = 0; i < payload.count; i++) {
             let item = payload.get(i)
             if (!item.valid) {
-                if (item.empty) {
-                    errorLog += "Empty key name found" + '\n'
-                } else if (item.keyword) {
-                    errorLog += "JavaScript keyword '" + item.name + "' found" + '\n'
-                } else if (item.duplicate) {
-                    errorLog += "Duplicate key name '" + item.name + "' found" + '\n'
+                if (!item.name) {
+                    emptyLog.push(i)
+                } else if (item.keyword && !jsLog.includes(item.name)) {
+                    jsLog.push(item.name)
+                } else if (item.duplicate && !duplicateLog.includes(item.name)) { // call includes() to ensure the log only states each duplicate once
+                    duplicateLog.push(item.name)
                 }
                 allValid = false
             }
-            if (!checkAllValidArrayObject(item)) {
+            if (!checkAllValidArrayObject(item)) { // returns true if not an array/object
                 allValid = false
             }
         }
@@ -93,24 +113,11 @@ QtObject {
     }
 
     /**
-      * checkForEmptyKey checks if the name is empty and sets a flag accordingly
-    **/
-    function checkForEmptyKey(payload, index) {
-        let valid = true
-        if (!payload.get(index).name) {
-            payload.setProperty(index, "empty", true)
-            valid = false
-        } else {
-            payload.setProperty(index, "empty", false)
-        }
-        return valid
-    }
-
-    /**
       * checkForKeyword checks if the key name is a JS keyword and sets a flag
     **/
     function checkForKeyword(payload, index) {
         let valid = true
+
         if (jsReserved.includes(payload.get(index).name)) {
             payload.setProperty(index, "keyword", true)
             valid = false
@@ -126,13 +133,12 @@ QtObject {
     **/
     function checkForDuplicateKey(payload, index) {
         let valid = true
+
         for (let i = 0; i < payload.count; i++) {
             if (i !== index && payload.get(index).name === payload.get(i).name) {
-                if (payload.get(i).name) {
-                    payload.setProperty(i, "duplicate", true)
-                    payload.setProperty(index, "duplicate", true)
-                    valid = false
-                }
+                payload.setProperty(i, "duplicate", true)
+                payload.setProperty(index, "duplicate", true)
+                valid = false
             }
         }
         return valid
@@ -145,28 +151,33 @@ QtObject {
     function checkForValidKey(payload, index) {
         let valid = true
         let changed = false
-        if (!checkForEmptyKey(payload, index)) {
-            valid = false
-        } else if (!checkForKeyword(payload, index)) {
-            valid = false
-        }
 
-        if (!checkForDuplicateKey(payload, index)) {
+        // uses else if structure for checks
+        // this creates a hierarchy of errors and avoids running checks unnecessarily 
+        if (!payload.get(index).name) {
             valid = false
-        } else if (payload.get(index).duplicate) {
+        } else if (!checkForKeyword(payload, index)) { 
+            valid = false
+        } else if (!checkForDuplicateKey(payload, index)) {
+            changed = true
+            valid = false
+        } else if (payload.get(index).duplicate) { // if this index is valid, but was a duplicate prior to being valid
             changed = true
             payload.setProperty(index, "duplicate", false)
         }
-        payload.setProperty(index, "valid", valid)
 
-        if (valid === false || changed === true) {
+        payload.setProperty(index, "valid", valid) // valid is true unless it fails one of the above checks
+
+        // only checks for duplicates if a duplicate was involved with this index
+        if (changed === true || payload.get(index).duplicate) {
             for (let i = 0; i < payload.count; i++) {
-                if (payload.get(i).duplicate && i != index) {
+                if (payload.get(i).duplicate && i !== index) {
                     if (checkForDuplicateKey(payload, i)) {
                         payload.setProperty(i, "duplicate", false)
                     }
                 }
-                if (payload.get(i).empty || payload.get(i).keyword || payload.get(i).duplicate) {
+                
+                if (!payload.get(i).name || payload.get(i).keyword || payload.get(i).duplicate) {
                     payload.setProperty(i, "valid", false)
                 } else {
                     payload.setProperty(i, "valid", true)

@@ -30,7 +30,6 @@ Item {
         "type": "cmd",
         "name": "",
         "valid": false,
-        "empty": true,
         "keyword": false,
         "duplicate": false,
         "payload": [],
@@ -41,7 +40,6 @@ Item {
         "type": "value",
         "name": "",
         "valid": false,
-        "empty": true,
         "keyword": false,
         "duplicate": false,
         "payload": [],
@@ -53,7 +51,6 @@ Item {
         "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
         "indexSelected": 0,
         "valid": false,
-        "empty": true,
         "keyword": false,
         "duplicate": false,
         "array": [], // This is only filled if the type == "array"
@@ -473,15 +470,20 @@ Item {
             }
 
             ToolTip {
-                text: {
-                    var result = ""
+                id: errorToolTip
+                visible: (generateButtonMouseArea.containsMouse & !generateButtonMouseArea.valid)
 
-                    if (functions.errorLog){
-                        result = functions.errorLog
-                    } 
-                    return result
+                function generationCheck() {
+                    if (generateButtonMouseArea.containsMouse) {
+                        let result = functions.checkForAllValid()
+                        generateButtonMouseArea.valid = result
+                        if (result) {
+                            alertToast.hide()
+                        }
+                    }
+
+                    text = functions.errorLog
                 }
-                visible: generateButtonMouseArea.containsMouse && (!generateButtonMouseArea.valid)
             }
 
             MouseArea {
@@ -489,13 +491,19 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 
-                property var valid: functions.checkForAllValid()
+                property bool valid: true
                 
                 cursorShape: (containsMouse & valid) ? Qt.PointingHandCursor : Qt.ArrowCursor
 
+                onContainsMouseChanged: {
+                    if (containsMouse) {
+                        errorToolTip.generationCheck()
+                    }
+                }
+
                 onClicked: {
                     if (!valid) {
-                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique and nonempty."
+                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique, not a JavaScript keyword, and nonempty."
                         alertToast.textColor = "white"
                         alertToast.color = "#D10000"
                         alertToast.interval = 0
@@ -503,7 +511,6 @@ Item {
                         return
                     } else {
                         // If the file already exists, prompt a popup confirming they want to overwrite
-                        alertToast.hide()
                         let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
                         if (SGUtilsCpp.isFile(fileName)) {
                             confirmOverwriteDialog.open()
