@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);

@@ -80,7 +80,8 @@ void StrataClient::disconnect()
 
 void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
 {
-    // qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
+    // qCDebug(logCategoryStrataClient).noquote().nospace()
+    //     << "New message from the server: '" << jsonServerMessage << '\'';
 
     Message serverMessage;
     DeferredRequest *deferredRequest = nullptr;

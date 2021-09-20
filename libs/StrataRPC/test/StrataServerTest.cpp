@@ -216,7 +216,7 @@ void StrataServerTest::testBuildNotificationApiV2()
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
             // ignore the response to the unregistered handler
-            if (message == R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+            if (message == R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
                 return;
             }
 
@@ -264,7 +264,7 @@ void StrataServerTest::testBuildResponseApiV2()
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
             // ignore the response to the unregistered handler
-            if (message == R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+            if (message == R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
                 return;
             }
 
@@ -352,7 +352,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
             // ignore the response to the unregistered handler
-            if (message == R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+            if (message == R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
                 return;
             }
 
@@ -519,6 +519,11 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
                 QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
                 QJsonObject jsonObject = jsonDocument.object();
 
+                if (jsonObject.contains("error")) {
+                    // skip error messages
+                    return;
+                }
+
                 QVERIFY_(jsonObject.contains("notification"));
                 QVERIFY_(jsonObject.value("notification").isObject());
                 testExecuted = true;
@@ -556,7 +561,7 @@ void StrataServerTest::testNotifyAllClients()
                 [&counter](const QByteArray &message) {
                     // ignore the response to the unregistered handler
                     if (message ==
-                        R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+                        R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
                         return;
                     }
 
@@ -607,6 +612,11 @@ void StrataServerTest::testNotifyAllClients()
 
                     QJsonDocument jsonDocument = QJsonDocument::fromJson(message);
                     QJsonObject jsonObject = jsonDocument.object();
+
+                    if (jsonObject.contains("error")) {
+                        // skip error messages
+                        return;
+                    }
 
                     QVERIFY_(jsonObject.contains("hcs::notification"));
                     QVERIFY_(jsonObject.value("hcs::notification").isObject());
@@ -762,7 +772,7 @@ void StrataServerTest::testdefaultHandlers()
                 QVERIFY_(jsonObject.value("error").isObject());
                 QCOMPARE_(
                     jsonObject.value("error").toObject(),
-                    QJsonObject({{"massage", "Failed to register client, Unknown API Version."}}));
+                    QJsonObject({{"message", "Failed to register client, Unknown API Version."}}));
                 testExecuted_2 = true;
             });
 

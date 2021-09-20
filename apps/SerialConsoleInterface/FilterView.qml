@@ -14,17 +14,21 @@ import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.logger 1.0
 
-SGWidgets.SGDialog {
-    id: dialog
+FocusScope {
+    id: filterView
 
-    title: "Scrollback Filtering"
-    headerIcon: "qrc:/sgimages/funnel.svg"
-    modal: true
-    focus: true
-    closePolicy: Popup.CloseOnEscape
+    property variant filterSuggestionModel
 
     property bool disableAllFiltering
-    property variant filterSuggestionModel
+    property var filterList: []
+    property bool showExample
+    property int baseSpacing: 16
+
+    signal invalidate()
+
+    Component.onCompleted: {
+        populateFilterData(filterList)
+    }
 
     ListModel {
         id: conditionTypeModel
@@ -67,21 +71,31 @@ SGWidgets.SGDialog {
         }
     }
 
-    Item {
-        id: contentItem
+    FocusScope {
+        id: content
+        anchors {
+            fill: parent
+            margins: baseSpacing
+        }
         implicitHeight: contentColumn.height
         implicitWidth: contentColumn.width
 
-        Keys.onEnterPressed: dialog.accept()
-        Keys.onReturnPressed: dialog.accept()
+        Keys.onEnterPressed: invalidate()
+        Keys.onReturnPressed: invalidate()
+
+        focus: true
 
         Column {
             id: contentColumn
             spacing: 8
 
-            property int firstColumnCenter: 1
             property int thirdColumnCenter: 1
-            property int delegateWidth: 1
+
+            SGWidgets.SGText {
+                text: "Scrollback Filtering"
+                fontSizeMultiplier: 2.0
+                font.bold: true
+            }
 
             SGWidgets.SGText {
                 width: conditionView.width
@@ -90,6 +104,7 @@ SGWidgets.SGDialog {
             }
 
             Column {
+                id: mainColumn
 
                 Item {
                     id: header
@@ -107,7 +122,7 @@ SGWidgets.SGDialog {
 
                 ListView {
                     id: conditionView
-                    width: contentColumn.delegateWidth
+                    width: content.width
                     height: 180
 
                     model: filterConditionModel
@@ -120,12 +135,18 @@ SGWidgets.SGDialog {
                     highlightMoveVelocity: -1
 
                     ScrollBar.vertical: ScrollBar {
-                        width: 8
-                        height: conditionView.height
+                        id: verticalScrollbar
+                        anchors {
+                            right: conditionView.right
+                            rightMargin: 0
+                        }
+                        width: visible ? 8 : 0
 
                         policy: ScrollBar.AlwaysOn
                         minimumSize: 0.1
                         visible: conditionView.height < conditionView.contentHeight
+
+                        Behavior on width { NumberAnimation {}}
                     }
 
                     delegate: FocusScope {
@@ -141,20 +162,7 @@ SGWidgets.SGDialog {
                         }
 
                         Component.onCompleted: {
-                            if (index === 0) {
-                                contentColumn.delegateWidth = width
-                                contentColumn.firstColumnCenter = nameFieldTextField.x + nameFieldTextField.width / 2
-                                contentColumn.thirdColumnCenter = filterStringTextField.x + filterStringTextField.width / 2
-                            }
-                        }
-
-                        ListView.onAdd: NumberAnimation {
-                            target: delegate
-                            property: "height"
-                            duration: 100
-                            easing.type: Easing.Linear
-                            from: 0
-                            to: contentRow.height
+                            calculateThirdColumnCenter()
                         }
 
                         ListView.onRemove: SequentialAnimation {
@@ -181,12 +189,18 @@ SGWidgets.SGDialog {
 
                         Row {
                             id: contentRow
+                            width: verticalScrollbar.visible ? (content.width - verticalScrollbar.width) : content.width
                             spacing: 4
+
+                            property int fillSpace: filterView.width - 2*baseSpacing
+                                                    - nameFieldTextField.width - spacing
+                                                    - typeComboBox.width - spacing
+                                                    - removeButton.width - spacing
 
                             SGWidgets.SGText {
                                 id: nameFieldTextField
                                 anchors.verticalCenter: contentRow.verticalCenter
-                                text: "Value\nattribute "
+                                text: "Value attribute "
                                 horizontalAlignment: Text.AlignHCenter
                             }
 
@@ -236,6 +250,7 @@ SGWidgets.SGDialog {
 
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
+                                width: verticalScrollbar.visible ? (contentRow.fillSpace - verticalScrollbar.width) : contentRow.fillSpace
                                 contextMenuEnabled: true
                                 showSuggestionButton: true
                                 suggestionCloseWithArrowKey: true
@@ -245,9 +260,13 @@ SGWidgets.SGDialog {
                                 suggestionModelTextRole: "suggestion"
                                 suggestionFilterPattern: filterStringTextField.text
 
+                                onWidthChanged: {
+                                    delegate.calculateThirdColumnCenter()
+                                }
+
                                 onSuggestionDelegateSelected: {
-                                   var sourceIndex = sortFilterModel.mapIndexToSource(index)
-                                   if (sourceIndex < 0) {
+                                    var sourceIndex = sortFilterModel.mapIndexToSource(index)
+                                    if (sourceIndex < 0) {
                                         console.error(Logger.sciCategory, "Index out of scope.")
                                         return
                                     }
@@ -275,7 +294,8 @@ SGWidgets.SGDialog {
                             }
 
                             SGWidgets.SGIconButton {
-                                anchors.verticalCenter: parent.verticalCenter
+                                id: removeButton
+                                anchors.verticalCenter: contentRow.verticalCenter
                                 icon.source: "qrc:/sgimages/times-circle.svg"
                                 iconColor: TangoTheme.palette.error
                                 enabled: filterConditionModel.count > 1 || filterStringTextField.text.length > 0
@@ -289,12 +309,25 @@ SGWidgets.SGDialog {
                                 }
                             }
                         }
+
+                        function calculateThirdColumnCenter() {
+                            if (index === 0) {
+                                contentColumn.thirdColumnCenter = filterStringTextField.x + filterStringTextField.width / 2
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        Column {
+            id: bottomColumn
+            anchors.bottom: content.bottom
+            anchors.left: content.left
+            spacing: baseSpacing
 
             Row {
-                spacing: 16
+                spacing: baseSpacing
 
                 SGWidgets.SGButton {
                     id: addButton
@@ -342,27 +375,31 @@ SGWidgets.SGDialog {
                       + "    }\n"
                       + "}"
             }
+
+            Row {
+                id: buttonRow
+                spacing: baseSpacing
+
+                SGWidgets.SGButton {
+                    text: "Back"
+                    icon.source: "qrc:/sgimages/chevron-left.svg"
+                    onClicked: {
+                        closeView()
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    text: "Set"
+                    onClicked: {
+                        invalidate()
+                    }
+                }
+            }
         }
     }
 
-    footer: Item {
-        implicitHeight: buttonRow.height + 10
-
-        Row {
-            id: buttonRow
-            anchors.centerIn: parent
-            spacing: 16
-
-            SGWidgets.SGButton {
-                text: "Set"
-                onClicked: dialog.accept()
-            }
-
-            SGWidgets.SGButton {
-                text: "Cancel"
-                onClicked: dialog.reject()
-            }
-        }
+    function closeView() {
+        StackView.view.pop();
     }
 
     function getFilterData() {

@@ -31,7 +31,9 @@ TcpDeviceScanner::~TcpDeviceScanner()
 void TcpDeviceScanner::init(quint32 flags)
 {
     if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
-        qCCritical(logCategoryDeviceScanner) << "Failed to bind UDP socket to" << UDP_LISTEN_PORT;
+        qCCritical(logCategoryDeviceScanner).nospace().noquote()
+            << "Failed to bind UDP socket to port " << UDP_LISTEN_PORT << ": "
+            << udpSocket_->errorString();
         return;
     }
     if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {

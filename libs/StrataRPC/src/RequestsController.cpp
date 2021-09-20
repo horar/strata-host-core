@@ -33,7 +33,7 @@ std::pair<DeferredRequest *, QByteArray> RequestsController::addNewRequest(
     const auto it = requests_.find(currentRequestId_);
     if (it != requests_.end()) {
         qCCritical(logCategoryRequestsController) << "Duplicate request id.";
-        return {0, ""};
+        return {nullptr, QByteArray()};
     }
 
     qCDebug(logCategoryRequestsController)
@@ -89,7 +89,7 @@ QString RequestsController::getMethodName(const int &id)
 void RequestsController::findTimedoutRequests()
 {
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
-    for (const auto &request : requests_) {
+    for (const auto &request : qAsConst(requests_)) {
         if ((currentTime - request.timestamp_) < REQUEST_TIMEOUT) {
             return;
         }

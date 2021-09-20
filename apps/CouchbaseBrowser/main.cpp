@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<DatabaseImpl>("com.onsemi.couchbase", 1, 0, "Database");
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
     QGuiApplication app(argc, argv);
     const strata::loggers::QtLoggerSetup loggerInitialization(app);

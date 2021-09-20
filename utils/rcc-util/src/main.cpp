@@ -18,7 +18,7 @@
 int main(int argc, char* argv[])
 {
 
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QCoreApplication::setApplicationName(QStringLiteral("rcc-util"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
     QSettings::setDefaultFormat(QSettings::IniFormat);

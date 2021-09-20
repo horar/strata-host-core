@@ -18,7 +18,7 @@ FocusScope {
     property variant mockDevice: model.platform.mockDevice
     property variant deviceType: model.platform.deviceType
     property bool isValid: mockDevice.isValid
-    property int baseSpacing: 10
+    property int baseSpacing: 16
     property int gridColumnSpacing: 6
 
     onDeviceTypeChanged: {
@@ -146,7 +146,7 @@ FocusScope {
                 SGWidgets.SGText {
                     id: mockVersionComboBoxLabel
                     fontSizeMultiplier: 1.2
-                    text: "Communication Protocol Version:"
+                    text: "Communication Protocol:"
                 }
 
                 SGWidgets.SGComboBox {

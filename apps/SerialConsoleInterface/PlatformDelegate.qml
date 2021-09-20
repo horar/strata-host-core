@@ -32,6 +32,8 @@ FocusScope {
 
     property bool hexViewShown: false
 
+    signal invalidateScrollbackFilterRequested()
+
     StackView {
         id: stackView
         anchors.fill: parent
@@ -70,6 +72,13 @@ FocusScope {
                 onSendMessageResultReceived: {
                     messageEditor.messageSendInProgress = false
                     sendMessageResultHandler(type, data)
+                }
+            }
+
+            Connections {
+                target: platformDelegate
+                onInvalidateScrollbackFilterRequested: {
+                    scrollbackView.invalidateFilter()
                 }
             }
 
@@ -236,8 +245,8 @@ FocusScope {
                         hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: openFilterDialog()
                         showActiveFlag: platformDelegate.filteringIsActive
+                        onClicked: showFilterView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -645,32 +654,6 @@ FocusScope {
                 toggleExpandButton.enabled = true
             }
 
-            function openFilterDialog() {
-                var dialog = SGWidgets.SGDialogJS.createDialog(
-                            ApplicationWindow.window,
-                            "qrc:/FilterDialog.qml",
-                            {
-                                "disableAllFiltering": disableAllFiltering,
-                                "filterSuggestionModel": filterSuggestionModel,
-                            })
-
-                var list = []
-
-                dialog.populateFilterData(filterList)
-
-                dialog.accepted.connect(function() {
-                    filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
-                    disableAllFiltering = dialog.disableAllFiltering
-
-                    console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
-                    console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
-
-                    scrollbackView.invalidateFilter()
-                })
-
-                dialog.open()
-            }
-
             function tryKeyboardAction(actionName, key) {
                 if (keyboardActionMatches(actionName, key)) {
                     var action = keyboardActions[actionName].action
@@ -722,6 +705,27 @@ FocusScope {
     }
 
     Component {
+        id: filterComponent
+
+        FilterView {
+            id: filterView
+            disableAllFiltering: platformDelegate.disableAllFiltering
+            filterSuggestionModel: platformDelegate.filterSuggestionModel
+            filterList: platformDelegate.filterList
+
+            onInvalidate: {
+                platformDelegate.filterList = JSON.parse(JSON.stringify(filterView.getFilterData()))
+                platformDelegate.disableAllFiltering = filterView.disableAllFiltering
+
+                console.log(Logger.sciCategory, "filters:", JSON.stringify(platformDelegate.filterList))
+                console.log(Logger.sciCategory, "disableAllFiltering", platformDelegate.disableAllFiltering)
+
+                platformDelegate.invalidateScrollbackFilterRequested()
+            }
+        }
+    }
+
+    Component {
         id: mockSettingsComponent
 
         MockSettingsView {
@@ -742,6 +746,10 @@ FocusScope {
 
     function showMockSettingsView() {
         stackView.push(mockSettingsComponent)
+    }
+
+    function showFilterView() {
+        stackView.push(filterComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {
