@@ -29,6 +29,14 @@ ColumnLayout {
                       + "}\n"
             }
 
+            SGWidgets.SGTextEdit {
+                id: textEdit
+                text: JSON.stringify(csvUtil.getData())
+                wrapMode: Text.WordWrap
+                enabled: false
+                width: exExportCsv.width
+            }
+
             SGWidgets.SGButton {
                 id: sgButton
                 text: "Open export folder dialog"
@@ -46,6 +54,7 @@ ColumnLayout {
                 onClicked: {
                     let data = ["1.11","false","5.33"]
                     csvUtil.appendRow(data)
+                    textEdit.text = JSON.stringify(data) + "\n"
                 }
             }
 
@@ -74,12 +83,6 @@ ColumnLayout {
                     let data = csvUtil.getData()
                     console.info(data)
                 }
-            }
-
-            SGWidgets.SGTextEdit {
-                id: textEdit
-                text: csvUtil.getData().toString()
-                readOnly: true
             }
         }
     }
