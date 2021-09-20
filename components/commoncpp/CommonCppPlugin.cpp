@@ -6,7 +6,7 @@
 #include "SGQWTPlot.h"
 #include "SGUserSettings.h"
 #include "SGVersionUtils.h"
-#include "SGCSVTableUtils.h"
+#include "SGCSVUtils.h"
 #include "mqtt/SGMqttClient.h"
 #include "mqtt/SGSslConfiguration.h"
 #include "SGJsonSyntaxHighlighter.h"
@@ -35,14 +35,7 @@ void CommonCppPlugin::registerTypes(const char *uri)
         return formatter;
     });
 
-    qmlRegisterSingletonType<SGCSVTableUtils>(uri, 1, 0,"SGCSVTableUtils", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject* {
-        Q_UNUSED(engine)
-        Q_UNUSED(scriptEngine)
-
-        SGCSVTableUtils *csvTableUtils = new SGCSVTableUtils();
-        return csvTableUtils;
-    });
-
+    qmlRegisterType<SGCSVUtils>(uri, 1, 0,"SGCSVUtils");
     qmlRegisterType<SGJLinkConnector>(uri, 1, 0, "SGJLinkConnector");
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
     qmlRegisterType<SGQWTPlot>(uri, 1, 0, "SGQWTPlot");

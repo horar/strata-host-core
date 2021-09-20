@@ -10,8 +10,8 @@ FocusScope {
         id: commoncppModel
 
         ListElement {
-            name: "SGCSVTableUtils"
-            page: "ExSGCSVTableUtils.qml"
+            name: "SGCSVUtils"
+            page: "ExSGCSVUtils.qml"
         }
 
         ListElement {

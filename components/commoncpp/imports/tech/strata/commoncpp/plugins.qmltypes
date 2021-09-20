@@ -405,36 +405,29 @@ Module {
         }
     }
     Component {
-        name: "SGCSVTableUtils"
-        prototype: "QAbstractTableModel"
-        exports: ["tech.strata.commoncpp/SGCSVTableUtils 1.0"]
+        name: "SGCSVUtils"
+        prototype: "QObject"
+        exports: ["tech.strata.commoncpp/SGCSVUtils 1.0"]
         exportMetaObjectRevisions: [0]
-        isSingleton: true
-        isCreatable: false
+        Property { name: "outputPath"; type: "string" }
         Method {
-            name: "getHeadersCount"
-            type: "int"
+            name: "getData"
+            type: "QVariant"
         }
         Method {
-            name: "importTableFromFile"
+            name: "importFromFile"
             Parameter {name: "folderPath"; type: "string"}
         }
         Method {
-            name: "overrideFolderPath"
-            Parameter {name: "folderPath"; type: "string"}
-        }
-
-        Method {
-            name: "updateTableFromControlView"
-            Parameter {name: "data"; type: "QJsonValue"}
-            Parameter {name: "exportOnAdd"; type: "bool"}
+            name: "clear"
         }
         Method {
-            name: "writeToPath"
-             Parameter {name: "folderPath"; type: "string"}
+            name: "setData"
+            Parameter {name: "data"; type: "QVariant"}
         }
-        Signal {
-            name: "clearBackingModel"
+        Method {
+            name: "appendRow"
+             Parameter {name: "data"; type: "QVariant"}
         }
     }
     Component {

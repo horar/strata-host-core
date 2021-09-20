@@ -38,7 +38,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGTextHighlighter
     strata::SGTranslator
     strata::SGConversion
-    strata::SGCSVTableUtils
+    strata::SGCSVUtils
     mqtt::mqtt
 )
 
