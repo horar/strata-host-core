@@ -118,30 +118,14 @@ ComboBox {
         }
     }
 
-    background: Item {
-        id: backgroundContainer
-        implicitHeight: 32
-        implicitWidth: root.width
-        height: root.height
-
-
-        Rectangle {
-            id: background
-            anchors.fill: backgroundContainer
-            visible: false
-        }
-
-        DropShadow {
-            anchors.fill: background
-            source: background
+    background: Rectangle {
+        layer.enabled: true
+        layer.effect: DropShadow {
             horizontalOffset: 0
             verticalOffset: 2
-            radius: 5.0
-            samples: 10
             color: "#40000000"
         }
     }
-
 
     popup: Popup {
         y: root.height - 1
