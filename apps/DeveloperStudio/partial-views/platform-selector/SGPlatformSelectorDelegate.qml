@@ -159,7 +159,7 @@ Item {
                 }
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                visible: model.program_controller
+                visible: model.program_controller || model.program_controller_error_string
                 font {
                     pixelSize: 14
                     family: Fonts.franklinGothicBook
