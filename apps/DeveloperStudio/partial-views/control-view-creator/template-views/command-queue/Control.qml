@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
@@ -30,7 +29,7 @@ Item {
         }
 
         //addCommand: Appends commands to the queue.
-        function addCommand (command,value = -1) {
+        function addCommand (command,value = "") {
             commandQueue.append({
                                     "cmd": command,
                                     "value" : value
@@ -45,18 +44,18 @@ Item {
             timer.running = false
             if (commandQueue.count > 0) {
                 let command = commandQueue.get(0).cmd
-                if(commandQueue.get(0).value !== -1) {
+                if(commandQueue.get(0).value !== "") {
                     platformInterface.commands[command].update(commandQueue.get(0).value)
-                    logs.insert(0,{log: "sending:" + JSON.stringify(platformInterface.commands[command])}) //For Demo Only
+                    logs.insert(0,{ log: "sending:" + JSON.stringify(platformInterface.commands[command]) }) //For Demo Only
                 } else {
                     platformInterface.commands[command].update()
-                    logs.insert(0,{log: "sending:" + JSON.stringify(platformInterface.commands[command])}) //For Demo Only
+                    logs.insert(0,{ log: "sending:" + JSON.stringify(platformInterface.commands[command]) }) //For Demo Only
                 }
 
                 commandQueue.remove(0)
 
             } else {
-                logs.insert(0, {log: "no commands in queue " + count++ }) //For Demo Only
+                logs.insert(0, { log: "no commands in queue " + count++ }) //For Demo Only
             }
 
             timer.start()
