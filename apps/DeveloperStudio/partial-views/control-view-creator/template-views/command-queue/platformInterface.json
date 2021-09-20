@@ -12,6 +12,26 @@
                     "value": 0
                 }
             ]
+        },
+        {
+            "cmd": "set_values",
+            "payload": [
+                {
+                    "name": "value",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "value2",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "value3",
+                    "type": "int",
+                    "value": 0
+                }
+            ]
         }
     ],
     "notifications": []
