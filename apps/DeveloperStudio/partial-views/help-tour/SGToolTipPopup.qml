@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
@@ -68,17 +76,13 @@ Popup {
             color: root.color
             radius: 15
             anchors.fill: parent
-        }
-
-        DropShadow {
-            anchors.fill: colorRect
-            horizontalOffset: 1.5
-            verticalOffset: 1.5
-            radius: 6.0
-            samples: 13
-            color: "#88000000"
-            source: colorRect
-            visible: root.visible
+            layer.enabled: true
+            layer.effect:  DropShadow {
+                horizontalOffset: 1.5
+                verticalOffset: 1.5
+                samples: 13
+                color: "#88000000"
+            }
         }
 
         MouseArea {
