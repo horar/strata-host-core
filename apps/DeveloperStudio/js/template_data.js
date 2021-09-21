@@ -33,7 +33,7 @@ const data = [
                    "path": ":/partial-views/control-view-creator/template-views/motor-template/"
                },
                {
-                   "name": "Command Queue Template",
+                   "name": "Command Queue Example",
                    "image": "qrc:/partial-views/control-view-creator/template-views/images/command-queue.jpg",
                    "path": ":/partial-views/control-view-creator/template-views/command-queue/"
                },

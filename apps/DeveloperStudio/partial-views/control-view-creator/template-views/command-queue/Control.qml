@@ -6,19 +6,80 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 Item {
-    id: controlNavigation
     anchors {
         fill: parent
     }
-    property var commandInlog
+
     property string class_id // automatically populated for use when the control view is created with a connected board
-
-
 
     PlatformInterface {
         id: platformInterface
     }
 
+    /**
+        Command Queue: Ensures that back-to-back commands are sent at a given interval or slower;
+                       prevents commands from being sent at the same time or immediately after each other.
+     */
+    QtObject {
+        id: commandQueue
+
+        property var queue_: []
+        signal queueChanged()
+
+        property Timer timer: Timer {
+            interval: 1000 // enforce >=1000ms between commands
+
+            onTriggered: {
+                if (commandQueue.queue_.length > 0) {
+                    // send next command in queue
+                    let oldestCommand = commandQueue.queue_.shift()
+                    commandQueue.queueChanged()
+                    commandQueue.sendCommand(oldestCommand)
+                }
+            }
+        }
+
+        /**
+            addCommand(): adds commands to the command queue or sends immediately if queue is empty
+            parameters:
+                commandName: name of command in PlatformInterface.qml
+                payload: any payload values the command needs
+            examples:
+                commandQueue.addCommand("get_data")                 // command with no payload
+                commandQueue.addCommand("set_values", 100, -100, 1) // command with 3 payload values
+         */
+        function addCommand (commandName, ...payload) { // spread syntax allows variable number of payload arguments
+            if (platformInterface.commands.hasOwnProperty(commandName)) {
+                let command = {
+                    commandName: commandName,
+                    payload: payload
+                }
+                if (timer.running === false) { // if not running, send immediately and start timer
+                    sendCommand(command)
+                } else { // if running, another command was just sent. add to queue instead.
+                    commandQueue.queue_.push(command)
+                    commandQueue.queueChanged()
+                }
+            } else {
+                console.error("PlatformInterface does not contain command named", commandName)
+            }
+        }
+
+        function sendCommand (command) {
+            platformInterface.commands[command.commandName].update(...command.payload)
+            commandQueue.timer.restart() // timer starts after command is sent to prevent any follow-on command from being sent too quickly
+
+            // For Demo Only ----------- Remove this log code
+            logs.insert(0,{log: "Sent: " + JSON.stringify(platformInterface.commands[command.commandName])})
+            if (commandQueue.queue_.length === 0) {
+                logs.insert(0,{log: "No commands left in queue"})
+            }
+        }
+    }
+
+    //// FOR VISUAL DEMO ONLY: buttons to add commands manually, show any existing commands in the queue, and to add a log of commands been sent.
+    //// No code below should be copied for use in production.
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Item {
         id: commandQueueContainer
@@ -26,95 +87,6 @@ Item {
         height: parent.height
         anchors.centerIn: parent
 
-        ListModel {
-            id: commandQueue
-        }
-
-        /***addCommand: Appends commands to the queue.
-          command = command name ,
-          containsPayload = true/false ,
-          numberOfPayload = number of payload contain in the command beens end,
-          value1 = parameter1 ,
-          value2 = parameter2 ,
-          value3 = parameter3
-
-         To add more parameter/payload:
-         1. Update funtion call to add a new parameter
-         2. Append by adding "payloadName" : "parameter" to the end
-        ***/
-
-        function addCommand (command , containsPayload = false, numberOfPayload = 0, value1 = undefined, value2 = undefined, value3 = undefined ) {
-            commandQueue.append({
-                                    "cmd": command,
-                                    "containsPayload": containsPayload,
-                                    "numberOfPayload": numberOfPayload,
-                                    "value1" : value1,
-                                    "value2" : value2,
-                                    "value3" : value3
-                                })
-
-        }
-        /**
-          To add more parameter/payload to the command:
-          1. update sendCommandPayload(command, numberOfPayload) by adding additional "if" condition.
-         **/
-
-        function sendCommandPayload(command, numberOfPayload) {
-            if(numberOfPayload === 1) {
-                platformInterface.commands[command].update(commandQueue.get(0).value1)
-            }
-            if(numberOfPayload === 2) {
-                platformInterface.commands[command].update(commandQueue.get(0).value1,
-                                                           commandQueue.get(0).value2)
-            }  if(numberOfPayload === 3) {
-                platformInterface.commands[command].update(commandQueue.get(0).value1,
-                                                           commandQueue.get(0).value2,
-                                                           commandQueue.get(0).value3)
-            }
-        }
-
-        property int count: 0 // only to show that getData is increasing in logs, should !remove!
-
-        function sendCommand () {
-            timer.running = false
-            if (commandQueue.count > 0) {
-                let command = commandQueue.get(0).cmd
-                if(commandQueue.get(0).containsPayload) {
-                    sendCommandPayload(command,commandQueue.get(0).numberOfPayload)
-
-                    //For Demo Only
-                    logs.insert(0,{log: "sending:" + JSON.stringify(platformInterface.commands[command])})
-
-                } else {
-                    platformInterface.commands[command].update()
-
-                    //For Demo Only
-                    logs.insert(0,{log: "sending:" + JSON.stringify(platformInterface.commands[command])})
-                }
-                commandQueue.remove(0)
-
-            } else {
-
-                //For Demo Only
-                logs.insert(0, {log: "no commands in queue " + count++})
-            }
-
-            timer.start()
-        }
-
-
-        Timer {
-            id: timer
-            running: true
-            repeat: true
-            interval: 500
-            onTriggered: {
-                //sendCommand() call the cammand in the queue on timer triggered
-                commandQueueContainer.sendCommand()
-            }
-        }
-
-        /// FOR VISUAL DEMO ONLY: button to add commands manually, show any existing commands in the queue, and to add a log of commands been send.
         ColumnLayout {
             id: contentColumn
             anchors.fill: parent
@@ -137,31 +109,31 @@ Item {
 
                         Button {
                             id: command
-                            text: "Add Command"
+                            text: "Add Command \n With No Payload"
 
                             onClicked: {
-                                commandQueueContainer.addCommand("get_data")
+                                commandQueue.addCommand("get_data")
                             }
                         }
 
                         Button {
                             id: commandValue1
-                            text: "Add Command \n With One Payload"
+                            text: "Add Command \n With One Payload Property"
                             anchors.left: command.right
                             anchors.leftMargin: 10
 
                             onClicked: {
-                                commandQueueContainer.addCommand("set_data",true,1,100)
+                                commandQueue.addCommand("set_data", 100)
                             }
                         }
 
                         Button {
-                            text: "Add Command \n With Mutiple Payload"
+                            text: "Add Command \n With Mutiple Payload Properties"
                             anchors.left: commandValue1.right
                             anchors.leftMargin: 10
 
                             onClicked: {
-                                commandQueueContainer.addCommand("set_values",true,3,100,-100,1)
+                                commandQueue.addCommand("set_values", 100, -100, 1)
                             }
                         }
                     }
@@ -172,7 +144,7 @@ Item {
 
                         Text {
                             text: "Commands in Queue:"
-                            anchors.fill: parent
+                            anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
@@ -182,70 +154,28 @@ Item {
                         color: "gray"
 
                         ListView {
+                            id: currentCommandQueue
                             anchors.fill: parent
-                            model: commandQueue
+                            model: commandQueue.queue_
                             delegate: commandDelegate
                             clip: true
                             ScrollBar.vertical: ScrollBar { active: true }
+
+                            Connections {
+                                target: commandQueue
+                                onQueueChanged: {
+                                    currentCommandQueue.model = commandQueue.queue_
+                                }
+                            }
                         }
-
-                        //For Demo
-
-
 
                         Component {
                             id: commandDelegate
-                            Item {
-                                width: 20
-                                height: 20
-                                //ONLY FOR DEMO: Set log command based on number  of payload
-                                function setLogCommad(model,numPayload) {
-                                    let command
-                                    if(numPayload === 1) {
-                                        command  = ({
-                                                        cmd:  model.cmd,
-                                                        value: model.value1
-                                                    })
-                                    }
-                                    if(numPayload === 2) {
-                                        command = ({
-                                                       cmd:  model.cmd,
-                                                       value: model.value1,
-                                                       value2: model.value2,
-                                                   })
-                                    }
 
-                                    if(numPayload === 3) {
-                                        command = ({
-                                                       cmd:  model.cmd,
-                                                       value: model.value1,
-                                                       value2: model.value2,
-                                                       value3: model.value3
-                                                   })
-                                    }
-                                    return command
-                                }
-
-                                Text {
-                                    id: commandText
-                                    color: "white"
-
-                                    text: {
-                                        var value = model.containsPayload
-                                        var numPayload = model.numberOfPayload
-
-                                        if (value === true) {
-                                            let command =  parent.setLogCommad(model,numPayload)
-                                            return JSON.stringify(command)
-                                        } else {
-                                            let command = ({
-                                                               cmd: model.cmd
-                                                           })
-
-                                            return JSON.stringify(command)
-                                        }
-                                    }
-                                }
+                            Text {
+                                id: commandText
+                                color: "white"
+                                text: JSON.stringify(modelData)
                             }
                         }
                     }
@@ -256,7 +186,6 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 350
 
-
                 ColumnLayout {
                     anchors.fill: parent
                     spacing: 5
@@ -266,8 +195,8 @@ Item {
                         Layout.preferredHeight: 20
 
                         Text {
-                            text: "Commands in the log:"
-                            anchors.fill: parent
+                            text: "Log of sent commands:"
+                            anchors.verticalCenter: parent.verticalCenter
                         }
                     }
 
@@ -310,7 +239,7 @@ Item {
                         Layout.bottomMargin: 5
 
                         Button {
-                            text: "Clear:"
+                            text: "Clear Log"
 
                             onClicked: {
                                 logs.clear()
@@ -321,5 +250,4 @@ Item {
             }
         }
     }
-
 }
