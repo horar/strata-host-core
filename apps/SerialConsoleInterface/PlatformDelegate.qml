@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -23,6 +31,8 @@ FocusScope {
     property bool scrollbackLimitReached: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
 
     property bool hexViewShown: false
+
+    signal invalidateScrollbackFilterRequested()
 
     StackView {
         id: stackView
@@ -62,6 +72,13 @@ FocusScope {
                 onSendMessageResultReceived: {
                     messageEditor.messageSendInProgress = false
                     sendMessageResultHandler(type, data)
+                }
+            }
+
+            Connections {
+                target: platformDelegate
+                onInvalidateScrollbackFilterRequested: {
+                    scrollbackView.invalidateFilter()
                 }
             }
 
@@ -228,8 +245,8 @@ FocusScope {
                         hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: openFilterDialog()
                         showActiveFlag: platformDelegate.filteringIsActive
+                        onClicked: showFilterView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -637,32 +654,6 @@ FocusScope {
                 toggleExpandButton.enabled = true
             }
 
-            function openFilterDialog() {
-                var dialog = SGWidgets.SGDialogJS.createDialog(
-                            ApplicationWindow.window,
-                            "qrc:/FilterDialog.qml",
-                            {
-                                "disableAllFiltering": disableAllFiltering,
-                                "filterSuggestionModel": filterSuggestionModel,
-                            })
-
-                var list = []
-
-                dialog.populateFilterData(filterList)
-
-                dialog.accepted.connect(function() {
-                    filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
-                    disableAllFiltering = dialog.disableAllFiltering
-
-                    console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
-                    console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
-
-                    scrollbackView.invalidateFilter()
-                })
-
-                dialog.open()
-            }
-
             function tryKeyboardAction(actionName, key) {
                 if (keyboardActionMatches(actionName, key)) {
                     var action = keyboardActions[actionName].action
@@ -714,6 +705,27 @@ FocusScope {
     }
 
     Component {
+        id: filterComponent
+
+        FilterView {
+            id: filterView
+            disableAllFiltering: platformDelegate.disableAllFiltering
+            filterSuggestionModel: platformDelegate.filterSuggestionModel
+            filterList: platformDelegate.filterList
+
+            onInvalidate: {
+                platformDelegate.filterList = JSON.parse(JSON.stringify(filterView.getFilterData()))
+                platformDelegate.disableAllFiltering = filterView.disableAllFiltering
+
+                console.log(Logger.sciCategory, "filters:", JSON.stringify(platformDelegate.filterList))
+                console.log(Logger.sciCategory, "disableAllFiltering", platformDelegate.disableAllFiltering)
+
+                platformDelegate.invalidateScrollbackFilterRequested()
+            }
+        }
+    }
+
+    Component {
         id: mockSettingsComponent
 
         MockSettingsView {
@@ -734,6 +746,10 @@ FocusScope {
 
     function showMockSettingsView() {
         stackView.push(mockSettingsComponent)
+    }
+
+    function showFilterView() {
+        stackView.push(filterComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {
