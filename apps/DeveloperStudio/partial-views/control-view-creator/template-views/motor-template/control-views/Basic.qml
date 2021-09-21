@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 
 import "qrc:/js/help_layout_manager.js" as Help
@@ -12,14 +20,14 @@ UIBase { // start_uibase
     rowCount: 25
 
     // ======================== UI Initialization ======================== //
-    
+
     Component.onCompleted: {
 
         // ------------------------ Help Messages ------------------------ //
         Help.registerTarget(rect_6a35c, "The input section displays telemetry from the platform by monitoring inputs to motor controller.", 7, "BasicControlHelp") // input rectangle
         Help.registerTarget(layoutRectangle_bead4, "The output section displays telemetry from the platform by monitoring outputs of the motor controller.", 8, "BasicControlHelp") // output rectangle
         Help.registerTarget(b_status_log_help_message, "The status log will show timestamped messages reported by the motor controller. Click the Clear button to clear the status log.", 9, "BasicControlHelp")
-      
+
         // -------------- Other Startup Tasks -------------- //
         // Such as synchronizing the UI and firmware
 
@@ -28,7 +36,7 @@ UIBase { // start_uibase
     // ======================== UI Objects ======================== //
 
     // ------------------------ General UI Setup and Titles ------------------------ //
-       
+
     LayoutText { // start_8695e
         id: b_title
         layoutInfo.uuid: "8695e"
@@ -144,7 +152,7 @@ UIBase { // start_uibase
         layoutInfo.rowsTall: 14
         layoutInfo.xColumns: 10
         layoutInfo.yRows: 3
-        
+
         // units
         unitText: platformInterface.notifications.actual_speed.unit
         // states
@@ -157,7 +165,7 @@ UIBase { // start_uibase
         value: platformInterface.notifications.actual_speed.value
         // values
         // TBD or NA, used for array UI elements
-        
+
         // change color of gauges to match EMEA's custom colors
         function lerpColor (color1, color2, x){
             if (Qt.colorEqual(color1, color2)){
@@ -248,7 +256,7 @@ UIBase { // start_uibase
         layoutInfo.rowsTall: 9
         layoutInfo.xColumns: 2
         layoutInfo.yRows: 7
-        
+
         // units
         unitText: platformInterface.notifications.input_voltage.unit
         // states
@@ -306,7 +314,7 @@ UIBase { // start_uibase
             id: b_status_log_box
             title: platformInterface.notifications.status_log.caption
             filterEnabled: false
-            
+
             Connections {
                 target: platformInterface.notifications.status_log
                 // Create status log message in the format of "hh:mm:ss:ms: Error message from status log notification"

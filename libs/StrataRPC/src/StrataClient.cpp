@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "ClientConnector.h"
 #include "Dispatcher.h"
 #include "RequestsController.h"
@@ -72,7 +80,8 @@ void StrataClient::disconnect()
 
 void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
 {
-    qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
+    // qCDebug(logCategoryStrataClient).noquote().nospace()
+    //     << "New message from the server: '" << jsonServerMessage << '\'';
 
     Message serverMessage;
     DeferredRequest *deferredRequest = nullptr;
@@ -96,7 +105,7 @@ void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
         return;
     }
 
-    qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
+    // qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
     emit messageParsed(serverMessage);
 }
 
@@ -149,7 +158,7 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
 
 bool StrataClient::sendNotification(const QString &method, const QJsonObject &payload)
 {
-    qCDebug(logCategoryStrataClient) << "Sending notification to the server";
+    // qCDebug(logCategoryStrataClient) << "Sending notification to the server";
 
     if (false == connector_->isConnected()) {
         QString errorMessage(QStringLiteral("Failed to send notification to the server."));
@@ -183,7 +192,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
 
     if (true == jsonObject.contains("jsonrpc") && true == jsonObject.value("jsonrpc").isString() &&
         jsonObject.value("jsonrpc").toString() == "2.0") {
-        qCDebug(logCategoryStrataClient) << "API v2.0";
+        // qCDebug(logCategoryStrataClient) << "API v2.0";
     } else {
         QString errorMessage(QStringLiteral("Invalid API."));
         qCCritical(logCategoryStrataClient) << errorMessage;
@@ -299,7 +308,7 @@ void StrataClient::dispatchHandler(const Message &serverMessage)
         return;
     }
 
-    qCDebug(logCategoryStrataClient) << "Handler executed.";
+    // qCDebug(logCategoryStrataClient) << "Handler executed.";
 }
 
 void StrataClient::connectorErrorHandler(const ClientConnectorError &errorType,

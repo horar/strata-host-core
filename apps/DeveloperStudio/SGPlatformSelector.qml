@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.7
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.12
@@ -96,8 +104,8 @@ Rectangle{
                     Rectangle {
                         // Strata Onsemi.com landing page button
                         color: !mouse.containsMouse
-                               ? Theme.palette.green : mouse.pressed
-                                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+                               ? Theme.palette.onsemiOrange : mouse.pressed
+                                 ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
                         radius: 10
                         Layout.preferredWidth: providerText.implicitWidth + providerText.height
                         Layout.maximumWidth: Layout.preferredWidth

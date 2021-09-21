@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.2
@@ -7,8 +15,8 @@ import tech.strata.commoncpp 1.0
 import tech.strata.SGQrcTreeModel 1.0
 import tech.strata.SGFileTabModel 1.0
 
-import "Editor/"
-import "Sidebar/"
+import "editor/"
+import "sidebar/"
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "../"
 
@@ -52,7 +60,10 @@ Item {
         }
 
         onTabClosed: {
-            treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+            // always listen for debugMenuSource changes in order to update DebugMenu.qml
+            if (filepath !== fileTreeModel.debugMenuSource) {
+                treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+            }
         }
     }
 
@@ -72,6 +83,7 @@ Item {
 
         Shortcut {
             sequence: "Ctrl+R"
+            enabled: editor.fileTreeModel.url.toString() !== ''
             onActivated: {
                 if (cvcUserSettings.openViewOnBuild) {
                     viewStack.currentIndex = 2
@@ -296,7 +308,7 @@ Item {
                                             case "jpeg":
                                             case "png":
                                             case "gif":
-                                                return "./Editor/ImageContainer.qml"
+                                                return "./editor/ImageContainer.qml"
                                             case "qml":
                                             case "csv":
                                             case "html":
@@ -304,9 +316,9 @@ Item {
                                             case "json":
                                             case "qrc":
                                             case "ts":
-                                                return "./Editor/TextEditorContainer.qml"
+                                                return "./editor/TextEditorContainer.qml"
                                             default:
-                                                return "./Editor/UnsupportedFileType.qml"
+                                                return "./editor/UnsupportedFileType.qml"
                                         }
                                     }
                                 }

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 .pragma library
 .import "navigation_control.js" as NavigationControl
 .import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -10,6 +18,7 @@
 
 var isInitialized = false
 var coreInterface
+var strataClient
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
@@ -31,9 +40,10 @@ function createPlatformActions() {
     notificationActions[1].triggered.connect(function(){disablePlatformNotifications()})
 }
 
-function initialize (newCoreInterface) {
+function initialize (newCoreInterface, newStrataClient) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
+    strataClient = newStrataClient
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
     createPlatformActions()
@@ -46,11 +56,7 @@ function disablePlatformNotifications(){
 
 function getPlatformList () {
     platformSelectorModel.platformListStatus = "loading"
-    const get_dynamic_plat_list = {
-        "hcs::cmd": "dynamic_platform_list",
-        "payload": {}
-    }
-    coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
+    strataClient.sendRequest("dynamic_platform_list", {})
 }
 
 /*
@@ -118,7 +124,7 @@ function generatePlatformSelectorModel(platform_list_json) {
         generatePlatform(platform)
     }
 
-    parseConnectedPlatforms(coreInterface.connected_platform_list_)
+    parseConnectedPlatforms(coreInterface.connectedPlatformList_)
     platformSelectorModel.platformListStatus = "loaded"
 }
 
@@ -530,6 +536,10 @@ function generateUnknownListing (platform) {
     let class_id = String(platform.class_id)
     let opn = "Class id: " + class_id
     let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
+
+    if (platform.verbose_name) {
+        return generateErrorListing(platform, platform.verbose_name, class_id, opn, description)
+    }
     return generateErrorListing(platform, "Unknown Platform", class_id, opn, description)
 }
 

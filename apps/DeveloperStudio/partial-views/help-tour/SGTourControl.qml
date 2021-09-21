@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.3
 import QtQuick.Controls 2.3
 import "qrc:/js/help_layout_manager.js" as Help
@@ -20,7 +28,7 @@ Item {
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus(); // focus on this to catch Keys below
-        } else if(focus){
+        } else if (focus){
             focus = false
         }
     }
@@ -72,14 +80,9 @@ Item {
             id: helpText
             color:"grey"
             fontSizeMultiplier: 1.25 //* root.fontSizeMultiplier
-            text: " "
+            text: (root.index + 1) + "/" + Help.tour_count
             anchors {
                 horizontalCenter: column.horizontalCenter
-            }
-            onVisibleChanged: {
-                if (visible) {
-                    text = (root.index + 1) + "/" + Help.tour_count
-                }
             }
         }
 

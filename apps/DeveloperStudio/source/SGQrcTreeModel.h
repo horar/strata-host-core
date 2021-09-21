@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include "SGQrcTreeNode.h"
@@ -227,6 +235,11 @@ public:
      * @param path The path to the file or directory
      */
     Q_INVOKABLE void stopWatchingPath(const QString &path);
+
+    /**
+     * @brief stopWatchingAll Removes all file/dir paths from internal QFileSystemWatcher
+     */
+    Q_INVOKABLE void stopWatchingAll();
 
     /**
      * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
