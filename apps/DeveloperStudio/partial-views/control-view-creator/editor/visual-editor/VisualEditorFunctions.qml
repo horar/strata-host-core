@@ -155,14 +155,6 @@ QtObject {
         }
     }
 
-    function insertTextAtBeginningOfFile(text) {
-        let regex = new RegExp(startOfObjectRegexString("uibase"))
-        let startOfFile = fileContents.match(regex)
-        fileContents = fileContents.replace(startOfFile, startOfFile + "\n" + text + "\n")
-
-        saveFile()
-    }
-
     function removeControl(uuid, addToUndoCommandStack = true, save = true, deselect = true) {
         const objectString = getObjectFromString(uuid)
         if (objectString === null) {
@@ -268,15 +260,6 @@ QtObject {
             bringToFront(selectedUuid, false)
         }
         saveFile()
-    }
-
-    function sendToBack(uuid) {
-        let copy = getObjectFromString(uuid)
-        if (copy === null) {
-            return
-        }
-        fileContents = fileContents.replace(copy, "\n")
-        insertTextAtBeginningOfFile(copy)
     }
 
     /*
