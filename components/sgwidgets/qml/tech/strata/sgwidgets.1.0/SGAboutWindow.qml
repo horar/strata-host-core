@@ -43,7 +43,10 @@ SGWidgets.SGWindow {
                 "<br>"+
                 "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
                 "<a href=\"https://github.com/FortAwesome/Font-Awesome\">https://github.com/FortAwesome/Font-Awesome</a><br>"+
-                "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a><br>"
+                "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a><br>"+
+                "<br>"+
+                "Strata Development Kit source code is available on GitHub:<br>"+
+                "<a href=\"https://github.com/stratadeveloperstudio\">https://github.com/stratadeveloperstudio</a><br>"
     }
 
     attributionText: {
