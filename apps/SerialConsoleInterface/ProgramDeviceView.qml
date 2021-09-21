@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -274,40 +282,44 @@ FocusScope {
             }
         }
 
-        Row {
+        Column {
+            id: bottomColumn
+            anchors.bottom: content.bottom
+            anchors.left: content.left
             spacing: baseSpacing
-            anchors {
-                top: statusColumn.bottom
-                topMargin: 2*baseSpacing
-            }
-            SGWidgets.SGButton {
-                text: "Back"
-                icon.source: "qrc:/sgimages/chevron-left.svg"
-                enabled: programDeviceView.editable
-                onClicked: {
-                    closeView()
+
+            Row {
+                spacing: baseSpacing
+
+                SGWidgets.SGButton {
+                    text: "Back"
+                    icon.source: "qrc:/sgimages/chevron-left.svg"
+                    enabled: programDeviceView.editable
+                    onClicked: {
+                        closeView()
+                    }
                 }
-            }
 
-            SGWidgets.SGButton {
-                id: programButton
-                text: "Program"
-                icon.source: "qrc:/sgimages/chip-flash.svg"
-                enabled: programDeviceView.editable
-                         && (model.platform.status === Sci.SciPlatform.Ready
-                             || model.platform.status === Sci.SciPlatform.NotRecognized)
-                onClicked: {
-                    var error = firmwarePathEdit.inputValidationErrorMsg()
-                    if (error.length > 0) {
-                        SGWidgets.SGDialogJS.showMessageDialog(
-                                    programDeviceView,
-                                    SGWidgets.SGMessageDialog.Error,
-                                    "Firmware file not set",
-                                    error)
-                    } else {
-                        updateFirmwarePathList(firmwarePathEdit.filePath)
+                SGWidgets.SGButton {
+                    id: programButton
+                    text: "Program"
+                    icon.source: "qrc:/sgimages/chip-flash.svg"
+                    enabled: programDeviceView.editable
+                             && (model.platform.status === Sci.SciPlatform.Ready
+                                 || model.platform.status === Sci.SciPlatform.NotRecognized)
+                    onClicked: {
+                        var error = firmwarePathEdit.inputValidationErrorMsg()
+                        if (error.length > 0) {
+                            SGWidgets.SGDialogJS.showMessageDialog(
+                                        programDeviceView,
+                                        SGWidgets.SGMessageDialog.Error,
+                                        "Firmware file not set",
+                                        error)
+                        } else {
+                            updateFirmwarePathList(firmwarePathEdit.filePath)
 
-                        startProgramProcess(firmwarePathEdit.filePath)
+                            startProgramProcess(firmwarePathEdit.filePath)
+                        }
                     }
                 }
             }

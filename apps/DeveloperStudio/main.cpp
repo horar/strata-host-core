@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtWebView/QtWebView>
@@ -76,7 +84,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QGuiApplication::setApplicationDisplayName(QStringLiteral("onsemi: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
