@@ -85,14 +85,6 @@ Popup {
         }
 
         ContextMenuButton {
-            text: multipleItemsSelected ? "Bring Selected To Back" : "Send To Back"
-            onClicked: {
-                visualEditor.functions.sendToBack(layoutOverlayRoot.layoutInfo.uuid)
-                contextMenu.close()
-            }
-        }
-
-        ContextMenuButton {
             text: multipleItemsSelected ? "Delete Selected" : "Delete"
             onClicked: {
                 visualEditor.functions.removeControlSelected()
