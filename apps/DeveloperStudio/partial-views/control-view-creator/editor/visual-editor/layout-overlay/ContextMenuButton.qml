@@ -17,7 +17,7 @@ Rectangle {
     implicitHeight: 20
     Layout.fillWidth: true
     implicitWidth: Math.max(100, buttonContent.implicitWidth + 10)
-    color: mouse.containsMouse ? "white" : "lightgrey"
+    color: mouse.containsMouse || subMenu.visible ? "white" : "lightgrey"
 
     property alias text: buttonText.text
     property alias chevron: chevron.visible
@@ -56,7 +56,6 @@ Rectangle {
         onEntered: {
             if (chevron.visible) {
                 subMenu.visible = true
-                root.color = "white"
                 // if popup will spawn past edge of window, place it on the opposite side of the click
                 if (((objectAlignButton.height + mouse.y + subMenu.height) + layoutOverlayRoot.y) > layoutOverlayRoot.parent.height) {
                     subMenu.y = objectAlignButton.y - subMenu.height
@@ -75,7 +74,6 @@ Rectangle {
         onClicked: {
             root.clicked()
             if (subMenu.visible) {
-                root.color = "lightgrey"
                 subMenu.close()
             }
         }
@@ -84,15 +82,17 @@ Rectangle {
     Popup {
         id: subMenu
         enabled: visible
-        height: contentHeight
-        width: contentWidth
+        margins: 0
+        topInset: 0
+        bottomInset: 0
+        leftInset: 0
+        rightInset: 0
 
         property alias content: content.sourceComponent
 
         Loader {
             id: content
-            x: 0
-            y: 0
+            anchors.fill: parent
         }
     }
 }

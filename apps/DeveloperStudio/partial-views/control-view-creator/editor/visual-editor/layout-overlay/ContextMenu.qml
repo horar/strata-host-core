@@ -120,9 +120,9 @@ Popup {
             id: objectAlignButton
             text: "Object Alignment"
             chevron: true
+
             subMenu: ColumnLayout {
-                id: alignmentColumn
-                spacing: 1
+                spacing: 0
 
                 ContextMenuButton {
                     text: "Horizontal Center (approx.)"
