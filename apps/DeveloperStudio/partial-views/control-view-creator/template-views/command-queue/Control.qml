@@ -56,7 +56,7 @@ Item {
         }
         /**
           To add more parameter/payload to the command:
-          1. update sendCommandPayload(command, numberOfPayload) by adding additional "else if" condition.
+          1. update sendCommandPayload(command, numberOfPayload) by adding additional "if" condition.
          **/
 
         function sendCommandPayload(command, numberOfPayload) {
