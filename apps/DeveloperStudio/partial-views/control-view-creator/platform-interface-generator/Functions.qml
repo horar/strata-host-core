@@ -66,10 +66,10 @@ QtObject {
             errorLog += emptyLog.length + " Empty key name(s) found\n"
         } 
         if (jsLog.length > 0) {
-            errorLog += "JavaScript keyword '" + jsLog + "' found\n"
+            errorLog += "JavaScript keyword(s) '" + jsLog + "' found\n"
         } 
         if (duplicateLog.length > 0) {
-            errorLog += "Duplicate key name '" + duplicateLog + "' found\n"
+            errorLog += "Duplicate key name(s) '" + duplicateLog + "' found\n"
         }
 
         return allValid
