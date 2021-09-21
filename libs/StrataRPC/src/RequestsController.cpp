@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "RequestsController.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -25,7 +33,7 @@ std::pair<DeferredRequest *, QByteArray> RequestsController::addNewRequest(
     const auto it = requests_.find(currentRequestId_);
     if (it != requests_.end()) {
         qCCritical(logCategoryRequestsController) << "Duplicate request id.";
-        return {0, ""};
+        return {nullptr, QByteArray()};
     }
 
     qCDebug(logCategoryRequestsController)
@@ -81,7 +89,7 @@ QString RequestsController::getMethodName(const int &id)
 void RequestsController::findTimedoutRequests()
 {
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
-    for (const auto &request : requests_) {
+    for (const auto &request : qAsConst(requests_)) {
         if ((currentTime - request.timestamp_) < REQUEST_TIMEOUT) {
             return;
         }

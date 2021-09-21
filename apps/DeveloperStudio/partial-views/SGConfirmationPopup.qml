@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
@@ -14,6 +22,15 @@ Popup {
     modal: true
     padding: 0
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    background: Rectangle {
+        layer.enabled: true
+        layer.effect: DropShadow {
+            horizontalOffset: 1
+            verticalOffset: 3
+            samples: 30
+            color: "#cc000000"
+        }
+    }
 
     property alias titleText: confirmTitle.text
     property alias popupText: confirmText.text
@@ -46,18 +63,6 @@ Popup {
 
     onPopupClosed: {
         close();
-    }
-
-    DropShadow {
-        width: root.width
-        height: root.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: 30
-        color: "#cc000000"
-        source: root.background
-        cached: true
     }
 
     Rectangle {
