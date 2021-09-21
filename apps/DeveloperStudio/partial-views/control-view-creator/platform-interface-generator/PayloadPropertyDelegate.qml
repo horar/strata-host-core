@@ -21,8 +21,9 @@ Rectangle {
     color: "transparent"
 
     property var selectedIndex: propertyType.currentIndex
+
     onSelectedIndexChanged: {
-        if (propertyType.currentIndex === 4 || propertyType.currentIndex === 6 ) {
+        if (propertyType.currentIndex === 4 || propertyType.currentIndex === 6) {
             if (color !== "#ffffff") {
                 return color = "#ffffff"
             }
@@ -116,10 +117,9 @@ Rectangle {
             TextField {
                 id: propertyKey
                 Layout.fillWidth: true
-                //Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
                 selectByMouse: true
-                persistentSelection: true   // must deselect manually
+                persistentSelection: true // must deselect manually
                 placeholderText: "Property key"
 
                 validator: RegExpValidator {
@@ -129,17 +129,15 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            border.width = 2
-                            return "#D10000";
+                            return "#D10000"
                         } else if (propertyKey.activeFocus) {
-                            border.width = 2
                             return palette.highlight
                         } else {
-                            border.width = 1
                             return "lightgrey"
                         }
                     }
-                    border.width: 2
+
+                    border.width: (!model.valid || propertyKey.activeFocus) ? 2 : 1
                 }
 
                 Component.onCompleted: {
@@ -163,7 +161,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
                         propertyKey.deselect()
                     }
                 }
@@ -172,19 +170,24 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.IBeamCursor
                     acceptedButtons: Qt.RightButton
+
                     onClicked: {
                         propertyKey.forceActiveFocus()
                     }
+
                     onReleased: {
                         if (containsMouse) {
-                            contextMenuPopup.popup(null)
+                            contextMenuPopupLoader.active = true
+                            contextMenuPopupLoader.item.textEditor = propertyKey
+                            contextMenuPopupLoader.item.popup(null)
                         }
                     }
                 }
 
-                SGContextMenuEditActions {
-                    id: contextMenuPopup
-                    textEditor: propertyKey
+                Loader {
+                    id: contextMenuPopupLoader
+                    active: false
+                    sourceComponent: contextMenuPopupComponent
                 }
             }
 
@@ -232,9 +235,9 @@ Rectangle {
             }
         }
 
-    /*****************************************
-    * This Repeater corresponds to the elements in a property of type "array"
-    *****************************************/
+        /*****************************************
+        * This Repeater corresponds to the elements in a property of type "array"
+        *****************************************/
         Repeater {
             id: payloadArrayRepeater
             model: payloadContainer.subArrayListModel
@@ -248,9 +251,9 @@ Rectangle {
             }
         }
 
-    /*****************************************
-    * This Repeater corresponds to the elements in a property of type "object"
-    *****************************************/
+        /*****************************************
+        * This Repeater corresponds to the elements in a property of type "object"
+        *****************************************/
         Repeater {
             id: payloadObjectRepeater
             model: payloadContainer.subObjectListModel
