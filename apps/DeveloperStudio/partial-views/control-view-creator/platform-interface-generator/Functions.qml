@@ -29,7 +29,7 @@ QtObject {
         "real","return","set","short","static","string","super","switch","synchronized","this","throw",
         "throws","transient","true","try","typeof","url","var","void","volatile","while","with","yield"]
 
-    // various logs for the 3 errors that can be found. Empty key, JS key, and a duplicate key
+    // various logs for the 3 errors that can be found. Empty keys, JS keys, and duplicate keys
     property var errorLog
     property var emptyLog: []
     property var jsLog: []
@@ -38,7 +38,7 @@ QtObject {
     /**
       * checkForAllValid checks if all fields are valid (no empty, JS, or duplicate entries)
       * Loop through each command / notification and make sure there are no invalid flags
-      * And recursively go through each property to ensure that there are no invalid flags
+      * And recursively go through each property using checkAllValidFlag() to ensure that there are no invalid flags
     **/
     function checkForAllValid() {
         // reset logs for each validation check
@@ -47,6 +47,7 @@ QtObject {
         jsLog = []
         duplicateLog = []
         let allValid = true
+
         for (let i = 0; i < finishedModel.count; i++) {
             let commands = finishedModel.get(i).data
             if (!checkAllValidFlag(commands)) {
@@ -79,6 +80,7 @@ QtObject {
     **/
     function checkAllValidFlag(payload) {
         let allValid = true
+
         for (let i = 0; i < payload.count; i++) {
             let item = payload.get(i)
             if (!item.valid) {
@@ -99,7 +101,7 @@ QtObject {
     }
 
     /**
-      * checkForValidArrayObject checks if array/object is valid, and recursively checks its children
+      * checkForValidArrayObject checks if an array/object is valid, and recursively checks its children
     **/
     function checkAllValidArrayObject(model) {
         let staticArray = sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
@@ -107,7 +109,7 @@ QtObject {
         let allValid = true
 
         if (model.type === staticArray) {
-            for (let i = 0; i < model.array.count; i++) {
+            for (let i = 0; i < model.array.count; i++) { // loop to check each array element
                 if (!checkAllValidArrayObject(model.array.get(i))) {
                     allValid = false
                 }
@@ -161,7 +163,7 @@ QtObject {
         let changed = false
 
         // uses else if structure for checks
-        // this creates a hierarchy of errors and avoids running checks unnecessarily 
+        // this creates a hierarchy for errors and avoids running checks unnecessarily
         if (!payload.get(index).name) {
             valid = false
         } else if (!checkForKeyword(payload, index)) { 
@@ -169,7 +171,7 @@ QtObject {
         } else if (!checkForDuplicateKey(payload, index)) {
             changed = true
             valid = false
-        } else if (payload.get(index).duplicate) { // if this index is valid, but was a duplicate prior to being valid
+        } else if (payload.get(index).duplicate) { // if this index is valid, but was a duplicate prior
             changed = true
             payload.setProperty(index, "duplicate", false)
         }
@@ -177,6 +179,7 @@ QtObject {
         payload.setProperty(index, "valid", valid) // valid is true unless it fails one of the above checks
 
         // only checks for duplicates if a duplicate was involved with this index
+        // then only check the indeces that are duplicates; optimized checks
         if (changed === true || payload.get(index).duplicate) {
             for (let i = 0; i < payload.count; i++) {
                 if (payload.get(i).duplicate && i !== index) {
