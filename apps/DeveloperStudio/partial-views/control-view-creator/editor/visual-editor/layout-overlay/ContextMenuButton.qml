@@ -13,6 +13,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 
 Rectangle {
+    id: root
     implicitHeight: 20
     Layout.fillWidth: true
     implicitWidth: Math.max(100, buttonContent.implicitWidth + 10)
@@ -21,6 +22,7 @@ Rectangle {
     property alias text: buttonText.text
     property alias chevron: chevron.visible
     property alias containsMouse: mouse.containsMouse
+    property alias subMenu: subMenu.content
 
     signal clicked()
 
@@ -46,11 +48,51 @@ Rectangle {
     MouseArea {
         id: mouse
         anchors {
-            fill: parent
+            fill: root
         }
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
-        onClicked: parent.clicked()
+        onEntered: {
+            if (chevron.visible) {
+                subMenu.visible = true
+                root.color = "white"
+                // if popup will spawn past edge of window, place it on the opposite side of the click
+                if (((objectAlignButton.height + mouse.y + subMenu.height) + layoutOverlayRoot.y) > layoutOverlayRoot.parent.height) {
+                    subMenu.y = objectAlignButton.y - subMenu.height
+                } else {
+                    subMenu.y = objectAlignButton.height
+                }
+                if (((objectAlignButton.width + mouse.x + subMenu.width) + layoutOverlayRoot.x) > layoutOverlayRoot.parent.width) {
+                    subMenu.x = objectAlignButton.x - subMenu.width
+                } else {
+                    subMenu.x = objectAlignButton.width
+                }
+                subMenu.open()
+            }
+        }
+
+        onClicked: {
+            root.clicked()
+            if (subMenu.visible) {
+                root.color = "lightgrey"
+                subMenu.close()
+            }
+        }
+    }
+
+    Popup {
+        id: subMenu
+        enabled: visible
+        height: contentHeight
+        width: contentWidth
+
+        property alias content: content.sourceComponent
+
+        Loader {
+            id: content
+            x: 0
+            y: 0
+        }
     }
 }
