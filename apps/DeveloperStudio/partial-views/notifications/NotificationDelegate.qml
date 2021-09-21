@@ -17,13 +17,16 @@ import tech.strata.theme 1.0
 import tech.strata.fonts 1.0
 import tech.strata.notifications 1.0
 
-Item {
+MouseArea { // MouseArea is needed to prevent any cursor hover effects from items underneath this
     id: root
     implicitWidth: ListView.view.width
-    implicitHeight: notificationContainer.height + (2 * notificationShadow.radius)
+    implicitHeight: notificationContainer.height + (2 * shadowRadius)
     opacity: 0
 
     property int modelIndex
+    property int shadowVerticalOffset: 3
+    property int shadowHorizontalOffset: 1
+    property int shadowRadius: 8
 
     Component.onCompleted: {
         opacity = 1
@@ -34,22 +37,25 @@ Item {
             duration: 400
         }
     }
-
-    MouseArea {
-        // This is needed to prevent any cursor hover effects from items below this item
-        anchors.fill: parent
-    }
-
+    
     Rectangle {
         id: notificationContainer
-        y: notificationShadow.radius - notificationShadow.verticalOffset
-        x: notificationShadow.radius - notificationShadow.horizontalOffset
-        width: parent.width - (2 * notificationShadow.radius)
+        y: shadowRadius - shadowVerticalOffset
+        x: shadowRadius - shadowHorizontalOffset
+        width: parent.width - (2 * shadowRadius)
         height: content.implicitHeight + (content.anchors.margins * 2)
         radius: 4
         clip: true
         border.color:  Theme.palette.lightGray
         border.width: 1
+        layer.enabled: true
+        layer.effect: DropShadow {
+            color: Qt.rgba(0, 0, 0, .5)
+            horizontalOffset: shadowHorizontalOffset
+            verticalOffset: shadowVerticalOffset
+            radius: shadowRadius
+            samples: (1 + (shadowRadius * 2))
+        }
 
         Timer {
             id: closeTimer
@@ -79,18 +85,5 @@ Item {
                 Qt.callLater(Notifications.model.remove, visibleNotifications.mapIndex(modelIndex))
             }
         }
-    }
-
-    DropShadow {
-        id: notificationShadow
-        anchors.fill: notificationContainer
-        source: notificationContainer
-        color: Qt.rgba(0, 0, 0, .5)
-        horizontalOffset: 1
-        verticalOffset: 3
-        cached: true
-        radius: 8
-        smooth: true
-        samples: radius*2
     }
 }

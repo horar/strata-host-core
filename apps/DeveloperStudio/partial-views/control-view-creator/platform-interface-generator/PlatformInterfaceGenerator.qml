@@ -524,4 +524,10 @@ Item {
             functions.loadJsonFile(fileUrl)
         }
     }
+
+    Component {
+        id: contextMenuPopupComponent
+
+        SGContextMenuEditActions {}
+    }
 }
