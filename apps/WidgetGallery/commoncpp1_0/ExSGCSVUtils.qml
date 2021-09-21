@@ -7,6 +7,11 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 ColumnLayout {
     id: exExportCsv
 
+    Component.onCompleted: {
+        csvUtil.clear()
+        csvUtil.appendRow(["dac","io","rev"])
+    }
+
     SGWidgets.SGAlignedLabel {
         id: exportLabel
         target: column

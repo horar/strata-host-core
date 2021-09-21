@@ -19,10 +19,10 @@ QVariantList SGCSVUtils::getData()
     return data_;
 }
 
-void SGCSVUtils::appendRow(QVariantList data, QString fileName)
+void SGCSVUtils::appendRow(QVariantList data)
 {
     SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(outputPath_, fileName);
+    QString filePath = utils.joinFilePath(outputPath_, fileName_);
     QString path = utils.urlToLocalFile(filePath);
     if (!utils.exists(path)) {
        utils.createFile(path);
