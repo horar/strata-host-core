@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
@@ -206,7 +214,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: Theme.palette.green
+                        border.color: Theme.palette.onsemiOrange
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
@@ -216,7 +224,7 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the onsemi <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"

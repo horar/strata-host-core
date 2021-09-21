@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -138,6 +146,10 @@ QJsonObject PlatformController::createPlatformsList() {
         if (it.value()->hasClassId()) {
             item.insert(JSON_CLASS_ID, it.value()->classId());
         }
+        if (it.value()->name().isNull() == false) {
+            item.insert(JSON_VERBOSE_NAME, it.value()->name());
+        }
+
         if (controllerType == Platform::ControllerType::Assisted) {
             item.insert(JSON_CONTROLLER_CLASS_ID, it.value()->controllerClassId());
             item.insert(JSON_FW_CLASS_ID, it.value()->firmwareClassId());

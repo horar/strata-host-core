@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include "SGQrcTreeNode.h"
@@ -229,6 +237,11 @@ public:
     Q_INVOKABLE void stopWatchingPath(const QString &path);
 
     /**
+     * @brief stopWatchingAll Removes all file/dir paths from internal QFileSystemWatcher
+     */
+    Q_INVOKABLE void stopWatchingAll();
+
+    /**
      * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
      * @param path The path to the file or directory
      */
@@ -259,6 +272,11 @@ public:
      * @return true if file is in pathsInTree_
      */
     Q_INVOKABLE bool containsPath(const QString url);
+
+    /**
+     * @brief reloadQrcModel force the Qrc model to be reloaded. public/QML-invocable call to createModel()
+     */
+    Q_INVOKABLE void reloadQrcModel();
 
     /***
      * SIGNALS

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -12,7 +20,7 @@ FocusScope {
 
     property string exportFilePath
     property string autoExportFilePath
-    property int baseSpacing: 10
+    property int baseSpacing: 16
 
     InfoPopup {
         id: infoPopup
@@ -119,7 +127,7 @@ FocusScope {
                 text: "ACTIVE"
                 font.bold: true
                 textColor: "white"
-                color: TangoTheme.palette.plum1
+                color: TangoTheme.palette.chameleon2
                 visible: model.platform.scrollbackModel.autoExportIsActive
             }
 
@@ -160,13 +168,24 @@ FocusScope {
                     topMargin: baseSpacing
                 }
 
-                text: model.platform.scrollbackModel.autoExportErrorString
+                text: {
+                    if (model.platform.scrollbackModel.autoExportErrorString) {
+                        return "Export Failed: " + model.platform.scrollbackModel.autoExportErrorString
+                    }
+
+                    return ""
+                }
+
                 font.bold: true
                 textColor: "white"
+                mask: "A"
                 color: TangoTheme.palette.error
+                sizeByMask: text.length === 0
+
             }
 
             SGWidgets.SGButton {
+                id: startExportButton
                 anchors {
                     top: autoExportErrorTag.bottom
                     topMargin: baseSpacing
@@ -180,6 +199,18 @@ FocusScope {
                         model.platform.scrollbackModel.startAutoExport(autoExportPathPicker.filePath)
                     }
                 }
+            }
+
+            SGWidgets.SGButton {
+                anchors {
+                    top: startExportButton.top
+                    left: startExportButton.right
+                    leftMargin: 6
+                }
+
+                text: "Clear Error"
+                visible: model.platform.scrollbackModel.autoExportErrorString.length > 0
+                onClicked: model.platform.scrollbackModel.clearAutoExportError()
             }
         }
 
@@ -209,7 +240,6 @@ FocusScope {
     }
 
     function closeView() {
-        model.platform.scrollbackModel.clearAutoExportError()
         StackView.view.pop();
     }
 }

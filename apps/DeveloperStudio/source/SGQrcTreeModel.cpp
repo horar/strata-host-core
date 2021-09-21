@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SGQrcTreeModel.h"
 #include "SGUtilsCpp.h"
 #include "logging/LoggingQtCategories.h"
@@ -646,6 +654,9 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
     }
 
     stopWatchingPath(SGUtilsCpp::urlToLocalFile(child->filepath()));
+    if (QString::compare(child->filepath().toString(), debugMenuSource_.toString()) == 0) {
+        setDebugMenuSource(QUrl());
+    }
 
     bool success = false;
     if (child->isDir()) {
@@ -653,6 +664,9 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         while (itr.hasNext()) {
             itr.next();
             stopWatchingPath(SGUtilsCpp::urlToLocalFile(child->filepath()));
+            if (QString::compare(child->filepath().toString(), debugMenuSource_.toString()) == 0) {
+                setDebugMenuSource(QUrl());
+            }
         }
         success = QDir(SGUtilsCpp::urlToLocalFile(child->filepath())).removeRecursively();
     } else {
@@ -673,6 +687,16 @@ void SGQrcTreeModel::stopWatchingPath(const QString &path)
 {
     if (!path.isEmpty()) {
         fsWatcher_->removePath(path);
+    }
+}
+
+void SGQrcTreeModel::stopWatchingAll()
+{
+    if (fsWatcher_->files().count() > 0) {
+        fsWatcher_->removePaths(fsWatcher_->files());
+    }
+    if (fsWatcher_->directories().count() > 0) {
+        fsWatcher_->removePaths(fsWatcher_->directories());
     }
 }
 
@@ -731,12 +755,7 @@ void SGQrcTreeModel::clear(bool emitSignals)
     setDebugMenuSource(QUrl());
     setNeedsCleaning(false);
 
-    if (fsWatcher_->files().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->files());
-    }
-    if (fsWatcher_->directories().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->directories());
-    }
+    stopWatchingAll();
     if (!qrcDoc_.isNull()) {
         qrcDoc_.clear();
     }
@@ -803,15 +822,15 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
     return true;
 }
 
+void SGQrcTreeModel::reloadQrcModel()
+{
+    createModel();
+}
+
 void SGQrcTreeModel::createModel()
 {
     // reset fsWatcher and pathsInTree_ before creating model
-    if (fsWatcher_->files().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->files());
-    }
-    if (fsWatcher_->directories().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->directories());
-    }
+    stopWatchingAll();
     pathsInTree_.clear();
 
     // Create a thread to write data to disk
@@ -842,6 +861,7 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
 
             if (info.fileName() == "platformInterface.json") {
                 setDebugMenuSource(QUrl::fromLocalFile(info.filePath()));
+                startWatchingPath(info.filePath());
             }
 
             SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
@@ -940,6 +960,7 @@ void SGQrcTreeModel::save()
     stream << qrcDoc_.toString(4);
     qrcFile.close();
     startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
+    emit fileChanged(url_);
 }
 
 void SGQrcTreeModel::setNeedsCleaning(const bool needsCleaning)
@@ -961,7 +982,6 @@ void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
     }
 }
 
-
 /***
  * PRIVATE SLOTS
  ***/
@@ -980,6 +1000,7 @@ void SGQrcTreeModel::projectFilesModified(const QString &path)
                 if (node->filepath() == url_) {
                     // If we encounter a change to the project's .qrc file, then reparse the qrc
                     createModel();
+                    emit fileChanged(url_);
                 } else {
                     emit fileChanged(url);
                 }
@@ -1091,6 +1112,11 @@ void SGQrcTreeModel::handleExternalFileAdded(const QUrl path, const QUrl parentP
     if (!parentIndex.isValid() && parentIndex != rootIndex_) {
         qCCritical(logCategoryControlViewCreator) << "Could not find path" << parentPath << "in tree";
         return;
+    }
+
+    if (path.fileName() == "platformInterface.json") {
+        setDebugMenuSource(path);
+        startWatchingPath(path.toLocalFile());
     }
 
     insertChild(path, -1, false, parentIndex);

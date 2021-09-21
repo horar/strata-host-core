@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "PrtModel.h"
 #include <PlatformManager.h>
 
@@ -8,6 +16,7 @@
 #include <QResource>
 #include <QDir>
 #include <QIcon>
+#include <QQmlFileSelector>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -58,7 +67,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
@@ -71,6 +80,7 @@ int main(int argc, char *argv[])
     loadResources();
 
     QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
 
     addImportPaths(&engine);
 

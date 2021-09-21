@@ -36,7 +36,7 @@ Logging categories in Qt and QML are defined as described in Qt documentation.
 ## Configuration
 Configuration file is stored:
 
-- macOS: /Users/<USER>/.config/ON Semiconductor/Strata Development Studio.ini
+- macOS: /Users/<USER>/.config/onsemi/Strata Development Studio.ini
 - Windows: TBD
 
 ### Log message formatting
@@ -100,6 +100,6 @@ Other sample sub-strings that may be used:
 ## Log file
 Logging files incl. rotated files will be stored:
 
-- macOS: /Users/<USER>/Library/Application Support/ON Semiconductor/Strata Development Studio/Strata\ Development\ Studio.log
+- macOS: /Users/<USER>/Library/Application Support/onsemi/Strata Development Studio/Strata\ Development\ Studio.log
 - Windows: TBD
 

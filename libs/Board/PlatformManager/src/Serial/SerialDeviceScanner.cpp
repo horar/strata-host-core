@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Serial/SerialDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -49,7 +57,7 @@ void SerialDeviceScanner::unsetProperties(quint32 flags) {
 
 void SerialDeviceScanner::startAutomaticScan() {
     if (timer_.isActive()) {
-        qCWarning(logCategoryDeviceScanner) << "Device scan is already running.";
+        qCDebug(logCategoryDeviceScanner) << "Device scan is already running.";
     } else {
         qCDebug(logCategoryDeviceScanner) << "Starting device scan.";
         timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
@@ -61,7 +69,7 @@ void SerialDeviceScanner::stopAutomaticScan() {
         qCDebug(logCategoryDeviceScanner) << "Stopping device scan.";
         timer_.stop();
     } else {
-        qCWarning(logCategoryDeviceScanner) << "Device scan is already stopped.";
+        qCDebug(logCategoryDeviceScanner) << "Device scan is already stopped.";
     }
 }
 

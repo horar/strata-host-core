@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 .pragma library
 
 // Map out class_id->platform name
@@ -122,4 +130,5 @@ var uuid_map = {
     "b1133641-5b46-4d11-9b96-9126b9d2a109": "mv-mdk",
     "1917934f-3b79-4e8b-b37a-b1bd92d2afd5": "mv-mdk",
     "d5029d50-9f39-4e44-8c35-589686b511cb": "lighting-kit-demo",
+    "12ef019d-4c18-4898-984e-6dc301d4be56": "ncv7685-rear"
 }
