@@ -11,6 +11,6 @@
         <UserInterface>shortcutcheckboxwidget.ui</UserInterface>
     </UserInterfaces>
     <Licenses>
-        <License name="ON Semiconductor License Agreement" file="onsemi_license.txt" />
+        <License name="onsemi License Agreement" file="onsemi_license.txt" />
     </Licenses>
 </Package>
