@@ -37,7 +37,7 @@ ColumnLayout {
             SGWidgets.SGTextEdit {
                 id: textEdit
                 text: JSON.stringify(csvUtil.getData())
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAnywhere
                 enabled: false
                 width: exExportCsv.width
             }
@@ -59,7 +59,7 @@ ColumnLayout {
                 onClicked: {
                     let data = ["1.11","false","5.33"]
                     csvUtil.appendRow(data)
-                    textEdit.text = JSON.stringify(data) + "\n"
+                    textEdit.text = JSON.stringify(csvUtil.getData()) + "\n"
                 }
             }
 
@@ -68,6 +68,7 @@ ColumnLayout {
 
                 onClicked: {
                     csvUtil.clear()
+                    textEdit.text = JSON.stringify(csvUtil.getData())
                 }
             }
 
