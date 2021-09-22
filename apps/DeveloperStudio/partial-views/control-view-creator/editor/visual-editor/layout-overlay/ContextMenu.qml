@@ -66,6 +66,12 @@ Popup {
                 menuLoader.item.open()
                 contextMenu.close()
             }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         ContextMenuButton {
@@ -73,6 +79,12 @@ Popup {
             onClicked: {
                 visualEditor.functions.duplicateControlSelected()
                 contextMenu.close()
+            }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
             }
         }
 
@@ -82,6 +94,12 @@ Popup {
                 visualEditor.functions.bringToFrontSelected()
                 contextMenu.close()
             }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         ContextMenuButton {
@@ -89,6 +107,12 @@ Popup {
             onClicked: {
                 visualEditor.functions.removeControlSelected()
                 contextMenu.close()
+            }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
             }
         }
 
@@ -98,6 +122,12 @@ Popup {
                 visualEditor.functions.passUUID(layoutOverlayRoot.layoutInfo.uuid)
                 contextMenu.close()
             }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         ContextMenuButton {
@@ -105,6 +135,12 @@ Popup {
             onClicked: {
                 Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
                 contextMenu.close()
+            }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
             }
         }
 
@@ -142,6 +178,15 @@ Popup {
             Layout.fillWidth: true
             implicitHeight: 1
             visible: extraContextLoader.source !== ""
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         Loader {
@@ -179,6 +224,17 @@ Popup {
                         return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLogBoxContextMenu.qml"
                     default:
                         return ""
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onContainsMouseChanged: {
+                    if (containsMouse) {
+                        objectAlignButton.content.close()
+                    }
                 }
             }
         }

@@ -17,12 +17,13 @@ Rectangle {
     implicitHeight: 20
     Layout.fillWidth: true
     implicitWidth: Math.max(100, buttonContent.implicitWidth + 10)
-    color: mouse.containsMouse || subMenu.visible ? "white" : "lightgrey"
+    color: mouse.containsMouse || content.visible ? "white" : "lightgrey"
 
     property alias text: buttonText.text
     property alias chevron: chevron.visible
     property alias containsMouse: mouse.containsMouse
-    property alias subMenu: subMenu.content
+    property alias subMenu: content.sourceComponent
+    property alias content: content
 
     signal clicked()
 
@@ -48,51 +49,55 @@ Rectangle {
     MouseArea {
         id: mouse
         anchors {
-            fill: root
+            left: root.left
+            right: root.right
+            top: root.top
+            bottom: root.bottom
         }
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
         onEntered: {
             if (chevron.visible) {
-                subMenu.visible = true
                 // if popup will spawn past edge of window, place it on the opposite side of the click
-                if (((objectAlignButton.height + mouse.y + subMenu.height) + layoutOverlayRoot.y) > layoutOverlayRoot.parent.height) {
-                    subMenu.y = objectAlignButton.y - subMenu.height
+                if (((objectAlignButton.height + mouse.y + content.height) + layoutOverlayRoot.y) > layoutOverlayRoot.parent.height) {
+                    content.y = objectAlignButton.y - content.height
                 } else {
-                    subMenu.y = objectAlignButton.height
+                    content.y = objectAlignButton.height
                 }
-                if (((objectAlignButton.width + mouse.x + subMenu.width) + layoutOverlayRoot.x) > layoutOverlayRoot.parent.width) {
-                    subMenu.x = objectAlignButton.x - subMenu.width
+                if (((objectAlignButton.width + mouse.x + content.width) + layoutOverlayRoot.x) > layoutOverlayRoot.parent.width) {
+                    content.x = objectAlignButton.x - content.width
                 } else {
-                    subMenu.x = objectAlignButton.width
+                    content.x = objectAlignButton.width
                 }
-                subMenu.open()
+                content.open()
             }
         }
 
         onClicked: {
             root.clicked()
-            if (subMenu.visible) {
-                subMenu.close()
+            if (content.visible) {
+                content.close()
             }
         }
     }
 
-    Popup {
-        id: subMenu
-        enabled: visible
-        margins: 0
-        topInset: 0
-        bottomInset: 0
-        leftInset: 0
-        rightInset: 0
+    Loader {
+        id: content
+        active: chevron.visible
+        visible: false
+        anchors.left: root.right
+        anchors.top: root.top
 
-        property alias content: content.sourceComponent
+        signal open()
+        signal close()
 
-        Loader {
-            id: content
-            anchors.fill: parent
+        onOpen: {
+            visible = true
+        }
+
+        onClose: {
+            visible = false
         }
     }
 }
