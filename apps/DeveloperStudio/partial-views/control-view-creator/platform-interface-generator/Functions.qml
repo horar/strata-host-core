@@ -34,7 +34,7 @@ QtObject {
     property var emptyLog: []
     property var jsLog: []
     property var duplicateLog: []
-    
+
     /**
       * checkForAllValid checks if all fields are valid (no empty, JS, or duplicate entries)
       * Loop through each command / notification and make sure there are no invalid flags
@@ -64,10 +64,10 @@ QtObject {
         // Update errorLog depending on the types of errors found from recursive checks
         if (emptyLog.length > 0) {
             errorLog += emptyLog.length + " Empty key name(s) found\n"
-        } 
+        }
         if (jsLog.length > 0) {
             errorLog += "JavaScript keyword(s) '" + jsLog + "' found\n"
-        } 
+        }
         if (duplicateLog.length > 0) {
             errorLog += "Duplicate key name(s) '" + duplicateLog + "' found\n"
         }
@@ -129,8 +129,8 @@ QtObject {
         if (jsReserved.includes(payload.get(index).name)) {
             payload.setProperty(index, "keyword", true)
             return false
-        } 
-        
+        }
+
         payload.setProperty(index, "keyword", false)
         return true
     }
@@ -164,7 +164,7 @@ QtObject {
         // this creates a hierarchy for errors and avoids running checks unnecessarily
         if (!payload.get(index).name) {
             valid = false
-        } else if (!checkForKeyword(payload, index)) { 
+        } else if (!checkForKeyword(payload, index)) {
             valid = false
         } else if (!checkForDuplicateKey(payload, index)) {
             changed = true
@@ -185,7 +185,7 @@ QtObject {
                         payload.setProperty(i, "duplicate", false)
                     }
                 }
-                
+
                 if (!payload.get(i).name || payload.get(i).keyword || payload.get(i).duplicate) {
                     payload.setProperty(i, "valid", false)
                 } else {
@@ -468,7 +468,7 @@ QtObject {
             SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
         }
         alertToast.show()
-        
+
         unsavedChanges = false
     }
 
@@ -476,7 +476,7 @@ QtObject {
       * importValidationCheck will check if the incoming JSON file is a valid Platform Interface JSON
     **/
     function importValidationCheck(object) {
-        if (!object.hasOwnProperty("commands") || 
+        if (!object.hasOwnProperty("commands") ||
             !object.hasOwnProperty("notifications") ||
             Object.keys(object).length !== 2) {
             // must contain only commands and notifications
@@ -636,7 +636,7 @@ QtObject {
     function fileDialogFolder() {
         // checks if the user has recently opened a file and uses that path
         // then, if there projects in the recent projects model and uses that dir path
-        // else, the user's home directory is opened                
+        // else, the user's home directory is opened
         let path = currentCvcProjectJsonUrl
         if (SGUtilsCpp.isValidFile(path)) {
             path = SGUtilsCpp.urlToLocalFile(path)

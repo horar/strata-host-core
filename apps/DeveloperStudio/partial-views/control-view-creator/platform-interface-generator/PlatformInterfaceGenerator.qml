@@ -499,7 +499,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: (containsMouse && valid) ? Qt.PointingHandCursor : Qt.ArrowCursor
-                
+
                 property bool valid: true
 
                 onContainsMouseChanged: {
