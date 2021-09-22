@@ -44,12 +44,7 @@ FocusScope {
             page: "ExDialogs.qml"
         }
 
-        ListElement {
-            name: "SGCSVFileUtilsManager"
-            page: "ExSGCSVFileUtilsManager.qml"
-        }
-
-        ListElement {
+		ListElement {
             name: "SGGraph"
             page: "ExSGGraph.qml"
         }
