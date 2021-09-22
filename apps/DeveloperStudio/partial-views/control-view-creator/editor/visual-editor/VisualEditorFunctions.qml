@@ -478,12 +478,22 @@ QtObject {
     }
 
     function alignItem(position, uuid) {
+
+        function horizontalCenterAlign() {
+            fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2), "", false)
+        }
+
+        function verticalCenterAlign() {
+            fileContents = setObjectProperty(uuid, "layoutInfo.yRows", Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2), "", false)
+        }
+
         switch (position) {
-            case "horCenter": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2), "", false)
+            case "horCenter": horizontalCenterAlign()
             break;
-            case "verCenter": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2), "", false)
+            case "verCenter": verticalCenterAlign()
             break;
         }
+
         saveFile();
     }
 
