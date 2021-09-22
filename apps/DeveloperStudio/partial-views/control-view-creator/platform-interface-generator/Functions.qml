@@ -17,11 +17,11 @@ import "../"
 
 QtObject {
     // All deprecated functions needed for PIG
-     property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
+    property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
 
     // Array containing JavaScript & QML keywords.
     // Used to ensure users do not use a keyword in their naming convention
-     readonly property var jsReserved: ["abstract","arguments","await","bool","boolean","break",
+    readonly property var jsReserved: ["abstract","arguments","await","bool","boolean","break",
         "byte","case","catch","char","class","const","continue","debugger","default","delete",
         "do","double","else","enum","enumeration","eval","export","extends","false","final","finally",
         "float","for","function","get","goto","if","int","implements","import","in","instanceof",
@@ -126,15 +126,13 @@ QtObject {
       * checkForKeyword checks if the key name is a JS keyword and sets a flag
     **/
     function checkForKeyword(payload, index) {
-        let valid = true
-
         if (jsReserved.includes(payload.get(index).name)) {
             payload.setProperty(index, "keyword", true)
-            valid = false
-        } else {
-            payload.setProperty(index, "keyword", false)
-        }
-        return valid
+            return false
+        } 
+        
+        payload.setProperty(index, "keyword", false)
+        return true
     }
 
     /**

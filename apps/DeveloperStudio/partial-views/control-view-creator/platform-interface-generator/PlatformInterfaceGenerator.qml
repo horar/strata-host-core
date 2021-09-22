@@ -466,7 +466,7 @@ Item {
                     if (!generateButton.enabled) {
                         return "lightgrey"
                     }
-                    return (generateButtonMouseArea.containsMouse & generateButtonMouseArea.valid) ? Qt.darker("grey", 1.5) : "grey"
+                    return (generateButtonMouseArea.containsMouse && generateButtonMouseArea.valid) ? Qt.darker("grey", 1.5) : "grey"
                 }
             }
 
@@ -479,7 +479,7 @@ Item {
 
             ToolTip {
                 id: errorToolTip
-                visible: (generateButtonMouseArea.containsMouse & !generateButtonMouseArea.valid)
+                visible: (generateButtonMouseArea.containsMouse && !generateButtonMouseArea.valid)
 
                 function generationCheck() {
                     if (generateButtonMouseArea.containsMouse) {
@@ -498,10 +498,9 @@ Item {
                 id: generateButtonMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
+                cursorShape: (containsMouse && valid) ? Qt.PointingHandCursor : Qt.ArrowCursor
                 
                 property bool valid: true
-                
-                cursorShape: (containsMouse & valid) ? Qt.PointingHandCursor : Qt.ArrowCursor
 
                 onContainsMouseChanged: {
                     if (containsMouse) {
