@@ -12,6 +12,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.theme 1.0
+import tech.strata.AppInfo 1.0
 
 SGWidgets.SGWindow {
     id: window
@@ -31,11 +32,13 @@ SGWidgets.SGWindow {
     property string defaultAttributionText
     property string additionalAttributionText
     property string attributionText
-    property variant versionNumberList: Qt.application.version.split(".")
-    property string versionNumber: "%1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])
+    property string versionNum: "<b>version:</b> %1".arg(AppInfo.version)
+    property string versionNumber: AppInfo.fullVersion.includes("dirty") ? versionNum + "-uncommitted" : versionNum
+    property string versionNumberExpanded: createVersionString()
     property color dialogBg: "#eeeeee"
     property color lighterGrayColor: Qt.lighter(Theme.palette.gray, 1.33)
     property color darkerGrayColor: Qt.lighter(Theme.palette.gray, 1.15)
+    property bool versionExpanded: false
 
     defaultAttributionText: {
         return "Built on the awesome Qt/QML framework<br>"+
@@ -81,18 +84,33 @@ SGWidgets.SGWindow {
             text: Qt.application.name
         }
 
-        SGWidgets.SGText {
-            id: versionText
+        Row {
+            id: versionRow
             width: parent.width
             padding: baseSpacing
+            spacing: baseSpacing
             topPadding: 0
 
             anchors {
                 top: appNameText.bottom
             }
-            fontSizeMultiplier: 1.1
-            wrapMode: Text.Wrap
-            text: versionNumber
+
+            SGWidgets.SGText {
+                id: versionText
+
+                wrapMode: Text.Wrap
+                text: versionExpanded ? versionNumberExpanded : versionNumber
+            }
+
+            SGWidgets.SGButton {
+                id: showButton
+                height: versionText.height
+                width: 20
+                color: darkerGrayColor
+                text: "..."
+                visible: versionExpanded ? false : true
+                onClicked: versionExpanded = !versionExpanded
+            }
         }
 
         Column {
@@ -100,7 +118,7 @@ SGWidgets.SGWindow {
             spacing: 20
             anchors {
                 margins: baseSpacing
-                top: versionText.bottom
+                top: versionRow.bottom
                 left: parent.left
             }
 
@@ -129,7 +147,7 @@ SGWidgets.SGWindow {
 
             anchors {
                 left: imageColumn.right
-                top: versionText.bottom
+                top: versionRow.bottom
                 leftMargin: baseSpacing
             }
 
@@ -356,5 +374,23 @@ SGWidgets.SGWindow {
             color: darkerGrayColor
             onClicked: window.close()
         }
+    }
+
+    function createVersionString() {
+        var versionList = ["stage of development", "build id", "git hash", "uncommitted changes"]
+        var version = versionNum
+        if (AppInfo.stageOfDevelopment !== "") {
+            version += "<b> %1: </b> %2".arg(versionList[0]).arg(AppInfo.stageOfDevelopment)
+        }
+        if (AppInfo.buildId !== "") {
+            version += "<b> %1: </b> %2".arg(versionList[1]).arg(AppInfo.buildId)
+        }
+        if (AppInfo.gitRevision !== "") {
+            version += "<b> %1: </b> %2".arg(versionList[2]).arg(AppInfo.gitRevision)
+        }
+        if (AppInfo.fullVersion.includes("dirty")) {
+            version += "<b> %1 </b>".arg(versionList[3])
+        }
+        return version
     }
 }

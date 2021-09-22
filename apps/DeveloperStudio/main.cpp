@@ -52,6 +52,18 @@
 using strata::loggers::QtLoggerSetup;
 
 namespace logConsts = strata::loggers::constants;
+static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+
+    QJSValue appInfo = scriptEngine->newObject();
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("buildId", AppInfo::buildId.data());
+    appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
+    appInfo.setProperty("stageOfDevelopment", AppInfo::stageOfDevelopment.data());
+    appInfo.setProperty("fullVersion", AppInfo::version.data());
+    return appInfo;
+}
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -166,6 +178,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
+    qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::aboutToQuit,
