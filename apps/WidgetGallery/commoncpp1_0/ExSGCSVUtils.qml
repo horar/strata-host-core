@@ -10,6 +10,7 @@ ColumnLayout {
     Component.onCompleted: {
         csvUtil.clear()
         csvUtil.appendRow(["dac","io","rev"])
+        textEdit.text += JSON.stringify(["dac","io","rev"]) + "\n"
     }
 
     SGWidgets.SGAlignedLabel {
@@ -36,10 +37,13 @@ ColumnLayout {
 
             SGWidgets.SGTextEdit {
                 id: textEdit
-                text: JSON.stringify(csvUtil.getData())
+                text: ""
                 wrapMode: Text.WrapAnywhere
                 enabled: false
                 width: exExportCsv.width
+                textFormat: TextEdit.RichText
+                clip: true
+                height: 50
             }
 
             SGWidgets.SGButton {
@@ -59,7 +63,7 @@ ColumnLayout {
                 onClicked: {
                     let data = ["1.11","false","5.33"]
                     csvUtil.appendRow(data)
-                    textEdit.text = JSON.stringify(csvUtil.getData()) + "\n"
+                    textEdit.text += JSON.stringify(data) + "\n"
                 }
             }
 
@@ -68,7 +72,8 @@ ColumnLayout {
 
                 onClicked: {
                     csvUtil.clear()
-                    textEdit.text = JSON.stringify(csvUtil.getData())
+                    textEdit.text = ""
+                    textEdit.text += JSON.stringify(["dac","io","rev"]) + "\n"
                 }
             }
 
