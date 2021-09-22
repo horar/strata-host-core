@@ -473,7 +473,6 @@ Window {
                                 Layout.fillWidth: true
                                 enabled: !platformRow.connected
                                 palette.highlight: Theme.palette.onsemiOrange
-
                                 
                                 property bool textChanged: false
 

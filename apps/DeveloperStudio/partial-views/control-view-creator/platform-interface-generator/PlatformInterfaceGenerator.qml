@@ -14,7 +14,6 @@ import QtQuick.Dialogs 1.2
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
-import tech.strata.theme 1.0
 
 import "../"
 
@@ -333,7 +332,6 @@ Item {
                     placeholderText: "Output Folder Location"
                     contextMenuEnabled: true
                     readOnly: true
-                    palette.highlight: Theme.palette.onsemiOrange
                 }
             }
         }

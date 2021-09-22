@@ -11,7 +11,6 @@ import QtQml 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
-import tech.strata.theme 1.0
 
 Rectangle {
     width:  ListView.view.width
@@ -79,7 +78,6 @@ Rectangle {
                 selectByMouse: true
                 persistentSelection: true   // must deselect manually
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
-                palette.highlight: Theme.palette.onsemiOrange
 
                 validator: RegExpValidator {
                     regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]+/
@@ -92,7 +90,7 @@ Rectangle {
                             return "#D10000";
                         } else if (cmdNotifName.activeFocus) {
                             border.width = 2
-                            return cmdNotifName.palette.highlight
+                            return palette.highlight
                         } else {
                             border.width = 1
                             return "lightgrey"
@@ -213,7 +211,6 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     selectByMouse: true
-                    palette.highlight: Theme.palette.onsemiOrange
                 }
             }
         }
