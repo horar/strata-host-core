@@ -479,17 +479,10 @@ QtObject {
 
     function alignItem(position, uuid) {
         switch (position) {
-            case "left": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", 0, "", false)
-                break;
             case "horCenter": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2), "", false)
-                break;
-            case "right": fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", overlayContainer.columnCount - getObjectPropertyValue(uuid, "layoutInfo.columnsWide"), "", false)
-                break;
-            case "top": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", 0, "", false)
-                break;
+            break;
             case "verCenter": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2), "", false)
-                break;
-            case "bottom": fileContents = setObjectProperty(uuid, "layoutInfo.yRows", overlayContainer.rowCount - getObjectPropertyValue(uuid, "layoutInfo.rowsTall"), "", false)
+            break;
         }
         saveFile();
     }
