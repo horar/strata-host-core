@@ -43,10 +43,7 @@ SGWidgets.SGWindow {
                 "<br>"+
                 "Some icons used in "+Qt.application.name+" belong to Font Awesome toolkit, licensed CC BY 4.0:<br>"+
                 "<a href=\"https://github.com/FortAwesome/Font-Awesome\">https://github.com/FortAwesome/Font-Awesome</a><br>"+
-                "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a><br>"+
-                "<br>"+
-                "Strata Development Kit source code is available on GitHub:<br>"+
-                "<a href=\"https://github.com/stratadeveloperstudio\">https://github.com/stratadeveloperstudio</a><br>"
+                "<a href=\"https://creativecommons.org/licenses/by/4.0/\">https://creativecommons.org/licenses/by/4.0/</a><br>"
     }
 
     attributionText: {
@@ -166,6 +163,22 @@ SGWidgets.SGWindow {
                     color: tabBar.currentIndex == 1 ? lighterGrayColor : darkerGrayColor
                 }
             }
+
+            TabButton {
+                id: contributionsButton
+                text: qsTr("Contributions")
+                width: implicitWidth
+
+                contentItem: Text {
+                    text: contributionsButton.text
+                    color: "black"
+                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+                }
+
+                background: Rectangle {
+                    color: tabBar.currentIndex == 2 ? lighterGrayColor : darkerGrayColor
+                }
+            }
         }
 
         StackLayout {
@@ -274,6 +287,55 @@ SGWidgets.SGWindow {
                         font.italic: true
                         textFormat: Text.RichText
                         text: attributionText
+                        onLinkActivated: {
+                            Qt.openUrlExternally(link)
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: contributionsTab
+                color: lighterGrayColor
+
+                Flickable {
+                    id: contributionsFlick
+                    width: parent.width
+                    height: parent.height
+                    contentWidth: parent.width
+                    contentHeight: openSourceText.height + repositoryRefrenceText.height
+                    clip: true
+                    boundsBehavior: Flickable.StopAtBounds
+
+                    ScrollBar.vertical: ScrollBar {
+                        width: visible ? 8 : 0
+                        anchors.right: contributionsFlick.right
+                        policy: ScrollBar.AlwaysOn
+                        visible: contributionsFlick.height < contributionsFlick.contentHeight
+                    }
+
+                    SGWidgets.SGText {
+                        id: openSourceText
+                        width: parent.width
+                        padding: baseSpacing
+
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        text: "Strata Development Kit is an open source project." +
+                              " Contributions are welcomed through our GitHub repository."
+                    }
+
+                    SGWidgets.SGText {
+                        id: repositoryRefrenceText
+                        width: parent.width
+                        padding: baseSpacing
+                        anchors.top: openSourceText.bottom
+
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        textFormat: Text.RichText
+                        text: "Source code and contribution instructions are available on GitHub:<br>"+
+                              "<a href=\"https://github.com/stratadeveloperstudio\">https://github.com/stratadeveloperstudio</a>"
                         onLinkActivated: {
                             Qt.openUrlExternally(link)
                         }
