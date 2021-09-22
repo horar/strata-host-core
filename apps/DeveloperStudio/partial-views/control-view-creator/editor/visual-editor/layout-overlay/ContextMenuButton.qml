@@ -49,10 +49,7 @@ Rectangle {
     MouseArea {
         id: mouse
         anchors {
-            left: root.left
-            right: root.right
-            top: root.top
-            bottom: root.bottom
+            fill: parent
         }
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
