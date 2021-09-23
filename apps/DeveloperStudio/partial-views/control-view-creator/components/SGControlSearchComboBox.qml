@@ -15,6 +15,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 RowLayout {
     id: root
@@ -51,6 +52,7 @@ RowLayout {
             anchors.fill: searchFilter
             leftPadding: 5
             contextMenuEnabled: true
+            palette.highlight: Theme.palette.onsemiOrange
         }
     }
 
@@ -63,6 +65,7 @@ RowLayout {
             SGCheckBox {
                 id: useCaseSensitive
                 text: "Case Sensitive"
+                palette.highlight: Theme.palette.onsemiOrange
             }
         }
     }

@@ -10,6 +10,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 ColumnLayout {
     id: root
@@ -87,6 +88,7 @@ ColumnLayout {
                     visible: !root.isArray
                     placeholderText: "key name here"
                     text: model.key
+                    palette.highlight: Theme.palette.onsemiOrange
 
                     onTextChanged: {
                         if (text !== model.key) {
@@ -147,6 +149,7 @@ ColumnLayout {
                     Layout.rightMargin: 10
                     Layout.preferredHeight: 30
                     text: model.value
+                    palette.highlight: Theme.palette.onsemiOrange
 
                     placeholderText: {
                         switch(comboBox.currentText) {
