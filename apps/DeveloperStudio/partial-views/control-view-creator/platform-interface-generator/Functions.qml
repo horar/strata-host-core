@@ -16,7 +16,7 @@ import "../"
 
 QtObject {
     // All deprecated functions needed for PIG
-     property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
+    property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
     
     /**
       * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
@@ -220,6 +220,72 @@ QtObject {
         return allValid
     }
 
+    function parseCommandNotification(topLevelType,jsonObject) {
+        const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
+
+        let listOfCommandsOrNotifications = {
+            "name": topLevelType, // "commands" / "notifications"
+            "data": []
+        }
+
+        finishedModel.append(listOfCommandsOrNotifications)
+
+        for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+            let commandsModel = finishedModel.get(finishedModel.count-1).data
+
+            let cmd = arrayOfCommandsOrNotifications[j]
+            let commandName
+            let commandType
+            let commandObject = {}
+
+            if (topLevelType === "commands") {
+                // If we are dealing with commands, then look for the "cmd" key
+                commandName = cmd["cmd"]
+                commandType = "cmd"
+            } else {
+                commandName = cmd["value"]
+                commandType = "value"
+            }
+
+            commandObject["type"] = commandType
+            commandObject["name"] = commandName
+            commandObject["valid"] = true
+            commandObject["payload"] = []
+            commandObject["editing"] = false
+
+            commandsModel.append(commandObject)
+
+            const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
+
+            if (payload) {
+                let payloadModel = commandsModel.get(j).payload
+                for (let k = 0; k < payload.length; k++) {
+
+                    const payloadProperty = payload[k]
+                    const type = payloadProperty.type
+
+                    let payloadPropObject = Object.assign({}, templatePayload)
+                    payloadPropObject["name"] = payloadProperty.name
+                    payloadPropObject["type"] = type
+                    payloadPropObject["valid"] = true
+                    payloadPropObject["indexSelected"] = -1
+                    if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                            type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                        payloadPropObject["value"] = String(payloadProperty.value)
+                    }
+
+                    payloadModel.append(payloadPropObject)
+
+                    if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                        generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
+                    } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                        generateObjectModel(payloadProperty.value, payloadModel.get(k).object)
+                    }
+                }
+            }
+        }
+    }
+
     /**
       * createModelFromJson creates the model from a JSON object (used when importing a JSON file)
     **/
@@ -229,71 +295,8 @@ QtObject {
         finishedModel.modelAboutToBeReset()
         finishedModel.clear()
 
-        for (let i = 0; i < topLevelKeys.length; i++) {
-            const topLevelType = topLevelKeys[i]
-            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
-            let listOfCommandsOrNotifications = {
-                "name": topLevelType, // "commands" / "notifications"
-                "data": []
-            }
-
-            finishedModel.append(listOfCommandsOrNotifications)
-
-            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                let commandsModel = finishedModel.get(i).data
-
-                let cmd = arrayOfCommandsOrNotifications[j]
-                let commandName
-                let commandType
-                let commandObject = {}
-
-                if (topLevelType === "commands") {
-                    // If we are dealing with commands, then look for the "cmd" key
-                    commandName = cmd["cmd"]
-                    commandType = "cmd"
-                } else {
-                    commandName = cmd["value"]
-                    commandType = "value"
-                }
-
-                commandObject["type"] = commandType
-                commandObject["name"] = commandName
-                commandObject["valid"] = true
-                commandObject["payload"] = []
-                commandObject["editing"] = false
-
-                commandsModel.append(commandObject)
-
-                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
-
-                if (payload) {
-                    let payloadModel = commandsModel.get(j).payload
-                    for (let k = 0; k < payload.length; k++) {
-
-                        const payloadProperty = payload[k]
-                        const type = payloadProperty.type
-
-                        let payloadPropObject = Object.assign({}, templatePayload)
-                        payloadPropObject["name"] = payloadProperty.name
-                        payloadPropObject["type"] = type
-                        payloadPropObject["valid"] = true
-                        payloadPropObject["indexSelected"] = -1
-                        if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
-                                type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                            payloadPropObject["value"] = String(payloadProperty.value)
-                        }
-
-                        payloadModel.append(payloadPropObject)
-
-                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                            generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
-                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                            generateObjectModel(payloadProperty.value, payloadModel.get(k).object)
-                        }
-                    }
-                }
-            }
-        }
+        parseCommandNotification("notifications", jsonObject)
+        parseCommandNotification("commands", jsonObject)
 
         alertToast.hide()
         alertToast.text = "Successfully imported JSON model." + (modelPopulated() ? "" : " Note: imported list of commands/notifications is empty.")
@@ -451,18 +454,18 @@ QtObject {
     **/
     function getTypedValue (type, value) {
         switch (type) {
-            case "int":
-                return parseInt(value)
-            case "double":
-                return parseFloat(value)
-            case "bool":
-                if (value === "false") {
-                    return false
-                } else {
-                    return true
-                }
-            default: // case "string"
-                return value
+        case "int":
+            return parseInt(value)
+        case "double":
+            return parseFloat(value)
+        case "bool":
+            if (value === "false") {
+                return false
+            } else {
+                return true
+            }
+        default: // case "string"
+            return value
         }
     }
 
@@ -500,9 +503,9 @@ QtObject {
       * importValidationCheck will check if the incoming JSON file is a valid Platform Interface JSON
     **/
     function importValidationCheck(object) {
-        if (!object.hasOwnProperty("commands") || 
-            !object.hasOwnProperty("notifications") ||
-            Object.keys(object).length !== 2) {
+        if (!object.hasOwnProperty("commands") ||
+                !object.hasOwnProperty("notifications") ||
+                Object.keys(object).length !== 2) {
             // must contain only commands and notifications
             return false
         }
@@ -609,6 +612,7 @@ QtObject {
             const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)
+
                 if (importValidationCheck(jsonObject)) {
                     if (apiVersion === "APIv1") {
                         if (alertToast.visible) {
@@ -660,7 +664,7 @@ QtObject {
     function fileDialogFolder() {
         // checks if the user has recently opened a file and uses that path
         // then, if there projects in the recent projects model and uses that dir path
-        // else, the user's home directory is opened                
+        // else, the user's home directory is opened
         let path = currentCvcProjectJsonUrl
         if (SGUtilsCpp.isValidFile(path)) {
             path = SGUtilsCpp.urlToLocalFile(path)
