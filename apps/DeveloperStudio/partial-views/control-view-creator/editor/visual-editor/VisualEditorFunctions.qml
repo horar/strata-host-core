@@ -481,11 +481,13 @@ QtObject {
 
         function horizontalCenterAlign(uuid) {
             const horPosition = Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "move", horPosition, getObjectPropertyValue(uuid, "layoutInfo.yRows"), getObjectPropertyValue(uuid, "layoutInfo.xColumns"), getObjectPropertyValue(uuid, "layoutInfo.yRows"))
             fileContents = setObjectProperty(uuid, "layoutInfo.xColumns", horPosition, "", false)
         }
 
         function verticalCenterAlign(uuid) {
             const verPosition = Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+            sdsModel.visualEditorUndoStack.addXYCommand(file, uuid, "move", getObjectPropertyValue(uuid, "layoutInfo.xColumns"), verPosition, getObjectPropertyValue(uuid, "layoutInfo.xColumns"), getObjectPropertyValue(uuid, "layoutInfo.yRows"))
             fileContents = setObjectProperty(uuid, "layoutInfo.yRows", verPosition, "", false)
         }
 
