@@ -310,7 +310,6 @@ QtObject {
         If <propertyName> is not found, it will be appended as a new property above the first child or end of object
         ** Only works on properties declared above children - see getObjectContents
     */
-
     function setObjectProperty(uuid, propertyName, value, string = fileContents, addToUndoCommandStack = true) {
         if (string == "") {
             string = fileContents
@@ -497,7 +496,6 @@ QtObject {
             case "verCenter": verticalCenterAlign(uuid)
             break;
         }
-
         saveFile();
     }
 
