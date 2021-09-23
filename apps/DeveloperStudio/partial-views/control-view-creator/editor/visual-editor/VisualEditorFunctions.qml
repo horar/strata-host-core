@@ -498,6 +498,18 @@ QtObject {
         }
         saveFile();
     }
+    // This will check if item can be exactly centered
+    function exactCenterCheck(uuid, horOrVert) {
+        if (horOrVert === "horizontal") {
+            const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        } else {
+            const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        }
+    }
 
     function create_UUID() {
         var dt = new Date().getTime();

@@ -148,11 +148,14 @@ Popup {
             text: "Object Alignment"
             chevron: true
 
+            property bool isExactHorizontal: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
+            property bool isExactVertical: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+
             subMenu: ColumnLayout {
                 spacing: 0
 
                 ContextMenuButton {
-                    text: "Horizontal Center (approx.)"
+                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (approx.)"
 
                     onClicked: {
                         visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
@@ -161,7 +164,7 @@ Popup {
                 }
 
                 ContextMenuButton {
-                    text: "Vertical Center (approx.)"
+                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (approx.)"
 
                     onClicked: {
                         visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
