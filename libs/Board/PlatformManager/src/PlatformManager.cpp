@@ -341,7 +341,7 @@ void PlatformManager::handlePlatformTerminated() {
     qCWarning(logCategoryPlatformManager).noquote() << "Unable to terminate, device Id does not exist:" << deviceId;
 }
 
-void PlatformManager::handlePlatformRecognized(bool isRecognized) {
+void PlatformManager::handlePlatformRecognized(bool isRecognized, bool inBootloader) {
     Platform *platform = qobject_cast<Platform*>(QObject::sender());
     if (platform == nullptr) {
         qCCritical(logCategoryPlatformManager) << "Platform does not exist";
@@ -352,7 +352,7 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized) {
 
     qCDebug(logCategoryPlatformManager).noquote().nospace() << "Platform recognized: " << isRecognized << ", deviceId: " << deviceId;
 
-    emit platformRecognized(deviceId, isRecognized);
+    emit platformRecognized(deviceId, isRecognized, inBootloader);
 
     if (isRecognized == false && keepDevicesOpen_ == false) {
         qCInfo(logCategoryPlatformManager).noquote()
