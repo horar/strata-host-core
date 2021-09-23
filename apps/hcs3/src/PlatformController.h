@@ -91,14 +91,12 @@ private:
 
         strata::platform::PlatformPtr platform;
         bool inBootloader;
-        // TODO: move here also sentMessageNumber
+        unsigned sentMessageNumber;  // number of last sent message
     };
 
     strata::PlatformManager platformManager_;
 
     // map: deviceID <-> PlatformData
     QHash<QByteArray, PlatformData> platforms_;
-    // map: deviceID <-> number of last sent message
-    QHash<QByteArray, unsigned> sentMessageNumbers_;
-    // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage
+    // access to platforms_ should be protected by mutex in case of multithread usage
 };

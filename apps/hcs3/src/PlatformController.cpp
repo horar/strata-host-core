@@ -35,14 +35,13 @@ void PlatformController::initialize() {
 }
 
 void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
-    auto it = platforms_.constFind(deviceId);
-    if (it == platforms_.constEnd()) {
+    auto it = platforms_.find(deviceId);
+    if (it == platforms_.end()) {
         qCWarning(logCategoryHcsPlatform).noquote() << "Cannot send message, platform" << deviceId << "was not found.";
         return;
     }
     qCDebug(logCategoryHcsPlatform).noquote() << "Sending message to platform" << deviceId;
-    unsigned msgNumber = it.value().platform->sendMessage(message);
-    sentMessageNumbers_.insert(deviceId, msgNumber);
+    it.value().sentMessageNumber = it.value().platform->sendMessage(message);
 }
 
 PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
@@ -87,9 +86,9 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
     } else {
         qCWarning(logCategoryHcsPlatform).noquote() << "Connected unknown (unrecognized) platform" << deviceId;
         // Remove platform if it was previously connected.
-        if (platforms_.contains(deviceId)) {
-            platforms_.remove(deviceId);
-            sentMessageNumbers_.remove(deviceId);
+        auto it = platforms_.find(deviceId);
+        if (it != platforms_.end()) {
+            platforms_.erase(it);
             emit platformDisconnected(deviceId);
         }
     }
@@ -97,14 +96,14 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
 
 void PlatformController::closeConnection(const QByteArray& deviceId)
 {
-    if (platforms_.contains(deviceId) == false) {
+    auto it = platforms_.find(deviceId);
+    if (it == platforms_.end()) {
         // This situation can occur if unrecognized platform is disconnected.
         qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected unknown platform" << deviceId;
         return;
     }
 
-    platforms_.remove(deviceId);
-    sentMessageNumbers_.remove(deviceId);
+    platforms_.erase(it);
 
     qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected platform" << deviceId;
 
@@ -142,8 +141,8 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
         return;
     }
 
-    auto iter = sentMessageNumbers_.constFind(platform->deviceId());
-    if ((iter != sentMessageNumbers_.constEnd()) && (iter.value() == msgNumber)) {
+    auto it = platforms_.constFind(platform->deviceId());
+    if ((it != platforms_.constEnd()) && (it.value().sentMessageNumber == msgNumber)) {
         qCWarning(logCategoryHcsPlatform) << platform << "Cannot send message: '"
             << rawMessage << "', error: '" << errorString << '\'';
     }
@@ -181,5 +180,5 @@ QJsonObject PlatformController::createPlatformsList() {
 }
 
 PlatformController::PlatformData::PlatformData(PlatformPtr p, bool b)
-    : platform(p), inBootloader(b)
+    : platform(p), inBootloader(b), sentMessageNumber(0)
 { }
