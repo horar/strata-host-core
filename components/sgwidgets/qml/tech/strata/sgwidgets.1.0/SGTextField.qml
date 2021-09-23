@@ -51,6 +51,7 @@ TextField {
     property string suggestionFilterPattern: ""
     property variant suggestionFilterPatternSyntax: CommonCpp.SGTextHighlighter.RegExp
     property bool suggestionCaseSensitive: false
+    property int flickableContentY
 
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
@@ -89,6 +90,12 @@ TextField {
             if (!suggestionPopupLoader.item.opened) {
                 suggestionPopupLoader.item.open()
             }
+        }
+    }
+
+    onFlickableContentYChanged: {
+        if (suggestionPopupLoader.status === Loader.Ready && suggestionPopupLoader.item.opened) {
+            suggestionPopupLoader.item.close()
         }
     }
 
@@ -327,6 +334,7 @@ TextField {
             iconSize: control.background.height - 20
             icon.source: "qrc:/sgimages/chevron-down.svg"
             onClicked: {
+                control.forceActiveFocus()
                 if (suggestionPopupLoader.status === Loader.Ready) {
                     if (suggestionPopupLoader.item.opened === false) {
                         suggestionPopupLoader.item.open()
