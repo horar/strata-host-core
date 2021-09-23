@@ -157,7 +157,7 @@ FocusScope {
                         enabled: disableAllFiltering === false
                         onActiveFocusChanged: {
                             if (delegate.activeFocus) {
-                                conditionView.currentIndex =  index
+                                conditionView.currentIndex = index
                             }
                         }
 
