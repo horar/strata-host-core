@@ -95,6 +95,14 @@ ColumnLayout {
                     console.info(data)
                 }
             }
+
+            SGWidgets.SGButton {
+                text: "Write to File"
+
+                onClicked: {
+                    csvUtil.writeToFile()
+                }
+            }
         }
     }
 

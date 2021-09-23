@@ -14,43 +14,31 @@ SGCSVUtils::~SGCSVUtils()
     data_.clear();
 }
 
-QVariantList SGCSVUtils::getData()
+QVector<QVariantList> SGCSVUtils::getData()
 {
     return data_;
 }
 
 void SGCSVUtils::appendRow(QVariantList data)
 {
-    SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(outputPath_, fileName_);
-    QString path = utils.urlToLocalFile(filePath);
-    if (!utils.exists(path)) {
-       utils.createFile(path);
-    }
-    QVariantList list;
     data_.append(data);
-    QString writeData = utils.readTextFileContent(path);
-    for (QVariant d: data) {
-        writeData += d.toString();
-        if (!data.endsWith(d)) {
-            writeData += ",";
-        }
-    }
-    writeData += "\n";
-    data_.append(writeData);
-    utils.atomicWrite(path, writeData);
 }
 
-QVariant SGCSVUtils::importFromFile(QString folderPath)
+QVector<QVariantList> SGCSVUtils::importFromFile(QString folderPath)
 {
     SGUtilsCpp utils;
     QString path = utils.urlToLocalFile(folderPath);
     if (!utils.exists(path)) {
        utils.createFile(path);
     }
-    QString readData = utils.readTextFileContent(path);
+    QStringList readData = utils.readTextFileContent(path).split("\n");
+    QVariantList convertedData;
+
+    for (QString data : readData) {
+        convertedData.append(data);
+    }
     data_.clear();
-    data_.append(readData);
+    data_.append(convertedData);
     return data_;
 }
 
@@ -59,9 +47,32 @@ void SGCSVUtils::clear()
     data_.clear();
 }
 
-void SGCSVUtils::setData(QVariantList data)
+void SGCSVUtils::setData(QVector<QVariantList> data)
 {
     if (data_ != data) {
         data_ = data;
     }
+}
+
+void SGCSVUtils::writeToFile()
+{
+    SGUtilsCpp utils;
+    QString filePath = utils.joinFilePath(outputPath_, fileName_);
+    QString path = utils.urlToLocalFile(filePath);
+    if (!utils.exists(path)) {
+       utils.createFile(path);
+    }
+    QString data = "";
+    for (QVariantList lines: data_) {
+        qInfo() << lines;
+        for (QVariant d: lines) {
+            data += d.toString();
+            if(!lines.endsWith(d)) {
+                data += ",";
+            }
+        }
+        data += "\n";
+    }
+
+    utils.atomicWrite(path, data);
 }

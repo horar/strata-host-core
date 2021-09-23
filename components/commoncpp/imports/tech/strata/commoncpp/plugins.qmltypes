@@ -423,6 +423,9 @@ Module {
             name: "clear"
         }
         Method {
+            name: "writeToFile"
+        }
+        Method {
             name: "setData"
             Parameter {name: "data"; type: "QVariant"}
         }

@@ -2,6 +2,7 @@
 #define SGCSVUTILS_H
 #include <QObject>
 #include <QVariant>
+#include <QVector>
 #include <QVariantList>
 #include <QDateTime>
 
@@ -37,18 +38,19 @@ public:
         }
     }
 
-    Q_INVOKABLE QVariant importFromFile(QString folderPath);
+    Q_INVOKABLE QVector<QVariantList> importFromFile(QString folderPath);
     Q_INVOKABLE void appendRow(QVariantList data);
-    Q_INVOKABLE QVariantList getData();
-    Q_INVOKABLE void setData(QVariantList data);
+    Q_INVOKABLE QVector<QVariantList> getData();
+    Q_INVOKABLE void setData(QVector<QVariantList> data);
     Q_INVOKABLE void clear();
+    Q_INVOKABLE void writeToFile();
 
 signals:
     void outputPathChanged();
     void fileNameChanged();
 
 private:
-    QVariantList data_;
+    QVector<QVariantList> data_;
     QString outputPath_;
     QString fileName_ = QString("Output"+QDateTime::currentDateTime().toString("dd.MM.yyyy")+"-"+QDateTime::currentDateTime().toString("hh:mm:ss t") + ".csv");
 };
