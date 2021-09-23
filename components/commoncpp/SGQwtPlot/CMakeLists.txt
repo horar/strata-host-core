@@ -1,5 +1,13 @@
-project(SGQWTPlot
-    VERSION 0.1
+##
+## Copyright (c) 2018-2021 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
+project(SGQwtPlot
+    VERSION 1.0
     LANGUAGES CXX
 )
 
@@ -9,10 +17,15 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME}
-    src/SGQWTPlot.cpp
-    src/logging/LoggingQtCategories.cpp
+    include/SGQwtPlot.h
+    include/SGQwtPlotCurve.h
+    include/SGQwtPlotCurveData.h
 
-    include/SGQWTPlot.h
+    src/SGQwtPlot.cpp
+    src/SGQwtPlotCurve.cpp
+    src/SGQwtPlotCurveData.cpp
+
+    src/logging/LoggingQtCategories.cpp
 )
 
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

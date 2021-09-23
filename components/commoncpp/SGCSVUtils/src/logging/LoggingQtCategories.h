@@ -2,4 +2,4 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryCsvTable)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryCsvUtils)

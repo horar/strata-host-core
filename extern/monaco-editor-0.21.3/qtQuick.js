@@ -15,6 +15,7 @@ const ERROR_TYPES = {
     GENERIC_ERROR: "There is an error within the monaco editor that is causing a failure in suggestions"
 }
 let err_flag = false;
+let err_msg = "";
 /*
     This the global registration for the monaco editor this creates the syntax and linguistics of the qml language, as well as defining the theme of the qml language
 */
