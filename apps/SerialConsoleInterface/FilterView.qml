@@ -259,6 +259,7 @@ FocusScope {
                                 suggestionListModel: sortFilterModel
                                 suggestionModelTextRole: "suggestion"
                                 suggestionFilterPattern: filterStringTextField.text
+                                flickableContentY: conditionView.contentY
 
                                 onWidthChanged: {
                                     delegate.calculateThirdColumnCenter()
@@ -277,12 +278,14 @@ FocusScope {
                                 Keys.priority: Keys.BeforeItem
 
                                 Keys.onPressed: {
+                                    positionViewAtCurrentIndex()
                                     if (suggestionPopup.opened === false && filterStringTextField.activeFocus) {
                                         suggestionPopup.open()
                                     }
                                 }
 
                                 onTextChanged: {
+                                    positionViewAtCurrentIndex()
                                     filterConditionModel.setProperty(index, "filter_string", text)
                                 }
 
@@ -400,6 +403,10 @@ FocusScope {
 
     function closeView() {
         StackView.view.pop();
+    }
+
+    function positionViewAtCurrentIndex() {
+        conditionView.positionViewAtIndex(conditionView.currentIndex, ListView.Contain)
     }
 
     function getFilterData() {
