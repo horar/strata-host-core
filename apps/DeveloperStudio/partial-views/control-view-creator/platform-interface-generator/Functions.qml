@@ -16,7 +16,7 @@ import "../"
 
 QtObject {
     // All deprecated functions needed for PIG
-    property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
+     property DeprecatedFunctions deprecatedFunctions: DeprecatedFunctions { }
     
     /**
       * checkForAllValid checks if all fields are valid (no empty or duplicate entries)
@@ -454,18 +454,18 @@ QtObject {
     **/
     function getTypedValue (type, value) {
         switch (type) {
-        case "int":
-            return parseInt(value)
-        case "double":
-            return parseFloat(value)
-        case "bool":
-            if (value === "false") {
-                return false
-            } else {
-                return true
-            }
-        default: // case "string"
-            return value
+            case "int":
+                return parseInt(value)
+            case "double":
+                return parseFloat(value)
+            case "bool":
+                if (value === "false") {
+                    return false
+                } else {
+                    return true
+                }
+            default: // case "string"
+                return value
         }
     }
 
@@ -503,9 +503,9 @@ QtObject {
       * importValidationCheck will check if the incoming JSON file is a valid Platform Interface JSON
     **/
     function importValidationCheck(object) {
-        if (!object.hasOwnProperty("commands") ||
-                !object.hasOwnProperty("notifications") ||
-                Object.keys(object).length !== 2) {
+        if (!object.hasOwnProperty("commands") || 
+            !object.hasOwnProperty("notifications") ||
+            Object.keys(object).length !== 2) {
             // must contain only commands and notifications
             return false
         }
@@ -612,7 +612,6 @@ QtObject {
             const fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
             try {
                 const jsonObject = JSON.parse(fileText)
-
                 if (importValidationCheck(jsonObject)) {
                     if (apiVersion === "APIv1") {
                         if (alertToast.visible) {
@@ -664,7 +663,7 @@ QtObject {
     function fileDialogFolder() {
         // checks if the user has recently opened a file and uses that path
         // then, if there projects in the recent projects model and uses that dir path
-        // else, the user's home directory is opened
+        // else, the user's home directory is opened                
         let path = currentCvcProjectJsonUrl
         if (SGUtilsCpp.isValidFile(path)) {
             path = SGUtilsCpp.urlToLocalFile(path)
