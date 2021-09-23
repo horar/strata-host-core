@@ -220,6 +220,10 @@ QtObject {
         return allValid
     }
 
+    /**
+      * parseCommandNotification creates the model from a JSON object and Type (used when importing a JSON file)
+    **/
+
     function parseCommandNotification(topLevelType,jsonObject) {
         const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
 
@@ -287,7 +291,7 @@ QtObject {
     }
 
     /**
-      * createModelFromJson creates the model from a JSON object (used when importing a JSON file)
+      * createModelFromJson parse/creates the model from a JSON object (used when importing a JSON file)
     **/
     function createModelFromJson(jsonObject) {
         let topLevelKeys = Object.keys(jsonObject) // This contains "commands" / "notifications" arrays
