@@ -105,10 +105,10 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
-                        model.name = ""
+                        model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
                         let commands = finishedModel.get(commandsListView.modelIndex).data
                         let payload = commands.get(commandsColumn.modelIndex).payload
-                        functions.checkForValidKey(payload, index)
+                        functions.checkForValidKey(payload, index, model.valid)
                         payloadModel.remove(index)
                     }
                 }
@@ -123,7 +123,7 @@ Rectangle {
                 placeholderText: "Property key"
 
                 validator: RegExpValidator {
-                    regExp: /^(?!default)[a-z_][a-zA-Z0-9_]*/
+                    regExp: /^[a-z_][a-zA-Z0-9_]*/
                 }
 
                 background: Rectangle {
@@ -144,6 +144,7 @@ Rectangle {
                     text = model.name
                     if (!text) {
                         model.valid = false
+                        functions.invalidCount++
                     }
                     forceActiveFocus()
                 }
@@ -157,7 +158,7 @@ Rectangle {
                     model.name = text
                     let commands = finishedModel.get(commandsListView.modelIndex).data
                     let payload = commands.get(commandsColumn.modelIndex).payload
-                    functions.checkForValidKey(payload, index)
+                    functions.checkForValidKey(payload, index, model.valid)
                 }
 
                 onActiveFocusChanged: {

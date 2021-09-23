@@ -468,6 +468,12 @@ Item {
                     }
                     return (generateButtonMouseArea.containsMouse && generateButtonMouseArea.valid) ? Qt.darker("grey", 1.5) : "grey"
                 }
+                opacity: {
+                    if (functions.invalidCount > 0) {
+                        return 0.25
+                    }
+                    return 1
+                }
             }
 
             contentItem: Text {
@@ -490,7 +496,12 @@ Item {
                         }
                     }
 
-                    text = functions.errorLog
+                    // removes endline from text
+                    if (functions.errorLog.endsWith("\n")) {
+                        text = functions.errorLog.substring(0, functions.errorLog.length-1)
+                    } else {
+                        text = functions.errorLog
+                    }
                 }
             }
 

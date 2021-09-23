@@ -66,9 +66,9 @@ Rectangle {
                         if (cmdNotifName.text !== "") {
                             unsavedChanges = true
                         }
-                        model.name = ""
+                        model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
                         let commands = finishedModel.get(commandsListView.modelIndex).data
-                        functions.checkForValidKey(commands, index)
+                        functions.checkForValidKey(commands, index, model.valid)
                         commandColumn.commandModel.remove(index)
                     }
                 }
@@ -83,7 +83,7 @@ Rectangle {
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
 
                 validator: RegExpValidator {
-                    regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]+/
+                    regExp: /^[a-z_][a-zA-Z0-9_]+/
                 }
 
                 background: Rectangle {
@@ -104,6 +104,7 @@ Rectangle {
                     text = model.name
                     if (!text) {
                         model.valid = false
+                        functions.invalidCount++
                     }
                     forceActiveFocus()
                 }
@@ -116,7 +117,7 @@ Rectangle {
 
                     model.name = text
                     let commands = finishedModel.get(commandsListView.modelIndex).data
-                    functions.checkForValidKey(commands, index)
+                    functions.checkForValidKey(commands, index, model.valid)
                 }
 
                 onActiveFocusChanged: {

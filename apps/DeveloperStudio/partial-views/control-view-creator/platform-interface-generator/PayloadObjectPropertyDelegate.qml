@@ -77,8 +77,8 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
-                        model.name = ""
-                        functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex)
+                        model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
+                        functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex, model.valid)
                         objectPropertyContainer.parentListModel.remove(modelIndex)
                     }
                 }
@@ -92,7 +92,7 @@ Rectangle {
                 placeholderText: "Key"
                 selectByMouse: true
                 validator: RegExpValidator {
-                    regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+                    regExp: /^[a-z_][a-zA-Z0-9_]*/
                 }
 
                 background: Rectangle {
@@ -116,6 +116,7 @@ Rectangle {
                         text = model.name
                     } else {
                         model.valid = false
+                        functions.invalidCount++
                     }
                     forceActiveFocus()
                 }
@@ -127,7 +128,7 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex)
+                    functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex, model.valid)
                 }
             }
 

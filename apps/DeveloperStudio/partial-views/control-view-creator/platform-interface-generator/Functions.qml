@@ -34,6 +34,7 @@ QtObject {
     property var emptyLog: []
     property var jsLog: []
     property var duplicateLog: []
+    property int invalidCount: 0
 
     /**
       * checkForAllValid checks if all fields are valid (no empty, JS, or duplicate entries)
@@ -42,7 +43,7 @@ QtObject {
     **/
     function checkForAllValid() {
         // reset logs for each validation check
-        errorLog = "\n"
+        errorLog = ""
         emptyLog = []
         jsLog = []
         duplicateLog = []
@@ -155,8 +156,9 @@ QtObject {
     /**
       * checkForValidKey checks if a particular passed index is totally valid
       * Also updates duplicates when they exist or not
+      * modelValid is passed to determine if the valid state changed during check
     **/
-    function checkForValidKey(payload, index) {
+    function checkForValidKey(payload, index, modelValid) {
         let valid = true
         let changed = false
 
@@ -172,6 +174,13 @@ QtObject {
         } else if (payload.get(index).duplicate) { // if this index is valid, but was a duplicate prior
             changed = true
             payload.setProperty(index, "duplicate", false)
+        }
+
+        // invalidCount is incremented or decremented depending on the change
+        if (!valid && modelValid) {
+            invalidCount++
+        } else if (valid && !modelValid) {
+            invalidCount--
         }
 
         payload.setProperty(index, "valid", valid) // valid is true unless it fails one of the above checks
@@ -204,6 +213,7 @@ QtObject {
 
         finishedModel.modelAboutToBeReset()
         finishedModel.clear()
+        invalidCount = 0 // resets invalid as new file is imported
 
         for (let i = 0; i < topLevelKeys.length; i++) {
             const topLevelType = topLevelKeys[i]
