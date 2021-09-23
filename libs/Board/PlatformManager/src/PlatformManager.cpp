@@ -86,7 +86,7 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     }
     }
 
-    for (const auto &existingScanner : scanners_) {
+    for (const auto &existingScanner : qAsConst(scanners_)) {
         if (existingScanner->scannerPrefix().startsWith(scanner->scannerPrefix()) ||
             scanner->scannerPrefix().startsWith(existingScanner->scannerPrefix())) {
 
@@ -143,45 +143,58 @@ bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
 }
 
 PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, bool closed) const {
-    if ((open == true) && (closed == false)) {
-        return openedPlatforms_.value(deviceId);
-    } else if ((open == false) && (closed == true)) {
-        return closedPlatforms_.value(deviceId);
-    } else if ((open == true) && (closed == true)) {
-        auto openIter = openedPlatforms_.constFind(deviceId);
-        if (openIter != openedPlatforms_.constEnd()) {
-            return openIter.value();
+    if (open == true) {
+        if (closed == true) {
+            auto openIter = openedPlatforms_.constFind(deviceId);
+            if (openIter != openedPlatforms_.constEnd()) {
+                return openIter.value();
+            }
+            auto closedIter = closedPlatforms_.constFind(deviceId);
+            if (closedIter != closedPlatforms_.constEnd()) {
+                return closedIter.value();
+            }
+            return PlatformPtr();
+        } else {
+            return openedPlatforms_.value(deviceId);
         }
-        auto closedIter = closedPlatforms_.constFind(deviceId);
-        if (closedIter != closedPlatforms_.constEnd()) {
-            return closedIter.value();
+    } else {
+        if (closed == true) {
+            return closedPlatforms_.value(deviceId);
+        } else {
+            return PlatformPtr();
         }
     }
-
-    return PlatformPtr();
 }
 
 QList<PlatformPtr> PlatformManager::getPlatforms(bool open, bool closed) const {
-    if ((open == true) && (closed == false)) {
-        return openedPlatforms_.values();
-    } else if ((open == false) && (closed == true)) {
-        return closedPlatforms_.values();
-    } else if ((open == true) && (closed == true)) {
-        return openedPlatforms_.values() + closedPlatforms_.values();
+    if (open == true) {
+        if (closed == true) {
+            return openedPlatforms_.values() + closedPlatforms_.values();
+        } else {
+            return openedPlatforms_.values();
+        }
     } else {
-        return QList<PlatformPtr>();
+        if (closed == true) {
+            return closedPlatforms_.values();
+        } else {
+            return QList<PlatformPtr>();
+        }
     }
 }
 
 QList<QByteArray> PlatformManager::getDeviceIds(bool open, bool closed) {
-    if ((open == true) && (closed == false)) {
-        return openedPlatforms_.keys();
-    } else if ((open == false) && (closed == true)) {
-        return closedPlatforms_.keys();
-    } else if ((open == true) && (closed == true)) {
-        return openedPlatforms_.keys() + closedPlatforms_.keys();
+    if (open == true) {
+        if (closed == true) {
+            return openedPlatforms_.keys() + closedPlatforms_.keys();
+        } else {
+            return openedPlatforms_.keys();
+        }
     } else {
-        return QList<QByteArray>();
+        if (closed == true) {
+            return closedPlatforms_.keys();
+        } else {
+            return QList<QByteArray>();
+        }
     }
 }
 
