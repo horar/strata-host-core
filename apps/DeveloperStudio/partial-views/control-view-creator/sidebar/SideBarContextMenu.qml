@@ -7,7 +7,6 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick.Controls 2.12
-import tech.strata.commoncpp 1.0
 
 Menu {
     id: sideBarContextMenu
@@ -21,10 +20,10 @@ Menu {
     }
 
     MenuItem {
-        text: "Add Existing File to Qrc"
+        text: "Import Files/Folder to Project"
         onTriggered: {
-            existingFileDialog.callerIndex = -1
-            existingFileDialog.open()
+            importFileOrFolderPopup.callerIndex = -1
+            importFileOrFolderPopup.open()
             sideBarContextMenu.dismiss()
         }
     }

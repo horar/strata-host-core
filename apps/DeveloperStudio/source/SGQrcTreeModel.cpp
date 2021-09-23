@@ -11,7 +11,6 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <QDir>
-#include <QDebug>
 #include <QDirIterator>
 #include <QThread>
 #include <QStack>
@@ -19,10 +18,6 @@
 #include <QUuid>
 #include <QDateTime>
 #include <QCryptographicHash>
-
-/**************************************************************
- * Class SGQrcTreeModel
-**************************************************************/
 
 SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
@@ -470,8 +465,6 @@ void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
     if (save) {
         startSave();
     }
-
-    return;
 }
 
 void SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
@@ -608,36 +601,34 @@ bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFile
         }
         startWatchingPath(oldFileInfo.absolutePath());
         return false;
-    } else {
-        pathsInTree_.remove(oldUrl);
-        pathsInTree_.insert(newUrl);
-        bool wasInQrc = node->inQrc();
-
-        if (wasInQrc) {
-            removeFromQrc(index, false);
-        }
-
-        setData(index, newUrl, FilepathRole);
-        setData(index, newFilename, FilenameRole);
-
-        if (node->isDir()) {
-            renameAllChildren(index, newPath);
-        } else {
-            setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
-        }
-
-        if (wasInQrc) {
-            addToQrc(index, false);
-        }
-
-        startSave();
-
-        if (wasWatchingOldPath) {
-            startWatchingPath(newPath);
-        }
-        startWatchingPath(oldFileInfo.absolutePath());
-        return true;
     }
+
+    pathsInTree_.remove(oldUrl);
+    pathsInTree_.insert(newUrl);
+    bool wasInQrc = node->inQrc();
+
+    if (wasInQrc) {
+        removeFromQrc(index, false);
+    }
+
+    setData(index, newUrl, FilepathRole);
+    setData(index, newFilename, FilenameRole);
+
+    if (node->isDir()) {
+        renameAllChildren(index, newPath);
+    } else {
+        setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
+    }
+
+    if (wasInQrc) {
+        addToQrc(index);
+    }
+
+    if (wasWatchingOldPath) {
+        startWatchingPath(newPath);
+    }
+    startWatchingPath(oldFileInfo.absolutePath());
+    return true;
 }
 
 bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)

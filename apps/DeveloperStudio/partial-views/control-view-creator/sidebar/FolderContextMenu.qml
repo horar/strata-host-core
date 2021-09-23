@@ -25,14 +25,14 @@ Menu {
     }
 
     MenuItem {
-        text: "Add Existing File to Qrc"
+        text: "Import Files/Folder to Project"
         onTriggered: {
             if (!styleData.isExpanded) {
                 treeView.expand(styleData.index)
             }
 
-            existingFileDialog.callerIndex = styleData.index
-            existingFileDialog.open()
+            importFileOrFolderPopup.callerIndex = styleData.index.parent
+            importFileOrFolderPopup.open()
             folderContextMenu.dismiss()
         }
     }
