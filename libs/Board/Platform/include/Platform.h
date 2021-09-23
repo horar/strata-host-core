@@ -258,8 +258,9 @@ namespace strata::platform {
         /**
          * Emitted when device was identified using Identify operation.
          * @param isRecognized true if successfully recognized, otherwise false
+         * @param inBootloader true if platform is in bootloader mode, otherwise false
          */
-        void recognized(bool isRecognized);
+        void recognized(bool isRecognized, bool inBootloader);
 
         /**
          * Emitted when device receives platform Id changed message.

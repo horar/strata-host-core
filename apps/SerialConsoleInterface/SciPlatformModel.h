@@ -82,7 +82,7 @@ protected:
 
 private slots:
     void boardConnectedHandler(const QByteArray& deviceId);
-    void boardReadyHandler(const QByteArray& deviceId, bool recognized);
+    void boardReadyHandler(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void boardDisconnectedHandler(const QByteArray& deviceId);
 
 private:

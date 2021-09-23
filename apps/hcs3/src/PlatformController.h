@@ -76,7 +76,7 @@ signals:
     void platformMessage(QString platformId, QJsonObject message);
 
 private slots:  // slots for signals from PlatformManager
-    void newConnection(const QByteArray& deviceId, bool recognized);
+    void newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void closeConnection(const QByteArray& deviceId);
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);

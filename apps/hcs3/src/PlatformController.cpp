@@ -53,7 +53,9 @@ PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
     return nullptr;
 }
 
-void PlatformController::newConnection(const QByteArray& deviceId, bool recognized) {
+void PlatformController::newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader) {
+    Q_UNUSED(inBootloader)
+
     if (recognized) {
         PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
