@@ -167,9 +167,20 @@ signals:
     void operationStateChanged(Operation operation, State state, QString errorString = QString());
 
     /*!
-     * This signal is emitted when platform properties are changed (when platform is switched to/from bootloader mode).
+     * This signal is emitted when platform properties are changed (when platform is
+     * switched to/from bootloader mode, fw_class_is is changed, ...).
      */
     void devicePropertiesChanged();
+
+    /*!
+     * This signal is emitted when 'start_bootloader' command was successful and bootloader is running.
+     */
+    void bootloaderActive();
+
+    /*!
+     * This signal is emitted when 'start_application' command was successful and application is running.
+     */
+    void applicationActive();
 
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
