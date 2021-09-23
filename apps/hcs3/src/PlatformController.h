@@ -75,6 +75,10 @@ signals:
     void platformDisconnected(QByteArray deviceId);
     void platformMessage(QString platformId, QJsonObject message);
 
+public slots:
+    void bootloaderActive(QByteArray deviceId);
+    void applicationActive(QByteArray deviceId);
+
 private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void closeConnection(const QByteArray& deviceId);
@@ -82,10 +86,18 @@ private slots:  // slots for signals from PlatformManager
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
 
 private:
+    struct PlatformData {
+        PlatformData(strata::platform::PlatformPtr p, bool b);
+
+        strata::platform::PlatformPtr platform;
+        bool inBootloader;
+        // TODO: move here also sentMessageNumber
+    };
+
     strata::PlatformManager platformManager_;
 
-    // map: deviceID <-> Platform
-    QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
+    // map: deviceID <-> PlatformData
+    QHash<QByteArray, PlatformData> platforms_;
     // map: deviceID <-> number of last sent message
     QHash<QByteArray, unsigned> sentMessageNumbers_;
     // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage

@@ -41,21 +41,35 @@ void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArra
         return;
     }
     qCDebug(logCategoryHcsPlatform).noquote() << "Sending message to platform" << deviceId;
-    unsigned msgNumber = it.value()->sendMessage(message);
+    unsigned msgNumber = it.value().platform->sendMessage(message);
     sentMessageNumbers_.insert(deviceId, msgNumber);
 }
 
 PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
     auto it = platforms_.constFind(deviceId);
     if (it != platforms_.constEnd()) {
-        return it.value();
+        return it.value().platform;
     }
     return nullptr;
 }
 
-void PlatformController::newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader) {
-    Q_UNUSED(inBootloader)
+void PlatformController::bootloaderActive(QByteArray deviceId)
+{
+    auto it = platforms_.find(deviceId);
+    if (it != platforms_.end()) {
+        it.value().inBootloader = true;
+    }
+}
 
+void PlatformController::applicationActive(QByteArray deviceId)
+{
+    auto it = platforms_.find(deviceId);
+    if (it != platforms_.end()) {
+        it.value().inBootloader = false;
+    }
+}
+
+void PlatformController::newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader) {
     if (recognized) {
         PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
@@ -65,7 +79,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
 
         connect(platform.get(), &Platform::messageReceived, this, &PlatformController::messageFromPlatform);
         connect(platform.get(), &Platform::messageSent, this, &PlatformController::messageToPlatform);
-        platforms_.insert(deviceId, platform);
+        platforms_.insert(deviceId, PlatformData(platform, inBootloader));
 
         qCInfo(logCategoryHcsPlatform).noquote() << "Connected new platform" << deviceId;
 
@@ -138,26 +152,34 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
 QJsonObject PlatformController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = platforms_.constBegin(); it != platforms_.constEnd(); ++it) {
-        Platform::ControllerType controllerType = it.value()->controllerType();
+        const PlatformPtr& platform = it.value().platform;
+        Platform::ControllerType controllerType = platform->controllerType();
         QJsonObject item {
-            { JSON_DEVICE_ID, QLatin1String(it.value()->deviceId()) },
+            { JSON_DEVICE_ID, QLatin1String(platform->deviceId()) },
             { JSON_CONTROLLER_TYPE, static_cast<int>(controllerType) },
-            { JSON_FW_VERSION, it.value()->applicationVer() },
-            { JSON_BL_VERSION, it.value()->bootloaderVer() }
+            { JSON_FW_VERSION, platform->applicationVer() },
+            { JSON_BL_VERSION, platform->bootloaderVer() },
+            { JSON_ACTIVE, (it.value().inBootloader == true)
+                           ? QLatin1String("bootloader")
+                           : QLatin1String("application")}
         };
-        if (it.value()->hasClassId()) {
-            item.insert(JSON_CLASS_ID, it.value()->classId());
+        if (platform->hasClassId()) {
+            item.insert(JSON_CLASS_ID, platform->classId());
         }
-        if (it.value()->name().isNull() == false) {
-            item.insert(JSON_VERBOSE_NAME, it.value()->name());
+        if (platform->name().isNull() == false) {
+            item.insert(JSON_VERBOSE_NAME, platform->name());
         }
 
         if (controllerType == Platform::ControllerType::Assisted) {
-            item.insert(JSON_CONTROLLER_CLASS_ID, it.value()->controllerClassId());
-            item.insert(JSON_FW_CLASS_ID, it.value()->firmwareClassId());
+            item.insert(JSON_CONTROLLER_CLASS_ID, platform->controllerClassId());
+            item.insert(JSON_FW_CLASS_ID, platform->firmwareClassId());
         }
         arr.append(item);
     }
 
     return QJsonObject{{JSON_LIST, arr}};
 }
+
+PlatformController::PlatformData::PlatformData(PlatformPtr p, bool b)
+    : platform(p), inBootloader(b)
+{ }

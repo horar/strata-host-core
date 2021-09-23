@@ -112,6 +112,10 @@ bool HostControllerService::initialize(const QString &config)
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this,
             &HostControllerService::handleUpdateProgress);
+    connect(&updateController_, &FirmwareUpdateController::bootloaderActive,
+            &platformController_, &PlatformController::bootloaderActive);
+    connect(&updateController_, &FirmwareUpdateController::applicationActive,
+            &platformController_, &PlatformController::applicationActive);
 
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this,
             &HostControllerService::sendUpdateInfoMessage);
