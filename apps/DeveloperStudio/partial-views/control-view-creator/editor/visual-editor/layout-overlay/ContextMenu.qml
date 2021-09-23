@@ -230,7 +230,7 @@ Popup {
             }
 
             MouseArea {
-                anchors.fill: parent
+                anchors.fill: extraContextLoader
                 hoverEnabled: true
 
                 onContainsMouseChanged: {
