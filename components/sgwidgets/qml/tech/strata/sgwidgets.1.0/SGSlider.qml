@@ -249,8 +249,8 @@ GridLayout {
 
     GridLayout {
         id: numsContainer
-        Layout.preferredHeight: root.horizontal ? implicitHeight : fromText.contentHeight + toText.contentHeight
-        Layout.preferredWidth: root.horizontal ? fromText.contentWidth + toText.contentWidth : implicitWidth
+        Layout.preferredHeight: implicitHeight
+        Layout.preferredWidth: implicitWidth
         Layout.fillHeight: true
         Layout.fillWidth: true
         Layout.maximumHeight: root.horizontal ? Layout.preferredHeight : slider.height
