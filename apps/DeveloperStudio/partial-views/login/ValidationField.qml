@@ -63,20 +63,10 @@ TextField {
         implicitHeight: 32
         border.width: field.activeFocus ? 1 : 0
         border.color:  field.activeFocus ? Theme.palette.onsemiOrange : "#40000000"
-
-        Rectangle {
-            id: background
-            anchors.fill: backgroundContainer
-            visible: false
-        }
-
-        DropShadow {
-            anchors.fill: background
-            source: background
+        layer.enabled: true
+        layer.effect: DropShadow {
             horizontalOffset: 0
             verticalOffset: 2
-            radius: 5.0
-            samples: 10
             color: "#40000000"
         }
 

@@ -254,6 +254,7 @@ SGStrataPopup {
                         Accessible.name: "FeedbackEdit"
                         Layout.fillHeight: true
                         Layout.fillWidth: true
+                        palette.highlight: Theme.palette.onsemiOrange
 
                         property int maximumLength: 1000
                         property string previousText: text
