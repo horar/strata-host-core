@@ -129,7 +129,6 @@ FocusScope {
                     spacing: 8
                     clip: true
                     focus: true
-                    snapMode: ListView.SnapToItem
                     boundsBehavior: Flickable.StopAtBounds
                     highlightMoveDuration: 0
                     highlightMoveVelocity: -1
@@ -263,6 +262,10 @@ FocusScope {
 
                                 onWidthChanged: {
                                     delegate.calculateThirdColumnCenter()
+                                }
+
+                                onSuggestionButtonClicked: {
+                                    positionViewAtCurrentIndex()
                                 }
 
                                 onSuggestionDelegateSelected: {

@@ -55,6 +55,7 @@ TextField {
 
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
+    signal suggestionButtonClicked()
 
     /*private*/
     property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
@@ -337,6 +338,7 @@ TextField {
                 control.forceActiveFocus()
                 if (suggestionPopupLoader.status === Loader.Ready) {
                     if (suggestionPopupLoader.item.opened === false) {
+                        suggestionButtonClicked()
                         suggestionPopupLoader.item.open()
                     } else {
                         suggestionPopupLoader.item.close()
