@@ -138,8 +138,8 @@ Item {
 
             GridLayout {
                 id: templateLayout
-                rowSpacing: 10
-                columnSpacing: 10
+                rowSpacing: 5
+                columnSpacing: 5
                 anchors.fill: parent
                 clip: true
                 columns: 9
