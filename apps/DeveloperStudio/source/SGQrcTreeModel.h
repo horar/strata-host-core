@@ -351,6 +351,8 @@ private:
     void save();
     void setNeedsCleaning(const bool needsCleaning);
 
+    bool copyDir(const QString &from, const QString &to);
+
     SGQrcTreeNode *root_ = nullptr;
     QUrl url_;
     QUrl projectDir_;

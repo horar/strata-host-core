@@ -328,8 +328,13 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const bool i
             outputFileLocation.setFile(SGUtilsCpp::joinFilePath(parentDir, filenameWithoutExt + "-" + QString::number(i) + "." + ext));
         }
 
-        // Copy the file to the base directory under the new name
-        QFile::copy(fileInfo.filePath(), outputFileLocation.filePath());
+        // Copy the file/directory to the base directory under the new name
+        if (fileInfo.isFile()) {
+            QFile::copy(fileInfo.filePath(), outputFileLocation.filePath());
+        } else if (fileInfo.isDir()) {
+            SGQrcTreeModel::copyDir(fileInfo.filePath(), outputFileLocation.filePath());
+        }
+
         fileInfo.setFile(outputFileLocation.filePath());
     }
 
@@ -393,6 +398,52 @@ bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &pa
     uidMap_.insert(uid, child);
     endInsertRows();
     return success;
+}
+
+bool SGQrcTreeModel::copyDir(const QString &from, const QString &to) {
+    QDir oldDir(from);
+    QDir newDir(to);
+
+    // Create destination directory
+    if (!newDir.cd(to) && !newDir.mkpath(to)) {
+        qCCritical(logCategoryControlViewCreator) << "Could not create new directory:" << to;
+        return false;
+    }
+
+    foreach (QString oldFile, oldDir.entryList(QDir::Files)) {
+        QFileInfo from(oldDir, oldFile);
+        QFileInfo to(newDir, oldFile);
+
+        // Attempt to copy file from old directory to destination directory
+        if (!QFile::copy(from.absoluteFilePath(), to.absoluteFilePath())) {
+            qCCritical(logCategoryControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
+            return false;
+        }
+
+        // We need this because copying files from a qresource path yields a readonly file by default
+        QFile::setPermissions(to.absoluteFilePath(), QFileDevice::WriteUser | QFileDevice::ReadUser);
+    }
+
+    // Loops through the next child directory
+    foreach (QString copyDir, oldDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        QFileInfo from(oldDir, copyDir);
+        QFileInfo to(newDir, copyDir);
+
+        // Make path to the new directory
+        QDir root = QDir::root();
+        if (!root.mkpath(to.absoluteFilePath())) {
+            qCCritical(logCategoryControlViewCreator) << "Unable to add new directory";
+            return false;
+        }
+
+        // Recursive call to copy child directory
+        if (!SGQrcTreeModel::copyDir(from.absoluteFilePath(), to.absoluteFilePath())) {
+            qCCritical(logCategoryControlViewCreator) << "Unable to recursively add files and directories to:" << oldDir.path();
+            return false;
+        }
+    }
+
+    return true;
 }
 
 QModelIndex SGQrcTreeModel::rootIndex() const
