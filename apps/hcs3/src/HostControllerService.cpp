@@ -80,6 +80,9 @@ bool HostControllerService::initialize(const QString &config)
     strataServer_->registerHandler(
         "program_controller", std::bind(&HostControllerService::processCmdProgramController, this,
                                         std::placeholders::_1));
+    strataServer_->registerHandler(
+        "start_platform_application", std::bind(&HostControllerService::processCmdStartPlatformApp, this,
+                                        std::placeholders::_1));
 
     // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
@@ -866,6 +869,11 @@ void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &
 {
     componentUpdateInfo_.requestUpdateInfo(message.clientID);
     strataServer_->notifyClient(message, QJsonObject{{"message", "Update check requested."}}, strataRPC::ResponseType::Response);
+}
+
+void HostControllerService::processCmdStartPlatformApp(const strata::strataRPC::Message &message)
+{
+    // TODO
 }
 
 void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString)
