@@ -306,40 +306,89 @@ function previousDeviceIndex(device_id) {
 function addConnectedPlatform(platform) {
     const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
     const is_assisted = (platform.controller_class_id !== undefined)
-    let data
+    let data = {
+        "class_id": class_id_string,
+        "device_id": platform.device_id,
+        "firmware_version": platform.firmware_version,
+        "is_assisted": is_assisted
+    }
 
-    if (is_assisted) {
-        // Assisted Strata
+    if (platform.active === "bootloader") {
+        // bootloader
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform in bootloader mode connected.");
+        insertBootloaderListing(platform, class_id_string)
 
-        if (platform.controller_class_id === "") {
-            //unregistered assisted controller
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted controller connected.");
-            insertUnregisteredListing(platform, class_id_string)
-        } else if (platform.class_id === undefined) {
-            //controller without platform
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted controller without platform connected:", platform.controller_class_id);
-            insertAssistedNoPlatformListing(platform, class_id_string)
-        } else if (platform.class_id === "") {
-            //unregistered assisted platform
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted platform connected.");
-            insertUnregisteredListing(platform, class_id_string)
+    } else {
+        // application
+        if (is_assisted) {
+            // Assisted Strata
+
+            if (platform.controller_class_id === "") {
+                //unregistered assisted controller
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted controller connected.");
+                insertUnregisteredListing(platform, class_id_string)
+            } else if (platform.class_id === undefined) {
+                //controller without platform
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted controller without platform connected:", platform.controller_class_id);
+                insertAssistedNoPlatformListing(platform, class_id_string)
+            } else if (platform.class_id === "") {
+                //unregistered assisted platform
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted platform connected.");
+                insertUnregisteredListing(platform, class_id_string)
+            } else {
+                if (platform.class_id === platform.fw_class_id) {
+                    if (classMap.hasOwnProperty(class_id_string)) {
+                        if (platform.firmware_version.length === 0) {
+                            //controller with invalid firmware
+
+                            // if there is already listing for this platform, reuse it
+                            let listing = getDeviceListing(class_id_string, platform.device_id)
+                            if (listing) {
+                                connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                            } else {
+                                insertProgramControllerListing(platform, class_id_string)
+                            }
+
+                            sdsModel.firmwareUpdater.programAssisted(platform.device_id)
+                        } else {
+                            connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                        }
+
+                    } else {
+                        // connected platform class_id not listed in DP platform list
+                        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
+                        insertUnknownListing(platform, class_id_string)
+                    }
+                } else {
+                    //uncompatible firmware installed
+                    insertProgramControllerListing(platform, class_id_string)
+                    sdsModel.firmwareUpdater.programAssisted(platform.device_id)
+                }
+            }
+
+            data.controller_class_id = platform.controller_class_id
         } else {
-            if (platform.class_id === platform.fw_class_id) {
+            // Embedded Strata
+
+            if (platform.class_id === "") {
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
+                insertUnregisteredListing(platform, class_id_string)
+            } else {
                 if (classMap.hasOwnProperty(class_id_string)) {
                     if (platform.firmware_version.length === 0) {
-                        //controller with invalid firmware
+                        //device without firmware
 
                         // if there is already listing for this platform, reuse it
                         let listing = getDeviceListing(class_id_string, platform.device_id)
                         if (listing) {
-                            connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                            connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                         } else {
-                            insertProgramControllerListing(platform, class_id_string)
+                            insertMissingFirmwareListing(platform, class_id_string)
                         }
 
-                        sdsModel.firmwareUpdater.programAssisted(platform.device_id)
+                        sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
                     } else {
-                        connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                        connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                     }
 
                 } else {
@@ -347,56 +396,7 @@ function addConnectedPlatform(platform) {
                     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
                     insertUnknownListing(platform, class_id_string)
                 }
-            } else {
-                //uncompatible firmware installed
-                insertProgramControllerListing(platform, class_id_string)
-                sdsModel.firmwareUpdater.programAssisted(platform.device_id)
             }
-        }
-
-        data = {
-            "class_id": class_id_string,
-            "controller_class_id": platform.controller_class_id,
-            "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version,
-            "is_assisted": is_assisted
-        }
-    } else {
-        // Embedded Strata
-
-        if (platform.class_id === "") {
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
-            insertUnregisteredListing(platform, class_id_string)
-        } else {
-            if (classMap.hasOwnProperty(class_id_string)) {
-                if (platform.firmware_version.length === 0) {
-                    //device without firmware
-
-                    // if there is already listing for this platform, reuse it
-                    let listing = getDeviceListing(class_id_string, platform.device_id)
-                    if (listing) {
-                        connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
-                    } else {
-                        insertMissingFirmwareListing(platform, class_id_string)
-                    }
-
-                    sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
-                } else {
-                    connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
-                }
-
-            } else {
-                // connected platform class_id not listed in DP platform list
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
-                insertUnknownListing(platform, class_id_string)
-            }
-        }
-
-        data = {
-            "class_id": class_id_string,
-            "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version,
-            "is_assisted": is_assisted
         }
     }
 
@@ -619,6 +619,13 @@ function insertMissingFirmwareListing(platform, class_id_string) {
     insertErrorListing(generateMissingFirmwareListing(platform, class_id_string))
 }
 
+/*
+    Insert listing for platform which is booted into bootloader
+*/
+function insertBootloaderListing(platform, class_id_string) {
+    insertErrorListing(generateBootloaderListing(platform, class_id_string))
+}
+
 function generateUnknownListing (platform, class_id_string) {
     let opn = "Class id: " + class_id_string
     let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
@@ -670,6 +677,15 @@ function generateMissingFirmwareListing(platform, class_id_string) {
     }
 
     return generateErrorListing(platform, verbose_name, class_id_string, opn, "", true)
+}
+function generateBootloaderListing (platform, class_id_string) {
+    let description = "Platform in bootloader mode"
+    let opn = "N/A"
+    if (classMap.hasOwnProperty(class_id_string)) {
+        opn = classMap[class_id_string].original_listing.opn
+    }
+
+    return generateErrorListing(platform, "Bootloader", class_id_string, opn, description)
 }
 
 function generateErrorListing (platform, verbose_name, class_id_string, opn, description, program_controller) {
