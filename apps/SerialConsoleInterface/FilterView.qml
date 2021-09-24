@@ -92,12 +92,14 @@ FocusScope {
             property int thirdColumnCenter: 1
 
             SGWidgets.SGText {
+                id: titleText
                 text: "Scrollback Filtering"
                 fontSizeMultiplier: 2.0
                 font.bold: true
             }
 
             SGWidgets.SGText {
+                id: subtitleText
                 width: conditionView.width
                 text: "Filter out notifications that matches any of the following conditions:"
                 wrapMode: Text.Wrap
@@ -123,7 +125,13 @@ FocusScope {
                 ListView {
                     id: conditionView
                     width: content.width
-                    height: 180
+                    height: fillHeight
+
+                    property int fillHeight: filterView.height
+                                             - 5*baseSpacing
+                                             - titleText.height
+                                             - subtitleText.height
+                                             - bottomColumn.height
 
                     model: filterConditionModel
                     spacing: 8
@@ -191,7 +199,7 @@ FocusScope {
                             width: verticalScrollbar.visible ? (content.width - verticalScrollbar.width) : content.width
                             spacing: 4
 
-                            property int fillSpace: filterView.width - 2*baseSpacing
+                            property int fillWidth: filterView.width - 2*baseSpacing
                                                     - nameFieldTextField.width - spacing
                                                     - typeComboBox.width - spacing
                                                     - removeButton.width - spacing
@@ -249,7 +257,7 @@ FocusScope {
 
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
-                                width: verticalScrollbar.visible ? (contentRow.fillSpace - verticalScrollbar.width) : contentRow.fillSpace
+                                width: verticalScrollbar.visible ? (contentRow.fillWidth - verticalScrollbar.width) : contentRow.fillWidth
                                 contextMenuEnabled: true
                                 showSuggestionButton: true
                                 suggestionCloseWithArrowKey: true
