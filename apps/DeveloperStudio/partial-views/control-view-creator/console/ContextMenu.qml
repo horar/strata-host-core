@@ -45,11 +45,12 @@ Item {
         }
 
         onOpened: {
-            var isSelected = false
+            let isSelected = false
             for (let i = 0; i < consoleLogs.model.count; i++) {
                 var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
                 if (listElement.state !== "noneSelected") {
                     isSelected = true
+                    break
                 }
             }
             copyAction.enabled = isSelected
