@@ -28,7 +28,7 @@ ColumnLayout {
         visible: firmwareRepeater.model.count > 0
 
         SGText {
-            text: "Firmware versions available:"
+            text: "Latest firmware available:"
             fontSizeMultiplier: 1.38
             color: "#666"
         }

@@ -228,6 +228,27 @@ int VersionedListModel::getLatestVersionIndex() {
     return latestVersionIndex;
 }
 
+int VersionedListModel::getLatestVersionIndex(QString controllerClassId) {
+    if (data_.size() == 0) {
+        return -1;
+    }
+    int latestVersionIndex = -1;
+    bool error = false;
+    for (int i = 0; i < data_.size(); i++) {
+        VersionedItem *versionItem = data_[i];
+        if (versionItem->controller_class_id != controllerClassId) {
+            continue;
+        }
+        if (latestVersionIndex < 0 || SGVersionUtils::greaterThan(versionItem->version, data_[latestVersionIndex]->version, &error)) {
+            latestVersionIndex = i;
+        }
+        if (error) {
+            return -1;
+        }
+    }
+    return latestVersionIndex;
+}
+
 int VersionedListModel::getInstalledVersionIndex() {
     int oldestInstalledIndex = -1;
 
