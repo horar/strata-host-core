@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/tech/strata/theme">
+        <file>Theme.qml</file>
+        <file>qmldir</file>
+        <file>TangoTheme.qml</file>
+        <file>palettes/StrataPalette.qml</file>
+        <file>palettes/TangoPalette.qml</file>
+    </qresource>
+</RCC>

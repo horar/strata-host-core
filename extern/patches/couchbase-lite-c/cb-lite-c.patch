@@ -1,0 +1,10 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f3e2368..da136b3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -144,4 +144,4 @@ set_dylib_properties()
+ 
+ ### TESTS:
+ 
+-add_subdirectory(test)
++# add_subdirectory(test)

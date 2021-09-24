@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/tech/strata/common/ContentView">
+        <file>qmldir</file>
+        <file>ContentView.qml</file>
+        <file>content-views/Datasheets.qml</file>
+        <file>content-views/Downloads.qml</file>
+        <file>content-views/Documents.qml</file>
+        <file>content-views/DocumentCheckBox.qml</file>
+        <file>content-views/BaseDocDelegate.qml</file>
+        <file>content-views/SectionDelegate.qml</file>
+        <file>images/docLoading.gif</file>
+        <file>images/angle-right-solid.svg</file>
+        <file>content-views/EmptyDocuments.qml</file>
+        <file>HelpButton.qml</file>
+        <file>images/HelpTourDocument.pdf</file>
+        <file>DocumentsHistory.qml</file>
+        <file>content-views/HistoryStatus.qml</file>
+    </qresource>
+</RCC>

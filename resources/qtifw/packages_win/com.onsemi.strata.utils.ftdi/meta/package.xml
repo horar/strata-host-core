@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (c) 2018-2021 onsemi.
+
+   All rights reserved. This software and/or documentation is licensed by onsemi under
+   limited terms and conditions. The terms and conditions pertaining to the software and/or
+   documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+   Terms and Conditions of Sale, Section 8 Software”).
+  -->
+<Package>
+    <DisplayName>FTDI Driver</DisplayName>
+    <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
+    <!--
+        This version is used also in installscript.js when doing uninstall, will change when we update driver
+        TODO: find out if we can generate this automatically
+    -->
+    <Version>2.12.28</Version>
+    <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>40</SortingPriority>
+    <!--we need admin rights to install this component-->
+    <RequiresAdminRights>true</RequiresAdminRights>
+    <Script>installscript.js</Script>
+    <ReleaseDate>2017-08-16</ReleaseDate>
+    <Licenses>
+        <License name="FTDI Driver License Agreement" file="ftdi_license.txt" />
+    </Licenses>
+</Package>

@@ -1,0 +1,16 @@
+<?xml version="2.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>The Strata package installs components required to access Strata platforms documentation and platforms control</Description>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Checkable>false</Checkable>
+    <Script>installscript.js</Script>
+    <SortingPriority>100</SortingPriority>
+    <UserInterfaces>
+        <UserInterface>shortcutcheckboxwidget.ui</UserInterface>
+    </UserInterfaces>
+    <Licenses>
+        <License name="onsemi License Agreement" file="onsemi_license.txt" />
+    </Licenses>
+</Package>

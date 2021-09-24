@@ -1,0 +1,4 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGStatusLogBox">
+    </qresource>
+</RCC>

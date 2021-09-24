@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>LogViewerMain.qml</file>
+        <file>LogViewerAboutWindow.qml</file>
+	<file>LogListView.qml</file>
+	<file>Divider.qml</file>
+    </qresource>
+</RCC>

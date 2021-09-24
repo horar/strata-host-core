@@ -1,0 +1,28 @@
+[submodule "extern/spdlog"]
+	path = extern/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "extern/rapidjson"]
+	path = extern/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
+[submodule "extern/googletest"]
+	path = extern/googletest
+	url = https://github.com/google/googletest.git
+[submodule "extern/qtmqtt"]
+	path = extern/qtmqtt
+	url = https://github.com/qt/qtmqtt.git
+	ignore = all
+[submodule "extern/couchbase-lite-C"]
+	path = extern/couchbase-lite-C
+	url = https://github.com/stratadeveloperstudio/couchbase-lite-C.git
+	ignore = dirty
+[submodule "extern/libzmq"]
+	path = extern/libzmq
+	url = https://github.com/zeromq/libzmq.git
+	ignore = dirty
+[submodule "extern/cppzmq"]
+	path = extern/cppzmq
+	url = https://github.com/zeromq/cppzmq.git
+	ignore = dirty
+[submodule "strata-cmake-modules"]
+	path = strata-cmake-modules
+	url = ../strata-cmake-modules.git

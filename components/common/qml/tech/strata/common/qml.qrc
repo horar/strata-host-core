@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/tech/strata/common">
+        <file>qmldir</file>
+        <file>Logger.qml</file>
+        <file>PlatformInterfaceBase.qml</file>
+    </qresource>
+</RCC>

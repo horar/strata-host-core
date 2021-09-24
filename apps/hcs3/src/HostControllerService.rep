@@ -1,0 +1,8 @@
+POD AppInfoPod(QString appName, QString appVersion)
+
+class HostControllerService
+{
+    PROP(AppInfoPod appInfoPod READONLY)
+
+    SLOT(void shutdown_cb(unsigned));
+};

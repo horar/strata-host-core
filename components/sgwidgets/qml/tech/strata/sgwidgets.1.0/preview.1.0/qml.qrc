@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/preview.1.0">
+        <file>qmldir</file>
+        <file>SGPdfViewer.qml</file>
+    </qresource>
+</RCC>
+

@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>widgets1_0/ExDialogs.qml</file>
+        <file>widgets1_0/ExSGButton.qml</file>
+        <file>widgets1_0/ExSGButtonStrip.qml</file>
+        <file>widgets1_0/ExSGGraph.qml</file>
+        <file>widgets1_0/ExSGTextField.qml</file>
+        <file>widgets1_0/PageSGWidgetsOneZero.qml</file>
+        <file>WgAboutWindow.qml</file>
+        <file>WgMain.qml</file>
+        <file>widgets1_0/ExSGSwitch.qml</file>
+        <file>widgets1_0/ExSGSlider.qml</file>
+        <file>widgets1_0/ExSGStatusLight.qml</file>
+        <file>widgets1_0/ExSGRadioButton.qml</file>
+        <file>widgets1_0/ExSGInfoBox.qml</file>
+        <file>widgets1_0/ExSGSubmitInfoBox.qml</file>
+        <file>widgets1_0/ExSGComboBox.qml</file>
+        <file>widgets1_0/ExSGCircularGauge.qml</file>
+        <file>widgets1_0/ExSGStatusLogBox.qml</file>
+        <file>widgets1_0/ExSGAccordion.qml</file>
+        <file>widgets1_0/ExSGHueSlider.qml</file>
+        <file>widgets1_0/ExSGRGBSlider.qml</file>
+        <file>widgets1_0/ExSGAlignedLabel.qml</file>
+        <file>widgets1_0/ExSGMqttClient.qml</file>
+        <file>widgets1_0/ExSGUserSettings.qml</file>
+        <file>widgets1_0/ExSGSpinBox.qml</file>
+        <file>widgets1_0/ExSGAbstractContextMenu.qml</file>
+        <file>widgets1_0/ExSGContextMenuEditActions.qml</file>
+        <file>widgets1_0/ExSGIcon.qml</file>
+        <file>widgets1_0/ExSGTag.qml</file>
+        <file>commoncpp1_0/PageSGCommonCppOneZero.qml</file>
+        <file>commoncpp1_0/ExSGTextHighlighter.qml</file>
+        <file>commoncpp1_0/ExSGJsonSyntaxHighlighter.qml</file>
+        <file>commoncpp1_0/ExSGSortFilterProxyModel.qml</file>
+    </qresource>
+</RCC>

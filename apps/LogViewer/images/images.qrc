@@ -1,0 +1,13 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/images/">
+	<file>uppercase-a.svg</file>
+	<file>uppercase-a-small.svg</file>
+	<file>side-pane-right-close.svg</file>
+	<file>side-pane-right-open.svg</file>
+	<file>text-wrap.svg</file>
+	<file>lv-logo.png</file>
+	<file>case-sensitive.svg</file>
+	<file>regular-expression.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+<?xml version="2.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>Run-time addons that are required to run Strata applications</Description>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Script>installscript.js</Script>
+    <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>62</SortingPriority>
+</Package>

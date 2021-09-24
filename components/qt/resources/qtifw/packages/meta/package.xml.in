@@ -1,0 +1,10 @@
+<?xml version="2.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>Plugins that are required to run applications built using Qt5 framework</Description>
+    <Version>@QT5_VERSION@-@BUILD_ID@</Version>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Script>installscript.js</Script>
+    <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>60</SortingPriority>
+</Package>

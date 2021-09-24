@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/tech/strata/sgwidgets/SGButton">
+        <file>SGButton.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+<?xml version="2.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>Run-time components that are required to run Strata Developer Studio</Description>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Script>installscript.js</Script>
+    <SortingPriority>80</SortingPriority>
+    <AutoDependOn>com.onsemi.strata.devstudio</AutoDependOn>
+</Package>

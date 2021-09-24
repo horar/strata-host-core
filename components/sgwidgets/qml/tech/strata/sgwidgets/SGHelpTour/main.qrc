@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>help_layout_manager.js</file>
+        <file>navigation_control.js</file>
+    </qresource>
+</RCC>

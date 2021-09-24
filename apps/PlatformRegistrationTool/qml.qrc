@@ -1,0 +1,31 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>PrtMain.qml</file>
+        <file>LoginScreen.qml</file>
+        <file>PrtAboutWindow.qml</file>
+        <file>ProgramDeviceWizard.qml</file>
+        <file>BaseStateMachine.qml</file>
+        <file>AssistedModeStateMachine.qml</file>
+        <file>EmbeddedModeStateMachine.qml</file>
+        <file>ControllerModeStateMachine.qml</file>
+        <file>ProgramSettingsWizard.qml</file>
+        <file>ProgramSettingsDelegate.qml</file>
+        <file>ProgramSettingsOpnDelegate.qml</file>
+        <file>ProgramSettingsQuestionDelegate.qml</file>
+        <file>ProgramSettingsJlinkPathDelegate.qml</file>
+        <file>UserMenuButton.qml</file>
+        <file>CanvasShapes.js</file>
+        <file>FeedbackArrow.qml</file>
+        <file>Arrow.qml</file>
+        <file>ProgramWorkflow.qml</file>
+        <file>WorkflowNode.qml</file>
+        <file>WorkflowNodeText.qml</file>
+        <file>jsonSchemas.js</file>
+        <file alias="TaskbarButton.qml">TaskbarButtonDummy.qml</file>
+    </qresource>
+    <qresource prefix="/+windows">
+        <file>TaskbarButton.qml</file>
+    </qresource>
+</RCC>

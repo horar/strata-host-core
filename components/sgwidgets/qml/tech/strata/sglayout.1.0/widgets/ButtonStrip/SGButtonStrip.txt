@@ -1,0 +1,14 @@
+    LayoutSGButtonStrip { // start_%1
+        id: sgButtonStrip_%1
+        layoutInfo.uuid: "%1"
+        layoutInfo.columnsWide: 10
+        layoutInfo.rowsTall: 2
+        layoutInfo.xColumns: 0
+        layoutInfo.yRows: 0
+
+        model: ["One","Two","Three","Four"]
+
+        onClicked: {
+            console.info("Clicked", checkedIndices)
+        }
+    } // end_%1

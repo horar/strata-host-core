@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ExportView.qml</file>
+        <file>FilterView.qml</file>
+        <file>SciMain.qml</file>
+        <file>SciSettings.qml</file>
+        <file>PlatformDelegate.qml</file>
+        <file>PlatformInfoWindow.qml</file>
+        <file>SciAboutWindow.qml</file>
+        <file>SciSettingsDialog.qml</file>
+        <file>VerticalDivider.qml</file>
+        <file>ProgramDeviceView.qml</file>
+        <file>StatusNode.qml</file>
+        <file>InfoPopup.qml</file>
+        <file>ScrollbackView.qml</file>
+        <file>MessageEditor.qml</file>
+        <file>HexView.qml</file>
+        <file>SciConnectMockDeviceDialog.qml</file>
+        <file>MockSettingsView.qml</file>
+        <file>SaveFirmwareView.qml</file>
+    </qresource>
+</RCC>

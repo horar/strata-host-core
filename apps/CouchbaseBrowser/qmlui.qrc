@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/MainWindow.qml</file>
+        <file>qml/SystemMenu.qml</file>
+        <file>qml/DocumentSelectorDrawer.qml</file>
+        <file>qml/ChannelSelectorDrawer.qml</file>
+        <file>qml/BodyDisplay.qml</file>
+        <file>qml/Popups/DatabasePopup.qml</file>
+        <file>qml/Popups/DocumentPopup.qml</file>
+        <file>qml/Popups/LoginPopup.qml</file>
+        <file>qml/Popups/WarningPopup.qml</file>
+        <file>qml/Popups/OpenPopup.qml</file>
+        <file>qml/Components/CustomMenuItem.qml</file>
+        <file>qml/Components/StatusBar.qml</file>
+        <file>qml/Components/UserInputBox.qml</file>
+        <file>qml/Components/ChannelSelector.qml</file>
+        <file>qml/Components/CustomListView.qml</file>
+        <file>qml/Components/CustomButton.qml</file>
+        <file>qml/Popups/CustomPopup.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,20 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dd3d8eb9..cd0dec08 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1315,11 +1315,10 @@ if(MSVC)
+     set_target_properties(
+       libzmq
+       PROPERTIES PUBLIC_HEADER "${public_headers}"
+-                 RELEASE_POSTFIX "${MSVC_TOOLSET}-mt-${ZMQ_VERSION_MAJOR}_${ZMQ_VERSION_MINOR}_${ZMQ_VERSION_PATCH}"
+-                 RELWITHDEBINFO_POSTFIX
+-                 "${MSVC_TOOLSET}-mt-${ZMQ_VERSION_MAJOR}_${ZMQ_VERSION_MINOR}_${ZMQ_VERSION_PATCH}"
+-                 MINSIZEREL_POSTFIX "${MSVC_TOOLSET}-mt-${ZMQ_VERSION_MAJOR}_${ZMQ_VERSION_MINOR}_${ZMQ_VERSION_PATCH}"
+-                 DEBUG_POSTFIX "${MSVC_TOOLSET}-mt-gd-${ZMQ_VERSION_MAJOR}_${ZMQ_VERSION_MINOR}_${ZMQ_VERSION_PATCH}"
++                 RELEASE_POSTFIX ""
++                 RELWITHDEBINFO_POSTFIX ""
++                 MINSIZEREL_POSTFIX ""
++                 DEBUG_POSTFIX "d"
+                  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+                  COMPILE_DEFINITIONS "DLL_EXPORT"
+                  OUTPUT_NAME "lib${ZMQ_OUTPUT_BASENAME}")

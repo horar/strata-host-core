@@ -1,0 +1,53 @@
+diff --git a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
+index 05c4cf31..175eb5bd 100644
+--- a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
++++ b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
+@@ -27,7 +27,7 @@ namespace c4Internal {
+ 
+         // Default maximum number of retry attempts before replications give up.
+         // These can be overridden by setting the option `kC4ReplicatorOptionMaxRetries`.
+-        static constexpr unsigned kMaxOneShotRetryCount = 2;
++        static constexpr unsigned kMaxOneShotRetryCount = 0;
+         static constexpr unsigned kMaxContinuousRetryCount = UINT_MAX;
+ 
+         // Longest possible retry delay, in seconds. The delay doubles on each failed retry
+diff --git a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
+index b9ff9bcc..083cdea2 100644
+--- a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
++++ b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
+@@ -239,34 +239,7 @@ namespace litecore::net {
+ #pragma mark - PLATFORM SPECIFIC CODE:
+ 
+ 
+-    optional<string> GetMyHostName() {
+-#ifdef __APPLE__
+-        // Apple platforms always have an mDNS/Bonjour hostname.
+-        string hostName;
+-    #if TARGET_OS_OSX
+-        // On macOS, we can get it from SystemConfiguration (not available on iOS)
+-        if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
+-            nsstring_slice strsl(cfName);
+-            hostName = string(strsl);
+-        }
+-    #else
+-        // From <http://stackoverflow.com/a/16902907/98077>.
+-        // On iOS, gethostname() returns the mDNS/Bonjour hostname (without the ".local")
+-        char baseHostName[256];
+-        if (gethostname(baseHostName, 255) == 0) {
+-            baseHostName[255] = '\0';
+-            hostName = baseHostName;
+-        }
+-    #endif
+-        if (!hostName.empty()) {
+-            if (!hasSuffix(hostName, ".local"))
+-                hostName += ".local";
+-            return hostName;
+-        }
+-#endif
+-        //TODO: Android supports mDNS; is there an API to get the hostname?
+-        return nullopt;
+-    }
++
+ 
+ 
+     // Platform-specific code to read the enabled network interfaces.

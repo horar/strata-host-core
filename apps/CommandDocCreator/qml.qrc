@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>CdcMain.qml</file>
+        <file>MdExampleWindow.qml</file>
+        <file>CdcAboutWindow.qml</file>
+        <file>resources/example.md</file>
+    </qresource>
+</RCC>
