@@ -155,7 +155,7 @@ Popup {
                 spacing: 0
 
                 ContextMenuButton {
-                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (+/-)1"
+                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (appx.)"
 
                     onClicked: {
                         visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
@@ -164,7 +164,7 @@ Popup {
                 }
 
                 ContextMenuButton {
-                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (+/-)1"
+                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (appx.)"
 
                     onClicked: {
                         visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
