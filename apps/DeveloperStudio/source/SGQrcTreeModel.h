@@ -335,6 +335,8 @@ private:
     void setDebugMenuSource(const QUrl &path);
     void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
+    void save();
+    void setNeedsCleaning(const bool needsCleaning);
 
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
@@ -348,10 +350,13 @@ private:
      * @param uid The UID of the file deleted
      */
     void handleExternalFileDeleted(const QString uid);
-    void save();
-    void setNeedsCleaning(const bool needsCleaning);
 
-    bool copyDir(const QString &from, const QString &to);
+    /**
+     * @brief copyDir Copies a directory and all children files/directories recursively.
+     * @param fromPath Path of origin directory
+     * @param toPath Path of destination directory
+     */
+    bool copyDir(const QString &fromPath, const QString &toPath);
 
     SGQrcTreeNode *root_ = nullptr;
     QUrl url_;

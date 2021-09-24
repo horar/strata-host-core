@@ -27,11 +27,12 @@ Menu {
     MenuItem {
         text: "Import Files/Folder to Project"
         onTriggered: {
+            treeView.selectItem(styleData.index)
             if (!styleData.isExpanded) {
                 treeView.expand(styleData.index)
             }
 
-            importFileOrFolderPopup.callerIndex = styleData.index.parent
+            importFileOrFolderPopup.callerIndex = styleData.index
             importFileOrFolderPopup.open()
             folderContextMenu.dismiss()
         }

@@ -400,13 +400,13 @@ bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &pa
     return success;
 }
 
-bool SGQrcTreeModel::copyDir(const QString &from, const QString &to) {
-    QDir oldDir(from);
-    QDir newDir(to);
+bool SGQrcTreeModel::copyDir(const QString &fromPath, const QString &toPath) {
+    QDir oldDir(fromPath);
+    QDir newDir(toPath);
 
     // Create destination directory
-    if (!newDir.cd(to) && !newDir.mkpath(to)) {
-        qCCritical(logCategoryControlViewCreator) << "Could not create new directory:" << to;
+    if (!newDir.cd(toPath) && !newDir.mkpath(toPath)) {
+        qCCritical(logCategoryControlViewCreator) << "Could not create new directory:" << toPath;
         return false;
     }
 
