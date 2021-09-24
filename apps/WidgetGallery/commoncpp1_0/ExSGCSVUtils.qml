@@ -61,7 +61,7 @@ ColumnLayout {
                 text: "Append to Row"
 
                 onClicked: {
-                    let data = ["1.11","false","5.33"]
+                    let data = [Math.random(1000).toFixed(2), Math.random(1000).toFixed(0) % 2 === 0, Math.random(1000).toFixed(2)]
                     csvUtil.appendRow(data)
                     textEdit.text += JSON.stringify(data) + "\n"
                 }
@@ -73,7 +73,9 @@ ColumnLayout {
                 onClicked: {
                     csvUtil.clear()
                     textEdit.text = ""
+                    csvUtil.appendRow(["dac","io","rev"])
                     textEdit.text += JSON.stringify(["dac","io","rev"]) + "\n"
+                    csvUtil.writeToFile()
                 }
             }
 
