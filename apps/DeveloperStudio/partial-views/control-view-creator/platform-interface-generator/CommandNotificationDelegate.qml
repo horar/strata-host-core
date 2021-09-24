@@ -66,9 +66,15 @@ Rectangle {
                         if (cmdNotifName.text !== "") {
                             unsavedChanges = true
                         }
-                        model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
-                        let commands = finishedModel.get(commandsListView.modelIndex).data
-                        functions.checkForValidKey(commands, index, model.valid)
+
+                        if (model.duplicate) {
+                            model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
+                            let commands = finishedModel.get(commandsListView.modelIndex).data
+                            functions.loopOverDuplicates(commands, index)
+                        }
+                        if (!model.valid) {
+                            functions.invalidCount--
+                        }
                         commandColumn.commandModel.remove(index)
                     }
                 }
@@ -83,7 +89,7 @@ Rectangle {
                 placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
 
                 validator: RegExpValidator {
-                    regExp: /^[a-z_][a-zA-Z0-9_]+/
+                    regExp: /^[a-z_][a-zA-Z0-9_]*/
                 }
 
                 background: Rectangle {

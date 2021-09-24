@@ -77,8 +77,14 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
-                        model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
-                        functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex, model.valid)
+
+                        if (model.duplicate) {
+                            model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
+                            functions.loopOverDuplicates(objectPropertyContainer.parentListModel, modelIndex)
+                        }
+                        if (!model.valid) {
+                            functions.invalidCount--
+                        }
                         objectPropertyContainer.parentListModel.remove(modelIndex)
                     }
                 }
