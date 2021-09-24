@@ -14,9 +14,21 @@ SGCSVUtils::~SGCSVUtils()
     data_.clear();
 }
 
-QVector<QVariantList> SGCSVUtils::getData()
+QString SGCSVUtils::getData()
 {
-    return data_;
+    QString data;
+    for (QVariantList list: data_) {
+        for (QVariant d: list) {
+            data += d.toString();
+
+            if (!list.endsWith(d)) {
+               data += ",";
+            }
+        }
+        data += "\n";
+    }
+
+    return data;
 }
 
 void SGCSVUtils::appendRow(QVariantList data)
@@ -24,7 +36,7 @@ void SGCSVUtils::appendRow(QVariantList data)
     data_.append(data);
 }
 
-QVector<QVariantList> SGCSVUtils::importFromFile(QString folderPath)
+QString SGCSVUtils::importFromFile(QString folderPath)
 {
     SGUtilsCpp utils;
     QString path = utils.urlToLocalFile(folderPath);
@@ -39,7 +51,7 @@ QVector<QVariantList> SGCSVUtils::importFromFile(QString folderPath)
     }
     data_.clear();
     data_.append(convertedData);
-    return data_;
+    return getData();
 }
 
 void SGCSVUtils::clear()

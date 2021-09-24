@@ -38,9 +38,9 @@ public:
         }
     }
 
-    Q_INVOKABLE QVector<QVariantList> importFromFile(QString folderPath);
+    Q_INVOKABLE QString importFromFile(QString folderPath);
     Q_INVOKABLE void appendRow(QVariantList data);
-    Q_INVOKABLE QVector<QVariantList> getData();
+    Q_INVOKABLE QString getData();
     Q_INVOKABLE void setData(QVector<QVariantList> data);
     Q_INVOKABLE void clear();
     Q_INVOKABLE void writeToFile();
