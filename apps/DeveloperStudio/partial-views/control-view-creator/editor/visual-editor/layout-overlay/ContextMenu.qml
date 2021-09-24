@@ -155,7 +155,7 @@ Popup {
                 spacing: 0
 
                 ContextMenuButton {
-                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (approx.)"
+                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (+/-)1"
 
                     onClicked: {
                         visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
@@ -164,7 +164,7 @@ Popup {
                 }
 
                 ContextMenuButton {
-                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (approx.)"
+                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (+/-)1"
 
                     onClicked: {
                         visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
@@ -187,6 +187,12 @@ Popup {
 
                 onEntered: {
                     objectAlignButton.content.close()
+                }
+
+                onContainsMouseChanged: {
+                    if (containsMouse) {
+                        objectAlignButton.content.close()
+                    }
                 }
             }
         }
@@ -237,6 +243,10 @@ Popup {
                     if (containsMouse) {
                         objectAlignButton.content.close()
                     }
+                }
+
+                onEntered: {
+                    objectAlignButton.content.close()
                 }
             }
         }
