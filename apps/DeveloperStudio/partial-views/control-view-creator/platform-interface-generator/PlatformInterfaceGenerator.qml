@@ -50,7 +50,6 @@ Item {
         "editing": false
     })
 
-
     readonly property var templatePayload: ({
         "name": "", // The name of the property
         "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.

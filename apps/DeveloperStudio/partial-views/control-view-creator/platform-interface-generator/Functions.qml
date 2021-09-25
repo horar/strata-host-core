@@ -294,8 +294,6 @@ QtObject {
       * createModelFromJson parse/creates the model from a JSON object (used when importing a JSON file)
     **/
     function createModelFromJson(jsonObject) {
-        let topLevelKeys = Object.keys(jsonObject) // This contains "commands" / "notifications" arrays
-
         finishedModel.modelAboutToBeReset()
         finishedModel.clear()
 
