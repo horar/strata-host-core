@@ -29,6 +29,10 @@ Item {
     onVisibleChanged: {
         if (!visible) {
             alertMessage.Layout.preferredHeight = 0
+        } else {
+            if (fileOutput.text === "") {
+                fileOutput.text = openProjectContainer.fileDialogFolder()
+            }
         }
     }
 
@@ -98,7 +102,6 @@ Item {
                 border.color: "#444"
                 border.width: 0.5
 
-
                 SGText {
                     id: fileOutput
                     color: "#333"
@@ -107,17 +110,6 @@ Item {
                         fill: parent
                     }
                     elide: Text.ElideLeft
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                SGText {
-                    visible: fileOutput.text === ""
-                    text: "Select a directory..."
-                    color: "#aaa"
-                    anchors {
-                        margins: 8
-                        fill: parent
-                    }
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -146,8 +138,8 @@ Item {
 
             GridLayout {
                 id: templateLayout
-                rowSpacing: 10
-                columnSpacing: 10
+                rowSpacing: 5
+                columnSpacing: 5
                 anchors.fill: parent
                 clip: true
                 columns: 9
