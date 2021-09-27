@@ -160,7 +160,9 @@ ColumnLayout {
             }
 
             if (platformStack.is_assisted === false) {
-                return true //embedded platform
+                //embedded platform
+                //display only newest
+                return firmwareListModel.getLatestVersionIndex() === row
             }
 
             if (platformStack.controller_class_id.length == 0) {
@@ -169,6 +171,10 @@ ColumnLayout {
 
             if (firmwareListModel.controller_class_id(row) !== platformStack.controller_class_id) {
                 return false //firmware for a different controller
+            }
+            if (firmwareListModel.getLatestVersionIndex(platformStack.controller_class_id) !== row) {
+                //display only newest
+                return false;
             }
 
             return true
