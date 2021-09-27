@@ -680,6 +680,7 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         removeRows(row, 1, parent);
     }
 
+    removeDeletedFilesFromQrc();
     return success;
 }
 
