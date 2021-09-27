@@ -112,8 +112,6 @@ ListView {
                 var sourceIndex = consoleItems.mapIndexToSource(clickedIndex)
                 if (clickedIndex > -1 && sourceIndex > -1) {
                     consoleModel.get(sourceIndex).state = "allSelected"
-                } else {
-                    console.error(Logger.devStudioCategory, "Index out of scope.")
                 }
             }
         }
