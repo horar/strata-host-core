@@ -175,6 +175,16 @@ Item {
         visible: false
     }
 
+    RenameFilePopup {
+        id: renameFilePopup
+        visible: false
+    }
+
+    CreateFolderPopup {
+        id: createFolderPopup
+        visible: false
+    }
+
     // TODO: add feature to move file to trash instead of permanently deleting it (requires Qt >= 5.15)
     // https://jira.onsemi.com/browse/CS-2055
     SGConfirmationPopup {
@@ -222,10 +232,5 @@ Item {
 
         console.error("Project does not have Control.qml at the top level")
         missingControlQml.open()
-    }
-
-    RenameFilePopup {
-        id: renameFilePopup
-        visible: false
     }
 }
