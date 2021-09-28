@@ -333,6 +333,7 @@ Item {
                 onTextChanged: {
                     savePath = text
                 }
+                palette.highlight: Theme.palette.onsemiOrange
 
                 Binding {
                     target: savePathField
