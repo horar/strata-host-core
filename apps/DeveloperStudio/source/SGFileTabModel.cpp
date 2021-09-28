@@ -253,8 +253,9 @@ bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
         return false;
     }
 
-    QString path = SGUtilsCpp::urlToLocalFile(filepath);
-    if (!SGUtilsCpp::exists(path)) {
+    SGUtilsCpp utils;
+    QString path = utils.urlToLocalFile(filepath);
+    if (!utils.exists(path)) {
         qCCritical(logCategoryControlViewCreator) << "File does not exist in file path";
         return false;
     }
