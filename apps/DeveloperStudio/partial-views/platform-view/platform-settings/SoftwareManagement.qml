@@ -362,8 +362,4 @@ ColumnLayout {
             }
         }
     }
-
-    ListModel {
-        id: viewVersions
-    }
 }
