@@ -227,6 +227,16 @@ strata::strataRPC::StrataClient *SDSModel::strataClient() const
     return strataClient_;
 }
 
+bool SDSModel::debugFeaturesEnabled()
+{
+    return debugFeaturesEnabled_;
+}
+
+void SDSModel::setDebugFeaturesEnabled(bool enabled)
+{
+    debugFeaturesEnabled_ = enabled;
+}
+
 void SDSModel::shutdownService()
 {
     remoteHcsNode_->shutdownService(hcsIdentifier_);

@@ -80,6 +80,15 @@ Item {
             }
 
             Button {
+                //feel free to reuse this flag for other debug purposes as well
+                text: "Debug Features: " + ((sdsModel.debugFeaturesEnabled)?("on"):("off"))
+                onClicked: {
+                    sdsModel.debugFeaturesEnabled = !sdsModel.debugFeaturesEnabled
+                    text = "Debug Features: " + ((sdsModel.debugFeaturesEnabled)?("on"):("off"))
+                }
+            }
+
+            Button {
                 text: "Login as Guest"
                 onClicked: {
                     if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {

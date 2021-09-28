@@ -46,6 +46,7 @@ class SDSModel: public QObject
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
     Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
+    Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -65,6 +66,8 @@ public:
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
     strata::strataRPC::StrataClient *strataClient() const;
+    bool debugFeaturesEnabled();
+    void setDebugFeaturesEnabled(bool enabled);
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -96,6 +99,7 @@ private:
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
     QPointer<QProcess> hcsProcess_;
     const unsigned hcsIdentifier_;
+    bool debugFeaturesEnabled_ = false;
 
     void setHcsConnected(bool hcsConnected);
 };
