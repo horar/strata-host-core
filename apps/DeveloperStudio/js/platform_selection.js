@@ -327,7 +327,6 @@ function addConnectedPlatform(platform) {
     } else {
         if (is_assisted) {
             // Assisted Strata
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "ass 0", platform.device_id)
 
             if (platform.controller_class_id === "") {
                 //unregistered assisted controller
@@ -378,40 +377,28 @@ function addConnectedPlatform(platform) {
 
             if (platform.class_id === "") {
                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
-                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 0", platform.device_id)
                 insertUnregisteredListing(platform, class_id_string)
             } else {
                 if (classMap.hasOwnProperty(class_id_string)) {
-                    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 1", platform.device_id)
                     if (platform.firmware_version.length === 0) {
-                        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 2", platform.device_id)
                         //device without firmware
 
                         // if there is already listing for this platform, reuse it
                         let listing = getDeviceListing(class_id_string, platform.device_id)
                         if (listing) {
-                            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 3", platform.device_id)
                             connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                         } else {
-                            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 4", platform.device_id)
                             insertProgramFirmwareListing(platform, class_id_string)
                         }
 
                         sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
                     } else {
-                        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 5", platform.device_id)
-                        let listing = getDeviceListing(class_id_string, platform.device_id)
-                        if (listing) {
-                            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 6", platform.device_id)
-                        }
-
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                     }
 
                 } else {
                     // connected platform class_id not listed in DP platform list
                     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
-                    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "*****", "emb 7", platform.device_id)
                     insertUnknownListing(platform, class_id_string)
                 }
             }
