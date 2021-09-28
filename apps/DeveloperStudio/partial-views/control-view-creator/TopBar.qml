@@ -27,27 +27,10 @@ RowLayout {
 
         Connections {
             target: treeModel
+
             onProjectDirectoryChanged: {
-                let cMakeFile = treeModel.projectDirectory
-                cMakeFile = SGUtilsCpp.urlToLocalFile(cMakeFile)
-                cMakeFile = SGUtilsCpp.joinFilePath(cMakeFile, "CMakeLists.txt")
-
-                if (SGUtilsCpp.isFile(cMakeFile)) {
-                    const content = SGUtilsCpp.readTextFileContent(cMakeFile)
-                    // Regex will parse the project name from CMakeLists.txt; "project(<project name to be captured>"
-                    const splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m
-                    const cMakeArr = content.match(splitCondition)
-
-                    if (cMakeArr === null || cMakeArr.length < 2) {
-                        console.warn("Could not determine project name from CMakeLists.txt")
-                        nameField.text = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
-                    } else {
-                        nameField.text = cMakeArr[1]
-                    }
-                } else {
-                    console.warn("Unable to open CMakeLists.txt")
-                    nameField.text = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
-                }
+                controlViewCreatorRoot.getProjectNameFromCmake()
+                nameField.text = controlViewCreatorRoot.projectName
             }
         }
     }

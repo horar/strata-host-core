@@ -121,7 +121,14 @@ public:
      * @param path The path to the QRC directory to find children.
      * @return QList List of child paths.
      */
-    Q_INVOKABLE  QList<QString> getQrcPaths(QString path);
+    Q_INVOKABLE QList<QString> getQrcPaths(const QString &path);
+
+    /**
+     * @brief getProjectNameFromCmake capture project name from project's CMakeLists.txt file
+     * @param qrcPath The path to the project's QRC file
+     * @return QString project name, or empty if failed
+     */
+    Q_INVOKABLE QString getProjectNameFromCmake(const QString &qrcPath);
 
 signals:
     void finishedRecompiling(QString filepath);
@@ -177,5 +184,5 @@ private:
 
     void clearLastLoggedError();
 
-    void setLastLoggedError(QString &error_str);
+    void setLastLoggedError(const QString &error_str);
 };
