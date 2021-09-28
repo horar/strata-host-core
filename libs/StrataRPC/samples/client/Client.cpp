@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "Client.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -15,7 +23,7 @@ Client::Client(QString clientId, QObject *parent)
       serverTime_()
 {
     qCInfo(logCategoryStrataClientSample).nospace().noquote()
-        << "Client ID 0x" << clientId.toUtf8().toHex();
+        << "ClientID 0x" << clientId.toUtf8().toHex();
 
     connect(strataClient_.get(), &StrataClient::connected, this, [this]() {
         connectionStatus_ = true;

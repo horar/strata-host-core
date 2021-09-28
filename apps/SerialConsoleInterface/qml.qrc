@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>ExportView.qml</file>
-        <file>FilterDialog.qml</file>
+        <file>FilterView.qml</file>
         <file>SciMain.qml</file>
         <file>SciSettings.qml</file>
         <file>PlatformDelegate.qml</file>

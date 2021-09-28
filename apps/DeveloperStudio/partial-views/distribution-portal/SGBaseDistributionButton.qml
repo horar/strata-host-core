@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.10
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
@@ -43,8 +51,8 @@ RowLayout {
     Rectangle {
         id: providerBackground
         color: !providerMouseArea.containsMouse && !providerPopup.opened
-               ? Theme.palette.green : providerMouseArea.pressed && !providerPopup.opened
-                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+               ? Theme.palette.onsemiOrange : providerMouseArea.pressed && !providerPopup.opened
+                 ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
         radius: 10
         Layout.preferredWidth: iconMouse.enabled ? textSize.width + textSize.height : iconBackground.width + textSize.width + textSize.height
         Layout.fillWidth: true
@@ -142,8 +150,8 @@ RowLayout {
         id: iconBackground
         radius: 10
         color: !iconMouse.containsMouse
-               ? Theme.palette.green : iconMouse.pressed
-                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+               ? Theme.palette.onsemiOrange : iconMouse.pressed
+                 ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
         implicitWidth: height
         implicitHeight: parent.height
         visible: iconMouse.enabled

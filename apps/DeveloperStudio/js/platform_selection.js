@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 .pragma library
 .import "navigation_control.js" as NavigationControl
 .import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -10,6 +18,7 @@
 var isInitialized = false
 var sdsModel
 var coreInterface
+var strataClient
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
@@ -35,6 +44,7 @@ function initialize (newSdsModel) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     sdsModel = newSdsModel
     coreInterface = newSdsModel.coreInterface;
+    strataClient = newSdsModel.strataClient
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
     createPlatformActions()
@@ -47,11 +57,7 @@ function disablePlatformNotifications(){
 
 function getPlatformList () {
     platformSelectorModel.platformListStatus = "loading"
-    const get_dynamic_plat_list = {
-        "hcs::cmd": "dynamic_platform_list",
-        "payload": {}
-    }
-    coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
+    strataClient.sendRequest("dynamic_platform_list", {})
 }
 
 /*
@@ -119,7 +125,7 @@ function generatePlatformSelectorModel(platform_list_json) {
         generatePlatform(platform)
     }
 
-    parseConnectedPlatforms(coreInterface.connected_platform_list_)
+    parseConnectedPlatforms(coreInterface.connectedPlatformList_)
     platformSelectorModel.platformListStatus = "loaded"
 }
 
@@ -326,13 +332,12 @@ function addConnectedPlatform(platform) {
                         // if there is already listing for this platform, reuse it
                         let listing = getDeviceListing(class_id_string, platform.device_id)
                         if (listing) {
-                            listing.program_controller = true
                             connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
                         } else {
                             insertProgramControllerListing(platform, class_id_string)
                         }
 
-                        sdsModel.programControllerManager.programAssisted(platform.device_id)
+                        sdsModel.firmwareUpdater.programAssisted(platform.device_id)
                     } else {
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
                     }
@@ -345,7 +350,7 @@ function addConnectedPlatform(platform) {
             } else {
                 //uncompatible firmware installed
                 insertProgramControllerListing(platform, class_id_string)
-                sdsModel.programControllerManager.programAssisted(platform.device_id)
+                sdsModel.firmwareUpdater.programAssisted(platform.device_id)
             }
         }
 
@@ -370,13 +375,12 @@ function addConnectedPlatform(platform) {
                     // if there is already listing for this platform, reuse it
                     let listing = getDeviceListing(class_id_string, platform.device_id)
                     if (listing) {
-                        listing.program_controller = true
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                     } else {
                         insertMissingFirmwareListing(platform, class_id_string)
                     }
 
-                    sdsModel.programControllerManager.programEmbedded(platform.device_id)
+                    sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
                 } else {
                     connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
                 }
@@ -530,6 +534,10 @@ function resetListing(selector_listing) {
     selector_listing.device_id = Constants.NULL_DEVICE_ID
     selector_listing.available = copyObject(classMap[selector_listing.class_id].original_listing.available)
 
+    selector_listing.program_controller = false
+    selector_listing.program_controller_progress = 0.0
+    selector_listing.program_controller_error_string = ""
+
     if (selector_listing.error) {
         // remove error listings that are not connected and no view_open
         selector_listing.visible = false
@@ -614,6 +622,10 @@ function insertMissingFirmwareListing(platform, class_id_string) {
 function generateUnknownListing (platform, class_id_string) {
     let opn = "Class id: " + class_id_string
     let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
+
+    if (platform.verbose_name) {
+        return generateErrorListing(platform, platform.verbose_name, class_id_string, opn, description)
+    }
     return generateErrorListing(platform, "Unknown Platform", class_id_string, opn, description)
 }
 

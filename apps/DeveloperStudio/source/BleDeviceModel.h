@@ -1,6 +1,16 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+
 #include <QAbstractListModel>
 #include <QStringListModel>
 
@@ -23,7 +33,8 @@ class BleDeviceModel : public QAbstractListModel
     Q_PROPERTY(QString lastScanError READ lastScanError NOTIFY lastScanErrorChanged)
 
 public:
-    BleDeviceModel(CoreInterface *coreInterface, QObject *parent = nullptr);
+    BleDeviceModel(strata::strataRPC::StrataClient *strataClient,
+                   CoreInterface *coreInterface, QObject *parent = nullptr);
     virtual ~BleDeviceModel() override;
 
     enum ModelRole {
@@ -58,10 +69,10 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void bluetoothScanReplyHandler(QJsonObject payload);
-    void connectReplyHandler(QJsonObject payload);
-    void disconnectReplyHandler(QJsonObject payload);
-    void updateDeviceConnection(QJsonObject payload);
+    void bluetoothScanReplyHandler(const QJsonObject &payload);
+    void connectReplyHandler(const QJsonObject &payload);
+    void disconnectReplyHandler(const QJsonObject &payload);
+    void updateDeviceConnection(const QJsonObject &payload);
 
 private:
     void setModelRoles();
@@ -72,6 +83,7 @@ private:
     void setInScanMode(bool inScanMode);
     void setLastScanError(QString lastScanError);
 
+    strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;
     QList<BleDeviceModelItem> data_;
     QHash<int, QByteArray> roleByEnumHash_;

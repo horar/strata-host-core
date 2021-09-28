@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.10
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
@@ -18,7 +26,7 @@ Rectangle {
     id: controlViewCreatorContainer
     height: container.height
     width: controlViewCreatorRow.implicitWidth
-    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.green : "#444"
+    color: controlViewCreatorMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.onsemiOrange : "#444"
     state: "debug"
 
     MouseArea {
@@ -58,7 +66,7 @@ Rectangle {
             Layout.preferredHeight: controlViewCreatorContainer.height
             Layout.preferredWidth: Layout.preferredHeight
             Layout.alignment: Qt.AlignRight
-            color:controlViewCreatorMouse.containsMouse ? Theme.palette.green : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.green : "#444"
+            color:controlViewCreatorMouse.containsMouse ? Theme.palette.onsemiOrange : closeArea.containsMouse  ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.onsemiOrange : "#444"
 
             SGIcon {
                 id: timesSignIcon

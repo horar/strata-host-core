@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 .import tech.strata.logger 1.0 as LoggerModule
 .import "qrc:/js/navigation_control.js" as NavigationControl
 .import QtQml 2.12 as QtQml
@@ -102,9 +110,8 @@ function data_source_handler (payload) {
 // -------------------------
 function send (command) {
     if (device_id) {
-        command.device_id = device_id
-        console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
-        coreInterface.sendCommand(JSON.stringify(command))
+        // console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
+        coreInterface.sendNotification("platform_message", { "device_id": device_id, "message": JSON.stringify(command) })
     }
     else {
         console.warn(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Device_id not set, command not sent: ", JSON.stringify(command));

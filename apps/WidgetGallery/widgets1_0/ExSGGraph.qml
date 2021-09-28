@@ -1,7 +1,16 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: sgGraphExample
@@ -602,61 +611,195 @@ Item {
             }
         }
 
-        SGWidgets.SGGraph {
-            id: valueHoverGraph
-            width: 400
-            height: 150
-            title: "Graph with hover value tool tip"
-            xMin: 1
-            xMax: 100
-            yMin: 1
-            yMax: 100
-            xTitle: "X Axis"
-            yTitle: "Y Axis"
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
+                id: pointGraph
+                width: 400
+                height: 300
+                title: "Graph with tooltip on data points"
+                xMin: 0
+                xMax: 10
+                yMin: 0
+                yMax: 10
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
 
-            Item {
-                id: crosshair
-                x: valueHoverGraph.mouseArea.mouseX
-                y: valueHoverGraph.mouseArea.mouseY - 3
+                Component.onCompleted: {
+                    let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                    curve.color = sgGraphExample.randomColor()
 
-                ToolTip {
-                    id: toolTip
-                    visible: valueHoverGraph.mouseArea.containsMouse
-                    closePolicy: Popup.NoAutoClose
-                    text: "(" + mouseValue.x.toFixed(decimalsX) + "," + mouseValue.y.toFixed(decimalsY) + ")"
+                    let dataArray = []
+                    let i = 0
+                    for (i = 0; i <= 10; i++) {
+                        dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
+                    }
+                    curve.appendList(dataArray)
+                }
 
-                    property point mouseValue: valueHoverGraph.mapToValue(Qt.point(crosshair.x, crosshair.y))
-                    property int decimalsX: 0
-                    property int decimalsY: 0
+                function closestPointByXValue() {
+                    // index and points array to store different curve points near the mouse
+                    let index = 0
+                    let curvePoints = []
+                    let diff = Infinity // large default value
+                    let closestIndex = 0
+                    // loop over all curves to find the closest points to the mouse's X position, then find the curve closest to the mouse's Y position
+                    for (let i = 0; i < pointGraph.count; i++) {
+                        index = pointGraph.curve(i).closestXAxisPointIndex(closestValue.mouseValue.x)
+                        if (index !== -1) {
+                            // using the index, store that point in the curvePoints array
+                            curvePoints[i] = pointGraph.curve(i).at(index)
+                            let distance = Math.abs(closestValue.mouseValue.y - curvePoints[i].y)
+                            // distance is used to determine which of all the curves is closest to the mouse
+                            if (distance < diff) {
+                                diff = distance
+                                closestIndex = i
+                            }
+                        }
+                    }
+                    return curvePoints[closestIndex] // closest point by X, to the mouse
+                }
 
-                    Component.onCompleted: generateDecimals()
+                Item {
+                    id: mouseCrosshair
+                    x: pointGraph.mouseArea.mouseX
+                    y: pointGraph.mouseArea.mouseY
 
-                    // show an appropriate number of digits based on the range of the graph
-                    function generateDecimals() {
-                        generateXDecimals()
-                        generateYDecimals()
+                    property int scroll: pointGraph.mouseArea.wheelChoke
+                    property var position: pointGraph.mouseArea.mousePosition
+                    property point closestPoint: Qt.point(0,0)
+
+                    onScrollChanged: {
+                        closestValue.visible = false // while scrolling the tooltip is not visible
                     }
 
-                    function generateXDecimals() {
-                        let range = (valueHoverGraph.xMax - valueHoverGraph.xMin)
-                        if (range < 1 && range > -1){
-                            decimalsX = (valueHoverGraph.xMax - valueHoverGraph.xMin).toString().split(".")[1].length
+                    onPositionChanged: {
+                        closestValue.visible = false // when shifting the graph the tooltip is not visible
+                    }
+
+                    onXChanged: {
+                        closestPoint = pointGraph.closestPointByXValue()
+                    }
+                }
+
+                // popup to display the point's coordinates and hovers over that location
+                SGWidgets09.SGToolTipPopup {
+                    id: closestValue
+                    // x and y positions are limited to the size of pointGraph
+                    x: determineX()
+                    y: determineY()
+                    color: "white"
+                    showOn: pointGraph.mouseArea.containsMouse
+                    enabled: false // disables internal mouse area
+                    content: Text {
+                        text: "(" + mouseCrosshair.closestPoint.x.toFixed(closestValue.decimalsX) + "," + mouseCrosshair.closestPoint.y.toFixed(closestValue.decimalsY) + ")"
+                    }
+
+                    property point mouseValue: pointGraph.mapToValue(Qt.point(mouseCrosshair.x, mouseCrosshair.y))
+                    property int decimalsX: 1 // determines how many decimal points to show
+                    property int decimalsY: 1
+                    property point pos: pointGraph.mapToPosition(mouseCrosshair.closestPoint)
+
+                    // determines the x position of the tooltip, will not extend beyond the xMin and xMax
+                    // can comment the 'visible' property to see off screen point coordinates
+                    function determineX() {
+                        if (mouseCrosshair.closestPoint.x < pointGraph.xMin) {
+                            let limit = Qt.point(pointGraph.xMin, mouseCrosshair.closestPoint.y)
+                            visible = false // comment out to show tooltip at the edge of the screen
+                            return pointGraph.mapToPosition(limit).x - width / 2 - 7
                         } else {
-                            decimalsX =  0
+                            return pos.x - width / 2 - 7
+
                         }
                     }
 
-                    function generateYDecimals() {
-                        let range = (valueHoverGraph.yMax - valueHoverGraph.yMin)
-                        if (range < 1 && range > -1){
-                            decimalsY = (valueHoverGraph.yMax - valueHoverGraph.yMin).toString().split(".")[1].length
+                    // determines the y position of the tooltip, will not extend beyond the yMin and yMax
+                    function determineY() {
+                        if (mouseCrosshair.closestPoint.y > pointGraph.yMax) {
+                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMax)
+                            visible = false // comment out to show tooltip at the edge of the screen
+                            return pointGraph.mapToPosition(limit).y - height
+                        } else if (mouseCrosshair.closestPoint.y < pointGraph.yMin){
+                            let limit = Qt.point(mouseCrosshair.closestPoint.x, pointGraph.yMin)
+                            visible = false // comment out to show tooltip at the edge of the screen
+                            return pointGraph.mapToPosition(limit).y - height
                         } else {
-                            decimalsY = 0
+                            visible = true // comment out to show tooltip at the edge of the screen
+                            return pos.y - height
                         }
                     }
                 }
             }
+
+            Column {
+                spacing: 5
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+
+                // This button will remove the two sine waves and produce one curve with random points
+                Button {
+                    id: singleCurveButton
+                    text: "Single Curve"
+                    enabled: false
+
+                    onClicked: {
+                        pointGraph.yMin = 0
+                        singleCurveButton.enabled = false
+                        manyCurveButton.enabled = true
+                        pointGraph.removeCurve("graphCurve0") // removes the two sine waves
+                        pointGraph.removeCurve("graphCurve1")
+
+                        let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+
+                        let dataArray = []
+                        for (let i = 0; i <= 10; i++) {
+                            dataArray.push({"x":i, "y":sgGraphExample.yourDataValueHere()*10})
+                        }
+                        curve.appendList(dataArray)
+                    }
+                }
+
+                // This button removes the single curve and creates two sine waves
+                // Useful for testing tooltip with multiple curves
+                Button {
+                    id: manyCurveButton
+                    text: "Multiple Curves"
+                    enabled: true
+
+                    onClicked: {
+                        pointGraph.yMin = -10
+                        singleCurveButton.enabled = true
+                        manyCurveButton.enabled = false
+                        pointGraph.removeCurve("graphCurve0") // remove the other curve
+
+                        let curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+
+                        let dataArray = []
+                        let i = 0
+                        for (i = 0; i <= 100; i++) {
+                            dataArray.push({"x":i/10, "y":sgGraphExample.multipleCurveValues(i/10)*10})
+                        }
+                        curve.appendList(dataArray)
+
+                        curve = pointGraph.createCurve("graphCurve" + pointGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+
+                        dataArray = []
+                        for (i = 0; i <= 100; i++) {
+                            dataArray.push({"x":i/10, "y":sgGraphExample.multipleCurveValues(i/10 - 10)*10})
+                        }
+                        curve.appendList(dataArray)
+                    }
+                }
+            }
         }
+    }
+
+    function multipleCurveValues(value) {
+        return Math.sin(value)
     }
 
     function yourDataValueHere() {

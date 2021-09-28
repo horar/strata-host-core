@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick.Controls 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -43,9 +51,11 @@ TextField {
     property string suggestionFilterPattern: ""
     property variant suggestionFilterPatternSyntax: CommonCpp.SGTextHighlighter.RegExp
     property bool suggestionCaseSensitive: false
+    property int flickableContentY
 
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
+    signal suggestionButtonClicked()
 
     /*private*/
     property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
@@ -81,6 +91,12 @@ TextField {
             if (!suggestionPopupLoader.item.opened) {
                 suggestionPopupLoader.item.open()
             }
+        }
+    }
+
+    onFlickableContentYChanged: {
+        if (suggestionPopupLoader.status === Loader.Ready && suggestionPopupLoader.item.opened) {
+            suggestionPopupLoader.item.close()
         }
     }
 
@@ -319,8 +335,10 @@ TextField {
             iconSize: control.background.height - 20
             icon.source: "qrc:/sgimages/chevron-down.svg"
             onClicked: {
+                control.forceActiveFocus()
                 if (suggestionPopupLoader.status === Loader.Ready) {
                     if (suggestionPopupLoader.item.opened === false) {
+                        suggestionButtonClicked()
                         suggestionPopupLoader.item.open()
                     } else {
                         suggestionPopupLoader.item.close()

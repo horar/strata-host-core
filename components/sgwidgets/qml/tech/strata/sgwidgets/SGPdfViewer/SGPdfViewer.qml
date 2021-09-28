@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtWebEngine 1.6
@@ -35,6 +43,17 @@ Rectangle {
         // Example url: "qrc:/minified/web/viewer.html?file=file://localhost/Users/zbgzzh/Desktop/layout.pdf"
         url: root.url === "datasheet-unavailable" ? "qrc:/tech/pdfjs/minified/web/viewer.html?file=" :"qrc:/tech/pdfjs/minified/web/viewer.html?file=" + root.url
         enabled: url != "qrc:/tech/pdfjs/minified/web/viewer.html?file="
+
+        onNavigationRequested: {
+            if (request.url.toString().startsWith("qrc:")) {
+                // internal requests will always start with qrc:/tech/pdfjs/minified/web/viewer.html?file=...
+                request.action = WebEngineNavigationRequest.AcceptRequest
+            } else {
+                // external request when user clicked on hyperlink should be opened in dedicated browser
+                request.action = WebEngineNavigationRequest.IgnoreRequest
+                Qt.openUrlExternally(request.url);
+            }
+        }
 
         profile: WebEngineProfile {
             onDownloadRequested: {

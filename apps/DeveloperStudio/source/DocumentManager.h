@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #ifndef DOCUMENT_MANAGER_H
 #define DOCUMENT_MANAGER_H
 
@@ -12,13 +20,19 @@
 #include <DocumentListModel.h>
 #include <QMap>
 
+namespace strata::strataRPC
+{
+class StrataClient;
+}
+
 class DocumentManager : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(DocumentManager)
 
 public:
-    DocumentManager(CoreInterface *coreInterface, QObject *parent=nullptr);
+    DocumentManager(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface_,
+                    QObject *parent = nullptr);
 
     virtual ~DocumentManager();
 
@@ -40,6 +54,7 @@ private slots:
     void platformMetaDataHandler(QJsonObject data);
 
 private:
+    strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;
 
     void init();

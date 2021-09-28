@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtWebView/QtWebView>
@@ -14,6 +22,8 @@
 #include <QSslSocket>
 
 #include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+#include <StrataRPC/DeferredRequest.h>
 
 #include "Version.h"
 #include "Timestamp.h"
@@ -31,8 +41,7 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "RunGuard.h"
-#include "ProgramControllerManager.h"
-#include "FirmwareManager.h"
+#include "FirmwareUpdater.h"
 #include "PlatformInterfaceGenerator.h"
 #include "BleDeviceModel.h"
 #include "VisualEditorUndoStack.h"
@@ -74,9 +83,9 @@ int main(int argc, char *argv[])
     }
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QGuiApplication::setApplicationDisplayName(QStringLiteral("ON Semiconductor: Strata Developer Studio"));
+    QGuiApplication::setApplicationDisplayName(QStringLiteral("onsemi: Strata Developer Studio"));
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
@@ -92,7 +101,7 @@ int main(int argc, char *argv[])
         QStringLiteral("Strata Developer Studio\n\n"
                        "A cloud-connected development platform that provides a seamless,"
                        "personalized and secure environment for engineers to evaluate and design "
-                       "with ON Semiconductor technologies."));
+                       "with onsemi technologies."));
     parser.addOption({{QStringLiteral("f")},
                       QObject::tr("Optional configuration <filename>"),
                       QObject::tr("filename"),
@@ -152,9 +161,10 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
-    qmlRegisterUncreatableType<ProgramControllerManager>("tech.strata.ProgramControllerManager", 1, 0, "ProgramControllerManager", "You can't instantiate ProgramControllerManager in QML");
     qmlRegisterUncreatableType<BleDeviceModel>("tech.strata.BleDeviceModel", 1, 0, "BleDeviceModel", "You can't instantiate BleDeviceModel in QML");
-    qmlRegisterUncreatableType<FirmwareManager>("tech.strata.FirmwareManager", 1, 0, "FirmwareManager", "You can't instantiate FirmwareManager in QML");
+    qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
+    qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
+    qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
@@ -170,7 +180,7 @@ int main(int argc, char *argv[])
 
     const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
     if (supportedPLugins.empty() == false) {
-        qCDebug(logCategoryStrataDevStudio) << "Supportrd plugins:" << supportedPLugins.join(", ");
+        qCDebug(logCategoryStrataDevStudio) << "Supported plugins:" << supportedPLugins.join(", ");
         selector.setExtraSelectors(supportedPLugins);
     }
 
