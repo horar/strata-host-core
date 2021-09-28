@@ -336,7 +336,7 @@ Item {
 
                 SGText {
                     visible: fileOutput.text === ""
-                    text: "Select a .QRC file..."
+                    text: "Select a .qrc file..."
                     color: "#aaa"
                     anchors {
                         margins: 8
