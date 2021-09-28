@@ -223,6 +223,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         commandBody += updateFunctionKwRemoved.join(", ");
         commandBody += ") {\n";
     } else {
+        commandBody += insertTabs(indentLevel + 1) + "signal commandSent()\n\n";
         commandBody += insertTabs(indentLevel + 1) + "function update() {\n";
     }
 
