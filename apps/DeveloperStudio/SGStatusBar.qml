@@ -410,7 +410,7 @@ Rectangle {
             anchors.centerIn: bleIconContainer
 
             radius: height / 2
-            color: Theme.palette.green
+            color: Theme.palette.onsemiOrange
 
             SGIcon {
                 height: bleIconHover.containsMouse ? 26 : 22
