@@ -36,9 +36,10 @@ Item {
         width: parent.width
 
         background: Rectangle {
-            color: control.pressed ? Theme.palette.gray : Theme.palette.darkGray
+            color: control.pressed ? Theme.palette.gray : Theme.palette.onsemiOrange
             implicitHeight: 25
             implicitWidth: control.contentItem.implicitWidth + 20
+            radius: 10
         }
 
         contentItem: SGText {
@@ -48,6 +49,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             fontSizeMultiplier: .9
+            font.bold: true
         }
 
         onClicked: {

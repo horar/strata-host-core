@@ -28,7 +28,7 @@ Item {
 
     Rectangle {
         width: 50
-        color: "#29e335"//Theme.palette.onsemiOrange
+        color: Theme.palette.onsemiHighlight
         opacity: 1
         height: parent.height-1
         visible: model.connected

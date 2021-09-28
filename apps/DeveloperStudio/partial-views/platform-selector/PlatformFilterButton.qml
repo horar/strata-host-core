@@ -16,107 +16,72 @@ import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
-Item {
-    id: root
-    implicitHeight: iconContainer.implicitHeight
-    implicitWidth: Math.min(iconContainer.width + (textColumn.anchors.margins * 2) + textMetrics.wideWidth, flow.width)
 
-    onYChanged: {
-        if (parent === flow) {
-            model.row = Math.ceil(y/(segmentCategoryList.delegateHeight + flow.spacing))
-        }
+AbstractButton {
+    id: filterButtonRoot
+
+    onClicked: {
+        PlatformFilters.setFilterActive(model.filterName, true)
     }
 
-    Rectangle {
-        id: textArea
-        color: Theme.palette.onsemiOrange
-        height: 30
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: iconContainer.horizontalCenter
-            right: parent.right
+    background: Rectangle {
+        radius: 20
+
+        border {
+            width: 1
+            color: Theme.palette.onsemiDark
         }
-        radius: 5
-    }
 
-    Rectangle {
-        id: iconContainer
-        color: "black"
-        radius: implicitHeight/2
-        implicitHeight: segmentCategoryList.delegateHeight
-        implicitWidth: implicitHeight
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
 
-        SGIcon {
-            source: model.iconSource
-            implicitHeight: iconContainer.height * .8
-            implicitWidth: implicitHeight
-            iconColor: "white"
-            anchors {
-                centerIn: parent
+            onClicked: {
+                filterButtonRoot.clicked()
             }
-        }
-    }
 
-    ColumnLayout {
-        id: textColumn
-        anchors {
-            verticalCenter: textArea.verticalCenter
-            left: iconContainer.right
-            right: textArea.right
-            margins: 5
-        }
-        spacing: 1
-
-        SGText {
-            id: mainText
-            text: model.text
-            elide: Text.ElideRight
-            Layout.fillWidth: true
-            font.underline: filterLinkMouse.containsMouse
-            color: "white"
-            fontSizeMultiplier: .9
-
-            MouseArea {
-                id: filterLinkMouse
-                anchors {
-                    fill: parent
-                }
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                onClicked:  {
-                    PlatformFilters.setFilterActive(model.filterName, true)
-                }
-
-                ToolTip {
-                    delay: 1000
-                    visible: parent.containsMouse
-                    text: {
-                        if (model.type === "category") {
-                            return "Filter platforms in this category"
-                        } else {
-                            return "Filter platforms in this Segment"
-                        }
+            ToolTip {
+                delay: 1000
+                visible: parent.containsMouse
+                text: {
+                    if (model.type === "category") {
+                        return "Filter platforms in this category"
+                    } else {
+                        return "Filter platforms in this Segment"
                     }
                 }
             }
+        }
+    }
 
-            TextMetrics {
-                id: textMetrics
-                text: model.text
-                font: mainText.font
+    contentItem: ColumnLayout {
+        spacing: 5
+        width: textMetrics.width + 20
 
-                property real wideWidth: width + 5 // +5 to make sure elide isn't prematurely applied due to rounding
-            }
+        SGText {
+            text: model.text
+            fontSizeMultiplier: 0.9
+            Layout.fillWidth: true
+            color: Theme.palette.onsemiDark
+            elide: Text.ElideRight
+            Layout.alignment: Qt.AlignHCenter
         }
 
         SGText {
             text: model.type
-            elide: Text.ElideRight
+            fontSizeMultiplier: 0.5
+            color: Theme.palette.onsemiDark
+            Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            fontSizeMultiplier: .5
-            font.capitalization: Font.AllUppercase
-            color: "white"
+            font.bold: true
         }
+    }
+
+    TextMetrics {
+        id: textMetrics
+
+        text: model.text
+        font.pixelSize: 13 * 0.9
     }
 }
