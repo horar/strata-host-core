@@ -247,53 +247,72 @@ GridLayout {
         }
     }
 
-    Item {
+    GridLayout {
         id: numsContainer
-        Layout.preferredHeight: root.horizontal ? numsGrid.implicitHeight : fromText.contentHeight + toText.contentHeight
-        Layout.preferredWidth: root.horizontal ? fromText.contentWidth + toText.contentWidth : numsGrid.implicitWidth
+        Layout.preferredHeight: implicitHeight
+        Layout.preferredWidth: implicitWidth
         Layout.fillHeight: true
         Layout.fillWidth: true
         Layout.maximumHeight: root.horizontal ? Layout.preferredHeight : slider.height
         Layout.maximumWidth: root.horizontal ? slider.width : Layout.preferredWidth
         Layout.column: root.horizontal ? 0 : root.mirror ? 0 : 1
         Layout.row: root.horizontal ? root.mirror ? 0 : 1 : 0
-        Layout.rightMargin: !root.horizontal && root.mirror ? 3 * fontSizeMultiplier : 0  // for padding against tickmark when vertical
-        Layout.leftMargin: !root.horizontal && !root.mirror ? 3 * fontSizeMultiplier : 0
+        Layout.rightMargin: (!root.horizontal && root.mirror) ? 3 * fontSizeMultiplier : 0  // for padding against tickmark when vertical
+        Layout.leftMargin: (!root.horizontal && !root.mirror) ? 3 * fontSizeMultiplier : 0
+        rowSpacing: 0
+        columnSpacing: 0
 
-        GridLayout {
-            id: numsGrid
-            anchors.fill: numsContainer
-            rowSpacing: 0
-            columnSpacing: 0
-
-            SGText {
-                id: fromText
-                text: slider.from
-                fontSizeMultiplier: root.fontSizeMultiplier
-                Layout.alignment: root.horizontal ? Qt.AlignLeft : Qt.AlignBottom
-                Layout.column: 0
-                Layout.row: root.horizontal ? 0 : 1
-                Layout.bottomMargin: root.horizontal ? 0 : (contentHeight < slider.handle.height) ? (slider.handle.height - contentHeight) / 2 : 0
-                Layout.leftMargin: root.horizontal ? (contentWidth < slider.handle.width) ? (slider.handle.width - contentWidth) / 2 : 0 : 0
-                Layout.fillWidth: true
-                elide: Text.ElideLeft
-                horizontalAlignment: !root.horizontal && root.mirror ? Text.AlignRight : Text.AlignLeft
-                color: root.textColor
+        SGText {
+            id: fromText
+            text: slider.from
+            fontSizeMultiplier: root.fontSizeMultiplier
+            Layout.alignment: root.horizontal ? Qt.AlignLeft : Qt.AlignBottom
+            Layout.column: 0
+            Layout.row: root.horizontal ? 0 : 1
+            Layout.fillWidth: true
+            elide: Text.ElideLeft
+            horizontalAlignment: (!root.horizontal && root.mirror) ? Text.AlignRight : Text.AlignLeft
+            color: root.textColor
+            Layout.bottomMargin: {
+                if ((contentHeight < slider.handle.height) && root.horizontal === false) {
+                    return (slider.handle.height - contentHeight) / 2
+                } else {
+                    return 0
+                }
             }
+            Layout.leftMargin: {
+                if (root.horizontal && (contentWidth < slider.handle.width)) {
+                    return  (slider.handle.width - contentWidth) / 2
+                } else {
+                    return 0
+                }
+            }
+        }
 
-            SGText {
-                id: toText
-                text: slider.to
-                fontSizeMultiplier: root.fontSizeMultiplier
-                Layout.alignment: root.horizontal ? Qt.AlignRight : Qt.AlignTop
-                Layout.column: root.horizontal ? 1 : 0
-                Layout.row: 0
-                Layout.topMargin: root.horizontal ? 0 : (contentHeight < slider.handle.height) ? (slider.handle.height - contentHeight) / 2 : 0
-                Layout.rightMargin: root.horizontal ? (contentWidth < slider.handle.width) ? (slider.handle.width - contentWidth) / 2 : 0 : 0
-                Layout.fillWidth: true
-                elide: Text.ElideLeft
-                horizontalAlignment: root.horizontal || !root.horizontal && root.mirror ? Text.AlignRight : Text.AlignLeft
-                color: root.textColor
+        SGText {
+            id: toText
+            text: slider.to
+            fontSizeMultiplier: root.fontSizeMultiplier
+            Layout.alignment: root.horizontal ? Qt.AlignRight : Qt.AlignTop
+            Layout.column: root.horizontal ? 1 : 0
+            Layout.row: 0
+            Layout.fillWidth: true
+            elide: Text.ElideLeft
+            horizontalAlignment: (root.horizontal || root.mirror) ? Text.AlignRight : Text.AlignLeft
+            color: root.textColor
+            Layout.topMargin: {
+                if ((contentHeight < slider.handle.height) && root.horizontal === false) {
+                    return (slider.handle.height - contentHeight) / 2
+                } else {
+                    return 0
+                }
+            }
+            Layout.rightMargin: {
+                if (root.horizontal && (contentWidth < slider.handle.width)) {
+                    return  (slider.handle.width - contentWidth) / 2
+                } else {
+                    return 0
+                }
             }
         }
     }
