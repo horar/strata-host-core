@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
@@ -104,7 +112,7 @@ Item {
                 delegate: Item {
                     id: tabDelegate
                     width: tabBar.tabWidth
-                    height: statusLight.height + 10
+                    height: tabTextColumn.height + 10
 
                     property bool isFirst: index === 0
                     property bool isLast: index === tabRepeater.count - 1
@@ -160,36 +168,36 @@ Item {
                         }
                     }
 
-                    SGWidgets.SGText {
-                        id: buttonText
+                    Column {
+                        id: tabTextColumn
                         anchors {
                             left: statusLight.right
                             leftMargin: 2
-                            top: statusLight.top
                             right: buttonRow.visible ? buttonRow.left : parent.right
                             rightMargin: 2
+                            verticalCenter: parent.verticalCenter
+                        }
+                        spacing: 1
+
+                        SGWidgets.SGText {
+                            id: buttonText
+                            width: parent.width
+                            text: model.platform.verboseName
+                            font: dummyText.font
+                            fontSizeMultiplier: dummyText.fontSizeMultiplier
+                            color: "black"
+                            elide: Text.ElideRight
                         }
 
-                        text: model.platform.verboseName
-                        font: dummyText.font
-                        fontSizeMultiplier: dummyText.fontSizeMultiplier
-                        color: "black"
-                        elide: Text.ElideRight
-                    }
-
-                    SGWidgets.SGText {
-                        id: deviceNameText
-                        anchors {
-                            left: buttonText.left
-                            top: buttonText.bottom
-                            right: buttonText.right
+                        SGWidgets.SGText {
+                            id: deviceNameText
+                            width: parent.width
+                            text: model.platform.deviceName
+                            fontSizeMultiplier: 0.9
+                            color: "black"
+                            opacity: 0.6
+                            elide: Text.ElideRight
                         }
-
-                        text: model.platform.deviceName
-                        fontSizeMultiplier: 0.9
-                        color: "black"
-                        opacity: 0.6
-                        elide: Text.ElideRight
                     }
 
                     Row {
@@ -279,6 +287,7 @@ Item {
                 scrollbackModel: model.platform.scrollbackModel
                 commandHistoryModel: model.platform.commandHistoryModel
                 filterSuggestionModel: model.platform.filterSuggestionModel
+                tabBorderColor: tabBar.tabBorderColor
             }
         }
     }

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick.Controls 2.12
 import tech.strata.theme 1.0
 import "../"
@@ -7,7 +15,7 @@ SGConfirmationPopup {
     padding: 0
     closePolicy: Popup.NoAutoClose
     popupText: "Your changes will be lost if you choose to not save them."
-    acceptButtonColor: Theme.palette.green
+    acceptButtonColor: Theme.palette.onsemiOrange
     acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
     acceptButtonText: "Save"
     cancelButtonText: "Cancel"

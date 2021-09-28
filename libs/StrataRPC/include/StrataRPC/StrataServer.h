@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <QObject>
@@ -82,7 +90,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                      const ResponseType &responseType);
+                      const ResponseType responseType);
 
     /**
      * Slot to send a message to a client. This overload is used to send unsolicited notifications
@@ -93,7 +101,7 @@ public slots:
      * @param [in] responseType The type of the server message.
      */
     void notifyClient(const QByteArray &clientId, const QString &handlerName,
-                      const QJsonObject &jsonObject, const ResponseType &responseType);
+                      const QJsonObject &jsonObject, const ResponseType responseType);
 
     /**
      * Slot to notify all connected clients.
@@ -183,7 +191,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     const ResponseType &responseType);
+                                                     const ResponseType responseType);
 
     /**
      * Build server message to be sent to clients using API v1.
@@ -196,7 +204,7 @@ private:
      */
     [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage,
                                                      const QJsonObject &payload,
-                                                     const ResponseType &responseType);
+                                                     const ResponseType responseType);
 
     /**
      * StrataServer handler for client registration.

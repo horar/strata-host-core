@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SDSModel.h"
 
 #include "DocumentManager.h"
@@ -7,11 +15,11 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
-#include "ProgramControllerManager.h"
 #include "BleDeviceModel.h"
-#include "FirmwareManager.h"
+#include "FirmwareUpdater.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
 
 #include <QThread>
 
@@ -27,17 +35,17 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
-      documentManager_(new DocumentManager(coreInterface_, this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), this)),
+      coreInterface_(new CoreInterface(strataClient_, this)),
+      documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      programControllerManager_(new ProgramControllerManager(coreInterface_, this)),
-      firmwareManager_(new FirmwareManager(coreInterface_, this)),
+      firmwareUpdater_(new FirmwareUpdater(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
-      bleDeviceModel_(new BleDeviceModel(coreInterface_, this)),
+      bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -56,9 +64,9 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
-    delete programControllerManager_;
-    delete firmwareManager_;
+    delete firmwareUpdater_;
     delete urlConfig_;
+    delete strataClient_;
 }
 
 bool SDSModel::startHcs()
@@ -75,7 +83,7 @@ bool SDSModel::startHcs()
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
-        hcsConfigPath = QDir::cleanPath(QString("%1/ON Semiconductor/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
+        hcsConfigPath = QDir::cleanPath(QString("%1/onsemi/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
         qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath;
     }else{
         qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
@@ -191,14 +199,9 @@ SGNewControlView *SDSModel::newControlView() const
     return newControlView_;
 }
 
-ProgramControllerManager *SDSModel::programControllerManager() const
+FirmwareUpdater *SDSModel::firmwareUpdater() const
 {
-    return programControllerManager_;
-}
-
-FirmwareManager *SDSModel::firmwareManager() const
-{
-    return firmwareManager_;
+    return firmwareUpdater_;
 }
 
 PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
@@ -224,6 +227,11 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
 BleDeviceModel *SDSModel::bleDeviceModel() const
 {
     return bleDeviceModel_;
+}
+
+strata::strataRPC::StrataClient *SDSModel::strataClient() const
+{
+    return strataClient_;
 }
 
 void SDSModel::shutdownService()
@@ -270,6 +278,13 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     }
 
     hcsConnected_ = hcsConnected;
+
+    if (true == hcsConnected_) {
+        strataClient_->connect();
+    } else {
+        strataClient_->disconnect();
+    }
+
     emit hcsConnectedChanged();
 }
 

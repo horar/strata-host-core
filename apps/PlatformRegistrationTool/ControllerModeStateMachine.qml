@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQml 2.12
 import QtQml.StateMachine 1.12 as DSM
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -39,7 +47,11 @@ BaseStateMachine {
         } else if (stateLoopFailed.active) {
             t = internalSubtext
             t += "\n\n"
-            t += "Unplug controller and press Continue"
+            if (prtModel.deviceCount === 0) {
+                t += "Press Continue"
+            } else {
+                t += "Unplug controller and press Continue"
+            }
         } else if (stateError.active) {
             t = internalSubtext
         }
@@ -54,6 +66,7 @@ BaseStateMachine {
     property QtObject jLinkConnector
     property QtObject breakButton
     property QtObject continueButton
+    property QtObject taskbarButton
 
     property string jlinkExePath: ""
     property var bootloaderData: ({})
@@ -78,7 +91,9 @@ BaseStateMachine {
         id: stateValidateInput
 
         onEntered: {
-             prtModel.clearBinaries();
+            prtModel.clearBinaries();
+            taskbarButton.progress.resume()
+            taskbarButton.progress.show()
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
@@ -189,6 +204,9 @@ BaseStateMachine {
             id: stateCheckDeviceCount
             onEntered: {
                 stateMachine.statusText = "Waiting for controller"
+                taskbarButton.progress.resume()
+                taskbarButton.progress.pause()
+                taskbarButton.progress.show()
 
                 console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
@@ -305,6 +323,7 @@ BaseStateMachine {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
                 stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
+                taskbarButton.progress.resume()
 
                 console.debug(Logger.prtCategory, "bootloader on controller is about to be programmed")
 
@@ -414,7 +433,7 @@ BaseStateMachine {
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
                     } else if (statusString) {
-                        stateMachine.internalSubtext = "Error: " + errorString
+                        stateMachine.internalSubtext = "Error: " + statusString
                     }
 
                     console.error(Logger.prtCategory, "controller registration failed:", statusString)
@@ -428,6 +447,7 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Controller Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
@@ -441,12 +461,13 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Controller Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
             targetState: stateControllerCheck
             signal: continueButton.clicked
-            guard: prtModel.deviceCount !== 1
+            guard: prtModel.deviceCount ===0
         }
     }
 
@@ -456,6 +477,8 @@ BaseStateMachine {
         onEntered: {
             stateMachine.statusText = "Controller Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
+            taskbarButton.progress.hide()
+            taskbarButton.progress.reset()
         }
 
         DSM.SignalTransition {
@@ -473,6 +496,8 @@ BaseStateMachine {
         id: exitState
 
         onEntered: {
+            taskbarButton.progress.hide()
+            taskbarButton.progress.resume()
             stateMachine.exitWizardRequested()
         }
     }

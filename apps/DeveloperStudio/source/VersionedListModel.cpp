@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "VersionedListModel.h"
 #include "logging/LoggingQtCategories.h"
 #include "SGVersionUtils.h"
@@ -217,6 +225,27 @@ int VersionedListModel::getLatestVersionIndex() {
 
     int latestVersionIndex = SGVersionUtils::getGreatestVersion(versions);
 
+    return latestVersionIndex;
+}
+
+int VersionedListModel::getLatestVersionIndex(QString controllerClassId) {
+    if (data_.size() == 0) {
+        return -1;
+    }
+    int latestVersionIndex = -1;
+    bool error = false;
+    for (int i = 0; i < data_.size(); i++) {
+        VersionedItem *versionItem = data_[i];
+        if (versionItem->controller_class_id != controllerClassId) {
+            continue;
+        }
+        if (latestVersionIndex < 0 || SGVersionUtils::greaterThan(versionItem->version, data_[latestVersionIndex]->version, &error)) {
+            latestVersionIndex = i;
+        }
+        if (error) {
+            return -1;
+        }
+    }
     return latestVersionIndex;
 }
 

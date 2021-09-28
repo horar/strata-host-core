@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
@@ -52,12 +60,14 @@ SGWidgets.SGMainWindow {
         mainWindow.height = defaultHeight
     }
 
-    QtLabsPlatform.Menu {
-        QtLabsPlatform.MenuItem {
-            text: qsTr("&About")
-            role: QtLabsPlatform.MenuItem.AboutRole
-            onTriggered:  {
-                showAboutWindow()
+    QtLabsPlatform.MenuBar {
+        QtLabsPlatform.Menu {
+            visible: Qt.platform.os === "osx" // only for MacOS which will place it in its own About menu
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&About")
+                onTriggered:  {
+                    showAboutWindow()
+                }
             }
         }
     }
@@ -102,7 +112,7 @@ SGWidgets.SGMainWindow {
             PlatformSelection.initialize(sdsModel)
         }
         if (!CoreUpdate.isInitialized) {
-            CoreUpdate.initialize(sdsModel.coreInterface, updateLoader)
+            CoreUpdate.initialize(sdsModel, updateLoader)
         }
         initialized()
     }
@@ -125,7 +135,7 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.coreInterface.unregisterClient();
+                                           sdsModel.strataClient.sendRequest("unregister", {});
                                            if (SessionUtils.settings.rememberMe === false) {
                                                SessionUtils.settings.clear()
                                            }
@@ -174,18 +184,24 @@ SGWidgets.SGMainWindow {
     }
 
     Connections {
-        target: sdsModel.programControllerManager
+        target: sdsModel.firmwareUpdater
 
-        onJobStatusChanged: {
-            if (status === "running") {
-                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0)
-            } else if (status === "failure") {
-                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
-            }
+        onJobStarted: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", true)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0.0)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", "")
         }
 
         onJobProgressUpdate: {
             PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", progress)
+        }
+
+        onJobFinished: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", false)
+        }
+
+        onJobError: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
         }
     }
 
@@ -293,17 +309,17 @@ SGWidgets.SGMainWindow {
         target: sdsModel.coreInterface
 
         onPlatformListChanged: {
-            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", platformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.generatePlatformSelectorModel(list)
+                PlatformSelection.generatePlatformSelectorModel(platformList)
             }
         }
 
         onConnectedPlatformListChanged: {
-            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", connectedPlatformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
-                PlatformSelection.parseConnectedPlatforms(list)
+                PlatformSelection.parseConnectedPlatforms(connectedPlatformList)
             }
         }
 

@@ -1,16 +1,27 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "BleDeviceModel.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QTimer>
 #include <chrono>
 #include <QOperatingSystemVersion>
+#include <QJsonArray>
 
 using namespace std::literals::chrono_literals;
 
 BleDeviceModel::BleDeviceModel(
+        strata::strataRPC::StrataClient *strataClient,
         CoreInterface *coreInterface,
         QObject *parent)
     : QAbstractListModel(parent),
+      strataClient_(strataClient),
       coreInterface_(coreInterface)
 {
     setModelRoles();
@@ -72,16 +83,9 @@ bool BleDeviceModel::bleSupported() const
 
 void BleDeviceModel::startScan()
 {
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "bluetooth_scan");
-    cmdMessageObject.insert("payload", QJsonObject());
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
     setLastScanError("");
     setInScanMode(true);
-    coreInterface_->sendCommand(strJson);
+    strataClient_->sendRequest("bluetooth_scan", QJsonObject());
 }
 
 void BleDeviceModel::tryConnect(int row)
@@ -102,18 +106,12 @@ void BleDeviceModel::tryConnect(int row)
 
     setPropertyAt(row, true, ConnectionInProgressRole);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "connect_device");
+    QJsonObject payload
+    {
+        {"device_id",  deviceId}
+    };
 
-    QJsonObject payload;
-    payload.insert("device_id", deviceId);
-
-    cmdMessageObject.insert("payload", payload);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    coreInterface_->sendCommand(strJson);
+    strataClient_->sendRequest("connect_device", payload);
 }
 
 void BleDeviceModel::tryDisconnect(int row)
@@ -134,18 +132,12 @@ void BleDeviceModel::tryDisconnect(int row)
 
     setPropertyAt(row, true, ConnectionInProgressRole);
 
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "disconnect_device");
+    QJsonObject payload
+    {
+        {"device_id",  deviceId}
+    };
 
-    QJsonObject payload;
-    payload.insert("device_id", deviceId);
-
-    cmdMessageObject.insert("payload", payload);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-
-    coreInterface_->sendCommand(strJson);
+    strataClient_->sendRequest("disconnect_device", payload);
 }
 
 QVariantMap BleDeviceModel::get(int row)
@@ -176,7 +168,7 @@ QHash<int, QByteArray> BleDeviceModel::roleNames() const
     return roleByEnumHash_;
 }
 
-void BleDeviceModel::bluetoothScanReplyHandler(QJsonObject payload)
+void BleDeviceModel::bluetoothScanReplyHandler(const QJsonObject &payload)
 {
     setInScanMode(false);
 
@@ -197,7 +189,7 @@ void BleDeviceModel::bluetoothScanReplyHandler(QJsonObject payload)
     populateModel(payload);
 }
 
-void BleDeviceModel::connectReplyHandler(QJsonObject payload)
+void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
 {
     QString deviceId = payload.value("device_id").toString();
 
@@ -224,7 +216,7 @@ void BleDeviceModel::connectReplyHandler(QJsonObject payload)
     emit tryConnectFinished(errorString);
 }
 
-void BleDeviceModel::disconnectReplyHandler(QJsonObject payload)
+void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
 {
     QString deviceId = payload.value("device_id").toString();
 
@@ -250,7 +242,7 @@ void BleDeviceModel::disconnectReplyHandler(QJsonObject payload)
     emit tryDisconnectFinished(errorString);
 }
 
-void BleDeviceModel::updateDeviceConnection(QJsonObject payload)
+void BleDeviceModel::updateDeviceConnection(const QJsonObject &payload)
 {
     QJsonArray list = payload.value("list").toArray();
     connectedDeviceIds_.clear();

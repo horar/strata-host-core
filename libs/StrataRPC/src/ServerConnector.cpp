@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "ServerConnector.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -48,7 +56,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
     std::string message;
     while (true == connector_->read(message)) {
         qCDebug(logCategoryStrataServerConnector).nospace().noquote()
-            << "message received. Client ID: 0x"
+            << "message received. ClientID: 0x"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
             << QByteArray::fromStdString(message) << "'";
         emit messageReceived(QByteArray::fromStdString(connector_->getDealerID()),
@@ -70,7 +78,7 @@ void ServerConnector::readMessages()
 bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message)
 {
     qCDebug(logCategoryStrataServerConnector).nospace().noquote()
-        << "Sending message. Client ID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
+        << "Sending message. ClientID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
     if (nullptr == connector_) {
         QString errorMessage(
@@ -86,7 +94,8 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
 
     if (false == connector_->send(message.toStdString())) {
         QString errorMessage(QStringLiteral("Failed to send message to client."));
-        qCCritical(logCategoryStrataClientConnector) << errorMessage << "Client id:" << clientId;
+        qCCritical(logCategoryStrataClientConnector).noquote().nospace()
+            << errorMessage << " ClientID 0x:" << clientId.toHex();
         emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
         return false;
     }

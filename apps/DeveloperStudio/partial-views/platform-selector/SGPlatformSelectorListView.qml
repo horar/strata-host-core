@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
@@ -354,7 +362,7 @@ Item {
                             right: clearIcon.left
                             rightMargin: 10
                         }
-                        color: Theme.palette.green
+                        color: Theme.palette.onsemiOrange
                         font.bold: true
                         selectByMouse: true
                         clip: true
@@ -587,7 +595,7 @@ Item {
                     // intended to demonstrate that we have many categories
                     SGWidgets09.SGToolTipPopup {
                         id: categoryHighlightPopup
-                        color: Qt.lighter(Theme.palette.green, 1.15)
+                        color: Qt.lighter(Theme.palette.onsemiOrange, 1.15)
                         anchors {
                             bottom: parent.top
                             horizontalCenter: parent.horizontalCenter

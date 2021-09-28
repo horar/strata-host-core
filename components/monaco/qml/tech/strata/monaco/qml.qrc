@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/tech/strata/monaco">
         <file>minified/editor.html</file>
-        <file>minified/min/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf</file>
+        <file>minified/min/vs/base/browser/ui/codicons/codicon/codicon.ttf</file>
         <file>minified/min/vs/base/worker/workerMain.js</file>
         <file>minified/min/vs/basic-languages/cpp/cpp.js</file>
         <file>minified/min/vs/basic-languages/css/css.js</file>
@@ -46,5 +46,10 @@
         <file>minified/monaco.d.ts</file>
         <file>minified/qtQuick.js</file>
         <file>minified/qtQuickTypes.js</file>
+        <file>minified/utils/helper.js</file>
+        <file>minified/utils/search.js</file>
+        <file>minified/utils/suggestions.js</file>
+        <file>minified/model/qtItemModel.js</file>
+        <file>minified/model/qtQuickModel.js</file>
     </qresource>
 </RCC>

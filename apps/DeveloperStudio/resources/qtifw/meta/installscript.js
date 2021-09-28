@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 function Component() {}
 
 Component.prototype.beginInstallation = function()
@@ -35,7 +43,7 @@ Component.prototype.createOperations = function()
             console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
             console.log(e);
         }
-        var onsemiConfigFolder = programDataShortcut + "\\ON Semiconductor";
+        var onsemiConfigFolder = programDataShortcut + "\\onsemi";
         var sdsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio";
         component.addOperation("Mkdir", sdsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted

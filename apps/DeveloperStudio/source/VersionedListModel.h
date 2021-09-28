@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #ifndef VERSIONED_LIST_MODEL_H
 #define VERSIONED_LIST_MODEL_H
 
@@ -58,6 +66,7 @@ public:
     Q_INVOKABLE QString filepath(int index);
     Q_INVOKABLE bool installed(int index);
     Q_INVOKABLE int getLatestVersionIndex();
+    Q_INVOKABLE int getLatestVersionIndex(QString controllerClassId);
     Q_INVOKABLE int getInstalledVersionIndex();
 
     enum {
