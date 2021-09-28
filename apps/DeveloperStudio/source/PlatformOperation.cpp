@@ -37,9 +37,16 @@ bool PlatformOperation::startPlatformApplication(QString deviceId)
         return false;
     }
 
-    //connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &PlatformOperation::replyHandler);
-    //connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &PlatformOperation::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &PlatformOperation::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &PlatformOperation::replyHandler);
 
     return true;
 }
 
+void PlatformOperation::replyHandler(QJsonObject payload)
+{
+    const QString errorString = payload.value(QStringLiteral("error_string")).toString();
+    if (errorString.isEmpty() == false) {
+        qCWarning(logCategoryStrataDevStudio).noquote() << "Platform operation has failed:" << errorString;
+    }
+}

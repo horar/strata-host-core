@@ -132,8 +132,7 @@ private slots:
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
-    void platformConnected(const QByteArray& deviceId);
-    void platformDisconnected(const QByteArray& deviceId);
+    void platformStateChanged(const QByteArray& deviceId);
 
 private:
     enum class hcsNotificationType {

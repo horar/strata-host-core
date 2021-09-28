@@ -10,6 +10,8 @@
 #pragma once
 
 #include <QObject>
+#include <QString>
+#include <QJsonObject>
 
 namespace strata::strataRPC {
     class StrataClient;
@@ -25,6 +27,9 @@ public:
     ~PlatformOperation();
 
     Q_INVOKABLE bool startPlatformApplication(QString deviceId);
+
+private slots:
+    void replyHandler(QJsonObject payload);
 
 private:
     strata::strataRPC::StrataClient *strataClient_;
