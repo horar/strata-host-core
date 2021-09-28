@@ -680,7 +680,13 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         removeRows(row, 1, parent);
     }
 
+    removeDeletedFilesFromQrc();
     return success;
+}
+
+bool SGQrcTreeModel::createNewFolder(const QString &path)
+{
+    return QDir().mkdir(path);
 }
 
 void SGQrcTreeModel::stopWatchingPath(const QString &path)

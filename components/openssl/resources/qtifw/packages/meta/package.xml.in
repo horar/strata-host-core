@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>OpenSSL libraries required to run applications using SSL communication</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_OPTIONAL@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>

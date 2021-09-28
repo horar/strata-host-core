@@ -77,7 +77,7 @@ Rectangle {
                 Layout.fillWidth: true
                 selectByMouse: true
                 persistentSelection: true // must deselect manually
-                placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
+                placeholderText: commandColumn.isNoti ? "Notification name" : "Command name"
 
                 validator: RegExpValidator {
                     regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]+/
