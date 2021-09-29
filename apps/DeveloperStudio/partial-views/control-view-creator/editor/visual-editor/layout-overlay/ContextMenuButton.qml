@@ -57,16 +57,12 @@ Rectangle {
         onEntered: {
             if (chevron.visible) {
                 // if popup will spawn past edge of window, place it on the opposite side of the click
-                if (((objectAlignButton.height + mouse.y + content.height) + layoutOverlayRoot.y) > layoutOverlayRoot.parent.height) {
-                    content.y = objectAlignButton.y - content.height
+                if((content.width + root.width + mouse.x + layoutOverlayRoot.x) > (layoutOverlayRoot.parent.width - content.width)) {
+                    content.x = root.x - content.width
                 } else {
-                    content.y = objectAlignButton.height
+                    content.x = root.width
                 }
-                if (((objectAlignButton.width + mouse.x + content.width) + layoutOverlayRoot.x) > layoutOverlayRoot.parent.width) {
-                    content.x = objectAlignButton.x - content.width
-                } else {
-                    content.x = objectAlignButton.width
-                }
+
                 content.open()
             }
         }
@@ -83,8 +79,7 @@ Rectangle {
         id: content
         active: chevron.visible
         visible: false
-        anchors.left: root.right
-        anchors.top: root.top
+        anchors.top: parent.top
 
         signal open()
         signal close()
