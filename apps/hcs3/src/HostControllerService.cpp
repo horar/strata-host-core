@@ -787,10 +787,9 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
     strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type), payload,
                                 strataRPC::ResponseType::Notification);
 
-    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
-        progress.status == FirmwareUpdateController::UpdateStatus::Success) {
-        // If firmware was updated broadcast new platforms list
-        // to indicate the firmware version has changed.
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished) {
+        // If update process finished broadcast new platforms list to indicate
+        // the firmware version has changed (or platform is in bootloader mode)
         strataServer_->notifyAllClients(
             hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
             platformController_.createPlatformsList());
