@@ -231,6 +231,13 @@ public:
     Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
     /**
+     * @brief createNewFolder Creates new folder in specified path. Uses QDir::mkdir
+     * @param path Path to new folder
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool createNewFolder(const QString &path);
+
+    /**
      * @brief stopWatchingPath Removes the `path` from internal QFileSystemWatcher
      * @param path The path to the file or directory
      */

@@ -129,7 +129,6 @@ FocusScope {
                     spacing: 8
                     clip: true
                     focus: true
-                    snapMode: ListView.SnapToItem
                     boundsBehavior: Flickable.StopAtBounds
                     highlightMoveDuration: 0
                     highlightMoveVelocity: -1
@@ -157,7 +156,7 @@ FocusScope {
                         enabled: disableAllFiltering === false
                         onActiveFocusChanged: {
                             if (delegate.activeFocus) {
-                                conditionView.currentIndex =  index
+                                conditionView.currentIndex = index
                             }
                         }
 
@@ -259,9 +258,14 @@ FocusScope {
                                 suggestionListModel: sortFilterModel
                                 suggestionModelTextRole: "suggestion"
                                 suggestionFilterPattern: filterStringTextField.text
+                                flickableContentY: conditionView.contentY
 
                                 onWidthChanged: {
                                     delegate.calculateThirdColumnCenter()
+                                }
+
+                                onSuggestionButtonClicked: {
+                                    positionViewAtCurrentIndex()
                                 }
 
                                 onSuggestionDelegateSelected: {
@@ -277,12 +281,14 @@ FocusScope {
                                 Keys.priority: Keys.BeforeItem
 
                                 Keys.onPressed: {
+                                    positionViewAtCurrentIndex()
                                     if (suggestionPopup.opened === false && filterStringTextField.activeFocus) {
                                         suggestionPopup.open()
                                     }
                                 }
 
                                 onTextChanged: {
+                                    positionViewAtCurrentIndex()
                                     filterConditionModel.setProperty(index, "filter_string", text)
                                 }
 
@@ -400,6 +406,10 @@ FocusScope {
 
     function closeView() {
         StackView.view.pop();
+    }
+
+    function positionViewAtCurrentIndex() {
+        conditionView.positionViewAtIndex(conditionView.currentIndex, ListView.Contain)
     }
 
     function getFilterData() {

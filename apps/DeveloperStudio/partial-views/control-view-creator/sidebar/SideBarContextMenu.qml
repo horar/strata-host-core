@@ -27,4 +27,12 @@ Menu {
             sideBarContextMenu.dismiss()
         }
     }
+
+    MenuItem {
+        text: "Create New Folder"
+        onTriggered: {
+            createFolderPopup.open()
+            sideBarContextMenu.dismiss()
+        }
+    }
 }
