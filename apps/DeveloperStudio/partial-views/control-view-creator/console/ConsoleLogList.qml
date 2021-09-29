@@ -94,8 +94,15 @@ ListView {
                 } else {
                     consoleLogs.indexDragStarted = consoleLogs.model.count
                 }
-                contextMenu.copyEnabled = true
                 consoleLogs.forceActiveFocus()
+            }
+        }
+
+        onReleased: {
+            var clickedIndex = consoleLogs.indexAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
+            var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(clickedIndex))
+            if (listElement.selection) {
+                contextMenu.copyEnabled = true
             }
         }
 
