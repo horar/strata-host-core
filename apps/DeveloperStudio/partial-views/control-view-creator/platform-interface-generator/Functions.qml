@@ -200,7 +200,7 @@ QtObject {
     }
 
     /**
-      * loopOverDuplicates will only check the indeces that are duplicates; optimized checks
+      * loopOverDuplicates will only check the indices that are duplicates; optimized checks
     **/
     function loopOverDuplicates(payload, index) {
         for (let i = 0; i < payload.count; i++) {
@@ -377,7 +377,7 @@ QtObject {
     function generateObjectModel(object, parentListModel) {
         for (let i = 0; i < object.length; i++) {
             const type = object[i].type
-            let obj = {"name": object[i].name, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""}
+            let obj = {"name": object[i].name, "type": type, "indexSelected": -1, "valid": true, "keyword": false, "duplicate": false, "array": [], "object": [], "parent": parentListModel, "value": ""}
 
             if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
                     type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
