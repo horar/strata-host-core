@@ -1,6 +1,6 @@
 #include "SGCSVUtils.h"
 #include "SGUtilsCpp.h"
-#include "QDebug"
+#include "logging/LoggingQtCategories.h"
 /**
  * This class is a Utils class that will allow users to export CSV files and import CSV File content.
 */
@@ -29,6 +29,7 @@ QVariantList SGCSVUtils::importFromFile(QString folderPath)
     SGUtilsCpp utils;
     QString path = utils.urlToLocalFile(folderPath);
     if (!utils.exists(path)) {
+        qCInfo(logCategoryCsvUtils) << "This file does not exist";
         return QVariantList();
     }
     data_.clear();
@@ -60,6 +61,11 @@ void SGCSVUtils::setData(QVariantList data)
 
 void SGCSVUtils::writeToFile()
 {
+    if (outputPath_.length() == 0 || fileName_.length() == 0) {
+        qCInfo(logCategoryCsvUtils) << "To write to file, the output path and the file name cannot be empty";
+        return;
+    }
+
     SGUtilsCpp utils;
     QString filePath = utils.joinFilePath(outputPath_, fileName_);
     QString path = utils.urlToLocalFile(filePath);
