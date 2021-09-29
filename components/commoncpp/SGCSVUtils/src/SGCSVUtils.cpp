@@ -62,7 +62,7 @@ void SGCSVUtils::setData(QVariantList data)
 void SGCSVUtils::writeToFile()
 {
     if (outputPath_.length() == 0 || fileName_.length() == 0) {
-        qCInfo(logCategoryCsvUtils) << "To write to file, the output path and the file name cannot be empty";
+        qCInfo(logCategoryCsvUtils) << "To write to file, the output path and the file name cannot be empty.";
         return;
     }
 

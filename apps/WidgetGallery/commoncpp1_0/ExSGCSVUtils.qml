@@ -123,15 +123,19 @@ ColumnLayout {
     FileDialog {
         id: fileDialog
         onAccepted: {
-            csvUtil.outputPath = fileDialog.fileUrl
             if (!selectFolder) {
                 textEdit.text = ""
-                let data = csvUtil.importFromFile(csvUtil.outputPath);
+                let data = csvUtil.importFromFile(fileDialog.fileUrl);
                 console.info(data);
                 for (let i = 0; i < data.length; i++) {
                     textEdit.text += JSON.stringify(data[i]) + "\n"
                 }
+                fileDialog.selectMultiple = false
+                fileDialog.selectFolder = true
+            } else {
+                csvUtil.outputPath = fileDialog.fileUrl
             }
+
             close()
         }
     }
