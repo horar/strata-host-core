@@ -23,9 +23,9 @@ PlatformOperation::PlatformOperation(strata::strataRPC::StrataClient *strataClie
 PlatformOperation::~PlatformOperation()
 { }
 
-bool PlatformOperation::startPlatformApplication(QString deviceId)
+bool PlatformOperation::platformStartApplication(QString deviceId)
 {
-    const QString command("start_platform_application");
+    const QString command("platform_start_application");
     const QJsonObject payload {
         { "device_id", deviceId }
     };

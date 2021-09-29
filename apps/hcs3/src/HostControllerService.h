@@ -165,7 +165,7 @@ private:
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
     void processCmdProgramController(const strata::strataRPC::Message &message);
     void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
-    void processCmdStartPlatformApplication(const strata::strataRPC::Message &message);
+    void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);
 

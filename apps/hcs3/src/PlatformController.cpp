@@ -219,7 +219,7 @@ QJsonObject PlatformController::createPlatformsList() {
     return QJsonObject{{JSON_LIST, arr}};
 }
 
-bool PlatformController::startPlatformApplication(const QByteArray& deviceId)
+bool PlatformController::platformStartApplication(const QByteArray& deviceId)
 {
     auto it = platforms_.constFind(deviceId);
     if (it == platforms_.constEnd()) {

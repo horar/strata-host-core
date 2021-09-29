@@ -26,7 +26,7 @@ public:
     PlatformOperation(strata::strataRPC::StrataClient *strataClient, QObject *parent = nullptr);
     ~PlatformOperation();
 
-    Q_INVOKABLE bool startPlatformApplication(QString deviceId);
+    Q_INVOKABLE bool platformStartApplication(QString deviceId);
 
 private slots:
     void replyHandler(QJsonObject payload);

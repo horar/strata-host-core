@@ -81,7 +81,7 @@ bool HostControllerService::initialize(const QString &config)
         "program_controller", std::bind(&HostControllerService::processCmdProgramController, this,
                                         std::placeholders::_1));
     strataServer_->registerHandler(
-        "start_platform_application", std::bind(&HostControllerService::processCmdStartPlatformApplication, this,
+        "platform_start_application", std::bind(&HostControllerService::processCmdPlatformStartApplication, this,
                                         std::placeholders::_1));
 
     // connect signals
@@ -864,7 +864,7 @@ void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &
     strataServer_->notifyClient(message, QJsonObject{{"message", "Update check requested."}}, strataRPC::ResponseType::Response);
 }
 
-void HostControllerService::processCmdStartPlatformApplication(const strataRPC::Message &message)
+void HostControllerService::processCmdPlatformStartApplication(const strataRPC::Message &message)
 {
     QString errorString;
     bool ok = true;
@@ -875,7 +875,7 @@ void HostControllerService::processCmdStartPlatformApplication(const strataRPC::
         ok = false;
     }
 
-    if (ok && (platformController_.startPlatformApplication(deviceId) == false)) {
+    if (ok && (platformController_.platformStartApplication(deviceId) == false)) {
         errorString = QStringLiteral("Attempt to start platform application was rejected.");
         ok = false;
     }

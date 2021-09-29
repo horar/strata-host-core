@@ -71,7 +71,7 @@ public:
      */
     QJsonObject createPlatformsList();
 
-    bool startPlatformApplication(const QByteArray& deviceId);
+    bool platformStartApplication(const QByteArray& deviceId);
 
 signals:
     void platformConnected(QByteArray deviceId);

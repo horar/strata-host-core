@@ -358,7 +358,7 @@ function addConnectedPlatform(platform) {
                             } else {
                                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform in bootloader mode connected.");
                                 insertBootloaderListing(platform, class_id_string)
-                                sdsModel.platformOperation.startPlatformApplication(platform.device_id)
+                                sdsModel.platformOperation.platformStartApplication(platform.device_id)
                             }
                         } else {
                             connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
@@ -403,7 +403,7 @@ function addConnectedPlatform(platform) {
                         } else {
                             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform in bootloader mode connected.");
                             insertBootloaderListing(platform, class_id_string)
-                            sdsModel.platformOperation.startPlatformApplication(platform.device_id)
+                            sdsModel.platformOperation.platformStartApplication(platform.device_id)
                         }
                     } else {
                         connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
