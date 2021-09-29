@@ -52,7 +52,7 @@ FocusScope {
             page: "ExDialogs.qml"
         }
 
-		ListElement {
+        ListElement {
             name: "SGGraph"
             page: "ExSGGraph.qml"
         }

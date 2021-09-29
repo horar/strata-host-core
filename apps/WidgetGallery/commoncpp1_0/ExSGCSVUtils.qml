@@ -72,10 +72,8 @@ ColumnLayout {
 
                 onClicked: {
                     csvUtil.clear()
-                    textEdit.text = ""
                     csvUtil.appendRow(["dac","io","rev"])
-                    textEdit.text += JSON.stringify(["dac","io","rev"]) + "\n"
-                    csvUtil.writeToFile()
+                    textEdit.text = JSON.stringify(["dac","io","rev"]) + "\n"
                 }
             }
 
@@ -94,7 +92,20 @@ ColumnLayout {
 
                 onClicked: {
                     let data = csvUtil.getData()
-                    console.info(data)
+                    console.info(JSON.stringify(data))
+                }
+            }
+
+            SGWidgets.SGButton {
+                text: "Set Data"
+
+                onClicked: {
+                    let data = [["dac","io", "rev"],["1.00", true, "0.57"]]
+                    csvUtil.setData(data)
+                    textEdit.text = ""
+                    for (var i = 0; i < data.length; i++) {
+                        textEdit.text += JSON.stringify(data[i]) + "\n"
+                    }
                 }
             }
 
@@ -114,8 +125,12 @@ ColumnLayout {
         onAccepted: {
             csvUtil.outputPath = fileDialog.fileUrl
             if (!selectFolder) {
-                let data = csvUtil.importFromFile(csvUtil.outputPath)
-                console.info(data)
+                textEdit.text = ""
+                let data = csvUtil.importFromFile(csvUtil.outputPath);
+                console.info(data);
+                for (let i = 0; i < data.length; i++) {
+                    textEdit.text += JSON.stringify(data[i]) + "\n"
+                }
             }
             close()
         }

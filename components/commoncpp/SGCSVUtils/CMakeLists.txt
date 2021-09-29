@@ -21,8 +21,11 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC Qt5::Core Qt5::Gui
-    PRIVATE strata::QtLogger
+    PUBLIC
+    Qt5::Core
+    Qt5::Gui
+    strata::QtLogger
+    strata::SGUtilsCpp
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
