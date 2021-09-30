@@ -134,8 +134,7 @@ private:
     void processCmdDownlodView(const strata::strataRPC::Message &message);
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
 
-    void platformConnected(const QByteArray& deviceId);
-    void platformDisconnected(const QByteArray& deviceId);
+    void platformStateChanged(const QByteArray& deviceId);
 
     bool parseConfig(const QString& config);
 
