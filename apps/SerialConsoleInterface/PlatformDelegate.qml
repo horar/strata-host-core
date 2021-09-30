@@ -19,20 +19,17 @@ FocusScope {
     id: platformDelegate
 
     property variant rootItem
-    property variant scrollbackModel
+    property QtObject scrollbackModel
+    property QtObject filterScrollbackModel
     property variant commandHistoryModel
     property variant filterSuggestionModel
     property color tabBorderColor
 
-    property bool disableAllFiltering: false
-    property var filterList: []
-    property bool filteringIsActive: filterList.length > 0 && disableAllFiltering == false
+    property bool filteringIsActive: filterScrollbackModel.filterList.length > 0 && filterScrollbackModel.disableAllFiltering === false
     property bool automaticScroll: true
     property bool scrollbackLimitReached: scrollbackModel.count >= sciModel.platformModel.maxScrollbackCount
 
     property bool hexViewShown: false
-
-    signal invalidateScrollbackFilterRequested()
 
     StackView {
         id: stackView
@@ -72,13 +69,6 @@ FocusScope {
                 onSendMessageResultReceived: {
                     messageEditor.messageSendInProgress = false
                     sendMessageResultHandler(type, data)
-                }
-            }
-
-            Connections {
-                target: platformDelegate
-                onInvalidateScrollbackFilterRequested: {
-                    scrollbackView.invalidateFilter()
                 }
             }
 
@@ -159,10 +149,8 @@ FocusScope {
                     right: hexViewWrapper.left
                 }
 
-                model: platformDelegate.scrollbackModel
+                model: platformDelegate.filterScrollbackModel
                 automaticScroll: platformDelegate.automaticScroll
-                disableAllFiltering: platformDelegate.disableAllFiltering
-                filterList: platformDelegate.filterList
 
                 onResendMessageRequested: {
                     messageEditor.text = message;
@@ -709,18 +697,16 @@ FocusScope {
 
         FilterView {
             id: filterView
-            disableAllFiltering: platformDelegate.disableAllFiltering
+            disableAllFiltering: platformDelegate.filterScrollbackModel.disableAllFiltering
             filterSuggestionModel: platformDelegate.filterSuggestionModel
-            filterList: platformDelegate.filterList
+            filterList: platformDelegate.filterScrollbackModel.filterList
 
-            onInvalidate: {
-                platformDelegate.filterList = JSON.parse(JSON.stringify(filterView.getFilterData()))
-                platformDelegate.disableAllFiltering = filterView.disableAllFiltering
+            onFilterDataChanged: {
+                var filterList = filterView.getFilterData()
+                console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
+                console.log(Logger.sciCategory, "disableAllFiltering", filterView.disableAllFiltering)
 
-                console.log(Logger.sciCategory, "filters:", JSON.stringify(platformDelegate.filterList))
-                console.log(Logger.sciCategory, "disableAllFiltering", platformDelegate.disableAllFiltering)
-
-                platformDelegate.invalidateScrollbackFilterRequested()
+                platformDelegate.filterScrollbackModel.invalidateFilter(filterList, filterView.disableAllFiltering)
             }
         }
     }

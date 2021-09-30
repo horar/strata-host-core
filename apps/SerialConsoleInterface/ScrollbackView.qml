@@ -18,10 +18,7 @@ import tech.strata.theme 1.0
 Item {
     id: scrollbackView
 
-    property variant model
-    property bool disableAllFiltering
-    property bool automaticScroll
-    property var filterList
+    property QtObject model
     readonly property int count: scrollbackFilterModel.count
 
     property int selectionStartIndex: -1
@@ -40,10 +37,6 @@ Item {
         clearSelection()
     }
 
-    function positionViewAtEnd() {
-        listView.positionViewAtEnd()
-        scrollbackViewAtEndTimer.restart()
-    }
 
     // internal stuff
     property int delegateBaseSpacing: 1
@@ -77,12 +70,8 @@ Item {
         }
     }
 
-    CommonCpp.SGSortFilterProxyModel {
-        id: scrollbackFilterModel
-        sourceModel: scrollbackView.model
-        filterRole: "message"
-        sortEnabled: false
-        invokeCustomFilter: true
+    Connections {
+        target: scrollbackView.model
 
         // New messages can be added only at the end
         // Existing messages can be removed only from beginning
@@ -113,40 +102,6 @@ Item {
 
             selectionStartIndex = newSelectionStartIndex;
             selectionEndIndex = newSelectionEndIndex
-        }
-
-        function filterAcceptsRow(row) {
-            if (filterList.length === 0) {
-                return true
-            }
-
-            if (disableAllFiltering) {
-                return true
-            }
-
-            var type = sourceModel.data(row, "type")
-            if (type !== Sci.SciScrollbackModel.NotificationReply) {
-                return true
-            }
-
-            var value = sourceModel.data(row, "value")
-
-            for (var i = 0; i < platformDelegate.filterList.length; ++i) {
-                var filterString = platformDelegate.filterList[i]["filter_string"].toString().toLowerCase();
-                var filterCondition = platformDelegate.filterList[i]["condition"].toString();
-
-                if (filterCondition === "contains" && value.includes(filterString)) {
-                    return false
-                } else if (filterCondition === "equal" && value === filterString) {
-                    return false
-                } else if (filterCondition === "startswith" && value.startsWith(filterString)) {
-                    return false
-                } else if (filterCondition === "endswith" && value.endsWith(filterString)) {
-                    return false
-                }
-            }
-
-            return true
         }
     }
 
@@ -231,7 +186,7 @@ Item {
             margins: listViewBg.border.width
         }
 
-        model: scrollbackFilterModel
+        model: scrollbackView.model
         clip: true
         boundsBehavior: Flickable.StopAtBounds
         highlightMoveDuration: 100
@@ -667,5 +622,10 @@ Item {
         selectionEndIndex = delegateIndexEnd
         selectionStartPosition = 0
         selectionEndPosition = delegatePositionEnd
+    }
+
+    function positionViewAtEnd() {
+        listView.positionViewAtEnd()
+        scrollbackViewAtEndTimer.restart()
     }
 }

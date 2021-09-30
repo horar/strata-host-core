@@ -1,0 +1,47 @@
+#pragma once
+
+#include <SGSortFilterProxyModel.h>
+
+class SciScrollbackModel;
+
+class SciFilterScrollbackModel: public SGSortFilterProxyModel
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(SciFilterScrollbackModel)
+
+    Q_PROPERTY(QVariant filterList READ filterList NOTIFY filterListChanged)
+    Q_PROPERTY(bool disableAllFiltering READ disableAllFiltering NOTIFY disableAllFilteringChanged)
+
+public:
+    struct FilterConditionItem {
+        QString type;
+        QString patern;
+    };
+
+    explicit SciFilterScrollbackModel(QObject *parent = nullptr);
+    void setSourceModel(SciScrollbackModel *sourceModel);
+    QVariant filterList();
+    bool disableAllFiltering();
+    Q_INVOKABLE void invalidateFilter(QVariantList filterList, bool disableAllFiltering);
+    bool filterAcceptsRow(int sourceRow);
+
+signals:
+    void filterListChanged();
+    void disableAllFilteringChanged();
+    void filterInvalidated();
+
+protected:
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+
+private:
+    void setFilterList(QVariantList filterList);
+    void setDisableAllFiltering(bool disableAllFiltering);
+
+    QVariantList filterList_;
+    QList<FilterConditionItem> filterConditions_;
+
+    bool disableAllFiltering_ = false;
+
+    //pointer to derived class so we dont have to cast sourceModel() every time
+    SciScrollbackModel *sourceModel_;
+};
