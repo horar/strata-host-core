@@ -44,6 +44,7 @@ Button {
     property color color: implicitColor
     property color pressedColor: Qt.darker(color, 1.1)
     property color checkedColor: Qt.darker(color, 1.3)
+    property alias textColor: textItem.color
 
     property bool roundedLeft: true
     property bool roundedRight: true

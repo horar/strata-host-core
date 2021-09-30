@@ -136,7 +136,7 @@ Rectangle {
     }
 
     Rectangle {
-        color: Theme.palette.green
+        color: Theme.palette.onsemiOrange
         width: imageContainer.width
         anchors {
             bottom: imageContainer.bottom

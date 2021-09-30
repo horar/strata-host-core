@@ -17,25 +17,22 @@ import tech.strata.fonts 1.0
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
 
-AbstractButton {
+Button {
     id: filterButtonRoot
-
-    onClicked: {
-        PlatformFilters.setFilterActive(model.filterName, true)
-    }
+    leftPadding: 5
+    rightPadding: 5
 
     background: Rectangle {
         radius: 20
-
-        border {
-            width: 1
-            color: Theme.palette.onsemiDark
-        }
+        border.width: 1
+        border.color: Theme.palette.onsemiDark
+        color: mouse.containsMouse ? Theme.palette.lightGray : "transparent"
 
         MouseArea {
+            id: mouse
             anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
 
             onClicked: {
                 filterButtonRoot.clicked()
@@ -43,7 +40,7 @@ AbstractButton {
 
             ToolTip {
                 delay: 1000
-                visible: parent.containsMouse
+                visible: mouse.containsMouse
                 text: {
                     if (model.type === "category") {
                         return "Filter platforms in this category"
@@ -55,26 +52,23 @@ AbstractButton {
         }
     }
 
+    onClicked: {
+        PlatformFilters.setFilterActive(model.filterName, true)
+    }
+
     contentItem: ColumnLayout {
-        spacing: 5
-        width: textMetrics.width + 20
+        Item {
+            id: wrapper
+            Layout.preferredWidth: textMetrics.boundingRect.width > 180 ? 180 : textMetrics.boundingRect.width
+            Layout.preferredHeight: textMetrics.boundingRect.height
 
-        SGText {
-            text: model.text
-            fontSizeMultiplier: 0.9
-            Layout.fillWidth: true
-            color: Theme.palette.onsemiDark
-            elide: Text.ElideRight
-            Layout.alignment: Qt.AlignHCenter
-        }
-
-        SGText {
-            text: model.type
-            fontSizeMultiplier: 0.5
-            color: Theme.palette.onsemiDark
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillWidth: true
-            font.bold: true
+            SGText {
+                text: model.text
+                fontSizeMultiplier: 0.9
+                color: Theme.palette.onsemiDark
+                elide: textMetrics.boundingRect.width > 180 ? Text.ElideRight : Text.ElideNone
+                anchors.fill: wrapper
+            }
         }
     }
 
