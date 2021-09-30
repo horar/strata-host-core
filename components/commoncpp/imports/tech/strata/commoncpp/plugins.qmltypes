@@ -409,8 +409,6 @@ Module {
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGCSVUtils 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "outputPath"; type: "string" }
-        Property { name: "fileName"; type: "string" }
         Method {
             name: "getData"
             type: "QVariant"
