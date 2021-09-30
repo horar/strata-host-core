@@ -324,7 +324,12 @@ void FlasherConnector::handleFlasherState(Flasher::State flasherState, bool done
     case Flasher::State::SwitchToBootloader :
         // When FlasherConnector starts some operation, 'operation_' is set to 'Preparation'.
         // Ignore 'SwitchToBootloader' state if 'operation_' is not 'Preparation' and this state is not done.
-        if ((operation_ != Operation::Preparation) || (done == false)) {
+        if (done == true) {
+            emit bootloaderActive();
+            if (operation_ != Operation::Preparation) {
+                return;
+            }
+        } else {
             return;
         }
         break;
@@ -340,8 +345,14 @@ void FlasherConnector::handleFlasherState(Flasher::State flasherState, bool done
     case Flasher::State::BackupFirmware :
         newOperation = (action_ == Action::BackupOld) ? Operation::BackupBeforeFlash : Operation::Backup;
         break;
+    case Flasher::State::StartApplication :
+        if (done == true) {
+            emit applicationActive();
+        }
+        return;  // return from function, we do not care about this flasher state anymore
+        break;
     default :
-        // we do not care about other flasher states (StartApplication, IdentifyBoard, FlashBootloader)
+        // we do not care about other flasher states (IdentifyBoard, FlashBootloader)
         return;
     }
 
