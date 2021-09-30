@@ -57,8 +57,8 @@ Rectangle {
         onEntered: {
             if (chevron.visible) {
                 // if popup will spawn past edge of window, place it on the opposite side of the click
-                if((content.width + root.width + mouse.x + layoutOverlayRoot.x) > (layoutOverlayRoot.parent.width - content.width)) {
-                    content.x = root.x - content.width
+                if ((content.width + root.mapToItem(layoutOverlayRoot.parent, width, 0).x) > layoutOverlayRoot.parent.width) {
+                    content.x = -content.width
                 } else {
                     content.x = root.width
                 }
