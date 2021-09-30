@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
@@ -47,13 +55,10 @@ ColumnLayout {
             }
 
             SGWidgets.SGButton {
-                id: sgButton
-                text: "Open export folder dialog"
+                text: "Export to Folder"
 
                 onClicked: {
-                    fileDialog.selectMultiple = false
-                    fileDialog.selectFolder = true
-                    fileDialog.open()
+                    exportDialog.open()
                 }
             }
 
@@ -81,9 +86,7 @@ ColumnLayout {
                 text: "Import from File"
 
                 onClicked: {
-                    fileDialog.selectMultiple = false
-                    fileDialog.selectFolder = false
-                    fileDialog.open()
+                   importDialog.open()
                 }
             }
 
@@ -108,40 +111,37 @@ ColumnLayout {
                     }
                 }
             }
-
-            SGWidgets.SGButton {
-                text: "Write to File"
-
-                onClicked: {
-                    csvUtil.writeToFile()
-                }
-            }
         }
     }
 
+    FileDialog {
+        id: importDialog
+        selectMultiple: false
+        selectFolder: false
+
+        onAccepted: {
+            textEdit.text = ""
+            let data = csvUtil.importFromFile(importDialog.fileUrl);
+            console.info(data);
+            for (let i = 0; i < data.length; i++) {
+                textEdit.text += JSON.stringify(data[i]) + "\n"
+            }
+            close()
+        }
+    }
 
     FileDialog {
-        id: fileDialog
-        onAccepted: {
-            if (!selectFolder) {
-                textEdit.text = ""
-                let data = csvUtil.importFromFile(fileDialog.fileUrl);
-                console.info(data);
-                for (let i = 0; i < data.length; i++) {
-                    textEdit.text += JSON.stringify(data[i]) + "\n"
-                }
-                fileDialog.selectMultiple = false
-                fileDialog.selectFolder = true
-            } else {
-                csvUtil.outputPath = fileDialog.fileUrl
-            }
+        id: exportDialog
+        selectMultiple: false
+        selectFolder: true
 
+        onAccepted: {
+            csvUtil.writeToFile(exportDialog.fileUrl)
             close()
         }
     }
 
     CommonCpp.SGCSVUtils {
         id: csvUtil
-        outputPath: fileDialog.shortcuts.home
     }
 }

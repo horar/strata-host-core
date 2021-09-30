@@ -417,13 +417,14 @@ Module {
         }
         Method {
             name: "importFromFile"
-            Parameter {name: "folderPath"; type: "string"}
+            Parameter {name: "filePath"; type: "string"}
         }
         Method {
             name: "clear"
         }
         Method {
             name: "writeToFile"
+            Parameter {name: "folderPath"; type: "string"}
         }
         Method {
             name: "setData"

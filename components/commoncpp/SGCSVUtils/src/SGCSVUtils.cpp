@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SGCSVUtils.h"
 #include "SGUtilsCpp.h"
 #include "logging/LoggingQtCategories.h"
@@ -24,10 +32,10 @@ void SGCSVUtils::appendRow(QVariantList data)
     data_.append(data);
 }
 
-QVariantList SGCSVUtils::importFromFile(QString folderPath)
+QVariantList SGCSVUtils::importFromFile(QString filePath)
 {
     SGUtilsCpp utils;
-    QString path = utils.urlToLocalFile(folderPath);
+    QString path = utils.urlToLocalFile(filePath);
     if (!utils.exists(path)) {
         qCInfo(logCategoryCsvUtils) << "This file does not exist";
         return QVariantList();
@@ -59,16 +67,15 @@ void SGCSVUtils::setData(QVariantList data)
     }
 }
 
-void SGCSVUtils::writeToFile()
+void SGCSVUtils::writeToFile(QString filePath)
 {
-    if (outputPath_.length() == 0 || fileName_.length() == 0) {
+    if (fileName_.length() == 0) {
         qCInfo(logCategoryCsvUtils) << "To write to file, the output path and the file name cannot be empty.";
         return;
     }
 
     SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(outputPath_, fileName_);
-    QString path = utils.urlToLocalFile(filePath);
+    QString path = utils.urlToLocalFile(utils.joinFilePath(filePath, fileName_));
     if (!utils.exists(path)) {
         utils.createFile(path);
     }
