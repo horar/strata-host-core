@@ -13,7 +13,6 @@ SGCheckBox 1.0 SGCheckBox.qml
 SGCircularGauge 1.0 SGCircularGauge.qml
 SGComboBox 1.0 SGComboBox.qml
 SGContextMenuEditActions 1.0 SGContextMenuEditActions.qml
-SGCSVFileUtilsManager 1.0 SGCSVFileUtilsManager.qml
 SGFilePicker 1.0 SGFilePicker.qml
 SGGraph 1.0 SGGraph.qml
 SGHueSlider 1.0 SGHueSlider.qml

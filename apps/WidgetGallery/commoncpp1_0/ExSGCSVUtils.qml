@@ -118,7 +118,7 @@ ColumnLayout {
         id: importDialog
         selectMultiple: false
         selectFolder: false
-
+        nameFilters: ["*.csv"]
         onAccepted: {
             textEdit.text = ""
             let data = csvUtil.importFromFile(importDialog.fileUrl);
@@ -126,7 +126,6 @@ ColumnLayout {
             for (let i = 0; i < data.length; i++) {
                 textEdit.text += JSON.stringify(data[i]) + "\n"
             }
-            close()
         }
     }
 
@@ -137,7 +136,6 @@ ColumnLayout {
 
         onAccepted: {
             csvUtil.writeToFile(exportDialog.fileUrl)
-            close()
         }
     }
 

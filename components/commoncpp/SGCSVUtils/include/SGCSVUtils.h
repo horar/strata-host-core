@@ -15,7 +15,6 @@
 class SGCSVUtils: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString fileName MEMBER fileName_ NOTIFY fileNameChanged)
 public:
     explicit SGCSVUtils(QObject *parent = nullptr);
     virtual ~SGCSVUtils();
@@ -25,7 +24,7 @@ public:
     Q_INVOKABLE QVariantList getData();
     Q_INVOKABLE void setData(QVariantList data);
     Q_INVOKABLE void clear();
-    Q_INVOKABLE void writeToFile(QString filePath);
+    Q_INVOKABLE void writeToFile(QString filePath, const QString fileName = QString("Output-" + QDateTime::currentDateTime().toString("hh:mm:ss") + ".csv"));
 
 signals:
     void outputPathChanged();
@@ -33,5 +32,4 @@ signals:
 
 private:
     QVector<QVariant> data_;
-    QString fileName_ = QString("Output-" + QDateTime::currentDateTime().toString("dd.MM.yyyy") + "-" + QDateTime::currentDateTime().toString("hh:mm:ss t") + ".csv");
 };
