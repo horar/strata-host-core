@@ -12,7 +12,6 @@
 #include <QVector>
 #include <QVariantList>
 #include <QDateTime>
-#include <QJsonArray>
 
 class SGCSVUtils: public QObject
 {
