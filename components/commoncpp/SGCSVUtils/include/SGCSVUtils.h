@@ -33,5 +33,5 @@ signals:
 
 private:
     QVector<QVariant> data_;
-    QString fileName_ = QString("Output-"+QDateTime::currentDateTime().toString("dd.MM.yyyy")+"-"+QDateTime::currentDateTime().toString("hh:mm:ss t") + ".csv");
+    QString fileName_ = QString("Output-" + QDateTime::currentDateTime().toString("dd.MM.yyyy") + "-" + QDateTime::currentDateTime().toString("hh:mm:ss t") + ".csv");
 };
