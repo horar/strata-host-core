@@ -88,6 +88,8 @@ public:
 signals:
     void progressOfUpdate(QByteArray deviceId, QByteArray clientId, UpdateProgress progress);
     void updaterError(QByteArray deviceId, QString errorString);
+    void bootloaderActive(QByteArray deviceId);
+    void applicationActive(QByteArray deviceId);
 
 public slots:
     /**

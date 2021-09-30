@@ -70,6 +70,10 @@ public:
      */
     QJsonObject createPlatformsList();
 
+public slots:
+    void bootloaderActive(QByteArray deviceId);
+    void applicationActive(QByteArray deviceId);
+
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
@@ -82,11 +86,17 @@ private slots:  // slots for signals from PlatformManager
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
 
 private:
+    struct PlatformData {
+        PlatformData(strata::platform::PlatformPtr p, bool b);
+
+        strata::platform::PlatformPtr platform;
+        bool inBootloader;
+        unsigned sentMessageNumber;  // number of last sent message
+    };
+
     strata::PlatformManager platformManager_;
 
-    // map: deviceID <-> Platform
-    QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
-    // map: deviceID <-> number of last sent message
-    QHash<QByteArray, unsigned> sentMessageNumbers_;
-    // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage
+    // map: deviceID <-> PlatformData
+    QHash<QByteArray, PlatformData> platforms_;
+    // access to platforms_ should be protected by mutex in case of multithread usage
 };
