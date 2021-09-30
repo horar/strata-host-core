@@ -211,16 +211,6 @@ Item {
         }
     }
 
-    Connections {
-        id: helpConnection
-        target: Help.utility
-        property bool tourRunning: false
-
-        onTour_runningChanged: {
-            tourRunning = tour_running
-        }
-    }
-
     ColumnLayout {
         anchors {
             fill: parent
@@ -234,7 +224,7 @@ Item {
                 width: 1
                 color: "#DDD"
             }
-            visible: platformLoaded || helpConnection.tourRunning
+            visible: platformLoaded || Help.utility.runningTourName === "selectorHelp"
 
             RowLayout {
                 id: filterRow

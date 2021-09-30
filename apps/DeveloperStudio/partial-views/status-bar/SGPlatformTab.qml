@@ -53,6 +53,7 @@ Item {
 
     Connections {
         target: Help.utility
+        enabled: Help.utility.runningTourName === "selectorHelp"
         // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
         onInternal_tour_indexChanged: {
             if (platformTabRoot.state === "help_tour") {
