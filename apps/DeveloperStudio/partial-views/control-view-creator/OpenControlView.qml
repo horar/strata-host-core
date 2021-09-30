@@ -121,7 +121,7 @@ Item {
 
         if (projectsList.projects) {
             for (var i = 0; i < projectsList.projects.length; ++i) {
-                if (projectsList.projects[i].name && projectsList.projects[i].url) {
+                if (projectsList.projects[i].hasOwnProperty("name") && projectsList.projects[i].hasOwnProperty("url")) {
                     previousFileURL.projects.push({ name: projectsList.projects[i].name, url: projectsList.projects[i].url })
                     listModelForUrl.append({ name: previousFileURL.projects[i].name, url: previousFileURL.projects[i].url })
                 } else {
