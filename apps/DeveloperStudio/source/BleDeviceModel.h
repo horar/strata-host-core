@@ -13,6 +13,7 @@
 
 #include <QAbstractListModel>
 #include <QStringListModel>
+#include <QSet>
 
 struct BleDeviceModelItem {
     QString deviceId;
