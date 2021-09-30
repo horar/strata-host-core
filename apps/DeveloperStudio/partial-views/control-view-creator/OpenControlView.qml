@@ -56,15 +56,7 @@ Item {
         openProjectContainer.url = path
         viewStack.currentIndex = 1 // switch to edit view
         controlViewCreatorRoot.projectInitialization = true
-
-        if (controlViewCreatorRoot.projectName != "") {
-            const projectName = controlViewCreatorRoot.projectName
-        } else {
-            controlViewCreatorRoot.getProjectNameFromCmake()
-            const projectName = controlViewCreatorRoot.projectName
-        }
-
-        addToTheProjectList(projectName, path)
+        addToTheProjectList(controlViewCreatorRoot.projectName, path)
         controlViewCreatorRoot.recompileControlViewQrc()
         fileOutput.text = ""
     }
