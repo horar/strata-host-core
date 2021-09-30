@@ -20,6 +20,7 @@ const QString JSON_DEVICE_ID("device_id");
 const QString JSON_VERBOSE_NAME("verbose_name");
 const QString JSON_FW_VERSION("firmware_version");
 const QString JSON_BL_VERSION("bootloader_version");
+const QString JSON_ACTIVE("active");
 const QString JSON_LIST("list");
 const QString JSON_TYPE("type");
 const QString JSON_MESSAGE("message");

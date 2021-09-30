@@ -469,9 +469,10 @@ void PrtModel::startApplication()
     operation->run();
 }
 
-void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized)
+void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized, bool inBootloader)
 {
     Q_UNUSED(recognized)
+    Q_UNUSED(inBootloader)
 
     strata::platform::PlatformPtr platform = platformManager_.getPlatform(deviceId);
     if (platform == nullptr) {

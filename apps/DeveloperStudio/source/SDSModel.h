@@ -24,6 +24,7 @@ class SGNewControlView;
 class FirmwareUpdater;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
+class PlatformOperation;
 
 namespace strata::strataRPC
 {
@@ -46,6 +47,7 @@ class SDSModel: public QObject
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
     Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
+    Q_PROPERTY(PlatformOperation* platformOperation READ platformOperation CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -65,6 +67,7 @@ public:
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
     strata::strataRPC::StrataClient *strataClient() const;
+    PlatformOperation* platformOperation() const;
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -94,6 +97,7 @@ private:
     VisualEditorUndoStack *visualEditorUndoStack_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
+    PlatformOperation *platformOperation_{nullptr};
     QPointer<QProcess> hcsProcess_;
     const unsigned hcsIdentifier_;
 

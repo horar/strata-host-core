@@ -102,7 +102,7 @@ signals:
     void startApplicationFinished(QString errorString);
 
 private slots:
-    void deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized);
+    void deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void deviceDisconnectedHandler(const QByteArray& deviceId);
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
     void downloadFinishedHandler(QString groupId, QString errorString);

@@ -97,6 +97,8 @@ void FirmwareUpdater::setFwClassId()
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
+    connect(flasherConnector_, &FlasherConnector::bootloaderActive, this, &FirmwareUpdater::handleBootloaderActive);
+    connect(flasherConnector_, &FlasherConnector::applicationActive, this, &FirmwareUpdater::handleApplicationActive);
 
     flasherConnector_->setFwClassId(strata::Flasher::FinalAction::StartApplication);
 }
@@ -179,6 +181,8 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::backupProgress, this, &FirmwareUpdater::handleBackupProgress);
     connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
+    connect(flasherConnector_, &FlasherConnector::bootloaderActive, this, &FirmwareUpdater::handleBootloaderActive);
+    connect(flasherConnector_, &FlasherConnector::applicationActive, this, &FirmwareUpdater::handleApplicationActive);
 
     flasherConnector_->flash(backupOldFirmware_, strata::Flasher::FinalAction::StartApplication);
 }
@@ -272,6 +276,16 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     if (withoutProgress || (updStatus != FirmwareUpdateController::UpdateStatus::Running)) {
         emit updateProgress(deviceId_, updOperation, updStatus, -1, -1, errorString);
     }
+}
+
+void FirmwareUpdater::handleBootloaderActive()
+{
+    emit bootloaderActive(deviceId_);
+}
+
+void FirmwareUpdater::handleApplicationActive()
+{
+    emit applicationActive(deviceId_);
 }
 
 void FirmwareUpdater::logAndEmitError(const QString& errorString)

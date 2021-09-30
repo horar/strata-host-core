@@ -50,6 +50,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/CoreUpdate.cpp
     source/PlatformInterfaceGenerator.cpp
     source/VisualEditorUndoStack.cpp
+    source/PlatformOperation.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
