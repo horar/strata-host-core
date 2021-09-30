@@ -27,12 +27,12 @@ QVariantList SGCSVUtils::getData()
     return data_.toList();
 }
 
-void SGCSVUtils::appendRow(QVariantList data)
+void SGCSVUtils::appendRow(const QVariantList data)
 {
     data_.append(data);
 }
 
-QVariantList SGCSVUtils::importFromFile(QString filePath)
+QVariantList SGCSVUtils::importFromFile(const QString &filePath)
 {
     SGUtilsCpp utils;
     QString path = utils.urlToLocalFile(filePath);
@@ -60,21 +60,21 @@ void SGCSVUtils::clear()
     data_.clear();
 }
 
-void SGCSVUtils::setData(QVariantList data)
+void SGCSVUtils::setData(const QVariantList data)
 {
     if (data_ != data.toVector()) {
         data_ = data.toVector();
     }
 }
 
-void SGCSVUtils::writeToFile(QString filePath, QString fileName)
+void SGCSVUtils::writeToFile(const QString &folderPath, const QString &fileName)
 {
-    if (filePath.length() == 0 || fileName.length() == 0) {
+    if (folderPath.length() == 0 || fileName.length() == 0) {
         qCInfo(logCategoryCsvUtils) << "To write to file, the folder path cannot be empty.";
         return;
     }
     SGUtilsCpp utils;
-    QString path = utils.urlToLocalFile(utils.joinFilePath(filePath, fileName));
+    QString path = utils.urlToLocalFile(utils.joinFilePath(folderPath, fileName));
     if (!utils.exists(path)) {
         utils.createFile(path);
     }

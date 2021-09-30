@@ -19,12 +19,12 @@ public:
     explicit SGCSVUtils(QObject *parent = nullptr);
     virtual ~SGCSVUtils();
 
-    Q_INVOKABLE QVariantList importFromFile(QString filePath);
-    Q_INVOKABLE void appendRow(QVariantList data);
+    Q_INVOKABLE QVariantList importFromFile(const QString &filePath);
+    Q_INVOKABLE void appendRow(const QVariantList data);
     Q_INVOKABLE QVariantList getData();
-    Q_INVOKABLE void setData(QVariantList data);
+    Q_INVOKABLE void setData(const QVariantList data);
     Q_INVOKABLE void clear();
-    Q_INVOKABLE void writeToFile(QString filePath, const QString fileName = QString("Output-" + QDateTime::currentDateTime().toString("hh:mm:ss") + ".csv"));
+    Q_INVOKABLE void writeToFile(const QString &folderPath, const QString &fileName = QString(QDateTime::currentDateTime().toString("yyyy.MM.dd") + " at " + QDateTime::currentDateTime().toString("hh.mm.ss") + ".csv"));
 
 signals:
     void outputPathChanged();

@@ -423,6 +423,7 @@ Module {
         Method {
             name: "writeToFile"
             Parameter {name: "folderPath"; type: "string"}
+            Parameter {name: "fileName"; type: "string"}
         }
         Method {
             name: "setData"
@@ -431,7 +432,6 @@ Module {
         Method {
             name: "appendRow"
             Parameter {name: "data"; type: "QVariant"}
-            Parameter {name: "fileName"; type: "string"}
         }
     }
     Component {

@@ -116,7 +116,6 @@ ColumnLayout {
 
     FileDialog {
         id: importDialog
-        selectMultiple: false
         selectFolder: false
         nameFilters: ["*.csv"]
         onAccepted: {
@@ -131,7 +130,6 @@ ColumnLayout {
 
     FileDialog {
         id: exportDialog
-        selectMultiple: false
         selectFolder: true
 
         onAccepted: {
