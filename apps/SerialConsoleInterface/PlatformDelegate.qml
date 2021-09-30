@@ -97,11 +97,27 @@ FocusScope {
                     rightMargin: 6
                 }
 
+                clip: true
+
                 Behavior on width { NumberAnimation {}}
+
+                SGWidgets.SGText {
+                    id: hexViewTitle
+                    anchors {
+                        top: parent.top
+                        left: hexView.left
+                    }
+
+                    text: "Raw Message"
+                }
 
                 HexView {
                     id: hexView
-                    height: parent.height
+                    anchors {
+                        top: hexViewTitle.bottom
+                        bottom: parent.bottom
+                    }
+
                     anchors.right: parent.right
 
                     property var nextContent: ""
