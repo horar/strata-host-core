@@ -69,6 +69,8 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
     connect(fwUpdater, &FirmwareUpdater::updaterError, this, &FirmwareUpdateController::updaterError);
+    connect(fwUpdater, &FirmwareUpdater::bootloaderActive, this, &FirmwareUpdateController::bootloaderActive);
+    connect(fwUpdater, &FirmwareUpdater::applicationActive, this, &FirmwareUpdateController::applicationActive);
 
     fwUpdater->updateFirmware();
 }
