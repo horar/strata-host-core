@@ -11,6 +11,7 @@
 #include <QString>
 #include <QQuickItem>
 #include <QProcess>
+#include <QMultiHash>
 
 struct ResourceItem {
     ResourceItem(
@@ -163,7 +164,7 @@ private:
      */
     bool findRccCompiler();
 
-    QHash<QString, ResourceItem*> viewsRegistered_;
+    QMultiHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
 

@@ -44,6 +44,7 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
+    viewsRegistered_.clear();
 }
 
 bool ResourceLoader::registerResource(const QString &path, const QString &prefix) {
@@ -72,6 +73,16 @@ bool ResourceLoader::registerResource(const QString &path, const QString &prefix
 bool ResourceLoader::registerControlViewResource(const QString &rccPath, const QString &class_id, const QString &version) {
     if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
         return false;
+    }
+
+    QMultiHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.constFind(class_id);
+    while (itr != viewsRegistered_.cend() && itr.key() == class_id) {
+        if (itr.value()->filepath == rccPath && itr.value()->version == version) {
+            qCWarning(logCategoryResourceLoader).nospace() << "Resource already loaded for class id: " << class_id
+                                                           << ", rccPath: " << rccPath << ", version: " << version;
+            return true;
+        }
+        ++itr;
     }
 
     if (registerResource(rccPath, getQResourcePrefix(class_id, version))) {
@@ -109,9 +120,7 @@ bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const
         return false;
     }
 
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
+    trimComponentCache(parent);
 
     QFile resourceInfo(rccPath);
 
@@ -133,16 +142,16 @@ bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const
         return false;
     }
 
-    QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
-    // Only reset this view in viewsRegistered if we have not already registered a different version
-    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one.
-    // In this case, the viewsRegistered_[class_id] will already contain the updated version
-    if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
-        ResourceItem *info = itr.value();
-        info->filepath = "";
-        info->gitTaggedVersion = "";
-        info->version = "";
+    auto ret = viewsRegistered_.equal_range(class_id);
+    for (auto itr = ret.first; itr != ret.second; ++itr) {
+        ResourceItem* info = itr.value();
+        if (info->filepath == resourceInfo.fileName() && info->version == version) {
+            viewsRegistered_.erase(itr);
+            delete info;
+            break;
+        }
     }
+
     return true;
 }
 
@@ -160,9 +169,7 @@ bool ResourceLoader::unregisterResource(const QString &path, const QString &pref
         return false;
     }
 
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
+    trimComponentCache(parent);
 
     QFileInfo resourceInfo(path);
 
@@ -242,24 +249,24 @@ void ResourceLoader::unregisterAllViews(QObject *parent)
     QHashIterator<QString, ResourceItem*> itr(viewsRegistered_);
     while (itr.hasNext()) {
         itr.next();
-        ResourceItem* item = itr.value();
+        ResourceItem* info = itr.value();
 
-        requestUnregisterDeleteViewResource(itr.key(), item->filepath, item->version, parent, false);
+        requestUnregisterDeleteViewResource(itr.key(), info->filepath, info->version, parent, false);
+        delete info;
     }
     viewsRegistered_.clear();
 }
 
-bool ResourceLoader::isViewRegistered(const QString &class_id) {
-    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    if (itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty()) {
-        return true;
-    }
-    return false;
+bool ResourceLoader::isViewRegistered(const QString &class_id)
+{
+    return viewsRegistered_.contains(class_id);
 }
 
-QString ResourceLoader::getVersionRegistered(const QString &class_id) {
-    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    if (itr != viewsRegistered_.end()) {
+QString ResourceLoader::getVersionRegistered(const QString &class_id)
+{
+    // will get the most recent value
+    QMultiHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.constFind(class_id);
+    if (itr != viewsRegistered_.cend()) {
         return itr.value()->version;
     } else {
         return NULL;
@@ -268,8 +275,9 @@ QString ResourceLoader::getVersionRegistered(const QString &class_id) {
 
 QString ResourceLoader::getGitTaggedVersion(const QString &class_id)
 {
-    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    if (itr != viewsRegistered_.end()) {
+    // will get the most recent value
+    QMultiHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.constFind(class_id);
+    if (itr != viewsRegistered_.cend()) {
         return itr.value()->gitTaggedVersion;
     } else {
         return NULL;
@@ -454,9 +462,15 @@ QString ResourceLoader::getLastLoggedError() {
 }
 
 void ResourceLoader::trimComponentCache(QObject *parent) {
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
+    if (parent != nullptr) {
+        QQmlEngine *eng = qmlEngine(parent);
+        if (eng != nullptr) {
+            eng->collectGarbage();
+            eng->trimComponentCache();
+        } else {
+            qCWarning(logCategoryResourceLoader) << "There is no QQmlEngine associated with object" << parent;
+        }
+    }
 }
 
 QList<QString> ResourceLoader::getQrcPaths(QString path) {

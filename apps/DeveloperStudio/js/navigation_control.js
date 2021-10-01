@@ -186,6 +186,9 @@ function globalEventHandler(event, data)
                 platform_view_model_.remove(0)
             }
 
+            // Unregister all control views
+            resource_loader_.unregisterAllViews(main_qml_object_);
+
             updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
             break;
 
