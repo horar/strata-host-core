@@ -257,6 +257,19 @@ void ResourceLoader::unregisterAllViews(QObject *parent)
     viewsRegistered_.clear();
 }
 
+void ResourceLoader::unregisterAllRelatedViews(const QString &class_id, QObject *parent)
+{
+    auto ret = viewsRegistered_.equal_range(class_id);
+    QMultiHash<QString, ResourceItem*>::iterator itr = ret.first;
+    while (itr != ret.second) {
+        ResourceItem* info = itr.value();
+
+        requestUnregisterDeleteViewResource(class_id, info->filepath, info->version, parent, false);
+        itr = viewsRegistered_.erase(itr);
+        delete info;
+    }
+}
+
 bool ResourceLoader::isViewRegistered(const QString &class_id)
 {
     return viewsRegistered_.contains(class_id);

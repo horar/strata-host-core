@@ -336,6 +336,9 @@ function updateState(event, data)
                         let closed_view = platform_view_model_.get(l)
                         if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
                             platform_view_model_.remove(l)
+
+                            // Unregister all related control views
+                            resource_loader_.unregisterAllRelatedViews(data.class_id, main_qml_object_);
                             break
                         }
                     }
