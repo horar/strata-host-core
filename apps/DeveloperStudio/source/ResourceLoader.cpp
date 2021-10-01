@@ -282,7 +282,7 @@ QString ResourceLoader::getVersionRegistered(const QString &class_id)
     if (itr != viewsRegistered_.cend()) {
         return itr.value()->version;
     } else {
-        return NULL;
+        return QString();
     }
 }
 
@@ -293,7 +293,7 @@ QString ResourceLoader::getGitTaggedVersion(const QString &class_id)
     if (itr != viewsRegistered_.cend()) {
         return itr.value()->gitTaggedVersion;
     } else {
-        return NULL;
+        return QString();
     }
 }
 
