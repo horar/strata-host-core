@@ -325,7 +325,7 @@ void Platform::setRecognized(bool isRecognized) {
         QWriteLocker wLock(&propertiesLock_);
         isRecognized_ = isRecognized;
     }
-    emit recognized(isRecognized);
+    emit recognized(isRecognized, bootloaderMode());
 }
 
 void Platform::openDevice() {

@@ -288,7 +288,12 @@ function addConnectedPlatform(platform) {
 
     if (class_id_string !== "") {
         if (classMap.hasOwnProperty(class_id_string)) {
-            connectListing(class_id_string, platform.device_id, platform.firmware_version)
+            if (platform.active === "bootloader") {
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform in bootloader mode connected.");
+                insertBootloaderListing(platform)
+            } else {
+                connectListing(class_id_string, platform.device_id, platform.firmware_version)
+            }
         } else if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
             // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
@@ -532,6 +537,13 @@ function insertAssistedNoPlatformListing (platform) {
     insertErrorListing(generateAssistedNoPlatformListing(platform))
 }
 
+/*
+    Insert listing for platform which is booted into bootloader
+*/
+function insertBootloaderListing(platform) {
+    insertErrorListing(generateBootloaderListing(platform))
+}
+
 function generateUnknownListing (platform) {
     let class_id = String(platform.class_id)
     let opn = "Class id: " + class_id
@@ -551,6 +563,16 @@ function generateUnregisteredListing (platform) {
 function generateAssistedNoPlatformListing (platform) {
     let description = "Connected only Strata Assisted controller without platform."
     return generateErrorListing(platform, "Strata Assisted (no platform)", "", "N/A", description)
+}
+
+function generateBootloaderListing (platform) {
+    let class_id_string = String(platform.class_id)
+    let description = "Platform in bootloader mode"
+    let opn = "N/A"
+    if (classMap.hasOwnProperty(class_id_string)) {
+        opn = classMap[class_id_string].original_listing.opn
+    }
+    return generateErrorListing(platform, "Bootloader", class_id_string, opn, description)
 }
 
 function generateErrorListing (platform, verbose_name, class_id, opn, description) {
