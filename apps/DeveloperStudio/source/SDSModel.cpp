@@ -242,8 +242,10 @@ bool SDSModel::debugFeaturesEnabled()
 
 void SDSModel::setDebugFeaturesEnabled(bool enabled)
 {
-    debugFeaturesEnabled_ = enabled;
-    emit debugFeaturesEnabledChanged();
+    if (debugFeaturesEnabled_ != enabled) {
+        debugFeaturesEnabled_ = enabled;
+        emit debugFeaturesEnabledChanged();
+    }
 }
 
 void SDSModel::shutdownService()
