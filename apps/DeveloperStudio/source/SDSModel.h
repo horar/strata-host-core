@@ -46,7 +46,7 @@ class SDSModel: public QObject
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
     Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
-    Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled)
+    Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled NOTIFY debugFeaturesEnabledChanged)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -78,6 +78,7 @@ public slots:
 
 signals:
     void hcsConnectedChanged();
+    void debugFeaturesEnabledChanged();
     void notifyQmlError(QString notifyQmlError);
 
 private slots:

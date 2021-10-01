@@ -188,6 +188,13 @@ ColumnLayout {
         }
     }
 
+    Connections {
+        target: sdsModel
+        onDebugFeaturesEnabledChanged: {
+            firmwareSortFilterModel.invalidate()
+        }
+    }
+
     FirmwareVersionList {
         id: firmwareList
     }
