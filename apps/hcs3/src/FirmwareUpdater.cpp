@@ -140,7 +140,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::bootloaderActive, this, &FirmwareUpdater::handleBootloaderActive);
     connect(flasherConnector_, &FlasherConnector::applicationActive, this, &FirmwareUpdater::handleApplicationActive);
 
-    flasherConnector_->flash(true, strata::Flasher::FinalAction::StartApplication);
+    flasherConnector_->flash(true);
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
