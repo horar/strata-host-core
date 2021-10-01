@@ -278,7 +278,7 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
 
-    flasherConnector_->flash(doBackup, strata::Flasher::FinalAction::PreservePlatformState);
+    flasherConnector_->flash(doBackup, strata::Flasher::FinalAction::StartApplication);
     setProgramInProgress(true);
 
     return true;
