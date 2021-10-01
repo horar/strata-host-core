@@ -75,31 +75,27 @@ void Flasher::flashFirmware(FinalAction finalAction)
 
     operationList_.reserve(5);
 
-    addSwitchToBootloaderOperation();      // switch to bootloader
+    addSwitchToBootloaderOperation();     // switch to bootloader
 
     if (fwClassId_.isNull() == false) {
-        addSetFwClassIdOperation(true);    // clear fw_class_id
+        addSetFwClassIdOperation(true);   // clear fw_class_id
     }
 
-    addFlashOperation(flashingFw);         // flash firmware
+    addFlashOperation(flashingFw);        // flash firmware
 
     if (fwClassId_.isNull() == false) {
-        addSetFwClassIdOperation(false);   // set fw_class_id
+        addSetFwClassIdOperation(false);  // set fw_class_id
     }
 
-    switch (finalAction_) {
-    case FinalAction::StartApplication :
-        addStartApplicationOperation();    // start application
-        break;
-    case FinalAction::StayInBootloader :
-        addIdentifyOperation(flashingFw);  // identify board
-        break;
-    case FinalAction::PreservePlatformState :
-        // Do nothing here, right operation will be added to 'operationList_' later
-        // in 'startBootloaderFinished()' operation when platform will be identified.
-        // It can be added later because it is added to the end of the 'operationList_'.
-        break;
+    // Flash firmware process is not completed until application is not started!
+    // Application writes data like its version into board memory (into FIB).
+
+    if (finalAction_ == FinalAction::StartApplication) {
+        addStartApplicationOperation();   // start application
     }
+    // If 'finalAction_' is 'PreservePlatformState', operation for start application
+    // can be added later in 'startBootloaderFinished()' when platform will be identified.
+    // It can be added later because it is added to the end of the 'operationList_'.
 
     currentOperation_ = operationList_.begin();
 
@@ -412,7 +408,7 @@ void Flasher::startBootloaderFinished(int status)
 
     // Operation 'SwitchToBootloader' has status set to 'ALREADY_IN_BOOTLOADER' (1) if platform was
     // already in bootloader mode, otherwise status has default value 'DEFAULT_STATUS' (INT_MIN).
-    if (status == operation::DEFAULT_STATUS) {
+    if (status != operation::ALREADY_IN_BOOTLOADER) {
         if (finalAction_ == FinalAction::PreservePlatformState) {
             // Platform had been booted into application before and 'finalAction_' is
             // 'PreservePlatformState' so add operation for start application.
@@ -428,20 +424,7 @@ void Flasher::startBootloaderFinished(int status)
             }
         }
         emit devicePropertiesChanged();
-    } else if (status == operation::ALREADY_IN_BOOTLOADER) {
-        if (finalAction_ == FinalAction::PreservePlatformState) {
-            switch (activity_) {
-            case FlasherActivity::FlashFirmware :
-                addIdentifyOperation(true);
-                break;
-            case FlasherActivity::FlashBootloader :
-            case FlasherActivity::BackupFirmware :
-            case FlasherActivity::SetFwClassId :
-                // Do nothing - firmware won't be changed (and 'FlashBootloader' already contains 'Identify' operation).
-                break;
-            }
-        }
-    }    
+    }
 
     runNextOperation();
 }
