@@ -28,10 +28,10 @@ Item {
 
     Rectangle {
         width: 50
-        height: parent.height - 1
-        opacity: 0.80
+        color: "#29e335"//Theme.palette.onsemiOrange
+        opacity: 1
+        height: parent.height-1
         visible: model.connected
-        color: Theme.palette.onsemiOrange
     }
 
     MouseArea {
@@ -74,7 +74,8 @@ Item {
             spacing: 12
             Layout.maximumHeight: parent.height
             Layout.fillHeight: false
-            Layout.preferredWidth: 500
+            // Layout width settings must match textFilterContainer in SGPlatformSelectorDelegate
+            Layout.preferredWidth: 300
 
             Text {
                 id: name
@@ -145,7 +146,7 @@ Item {
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 12
                 lineHeight: 1.2
-                color: Theme.palette.onsemiDark
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
@@ -182,251 +183,223 @@ Item {
                     pixelSize: 12
                     family: Fonts.franklinGothicBook
                 }
-                color: Theme.palette.onsemiDark
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
             }
         }
 
-        ColumnLayout {
-            height: root.height
-            width: 180
-            ListView {
-                id: listView
-                model: segmentsCategories
-                delegate: iconDelegate
-                clip: true
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                spacing: 3
-            }
-        }
+        RowLayout {
+            id: categoryControlsRow
+            // Layout settings must match segmentFilterContainer in SGPlatformSelectorListView
+            Layout.preferredWidth: 200
+            Layout.minimumWidth: 300
 
-        SGSortFilterProxyModel {
-            id: segmentsCategories
-            sourceModel: filters
-            sortEnabled: true
-            sortRole: "type"
-        }
+            ColumnLayout {
+                id: segmentCategoryList
+                Layout.preferredWidth: 150
+                Layout.minimumWidth: 100
 
-        Component {
-            id: iconDelegate
-            PlatformFilterButton { }
-        }
+                property real delegateHeight: 35
 
+                Flow {
+                    id: flow
+                    Layout.fillWidth: true
+                    spacing: 2
 
-//        RowLayout {
-//            id: categoryControlsRow
-//            // Layout settings must match segmentFilterContainer in SGPlatformSelectorListView
-//            Layout.preferredWidth: 200
-//            Layout.minimumWidth: 300
+                    property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
+                    property int maxRows: 2
 
-//            ColumnLayout {
-//                id: segmentCategoryList
-//                Layout.preferredWidth: 150
-//                Layout.minimumWidth: 100
+                    onRowsChanged: {
+                        if (rows < maxRows) {
+                            reset()
+                        }
+                    }
 
-//                property real delegateHeight: 35
+                    function reset () {
+                        for (let i = 0; i < filters.count; i++) {
+                            filters.get(i).row = -1
+                        }
+                    }
 
-//                Flow {
-//                    id: flow
-//                    Layout.fillWidth: true
-//                    spacing: 2
+                    Repeater {
+                        id: segmentCategoryRepeater
+                        model: visibleButtons
+                        delegate: iconDelegate
+                    }
+                }
 
-//                    property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
-//                    property int maxRows: 2
+                SGSortFilterProxyModel {
+                    id: segmentsCategories
+                    sourceModel: filters
+                    sortEnabled: true
+                    sortRole: "type"
+                }
 
-//                    onRowsChanged: {
-//                        if (rows < maxRows) {
-//                            reset()
-//                        }
-//                    }
+                SGSortFilterProxyModel {
+                    id: visibleButtons
+                    sourceModel: segmentsCategories
+                    invokeCustomFilter: true
 
-//                    function reset () {
-//                        for (let i = 0; i < filters.count; i++) {
-//                            filters.get(i).row = -1
-//                        }
-//                    }
+                    function filterAcceptsRow (index) {
+                        var listing = sourceModel.get(index)
+                        return listing.row < flow.maxRows
+                    }
+                }
 
-//                    Repeater {
-//                        id: segmentCategoryRepeater
-//                        model: visibleButtons
-//                        delegate: iconDelegate
-//                    }
-//                }
+                SGSortFilterProxyModel {
+                    id: remainingButtons
+                    sourceModel: segmentsCategories
+                    invokeCustomFilter: true
 
-//                SGSortFilterProxyModel {
-//                    id: segmentsCategories
-//                    sourceModel: filters
-//                    sortEnabled: true
-//                    sortRole: "type"
-//                }
+                    function filterAcceptsRow (index) {
+                        var listing = sourceModel.get(index)
+                        return listing.row >= flow.maxRows
+                    }
+                }
 
-//                SGSortFilterProxyModel {
-//                    id: visibleButtons
-//                    sourceModel: segmentsCategories
-//                    invokeCustomFilter: true
+                SGText {
+                    id: remainingText
+                    visible: remainingButtons.count > 0
+                    text: "And " + remainingButtons.count + " more..."
+                    Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
+                    font.underline: moreFiltersMouse.containsMouse
 
-//                    function filterAcceptsRow (index) {
-//                        var listing = sourceModel.get(index)
-//                        return listing. < flow.maxRows
-//                    }
-//                }
+                    MouseArea {
+                        id: moreFiltersMouse
+                        anchors {
+                            fill: parent
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
 
-//                SGSortFilterProxyModel {
-//                    id: remainingButtons
-//                    sourceModel: segmentsCategories
-//                    invokeCustomFilter: true
+                        onClicked:  {
+                            filterOverFlow.open()
+                        }
+                    }
 
-//                    function filterAcceptsRow (index) {
-//                        var listing = sourceModel.get(index)
-//                        return listing.row >= flow.maxRows
-//                    }
-//                }
+                    Popup {
+                        id: filterOverFlow
+                        padding: 0
+                        x: -remainingText.Layout.leftMargin
+                        width: segmentCategoryList.width
+                        background: Rectangle {
+                            color: isCurrentItem ? "#eee" : "white"
+                        }
 
-//                SGText {
-//                    id: remainingText
-//                    visible: remainingButtons.count > 0
-//                    text: "And " + remainingButtons.count + " more..."
-//                    Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
-//                    font.underline: moreFiltersMouse.containsMouse
+                        ColumnLayout {
+                            width: parent.width
 
-//                    MouseArea {
-//                        id: moreFiltersMouse
-//                        anchors {
-//                            fill: parent
-//                        }
-//                        hoverEnabled: true
-//                        cursorShape: Qt.PointingHandCursor
+                            Repeater {
+                                id: overflowRepeater
+                                model: remainingButtons
+                                delegate: iconDelegate
+                            }
+                        }
+                    }
+                }
 
-//                        onClicked:  {
-//                            filterOverFlow.open()
-//                        }
-//                    }
+                Component {
+                    id: iconDelegate
 
-//                    Popup {
-//                        id: filterOverFlow
-//                        padding: 0
-//                        x: -remainingText.Layout.leftMargin
-//                        width: segmentCategoryList.width
-//                        background: Rectangle {
-//                            color: isCurrentItem ? "#eee" : "white"
-//                        }
-
-//                        ColumnLayout {
-//                            width: parent.width
-
-//                            Repeater {
-//                                id: overflowRepeater
-//                                model: remainingButtons
-//                                delegate: iconDelegate
-//                            }
-//                        }
-//                    }
-//                }
-
-//                Component {
-//                    id: iconDelegate
-
-//                    PlatformFilterButton { }
-//                }
-//            }
-
-        ColumnLayout {
-            id: platformControlsColumn
-            Layout.fillWidth: false
-            Layout.preferredWidth: 170
-
-            property bool comingSoon: model.coming_soon
-
-            Text {
-                id: comingSoonWarn
-                text: "This platform is coming soon!"
-                visible: platformControlsColumn.comingSoon
-                width: platformControlsColumn.width
-                Layout.fillWidth: true
-                font.pixelSize: 15
-                font.family: Fonts.franklinGothicBold
-                color: Theme.palette.onsemiDark
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.Wrap
+                    PlatformFilterButton { }
+                }
             }
 
             ColumnLayout {
-                id: buttonColumn
-                Layout.fillHeight: false
-                visible: platformControlsColumn.comingSoon === false
+                id: platformControlsColumn
+                Layout.fillWidth: false
+                Layout.preferredWidth: 170
 
-                function openView(view) {
-                    var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
-                    if (sourceIndex < 0) {
-                        console.error(Logger.devStudioCategory, "Index out of scope.")
-                        return
-                    }
-                    let data = {
-                        "device_id": model.device_id,
-                        "class_id": model.class_id,
-                        "name": model.verbose_name,
-                        "index": sourceIndex,
-                        "available": model.available,
-                        "firmware_version": model.firmware_version,
-                        "view": view,
-                        "connected": model.connected
-                    }
+                property bool comingSoon: model.coming_soon
 
-                    PlatformSelection.openPlatformView(data)
+                Text {
+                    id: comingSoonWarn
+                    text: "This platform is coming soon!"
+                    visible: platformControlsColumn.comingSoon
+                    width: platformControlsColumn.width
+                    Layout.fillWidth: true
+                    font.pixelSize: 15
+                    font.family: Fonts.franklinGothicBold
+                    color: "#333"
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.Wrap
                 }
 
-                PlatformControlButton {
-                    id: openControls
-                    text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
-                    buttonEnabled: model.connected && model.available.control
-                    toolTipText: {
-                        if (model.connected && model.available.control === false) {
-                            return "No control software found"
+                ColumnLayout {
+                    id: buttonColumn
+                    Layout.fillHeight: false
+                    visible: platformControlsColumn.comingSoon === false
+
+                    function openView(view) {
+                        var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
+                        if (sourceIndex < 0) {
+                            console.error(Logger.devStudioCategory, "Index out of scope.")
+                            return
                         }
-                        if (model.connected && model.available.control) { // buttonEnabled === true
-                            return ""
+                        let data = {
+                            "device_id": model.device_id,
+                            "class_id": model.class_id,
+                            "name": model.verbose_name,
+                            "index": sourceIndex,
+                            "available": model.available,
+                            "firmware_version": model.firmware_version,
+                            "view": view,
+                            "connected": model.connected
                         }
-                        return "Hardware not connected"
+
+                        PlatformSelection.openPlatformView(data)
                     }
 
-                    onClicked: {
-                        buttonColumn.openView("control")
+                    PlatformControlButton {
+                        id: openControls
+                        text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
+                        buttonEnabled: model.connected && model.available.control
+                        toolTipText: {
+                            if (model.connected && model.available.control === false) {
+                                return "No control software found"
+                            }
+                            if (model.connected && model.available.control) { // buttonEnabled === true
+                                return ""
+                            }
+                            return "Hardware not connected"
+                        }
+
+                        onClicked: {
+                            buttonColumn.openView("control")
+                        }
                     }
-                }
 
-                PlatformControlButton {
-                    id: select
-                    text: model.view_open ? "Return to Documentation" : "Browse Documentation"
-                    buttonEnabled: model.available.documents
-                    toolTipText: buttonEnabled ? "" : "No documentation found"
+                    PlatformControlButton {
+                        id: select
+                        text: model.view_open ? "Return to Documentation" : "Browse Documentation"
+                        buttonEnabled: model.available.documents
+                        toolTipText: buttonEnabled ? "" : "No documentation found"
 
-                    onClicked: {
-                        buttonColumn.openView("collateral")
+                        onClicked: {
+                            buttonColumn.openView("collateral")
+                        }
                     }
-                }
 
-                PlatformControlButton {
-                    id: order
-                    text: "Contact Sales"
-                    buttonEnabled: model.available.order
+                    PlatformControlButton {
+                        id: order
+                        text: "Contact Sales"
+                        buttonEnabled: model.available.order
 
-                    onClicked: {
-                        Qt.openUrlExternally(sdsModel.urls.salesPopupUrl)
+                        onClicked: {
+                            Qt.openUrlExternally(sdsModel.urls.salesPopupUrl)
+                        }
                     }
                 }
             }
         }
     }
 
-
     Rectangle {
         id: bottomDivider
-        color: Theme.palette.onsemiDark
+        color: Theme.palette.lightGray
         height: 1
-        opacity: 0.8
         anchors {
             bottom: root.bottom
             horizontalCenter: root.horizontalCenter

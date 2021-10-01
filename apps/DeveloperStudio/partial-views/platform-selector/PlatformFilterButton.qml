@@ -19,8 +19,6 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 
 Button {
     id: filterButtonRoot
-    leftPadding: 5
-    rightPadding: 5
 
     background: Rectangle {
         radius: 20
@@ -59,14 +57,14 @@ Button {
     contentItem: ColumnLayout {
         Item {
             id: wrapper
-            Layout.preferredWidth: textMetrics.boundingRect.width > 180 ? 180 : textMetrics.boundingRect.width
+            Layout.preferredWidth: textMetrics.boundingRect.width > 150 ? 150 : textMetrics.boundingRect.width
             Layout.preferredHeight: textMetrics.boundingRect.height
 
             SGText {
                 text: model.text
                 fontSizeMultiplier: 0.9
                 color: Theme.palette.onsemiDark
-                elide: textMetrics.boundingRect.width > 180 ? Text.ElideRight : Text.ElideNone
+                elide: textMetrics.boundingRect.width > 150 ? Text.ElideRight : Text.ElideNone
                 anchors.fill: wrapper
             }
         }
