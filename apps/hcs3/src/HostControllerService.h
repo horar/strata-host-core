@@ -132,8 +132,7 @@ private slots:
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
-    void platformConnected(const QByteArray& deviceId);
-    void platformDisconnected(const QByteArray& deviceId);
+    void platformStateChanged(const QByteArray& deviceId);
 
 private:
     enum class hcsNotificationType {
@@ -166,6 +165,7 @@ private:
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
     void processCmdProgramController(const strata::strataRPC::Message &message);
     void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
+    void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);
 

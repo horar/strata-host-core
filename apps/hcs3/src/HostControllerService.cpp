@@ -80,6 +80,9 @@ bool HostControllerService::initialize(const QString &config)
     strataServer_->registerHandler(
         "program_controller", std::bind(&HostControllerService::processCmdProgramController, this,
                                         std::placeholders::_1));
+    strataServer_->registerHandler(
+        "platform_start_application", std::bind(&HostControllerService::processCmdPlatformStartApplication, this,
+                                        std::placeholders::_1));
 
     // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
@@ -104,14 +107,20 @@ bool HostControllerService::initialize(const QString &config)
             &HostControllerService::sendPlatformMetaData);
 
     connect(&platformController_, &PlatformController::platformConnected, this,
-            &HostControllerService::platformConnected);
+            &HostControllerService::platformStateChanged);
     connect(&platformController_, &PlatformController::platformDisconnected, this,
-            &HostControllerService::platformDisconnected);
+            &HostControllerService::platformStateChanged);
     connect(&platformController_, &PlatformController::platformMessage, this,
             &HostControllerService::sendPlatformMessageToClients);
+    connect(&platformController_, &PlatformController::platformApplicationStarted, this,
+            &HostControllerService::platformStateChanged);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this,
             &HostControllerService::handleUpdateProgress);
+    connect(&updateController_, &FirmwareUpdateController::bootloaderActive,
+            &platformController_, &PlatformController::bootloaderActive);
+    connect(&updateController_, &FirmwareUpdateController::applicationActive,
+            &platformController_, &PlatformController::applicationActive);
 
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this,
             &HostControllerService::sendUpdateInfoMessage);
@@ -389,16 +398,7 @@ bool HostControllerService::parseConfig(const QString &config)
     return true;
 }
 
-void HostControllerService::platformConnected(const QByteArray &deviceId)
-{
-    Q_UNUSED(deviceId)
-
-    strataServer_->notifyAllClients(
-        hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
-        platformController_.createPlatformsList());
-}
-
-void HostControllerService::platformDisconnected(const QByteArray &deviceId)
+void HostControllerService::platformStateChanged(const QByteArray &deviceId)
 {
     Q_UNUSED(deviceId)
 
@@ -787,10 +787,9 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
     strataServer_->notifyClient(clientId, hcsNotificationTypeToString(type), payload,
                                 strataRPC::ResponseType::Notification);
 
-    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
-        progress.status == FirmwareUpdateController::UpdateStatus::Success) {
-        // If firmware was updated broadcast new platforms list
-        // to indicate the firmware version has changed.
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished) {
+        // If update process finished broadcast new platforms list to indicate
+        // the firmware version has changed (or platform is in bootloader mode)
         strataServer_->notifyAllClients(
             hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
             platformController_.createPlatformsList());
@@ -862,6 +861,33 @@ void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &
 {
     componentUpdateInfo_.requestUpdateInfo(message.clientID);
     strataServer_->notifyClient(message, QJsonObject{{"message", "Update check requested."}}, strataRPC::ResponseType::Response);
+}
+
+void HostControllerService::processCmdPlatformStartApplication(const strataRPC::Message &message)
+{
+    QString errorString;
+    bool ok = true;
+
+    const QByteArray deviceId = message.payload.value("device_id").toVariant().toByteArray();
+    if (deviceId.isEmpty()) {
+        errorString = QStringLiteral("device_id attribute is empty or has bad format");
+        ok = false;
+    }
+
+    if (ok && (platformController_.platformStartApplication(deviceId) == false)) {
+        errorString = QStringLiteral("Attempt to start platform application was rejected.");
+        ok = false;
+    }
+
+    QJsonObject payloadBody {
+        { "device_id", QLatin1String(deviceId) }
+    };
+    if (ok == false) {
+        payloadBody.insert("error_string", errorString);
+        qCWarning(logCategoryHcs).noquote() << errorString;
+    }
+
+    strataServer_->notifyClient(message, payloadBody, ok ? strataRPC::ResponseType::Response : strataRPC::ResponseType::Error);
 }
 
 void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString)
