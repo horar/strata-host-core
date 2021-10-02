@@ -18,6 +18,7 @@ Strata Host Core contains all the applications and dependencies necessary for St
 * Git >= 2.28.0
 * Qt5 5.12.xx
 * CMake >= 3.19
+* Homebrew
 * OpenSSL
 
 ## Qt5 installation
