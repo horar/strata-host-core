@@ -350,6 +350,9 @@ Rectangle {
         controlViewLoader.setSource("")
         Help.resetDeviceIdTour(debugPlatform.device_id)
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
+        if (cvcUserSettings.openViewOnBuild) {
+            viewStack.currentIndex = 2
+        }
     }
 
     function registerAndSetRecompiledRccFile (compiledRccFile) {

@@ -133,11 +133,7 @@ Item {
         tooltipDescription: "Recompile your control view project."
 
         onClicked: {
-            recompileControlViewQrc();
-
-            if (cvcUserSettings.openViewOnBuild) {
-               viewStack.currentIndex = 2
-            }
+            recompileControlViewQrc()
         }
     }
 

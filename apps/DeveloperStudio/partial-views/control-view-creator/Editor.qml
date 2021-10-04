@@ -83,11 +83,8 @@ Item {
 
         Shortcut {
             sequence: "Ctrl+R"
-            enabled: editor.fileTreeModel.url.toString() !== ''
+            enabled: editor.fileTreeModel.url.toString() !== '' && !model.hasUnsavedChanges
             onActivated: {
-                if (cvcUserSettings.openViewOnBuild) {
-                    viewStack.currentIndex = 2
-                }
                 recompileControlViewQrc()
             }
         }
