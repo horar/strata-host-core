@@ -14,6 +14,7 @@
 #include "SciPlatformSettings.h"
 #include "SciMockDevice.h"
 #include "SciFilterScrollbackModel.h"
+#include "SciSearchScrollbackModel.h"
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
@@ -36,6 +37,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(SciMockDevice* mockDevice READ mockDevice CONSTANT)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciFilterScrollbackModel* filterScrollbackModel READ filterScrollbackModel CONSTANT)
+    Q_PROPERTY(SciSearchScrollbackModel* searchScrollbackModel READ searchScrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
@@ -83,6 +85,7 @@ public:
     SciCommandHistoryModel* commandHistoryModel();
     SciFilterSuggestionModel* filterSuggestionModel();
     SciFilterScrollbackModel* filterScrollbackModel();
+    SciSearchScrollbackModel* searchScrollbackModel();
     QString errorString();
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
@@ -152,6 +155,7 @@ private:
     SciPlatformSettings *settings_;
     SciFilterSuggestionModel *filterSuggestionModel_;
     SciFilterScrollbackModel *filterScrollbackModel_;
+    SciSearchScrollbackModel *searchScrollbackModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     strata::PlatformManager *platformManager_;
     uint currentMessageId_ = 0;

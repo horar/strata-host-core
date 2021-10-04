@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciMockVersionModel.cpp
     HexModel.cpp
     SciFilterScrollbackModel.cpp
+    SciSearchScrollbackModel.cpp
     qml.qrc
     images/images.qrc
 

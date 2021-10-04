@@ -21,8 +21,9 @@ FocusScope {
     property variant rootItem
     property QtObject scrollbackModel
     property QtObject filterScrollbackModel
-    property variant commandHistoryModel
-    property variant filterSuggestionModel
+    property QtObject searchScrollbackModel
+    property QtObject commandHistoryModel
+    property QtObject filterSuggestionModel
     property color tabBorderColor
 
     property bool filteringIsActive: filterScrollbackModel.filterList.length > 0 && filterScrollbackModel.disableAllFiltering === false
@@ -49,8 +50,9 @@ FocusScope {
         FocusScope {
             id: mainPage
 
-            property int maximumInputAreaHeight: Math.floor(height/2)
+            property int maximumInputAreaHeight: height - 2*searchAreaHeight
             property int minimumInputAreaHeight: 100
+            property int searchAreaHeight: 200
 
             onMaximumInputAreaHeightChanged: {
                 messageEditor.height = Math.min(maximumInputAreaHeight, messageEditor.height)
@@ -92,7 +94,7 @@ FocusScope {
                 width: platformDelegate.hexViewShown ? hexView.width + 4 : 0
                 anchors {
                     top: parent.top
-                    bottom: scrollbackView.bottom
+                    bottom: searchViewWrapper.bottom
                     right: parent.right
                     rightMargin: 6
                 }
@@ -139,11 +141,12 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            if (scrollbackView.currentIndex < 0 || scrollbackView.count === 0) {
+                            var sourceIndex = platformDelegate.filterScrollbackModel.mapIndexToSource(scrollbackView.currentIndex)
+                            if (sourceIndex < 0 || scrollbackView.count === 0) {
                                 return ""
                             }
 
-                            var selectedMsg = platformDelegate.scrollbackModel.data(scrollbackView.currentIndex, "rawMessage")
+                            var selectedMsg = platformDelegate.scrollbackModel.data(sourceIndex, "rawMessage")
                             if (selectedMsg === undefined) {
                                 return ""
                             } else {
@@ -158,18 +161,88 @@ FocusScope {
                 id: scrollbackView
                 anchors {
                     top: parent.top
-                    bottom: inputWrapper.top
-                    bottomMargin: 2
+                    bottom: searchViewWrapper.top
+                    bottomMargin: searchViewWrapper.shown ? 6 : 0
                     left: parent.left
                     leftMargin: 6
                     right: hexViewWrapper.left
                 }
 
                 model: platformDelegate.filterScrollbackModel
+                timestampFormat: platformDelegate.scrollbackModel.timestampFormat
                 automaticScroll: platformDelegate.automaticScroll
 
                 onResendMessageRequested: {
                     messageEditor.text = message;
+                }
+
+                onCondenseMessageRequested: {
+                    var sourceIndex = scrollbackView.model.mapIndexToSource(index)
+                    if (sourceIndex < 0) {
+                        console.error(Logger.sciCategory, "Index out of range.")
+                        return
+                    }
+
+                    platformDelegate.scrollbackModel.setIsCondensed(sourceIndex, isCondensed)
+                }
+            }
+
+            Item {
+                id: searchViewWrapper
+                height: shown ? mainPage.searchAreaHeight : 0
+                anchors {
+                    bottom: inputWrapper.top
+                    bottomMargin: 6
+                    left: parent.left
+                    leftMargin: 6
+                    right: scrollbackView.right
+                }
+
+                clip: true
+
+                property bool shown: searchInput.text.length
+
+                Behavior on height { NumberAnimation {} }
+
+                SGWidgets.SGText {
+                    id: searchViewTitle
+                    anchors {
+                        top: parent.top
+                        left: searchScrollbackView.left
+                    }
+
+                    text: "Search Results: " + searchScrollbackView.count.toString()
+                }
+
+                ScrollbackView {
+                    id: searchScrollbackView
+                    width: parent.width
+                    anchors {
+                        top: searchViewTitle.bottom
+                        bottom: parent.bottom
+                    }
+
+                    model: platformDelegate.searchScrollbackModel
+                    timestampFormat: platformDelegate.scrollbackModel.timestampFormat
+                    automaticScroll: false
+                    allowOnlyCondensedMode: true
+                    allowResendButton: false
+                    allowSyntaxHighlight: false
+                    allowMouseSelection: false
+                    allowCopyMenu: false
+                    allowSearchHighlight: true
+
+                    onDelegateClicked: {
+                        var srcIndex = platformDelegate.searchScrollbackModel.mapIndexToSource(index);
+                        var dstIndex = platformDelegate.filterScrollbackModel.mapIndexFromSource(srcIndex)
+
+                        if (dstIndex < 0) {
+                            console.warn(Logger.sciCategory, "Could not map index", index, "->", srcIndex, "->", dstIndex)
+                            return
+                        }
+
+                        scrollbackView.positionViewAtIndex(dstIndex)
+                    }
                 }
             }
 
@@ -378,6 +451,22 @@ FocusScope {
                     }
                 }
 
+                SGWidgets.SGTextField {
+                    id: searchInput
+                    anchors {
+                        top: inputWrapper.top
+                        right: parent.right
+                    }
+
+                    placeholderText: "Search..."
+                    leftIconSource: "qrc:/sgimages/zoom.svg"
+                    showClearButton: true
+                    onTextChanged: {
+                        platformDelegate.searchScrollbackModel.searchPattern = text
+                        searchScrollbackView.searchHighlightPattern = text
+                    }
+                }
+
                 SGWidgets.SGTag {
                     id: inputStatusTag
                     anchors {
@@ -397,7 +486,7 @@ FocusScope {
 
                 MessageEditor {
                     id: messageEditor
-                    height: 200
+                    height: 160
                     anchors {
                         top: inputStatusTag.bottom
                         left: parent.left

@@ -50,7 +50,7 @@ bool SciFilterScrollbackModel::filterAcceptsRow(int sourceRow, const QModelIndex
         return true;
     }
 
-    if (SciScrollbackModel::NotificationReply != sourceModel_->data(createIndex(sourceRow, 1), SciScrollbackModel::TypeRole)) {
+    if (SciScrollbackModel::NotificationReply != sourceModel_->data(createIndex(sourceRow, 1), SciScrollbackModel::TypeRole).toInt()) {
         return true;
     }
 

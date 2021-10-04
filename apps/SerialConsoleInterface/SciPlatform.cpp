@@ -38,6 +38,10 @@ SciPlatform::SciPlatform(
     filterScrollbackModel_ = new SciFilterScrollbackModel(this);
     filterScrollbackModel_->setSortEnabled(false);
     filterScrollbackModel_->setSourceModel(scrollbackModel_);
+
+    searchScrollbackModel_ = new SciSearchScrollbackModel(filterScrollbackModel_, this);
+    searchScrollbackModel_->setSearchRole(SciScrollbackModel::RawMessageRole);
+    searchScrollbackModel_->setSourceModel(scrollbackModel_);
 }
 
 SciPlatform::~SciPlatform()
@@ -47,6 +51,7 @@ SciPlatform::~SciPlatform()
     commandHistoryModel_->deleteLater();
     filterSuggestionModel_->deleteLater();
     filterScrollbackModel_->deleteLater();
+    searchScrollbackModel_->deleteLater();
 }
 
 QByteArray SciPlatform::deviceId()
@@ -178,6 +183,11 @@ SciFilterSuggestionModel *SciPlatform::filterSuggestionModel()
 SciFilterScrollbackModel *SciPlatform::filterScrollbackModel()
 {
     return filterScrollbackModel_;
+}
+
+SciSearchScrollbackModel *SciPlatform::searchScrollbackModel()
+{
+    return searchScrollbackModel_;
 }
 
 QString SciPlatform::errorString()

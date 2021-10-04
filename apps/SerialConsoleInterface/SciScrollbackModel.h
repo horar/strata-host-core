@@ -36,8 +36,9 @@ public:
     virtual ~SciScrollbackModel() override;
 
     enum ModelRole {
-        MessageRole = Qt::UserRole,
-        RawMessageRole,
+        RawMessageRole = Qt::UserRole,
+        CondensedMessageRole,
+        ExpandedMessageRole,
         TypeRole,
         TimestampRole,
         IsCondensedRole,
@@ -45,7 +46,7 @@ public:
         ValueRole,
     };
 
-    enum class MessageType {
+    enum MessageType {
         Request,
         UnknownReply,
         NotificationReply,
@@ -113,8 +114,9 @@ private:
 };
 
 struct ScrollbackModelItem {
-    QString message;
     QString rawMessage;
+    QString condensedMessage;
+    QString expandedMessage;
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
     bool isCondensed;
