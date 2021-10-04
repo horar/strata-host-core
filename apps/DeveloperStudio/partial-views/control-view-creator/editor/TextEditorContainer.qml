@@ -195,6 +195,12 @@ ColumnLayout {
                 saveFile(close, true)
             }
         }
+
+        onCurrentIndexChanged: {
+            var htmlHeight = webEngine.height - 16
+            var htmlWidth = webEngine.width - 16
+            channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
+        }
     }
 
     ConfirmClosePopup {
