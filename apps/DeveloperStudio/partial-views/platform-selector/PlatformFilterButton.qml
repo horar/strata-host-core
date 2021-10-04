@@ -20,6 +20,12 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 Button {
     id: filterButtonRoot
 
+    onYChanged: {
+        if (parent === flow) {
+            model.row = Math.ceil(y/(segmentCategoryList.delegateHeight + flow.spacing))
+        }
+    }
+
     background: Rectangle {
         radius: 20
         border.width: 1
