@@ -105,6 +105,8 @@ class Flasher : public QObject
         /*!
          * Flash firmware.
          * \param finalAction value from FinalAction enum, defines what to do after flash
+         * NOTE: Flash firmware process is not completed until application is not started!
+         *       Application writes data like its version into board memory (into FIB).
          */
         void flashFirmware(FinalAction finalAction);
 
