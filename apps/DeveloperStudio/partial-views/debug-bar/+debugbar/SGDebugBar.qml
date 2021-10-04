@@ -86,6 +86,11 @@ Item {
                 onCheckedChanged: {
                     sdsModel.debugFeaturesEnabled = debugFeatures.checked
                 }
+                Binding {
+                    target: debugFeatures
+                    property: "checked"
+                    value: sdsModel.debugFeaturesEnabled
+                }
             }
 
             Button {
