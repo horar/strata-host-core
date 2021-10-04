@@ -35,6 +35,7 @@ public:
     Q_INVOKABLE bool isValidImage(const QString &file);
     Q_INVOKABLE bool isExecutable(const QString &file);
     Q_INVOKABLE bool isRelative(const QString &file);
+    Q_INVOKABLE bool containsForbiddenCharacters(const QString &fileName);
     Q_INVOKABLE QString fileName(const QString &file);
     Q_INVOKABLE QString fileAbsolutePath(const QString &file);
     Q_INVOKABLE QString dirName(const QString &path);
@@ -55,7 +56,10 @@ public:
     Q_INVOKABLE static QString keySequenceNativeText(QString sequence);
     Q_INVOKABLE static bool keySequenceMatches(QString sequence, int key);
     Q_INVOKABLE  QList<QString> getQrcPaths(QString path);
+    Q_INVOKABLE QString joinForbiddenCharacters(QString separator = " ");
+    Q_INVOKABLE QStringList getForbiddenCharacters();
 
 private:
     const QStringList fileSizePrefixList_;
+    const QList<QChar> forbiddenCharactersList_;
 };
