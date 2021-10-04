@@ -58,9 +58,8 @@ FlasherConnector::~FlasherConnector()
     }
 }
 
-bool FlasherConnector::flash(bool backupBeforeFlash, Flasher::FinalAction finalAction) {
+bool FlasherConnector::flash(bool backupBeforeFlash) {
     operation_ = Operation::Preparation;
-    flashFinalAction_ = finalAction;
     emit operationStateChanged(operation_, State::Started);
 
     if (action_ != Action::None) {
@@ -141,7 +140,7 @@ bool FlasherConnector::setFwClassId(Flasher::FinalAction finalAction) {
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
-    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::handleDevicePropertiesChanged);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     flasher_->setFwClassId(finalAction);
 
@@ -171,11 +170,13 @@ void FlasherConnector::flashFirmware(bool flashOld) {
     }
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
-    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::handleDevicePropertiesChanged);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
 
-    flasher_->flashFirmware(flashFinalAction_);
+    // Flash firmware process is not completed until application is not started
+    // because application writes data like its version into FIB.
+    flasher_->flashFirmware(Flasher::FinalAction::StartApplication);
 }
 
 void FlasherConnector::backupFirmware(bool backupOld, Flasher::FinalAction finalAction) {
@@ -185,7 +186,7 @@ void FlasherConnector::backupFirmware(bool backupOld, Flasher::FinalAction final
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
-    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::handleDevicePropertiesChanged);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     flasher_->backupFirmware(finalAction);
 }
@@ -362,19 +363,6 @@ void FlasherConnector::handleFlasherState(Flasher::State flasherState, bool done
         operation_ = newOperation;
         emit operationStateChanged(operation_, State::Started);
     }
-}
-
-void FlasherConnector::handleDevicePropertiesChanged() {
-    if (operation_ == Operation::Preparation
-        && flashFinalAction_ != Flasher::FinalAction::StayInBootloader)
-    {
-        // * Platform was switched from application to bootloader.
-        // * FlasherConnector calls Flasher multiple times if old firmware backup
-        //   is being done. It is reason why 'flashFinalAction_' is changed here
-        //   (before flashing new firmware board is always in bootloader mode).
-        flashFinalAction_ = Flasher::FinalAction::StartApplication;
-    }
-    emit devicePropertiesChanged();
 }
 
 }  // namespace

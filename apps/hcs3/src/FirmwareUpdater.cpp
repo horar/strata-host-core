@@ -184,7 +184,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::bootloaderActive, this, &FirmwareUpdater::handleBootloaderActive);
     connect(flasherConnector_, &FlasherConnector::applicationActive, this, &FirmwareUpdater::handleApplicationActive);
 
-    flasherConnector_->flash(backupOldFirmware_, strata::Flasher::FinalAction::StartApplication);
+    flasherConnector_->flash(backupOldFirmware_);
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
