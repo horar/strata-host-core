@@ -549,6 +549,11 @@ BaseStateMachine {
             signal: continueButton.clicked
             guard: prtModel.deviceCount === 0
         }
+
+        DSM.SignalTransition {
+            targetState: exitState
+            signal: breakButton.clicked
+        }
     }
 
     DSM.State {
