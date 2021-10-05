@@ -68,25 +68,25 @@ public:
     // because Q_ENUM macro is constrained to the class it is used in and doesn't work well between classes
     Q_ENUM(strata::device::Device::Type)
 
-    QByteArray deviceId();
-    strata::device::Device::Type deviceType();
+    QByteArray deviceId() const;
+    strata::device::Device::Type deviceType() const;
     void setDeviceType(const strata::device::Device::Type &type);
     void setPlatform(const strata::platform::PlatformPtr& platform);
-    QString verboseName();
+    QString verboseName() const;
     void setVerboseName(const QString &verboseName);
-    QString appVersion();
+    QString appVersion() const;
     void setAppVersion(const QString &appVersion);
-    QString bootloaderVersion();
+    QString bootloaderVersion() const;
     void setBootloaderVersion(const QString &bootloaderVersion);
-    SciPlatform::PlatformStatus status();
+    SciPlatform::PlatformStatus status() const;
     void setStatus(SciPlatform::PlatformStatus status);
-    SciMockDevice* mockDevice();
-    SciScrollbackModel* scrollbackModel();
-    SciCommandHistoryModel* commandHistoryModel();
-    SciFilterSuggestionModel* filterSuggestionModel();
-    SciFilterScrollbackModel* filterScrollbackModel();
-    SciSearchScrollbackModel* searchScrollbackModel();
-    QString errorString();
+    SciMockDevice* mockDevice() const;
+    SciScrollbackModel* scrollbackModel() const;
+    SciCommandHistoryModel* commandHistoryModel() const;
+    SciFilterSuggestionModel* filterSuggestionModel() const;
+    SciFilterScrollbackModel* filterScrollbackModel() const;
+    SciSearchScrollbackModel* searchScrollbackModel() const;
+    QString errorString() const;
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
     QString deviceName() const;

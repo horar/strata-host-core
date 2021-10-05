@@ -37,7 +37,7 @@ void SciSearchScrollbackModel::setSearchPattern(const QString &searchPattern)
      updateSearchResuls();
 }
 
-bool SciSearchScrollbackModel::isActive()
+bool SciSearchScrollbackModel::isActive() const
 {
     return isActive_;
 }
@@ -103,12 +103,12 @@ QModelIndex SciSearchScrollbackModel::mapToSource(const QModelIndex &proxyIndex)
     return this->index(sourceRow, 0);
 }
 
-int SciSearchScrollbackModel::mapIndexToSource(int i)
+int SciSearchScrollbackModel::mapIndexToSource(int i) const
 {
     return mapToSource(index(i, 0, QModelIndex())).row();
 }
 
-int SciSearchScrollbackModel::mapIndexFromSource(int i)
+int SciSearchScrollbackModel::mapIndexFromSource(int i) const
 {
     if (sourceModel() == nullptr) {
         return -1;

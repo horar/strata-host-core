@@ -42,7 +42,7 @@ public:
 
     QString searchPattern() const;
     void setSearchPattern(const QString &searchPattern);
-    bool isActive();
+    bool isActive() const;
     void setSearchRole(int searchRole);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -52,8 +52,8 @@ public:
     QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
 
-    Q_INVOKABLE int mapIndexToSource(int i);
-    Q_INVOKABLE int mapIndexFromSource(int i);
+    Q_INVOKABLE int mapIndexToSource(int i) const;
+    Q_INVOKABLE int mapIndexFromSource(int i) const;
 
 signals:
     void searchPatternChanged();

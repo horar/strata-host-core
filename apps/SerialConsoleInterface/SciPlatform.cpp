@@ -54,12 +54,12 @@ SciPlatform::~SciPlatform()
     searchScrollbackModel_->deleteLater();
 }
 
-QByteArray SciPlatform::deviceId()
+QByteArray SciPlatform::deviceId() const
 {
     return deviceId_;
 }
 
-strata::device::Device::Type SciPlatform::deviceType()
+strata::device::Device::Type SciPlatform::deviceType() const
 {
     return deviceType_;
 }
@@ -108,7 +108,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
     }
 }
 
-QString SciPlatform::verboseName()
+QString SciPlatform::verboseName() const
 {
     return verboseName_;
 }
@@ -121,7 +121,7 @@ void SciPlatform::setVerboseName(const QString &verboseName)
     }
 }
 
-QString SciPlatform::appVersion()
+QString SciPlatform::appVersion() const
 {
     return appVersion_;
 }
@@ -134,7 +134,7 @@ void SciPlatform::setAppVersion(const QString &appVersion)
     }
 }
 
-QString SciPlatform::bootloaderVersion()
+QString SciPlatform::bootloaderVersion() const
 {
     return bootloaderVersion_;
 }
@@ -147,7 +147,7 @@ void SciPlatform::setBootloaderVersion(const QString &bootloaderVersion)
     }
 }
 
-SciPlatform::PlatformStatus SciPlatform::status()
+SciPlatform::PlatformStatus SciPlatform::status() const
 {
     return status_;
 }
@@ -160,37 +160,37 @@ void SciPlatform::setStatus(SciPlatform::PlatformStatus status)
     }
 }
 
-SciMockDevice* SciPlatform::mockDevice()
+SciMockDevice* SciPlatform::mockDevice() const
 {
     return mockDevice_;
 }
 
-SciScrollbackModel *SciPlatform::scrollbackModel()
+SciScrollbackModel *SciPlatform::scrollbackModel() const
 {
     return scrollbackModel_;
 }
 
-SciCommandHistoryModel *SciPlatform::commandHistoryModel()
+SciCommandHistoryModel *SciPlatform::commandHistoryModel() const
 {
     return commandHistoryModel_;
 }
 
-SciFilterSuggestionModel *SciPlatform::filterSuggestionModel()
+SciFilterSuggestionModel *SciPlatform::filterSuggestionModel() const
 {
     return filterSuggestionModel_;
 }
 
-SciFilterScrollbackModel *SciPlatform::filterScrollbackModel()
+SciFilterScrollbackModel *SciPlatform::filterScrollbackModel() const
 {
     return filterScrollbackModel_;
 }
 
-SciSearchScrollbackModel *SciPlatform::searchScrollbackModel()
+SciSearchScrollbackModel *SciPlatform::searchScrollbackModel() const
 {
     return searchScrollbackModel_;
 }
 
-QString SciPlatform::errorString()
+QString SciPlatform::errorString() const
 {
     return errorString_;
 }

@@ -14,12 +14,12 @@ void SciFilterScrollbackModel::setSourceModel(SciScrollbackModel *sourceModel)
     sourceModel_ = sourceModel;
 }
 
-QVariant SciFilterScrollbackModel::filterList()
+QVariant SciFilterScrollbackModel::filterList() const
 {
     return filterList_;
 }
 
-bool SciFilterScrollbackModel::disableAllFiltering()
+bool SciFilterScrollbackModel::disableAllFiltering() const
 {
     return disableAllFiltering_;
 }
@@ -33,7 +33,7 @@ void SciFilterScrollbackModel::invalidateFilter(QVariantList filterList, bool di
     emit filterInvalidated();
 }
 
-bool SciFilterScrollbackModel::filterAcceptsRow(int sourceRow)
+bool SciFilterScrollbackModel::filterAcceptsRow(int sourceRow) const
 {
     return filterAcceptsRow(sourceRow, QModelIndex());
 }

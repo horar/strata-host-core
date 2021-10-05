@@ -28,10 +28,10 @@ public:
 
     explicit SciFilterScrollbackModel(QObject *parent = nullptr);
     void setSourceModel(SciScrollbackModel *sourceModel);
-    QVariant filterList();
-    bool disableAllFiltering();
+    QVariant filterList() const;
+    bool disableAllFiltering() const;
     Q_INVOKABLE void invalidateFilter(QVariantList filterList, bool disableAllFiltering);
-    bool filterAcceptsRow(int sourceRow);
+    bool filterAcceptsRow(int sourceRow) const;
 
 signals:
     void filterListChanged();
