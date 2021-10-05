@@ -64,11 +64,11 @@ ProgramSettingsDelegate {
             }
 
             Keys.onEnterPressed: {
-                checkOpnRequested(text)
+                sendSanitizedOpnRequest()
             }
 
             Keys.onReturnPressed: {
-                checkOpnRequested(text)
+                sendSanitizedOpnRequest()
             }
 
             Binding {
@@ -116,8 +116,14 @@ ProgramSettingsDelegate {
             opacity: delegate.isSet ? 0 : 1
 
             onClicked: {
-                checkOpnRequested(opnInput.text)
+                sendSanitizedOpnRequest()
             }
+        }
+
+        function sendSanitizedOpnRequest() {
+            var text = opnInput.text.trim()
+            opnInput.text = text
+            checkOpnRequested(text)
         }
     }
 }
