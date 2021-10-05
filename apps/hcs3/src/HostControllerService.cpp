@@ -494,7 +494,6 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
 {
     FirmwareUpdateController::ChangeFirmwareData firmwareData;
     firmwareData.clientId = message.clientID;
-    firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::UpdateFirmware;
 
     QString errorString;
     do {
@@ -510,23 +509,30 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
             break;
         }
 
+        const QJsonValue noBackup = message.payload.value("no_backup");
+        if ((noBackup.isUndefined() == false) && (noBackup.toBool() == true)) {
+            firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::ProgramFirmware;
+        } else {
+            firmwareData.action = FirmwareUpdateController::ChangeFirmwareAction::UpdateFirmware;
+        }
+
         // if firmwareClassId is available, flasher needs it (due to correct flashing of assisted boards)
         if (platform->controllerType() == strata::platform::Platform::ControllerType::Assisted) {
             firmwareData.firmwareClassId = platform->firmwareClassId();
         }
 
-        QString path;
-        if (message.payload.contains("path") || message.payload.contains("md5")) {
+        QString firmwarePath;
+        const QJsonValue path = message.payload.value("path");
+        const QJsonValue md5 = message.payload.value("md5");
+        if ((path.isUndefined() == false) || (md5.isUndefined() == false)) {
             //use provided firmware
-            path = message.payload.value("path").toString();
-            if (path.isEmpty()) {
+            firmwarePath = path.toString();
+            if (firmwarePath.isEmpty()) {
                 errorString = "path attribute is empty or has bad format";
                 break;
             }
 
-            firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
-
-            firmwareData.firmwareMD5 = message.payload.value("md5").toString();
+            firmwareData.firmwareMD5 = md5.toString();
             if (firmwareData.firmwareMD5.isEmpty()) {
                 errorString = "md5 attribute is empty or has bad format";
                 break;
@@ -544,17 +550,17 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
                 break;
             }
 
-            path = firmware->partialUri;
-            firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
+            firmwarePath = firmware->partialUri;
             firmwareData.firmwareMD5 = firmware->md5;
         }
 
+        firmwareData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(firmwarePath));
         firmwareData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
         QJsonObject payloadBody {
             { "job_id", firmwareData.jobUuid },
             { "device_id", QLatin1String(firmwareData.deviceId) },
-            { "path", path },
+            { "path", firmwarePath },
             { "md5", firmwareData.firmwareMD5 }
         };
 

@@ -41,7 +41,8 @@ bool FirmwareUpdater::programEmbedded(QString deviceId)
     }
 
     QJsonObject cmdPayloadObject {
-        { "device_id", deviceId }
+        { "device_id", deviceId },
+        { "no_backup", true }
     };
 
     return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
