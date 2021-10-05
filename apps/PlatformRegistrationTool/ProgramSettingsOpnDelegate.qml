@@ -114,6 +114,7 @@ ProgramSettingsDelegate {
 
             text: "Set"
             opacity: delegate.isSet ? 0 : 1
+            enabled: opnInput.text.trim().length > 0
 
             onClicked: {
                 sendSanitizedOpnRequest()
@@ -122,6 +123,10 @@ ProgramSettingsDelegate {
 
         function sendSanitizedOpnRequest() {
             var text = opnInput.text.trim()
+            if (text.length === 0) {
+                return
+            }
+
             opnInput.text = text
             checkOpnRequested(text)
         }
