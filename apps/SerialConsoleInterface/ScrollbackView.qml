@@ -607,7 +607,7 @@ Item {
                 break
             }
 
-            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(scrollbackView.model.data(sourceIndex, "condensedMessage"))
+            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(scrollbackView.model.sourceModel.data(sourceIndex, "condensedMessage"))
             if (i !== selectionEndIndex) {
                 text += '\n'
             }
