@@ -540,7 +540,7 @@ BaseStateMachine {
         id: stateLoopFailed
 
         onEntered: {
-            stateMachine.statusText = "Registration Failed"
+            stateMachine.statusText = "Platform Registration Failed"
             taskbarButton.progress.stop()
         }
 
@@ -560,7 +560,7 @@ BaseStateMachine {
         id: stateLoopSucceed
 
         onEntered: {
-            stateMachine.statusText = "Registration Successful"
+            stateMachine.statusText = "Platform Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
             taskbarButton.progress.hide()
             taskbarButton.progress.reset()
