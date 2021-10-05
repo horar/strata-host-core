@@ -11,6 +11,7 @@
 #include <QString>
 #include <QQuickItem>
 #include <QProcess>
+#include <QMultiHash>
 
 struct ResourceItem {
     ResourceItem(
@@ -108,7 +109,18 @@ public:
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
+    /**
+     * @brief unregisterAllViews Asynchronously requests resource unregistration for all control view resources
+     * @param parent The parent/container
+     */
     Q_INVOKABLE void unregisterAllViews(QObject *parent);
+
+    /**
+     * @brief unregisterDeleteViewResource Asynchronously requests resource unregistration for specific class id
+     * @param class_id The class id of the platform
+     * @param parent The parent/container
+     */
+    Q_INVOKABLE void unregisterAllRelatedViews(const QString &class_id, QObject *parent);
 
     Q_INVOKABLE void recompileControlViewQrc(QString qrcFilePath);
 
@@ -163,7 +175,7 @@ private:
      */
     bool findRccCompiler();
 
-    QHash<QString, ResourceItem*> viewsRegistered_;
+    QMultiHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
 

@@ -44,6 +44,7 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
+    viewsRegistered_.clear();
 }
 
 bool ResourceLoader::registerResource(const QString &path, const QString &prefix) {
@@ -74,6 +75,16 @@ bool ResourceLoader::registerControlViewResource(const QString &rccPath, const Q
         return false;
     }
 
+    QMultiHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.constFind(class_id);
+    while (itr != viewsRegistered_.cend() && itr.key() == class_id) {
+        if (itr.value()->filepath == rccPath && itr.value()->version == version) {
+            qCWarning(logCategoryResourceLoader).nospace() << "Resource already loaded for class id: " << class_id
+                                                           << ", rccPath: " << rccPath << ", version: " << version;
+            return true;
+        }
+        ++itr;
+    }
+
     if (registerResource(rccPath, getQResourcePrefix(class_id, version))) {
         // `gitTaggedVersion` is created at build time. It incorporates the git tag version into the rcc file.
         // The reason we store both is to double check that the metadata version shipped from OTA is the same as the
@@ -101,49 +112,54 @@ void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id,
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
     }
-    QTimer::singleShot(1, this, [=]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
+    QTimer::singleShot(1, this, [=]{
+        if (unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem) == false) {
+            qCWarning(logCategoryResourceLoader).nospace() << "Resource not unregistered/deleted, might remain stored in memory/HDD, class id: " << class_id << ", rccPath: " << rccPath << ", version: " << version;
+        }
+    });
 }
 
 bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
     if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
+        qCCritical(logCategoryResourceLoader).nospace() << "Invalid data provided, class id: " << class_id << ", rccPath: " << rccPath << ", version: " << version;
         return false;
     }
 
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
+    trimComponentCache(parent);
 
     QFile resourceInfo(rccPath);
 
+    bool success = true;
     if (resourceInfo.exists()) {
         if (QResource::unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version))) {
             qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource version" << version << "for" << resourceInfo.fileName();
         } else {
             qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource" << resourceInfo.fileName() << "either wasn't registered or is still in use for class id:" << class_id;
+            success = false;
         }
 
         if (removeFromSystem) {
             if (resourceInfo.remove() == false) {
                 qCCritical(logCategoryResourceLoader) << "Could not delete the resource" << resourceInfo.fileName();
-                return false;
+                success = false;
+            }
+        }
+
+        auto ret = viewsRegistered_.equal_range(class_id);
+        for (auto itr = ret.first; itr != ret.second; ++itr) {
+            ResourceItem* info = itr.value();
+            if (info->filepath == resourceInfo.fileName() && info->version == version) {
+                viewsRegistered_.erase(itr);
+                delete info;
+                break;
             }
         }
     } else {
         qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist -" << resourceInfo.fileName();
-        return false;
+        success = false;
     }
 
-    QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
-    // Only reset this view in viewsRegistered if we have not already registered a different version
-    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one.
-    // In this case, the viewsRegistered_[class_id] will already contain the updated version
-    if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
-        ResourceItem *info = itr.value();
-        info->filepath = "";
-        info->gitTaggedVersion = "";
-        info->version = "";
-    }
-    return true;
+    return success;
 }
 
 void ResourceLoader::requestUnregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {
@@ -152,40 +168,45 @@ void ResourceLoader::requestUnregisterResource(const QString &path, const QStrin
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << path;
     }
-    QTimer::singleShot(1, this, [=]{ unregisterResource(path, prefix, parent, removeFromSystem); });
+    QTimer::singleShot(1, this, [=]{
+        if (unregisterResource(path, prefix, parent, removeFromSystem) == false) {
+            qCWarning(logCategoryResourceLoader).nospace() << "Resource not unregistered/deleted, might remain stored in memory/HDD, path: " << path << ", prefix: " << prefix;
+        }
+    });
 }
 
 bool ResourceLoader::unregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {
     if (path.isEmpty() || prefix.isEmpty()) {
+        qCCritical(logCategoryResourceLoader).nospace() << "Invalid data provided, path: " << path << ", prefix: " << prefix;
         return false;
     }
 
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
+    trimComponentCache(parent);
 
     QFileInfo resourceInfo(path);
 
+    bool success = true;
     if (resourceInfo.exists()) {
         if (QResource::unregisterResource(resourceInfo.filePath(), prefix)) {
             qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource" << resourceInfo.fileName() << "with prefix" << prefix;
         } else {
             qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource" << resourceInfo.fileName() << "either wasn't registered or is still in use with prefix:" << prefix;
+            success = false;
         }
 
         if (removeFromSystem) {
             QFile resourceFile(path);
             if (resourceFile.remove() == false) {
                 qCCritical(logCategoryResourceLoader) << "Could not delete the resource" << resourceInfo.fileName();
-                return false;
+                success = false;
             }
         }
     } else {
         qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist -" << resourceInfo.fileName();
-        return false;
+        success = false;
     }
 
-    return true;
+    return success;
 }
 
 void ResourceLoader::loadCoreResources()
@@ -242,37 +263,51 @@ void ResourceLoader::unregisterAllViews(QObject *parent)
     QHashIterator<QString, ResourceItem*> itr(viewsRegistered_);
     while (itr.hasNext()) {
         itr.next();
-        ResourceItem* item = itr.value();
+        ResourceItem* info = itr.value();
 
-        requestUnregisterDeleteViewResource(itr.key(), item->filepath, item->version, parent, false);
+        requestUnregisterDeleteViewResource(itr.key(), info->filepath, info->version, parent, false);
+        delete info;
     }
     viewsRegistered_.clear();
 }
 
-bool ResourceLoader::isViewRegistered(const QString &class_id) {
-    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    if (itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty()) {
-        return true;
+void ResourceLoader::unregisterAllRelatedViews(const QString &class_id, QObject *parent)
+{
+    auto ret = viewsRegistered_.equal_range(class_id);
+    QMultiHash<QString, ResourceItem*>::iterator itr = ret.first;
+    while (itr != ret.second) {
+        ResourceItem* info = itr.value();
+
+        requestUnregisterDeleteViewResource(class_id, info->filepath, info->version, parent, false);
+        itr = viewsRegistered_.erase(itr);
+        delete info;
     }
-    return false;
 }
 
-QString ResourceLoader::getVersionRegistered(const QString &class_id) {
-    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    if (itr != viewsRegistered_.end()) {
+bool ResourceLoader::isViewRegistered(const QString &class_id)
+{
+    return viewsRegistered_.contains(class_id);
+}
+
+QString ResourceLoader::getVersionRegistered(const QString &class_id)
+{
+    // will get the most recent value
+    QMultiHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.constFind(class_id);
+    if (itr != viewsRegistered_.cend()) {
         return itr.value()->version;
     } else {
-        return NULL;
+        return QString();
     }
 }
 
 QString ResourceLoader::getGitTaggedVersion(const QString &class_id)
 {
-    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    if (itr != viewsRegistered_.end()) {
+    // will get the most recent value
+    QMultiHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.constFind(class_id);
+    if (itr != viewsRegistered_.cend()) {
         return itr.value()->gitTaggedVersion;
     } else {
-        return NULL;
+        return QString();
     }
 }
 
@@ -454,9 +489,15 @@ QString ResourceLoader::getLastLoggedError() {
 }
 
 void ResourceLoader::trimComponentCache(QObject *parent) {
-    QQmlEngine *eng = qmlEngine(parent);
-    eng->collectGarbage();
-    eng->trimComponentCache();
+    if (parent != nullptr) {
+        QQmlEngine *eng = qmlEngine(parent);
+        if (eng != nullptr) {
+            eng->collectGarbage();
+            eng->trimComponentCache();
+        } else {
+            qCWarning(logCategoryResourceLoader) << "There is no QQmlEngine associated with object" << parent;
+        }
+    }
 }
 
 QList<QString> ResourceLoader::getQrcPaths(QString path) {
