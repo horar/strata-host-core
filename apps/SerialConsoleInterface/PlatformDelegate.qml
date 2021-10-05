@@ -118,9 +118,8 @@ FocusScope {
                     anchors {
                         top: hexViewTitle.bottom
                         bottom: parent.bottom
+                        right: parent.right
                     }
-
-                    anchors.right: parent.right
 
                     property var nextContent: ""
                     onNextContentChanged: {
