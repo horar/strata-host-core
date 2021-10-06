@@ -80,6 +80,6 @@ Button {
         id: textMetrics
 
         text: model.text
-        font.pixelSize: 13 * 0.9
+        font.pixelSize: 12
     }
 }
