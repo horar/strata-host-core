@@ -38,29 +38,14 @@ PlatformManager::~PlatformManager() {
     // stop all operations here to avoid capturing signals later which could crash
     platformOperations_.stopAllOperations();
 
-    // forcibly terminate all scanners, do not wait for signals
+    // forcibly terminate all scanners
     foreach(DeviceScannerPtr scanner, scanners_) {
-        disconnect(scanner.get(), nullptr, this, nullptr);
-        scanner->deinit();
+        scanner->deinit();                                  // all devices will be reported as lost
+        disconnect(scanner.get(), nullptr, this, nullptr);  // in case someone held the scanner pointer
     }
     scanners_.clear();
 
-    // forcibly terminate all devices, do not wait for signals
-    foreach(PlatformPtr platform, closedPlatforms_) {
-        disconnect(platform.get(), nullptr, this, nullptr);
-        platform->terminate(false);
-    }
-    closedPlatforms_.clear();
-
-    foreach(PlatformPtr platform, openedPlatforms_) {
-        disconnect(platform.get(), nullptr, this, nullptr);
-        const QByteArray deviceId = platform->deviceId();
-        emit platformAboutToClose(deviceId);
-        platform->terminate(true);
-        emit platformRemoved(deviceId);
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
-    }
-    openedPlatforms_.clear();
+    // all devices should have been terminated by the scanner deinit
 }
 
 void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
@@ -217,13 +202,13 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
         // add first to closedPlatforms_ and when open() succeeds, add to openedPlatforms_
         closedPlatforms_.insert(deviceId, platform);
 
-        connect(platform.get(), &Platform::opened, this, &PlatformManager::handlePlatformOpened, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::aboutToClose, this, &PlatformManager::handlePlatformAboutToClose, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::closed, this, &PlatformManager::handlePlatformClosed, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::terminated, this, &PlatformManager::handlePlatformTerminated, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::recognized, this, &PlatformManager::handlePlatformRecognized, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::opened, this, &PlatformManager::handlePlatformOpened);
+        connect(platform.get(), &Platform::aboutToClose, this, &PlatformManager::handlePlatformAboutToClose);
+        connect(platform.get(), &Platform::closed, this, &PlatformManager::handlePlatformClosed);
+        connect(platform.get(), &Platform::terminated, this, &PlatformManager::handlePlatformTerminated);
+        connect(platform.get(), &Platform::recognized, this, &PlatformManager::handlePlatformRecognized);
+        connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged);
+        connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError);
 
         platform->open();
     } else {

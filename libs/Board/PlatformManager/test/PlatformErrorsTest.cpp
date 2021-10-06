@@ -198,7 +198,7 @@ void PlatformErrorsTest::errorBeforeOperationTest()
     platformOperation->run();
 
     QCOMPARE(platformOperation->deviceId(), deviceId_);
-    QCOMPARE(platformOperation->hasStarted(), true);
+    QCOMPARE(platformOperation->hasStarted(), false);
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
     QCOMPARE(platformOperation->isSuccessfullyFinished(), false);
 
