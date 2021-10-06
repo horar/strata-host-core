@@ -75,8 +75,12 @@ SGWidgets.SGWindow {
 
         SGWidgets.SGText {
             id: appNameText
-            width: parent.width
-            padding: baseSpacing
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                margins: baseSpacing
+            }
 
             fontSizeMultiplier: 1.5
             wrapMode: Text.Wrap
@@ -84,32 +88,57 @@ SGWidgets.SGWindow {
             text: Qt.application.name
         }
 
-        Row {
-            id: versionRow
-            width: parent.width
-            padding: baseSpacing
-            spacing: baseSpacing
-            topPadding: 0
-
+        Flickable {
+            id: versionFlick
             anchors {
                 top: appNameText.bottom
+                margins: baseSpacing
+                left: parent.left
+                right: parent.right
             }
 
-            SGWidgets.SGText {
-                id: versionText
+            width: parent.width
+            height: versionRow.height + horizontalScrollBar.height
+            contentWidth: versionRow.width
+            contentHeight: versionRow.height + horizontalScrollBar.height
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
 
-                wrapMode: Text.Wrap
-                text: versionExpanded ? versionNumberExpanded : versionNumber
+            ScrollBar.horizontal: ScrollBar {
+                id: horizontalScrollBar
+                anchors.bottom: versionFlick.bottom
+                height: 6
+                policy: ScrollBar.AlwaysOn
+                visible: versionFlick.width < versionFlick.contentWidth
             }
 
-            SGWidgets.SGButton {
-                id: showButton
-                height: versionText.height
-                width: 20
-                color: darkerGrayColor
-                text: "..."
-                visible: versionExpanded ? false : true
-                onClicked: versionExpanded = !versionExpanded
+            Row {
+                id: versionRow
+                spacing: 4
+
+                SGWidgets.SGTextEdit {
+                    id: versionText
+                    wrapMode: Text.Wrap
+                    text: versionExpanded ? versionNumberExpanded : versionNumber
+                    readOnly: true
+                    selectByMouse: true
+                    textFormat: TextEdit.RichText
+                }
+
+                SGWidgets.SGIconButton {
+                    id: showButton
+                    anchors.verticalCenter: versionText.verticalCenter
+
+                    hintText: versionExpanded ? "Show less" : "Show more"
+                    icon.source: versionExpanded ? "qrc:/sgimages/chevron-left.svg" : "qrc:/sgimages/chevron-right.svg"
+                    iconColor: Theme.palette.black
+                    iconSize: 0.7*versionText.height
+                    backgroundOnlyOnHovered: false
+
+                    onClicked: {
+                        versionExpanded = !versionExpanded
+                    }
+                }
             }
         }
 
@@ -118,13 +147,14 @@ SGWidgets.SGWindow {
             spacing: 20
             anchors {
                 margins: baseSpacing
-                top: versionRow.bottom
+                top: versionFlick.bottom
                 left: parent.left
             }
 
             Image {
                 id: appLogoImage
                 anchors.horizontalCenter: parent.horizontalCenter
+
                 fillMode: Image.PreserveAspectFit
                 sourceSize.width: 100
                 smooth: true
@@ -141,14 +171,14 @@ SGWidgets.SGWindow {
 
         TabBar {
             id: tabBar
-            background: Rectangle {
-                color: dialogBg
+            anchors {
+                margins: baseSpacing
+                left: imageColumn.right
+                top: versionFlick.bottom
             }
 
-            anchors {
-                left: imageColumn.right
-                top: versionRow.bottom
-                leftMargin: baseSpacing
+            background: Rectangle {
+                color: dialogBg
             }
 
             TabButton {
@@ -201,8 +231,6 @@ SGWidgets.SGWindow {
 
         StackLayout {
             id:tabLayout
-            currentIndex: tabBar.currentIndex
-
             anchors {
                 top: tabBar.bottom
                 left: imageColumn.right
@@ -211,6 +239,8 @@ SGWidgets.SGWindow {
                 margins: baseSpacing
                 topMargin: 0
             }
+
+            currentIndex: tabBar.currentIndex
 
             Rectangle {
                 id: generalTab
@@ -221,12 +251,12 @@ SGWidgets.SGWindow {
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
-                    contentHeight: infoText.height + copyrightText.height + disclaimerTextLabel.height
+                    contentHeight: disclaimerTextLabel.y + disclaimerTextLabel.height
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
                     ScrollBar.vertical: ScrollBar {
-                        width: visible ? 8 : 0
+                        width: 8
                         anchors.right: generalFlick.right
                         policy: ScrollBar.AlwaysOn
                         visible: generalFlick.height < generalFlick.contentHeight
@@ -234,36 +264,46 @@ SGWidgets.SGWindow {
 
                     SGWidgets.SGText {
                         id: infoText
-                        width: parent.width
-                        padding: baseSpacing
+                        anchors {
+                            top: parent.top
+                            margins: baseSpacing
+                            left: parent.left
+                        }
 
+                        width: parent.width - 2*baseSpacing
                         fontSizeMultiplier: 1.1
                         font.italic: true
                         wrapMode: Text.Wrap
                         text: "\"Designed by engineers for engineers to securely deliver software & information, " +
-                            "efficiently bringing you the focused info you need, nothing you don’t.\""
+                            "efficiently bringing you the focused info you need, nothing you don’t.\"\n"
                     }
 
                     SGWidgets.SGText {
                         id: copyrightText
-                        width: parent.width
-                        padding: baseSpacing
-                        anchors.top: infoText.bottom
+                        anchors {
+                            margins: baseSpacing
+                            top: infoText.bottom
+                            left: parent.left
+                        }
 
+                        width: parent.width - 2*baseSpacing
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
                         text: Qt.application.name + " is part of Strata development kit.\n" +
-                            "\n"+
+                            "\n" +
                             "Copyright \u00a9 2018-2021 " + Qt.application.organization + ".\n"+
-                            "All rights reserved."
+                            "All rights reserved.\n"
                     }
 
                     SGWidgets.SGText {
                         id: disclaimerTextLabel
-                        width: parent.width
-                        padding: baseSpacing
-                        anchors.top: copyrightText.bottom
+                        anchors {
+                            margins: baseSpacing
+                            top: copyrightText.bottom
+                            left: parent.left
+                        }
 
+                        width: parent.width - 2*baseSpacing
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
                         text: "The program is provided AS IS WITHOUT WARRANTY OF ANY KIND, "+
@@ -288,7 +328,7 @@ SGWidgets.SGWindow {
                     boundsBehavior: Flickable.StopAtBounds
 
                     ScrollBar.vertical: ScrollBar {
-                        width: visible ? 8 : 0
+                        width: 8
                         anchors.right: attributionsFlick.right
                         policy: ScrollBar.AlwaysOn
                         visible: attributionsFlick.height < attributionsFlick.contentHeight
@@ -296,11 +336,13 @@ SGWidgets.SGWindow {
 
                     SGWidgets.SGText {
                         id: attributionTextLabel
-                        width: parent.width
-                        padding: baseSpacing
+                        anchors {
+                            margins: baseSpacing
+                            top: parent.top
+                            left: parent.left
+                        }
 
-                        anchors.topMargin: 2*baseSpacing
-
+                        width: parent.width - 2*baseSpacing
                         wrapMode: Text.Wrap
                         font.italic: true
                         textFormat: Text.RichText
@@ -321,12 +363,12 @@ SGWidgets.SGWindow {
                     width: parent.width
                     height: parent.height
                     contentWidth: parent.width
-                    contentHeight: openSourceText.height + repositoryRefrenceText.height
+                    contentHeight: repositoryRefrenceText.y + repositoryRefrenceText.height
                     clip: true
                     boundsBehavior: Flickable.StopAtBounds
 
                     ScrollBar.vertical: ScrollBar {
-                        width: visible ? 8 : 0
+                        width: 8
                         anchors.right: contributionsFlick.right
                         policy: ScrollBar.AlwaysOn
                         visible: contributionsFlick.height < contributionsFlick.contentHeight
@@ -334,9 +376,13 @@ SGWidgets.SGWindow {
 
                     SGWidgets.SGText {
                         id: openSourceText
-                        width: parent.width
-                        padding: baseSpacing
+                        anchors {
+                            margins: baseSpacing
+                            top: parent.top
+                            left: parent.left
+                        }
 
+                        width: parent.width - 2*baseSpacing
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
                         text: "Strata Development Kit is an open source project." +
@@ -345,10 +391,13 @@ SGWidgets.SGWindow {
 
                     SGWidgets.SGText {
                         id: repositoryRefrenceText
-                        width: parent.width
-                        padding: baseSpacing
-                        anchors.top: openSourceText.bottom
+                        anchors {
+                            margins: baseSpacing
+                            top: openSourceText.bottom
+                            left: parent.left
+                        }
 
+                        width: parent.width - 2*baseSpacing
                         fontSizeMultiplier: 1.1
                         wrapMode: Text.Wrap
                         textFormat: Text.RichText
@@ -365,9 +414,8 @@ SGWidgets.SGWindow {
         SGWidgets.SGButton {
             id: closeButton
             anchors {
+                margins: baseSpacing
                 bottom: parent.bottom
-                bottomMargin: baseSpacing
-                rightMargin: baseSpacing
                 right: parent.right
             }
             text: "Close"
@@ -377,19 +425,18 @@ SGWidgets.SGWindow {
     }
 
     function createVersionString() {
-        var versionList = ["stage of development", "build id", "git hash", "uncommitted changes"]
         var version = versionNum
         if (AppInfo.stageOfDevelopment !== "") {
-            version += "<b> %1: </b> %2".arg(versionList[0]).arg(AppInfo.stageOfDevelopment)
+            version += "<b> stage of development: </b> %2".arg(AppInfo.stageOfDevelopment)
         }
         if (AppInfo.buildId !== "") {
-            version += "<b> %1: </b> %2".arg(versionList[1]).arg(AppInfo.buildId)
+            version += "<b> build id: </b> %2".arg(AppInfo.buildId)
         }
         if (AppInfo.gitRevision !== "") {
-            version += "<b> %1: </b> %2".arg(versionList[2]).arg(AppInfo.gitRevision)
+            version += "<b> git hash: </b> %2".arg(AppInfo.gitRevision)
         }
         if (AppInfo.fullVersion.includes("dirty")) {
-            version += "<b> %1 </b>".arg(versionList[3])
+            version += "<b> uncommitted changes </b>"
         }
         return version
     }
