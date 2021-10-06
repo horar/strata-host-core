@@ -13,6 +13,8 @@
 #include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
 #include "SciMockDevice.h"
+#include "SciFilterScrollbackModel.h"
+#include "SciSearchScrollbackModel.h"
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
@@ -34,6 +36,8 @@ class SciPlatform: public QObject {
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
     Q_PROPERTY(SciMockDevice* mockDevice READ mockDevice CONSTANT)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
+    Q_PROPERTY(SciFilterScrollbackModel* filterScrollbackModel READ filterScrollbackModel CONSTANT)
+    Q_PROPERTY(SciSearchScrollbackModel* searchScrollbackModel READ searchScrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
@@ -64,23 +68,25 @@ public:
     // because Q_ENUM macro is constrained to the class it is used in and doesn't work well between classes
     Q_ENUM(strata::device::Device::Type)
 
-    QByteArray deviceId();
-    strata::device::Device::Type deviceType();
+    QByteArray deviceId() const;
+    strata::device::Device::Type deviceType() const;
     void setDeviceType(const strata::device::Device::Type &type);
     void setPlatform(const strata::platform::PlatformPtr& platform);
-    QString verboseName();
+    QString verboseName() const;
     void setVerboseName(const QString &verboseName);
-    QString appVersion();
+    QString appVersion() const;
     void setAppVersion(const QString &appVersion);
-    QString bootloaderVersion();
+    QString bootloaderVersion() const;
     void setBootloaderVersion(const QString &bootloaderVersion);
-    SciPlatform::PlatformStatus status();
+    SciPlatform::PlatformStatus status() const;
     void setStatus(SciPlatform::PlatformStatus status);
-    SciMockDevice* mockDevice();
-    SciScrollbackModel* scrollbackModel();
-    SciCommandHistoryModel* commandHistoryModel();
-    SciFilterSuggestionModel* filterSuggestionModel();
-    QString errorString();
+    SciMockDevice* mockDevice() const;
+    SciScrollbackModel* scrollbackModel() const;
+    SciCommandHistoryModel* commandHistoryModel() const;
+    SciFilterSuggestionModel* filterSuggestionModel() const;
+    SciFilterScrollbackModel* filterScrollbackModel() const;
+    SciSearchScrollbackModel* searchScrollbackModel() const;
+    QString errorString() const;
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
     QString deviceName() const;
@@ -148,6 +154,8 @@ private:
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;
     SciFilterSuggestionModel *filterSuggestionModel_;
+    SciFilterScrollbackModel *filterScrollbackModel_;
+    SciSearchScrollbackModel *searchScrollbackModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     strata::PlatformManager *platformManager_;
     uint currentMessageId_ = 0;
