@@ -11,6 +11,7 @@
 #include "ResourcePath.h"
 #include "logging/LoggingQtCategories.h"
 #include "SGVersionUtils.h"
+#include "SGUtilsCpp.h"
 
 #include "Version.h"
 
@@ -21,6 +22,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QRegularExpression>
 
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
@@ -480,7 +482,7 @@ void ResourceLoader::clearLastLoggedError() {
     lastLoggedError_ = "";
 }
 
-void ResourceLoader::setLastLoggedError(QString &error_str) {
+void ResourceLoader::setLastLoggedError(const QString &error_str) {
     lastLoggedError_ = error_str;
 }
 
@@ -500,11 +502,33 @@ void ResourceLoader::trimComponentCache(QObject *parent) {
     }
 }
 
-QList<QString> ResourceLoader::getQrcPaths(QString path) {
+QList<QString> ResourceLoader::getQrcPaths(const QString &path) {
     QList<QString> pathList;
     QDirIterator it(path, QDirIterator::Subdirectories);
     while (it.hasNext()) {
         pathList.append(it.next());
     }
     return pathList;
+}
+
+QString ResourceLoader::getProjectNameFromCmake(const QString &qrcPath) {
+    const QFile qrcFile(qrcPath);
+    if (!qrcFile.exists()) {
+        qCCritical(logCategoryResourceLoader) << "Unable to find QRC file at:" << qrcPath;
+        return QString();
+    }
+
+    // Find QRC file's parent directory, then read CMakeLists.txt in it
+    SGUtilsCpp utils;
+    const QDir parentDir(utils.parentDirectoryPath(qrcPath));
+    const QString cmakePath = parentDir.filePath("CMakeLists.txt");
+    const QString cmakeText = utils.readTextFileContent(cmakePath);
+    if (cmakeText.isEmpty()) {
+        return QString();
+    }
+
+    // Regex to get 'project_name' out of 'project(project_name)'
+    const QRegularExpression re("(?<=project\\()(\\w+)");
+    const QRegularExpressionMatch match = re.match(cmakeText);
+    return match.captured();
 }
