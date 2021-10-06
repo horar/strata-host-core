@@ -349,7 +349,7 @@ function addConnectedPlatform(platform) {
                             insertProgramFirmwareListing(platform, class_id_string)
                         }
 
-                        sdsModel.firmwareUpdater.programAssisted(platform.device_id)
+                        sdsModel.firmwareUpdater.programAssistedController(platform.device_id)
                     } else {
                         if (platform.active === "bootloader") {
                             if (sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platform.device_id)) {
@@ -372,7 +372,7 @@ function addConnectedPlatform(platform) {
             } else {
                 //uncompatible firmware installed
                 insertProgramFirmwareListing(platform, class_id_string)
-                sdsModel.firmwareUpdater.programAssisted(platform.device_id)
+                sdsModel.firmwareUpdater.programAssistedController(platform.device_id)
             }
         }
     } else {
@@ -394,7 +394,7 @@ function addConnectedPlatform(platform) {
                         insertProgramFirmwareListing(platform, class_id_string)
                     }
 
-                    sdsModel.firmwareUpdater.programEmbedded(platform.device_id)
+                    sdsModel.firmwareUpdater.programEmbeddedWithoutFw(platform.device_id)
                 } else {
                     if (platform.active === "bootloader") {
                         if (sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platform.device_id)) {
