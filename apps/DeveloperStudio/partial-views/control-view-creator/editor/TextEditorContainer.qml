@@ -197,9 +197,9 @@ ColumnLayout {
         }
 
         onCurrentIndexChanged: {
-            var htmlHeight = webEngine.height - 16
-            var htmlWidth = webEngine.width - 16
-            channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
+            if (openFilesModel.currentIndex === fileContainerRoot.modelIndex) {
+                resetHeight()
+            }
         }
     }
 
@@ -471,12 +471,12 @@ ColumnLayout {
 
                 onHeightChanged: {
                     var htmlHeight = height - 16
-                    channelObject.setContainerHeight(htmlHeight.toString())
+                    channelObject.setContainerHeight(htmlHeight)
                 }
 
                 onWidthChanged: {
                     var htmlWidth = width - 16
-                    channelObject.setContainerWidth(htmlWidth.toString())
+                    channelObject.setContainerWidth(htmlWidth)
                 }
 
                 // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
@@ -485,9 +485,7 @@ ColumnLayout {
                     target: mainWindow
 
                     onVisibilityChanged: {
-                        var htmlHeight = webEngine.height - 16
-                        var htmlWidth = webEngine.width - 16
-                        channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
+                        resetHeight()
                     }
                 }
 
@@ -556,9 +554,9 @@ ColumnLayout {
         property bool reset: false
 
         signal setValue(string value)
-        signal setContainerHeight(string height)
-        signal setContainerWidth(string width)
-        signal resetContainer(string height, string width)
+        signal setContainerHeight(int height)
+        signal setContainerWidth(int width)
+        signal resetContainer(int height, int width)
         signal undo()
         signal redo()
         signal goToUUID(string uuid)
@@ -606,5 +604,11 @@ ColumnLayout {
             viewStack.currentIndex = 0
             channelObject.goToUUID(uuid)
         }
+    }
+
+    function resetHeight() {
+        var htmlHeight = webEngine.height - 16
+        var htmlWidth = webEngine.width - 16
+        channelObject.resetContainer(htmlHeight, htmlWidth)
     }
 }
