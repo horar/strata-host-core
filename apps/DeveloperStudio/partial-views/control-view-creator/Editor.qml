@@ -219,7 +219,7 @@ Item {
                                         width: height
                                         implicitWidth: height
                                         iconColor: "black"
-                                        visible: !closeFileIcon.visible
+                                        visible: !closeFileIcon.visible && model.hasUnsavedChanges
                                         anchors {
                                             left: tabText.right
                                             leftMargin: 4
