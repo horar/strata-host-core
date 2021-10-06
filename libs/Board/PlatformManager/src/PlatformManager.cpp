@@ -38,29 +38,14 @@ PlatformManager::~PlatformManager() {
     // stop all operations here to avoid capturing signals later which could crash
     platformOperations_.stopAllOperations();
 
-    // forcibly terminate all scanners, do not wait for signals
+    // forcibly terminate all scanners
     foreach(DeviceScannerPtr scanner, scanners_) {
-        disconnect(scanner.get(), nullptr, this, nullptr);
-        scanner->deinit();
+        scanner->deinit();                                  // all devices will be reported as lost
+        disconnect(scanner.get(), nullptr, this, nullptr);  // in case someone held the scanner pointer
     }
     scanners_.clear();
 
-    // forcibly terminate all devices, do not wait for signals
-    foreach(PlatformPtr platform, closedPlatforms_) {
-        disconnect(platform.get(), nullptr, this, nullptr);
-        platform->terminate(false);
-    }
-    closedPlatforms_.clear();
-
-    foreach(PlatformPtr platform, openedPlatforms_) {
-        disconnect(platform.get(), nullptr, this, nullptr);
-        const QByteArray deviceId = platform->deviceId();
-        emit platformAboutToClose(deviceId);
-        platform->terminate(true);
-        emit platformRemoved(deviceId);
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
-    }
-    openedPlatforms_.clear();
+    // all devices should have been terminated by the scanner deinit
 }
 
 void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
