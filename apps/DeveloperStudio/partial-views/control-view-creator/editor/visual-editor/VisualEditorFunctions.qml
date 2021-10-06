@@ -223,18 +223,19 @@ QtObject {
             row = parseInt(row)
             column = parseInt(column)
             if (row < visualEditor.loader.item.rowCount - 1) {
-                row++
-                copy = setObjectProperty(newUuid, "layoutInfo.yRows", row, copy)
+                copy = setObjectProperty(newUuid, "layoutInfo.yRows", row + 1, copy, false)
             }
             if (column < visualEditor.loader.item.columnCount - 1) {
-                column++
-                copy = setObjectProperty(newUuid, "layoutInfo.xColumns", column, copy)
+                copy = setObjectProperty(newUuid, "layoutInfo.xColumns", column + 1, copy, false)
             }
         } else {
             console.warn("Problem detected with layoutInfo in object " + newUuid)
         }
 
         insertTextAtEndOfFile(copy, save)
+
+        // undo/redo
+        sdsModel.visualEditorUndoStack.addItem(file, newUuid, copy)
     }
 
     function duplicateControlSelected() {
