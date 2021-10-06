@@ -39,6 +39,7 @@ Item {
     signal resendMessageRequested(string message)
     signal condenseMessageRequested(int index, bool isCondensed)
     signal delegateClicked(int index)
+    signal delegateEnterPressed(int index)
 
     // internal stuff
     property int delegateBaseSpacing: 1
@@ -351,6 +352,9 @@ Item {
 
             property int delegateIndex: index
             onDelegateIndexChanged: selectTimer.restart()
+
+            Keys.onEnterPressed: delegateEnterPressed(index)
+            Keys.onReturnPressed:  delegateEnterPressed(index)
 
             Rectangle {
                 id: messageTypeBg

@@ -231,7 +231,10 @@ FocusScope {
                     allowCopyMenu: false
                     allowSearchHighlight: true
 
-                    onDelegateClicked: {
+                    onDelegateEnterPressed: positionScrollbackViewAtEnd(index)
+                    onDelegateClicked: positionScrollbackViewAtEnd(index)
+
+                    function positionScrollbackViewAtEnd(index) {
                         var srcIndex = platformDelegate.searchScrollbackModel.mapIndexToSource(index);
                         var dstIndex = platformDelegate.filterScrollbackModel.mapIndexFromSource(srcIndex)
 
