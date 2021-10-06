@@ -35,6 +35,7 @@ Platform::Platform(const device::DevicePtr& device) :
     operationLock_(0),
     bootloaderMode_(false),
     isRecognized_(false),
+    platformState_(PlatformState::Closed),
     apiVersion_(ApiVersion::Unknown),
     controllerType_(ControllerType::Embedded)
 {
@@ -49,7 +50,7 @@ Platform::Platform(const device::DevicePtr& device) :
     connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
 
     reconnectTimer_.setSingleShot(true);
-    connect(&reconnectTimer_, &QTimer::timeout, this, &Platform::openDevice);
+    connect(&reconnectTimer_, &QTimer::timeout, this, &Platform::open);
 }
 
 Platform::~Platform() {
@@ -118,21 +119,42 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString err
 }
 
 void Platform::open() {
-    abortReconnect();
-    openDevice();
+    if (platformState_ == PlatformState::Closed) {
+        abortReconnect();
+        device_->open();
+    } else {
+        qCWarning(logCategoryPlatform) << this << "Attempting to open device in invalid state" << platformState_;
+    }
 }
 
 void Platform::close(const std::chrono::milliseconds waitInterval) {
-    abortReconnect();
-    closeDevice(waitInterval);
+    if (platformState_ == PlatformState::Opened) {
+        abortReconnect();
+        platformState_ = PlatformState::AboutToClose;
+        emit aboutToClose();
+        device_->close();   // can take some time depending on the device type
+        emit closed();
+        platformState_ = PlatformState::Closed;
+        if (waitInterval != std::chrono::milliseconds::zero()) {
+            reconnectTimer_.start(waitInterval.count());
+        }
+    } else {
+        qCWarning(logCategoryPlatform) << this << "Attempting to close device in invalid state" << platformState_;
+    }
 }
 
-void Platform::terminate(bool close) {
-    abortReconnect();
-    if (close) {
-        closeDevice(std::chrono::milliseconds::zero());
+void Platform::terminate() {
+    if (platformState_ != PlatformState::Terminated) {
+        if (platformState_ == PlatformState::Opened) {
+            close(std::chrono::milliseconds::zero());
+        } else {
+            abortReconnect();
+        }
+        platformState_ = PlatformState::Terminated;
+        emit terminated();
+    } else {
+        qCWarning(logCategoryPlatform) << this << "Attempting to terminate already terminated platform";
     }
-    emit terminated();
 }
 
 // public method
@@ -250,7 +272,6 @@ void Platform::resetReceiving() {
     device_->resetReceiving();
 }
 
-
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {
     // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&propertiesLock_);
@@ -328,20 +349,16 @@ void Platform::setRecognized(bool isRecognized) {
     emit recognized(isRecognized, bootloaderMode());
 }
 
-void Platform::openDevice() {
-    device_->open();
+bool Platform::isOpen() const {
+    return platformState_ == PlatformState::Opened;
 }
 
 void Platform::openedHandler() {
-    emit opened();
-}
-
-void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
-    emit aboutToClose();
-    device_->close();   // can take some time depending on the device type
-    emit closed();
-    if (waitInterval != std::chrono::milliseconds::zero()) {
-        reconnectTimer_.start(waitInterval.count());
+    if (platformState_ == PlatformState::Closed) {
+        platformState_ = PlatformState::Opened;
+        emit opened();
+    } else {
+        qCWarning(logCategoryPlatform) << this << "Attempting to emit open() signal in invalid state" << platformState_;
     }
 }
 
