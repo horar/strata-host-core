@@ -37,7 +37,7 @@ QVariantList SGCSVUtils::importFromFile(const QString &filePath)
     SGUtilsCpp utils;
     QString path = utils.urlToLocalFile(filePath);
     if (!utils.exists(path)) {
-        qCInfo(logCategoryCsvUtils) << "This file does not exist";
+        qCCritical(logCategoryCsvUtils) << "This file does not exist" << path;
         return QVariantList();
     }
     data_.clear();
@@ -70,7 +70,7 @@ void SGCSVUtils::setData(const QVariantList data)
 void SGCSVUtils::writeToFile(const QString &folderPath, const QString &fileName)
 {
     if (folderPath.length() == 0 || fileName.length() == 0) {
-        qCInfo(logCategoryCsvUtils) << "To write to file, the folder path cannot be empty.";
+        qCCritical(logCategoryCsvUtils) << "To write to file, the folder path cannot be empty and/or must include filename";
         return;
     }
     SGUtilsCpp utils;
