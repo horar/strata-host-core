@@ -61,6 +61,11 @@ Rectangle {
         Help.registerTarget(help_tour, "When a platform has been selected, its tab will come into view.", 2, "selectorHelp")
         userSettings.loadSettings()
         alertIconContainer.visible = hasNotifications
+        if (userSettings.hasOptedOut) {
+            Authenticator.update_metrics("anonymous")
+        } else {
+            Authenticator.update_metrics(NavigationControl.context.user_id)
+        }
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -624,6 +629,18 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: userSettings
+
+        onHasOptedOutChanged: {
+            if (userSettings.hasOptedOut) {
+                Authenticator.update_metrics("anonymous")
+            } else {
+                Authenticator.update_metrics(NavigationControl.context.user_id)
+            }
+        }
+    }
+
     Loader {
         id: feedLoader
         source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
@@ -653,6 +670,7 @@ Rectangle {
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
+        property bool hasOptedOut: false
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
@@ -676,9 +694,13 @@ Rectangle {
             if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
                 notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
             }
-            if(settings.hasOwnProperty("notifyOnPlatformConnections")){
+            if (settings.hasOwnProperty("notifyOnPlatformConnections")){
                 notifyOnPlatformConnections = settings.notifyOnPlatformConnections
             }
+            if (settings.hasOwnProperty("hasOptedOut")) {
+                hasOptedOut = settings.hasOptedOut
+            }
+
             NavigationControl.userSettings = userSettings
         }
 
@@ -690,7 +712,8 @@ Rectangle {
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal,
                 notifyOnPlatformConnections: notifyOnPlatformConnections,
-                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate,
+                hasOptedOut: hasOptedOut
             }
             userSettings.writeFile("general-settings.json", settings)
         }

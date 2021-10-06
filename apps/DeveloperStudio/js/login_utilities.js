@@ -567,11 +567,23 @@ function validation_result (response) {
     }
 }
 
+function update_metrics(data) {
+    Rest.xhr("get", "metrics", metrics_error, metrics_response)
+}
+
+function metrics_response(response) {
+    console.log(JSON.stringify(response))
+}
+
+function metrics_error(error) {
+    console.error(JSON.stringify(error))
+}
+
 function set_token (token) {
     Rest.jwt = token
 }
 
-function getNextId(){
+function getNextId() {
    return Rest.getNextRequestId();
 }
 

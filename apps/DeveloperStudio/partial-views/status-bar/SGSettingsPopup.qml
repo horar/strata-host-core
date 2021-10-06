@@ -64,6 +64,16 @@ SGStrataPopup {
             }
         }
 
+        SGSettingsCheckbox {
+            text: "Request to opt-out of metric tracking"
+            checked: userSettings.hasOptedOut
+
+            onCheckedChanged: {
+                userSettings.hasOptedOut = checked
+                userSettings.saveSettings()
+            }
+        }
+
             // to be uncommented in CS-880
 //            SGText {
 //                text: "Firmware Settings"
