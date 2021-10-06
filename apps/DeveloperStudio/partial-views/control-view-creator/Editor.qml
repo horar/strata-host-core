@@ -83,7 +83,7 @@ Item {
 
         Shortcut {
             sequence: "Ctrl+R"
-            enabled: editor.fileTreeModel.url.toString() !== '' && !model.hasUnsavedChanges
+            enabled: editor.fileTreeModel.url.toString() !== ''
             onActivated: {
                 recompileControlViewQrc()
             }
