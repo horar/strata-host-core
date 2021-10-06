@@ -83,14 +83,6 @@ namespace strata {
         platform::PlatformPtr getPlatform(const QByteArray& deviceId, bool open = true, bool closed = false) const;
 
         /**
-         * Get list of smart pointers to all the opened and/or closed platforms.
-         * @param open true if open platforms are considered, false otherwise
-         * @param closed true if closed platforms are considered, false otherwise
-         * @return list of platform pointers
-         */
-        QList<platform::PlatformPtr> getPlatforms(bool open = true, bool closed = false) const;
-
-        /**
          * Get list of device Ids of all the opened and/or closed platforms.
          * @param open true if open platforms are considered, false otherwise
          * @param closed true if closed platforms are considered, false otherwise
@@ -149,8 +141,7 @@ namespace strata {
         void startPlatformOperations(const platform::PlatformPtr& platform);
 
         QMap<device::Device::Type, device::scanner::DeviceScannerPtr> scanners_;
-        QHash<QByteArray, platform::PlatformPtr> openedPlatforms_;
-        QHash<QByteArray, platform::PlatformPtr> closedPlatforms_;
+        QHash<QByteArray, platform::PlatformPtr> platforms_;
 
         platform::operation::PlatformOperations platformOperations_;
 
