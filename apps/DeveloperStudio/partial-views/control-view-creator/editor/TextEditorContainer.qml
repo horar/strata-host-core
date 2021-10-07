@@ -198,7 +198,7 @@ ColumnLayout {
 
         onCurrentIndexChanged: {
             if (openFilesModel.currentIndex === fileContainerRoot.modelIndex) {
-                resetHeight()
+                resetHeightAndWidth()
             }
         }
     }
@@ -485,7 +485,7 @@ ColumnLayout {
                     target: mainWindow
 
                     onVisibilityChanged: {
-                        resetHeight()
+                        resetHeightAndWidth()
                     }
                 }
 
@@ -606,7 +606,7 @@ ColumnLayout {
         }
     }
 
-    function resetHeight() {
+    function resetHeightAndWidth() {
         var htmlHeight = webEngine.height - 16
         var htmlWidth = webEngine.width - 16
         channelObject.resetContainer(htmlHeight, htmlWidth)
