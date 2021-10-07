@@ -86,7 +86,7 @@ void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
     QSignalSpy platformTerminatedSignal(platform_.get(), SIGNAL(terminated()));
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
 
-    QVERIFY(mockDeviceScanner_->mockDeviceLost(deviceId_));
+    QVERIFY(mockDeviceScanner_->disconnectDevice(deviceId_).isEmpty());
 
     if (alreadyDisconnected) {
         QVERIFY((platformRemovedSignal.count() == 0) && (platformRemovedSignal.wait(100) == false));
@@ -134,13 +134,9 @@ void PlatformErrorsTest::deviceLostWithDisconnectTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-
     QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
     mockDevice_->mockEmitError(Device::ErrorCode::DeviceDisconnected, "Device Disconnected");
     QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(100) == true));
-
-    removeMockDevice(true);
-
     QVERIFY(platformErrorSignal.count() == 1);
     QList<QVariant> arguments = platformErrorSignal.takeFirst();
     QVERIFY(arguments.at(0).type() == QVariant::UserType);
@@ -270,19 +266,19 @@ void PlatformErrorsTest::unableToOpenTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformClosedSignal(platformManager_.get(), SIGNAL(platformClosed(QByteArray)));
 
     mockDevice_->mockSetOpenEnabled(false);
 
     platformManager_->disconnectPlatform(deviceId_, std::chrono::milliseconds(10));
 
     QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(250) == true));
-    QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(250) == true));
+    QVERIFY((platformClosedSignal.count() == 1) || (platformClosedSignal.wait(250) == true));
 
     QList<QVariant> arguments = platformErrorSignal.takeFirst();
     QVERIFY(arguments.at(0).type() == QVariant::UserType);
     QVERIFY(arguments.at(1).type() == QVariant::String);
-    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceFailedToOpen);
+    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceFailedToOpenGoingToRetry);
 
     QVERIFY(platform_->deviceConnected() == false);
 }

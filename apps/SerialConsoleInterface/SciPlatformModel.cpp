@@ -148,6 +148,8 @@ void SciPlatformModel::removePlatform(int index)
     endRemoveRows();
 
     emit countChanged();
+
+    platformManager_->disconnectPlatform(item->deviceId());
 }
 
 void SciPlatformModel::reconnect(int index)

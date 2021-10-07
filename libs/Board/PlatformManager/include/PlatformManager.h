@@ -58,13 +58,20 @@ namespace strata {
         void removeScanner(device::Device::Type scannerType);
 
         /**
-         * Disconnect and close the platform.
+         * Disconnect and close the platform temporarily.
          * @param deviceId device ID
          * @param disconnectDuration if more than 0, the device will be connected again after the given milliseconds at the earliest;
          *                           if 0 or less, there will be no attempt to reconnect device
          * @return true if platform was open and a close attempt was executed, otherwise false
          */
-        bool disconnectPlatform(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
+        bool disconnectPlatform(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration);
+
+        /**
+         * Disconnect and close the platform permanently.
+         * @param deviceId device ID
+         * @return true if platform was open and a close attempt was executed, otherwise false
+         */
+        bool disconnectPlatform(const QByteArray& deviceId);
 
         /**
          * Reconnect and open the platform.
@@ -98,19 +105,25 @@ namespace strata {
 
     signals:
         /**
-         * Emitted when new platform is connected and succesfully opened (added to openedPlatforms_).
+         * Emitted when new platform is connected and succesfully opened.
          * @param deviceId device ID
          */
         void platformAdded(QByteArray deviceId);
 
         /**
-         * Emitted when platform is about to be closed (removed from openedPlatforms_).
+         * Emitted when platform is about to be closed.
          * @param deviceId device ID
          */
         void platformAboutToClose(QByteArray deviceId);
 
         /**
-         * Emitted when platform is disconnected and closed (removed from openedPlatforms_).
+         * Emitted when platform is closed.
+         * @param deviceId device ID
+         */
+        void platformClosed(QByteArray deviceId);
+
+        /**
+         * Emitted when platform is disconnected and removed.
          * @param deviceId device ID
          */
         void platformRemoved(QByteArray deviceId);

@@ -76,8 +76,8 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 {
     if (platform == nullptr) {
         if (status_ == PlatformStatus::Disconnected) {
-             qCCritical(logCategorySci) << "platform is already disconnected";
-             return;
+            // no need to do anything, already erased
+            return;
         }
 
         disconnect(platform_.get(), nullptr, this, nullptr);
