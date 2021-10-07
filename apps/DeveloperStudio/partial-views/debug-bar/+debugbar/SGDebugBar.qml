@@ -83,13 +83,9 @@ Item {
                 //feel free to reuse this flag for other debug purposes as well
                 id: debugFeatures
                 text: "Debug Features"
+                checked: sdsModel.debugFeaturesEnabled
                 onCheckedChanged: {
                     sdsModel.debugFeaturesEnabled = debugFeatures.checked
-                }
-                Binding {
-                    target: debugFeatures
-                    property: "checked"
-                    value: sdsModel.debugFeaturesEnabled
                 }
             }
 
