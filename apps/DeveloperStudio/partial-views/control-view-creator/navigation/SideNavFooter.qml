@@ -133,7 +133,10 @@ Item {
         tooltipDescription: "Recompile your control view project."
 
         onClicked: {
-            checkRecompileBeforeView()
+            recompileControlViewQrc()
+            if (cvcUserSettings.openViewOnBuild && !confirmBuildClean.opened) {
+                viewStack.currentIndex = 2
+            }
         }
     }
 
@@ -141,17 +144,5 @@ Item {
         id: cvcSettingsLoader
         sourceComponent: SGControlViewCreatorSettingsPopup {}
         active: false
-    }
-
-    function checkRecompileBeforeView() {
-        if (openFilesModel.getUnsavedCount() > 0) {
-            confirmBuildClean.open();
-        } else {
-            recompileControlViewQrc()
-        }
-
-        if (cvcUserSettings.openViewOnBuild && !confirmBuildClean.opened) {
-            viewStack.currentIndex = 2
-        }
     }
 }
