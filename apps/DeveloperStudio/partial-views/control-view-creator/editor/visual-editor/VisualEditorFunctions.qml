@@ -477,6 +477,41 @@ QtObject {
         return type;
     }
 
+    function alignItem(position, uuid) {
+        switch (position) {
+            case "horCenter":
+                horizontalCenterAlign(uuid)
+            break;
+            case "verCenter":
+                verticalCenterAlign(uuid)
+            break;
+        }
+        saveFile();
+    }
+
+    function horizontalCenterAlign(uuid) {
+        const horPosition = Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+        moveItem(uuid, horPosition, getObjectPropertyValue(uuid, "layoutInfo.yRows"))
+    }
+
+    function verticalCenterAlign(uuid) {
+        const verPosition = Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+        moveItem(uuid, getObjectPropertyValue(uuid, "layoutInfo.xColumns"), verPosition)
+    }
+
+    // This will check if item can be exactly centered
+    function exactCenterCheck(uuid, horOrVert) {
+        if (horOrVert === "horizontal") {
+            const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        } else {
+            const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        }
+    }
+
     function create_UUID() {
         var dt = new Date().getTime();
         var uuid = 'xxxxx'.replace(/[xy]/g, function(c) {
