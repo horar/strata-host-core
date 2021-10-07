@@ -270,7 +270,7 @@ Item {
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
         onOpened: {
-            if(menu.state === "help_tour"){
+            if (menu.state === "help_tour") {
                 Help.refreshView(Help.internal_tour_index)
             }
         }
@@ -283,7 +283,7 @@ Item {
             state: "normal"
 
             onStateChanged: {
-                if(state === "help_tour"){
+                if (state === "help_tour") {
                     Help.refreshView(Help.internal_tour_index)
                 }
             }

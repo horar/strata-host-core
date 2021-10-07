@@ -91,21 +91,21 @@ Rectangle {
         }
         spacing: 1
 
-    	Item {
-        	id: logoContainer
-        	Layout.preferredHeight: container.height
-        	Layout.preferredWidth: 70
+        Item {
+            id: logoContainer
+            Layout.preferredHeight: container.height
+            Layout.preferredWidth: 70
 
-        	Image {
-            	source: "qrc:/images/strata-logo-reverse.svg"
-            	height: 30
-            	width: 60
-            	mipmap: true
-            	anchors {
-                	centerIn: logoContainer
-            	}
-        	}
-    	}
+            Image {
+                source: "qrc:/images/strata-logo-reverse.svg"
+                height: 30
+                width: 60
+                mipmap: true
+                anchors {
+                    centerIn: logoContainer
+                }
+            }
+        }
 
         Rectangle {
             id: platformSelector
@@ -228,13 +228,13 @@ Rectangle {
                 enabled: Help.utility.runningTourName === "selectorHelp"
 
                 onTour_runningChanged: {
-                    if (!tour_running){
+                    if (!tour_running) {
                         help_tour.visible = false
                     }
                 }
 
                 onInternal_tour_indexChanged: {
-                    if (Help.current_tour_targets[index]["target"] === help_tour){
+                    if (Help.current_tour_targets[index]["target"] === help_tour) {
                         help_tour.visible = true
                     }
                 }
