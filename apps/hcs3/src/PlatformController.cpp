@@ -17,6 +17,10 @@
 
 #include <Operations/StartApplication.h>
 
+#include <rapidjson/pointer.h>
+
+#include <cstring>
+
 using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
@@ -126,6 +130,23 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
     Platform *platform = qobject_cast<Platform*>(QObject::sender());
     if (platform == nullptr) {
         return;
+    }
+
+    // do not send 'backup_firmware' and 'flash_firmware' ACKs and notifications to clients
+    if (message.isJsonValidObject()) {
+        const rapidjson::Value *jsonValue = rapidjson::GetValueByPointer(message.json(), "/notification/value");
+        if (jsonValue == nullptr) {
+            jsonValue = rapidjson::GetValueByPointer(message.json(), "/ack");
+        }
+
+        if ((jsonValue != nullptr) && jsonValue->IsString()) {
+            const char *str = jsonValue->GetString();
+            if (str != nullptr) {
+                if ((std::strcmp("flash_firmware", str) == 0) || (std::strcmp("backup_firmware", str) == 0)) {
+                    return;
+                }
+            }
+        }
     }
 
     const QByteArray deviceId = platform->deviceId();
