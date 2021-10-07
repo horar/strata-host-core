@@ -85,7 +85,7 @@ Item {
             sequence: "Ctrl+R"
             enabled: editor.fileTreeModel.url.toString() !== '' && !model.hasUnsavedChanges
             onActivated: {
-                recompileControlViewQrc()
+                checkRecompileBeforeView()
             }
         }
 
@@ -343,6 +343,18 @@ Item {
                 editQRCEnabled = true
             }
             openFilesModel.closeTabAt(index)
+        }
+    }
+
+    function checkRecompileBeforeView() {
+        if (openFilesModel.getUnsavedCount() > 0) {
+            confirmBuildClean.open();
+        } else {
+            recompileControlViewQrc()
+        }
+
+        if (cvcUserSettings.openViewOnBuild && !confirmBuildClean.opened) {
+            viewStack.currentIndex = 2
         }
     }
 }
