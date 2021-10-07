@@ -109,7 +109,7 @@ Item {
                     } else {
                         let txt = model.opn
                         let idx = model.opn_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
 
@@ -134,7 +134,7 @@ Item {
                     } else {
                         let txt = model.description
                         let idx = model.desc_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
                 Layout.fillWidth: true
@@ -166,7 +166,7 @@ Item {
                                     if (str !== "Matching Part OPNs: ") {
                                         str += ", "
                                     }
-                                    str += part.substring(0, idx) + "<font color=\"orange\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                    str += part.substring(0, idx) + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + part.substring(idx + PlatformFilters.keywordFilter.length)
                                 } else {
                                     continue
                                 }
