@@ -34,13 +34,7 @@ ColumnLayout {
                 id: jsonExample
                 wrapMode: Text.WordWrap
                 enabled: false
-                text: "\"my_cmd\": {\n"
-                      + "    \"payload\": {\n"
-                      + "        \"dac\": 0.7,\n"
-                      + "        \"io\": true,\n"
-                      + "        \"rev\": 56\n"
-                      + "    }\n"
-                      + "}\n"
+                text: "Currently stored CSV data: "
             }
 
             SGWidgets.SGTextEdit {
@@ -117,7 +111,9 @@ ColumnLayout {
     FileDialog {
         id: importDialog
         selectFolder: false
+        selectMultiple: false
         nameFilters: ["*.csv"]
+
         onAccepted: {
             textEdit.text = ""
             let data = csvUtil.importFromFile(importDialog.fileUrl);
@@ -131,6 +127,7 @@ ColumnLayout {
     FileDialog {
         id: exportDialog
         selectFolder: true
+        selectMultiple: false
 
         onAccepted: {
             csvUtil.writeToFile(exportDialog.fileUrl)
