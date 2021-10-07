@@ -54,6 +54,12 @@ ColumnLayout {
         return fileText.replace(/\t/g, '    ')
     }
 
+    function resetHeightAndWidth() {
+        var htmlHeight = webEngine.height - 16
+        var htmlWidth = webEngine.width - 16
+        channelObject.resetContainer(htmlHeight, htmlWidth)
+    }
+
     function saveFile(closeFile = false, forceOverwrite = false) {
         if (alertToast.visible) {
             alertToast.hide()
@@ -604,11 +610,5 @@ ColumnLayout {
             viewStack.currentIndex = 0
             channelObject.goToUUID(uuid)
         }
-    }
-
-    function resetHeightAndWidth() {
-        var htmlHeight = webEngine.height - 16
-        var htmlWidth = webEngine.width - 16
-        channelObject.resetContainer(htmlHeight, htmlWidth)
     }
 }
