@@ -219,13 +219,14 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 
         let previousIndex = previousDeviceIndex(platform.device_id)
         if (previousIndex > -1) {
+            let previousPlatform = previouslyConnected[previousIndex]
             if (platform.controller_class_id === undefined) {
-                if (previouslyConnected[previousIndex].class_id !== platform.class_id
-                        || previouslyConnected[previousIndex].platform_id !== platform.platform_id
-                        || previouslyConnected[previousIndex].firmware_version !== platform.firmware_version
-                        || previouslyConnected[previousIndex].active !== platform.active ) {
+                if (previousPlatform.class_id !== platform.class_id
+                        || previousPlatform.platform_id !== platform.platform_id
+                        || previousPlatform.firmware_version !== platform.firmware_version
+                        || previousPlatform.active !== platform.active ) {
 
-                    disconnectPlatform(previouslyConnected[previousIndex])
+                    disconnectPlatform(previousPlatform)
                     addConnectedPlatform(platform)
                 } else {
                     refreshFirmwareVersion(platform)
@@ -234,15 +235,15 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                 // Assisted Strata
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
                 if(
-                        previouslyConnected[previousIndex].class_id !== platform.class_id ||
-                        previouslyConnected[previousIndex].controller_class_id !== platform.controller_class_id ||
-                        previouslyConnected[previousIndex].fw_class_id !== platform.fw_class_id ||
-                        previouslyConnected[previousIndex].platform_id !== platform.platform_id ||
-                        previouslyConnected[previousIndex].controller_platform_id !== platform.controller_platform_id ||
-                        previouslyConnected[previousIndex].firmware_version !== platform.firmware_version ||
-                        previouslyConnected[previousIndex].active !== platform.active) {
+                        previousPlatform.class_id !== platform.class_id ||
+                        previousPlatform.controller_class_id !== platform.controller_class_id ||
+                        previousPlatform.fw_class_id !== platform.fw_class_id ||
+                        previousPlatform.platform_id !== platform.platform_id ||
+                        previousPlatform.controller_platform_id !== platform.controller_platform_id ||
+                        previousPlatform.firmware_version !== platform.firmware_version ||
+                        previousPlatform.active !== platform.active) {
 
-                    disconnectPlatform(previouslyConnected[previousIndex])
+                    disconnectPlatform(previousPlatform)
                     addConnectedPlatform(platform)
                 } else {
                     refreshFirmwareVersion(platform)
