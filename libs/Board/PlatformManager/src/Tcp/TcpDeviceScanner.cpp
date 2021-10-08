@@ -47,7 +47,7 @@ void TcpDeviceScanner::deinit()
     disconnect(udpSocket_.get(), nullptr, this, nullptr);
     scanRunning_ = false;
 
-    for (const auto &deviceId : discoveredDevices_) {
+    for (const auto &deviceId : qAsConst(discoveredDevices_)) {
         emit deviceLost(deviceId);
     }
     discoveredDevices_.clear();
@@ -68,7 +68,7 @@ void TcpDeviceScanner::unsetProperties(quint32 flags) {
 void TcpDeviceScanner::startAutomaticScan()
 {
     if (scanRunning_) {
-        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
+        qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
     } else {
         connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
                 &TcpDeviceScanner::processPendingDatagrams);
@@ -82,7 +82,7 @@ void TcpDeviceScanner::stopAutomaticScan()
         disconnect(udpSocket_.get(), nullptr, this, nullptr);
         scanRunning_ = false;
     } else {
-        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
+        qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
     }
 }
 
@@ -97,14 +97,14 @@ void TcpDeviceScanner::processPendingDatagrams()
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
             if (discoveredDevices_.contains(createDeviceId(TcpDevice::createUniqueHash(clientAddress)))) {
-                qCCritical(logCategoryDeviceScanner)
+                qCCritical(logCategoryDeviceScanner).noquote()
                     << "Tcp device" << clientAddress.toString() << "already discovered";
                 return;
             }
 
-            qCDebug(logCategoryDeviceScanner)
-                << "Discovered new platfrom. IP:" << clientAddress.toString()
-                << ", TCP port:" << tcpPort;
+            qCDebug(logCategoryDeviceScanner).noquote().nospace()
+                << "Discovered new platfrom. IP: " << clientAddress.toString()
+                << ", TCP port: " << tcpPort;
             addTcpDevice(clientAddress, tcpPort);
         }
     }
@@ -128,7 +128,7 @@ void TcpDeviceScanner::deviceErrorHandler(Device::ErrorCode error, QString error
 
     platform::Platform *platform = qobject_cast<platform::Platform*>(QObject::sender());
     if (platform == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to platform object";
+        qCWarning(logCategoryDeviceScanner) << "Cannot cast sender to platform object";
         return;
     }
 
@@ -142,7 +142,7 @@ void TcpDeviceScanner::deviceErrorHandler(Device::ErrorCode error, QString error
         }
 
         QTimer::singleShot(0, this, [this, deviceId](){
-            qCDebug(logCategoryDeviceScanner) << "device loss is about to be reported for" << deviceId;
+            qCDebug(logCategoryDeviceScanner).noquote() << "Device loss is about to be reported for" << deviceId;
             emit deviceLost(deviceId);
         });
     }
