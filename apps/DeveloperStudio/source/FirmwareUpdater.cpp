@@ -57,7 +57,7 @@ bool FirmwareUpdater::programEmbeddedWithoutFw(QString deviceId)
     return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
 }
 
-bool FirmwareUpdater::ProgramFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
+bool FirmwareUpdater::programFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
 {
     if (requestDevice(deviceId, Action::ProgramFirmware, firmwareUri, firmwareMD5) == false) {
         return false;
