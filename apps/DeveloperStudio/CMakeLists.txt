@@ -51,6 +51,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/PlatformInterfaceGenerator.cpp
     source/BleDeviceModel.cpp
     source/VisualEditorUndoStack.cpp
+    source/PlatformOperation.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp

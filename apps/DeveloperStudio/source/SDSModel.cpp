@@ -17,6 +17,7 @@
 #include "logging/LoggingQtCategories.h"
 #include "BleDeviceModel.h"
 #include "FirmwareUpdater.h"
+#include "PlatformOperation.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
@@ -45,6 +46,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
+      platformOperation_(new PlatformOperation(strataClient_, this)),
       bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
@@ -67,6 +69,7 @@ SDSModel::~SDSModel()
     delete firmwareUpdater_;
     delete urlConfig_;
     delete strataClient_;
+    delete platformOperation_;
 }
 
 bool SDSModel::startHcs()
@@ -232,6 +235,11 @@ BleDeviceModel *SDSModel::bleDeviceModel() const
 strata::strataRPC::StrataClient *SDSModel::strataClient() const
 {
     return strataClient_;
+}
+
+PlatformOperation *SDSModel::platformOperation() const
+{
+    return platformOperation_;
 }
 
 void SDSModel::shutdownService()

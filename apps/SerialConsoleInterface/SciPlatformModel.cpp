@@ -182,8 +182,10 @@ void SciPlatformModel::boardConnectedHandler(const QByteArray& deviceId)
     }
 }
 
-void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
+void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recognized, bool inBootloader)
 {
+    Q_UNUSED(inBootloader)
+
     int index = findPlatform(deviceId);
     if (index < 0) {
         qCCritical(logCategorySci) << "unknown board" << deviceId;

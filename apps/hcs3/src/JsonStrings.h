@@ -21,6 +21,7 @@ const QString JSON_VERBOSE_NAME("verbose_name");
 const QString JSON_FW_VERSION("firmware_version");
 const QString JSON_BL_VERSION("bootloader_version");
 const QString JSON_ERROR_STRING("error_string");
+const QString JSON_ACTIVE("active");
 const QString JSON_LIST("list");
 const QString JSON_TYPE("type");
 const QString JSON_MESSAGE("message");

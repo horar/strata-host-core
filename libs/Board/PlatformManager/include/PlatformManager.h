@@ -83,14 +83,6 @@ namespace strata {
         platform::PlatformPtr getPlatform(const QByteArray& deviceId, bool open = true, bool closed = false) const;
 
         /**
-         * Get list of smart pointers to all the opened and/or closed platforms.
-         * @param open true if open platforms are considered, false otherwise
-         * @param closed true if closed platforms are considered, false otherwise
-         * @return list of platform pointers
-         */
-        QList<platform::PlatformPtr> getPlatforms(bool open = true, bool closed = false) const;
-
-        /**
          * Get list of device Ids of all the opened and/or closed platforms.
          * @param open true if open platforms are considered, false otherwise
          * @param closed true if closed platforms are considered, false otherwise
@@ -126,9 +118,10 @@ namespace strata {
         /**
          * Emitted when platform was recognized through Identify operation (and is ready for communication).
          * @param deviceId device ID
-         * @param recognized true when platform was recognized (identified), otherwise false
+         * @param isRecognized true when platform was recognized (identified), otherwise false
+         * @param inBootloader true when platform is booted into bootloader, otherwise false
          */
-        void platformRecognized(QByteArray deviceId, bool isRecognized);
+        void platformRecognized(QByteArray deviceId, bool isRecognized, bool inBootloader);
 
     private slots:
         // from DeviceScanner
@@ -140,7 +133,7 @@ namespace strata {
         void handlePlatformAboutToClose();
         void handlePlatformClosed();
         void handlePlatformTerminated();
-        void handlePlatformRecognized(bool isRecognized);
+        void handlePlatformRecognized(bool isRecognized, bool inBootloader);
         void handlePlatformIdChanged();
         void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
@@ -148,8 +141,7 @@ namespace strata {
         void startPlatformOperations(const platform::PlatformPtr& platform);
 
         QMap<device::Device::Type, device::scanner::DeviceScannerPtr> scanners_;
-        QHash<QByteArray, platform::PlatformPtr> openedPlatforms_;
-        QHash<QByteArray, platform::PlatformPtr> closedPlatforms_;
+        QHash<QByteArray, platform::PlatformPtr> platforms_;
 
         platform::operation::PlatformOperations platformOperations_;
 

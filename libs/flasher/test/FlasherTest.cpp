@@ -306,12 +306,12 @@ void FlasherTest::flashFirmware(bool startInBootloader, Flasher::FinalAction fin
         startApplication = false;
     }
 
-    uint messageCount = 25;
+    uint messageCount = 23;
     if (startInBootloader == false) {
         messageCount += 3;
     }
     if (startApplication) {
-        messageCount += 1;
+        messageCount += 3;
     }
 
     QCOMPARE(recordedMessages.size(), messageCount);
@@ -344,9 +344,9 @@ void FlasherTest::flashFirmware(bool startInBootloader, Flasher::FinalAction fin
 
     if (startApplication) {
         QCOMPARE(recordedMessages[messageIndex++], test_commands::start_application_request);
+        QCOMPARE(recordedMessages[messageIndex++], test_commands::get_firmware_info_request);
+        QCOMPARE(recordedMessages[messageIndex], test_commands::request_platform_id_request);
     }
-    QCOMPARE(recordedMessages[messageIndex++], test_commands::get_firmware_info_request);
-    QCOMPARE(recordedMessages[messageIndex], test_commands::request_platform_id_request);
 
     QCOMPARE(flasherFinishedCount_, 1);
 }

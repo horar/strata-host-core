@@ -41,29 +41,14 @@ PlatformManager::~PlatformManager() {
     // stop all operations here to avoid capturing signals later which could crash
     platformOperations_.stopAllOperations();
 
-    // forcibly terminate all scanners, do not wait for signals
+    // forcibly terminate all scanners
     foreach(DeviceScannerPtr scanner, scanners_) {
-        disconnect(scanner.get(), nullptr, this, nullptr);
-        scanner->deinit();
+        scanner->deinit();                                  // all devices will be reported as lost
+        disconnect(scanner.get(), nullptr, this, nullptr);  // in case someone held the scanner pointer
     }
     scanners_.clear();
 
-    // forcibly terminate all devices, do not wait for signals
-    foreach(PlatformPtr platform, closedPlatforms_) {
-        disconnect(platform.get(), nullptr, this, nullptr);
-        platform->terminate(false);
-    }
-    closedPlatforms_.clear();
-
-    foreach(PlatformPtr platform, openedPlatforms_) {
-        disconnect(platform.get(), nullptr, this, nullptr);
-        const QByteArray deviceId = platform->deviceId();
-        emit platformAboutToClose(deviceId);
-        platform->terminate(true);
-        emit platformRemoved(deviceId);
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
-    }
-    openedPlatforms_.clear();
+    // all devices should have been terminated by the scanner deinit
 }
 
 void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
@@ -92,7 +77,7 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     }
     }
 
-    for (const auto &existingScanner : scanners_) {
+    foreach(const auto &existingScanner, scanners_) {
         if (existingScanner->scannerPrefix().startsWith(scanner->scannerPrefix()) ||
             scanner->scannerPrefix().startsWith(existingScanner->scannerPrefix())) {
 
@@ -129,67 +114,58 @@ void PlatformManager::removeScanner(Device::Type scannerType) {
 }
 
 bool PlatformManager::disconnectPlatform(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration) {
-    auto it = openedPlatforms_.constFind(deviceId);
-    if (it != openedPlatforms_.constEnd()) {
-        qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: "
-            << deviceId << ", duration: " << disconnectDuration.count() << " ms";
-        it.value()->close(disconnectDuration);
-        return true;
+    auto iter = platforms_.constFind(deviceId);
+    if (iter != platforms_.constEnd()) {
+        PlatformPtr platform = iter.value();
+        if (platform->isOpen()) {
+            qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to disconnect platform, deviceId: "
+                << deviceId << ", duration: " << disconnectDuration.count() << " ms";
+            platform->close(disconnectDuration);
+            return true;
+        } else {
+            qCDebug(logCategoryPlatformManager).noquote().nospace() << "Platform already disconnected, deviceId: " << deviceId;
+        }
+    } else {
+        qCWarning(logCategoryPlatformManager).noquote().nospace() << "Platform not found, deviceId: " << deviceId;
     }
     return false;
 }
 
 bool PlatformManager::reconnectPlatform(const QByteArray& deviceId) {
-    auto it = closedPlatforms_.constFind(deviceId);
-    if (it != closedPlatforms_.constEnd()) {
-        qCDebug(logCategoryPlatformManager).noquote() << "Going to reconnect platform, deviceId:" << deviceId;
-        it.value()->open();
-        return true;
+    auto iter = platforms_.constFind(deviceId);
+    if (iter != platforms_.constEnd()) {
+        PlatformPtr platform = iter.value();
+        if (platform->isOpen() == false) {
+            qCDebug(logCategoryPlatformManager).noquote() << "Going to reconnect platform, deviceId:" << deviceId;
+            platform->open();
+            return true;
+        } else {
+            qCDebug(logCategoryPlatformManager).noquote().nospace() << "Platform already connected, deviceId: " << deviceId;
+        }
+    } else {
+        qCWarning(logCategoryPlatformManager).noquote().nospace() << "Platform not found, deviceId: " << deviceId;
     }
     return false;
 }
 
 PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, bool closed) const {
-    if ((open == true) && (closed == false)) {
-        return openedPlatforms_.value(deviceId);
-    } else if ((open == false) && (closed == true)) {
-        return closedPlatforms_.value(deviceId);
-    } else if ((open == true) && (closed == true)) {
-        auto openIter = openedPlatforms_.constFind(deviceId);
-        if (openIter != openedPlatforms_.constEnd()) {
-            return openIter.value();
-        }
-        auto closedIter = closedPlatforms_.constFind(deviceId);
-        if (closedIter != closedPlatforms_.constEnd()) {
-            return closedIter.value();
+    PlatformPtr platform = platforms_.value(deviceId);
+    if (platform != nullptr) {
+        if ((platform->isOpen() && open) || ((platform->isOpen() == false) && closed)) {
+            return platform;
         }
     }
-
     return PlatformPtr();
 }
 
-QList<PlatformPtr> PlatformManager::getPlatforms(bool open, bool closed) const {
-    if ((open == true) && (closed == false)) {
-        return openedPlatforms_.values();
-    } else if ((open == false) && (closed == true)) {
-        return closedPlatforms_.values();
-    } else if ((open == true) && (closed == true)) {
-        return openedPlatforms_.values() + closedPlatforms_.values();
-    } else {
-        return QList<PlatformPtr>();
-    }
-}
-
 QList<QByteArray> PlatformManager::getDeviceIds(bool open, bool closed) {
-    if ((open == true) && (closed == false)) {
-        return openedPlatforms_.keys();
-    } else if ((open == false) && (closed == true)) {
-        return closedPlatforms_.keys();
-    } else if ((open == true) && (closed == true)) {
-        return openedPlatforms_.keys() + closedPlatforms_.keys();
-    } else {
-        return QList<QByteArray>();
+    QList<QByteArray> platforms;
+    foreach(PlatformPtr platform, platforms_) {
+        if ((platform->isOpen() && open) || ((platform->isOpen() == false) && closed)) {
+            platforms.push_back(platform->deviceId());
+        }
     }
+    return platforms;
 }
 
 DeviceScannerPtr PlatformManager::getScanner(Device::Type scannerType) {
@@ -206,18 +182,17 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
 
     qCInfo(logCategoryPlatformManager).nospace().noquote() << "Platform detected: deviceId: " << deviceId << ", Type: " << platform->deviceType();
 
-    if ((openedPlatforms_.contains(deviceId) == false) &&
-        (closedPlatforms_.contains(deviceId) == false)) {
+    if ((platforms_.contains(deviceId) == false)) {
         // add first to closedPlatforms_ and when open() succeeds, add to openedPlatforms_
-        closedPlatforms_.insert(deviceId, platform);
+        platforms_.insert(deviceId, platform);
 
-        connect(platform.get(), &Platform::opened, this, &PlatformManager::handlePlatformOpened, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::aboutToClose, this, &PlatformManager::handlePlatformAboutToClose, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::closed, this, &PlatformManager::handlePlatformClosed, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::terminated, this, &PlatformManager::handlePlatformTerminated, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::recognized, this, &PlatformManager::handlePlatformRecognized, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged, Qt::QueuedConnection);
-        connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError, Qt::QueuedConnection);
+        connect(platform.get(), &Platform::opened, this, &PlatformManager::handlePlatformOpened);
+        connect(platform.get(), &Platform::aboutToClose, this, &PlatformManager::handlePlatformAboutToClose);
+        connect(platform.get(), &Platform::closed, this, &PlatformManager::handlePlatformClosed);
+        connect(platform.get(), &Platform::terminated, this, &PlatformManager::handlePlatformTerminated);
+        connect(platform.get(), &Platform::recognized, this, &PlatformManager::handlePlatformRecognized);
+        connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged);
+        connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError);
 
         platform->open();
     } else {
@@ -228,14 +203,9 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
 void PlatformManager::handleDeviceLost(QByteArray deviceId) {
     qCInfo(logCategoryPlatformManager).noquote() << "Platform lost: deviceId:" << deviceId;
 
-    auto openIter = openedPlatforms_.constFind(deviceId);
-    if (openIter != openedPlatforms_.constEnd()) {
-        openIter.value()->terminate(true);
-        return;
-    }
-    auto closedIter = closedPlatforms_.constFind(deviceId);
-    if (closedIter != closedPlatforms_.constEnd()) {
-        closedIter.value()->terminate(false);
+    auto iter = platforms_.constFind(deviceId);
+    if (iter != platforms_.constEnd()) {
+        iter.value()->terminate();
         return;
     }
 
@@ -251,20 +221,16 @@ void PlatformManager::handlePlatformOpened() {
 
     const QByteArray deviceId = platform->deviceId();
 
-    auto closedIter = closedPlatforms_.find(deviceId);
-    if (closedIter != closedPlatforms_.end()) {
-        PlatformPtr platformPtr = closedIter.value();
-        closedPlatforms_.erase(closedIter);
-        openedPlatforms_.insert(deviceId, platformPtr);
+    auto iter = platforms_.find(deviceId);
+    if (iter != platforms_.end()) {
+        PlatformPtr platformPtr = iter.value();
         qCInfo(logCategoryPlatformManager).noquote() << "Platform open, deviceId:" << deviceId;
 
         emit platformAdded(deviceId);
 
         startPlatformOperations(platformPtr);
-    } else if (openedPlatforms_.contains(deviceId)) {
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform already open, deviceId:" << deviceId;
     } else {
-        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to openedPlatforms_, device Id does not exist:" << deviceId;
+        qCCritical(logCategoryPlatformManager).noquote() << "Unable to locate platform, device Id does not exist:" << deviceId;
     }
 }
 
@@ -293,18 +259,8 @@ void PlatformManager::handlePlatformClosed() {
 
     const QByteArray deviceId = platform->deviceId();
 
-    auto openIter = openedPlatforms_.find(deviceId);
-    if (openIter != openedPlatforms_.end()) {
-        PlatformPtr platformPtr = openIter.value();
-        openedPlatforms_.erase(openIter);
-        closedPlatforms_.insert(deviceId, platformPtr);
-        qCInfo(logCategoryPlatformManager).noquote() << "Platform closed, deviceId:" << deviceId;
-        emit platformRemoved(deviceId);
-    } else if (closedPlatforms_.contains(deviceId)) {
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform already closed, deviceId:" << deviceId;
-    } else {
-        qCWarning(logCategoryPlatformManager).noquote() << "Unable to move to closedPlatforms_, device Id does not exist:" << deviceId;
-    }
+    qCInfo(logCategoryPlatformManager).noquote() << "Platform closed, deviceId:" << deviceId;
+    emit platformRemoved(deviceId);
 }
 
 void PlatformManager::handlePlatformTerminated() {
@@ -315,27 +271,18 @@ void PlatformManager::handlePlatformTerminated() {
     }
 
     const QByteArray deviceId = platform->deviceId();
-
-    auto closedIter = closedPlatforms_.find(deviceId);
-    if (closedIter != closedPlatforms_.end()) {
-        disconnect(closedIter.value().get(), nullptr, this, nullptr);
-        closedPlatforms_.erase(closedIter);
+    auto iter = platforms_.find(deviceId);
+    if (iter != platforms_.end()) {
+        disconnect(iter.value().get(), nullptr, this, nullptr);
+        platforms_.erase(iter);     // platform gets deleted after this point, do not reuse
         qCDebug(logCategoryPlatformManager).noquote() << "Terminated device:" << deviceId;
         return;
+    } else {
+        qCWarning(logCategoryPlatformManager).noquote() << "Unable to terminate, device Id does not exist:" << deviceId;
     }
-
-    auto openIter = openedPlatforms_.find(deviceId);
-    if (openIter != openedPlatforms_.end()) {
-        disconnect(openIter.value().get(), nullptr, this, nullptr);
-        openedPlatforms_.erase(openIter);
-        qCWarning(logCategoryPlatformManager).noquote() << "Terminating open device:" << deviceId;
-        return;
-    }
-
-    qCWarning(logCategoryPlatformManager).noquote() << "Unable to terminate, device Id does not exist:" << deviceId;
 }
 
-void PlatformManager::handlePlatformRecognized(bool isRecognized) {
+void PlatformManager::handlePlatformRecognized(bool isRecognized, bool inBootloader) {
     Platform *platform = qobject_cast<Platform*>(QObject::sender());
     if (platform == nullptr) {
         qCCritical(logCategoryPlatformManager) << "Platform does not exist";
@@ -346,11 +293,11 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized) {
 
     qCDebug(logCategoryPlatformManager).noquote().nospace() << "Platform recognized: " << isRecognized << ", deviceId: " << deviceId;
 
-    emit platformRecognized(deviceId, isRecognized);
+    emit platformRecognized(deviceId, isRecognized, inBootloader);
 
     if (isRecognized == false && keepDevicesOpen_ == false) {
         qCInfo(logCategoryPlatformManager).noquote()
-            << "Platform was not recognized, going to release communication channel, deviceId:" << deviceId;
+            << "Platform was not recognized and should be ignored, going to release communication channel, deviceId:" << deviceId;
         disconnectPlatform(deviceId);
     }
 }
@@ -364,12 +311,15 @@ void PlatformManager::handlePlatformIdChanged() {
 
     const QByteArray deviceId = platform->deviceId();
 
-    auto iter = openedPlatforms_.constFind(deviceId);
-    if (iter != openedPlatforms_.constEnd()) {
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, going to Identify, deviceId:" << deviceId;
-        startPlatformOperations(iter.value());
-    } else if (closedPlatforms_.contains(deviceId)) {
-        qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify (platform closed), deviceId:" << deviceId;
+    auto iter = platforms_.constFind(deviceId);
+    if (iter != platforms_.constEnd()) {
+        PlatformPtr platformPtr = iter.value();
+        if (platformPtr->isOpen()) {
+            qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, going to Identify, deviceId:" << deviceId;
+            startPlatformOperations(platformPtr);
+        } else {
+            qCDebug(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify (platform closed), deviceId:" << deviceId;
+        }
     } else {
         qCWarning(logCategoryPlatformManager).noquote() << "Platform Id changed, but unable to Identify, device Id does not exist:" << deviceId;
     }

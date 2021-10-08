@@ -13,14 +13,17 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 
 Rectangle {
+    id: root
     implicitHeight: 20
     Layout.fillWidth: true
     implicitWidth: Math.max(100, buttonContent.implicitWidth + 10)
-    color: mouse.containsMouse ? "white" : "lightgrey"
+    color: mouse.containsMouse || content.visible ? "white" : "lightgrey"
 
     property alias text: buttonText.text
     property alias chevron: chevron.visible
     property alias containsMouse: mouse.containsMouse
+    property alias subMenu: content.sourceComponent
+    property alias content: content
 
     signal clicked()
 
@@ -51,6 +54,42 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
-        onClicked: parent.clicked()
+        onEntered: {
+            if (chevron.visible) {
+                // if popup will spawn past edge of window, place it on the opposite side of the click
+                if ((content.width + root.mapToItem(layoutOverlayRoot.parent, width, 0).x) > layoutOverlayRoot.parent.width) {
+                    content.x = -content.width
+                } else {
+                    content.x = root.width
+                }
+
+                content.open()
+            }
+        }
+
+        onClicked: {
+            root.clicked()
+            if (content.visible) {
+                content.close()
+            }
+        }
+    }
+
+    Loader {
+        id: content
+        active: chevron.visible
+        visible: false
+        anchors.top: parent.top
+
+        signal open()
+        signal close()
+
+        onOpen: {
+            visible = true
+        }
+
+        onClose: {
+            visible = false
+        }
     }
 }
