@@ -270,7 +270,7 @@ ColumnLayout {
 
                             if ((already_started === false) &&
                                 (firmwareRepeater.flashingDeviceInProgress === false)) {
-                                success = sdsModel.firmwareUpdater.programSpecificFirmware(platformStack.device_id, model.uri, model.md5);
+                                success = sdsModel.firmwareUpdater.programFirmware(platformStack.device_id, model.uri, model.md5);
                             }
 
                             if (success) {

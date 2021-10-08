@@ -91,9 +91,10 @@ public:
      * The ChangeFirmwareAction enum for ChangeFirmwareData struct.
      */
     enum class ChangeFirmwareAction {
-        UpdateFirmware,
-        ProgramController,
-        SetControllerFwClassId
+        UpdateFirmware,         // backup old firmware and flash new firmware
+        ProgramFirmware,        // program firmware (without backup) - embedded board
+        ProgramController,      // program controller (dongle) - assisted board
+        SetControllerFwClassId  // set controller FW class ID - assisted board
     };
 
     /**
