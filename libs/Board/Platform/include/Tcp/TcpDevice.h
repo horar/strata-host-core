@@ -72,9 +72,6 @@ public:
      */
     static QByteArray createUniqueHash(QHostAddress hostAddress);
 
-signals:
-    void deviceDisconnected();
-
 private slots:
     void readMessages();
     void handleError(QAbstractSocket::SocketError socketError);
