@@ -161,8 +161,8 @@ ColumnLayout {
 
             if (platformStack.is_assisted === false) {
                 //embedded platform
-                //display only newest
-                return firmwareListModel.getLatestVersionIndex() === row
+                //display only newest (if debugFeaturesEnabled is false)
+                return sdsModel.debugFeaturesEnabled === true || firmwareListModel.getLatestVersionIndex() === row
             }
 
             if (platformStack.controller_class_id.length == 0) {
@@ -172,8 +172,8 @@ ColumnLayout {
             if (firmwareListModel.controller_class_id(row) !== platformStack.controller_class_id) {
                 return false //firmware for a different controller
             }
-            if (firmwareListModel.getLatestVersionIndex(platformStack.controller_class_id) !== row) {
-                //display only newest
+            if (sdsModel.debugFeaturesEnabled === false && firmwareListModel.getLatestVersionIndex(platformStack.controller_class_id) !== row) {
+                //display only newest (if debugFeaturesEnabled is false)
                 return false;
             }
 
@@ -184,6 +184,13 @@ ColumnLayout {
     Connections {
         target: platformStack
         onConnectedChanged: {
+            firmwareSortFilterModel.invalidate()
+        }
+    }
+
+    Connections {
+        target: sdsModel
+        onDebugFeaturesEnabledChanged: {
             firmwareSortFilterModel.invalidate()
         }
     }

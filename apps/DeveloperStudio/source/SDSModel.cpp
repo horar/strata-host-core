@@ -235,6 +235,19 @@ PlatformOperation *SDSModel::platformOperation() const
     return platformOperation_;
 }
 
+bool SDSModel::debugFeaturesEnabled()
+{
+    return debugFeaturesEnabled_;
+}
+
+void SDSModel::setDebugFeaturesEnabled(bool enabled)
+{
+    if (debugFeaturesEnabled_ != enabled) {
+        debugFeaturesEnabled_ = enabled;
+        emit debugFeaturesEnabledChanged();
+    }
+}
+
 void SDSModel::shutdownService()
 {
     remoteHcsNode_->shutdownService(hcsIdentifier_);
