@@ -39,7 +39,7 @@ PlatformManager::~PlatformManager() {
     platformOperations_.stopAllOperations();
 
     // forcibly terminate all scanners
-    foreach(DeviceScannerPtr scanner, scanners_) {
+    for(const DeviceScannerPtr& scanner: qAsConst(scanners_)) {
         scanner->deinit();                                  // all devices will be reported as lost
         disconnect(scanner.get(), nullptr, this, nullptr);  // in case someone held the scanner pointer
     }
@@ -73,7 +73,7 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     }
     }
 
-    foreach(const auto &existingScanner, scanners_) {
+    for(const auto &existingScanner: qAsConst(scanners_)) {
         if (existingScanner->scannerPrefix().startsWith(scanner->scannerPrefix()) ||
             scanner->scannerPrefix().startsWith(existingScanner->scannerPrefix())) {
 
@@ -176,7 +176,7 @@ PlatformPtr PlatformManager::getPlatform(const QByteArray& deviceId, bool open, 
 
 QList<QByteArray> PlatformManager::getDeviceIds(bool open, bool closed) {
     QList<QByteArray> platforms;
-    foreach(PlatformPtr platform, platforms_) {
+    for(const PlatformPtr& platform: qAsConst(platforms_)) {
         if ((platform->isOpen() && open) || ((platform->isOpen() == false) && closed)) {
             platforms.push_back(platform->deviceId());
         }
