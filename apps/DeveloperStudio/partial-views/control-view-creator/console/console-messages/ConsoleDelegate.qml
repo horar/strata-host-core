@@ -101,6 +101,7 @@ Item {
             }
 
             model.state = "someSelected"
+            contextMenu.copyEnabled = true
             consoleLogs.selectInBetween(index)
         }
 

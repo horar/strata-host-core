@@ -88,6 +88,7 @@ ListView {
         onPressed: {
             if (mouse.button === Qt.LeftButton) {
                 consoleLogs.deselectAll()
+                contextMenu.copyEnabled = false
                 var clickedDelegate = consoleLogs.itemAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)
@@ -95,21 +96,6 @@ ListView {
                     consoleLogs.indexDragStarted = consoleLogs.model.count
                 }
                 consoleLogs.forceActiveFocus()
-            }
-        }
-
-        onReleased: {
-            var clickedIndex = consoleLogs.indexAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
-            var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(clickedIndex))
-            if (listElement.selection) {
-                contextMenu.copyEnabled = true
-            }
-        }
-
-        onClicked: {
-            if (mouse.button === Qt.LeftButton) {
-                consoleLogs.deselectAll()
-                contextMenu.copyEnabled = false
             } else if (mouse.button === Qt.RightButton) {
                 contextMenu.contextMenuEdit.popup(null)
             }
