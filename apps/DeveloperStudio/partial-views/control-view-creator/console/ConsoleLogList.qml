@@ -88,7 +88,6 @@ ListView {
         onPressed: {
             if (mouse.button === Qt.LeftButton) {
                 consoleLogs.deselectAll()
-                contextMenu.copyEnabled = false
                 var clickedDelegate = consoleLogs.itemAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)

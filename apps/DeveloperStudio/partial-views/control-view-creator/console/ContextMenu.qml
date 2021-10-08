@@ -42,7 +42,6 @@ Item {
             id: selectAction
             text: qsTr("Select All")
             onTriggered: {
-                copyEnabled = true
                 root.selectAll()
             }
         }
