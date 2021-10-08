@@ -223,18 +223,19 @@ QtObject {
             row = parseInt(row)
             column = parseInt(column)
             if (row < visualEditor.loader.item.rowCount - 1) {
-                row++
-                copy = setObjectProperty(newUuid, "layoutInfo.yRows", row, copy)
+                copy = setObjectProperty(newUuid, "layoutInfo.yRows", row + 1, copy, false)
             }
             if (column < visualEditor.loader.item.columnCount - 1) {
-                column++
-                copy = setObjectProperty(newUuid, "layoutInfo.xColumns", column, copy)
+                copy = setObjectProperty(newUuid, "layoutInfo.xColumns", column + 1, copy, false)
             }
         } else {
             console.warn("Problem detected with layoutInfo in object " + newUuid)
         }
 
         insertTextAtEndOfFile(copy, save)
+
+        // undo/redo
+        sdsModel.visualEditorUndoStack.addItem(file, newUuid, copy)
     }
 
     function duplicateControlSelected() {
@@ -474,6 +475,41 @@ QtObject {
             console.warn("No match for " + uuid + " found, start/end tags may be malformed")
         }
         return type;
+    }
+
+    function alignItem(position, uuid) {
+        switch (position) {
+            case "horCenter":
+                horizontalCenterAlign(uuid)
+            break;
+            case "verCenter":
+                verticalCenterAlign(uuid)
+            break;
+        }
+        saveFile();
+    }
+
+    function horizontalCenterAlign(uuid) {
+        const horPosition = Math.floor((overlayContainer.columnCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+        moveItem(uuid, horPosition, getObjectPropertyValue(uuid, "layoutInfo.yRows"))
+    }
+
+    function verticalCenterAlign(uuid) {
+        const verPosition = Math.floor((overlayContainer.rowCount / 2) - getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+        moveItem(uuid, getObjectPropertyValue(uuid, "layoutInfo.xColumns"), verPosition)
+    }
+
+    // This will check if item can be exactly centered
+    function exactCenterCheck(uuid, horOrVert) {
+        if (horOrVert === "horizontal") {
+            const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        } else {
+            const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        }
     }
 
     function create_UUID() {

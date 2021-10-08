@@ -26,7 +26,7 @@ FocusScope {
     property int contentSpacing: 8
     property int thirdColumnCenter: 1
 
-    signal invalidate()
+    signal filterDataChanged()
 
     Component.onCompleted: {
         populateFilterData(filterList)
@@ -79,9 +79,6 @@ FocusScope {
             fill: parent
             margins: baseSpacing
         }
-
-        Keys.onEnterPressed: invalidate()
-        Keys.onReturnPressed: invalidate()
 
         focus: true
 
@@ -408,7 +405,8 @@ FocusScope {
                 SGWidgets.SGButton {
                     text: "Set"
                     onClicked: {
-                        invalidate()
+                        filterDataChanged()
+                        closeView()
                     }
                 }
             }
@@ -429,7 +427,10 @@ FocusScope {
             var item = filterConditionModel.get(i)
 
             if (item["filter_string"].length > 0) {
-                list.push(item)
+                list.push({
+                              "condition": item["condition"],
+                              "filter_string": item["filter_string"],
+                          })
             }
         }
 
