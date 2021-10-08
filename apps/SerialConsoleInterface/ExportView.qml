@@ -49,14 +49,24 @@ FocusScope {
                 id: exportPathPicker
                 contextMenuEnabled: true
                 width: content.width
-                hasHelperText: false
                 filePath: model.platform.scrollbackModel.exportFilePath
                 label: "Output File"
+                inputValidation: true
                 dialogLabel: "Export to file"
                 dialogSelectExisting: false
                 dialogDefaultSuffix: "log"
                 dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
                 focus: true
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                        return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
+                    }
+
+                    return ""
+                }
             }
 
             SGWidgets.SGTag {
@@ -150,15 +160,25 @@ FocusScope {
                     topMargin: baseSpacing
                 }
 
-                hasHelperText: false
                 filePath: model.platform.scrollbackModel.autoExportFilePath
                 label: "Output File"
+                inputValidation: true
                 enabled: model.platform.scrollbackModel.autoExportIsActive === false
 
                 dialogLabel: "Export to file"
                 dialogSelectExisting: false
                 dialogDefaultSuffix: "log"
                 dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                        return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
+                    }
+
+                    return ""
+                }
             }
 
             SGWidgets.SGTag {
