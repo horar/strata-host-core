@@ -54,6 +54,12 @@ ColumnLayout {
         return fileText.replace(/\t/g, '    ')
     }
 
+    function resetHeightAndWidth() {
+        var htmlHeight = webEngine.height - 16
+        var htmlWidth = webEngine.width - 16
+        channelObject.resetContainer(htmlHeight, htmlWidth)
+    }
+
     function saveFile(closeFile = false, forceOverwrite = false) {
         if (alertToast.visible) {
             alertToast.hide()
@@ -198,7 +204,7 @@ ColumnLayout {
 
         onCurrentIndexChanged: {
             if (openFilesModel.currentIndex === fileContainerRoot.modelIndex) {
-                resetHeight()
+                resetHeightAndWidth()
             }
         }
     }
@@ -485,7 +491,7 @@ ColumnLayout {
                     target: mainWindow
 
                     onVisibilityChanged: {
-                        resetHeight()
+                        resetHeightAndWidth()
                     }
                 }
 
@@ -604,11 +610,5 @@ ColumnLayout {
             viewStack.currentIndex = 0
             channelObject.goToUUID(uuid)
         }
-    }
-
-    function resetHeight() {
-        var htmlHeight = webEngine.height - 16
-        var htmlWidth = webEngine.width - 16
-        channelObject.resetContainer(htmlHeight, htmlWidth)
     }
 }
