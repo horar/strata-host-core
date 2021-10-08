@@ -10,7 +10,7 @@ Strata Host Core contains all the applications and dependencies necessary for St
 * CMake >= 3.19
 * Qt5 5.12.xx
 * Visual Studio Build Tools 2017
-* OpenSSL (can be installed through Qt installer)
+* OpenSSL (not needed when secure connection is not used)
 
 ### MacOS
 
@@ -18,7 +18,8 @@ Strata Host Core contains all the applications and dependencies necessary for St
 * Git >= 2.28.0
 * Qt5 5.12.xx
 * CMake >= 3.19
-* OpenSSL
+* Homebrew
+* OpenSSL (not needed when secure connection is not used)
 
 ## Qt5 installation
 
