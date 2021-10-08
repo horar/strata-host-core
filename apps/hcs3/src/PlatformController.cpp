@@ -295,7 +295,7 @@ void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByt
 
 QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner) {
     QJsonArray payloadList;
-    const auto discoveredDevices = bleDeviceScanner->discoveredDevices();
+    const auto discoveredDevices = bleDeviceScanner->discoveredBleDevices();
     for (const auto &device : discoveredDevices) {
         QJsonArray manufacturerIdList;
         for (const auto id : device.manufacturerIds) {

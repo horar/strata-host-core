@@ -30,6 +30,9 @@ BluetoothLowEnergyScanner::BluetoothLowEnergyScanner()
 
 BluetoothLowEnergyScanner::~BluetoothLowEnergyScanner()
 {
+    if ((createdDevices_.isEmpty() == false) || (discoveryAgent_ != nullptr)) {
+        BluetoothLowEnergyScanner::deinit();
+    }
 }
 
 void BluetoothLowEnergyScanner::init(quint32 flags)
@@ -39,6 +42,15 @@ void BluetoothLowEnergyScanner::init(quint32 flags)
 
 void BluetoothLowEnergyScanner::deinit()
 {
+    stopDiscovery();
+
+    if (discoveryAgent_ != nullptr) {
+        disconnect(discoveryAgent_, nullptr, this, nullptr);
+        discoveryAgent_->deleteLater();
+        discoveryAgent_ = nullptr;
+    }
+
+    BluetoothLowEnergyScanner::disconnectAllDevices();
 }
 
 void BluetoothLowEnergyScanner::startDiscovery()
@@ -97,7 +109,12 @@ void BluetoothLowEnergyScanner::stopDiscovery()
     discoveryAgent_->stop();
 }
 
-const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredDevices() const
+QList<QByteArray> BluetoothLowEnergyScanner::discoveredDevices() const
+{
+    return discoveredDevicesMap_.keys();
+}
+
+const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredBleDevices() const
 {
     return discoveredDevices_;
 }
@@ -129,13 +146,12 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
     const QBluetoothDeviceInfo & deviceInfo = *deviceInfoIterator;
 
     DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(deviceId, deviceInfo, controllerFactory_);
-
-    connect(device.get(), &Device::opened,
-            this, &BluetoothLowEnergyScanner::deviceOpenedHandler);
-    connect(device.get(), &Device::deviceError,
-            this, &BluetoothLowEnergyScanner::deviceErrorHandler);
-
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    connect(platform.get(), &platform::Platform::opened,
+            this, &BluetoothLowEnergyScanner::deviceOpenedHandler);
+    connect(platform.get(), &platform::Platform::deviceError,
+            this, &BluetoothLowEnergyScanner::deviceErrorHandler);
 
     createdDevices_.insert(deviceId, deviceInfo);
     emit deviceDetected(platform);
@@ -155,12 +171,21 @@ QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
         emit deviceLost(deviceId);
         return QString();
     }
+
     if (discoveredDevicesMap_.contains(deviceId)) {
         qCWarning(logCategoryDeviceScanner()) << "Device not connected:" << deviceId;
         return "Device not connected.";
     }
+
     qCWarning(logCategoryDeviceScanner()) << "No such device ID:" << deviceId;
     return "No such device ID.";
+}
+
+void BluetoothLowEnergyScanner::disconnectAllDevices() {
+    for (auto iter = createdDevices_.keyBegin(); iter != createdDevices_.keyEnd(); ++iter) {
+        emit deviceLost(*iter);
+    }
+    createdDevices_.clear();
 }
 
 void BluetoothLowEnergyScanner::discoveryFinishedHandler()
@@ -238,37 +263,24 @@ void BluetoothLowEnergyScanner::discoveryErrorHandler(QBluetoothDeviceDiscoveryA
 
 void BluetoothLowEnergyScanner::deviceOpenedHandler()
 {
-    Device *device = qobject_cast<Device*>(QObject::sender());
-    if (device == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
+    platform::Platform *platform = qobject_cast<platform::Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to platform object";
         return;
     }
-    emit connectDeviceFinished(device->deviceId());
+    emit connectDeviceFinished(platform->deviceId());
 }
 
 void BluetoothLowEnergyScanner::deviceErrorHandler(Device::ErrorCode error, QString errorString)
 {
-    Q_UNUSED(errorString)
-
-    Device *device = qobject_cast<Device*>(QObject::sender());
-    if (device == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
+    platform::Platform *platform = qobject_cast<platform::Platform*>(QObject::sender());
+    if (platform == nullptr) {
+        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to platform object";
         return;
     }
 
     if (error == Device::ErrorCode::DeviceFailedToOpen) {
-        emit connectDeviceFailed(device->deviceId(), errorString);
-    }
-
-    // multiple errors can arrive in sequence, e.g. DeviceDisconnected and then DeviceFailedToOpen, send deviceLost only once
-    if (((error == Device::ErrorCode::DeviceDisconnected) || (error == Device::ErrorCode::DeviceFailedToOpen)) &&
-        createdDevices_.remove(device->deviceId())) {
-        // loss is reported after error is processed in Platform
-        QByteArray deviceId = device->deviceId();
-        QTimer::singleShot(1, this, [this, deviceId](){
-            qCDebug(logCategoryDeviceScanner) << "device loss is about to be reported for" << deviceId;
-            emit deviceLost(deviceId);
-        });
+        emit connectDeviceFailed(platform->deviceId(), errorString);
     }
 }
 
@@ -343,7 +355,7 @@ bool BluetoothLowEnergyScanner::hasLocalAdapters()
     QList<QBluetoothHostInfo> adapters = QBluetoothLocalDevice::allDevices();
 #endif
 
-    foreach(auto adapter, adapters) {
+    for(const auto& adapter: adapters) {
         qCDebug(logCategoryDeviceScanner).noquote().nospace() << "Found Bluetooth adapter, name: '" << adapter.name() << "', address: '" << adapter.address() << "'";
     }
     return (adapters.empty() == false);

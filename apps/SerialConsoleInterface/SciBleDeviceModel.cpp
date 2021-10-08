@@ -129,7 +129,7 @@ void SciBleDeviceModel::discoveryFinishedHandler(
 
 void SciBleDeviceModel::populateModel()
 {
-    const QList<BlootoothLowEnergyInfo> infoList = scanner_->discoveredDevices();
+    const QList<BlootoothLowEnergyInfo> infoList = scanner_->discoveredBleDevices();
 
     beginResetModel();
 
