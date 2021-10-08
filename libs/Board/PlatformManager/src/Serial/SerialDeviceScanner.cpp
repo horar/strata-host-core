@@ -83,7 +83,7 @@ QString SerialDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
 
 void SerialDeviceScanner::disconnectAllDevices() {
     // we will keep the devices in lists here in scanner
-    foreach (const auto& deviceId, deviceIds_) {
+    for (const auto& deviceId: qAsConst(deviceIds_)) {
         emit deviceLost(deviceId);
     }
 }
@@ -166,11 +166,11 @@ void SerialDeviceScanner::checkNewSerialDevices() {
 
     portNames_ = std::move(detectedPortNames); // must be called before connectDevice
 
-    foreach (const auto& deviceId, removedDeviceIds) {
+    for (const auto& deviceId: qAsConst(removedDeviceIds)) {
         emit deviceLost(deviceId);
     }
 
-    foreach (const auto& deviceId, addedDeviceIds) {
+    for (const auto& deviceId: qAsConst(addedDeviceIds)) {
         if (connectDevice(deviceId).isEmpty() == false) {
             // If serial port cannot be opened (for example it is hold by another application),
             // remove it from list of known ports. There will be another attempt to open it in next round.
