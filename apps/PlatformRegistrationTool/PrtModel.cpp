@@ -167,7 +167,7 @@ void PrtModel::programDevice()
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &PrtModel::flasherProgress);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &PrtModel::flasherFinishedHandler);
 
-    flasherConnector_->flash(false, strata::Flasher::FinalAction::StartApplication);
+    flasherConnector_->flash(false);
 }
 
 void PrtModel::downloadBinaries(
@@ -469,9 +469,10 @@ void PrtModel::startApplication()
     operation->run();
 }
 
-void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized)
+void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized, bool inBootloader)
 {
     Q_UNUSED(recognized)
+    Q_UNUSED(inBootloader)
 
     strata::platform::PlatformPtr platform = platformManager_.getPlatform(deviceId);
     if (platform == nullptr) {

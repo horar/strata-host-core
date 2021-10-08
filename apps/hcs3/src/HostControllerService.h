@@ -132,8 +132,7 @@ private slots:
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
-    void platformConnected(const QByteArray& deviceId);
-    void platformDisconnected(const QByteArray& deviceId);
+    void platformStateChanged(const QByteArray& deviceId);
 
     void bluetoothScanFinished(const QJsonObject payload);
     void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
@@ -180,6 +179,7 @@ private:
     void processCmdBluetoothScan(const strata::strataRPC::Message &message);
     void processCmdConnectDevice(const strata::strataRPC::Message &message);
     void processCmdDisconnectDevice(const strata::strataRPC::Message &message);
+    void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);
 

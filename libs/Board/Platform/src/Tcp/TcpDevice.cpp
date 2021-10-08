@@ -50,11 +50,10 @@ void TcpDevice::open()
 
 void TcpDevice::close()
 {
-    qCDebug(logCategoryDeviceTcp) << this << "Disconnecting from tcp device:" << deviceId_
-                                  << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
-
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {
+        qCDebug(logCategoryDeviceTcp) << this << "Disconnecting from tcp device:" << deviceId_
+                                      << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
         tcpSocket_->close();
     }
 }
@@ -121,7 +120,7 @@ void TcpDevice::deviceDiconnectedHandler()
 {
     qCDebug(logCategoryDeviceTcp) << "Disconnected from tcp device address"
                                   << deviceAddress_.toString();
-    emit deviceDisconnected();
+    emit deviceError(ErrorCode::DeviceDisconnected, "");
 }
 
 void TcpDevice::deviceOpenedHandler()

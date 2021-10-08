@@ -107,8 +107,8 @@ bool DeviceCommand::createSerialDevice() {
     device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, OPEN_MAX_RETRIES);
     platform_ = std::make_shared<platform::Platform>(device);
 
-    connect(platform_.get(), &platform::Platform::opened, this, &DeviceCommand::handlePlatformOpened, Qt::QueuedConnection);
-    connect(platform_.get(), &platform::Platform::deviceError, this, &DeviceCommand::handleDeviceError, Qt::QueuedConnection);
+    connect(platform_.get(), &platform::Platform::opened, this, &DeviceCommand::handlePlatformOpened);
+    connect(platform_.get(), &platform::Platform::deviceError, this, &DeviceCommand::handleDeviceError);
 
     return true;
 }

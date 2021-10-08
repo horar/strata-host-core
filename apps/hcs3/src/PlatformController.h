@@ -14,6 +14,7 @@
 
 #include <PlatformManager.h>
 #include <BluetoothLowEnergy/BluetoothLowEnergyScanner.h>
+#include <Operations/PlatformOperations.h>
 
 /*
 This PlatformController class is replacement for original classes BoardsController and PlatformBoard.
@@ -93,6 +94,9 @@ public:
      * @param clientId client starting this call
      */
     void disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId);
+
+    bool platformStartApplication(const QByteArray& deviceId);
+
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
@@ -102,15 +106,28 @@ signals:
     void connectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
     void disconnectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
     void disconnectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
+    void platformApplicationStarted(QByteArray deviceId);
 
-private slots:  // slots for signals from PlatformManager
-    void newConnection(const QByteArray& deviceId, bool recognized);
+public slots:
+    void bootloaderActive(QByteArray deviceId);
+    void applicationActive(QByteArray deviceId);
+
+private slots:
+    // slots for signals from PlatformManager
+    void newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void closeConnection(const QByteArray& deviceId);
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
     void bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
     void bleConnectDeviceFinishedHandler(const QByteArray& deviceId);
     void bleConnectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString);
+
+    // slot for signal from PlatformOperations
+    void operationFinished(QByteArray deviceId,
+                           strata::platform::operation::Type type,
+                           strata::platform::operation::Result result,
+                           int status,
+                           QString errorString);
 
 private:
     /**
@@ -126,14 +143,22 @@ private:
      */
     static  QJsonObject createBluetoothScanErrorPayload(QString errorString);
 
+    struct PlatformData {
+        PlatformData(strata::platform::PlatformPtr p, bool b);
+
+        strata::platform::PlatformPtr platform;
+        bool inBootloader;
+        bool startAppFailed;
+        unsigned sentMessageNumber;  // number of last sent message
+    };
 
     strata::PlatformManager platformManager_;
 
-    // map: deviceID <-> Platform
-    QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
-    // map: deviceID <-> number of last sent message
-    QHash<QByteArray, unsigned> sentMessageNumbers_;
-    // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage
+    // map: deviceID <-> PlatformData
+    QHash<QByteArray, PlatformData> platforms_;
+    // access to platforms_ should be protected by mutex in case of multithread usage
+
+    strata::platform::operation::PlatformOperations platformOperations_;
 
     QMultiMap<QByteArray, QByteArray> connectDeviceRequests_; //remember clients who have sent connectDevice requests
 };

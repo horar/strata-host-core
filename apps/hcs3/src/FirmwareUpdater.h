@@ -73,6 +73,8 @@ signals:
     void updateProgress(QByteArray deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
                         qint64 complete = -1, qint64 total = -1, QString errorString = QString());
     void updaterError(QByteArray deviceId, QString errorString);
+    void bootloaderActive(QByteArray deviceId);
+    void applicationActive(QByteArray deviceId);
     // internal signal:
     void flashFirmware(QPrivateSignal);
 
@@ -87,6 +89,8 @@ private slots:
     void handleRestoreProgress(int chunk, int total);
     void handleOperationStateChanged(strata::FlasherConnector::Operation operation,
                                      strata::FlasherConnector::State state, QString errorString);
+    void handleBootloaderActive();
+    void handleApplicationActive();
     // slot for flashFirmware() signal:
     void handleFlashFirmware();
 

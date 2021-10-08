@@ -285,6 +285,8 @@ Item {
                 height: platformContentContainer.height
                 rootItem: sciMain
                 scrollbackModel: model.platform.scrollbackModel
+                filterScrollbackModel: model.platform.filterScrollbackModel
+                searchScrollbackModel: model.platform.searchScrollbackModel
                 commandHistoryModel: model.platform.commandHistoryModel
                 filterSuggestionModel: model.platform.filterSuggestionModel
                 tabBorderColor: tabBar.tabBorderColor

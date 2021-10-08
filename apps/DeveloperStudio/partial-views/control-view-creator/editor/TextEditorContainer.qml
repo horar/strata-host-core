@@ -54,6 +54,12 @@ ColumnLayout {
         return fileText.replace(/\t/g, '    ')
     }
 
+    function resetHeightAndWidth() {
+        var htmlHeight = webEngine.height - 16
+        var htmlWidth = webEngine.width - 16
+        channelObject.resetContainer(htmlHeight, htmlWidth)
+    }
+
     function saveFile(closeFile = false, forceOverwrite = false) {
         if (alertToast.visible) {
             alertToast.hide()
@@ -193,6 +199,12 @@ ColumnLayout {
                     model.exists = true
                 }
                 saveFile(close, true)
+            }
+        }
+
+        onCurrentIndexChanged: {
+            if (openFilesModel.currentIndex === fileContainerRoot.modelIndex) {
+                resetHeightAndWidth()
             }
         }
     }
@@ -465,12 +477,12 @@ ColumnLayout {
 
                 onHeightChanged: {
                     var htmlHeight = height - 16
-                    channelObject.setContainerHeight(htmlHeight.toString())
+                    channelObject.setContainerHeight(htmlHeight)
                 }
 
                 onWidthChanged: {
                     var htmlWidth = width - 16
-                    channelObject.setContainerWidth(htmlWidth.toString())
+                    channelObject.setContainerWidth(htmlWidth)
                 }
 
                 // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window,
@@ -479,9 +491,7 @@ ColumnLayout {
                     target: mainWindow
 
                     onVisibilityChanged: {
-                        var htmlHeight = webEngine.height - 16
-                        var htmlWidth = webEngine.width - 16
-                        channelObject.resetContainer(htmlHeight.toString(), htmlWidth.toString())
+                        resetHeightAndWidth()
                     }
                 }
 
@@ -550,9 +560,9 @@ ColumnLayout {
         property bool reset: false
 
         signal setValue(string value)
-        signal setContainerHeight(string height)
-        signal setContainerWidth(string width)
-        signal resetContainer(string height, string width)
+        signal setContainerHeight(int height)
+        signal setContainerWidth(int width)
+        signal resetContainer(int height, int width)
         signal undo()
         signal redo()
         signal goToUUID(string uuid)

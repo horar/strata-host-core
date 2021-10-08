@@ -105,6 +105,7 @@ void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
     switch(data.action) {
     case ChangeFirmwareAction::UpdateFirmware :
         programController = false;
+        [[fallthrough]];
     case ChangeFirmwareAction::ProgramController :
         fwUpdater = new FirmwareUpdater(platform, downloadManager_, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
         break;
@@ -118,6 +119,8 @@ void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
     connect(fwUpdater, &FirmwareUpdater::updaterError, this, &FirmwareUpdateController::updaterError);
+    connect(fwUpdater, &FirmwareUpdater::bootloaderActive, this, &FirmwareUpdateController::bootloaderActive);
+    connect(fwUpdater, &FirmwareUpdater::applicationActive, this, &FirmwareUpdateController::applicationActive);
 
     switch(data.action) {
     case ChangeFirmwareAction::UpdateFirmware :
