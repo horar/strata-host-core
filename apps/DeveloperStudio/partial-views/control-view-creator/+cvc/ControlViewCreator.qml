@@ -185,7 +185,7 @@ Rectangle {
     Loader {
         id: newWindowLoader
         active: popupWindow
-        source: "Console/NewWindowConsoleLog.qml"
+        source: "console/NewWindowConsoleLog.qml"
     }
 
     Loader {
