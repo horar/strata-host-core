@@ -266,14 +266,12 @@ ColumnLayout {
                         }
 
                         function startFlash(already_started) {
-                            let success = already_started;
-
                             if ((already_started === false) &&
                                 (firmwareRepeater.flashingDeviceInProgress === false)) {
-                                success = sdsModel.firmwareUpdater.programFirmware(platformStack.device_id, model.uri, model.md5)
+                                already_started = sdsModel.firmwareUpdater.programFirmware(platformStack.device_id, model.uri, model.md5)
                             }
 
-                            if (success) {
+                            if (already_started) {
                                 firmwareRow.flashingFirmwareInProgress = true
                                 firmwareRepeater.flashingDeviceInProgress = true // call before changing the currentStatus
                                 firmwareDescription.currentStatus = "Do not unplug your board during this process"
