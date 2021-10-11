@@ -34,7 +34,7 @@ public:
     // program embedded platform without firmware with the newest firmware (no backup):
     Q_INVOKABLE bool programEmbeddedWithoutFw(QString deviceId);
     // program (update) platform with new firmware (do old firmware backup):
-    Q_INVOKABLE bool ProgramFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5);
+    Q_INVOKABLE bool programFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5);
 
     Q_INVOKABLE bool isFirmwareUpdateInProgress(QString deviceId) const;
     Q_INVOKABLE QJsonObject getFirmwareUpdateData(QString deviceId, QString firmwareUri, QString firmwareMD5) const;
