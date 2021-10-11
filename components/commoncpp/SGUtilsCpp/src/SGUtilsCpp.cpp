@@ -23,6 +23,8 @@
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QKeySequence>
+#include <QProcess>
+#include <QDesktopServices>
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
@@ -318,4 +320,37 @@ QList<QString> SGUtilsCpp::getQrcPaths(QString path) {
         pathList.append(it.next());
     }
     return pathList;
+}
+
+void SGUtilsCpp::showFileInFolder(const QString &path){
+    QFileInfo info(path);
+    #if defined(Q_OS_WIN)
+        QStringList args;
+        if (!info.isDir())
+            args << "/select,";
+        args << QDir::toNativeSeparators(path);
+        if (QProcess::startDetached("explorer", args))
+            return;
+    #elif defined(Q_OS_MAC)
+        QStringList args;
+        args << "-e";
+        args << "tell application \"Finder\"";
+        args << "-e";
+        args << "activate";
+        args << "-e";
+        args << "select POSIX file \"" + path + "\"";
+        args << "-e";
+        args << "end tell";
+        args << "-e";
+        args << "return";
+        if (!QProcess::execute("/usr/bin/osascript", args))
+            return;
+    #endif
+        QDesktopServices::openUrl(QUrl::fromLocalFile(info.isDir()? path : info.path()));
+//    #ifdef _WIN32    //Code for Windows
+//        QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(path)});
+//    #elif defined(Q_OS_MAC)  //Code for Mac
+//        QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\""});
+//        QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to activate"});
+//    #endif
 }
