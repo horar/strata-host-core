@@ -24,7 +24,7 @@ public:
     Q_INVOKABLE QVariantList getData();
     Q_INVOKABLE void setData(const QVariantList data);
     Q_INVOKABLE void clear();
-    Q_INVOKABLE void writeToFile(const QString &folderPath, const QString &fileName = QString(QDateTime::currentDateTime().toString("yyyy.MM.dd") + " at " + QDateTime::currentDateTime().toString("hh.mm.ss") + ".csv"));
+    Q_INVOKABLE void writeToFile(const QString &filePath);
 
 signals:
     void outputPathChanged();
@@ -32,4 +32,5 @@ signals:
 
 private:
     QVector<QVariant> data_;
+    const QString defaultFileName_ = QString(QDateTime::currentDateTime().toString("yyyy.MM.dd") + " at " + QDateTime::currentDateTime().toString("hh.mm.ss") + ".csv");
 };

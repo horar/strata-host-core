@@ -9,22 +9,25 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 
 ColumnLayout {
     id: exExportCsv
 
+    property string filePath: ""
+
     Component.onCompleted: {
         csvUtil.clear()
         csvUtil.appendRow(["dac","io","rev"])
-        textEdit.text += JSON.stringify(["dac","io","rev"]) + "\n"
+        textEdit.text = JSON.stringify(["dac","io","rev"]) + "\n"
     }
 
     SGWidgets.SGAlignedLabel {
         id: exportLabel
         target: column
-        text: "Export CSV to file"
+        text: "Csv utilities that allow for export and import"
         fontSizeMultiplier: 2.1
 
         ColumnLayout {
@@ -37,15 +40,19 @@ ColumnLayout {
                 text: "Currently stored CSV data: "
             }
 
-            SGWidgets.SGTextEdit {
-                id: textEdit
-                text: ""
-                wrapMode: Text.WrapAnywhere
-                enabled: false
-                width: exExportCsv.width
-                textFormat: TextEdit.RichText
+            ScrollView {
+                Layout.preferredWidth: exExportCsv.width
+                Layout.maximumHeight: 150
                 clip: true
-                height: 50
+
+                SGWidgets.SGTextEdit {
+                    id: textEdit
+                    text: ""
+                    wrapMode: Text.WrapAnywhere
+                    enabled: false
+                    textFormat: TextEdit.RichText
+                    clip: true
+                }
             }
 
             SGWidgets.SGButton {
@@ -67,7 +74,7 @@ ColumnLayout {
             }
 
             SGWidgets.SGButton {
-                text: "Clear Data"
+                text: "Clear Data and re-add headers"
 
                 onClicked: {
                     csvUtil.clear()
@@ -99,10 +106,34 @@ ColumnLayout {
                 onClicked: {
                     let data = [["dac","io", "rev"],["1.00", true, "0.57"]]
                     csvUtil.setData(data)
-                    textEdit.text = ""
+                    textEdit.clear()
                     for (var i = 0; i < data.length; i++) {
                         textEdit.text += JSON.stringify(data[i]) + "\n"
                     }
+                }
+            }
+
+            RowLayout {
+                Layout.preferredWidth: exExportCsv.width
+                spacing: 0
+                SGWidgets.SGButton {
+                    text: "Write to file"
+
+                    onClicked: {
+                       if (exExportCsv.filePath.length > 0 && (exportName.text.length > 0 && exportName.text.endsWith(".csv"))) {
+                            csvUtil.writeToFile(CommonCpp.SGUtilsCpp.joinFilePath(exExportCsv.filePath, exportName.text))
+                       }
+                    }
+                }
+
+                SGWidgets.SGText {
+                    text: "Filename: "
+                }
+
+                SGWidgets.SGTextField {
+                    id: exportName
+                    Layout.preferredWidth: 250
+                    placeholderText: "Write to file.csv"
                 }
             }
         }
@@ -115,7 +146,7 @@ ColumnLayout {
         nameFilters: ["*.csv"]
 
         onAccepted: {
-            textEdit.text = ""
+            textEdit.clear()
             let data = csvUtil.importFromFile(importDialog.fileUrl);
             console.info(data);
             for (let i = 0; i < data.length; i++) {
@@ -130,7 +161,7 @@ ColumnLayout {
         selectMultiple: false
 
         onAccepted: {
-            csvUtil.writeToFile(exportDialog.fileUrl)
+            exExportCsv.filePath = fileUrl
         }
     }
 

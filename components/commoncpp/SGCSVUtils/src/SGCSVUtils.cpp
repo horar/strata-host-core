@@ -67,14 +67,14 @@ void SGCSVUtils::setData(const QVariantList data)
     }
 }
 
-void SGCSVUtils::writeToFile(const QString &folderPath, const QString &fileName)
+void SGCSVUtils::writeToFile(const QString &filePath)
 {
-    if (folderPath.length() == 0 || fileName.length() == 0) {
-        qCCritical(logCategoryCsvUtils) << "To write to file, the folder path cannot be empty and/or must include filename";
+    if (filePath.length() == 0) {
+        qCCritical(logCategoryCsvUtils) << "To write to file, the file path cannot be empty!";
         return;
     }
     SGUtilsCpp utils;
-    QString path = utils.urlToLocalFile(utils.joinFilePath(folderPath, fileName));
+    QString path = utils.urlToLocalFile(filePath);
     if (!utils.exists(path)) {
         utils.createFile(path);
     }

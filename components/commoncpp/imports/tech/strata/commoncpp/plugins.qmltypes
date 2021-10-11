@@ -422,8 +422,7 @@ Module {
         }
         Method {
             name: "writeToFile"
-            Parameter {name: "folderPath"; type: "string"}
-            Parameter {name: "fileName"; type: "string"}
+            Parameter {name: "filePath"; type: "string"}
         }
         Method {
             name: "setData"
