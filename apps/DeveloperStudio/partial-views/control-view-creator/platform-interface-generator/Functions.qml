@@ -34,6 +34,7 @@ QtObject {
     property var emptyLog: []
     property var jsLog: []
     property var duplicateLog: []
+    property var regexLog: []
     property int invalidCount: 0
 
     /**
@@ -47,6 +48,7 @@ QtObject {
         emptyLog = []
         jsLog = []
         duplicateLog = []
+        regexLog = []
         let allValid = true
 
         for (let i = 0; i < finishedModel.count; i++) {
@@ -72,6 +74,9 @@ QtObject {
         if (duplicateLog.length > 0) {
             errorLog += "Duplicate key name(s) '" + duplicateLog + "' found\n"
         }
+        if (regexLog.length > 0) {
+            errorLog += "Invalid syntax with key name(s) '" + regexLog + "' found\n"
+        }
 
         return allValid
     }
@@ -91,6 +96,8 @@ QtObject {
                     jsLog.push(item.name)
                 } else if (item.duplicate && !duplicateLog.includes(item.name)) { // call includes() to ensure the log only states each duplicate once
                     duplicateLog.push(item.name)
+                } else if (!item.valid && !regexLog.includes(item.name) && !item.duplicate && !item.keyword) { // if invalid, and other flags are not set, the regex failed to pass
+                    regexLog.push(item.name)
                 }
                 allValid = false
             }
@@ -186,23 +193,47 @@ QtObject {
         payload.setProperty(index, "valid", valid) // valid is true unless it fails one of the above checks
 
         // only checks for duplicates if a duplicate was involved with this index
-        // then only check the indeces that are duplicates; optimized checks
         if (changed === true || payload.get(index).duplicate) {
-            for (let i = 0; i < payload.count; i++) {
-                if (payload.get(i).duplicate && i !== index) {
-                    if (checkForDuplicateKey(payload, i)) {
-                        payload.setProperty(i, "duplicate", false)
-                    }
-                }
-
-                if (!payload.get(i).name || payload.get(i).keyword || payload.get(i).duplicate) {
-                    payload.setProperty(i, "valid", false)
-                } else {
-                    payload.setProperty(i, "valid", true)
-                }
-            }
+            loopOverDuplicates(payload, index)
         }
         return valid
+    }
+
+    /**
+      * loopOverDuplicates will only check the indices that are duplicates; optimized checks
+    **/
+    function loopOverDuplicates(payload, index) {
+        for (let i = 0; i < payload.count; i++) {
+            let indexValid = payload.get(i).valid
+            if (payload.get(i).duplicate && i !== index) {
+                if (checkForDuplicateKey(payload, i)) {
+                    payload.setProperty(i, "duplicate", false)
+                }
+            }
+            if (!payload.get(i).name || payload.get(i).keyword || payload.get(i).duplicate) {
+                payload.setProperty(i, "valid", false)
+            } else {
+                payload.setProperty(i, "valid", true)
+            }
+
+            // invalidCount is incremented or decremented depending on the change
+            if (!payload.get(i).valid && indexValid) {
+                invalidCount++
+            } else if (payload.get(i).valid && !indexValid) {
+                invalidCount--
+            }
+        }
+    }
+
+    /**
+      * importRegexCheck - on import, every index will be checked to ensure it follows the required syntax
+    **/
+    function importRegexCheck(payload, index) {
+        const regExp = /^[a-z_][a-zA-Z0-9_]*/
+        if (!regExp.test(payload.get(index).name)) {
+            payload.setProperty(index, "valid", false)
+            invalidCount++
+        }
     }
 
     /**
@@ -245,10 +276,14 @@ QtObject {
                 commandObject["type"] = commandType
                 commandObject["name"] = commandName
                 commandObject["valid"] = true
+                commandObject["keyword"] = false
+                commandObject["duplicate"] = false
                 commandObject["payload"] = []
                 commandObject["editing"] = false
 
                 commandsModel.append(commandObject)
+                checkForValidKey(commandsModel, j, true)
+                importRegexCheck(commandsModel, j)
 
                 const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
 
@@ -263,6 +298,8 @@ QtObject {
                         payloadPropObject["name"] = payloadProperty.name
                         payloadPropObject["type"] = type
                         payloadPropObject["valid"] = true
+                        payloadPropObject["keyword"] = false
+                        payloadPropObject["duplicate"] = false
                         payloadPropObject["indexSelected"] = -1
                         if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
                                 type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
@@ -270,6 +307,8 @@ QtObject {
                         }
 
                         payloadModel.append(payloadPropObject)
+                        checkForValidKey(payloadModel, k, true)
+                        importRegexCheck(payloadModel, k)
 
                         if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                             generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
@@ -338,7 +377,7 @@ QtObject {
     function generateObjectModel(object, parentListModel) {
         for (let i = 0; i < object.length; i++) {
             const type = object[i].type
-            let obj = {"name": object[i].name, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel, "value": ""}
+            let obj = {"name": object[i].name, "type": type, "indexSelected": -1, "valid": true, "keyword": false, "duplicate": false, "array": [], "object": [], "parent": parentListModel, "value": ""}
 
             if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
                     type !== sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
@@ -346,6 +385,8 @@ QtObject {
             }
 
             parentListModel.append(obj)
+            checkForValidKey(parentListModel, i, true)
+            importRegexCheck(parentListModel, i)
 
             if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
                 generateArrayModel(object[i].value, parentListModel.get(i).array)
