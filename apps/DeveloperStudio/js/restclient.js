@@ -18,7 +18,6 @@ var jwt = '';
 var session = '';
 var cachedState
 var version_ = ""
-var anonymous = false
 var currentrequestId_ = -1
 const signals = SignalsModule.Signals;
 

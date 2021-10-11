@@ -26,12 +26,11 @@ var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml"
   Login: Send information to server
 */
 function login(login_info){
-    var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
+    var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone, "anonymous": Rest.anonymous};
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
-        "anonymous": Rest.anonymous,
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -80,7 +79,8 @@ function login_result(response)
         "jwt": response.token,
         "first_name": response.firstname,
         "last_name": response.lastname,
-        "user_id": response.user
+        "user_id": response.user,
+        "anonymous": response.anonymous
     }
 
     // [TODO][prasanth]: jwt will be created/received in the hcs
@@ -209,9 +209,10 @@ function register(registration_info){
         "username":registration_info.username,
         "password":registration_info.password,
         "title": registration_info.title,
-        "company": registration_info.company
+        "company": registration_info.company,
+        "anonymous": registration_info.anonymous
     };
-    Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": Rest.anonymous })
+    Rest.xhr("post", "signup", data, register_result, register_error, null)
 
     /*
       * Possible valid outcomes:
@@ -520,7 +521,6 @@ function validate_token()
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
-            "anonymous": Rest.anonymous,
         }
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
