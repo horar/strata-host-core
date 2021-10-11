@@ -27,6 +27,7 @@ FocusScope {
     property bool keepCursorAtEnd: false
     property bool isValid: true
     property bool contextMenuEnabled: false
+    property alias palette: dummyControl.palette
 
     // This is to match look and feel of other controls
     Control {

@@ -67,26 +67,25 @@ public:
     ~FlasherConnector();
 
     /*!
-     * Flash firmware.
-     * \param backupBeforeFlash if set to true backup old firmware before flashing new one and if flash process fails flash old firmware
-     * \param finalAction what to do after flash: start application, stay in bootloader or do not change state of borad's binary
+     * Flash firmware. Firmware (application) is always started when it is fully flashed.
+     * \param backupBeforeFlash if set to true backup old firmware before flashing new one and if flash process fails flash old firmware back
      * \return true if flash process has started, otherwise false
      */
-    bool flash(bool backupBeforeFlash, Flasher::FinalAction finalAction);
+    bool flash(bool backupBeforeFlash = true);
 
     /*!
      * Backup firmware.
      * \param finalAction what to do after backup: start application, stay in bootloader or do not change state of borad's binary
      * \return true if backup process has started, otherwise false
      */
-    bool backup(Flasher::FinalAction finalAction);
+    bool backup(Flasher::FinalAction finalAction = Flasher::FinalAction::StartApplication);
 
     /*!
      * Set Firmware Class ID (without flashing firmware)
      * finalAction what to do after set FW clas ID: start application, stay in bootloader or do not change state of borad's binary
      * \return true if set process has started, otherwise false
      */
-    bool setFwClassId(Flasher::FinalAction finalAction);
+    bool setFwClassId(Flasher::FinalAction finalAction = Flasher::FinalAction::StartApplication);
 
     /*!
      * Stop flash/backup firmware operation.
@@ -167,14 +166,24 @@ signals:
     void operationStateChanged(Operation operation, State state, QString errorString = QString());
 
     /*!
-     * This signal is emitted when platform properties are changed (when platform is switched to/from bootloader mode).
+     * This signal is emitted when platform properties are changed (when platform is
+     * switched to/from bootloader mode, fw_class_is is changed, ...).
      */
     void devicePropertiesChanged();
+
+    /*!
+     * This signal is emitted when 'start_bootloader' command was successful and bootloader is running.
+     */
+    void bootloaderActive();
+
+    /*!
+     * This signal is emitted when 'start_application' command was successful and application is running.
+     */
+    void applicationActive();
 
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
     void handleFlasherState(Flasher::State flasherState, bool done);
-    void handleDevicePropertiesChanged();
 
 private:
     // deleter for flasher_ unique pointer
@@ -207,8 +216,6 @@ private:
     Action action_;
 
     Operation operation_;
-
-    Flasher::FinalAction flashFinalAction_;
 };
 
 }  // namespace

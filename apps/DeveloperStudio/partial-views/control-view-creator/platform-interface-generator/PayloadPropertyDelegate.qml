@@ -51,14 +51,14 @@ Rectangle {
                 // static array
                 if (arrayListModel.count === 0) {
                     objectListModel.clear()
-                    arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0"})
+                    arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0", "keyword": false, "duplicate": false})
                     commandsListView.contentY += 50
                 }
             } else if (index === 6) {
                 // Object with known properties
                 if (objectListModel.count === 0) {
                     arrayListModel.clear()
-                    objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
+                    objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0", "keyword": false, "duplicate": false})
                 }
             } else {
                 arrayListModel.clear()
@@ -294,9 +294,9 @@ Rectangle {
 
                 onClicked: {
                     if (propertyType.currentIndex === 4) {
-                        payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0"})
+                        payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0", "keyword": false, "duplicate": false})
                     } else {
-                        payloadContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subObjectListModel, "value": "0"})
+                        payloadContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subObjectListModel, "value": "0", "keyword": false, "duplicate": false})
                     }
                     commandsListView.contentY += 40
                 }

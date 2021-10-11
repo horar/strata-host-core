@@ -30,8 +30,18 @@ Item {
     readonly property string jsonFileName: "platformInterface.json"
 
     readonly property var baseModel: ({
-        "commands": [],
-        "notifications": []
+        "notifications": [],
+        "commands": []
+    })
+
+    readonly property var templateNotification: ({
+        "type": "value",
+        "name": "",
+        "valid": false,
+        "keyword": false,
+        "duplicate": false,
+        "payload": [],
+        "editing": false
     })
 
     readonly property var templateCommand: ({
@@ -43,16 +53,6 @@ Item {
         "payload": [],
         "editing": false
     })
-
-    readonly property var templateNotification: ({
-        "type": "value",
-        "name": "",
-        "valid": false,
-        "keyword": false,
-        "duplicate": false,
-        "payload": [],
-        "editing": false
-	})
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
@@ -358,7 +358,7 @@ Item {
                     Layout.fillHeight: true
 
                     property ListModel commandModel: model.data
-                    property bool isCommand: index === 0
+                    property bool isNoti: index === 0
 
                     Text {
                         id: sectionTitle
@@ -393,7 +393,7 @@ Item {
 
                     Button {
                         id: addCmdNotifButton
-                        text: commandColumn.isCommand ? "Add command" : "Add notification"
+                        text: commandColumn.isNoti ? "Add notification" : "Add command"
 
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignHCenter
@@ -411,11 +411,11 @@ Item {
 
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
-                                if (commandColumn.isCommand) {
-                                    commandColumn.commandModel.append(templateCommand)
+                                if (commandColumn.isNoti) {
+                                    commandColumn.commandModel.append(templateNotification)
                                     commandsListView.contentY += 110
                                 } else {
-                                    commandColumn.commandModel.append(templateNotification)
+                                    commandColumn.commandModel.append(templateCommand)
                                 }
                             }
                         }

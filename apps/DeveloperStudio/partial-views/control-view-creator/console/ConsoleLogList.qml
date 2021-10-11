@@ -34,6 +34,7 @@ ListView {
         for (var i = 0; i < consoleModel.count; i++) {
             consoleModel.get(i).state = "noneSelected"
         }
+        contextMenu.copyEnabled = false
     }
 
     onSelectInBetween: {
@@ -94,12 +95,6 @@ ListView {
                     consoleLogs.indexDragStarted = consoleLogs.model.count
                 }
                 consoleLogs.forceActiveFocus()
-            }
-        }
-
-        onClicked: {
-            if (mouse.button === Qt.LeftButton) {
-                consoleLogs.deselectAll()
             } else if (mouse.button === Qt.RightButton) {
                 contextMenu.contextMenuEdit.popup(null)
             }
@@ -111,9 +106,8 @@ ListView {
                 var clickedIndex = consoleLogs.indexAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
                 var sourceIndex = consoleItems.mapIndexToSource(clickedIndex)
                 if (clickedIndex > -1 && sourceIndex > -1) {
+                    contextMenu.copyEnabled = true
                     consoleModel.get(sourceIndex).state = "allSelected"
-                } else {
-                    console.error(Logger.devStudioCategory, "Index out of scope.")
                 }
             }
         }

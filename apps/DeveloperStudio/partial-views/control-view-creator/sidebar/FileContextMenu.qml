@@ -83,10 +83,10 @@ Menu {
     }
 
     MenuItem {
-        text: "Add Existing File to Qrc"
+        text: "Import Files/Folder to Project"
         onTriggered: {
-            existingFileDialog.callerIndex = styleData.index.parent
-            existingFileDialog.open()
+            importFileOrFolderPopup.callerIndex = styleData.index.parent
+            importFileOrFolderPopup.open()
             fileContextMenu.dismiss()
         }
     }

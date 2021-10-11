@@ -94,9 +94,9 @@ bool HostControllerService::initialize(const QString &config)
             &HostControllerService::sendPlatformMetaData);
 
     connect(&platformController_, &PlatformController::platformConnected, this,
-            &HostControllerService::platformConnected);
+            &HostControllerService::platformStateChanged);
     connect(&platformController_, &PlatformController::platformDisconnected, this,
-            &HostControllerService::platformDisconnected);
+            &HostControllerService::platformStateChanged);
     connect(&platformController_, &PlatformController::platformMessage, this,
             &HostControllerService::sendPlatformMessageToClients);
 
@@ -361,15 +361,7 @@ bool HostControllerService::parseConfig(const QString &config)
     return true;
 }
 
-void HostControllerService::platformConnected(const QByteArray &deviceId)
-{
-    Q_UNUSED(deviceId)
-
-    strataServer_->notifyAllClients("connected_platforms",
-                                    platformController_.createPlatformsList());
-}
-
-void HostControllerService::platformDisconnected(const QByteArray &deviceId)
+void HostControllerService::platformStateChanged(const QByteArray &deviceId)
 {
     Q_UNUSED(deviceId)
 
@@ -580,10 +572,9 @@ void HostControllerService::handleUpdateProgress(const QByteArray &deviceId,
     strataServer_->notifyClient(clientId, "firmware_update", payload,
                                 strataRPC::ResponseType::Notification);
 
-    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
-        progress.status == FirmwareUpdateController::UpdateStatus::Success) {
-        // If firmware was updated broadcast new platforms list
-        // to indicate the firmware version has changed.
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished) {
+        // If update process finished broadcast new platforms list to indicate
+        // the firmware version has changed (or platform is in bootloader mode)
         strataServer_->notifyAllClients("connected_platforms",
                                         platformController_.createPlatformsList());
     }

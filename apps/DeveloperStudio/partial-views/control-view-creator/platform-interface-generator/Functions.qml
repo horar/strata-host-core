@@ -237,88 +237,92 @@ QtObject {
     }
 
     /**
-      * createModelFromJson creates the model from a JSON object (used when importing a JSON file)
+      * parseCommandNotification creates the model from a JSON object and Type (used when importing a JSON file)
     **/
-    function createModelFromJson(jsonObject) {
-        let topLevelKeys = Object.keys(jsonObject) // This contains "commands" / "notifications" arrays
+    function parseCommandNotification(topLevelType,jsonObject) {
+        const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
 
-        finishedModel.modelAboutToBeReset()
-        finishedModel.clear()
-        invalidCount = 0 // resets invalid as new file is imported
+        let listOfCommandsOrNotifications = {
+            "name": topLevelType, // "commands" / "notifications"
+            "data": []
+        }
 
-        for (let i = 0; i < topLevelKeys.length; i++) {
-            const topLevelType = topLevelKeys[i]
-            const arrayOfCommandsOrNotifications = jsonObject[topLevelType]
-            let listOfCommandsOrNotifications = {
-                "name": topLevelType, // "commands" / "notifications"
-                "data": []
+        finishedModel.append(listOfCommandsOrNotifications)
+
+        for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+            let commandsModel = finishedModel.get(finishedModel.count-1).data
+
+            let cmd = arrayOfCommandsOrNotifications[j]
+            let commandName
+            let commandType
+            let commandObject = {}
+
+            if (topLevelType === "commands") {
+                // If we are dealing with commands, then look for the "cmd" key
+                commandName = cmd["cmd"]
+                commandType = "cmd"
+            } else {
+                commandName = cmd["value"]
+                commandType = "value"
             }
 
-            finishedModel.append(listOfCommandsOrNotifications)
+            commandObject["type"] = commandType
+            commandObject["name"] = commandName
+            commandObject["valid"] = true
+            commandObject["keyword"] = false
+            commandObject["duplicate"] = false
+            commandObject["payload"] = []
+            commandObject["editing"] = false
 
-            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
-                let commandsModel = finishedModel.get(i).data
+            commandsModel.append(commandObject)
+            checkForValidKey(commandsModel, j, true)
+            importRegexCheck(commandsModel, j)
 
-                let cmd = arrayOfCommandsOrNotifications[j]
-                let commandName
-                let commandType
-                let commandObject = {}
+            const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
 
-                if (topLevelType === "commands") {
-                    // If we are dealing with commands, then look for the "cmd" key
-                    commandName = cmd["cmd"]
-                    commandType = "cmd"
-                } else {
-                    commandName = cmd["value"]
-                    commandType = "value"
-                }
+            if (payload) {
+                let payloadModel = commandsModel.get(j).payload
+                for (let k = 0; k < payload.length; k++) {
 
-                commandObject["type"] = commandType
-                commandObject["name"] = commandName
-                commandObject["valid"] = true
-                commandObject["keyword"] = false
-                commandObject["duplicate"] = false
-                commandObject["payload"] = []
-                commandObject["editing"] = false
+                    const payloadProperty = payload[k]
+                    const type = payloadProperty.type
 
-                commandsModel.append(commandObject)
-                checkForValidKey(commandsModel, j, true)
-                importRegexCheck(commandsModel, j)
+                    let payloadPropObject = Object.assign({}, templatePayload)
+                    payloadPropObject["name"] = payloadProperty.name
+                    payloadPropObject["type"] = type
+                    payloadPropObject["valid"] = true
+                    payloadPropObject["keyword"] = false
+                    payloadPropObject["duplicate"] = false
+                    payloadPropObject["indexSelected"] = -1
+                    if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
+                            type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                        payloadPropObject["value"] = String(payloadProperty.value)
+                    }
 
-                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null
+                    payloadModel.append(payloadPropObject)
+                    checkForValidKey(payloadModel, k, true)
+                    importRegexCheck(payloadModel, k)
 
-                if (payload) {
-                    let payloadModel = commandsModel.get(j).payload
-                    for (let k = 0; k < payload.length; k++) {
-
-                        const payloadProperty = payload[k]
-                        const type = payloadProperty.type
-
-                        let payloadPropObject = Object.assign({}, templatePayload)
-                        payloadPropObject["name"] = payloadProperty.name
-                        payloadPropObject["type"] = type
-                        payloadPropObject["valid"] = true
-                        payloadPropObject["keyword"] = false
-                        payloadPropObject["duplicate"] = false
-                        payloadPropObject["indexSelected"] = -1
-                        if (type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC &&
-                                type !== sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                            payloadPropObject["value"] = String(payloadProperty.value)
-                        }
-
-                        payloadModel.append(payloadPropObject)
-                        checkForValidKey(payloadModel, k, true)
-                        importRegexCheck(payloadModel, k)
-
-                        if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
-                            generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
-                        } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
-                            generateObjectModel(payloadProperty.value, payloadModel.get(k).object)
-                        }
+                    if (type === sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC) {
+                        generateArrayModel(payloadProperty.value, payloadModel.get(k).array)
+                    } else if (type === sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC) {
+                        generateObjectModel(payloadProperty.value, payloadModel.get(k).object)
                     }
                 }
             }
         }
+    }
+
+    /**
+      * createModelFromJson parse/creates the model from a JSON object (used when importing a JSON file)
+    **/
+    function createModelFromJson(jsonObject) {
+        finishedModel.modelAboutToBeReset()
+        finishedModel.clear()
+        invalidCount = 0 // resets invalid as new file is imported
+
+        parseCommandNotification("notifications", jsonObject)
+        parseCommandNotification("commands", jsonObject)
 
         alertToast.hide()
         alertToast.text = "Successfully imported JSON model." + (modelPopulated() ? "" : " Note: imported list of commands/notifications is empty.")
