@@ -31,6 +31,7 @@ function login(login_info){
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
+        "anonymous": Rest.anonymous,
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -73,6 +74,7 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
+
     var result = {
         "response":"Connected",
         "jwt": response.token,
@@ -209,7 +211,7 @@ function register(registration_info){
         "title": registration_info.title,
         "company": registration_info.company
     };
-    Rest.xhr("post", "signup", data, register_result, register_error, null)
+    Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": Rest.anonymous })
 
     /*
       * Possible valid outcomes:
@@ -518,6 +520,7 @@ function validate_token()
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
+            "anonymous": Rest.anonymous,
         }
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
@@ -565,18 +568,6 @@ function validation_result (response) {
             SignalsModule.Signals.validationResult("Error")
         }
     }
-}
-
-function update_metrics(data) {
-    Rest.xhr("get", "metrics", metrics_error, metrics_response)
-}
-
-function metrics_response(response) {
-    console.log(JSON.stringify(response))
-}
-
-function metrics_error(error) {
-    console.error(JSON.stringify(error))
 }
 
 function set_token (token) {

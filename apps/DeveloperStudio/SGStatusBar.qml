@@ -633,11 +633,7 @@ Rectangle {
         target: userSettings
 
         onHasOptedOutChanged: {
-            if (userSettings.hasOptedOut) {
-                Authenticator.update_metrics("anonymous")
-            } else {
-                Authenticator.update_metrics(NavigationControl.context.user_id)
-            }
+
         }
     }
 

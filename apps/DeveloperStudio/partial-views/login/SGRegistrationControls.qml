@@ -13,6 +13,7 @@ import "qrc:/partial-views"
 import "qrc:/partial-views/login/registration"
 import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Registration
+import "qrc:/js/restclient.js" as Rest
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
@@ -194,7 +195,7 @@ Item {
 
             CheckBox {
                 id: policyCheck
-                KeyNavigation.tab: registerButton.enabled ? registerButton : firstNameField
+                KeyNavigation.tab: optOutCheck
                 implicitHeight: 20
                 implicitWidth: 20
 
@@ -236,6 +237,53 @@ Item {
                     acceptedButtons: Qt.NoButton
                     cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                 }
+            }
+        }
+
+        RowLayout{
+            Layout.fillWidth: true
+            Layout.columnSpan: 2
+            spacing: 13
+
+            CheckBox {
+                id: optOutCheck
+                KeyNavigation.tab: registerButton.enabled ? registerButton : firstNameField
+                implicitHeight: 20
+                implicitWidth: 20
+
+                onCheckedChanged: {
+                    Rest.anonymous = checked
+                }
+
+                indicator: Rectangle {
+                    implicitWidth: 20
+                    implicitHeight: implicitWidth
+                    border.color: "#ccc"
+
+                    SGIcon {
+                        width: parent.width * .8
+                        height: width
+                        anchors.centerIn: parent
+                        iconColor: "#777"
+                        visible: optOutCheck.checked
+                        source: "qrc:/sgimages/check.svg"
+                    }
+
+                    Rectangle {
+                        color: "transparent"
+                        border.color: Theme.palette.onsemiOrange
+                        anchors.centerIn: parent
+                        visible: optOutCheck.focus
+                        width: parent.width + 4
+                        height: parent.height + 4
+                    }
+                }
+            }
+
+            Text {
+                text: "Opt Out of data tracking"
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
             }
         }
 
