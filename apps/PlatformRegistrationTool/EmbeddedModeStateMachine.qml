@@ -540,7 +540,7 @@ BaseStateMachine {
         id: stateLoopFailed
 
         onEntered: {
-            stateMachine.statusText = "Registration Failed"
+            stateMachine.statusText = "Platform Registration Failed"
             taskbarButton.progress.stop()
         }
 
@@ -549,13 +549,18 @@ BaseStateMachine {
             signal: continueButton.clicked
             guard: prtModel.deviceCount === 0
         }
+
+        DSM.SignalTransition {
+            targetState: exitState
+            signal: breakButton.clicked
+        }
     }
 
     DSM.State {
         id: stateLoopSucceed
 
         onEntered: {
-            stateMachine.statusText = "Registration Successful"
+            stateMachine.statusText = "Platform Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
             taskbarButton.progress.hide()
             taskbarButton.progress.reset()

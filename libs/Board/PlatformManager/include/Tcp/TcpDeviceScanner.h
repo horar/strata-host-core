@@ -13,6 +13,7 @@
 
 #include <QHostAddress>
 #include <QUdpSocket>
+#include <QSet>
 
 namespace strata::device::scanner
 {
@@ -70,7 +71,7 @@ public:
 
 private slots:
     void processPendingDatagrams();
-    void deviceDisconnectedHandler();
+    void deviceErrorHandler(Device::ErrorCode error, QString errorString);
 
 private:
     void startAutomaticScan();
@@ -79,7 +80,7 @@ private:
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
-    QList<QByteArray> discoveredDevices_;
+    QSet<QByteArray> discoveredDevices_;
 
     bool scanRunning_;
 

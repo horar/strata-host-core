@@ -40,10 +40,12 @@ QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
     const ScrollbackModelItem &item = data_.at(row);
 
     switch (role) {
-    case MessageRole:
-        return item.message;
     case RawMessageRole:
         return item.rawMessage;
+    case CondensedMessageRole:
+        return item.condensedMessage;
+    case ExpandedMessageRole:
+        return item.expandedMessage;
     case TypeRole:
         return static_cast<int>(item.type);
     case TimestampRole:
@@ -111,14 +113,12 @@ void SciScrollbackModel::append(const QByteArray &message, bool isRequest)
     }
 
     if (item.isJsonValid) {
-        if (condensedMode_) {
-            item.message = SGJsonFormatter::minifyJson(message);
-        } else {
-            item.message = SGJsonFormatter::prettifyJson(message, true);
-        }
+        item.condensedMessage = SGJsonFormatter::minifyJson(message);
+        item.expandedMessage = SGJsonFormatter::prettifyJson(message, true);
     } else {
         //store invalid json message as is
-        item.message = message;
+        item.condensedMessage = message;
+        item.expandedMessage = message;
     }
 
     item.timestamp = QDateTime::currentDateTime();
@@ -147,23 +147,13 @@ void SciScrollbackModel::append(const QByteArray &message, bool isRequest)
 void SciScrollbackModel::setIsCondensedAll(bool condensed)
 {
     for (auto &item : data_) {
-        if (item.isCondensed == condensed || item.isJsonValid == false) {
-            continue;
-        }
-
         item.isCondensed = condensed;
-
-        if (condensed) {
-            item.message = SGJsonFormatter::minifyJson(item.message);
-        } else {
-            item.message = SGJsonFormatter::prettifyJson(item.message, true);
-        }
     }
 
     emit dataChanged(
                 createIndex(0, 0),
                 createIndex(data_.length() - 1, 0),
-                QVector<int>() << IsCondensedRole << MessageRole);
+                QVector<int>() << IsCondensedRole);
 }
 
 void SciScrollbackModel::setIsCondensed(int index, bool condensed)
@@ -173,17 +163,16 @@ void SciScrollbackModel::setIsCondensed(int index, bool condensed)
         return;
     }
 
-    data_[index].isCondensed = condensed;
-    if (condensed) {
-        data_[index].message = SGJsonFormatter::minifyJson(data_.at(index).message);
-    } else {
-        data_[index].message = SGJsonFormatter::prettifyJson(data_.at(index).message, true);
+    if (data_.at(index).isCondensed == condensed) {
+        return;
     }
+
+    data_[index].isCondensed = condensed;
 
     emit dataChanged(
                 createIndex(index, 0),
                 createIndex(index, 0),
-                QVector<int>() << IsCondensedRole << MessageRole);
+                QVector<int>() << IsCondensedRole);
 }
 
 void SciScrollbackModel::clear()
@@ -297,7 +286,7 @@ QByteArray SciScrollbackModel::stringify(const ScrollbackModelItem &item) const
     line += " ";
     line += item.type == MessageType::Request ? "request" : "response";
     line += " ";
-    line += SGJsonFormatter::minifyJson(item.message).toUtf8();
+    line += item.condensedMessage.toUtf8();
     line += "\n";
 
     return line;
@@ -388,8 +377,9 @@ QHash<int, QByteArray> SciScrollbackModel::roleNames() const
 void SciScrollbackModel::setModelRoles()
 {
     roleByEnumHash_.clear();
-    roleByEnumHash_.insert(MessageRole, "message");
     roleByEnumHash_.insert(RawMessageRole, "rawMessage");
+    roleByEnumHash_.insert(CondensedMessageRole, "condensedMessage");
+    roleByEnumHash_.insert(ExpandedMessageRole, "expandedMessage");
     roleByEnumHash_.insert(TypeRole, "type");
     roleByEnumHash_.insert(TimestampRole, "timestamp");
     roleByEnumHash_.insert(IsCondensedRole, "isCondensed");

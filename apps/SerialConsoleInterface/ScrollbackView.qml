@@ -18,32 +18,28 @@ import tech.strata.theme 1.0
 Item {
     id: scrollbackView
 
-    property variant model
-    property bool disableAllFiltering
-    property bool automaticScroll
-    property var filterList
-    readonly property int count: scrollbackFilterModel.count
-
+    property QtObject model
+    readonly property int count: listView.count
+    property string timestampFormat
+    property bool automaticScroll: false
     property int selectionStartIndex: -1
     property int selectionEndIndex: -1
     property int selectionStartPosition: -1
     property int selectionEndPosition: -1
-
-    property int currentIndex: scrollbackFilterModel.mapIndexToSource(listView.currentIndex)
+    property alias currentIndex: listView.currentIndex
     property color highlightNoFocusColor: "#aaaaaa"
+    property bool allowOnlyCondensedMode: false
+    property bool allowResendButton: true
+    property bool allowSyntaxHighlight: true
+    property bool allowMouseSelection: true
+    property bool allowCopyMenu: true
+    property bool allowSearchHighlight: false
+    property string searchHighlightPattern
 
     signal resendMessageRequested(string message)
-
-
-    function invalidateFilter() {
-        scrollbackFilterModel.invalidate()
-        clearSelection()
-    }
-
-    function positionViewAtEnd() {
-        listView.positionViewAtEnd()
-        scrollbackViewAtEndTimer.restart()
-    }
+    signal condenseMessageRequested(int index, bool isCondensed)
+    signal delegateClicked(int index)
+    signal delegateEnterPressed(int index)
 
     // internal stuff
     property int delegateBaseSpacing: 1
@@ -77,12 +73,8 @@ Item {
         }
     }
 
-    CommonCpp.SGSortFilterProxyModel {
-        id: scrollbackFilterModel
-        sourceModel: scrollbackView.model
-        filterRole: "message"
-        sortEnabled: false
-        invokeCustomFilter: true
+    Connections {
+        target: scrollbackView.model
 
         // New messages can be added only at the end
         // Existing messages can be removed only from beginning
@@ -114,40 +106,6 @@ Item {
             selectionStartIndex = newSelectionStartIndex;
             selectionEndIndex = newSelectionEndIndex
         }
-
-        function filterAcceptsRow(row) {
-            if (filterList.length === 0) {
-                return true
-            }
-
-            if (disableAllFiltering) {
-                return true
-            }
-
-            var type = sourceModel.data(row, "type")
-            if (type !== Sci.SciScrollbackModel.NotificationReply) {
-                return true
-            }
-
-            var value = sourceModel.data(row, "value")
-
-            for (var i = 0; i < platformDelegate.filterList.length; ++i) {
-                var filterString = platformDelegate.filterList[i]["filter_string"].toString().toLowerCase();
-                var filterCondition = platformDelegate.filterList[i]["condition"].toString();
-
-                if (filterCondition === "contains" && value.includes(filterString)) {
-                    return false
-                } else if (filterCondition === "equal" && value === filterString) {
-                    return false
-                } else if (filterCondition === "startswith" && value.startsWith(filterString)) {
-                    return false
-                } else if (filterCondition === "endswith" && value.endsWith(filterString)) {
-                    return false
-                }
-            }
-
-            return true
-        }
     }
 
     SGWidgets.SGIconButton {
@@ -161,7 +119,7 @@ Item {
         id: timestampTextMetrics
         font.family: "monospace"
         font.pixelSize: SGWidgets.SGSettings.fontPixelSize
-        text: model.timestampFormat
+        text: timestampFormat
     }
 
     Rectangle {
@@ -231,7 +189,7 @@ Item {
             margins: listViewBg.border.width
         }
 
-        model: scrollbackFilterModel
+        model: scrollbackView.model
         clip: true
         boundsBehavior: Flickable.StopAtBounds
         highlightMoveDuration: 100
@@ -255,7 +213,7 @@ Item {
             }
 
             onReleased: {
-                if (menuPopupMouseArea.containsMouse) {
+                if (allowCopyMenu && menuPopupMouseArea.containsMouse) {
                     contextMenuPopup.popup(null)
                 }
             }
@@ -272,7 +230,7 @@ Item {
                 rightMargin: delegateRightMargin
             }
 
-            cursorShape: Qt.IBeamCursor
+            cursorShape: allowMouseSelection ? Qt.IBeamCursor : Qt.ArrowCursor
             acceptedButtons: Qt.LeftButton
 
             /*this is to stop interaction with flickable while selecting text */
@@ -291,6 +249,12 @@ Item {
 
                 listView.currentIndex = position.delegate_index
 
+                delegateClicked(position.delegate_index);
+
+                if (allowMouseSelection === false) {
+                    return
+                }
+
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
 
@@ -301,6 +265,10 @@ Item {
             }
 
             onPositionChanged: {
+                if (allowMouseSelection === false) {
+                    return
+                }
+
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
                    var mouseY = 0
@@ -384,6 +352,9 @@ Item {
 
             property int delegateIndex: index
             onDelegateIndexChanged: selectTimer.restart()
+
+            Keys.onEnterPressed: delegateEnterPressed(index)
+            Keys.onReturnPressed:  delegateEnterPressed(index)
 
             Rectangle {
                 id: messageTypeBg
@@ -470,7 +441,7 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
 
-                    sourceComponent: model.type === Sci.SciScrollbackModel.Request ? resendButtonComponent : null
+                    sourceComponent: allowResendButton && model.type === Sci.SciScrollbackModel.Request ? resendButtonComponent : null
                 }
 
                 Loader {
@@ -479,7 +450,7 @@ Item {
                         leftMargin: dummyIconButton.width + scrollbackView.buttonRowSpacing
                     }
 
-                    sourceComponent: condensedButtonComponent
+                    sourceComponent: allowOnlyCondensedMode ? null : condensedButtonComponent
                 }
             }
 
@@ -499,7 +470,7 @@ Item {
                 selectByKeyboard: true
                 selectByMouse: false
                 readOnly: true
-                text: model.message
+                text: model.isCondensed || allowOnlyCondensedMode ? model.condensedMessage : model.expandedMessage
                 selectionColor: TangoTheme.palette.selectedText
                 selectedTextColor: "white"
 
@@ -535,7 +506,11 @@ Item {
 
             Loader {
                 id: syntaxHighlighterLoader
-                sourceComponent: model.isJsonValid ? syntaxHighlighterComponent : null
+                sourceComponent: allowSyntaxHighlight && model.isJsonValid ? syntaxHighlighterComponent : null
+            }
+
+            Loader {
+                sourceComponent: allowSearchHighlight ? searchHighlightComponent : null
             }
 
             Rectangle {
@@ -561,13 +536,7 @@ Item {
                     iconSize: scrollbackView.buttonRowIconSize
                     icon.source: "qrc:/images/redo.svg"
                     onClicked: {
-                        if (model.isJsonValid) {
-                            var msg = CommonCpp.SGJsonFormatter.prettifyJson(model.message)
-                        } else {
-                            msg = model.message
-                        }
-
-                        resendMessageRequested(msg)
+                        resendMessageRequested(model.expandedMessage)
                     }
                 }
             }
@@ -587,13 +556,7 @@ Item {
                     }
 
                     onClicked: {
-                        var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                        if (sourceIndex < 0) {
-                            console.error(Logger.sciCategory, "Index out of scope.")
-                            return
-                        }
-
-                        var item = scrollbackView.model.setIsCondensed(sourceIndex, !model.isCondensed)
+                        condenseMessageRequested(index, !model.isCondensed)
                         clearSelection()
                     }
                 }
@@ -603,6 +566,16 @@ Item {
                 id: syntaxHighlighterComponent
                 CommonCpp.SGJsonSyntaxHighlighter {
                     textDocument: cmdText.textDocument
+                }
+            }
+
+            Component {
+                id: searchHighlightComponent
+                CommonCpp.SGTextHighlighter {
+                    textDocument: cmdText.textDocument
+                    filterPattern: searchHighlightPattern
+                    filterPatternSyntax: CommonCpp.SGTextHighlighter.FixedString
+                    caseSensitive: false
                 }
             }
 
@@ -631,14 +604,14 @@ Item {
         var text = ""
 
         for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
-            var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
+            var sourceIndex = scrollbackView.model.mapIndexToSource(i)
             if (sourceIndex < 0) {
                 console.error(Logger.sciCategory, "Index out of scope.")
                 text = ""
                 break
             }
 
-            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(model.data(sourceIndex, "message"))
+            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(scrollbackView.model.sourceModel.data(sourceIndex, "condensedMessage"))
             if (i !== selectionEndIndex) {
                 text += '\n'
             }
@@ -667,5 +640,15 @@ Item {
         selectionEndIndex = delegateIndexEnd
         selectionStartPosition = 0
         selectionEndPosition = delegatePositionEnd
+    }
+
+    function positionViewAtEnd() {
+        listView.positionViewAtEnd()
+        scrollbackViewAtEndTimer.restart()
+    }
+
+    function positionViewAtIndex(index) {
+        listView.positionViewAtIndex(index, ListView.Contain)
+        listView.currentIndex = index
     }
 }
