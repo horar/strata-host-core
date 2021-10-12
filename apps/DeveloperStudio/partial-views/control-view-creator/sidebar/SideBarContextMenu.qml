@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick.Controls 2.12
+import tech.strata.commoncpp 1.0
 
 Menu {
     id: sideBarContextMenu
@@ -33,6 +34,14 @@ Menu {
         onTriggered: {
             createFolderPopup.open()
             sideBarContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
+        text: "Show in Explorer/Finder"
+        onTriggered: {
+            console.info(treeModel.projectDirectory)
+            SGUtilsCpp.showFileInFolder(treeModel.projectDirectory)
         }
     }
 }
