@@ -238,8 +238,6 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             if (platformChanged) {
                 disconnectPlatform(previousPlatform)
                 addConnectedPlatform(platform)
-            } else {
-                refreshFirmwareVersion(platform)
             }
 
             // device previously connected: keep status, remove from previouslyConnected list
@@ -256,32 +254,6 @@ function parseConnectedPlatforms (connected_platform_list_json) {
     }
 
     previouslyConnected = currentlyConnected
-}
-
-/*
-    Upon successful firmware flash, connected platform list resent, check for version changes
-*/
-function refreshFirmwareVersion(platform) {
-    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
-
-    if (classMap.hasOwnProperty(class_id_string)) {
-        for (let index of classMap[class_id_string].selector_listings) {
-            let selector_listing = platformSelectorModel.get(index)
-            if (selector_listing.device_id === platform.device_id) {
-                if (selector_listing.firmware_version !== platform.firmware_version) {
-                    selector_listing.firmware_version = platform.firmware_version
-                    for (let i = 0; i < NavigationControl.platform_view_model_.count; i++) {
-                        let open_view = NavigationControl.platform_view_model_.get(i)
-                        if (open_view.class_id === class_id_string && open_view.device_id === platform.device_id) {
-                            open_view.firmware_version = platform.firmware_version
-                            break
-                        }
-                    }
-                } // else firmware version has not changed
-                break
-            }
-        }
-    }
 }
 
 /*
