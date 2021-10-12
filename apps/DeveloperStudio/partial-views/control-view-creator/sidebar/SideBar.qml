@@ -37,8 +37,10 @@ Item {
 
     QtQC1.TreeView {
         id: treeView
-        model: treeModel
+
         anchors.fill: parent
+
+        model: treeModel
         backgroundVisible: false
         frameVisible: false
         alternatingRowColors: false
