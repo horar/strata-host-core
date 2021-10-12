@@ -12,7 +12,6 @@ SGWidgets.SGDialog {
     modal: true
 
     property int innerSpacing: 6
-    property alias errorString: errorText.text
     property bool bleSupported: sciModel.bleDeviceModel.bleSupported()
 
     CommonCpp.SGSortFilterProxyModel {
@@ -28,21 +27,24 @@ SGWidgets.SGDialog {
             var leftItem = sourceModel.get(leftRow)
             var rightItem = sourceModel.get(rightRow)
 
-            //empty name goes at the end
+            if (leftItem.isStrata === rightItem.isStrata) {
+                if (leftItem.name.length === 0 && rightItem.name.length > 0) {
+                    return false
+                }
 
-            if (leftItem.name.length === 0 && rightItem.name.length > 0) {
-                return false
+                if (leftItem.name.length > 0 && rightItem.name.length === 0) {
+                    return true
+                }
+
+                if (leftItem.name !== rightItem.name) {
+                    return naturalCompare(leftItem.name, rightItem.name) < 0
+                }
+
+                // empty name goes at the end
+                return naturalCompare(leftItem.address, rightItem.address) < 0
+            } else {
+                return leftItem.isStrata > rightItem.isStrata
             }
-
-            if (leftItem.name.length > 0 && rightItem.name.length === 0) {
-                return true
-            }
-
-            if (leftItem.name !== rightItem.name) {
-                return naturalCompare(leftItem.name, rightItem.name) < 0
-            }
-
-            return naturalCompare(leftItem.address, rightItem.address) < 0
         }
 
         function filterAcceptsRow(row) {
@@ -53,19 +55,6 @@ SGWidgets.SGDialog {
             }
 
             return false
-        }
-    }
-
-    Connections {
-        target: sciModel.bleDeviceModel
-        onDiscoveryFinished: {
-            dialog.errorString = errorString
-        }
-
-        onInDiscoveryModeChanged: {
-            if (sciModel.bleDeviceModel.inDiscoveryMode) {
-                dialog.errorString = ""
-            }
         }
     }
 
@@ -245,9 +234,11 @@ SGWidgets.SGDialog {
                         rightMargin: delegate.horizontalOuterSpacing
                     }
 
-                    hintText: "Try connect"
+                    enabled: model.connectionInProgress === false
+                    opacity: enabled ? 1.0 : 0.7
+                    hintText: model.isConnected ? "Try disconnect" : "Try connect"
                     iconSize: Math.floor(0.6*parent.height)
-                    icon.source: "qrc:/sgimages/link.svg"
+                    icon.source: model.isConnected ? "qrc:/sgimages/unlink.svg" : "qrc:/sgimages/link.svg"
                     visible: delegate.ListView.isCurrentItem || delegateMouseArea.containsMouse || hovered
                     onClicked: {
                         var sourceIndex = deviceSortFilterModel.mapIndexToSource(index)
@@ -255,7 +246,8 @@ SGWidgets.SGDialog {
                             return
                         }
 
-                        sciModel.bleDeviceModel.tryConnectDevice(sourceIndex)
+                        model.isConnected ? sciModel.bleDeviceModel.tryDisconnectDevice(sourceIndex) :
+                                            sciModel.bleDeviceModel.tryConnectDevice(sourceIndex)
                     }
                 }
             }
@@ -289,6 +281,10 @@ SGWidgets.SGDialog {
             text: {
                 if (bleSupported === false) {
                     return "Bluetooth Low Energy is not supported on this operating system"
+                }
+
+                if (sciModel.bleDeviceModel.lastDiscoveryError.length) {
+                    return sciModel.bleDeviceModel.lastDiscoveryError
                 }
 
                 if (deviceSortFilterModel.count === 0
