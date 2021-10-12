@@ -31,7 +31,7 @@ Menu {
     }
 
     MenuItem {
-        text: "Show in explorer/finder"
+        text: "Show in Explorer/Finder"
         onTriggered: {
             SGUtilsCpp.showFileInFolder(model.filepath)
         }
