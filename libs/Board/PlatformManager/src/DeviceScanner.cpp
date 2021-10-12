@@ -40,7 +40,7 @@ QByteArray DeviceScanner::createDeviceId(const QByteArray &uniqueHash) const
     return QByteArray(scannerPrefix() + uniqueHash);
 }
 
-Device::Type DeviceScanner::scannerType(const QByteArray deviceId)
+Device::Type DeviceScanner::scannerType(const QByteArray& deviceId)
 {
     for (auto it = allScannerTypes_.keyValueBegin(); it != allScannerTypes_.keyValueEnd(); it++) {
         if (deviceId.startsWith((*it).second)) {

@@ -11,6 +11,7 @@
 #include <QString>
 #include <QQuickItem>
 #include <QProcess>
+#include <QMultiHash>
 
 struct ResourceItem {
     ResourceItem(
@@ -108,7 +109,18 @@ public:
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
+    /**
+     * @brief unregisterAllViews Asynchronously requests resource unregistration for all control view resources
+     * @param parent The parent/container
+     */
     Q_INVOKABLE void unregisterAllViews(QObject *parent);
+
+    /**
+     * @brief unregisterDeleteViewResource Asynchronously requests resource unregistration for specific class id
+     * @param class_id The class id of the platform
+     * @param parent The parent/container
+     */
+    Q_INVOKABLE void unregisterAllRelatedViews(const QString &class_id, QObject *parent);
 
     Q_INVOKABLE void recompileControlViewQrc(QString qrcFilePath);
 
@@ -121,7 +133,14 @@ public:
      * @param path The path to the QRC directory to find children.
      * @return QList List of child paths.
      */
-    Q_INVOKABLE  QList<QString> getQrcPaths(QString path);
+    Q_INVOKABLE QList<QString> getQrcPaths(const QString &path);
+
+    /**
+     * @brief getProjectNameFromCmake capture project name from project's CMakeLists.txt file
+     * @param qrcPath The path to the project's QRC file
+     * @return QString project name, or empty if failed
+     */
+    Q_INVOKABLE QString getProjectNameFromCmake(const QString &qrcPath);
 
 signals:
     void finishedRecompiling(QString filepath);
@@ -163,7 +182,7 @@ private:
      */
     bool findRccCompiler();
 
-    QHash<QString, ResourceItem*> viewsRegistered_;
+    QMultiHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
 
@@ -177,5 +196,5 @@ private:
 
     void clearLastLoggedError();
 
-    void setLastLoggedError(QString &error_str);
+    void setLastLoggedError(const QString &error_str);
 };

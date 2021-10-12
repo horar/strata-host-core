@@ -39,6 +39,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciMockResponseModel.cpp
     SciMockVersionModel.cpp
     HexModel.cpp
+    SciFilterScrollbackModel.cpp
+    SciSearchScrollbackModel.cpp
     qml.qrc
     images/images.qrc
 
@@ -68,6 +70,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGUtilsCpp
     strata::SGJsonSyntaxHighlighter
     strata::SGTextHighlighter
+    strata::SGSortFilterProxyModel
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

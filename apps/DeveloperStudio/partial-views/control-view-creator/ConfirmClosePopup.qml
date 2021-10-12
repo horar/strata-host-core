@@ -15,7 +15,7 @@ SGConfirmationPopup {
     padding: 0
     closePolicy: Popup.NoAutoClose
     popupText: "Your changes will be lost if you choose to not save them."
-    acceptButtonColor: Theme.palette.onsemiOrange
+    acceptButtonColor: Theme.palette.green
     acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
     acceptButtonText: "Save"
     cancelButtonText: "Cancel"

@@ -186,6 +186,9 @@ function globalEventHandler(event, data)
                 platform_view_model_.remove(0)
             }
 
+            // Unregister all control views
+            resource_loader_.unregisterAllViews(main_qml_object_);
+
             updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
             break;
 
@@ -333,6 +336,9 @@ function updateState(event, data)
                         let closed_view = platform_view_model_.get(l)
                         if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
                             platform_view_model_.remove(l)
+
+                            // Unregister all related control views
+                            resource_loader_.unregisterAllRelatedViews(data.class_id, main_qml_object_);
                             break
                         }
                     }

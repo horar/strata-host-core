@@ -26,6 +26,7 @@ import "platform-interface-generator"
 Rectangle {
     id: controlViewCreatorRoot
 
+    property string projectName
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
     property bool isDebugMenuOpen: false
@@ -184,7 +185,7 @@ Rectangle {
     Loader {
         id: newWindowLoader
         active: popupWindow
-        source: "Console/NewWindowConsoleLog.qml"
+        source: "console/NewWindowConsoleLog.qml"
     }
 
     Loader {
@@ -210,6 +211,10 @@ Rectangle {
 
             if (closeReason === acceptCloseReason) {
                 editor.openFilesModel.saveAll(false)
+            }
+
+            if (cvcUserSettings.openViewOnBuild) {
+                viewStack.currentIndex = 2
             }
 
             requestRecompile()
@@ -283,7 +288,7 @@ Rectangle {
         padding: 0
         closePolicy: Popup.NoAutoClose
 
-        acceptButtonColor: Theme.palette.onsemiOrange
+        acceptButtonColor: Theme.palette.green
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Clean"
         cancelButtonText: "Cancel"
@@ -338,7 +343,7 @@ Rectangle {
     function recompileControlViewQrc() {
         if (editor.fileTreeModel.url.toString() !== '') {
             if (editor.openFilesModel.getUnsavedCount() > 0) {
-                confirmBuildClean.open();
+                confirmBuildClean.open()
             } else {
                 requestRecompile()
             }
@@ -352,7 +357,7 @@ Rectangle {
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
-    function registerAndSetRecompiledRccFile (compiledRccFile) {
+    function registerAndSetRecompiledRccFile(compiledRccFile) {
         // Unregister previous (cached) resource
         if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
             sdsModel.resourceLoader.unregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, controlViewLoader, false)
@@ -393,6 +398,10 @@ Rectangle {
         }
 
         return false
+    }
+
+    function getProjectNameFromCmake() {
+        controlViewCreatorRoot.projectName = sdsModel.resourceLoader.getProjectNameFromCmake(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
     Connections {

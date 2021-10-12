@@ -34,6 +34,14 @@ SciPlatform::SciPlatform(
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
+
+    filterScrollbackModel_ = new SciFilterScrollbackModel(this);
+    filterScrollbackModel_->setSortEnabled(false);
+    filterScrollbackModel_->setSourceModel(scrollbackModel_);
+
+    searchScrollbackModel_ = new SciSearchScrollbackModel(filterScrollbackModel_, this);
+    searchScrollbackModel_->setSearchRole(SciScrollbackModel::RawMessageRole);
+    searchScrollbackModel_->setSourceModel(scrollbackModel_);
 }
 
 SciPlatform::~SciPlatform()
@@ -42,14 +50,16 @@ SciPlatform::~SciPlatform()
     scrollbackModel_->deleteLater();
     commandHistoryModel_->deleteLater();
     filterSuggestionModel_->deleteLater();
+    filterScrollbackModel_->deleteLater();
+    searchScrollbackModel_->deleteLater();
 }
 
-QByteArray SciPlatform::deviceId()
+QByteArray SciPlatform::deviceId() const
 {
     return deviceId_;
 }
 
-strata::device::Device::Type SciPlatform::deviceType()
+strata::device::Device::Type SciPlatform::deviceType() const
 {
     return deviceType_;
 }
@@ -66,8 +76,8 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 {
     if (platform == nullptr) {
         if (status_ == PlatformStatus::Disconnected) {
-             qCCritical(logCategorySci) << "platform is already disconnected";
-             return;
+            // no need to do anything, already erased
+            return;
         }
 
         disconnect(platform_.get(), nullptr, this, nullptr);
@@ -98,7 +108,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
     }
 }
 
-QString SciPlatform::verboseName()
+QString SciPlatform::verboseName() const
 {
     return verboseName_;
 }
@@ -111,7 +121,7 @@ void SciPlatform::setVerboseName(const QString &verboseName)
     }
 }
 
-QString SciPlatform::appVersion()
+QString SciPlatform::appVersion() const
 {
     return appVersion_;
 }
@@ -124,7 +134,7 @@ void SciPlatform::setAppVersion(const QString &appVersion)
     }
 }
 
-QString SciPlatform::bootloaderVersion()
+QString SciPlatform::bootloaderVersion() const
 {
     return bootloaderVersion_;
 }
@@ -137,7 +147,7 @@ void SciPlatform::setBootloaderVersion(const QString &bootloaderVersion)
     }
 }
 
-SciPlatform::PlatformStatus SciPlatform::status()
+SciPlatform::PlatformStatus SciPlatform::status() const
 {
     return status_;
 }
@@ -150,27 +160,37 @@ void SciPlatform::setStatus(SciPlatform::PlatformStatus status)
     }
 }
 
-SciMockDevice* SciPlatform::mockDevice()
+SciMockDevice* SciPlatform::mockDevice() const
 {
     return mockDevice_;
 }
 
-SciScrollbackModel *SciPlatform::scrollbackModel()
+SciScrollbackModel *SciPlatform::scrollbackModel() const
 {
     return scrollbackModel_;
 }
 
-SciCommandHistoryModel *SciPlatform::commandHistoryModel()
+SciCommandHistoryModel *SciPlatform::commandHistoryModel() const
 {
     return commandHistoryModel_;
 }
 
-SciFilterSuggestionModel *SciPlatform::filterSuggestionModel()
+SciFilterSuggestionModel *SciPlatform::filterSuggestionModel() const
 {
     return filterSuggestionModel_;
 }
 
-QString SciPlatform::errorString()
+SciFilterScrollbackModel *SciPlatform::filterScrollbackModel() const
+{
+    return filterScrollbackModel_;
+}
+
+SciSearchScrollbackModel *SciPlatform::searchScrollbackModel() const
+{
+    return searchScrollbackModel_;
+}
+
+QString SciPlatform::errorString() const
 {
     return errorString_;
 }

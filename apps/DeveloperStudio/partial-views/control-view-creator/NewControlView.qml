@@ -329,10 +329,10 @@ Item {
 
         const qrcUrl = sdsModel.newControlView.createNewProject(projectName.text, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath)
         openProjectContainer.url = qrcUrl
-        openProjectContainer.addToTheProjectList(qrcUrl.toString())
+        openProjectContainer.addToTheProjectList(projectName.text, qrcUrl.toString())
         viewStack.currentIndex = 1
         controlViewCreatorRoot.projectInitialization = true
-        controlViewCreatorRoot.recompileControlViewQrc();
+        controlViewCreatorRoot.recompileControlViewQrc()
         projectName.text = ""
         fileOutput.text = ""
     }

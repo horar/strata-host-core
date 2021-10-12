@@ -65,6 +65,12 @@ Popup {
                 menuLoader.item.open()
                 contextMenu.close()
             }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         ContextMenuButton {
@@ -72,6 +78,12 @@ Popup {
             onClicked: {
                 visualEditor.functions.duplicateControlSelected()
                 contextMenu.close()
+            }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
             }
         }
 
@@ -81,6 +93,12 @@ Popup {
                 visualEditor.functions.bringToFrontSelected()
                 contextMenu.close()
             }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         ContextMenuButton {
@@ -88,6 +106,12 @@ Popup {
             onClicked: {
                 visualEditor.functions.removeControlSelected()
                 contextMenu.close()
+            }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
             }
         }
 
@@ -97,6 +121,12 @@ Popup {
                 visualEditor.functions.passUUID(layoutOverlayRoot.layoutInfo.uuid)
                 contextMenu.close()
             }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
         }
 
         ContextMenuButton {
@@ -104,6 +134,43 @@ Popup {
             onClicked: {
                 Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
                 contextMenu.close()
+            }
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
+        }
+
+        ContextMenuButton {
+            id: objectAlignButton
+            text: "Object Alignment"
+            chevron: true
+
+            property bool isExactHorizontal: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
+            property bool isExactVertical: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+
+            subMenu: ColumnLayout {
+                spacing: 0
+
+                ContextMenuButton {
+                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (appx.)"
+
+                    onClicked: {
+                        visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
+                        contextMenu.close()
+                    }
+                }
+
+                ContextMenuButton {
+                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (appx.)"
+
+                    onClicked: {
+                        visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
+                        contextMenu.close()
+                    }
+                }
             }
         }
 
@@ -113,43 +180,72 @@ Popup {
             Layout.fillWidth: true
             implicitHeight: 1
             visible: extraContextLoader.source !== ""
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onEntered: {
+                    objectAlignButton.content.close()
+                }
+
+                onContainsMouseChanged: {
+                    if (containsMouse) {
+                        objectAlignButton.content.close()
+                    }
+                }
+            }
         }
 
-        Loader {
-            id: extraContextLoader
+        MouseArea {
             Layout.fillWidth: true
-            source: {
-                switch (layoutOverlayRoot.type) {
-                    case "LayoutRectangle":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRectangleContextMenu.qml"
-                    case "LayoutSGIcon":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGIconContextMenu.qml"
-                    case "LayoutSGGraph":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGraphContextMenu.qml"
-                    case "LayoutButton":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonContextMenu.qml"
-                    case "LayoutText":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGTextContextMenu.qml"
-                    case "LayoutSGSwitch":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSwitchContextMenu.qml"
-                    case "LayoutDivider":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGDividerContextMenu.qml"
-                    case "LayoutSGInfoBox":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGInfoBoxContextMenu.qml"
-                    case "LayoutSGSlider":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSliderContextMenu.qml"
-                    case "LayoutSGCircularGauge":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGaugeContextMenu.qml"
-                    case "LayoutSGStatusLight":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLightContextMenu.qml"
-                    case "LayoutRadioButtons":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRadioButtonsContextMenu.qml"
-                    case "LayoutSGButtonStrip":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonStripContextMenu.qml"
-                    case "LayoutSGStatusLogBox":
-                        return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLogBoxContextMenu.qml"
-                    default:
-                        return ""
+            Layout.preferredHeight: extraContextLoader.height
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onContainsMouseChanged: {
+                if (containsMouse) {
+                    objectAlignButton.content.close()
+                }
+            }
+
+            Loader {
+                id: extraContextLoader
+                width: parent.width
+
+                source: {
+                    switch (layoutOverlayRoot.type) {
+                        case "LayoutRectangle":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRectangleContextMenu.qml"
+                        case "LayoutSGIcon":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGIconContextMenu.qml"
+                        case "LayoutSGGraph":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGraphContextMenu.qml"
+                        case "LayoutButton":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonContextMenu.qml"
+                        case "LayoutText":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGTextContextMenu.qml"
+                        case "LayoutSGSwitch":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSwitchContextMenu.qml"
+                        case "LayoutDivider":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGDividerContextMenu.qml"
+                        case "LayoutSGInfoBox":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGInfoBoxContextMenu.qml"
+                        case "LayoutSGSlider":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSliderContextMenu.qml"
+                        case "LayoutSGCircularGauge":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGaugeContextMenu.qml"
+                        case "LayoutSGStatusLight":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLightContextMenu.qml"
+                        case "LayoutRadioButtons":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRadioButtonsContextMenu.qml"
+                        case "LayoutSGButtonStrip":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonStripContextMenu.qml"
+                        case "LayoutSGStatusLogBox":
+                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLogBoxContextMenu.qml"
+                        default:
+                            return ""
+                    }
                 }
             }
         }

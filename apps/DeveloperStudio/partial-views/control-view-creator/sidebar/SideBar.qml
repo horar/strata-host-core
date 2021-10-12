@@ -8,7 +8,6 @@
  */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
 import tech.strata.commoncpp 1.0
 import QtQuick.Controls 1.4 as QtQC1
@@ -140,31 +139,6 @@ Item {
         }
     }
 
-    FileDialog {
-        id: existingFileDialog
-
-        nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
-        selectExisting: true
-        selectMultiple: false
-        folder: treeModel.projectDirectory
-
-        property variant callerIndex: null
-
-        onAccepted: {
-            if (callerIndex) {
-                if (callerIndex === -1) {
-                    createFilePopup.fileAddRequested = true
-                    treeModel.insertChild(fileUrl, -1, true, treeModel.index(callerIndex))
-                    callerIndex = null
-                } else {
-                    createFilePopup.fileAddRequested = true
-                    treeModel.insertChild(fileUrl, -1, true, callerIndex)
-                    callerIndex = null
-                }
-            }
-        }
-    }
-
     Loader {
         id: sideBarContextMenu
         source: "./SideBarContextMenu.qml"
@@ -172,6 +146,11 @@ Item {
 
     CreateFilePopup {
         id: createFilePopup
+        visible: false
+    }
+
+    ImportFileOrFolderPopup {
+        id: importFileOrFolderPopup
         visible: false
     }
 
