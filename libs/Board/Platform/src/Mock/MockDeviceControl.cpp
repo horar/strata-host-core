@@ -238,7 +238,7 @@ void MockDeviceControl::initializeDefaultResponses()
 
     responses_.clear();
     QList<MockCommand> supportedCommands = mockSupportedCommands(version_);
-    foreach(auto command, supportedCommands) {
+    for(auto command: supportedCommands) {
         responses_.insert({command, MockResponse::Normal});
     }
 }

@@ -88,7 +88,6 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
     if (platformManager_->disconnectPlatform(deviceId)) {
         QVERIFY((platformAboutToCloseSignal.count() == 1) || (platformAboutToCloseSignal.wait(250) == true));
         QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(250) == true));
-        QVERIFY(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceLost(deviceId));
         QVERIFY(platform.get() != nullptr);
         QVERIFY(platform->deviceType() == Device::Type::MockDevice);
         QCOMPARE(platformManager_->getDeviceIds().count(), --devicesCount);

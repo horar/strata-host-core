@@ -25,6 +25,9 @@ TcpDevice::TcpDevice(const QByteArray& deviceId, QHostAddress deviceAddress, qui
 TcpDevice::~TcpDevice()
 {
     TcpDevice::close();
+    qCDebug(logCategoryDeviceTcp).nospace().noquote()
+        << "Deleted TCP device, ID: " <<  deviceId_
+        << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 void TcpDevice::open()
@@ -112,8 +115,16 @@ void TcpDevice::readMessages()
 
 void TcpDevice::handleError(QAbstractSocket::SocketError socketError)
 {
-    Q_UNUSED(socketError);
-    emit deviceError(ErrorCode::DeviceError, tcpSocket_->errorString());
+    QString errString = "(";
+    errString.append(QString::number(socketError));
+    errString.append(") ");
+    errString.append(tcpSocket_->errorString());
+
+    if (socketError == QAbstractSocket::RemoteHostClosedError) {
+        emit deviceError(ErrorCode::DeviceDisconnected, errString);
+    } else {
+        emit deviceError(ErrorCode::DeviceError, errString);
+    }
 }
 
 void TcpDevice::deviceDiconnectedHandler()

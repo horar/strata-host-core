@@ -48,7 +48,18 @@ public:
 
     void startDiscovery();
     void stopDiscovery();
-    const QList<BlootoothLowEnergyInfo> discoveredDevices() const;
+
+    /**
+     * Return list of deviceIds of all discovered devices
+     * @return list of discovered devices
+     */
+    virtual QList<QByteArray> discoveredDevices() const override;
+
+    /**
+     * Return list of informations of all discovered devices
+     * @return list of discovered devices and their info
+     */
+    const QList<BlootoothLowEnergyInfo> discoveredBleDevices() const;
 
     /**
      * Initiates connection to discovered BLE device.
@@ -60,7 +71,7 @@ public:
      * @return empty string if connecting started (doesn't mean successful connection, only initiation of connection process).
      * Error message if there was an error.
      */
-    QString connectDevice(const QByteArray& deviceId);
+    virtual QString connectDevice(const QByteArray& deviceId) override;
 
     /**
      * Drops connection to discovered BLE device.
@@ -68,7 +79,12 @@ public:
      * @return empty string if disconnected.
      * Error message if there was an error.
      */
-    QString disconnectDevice(const QByteArray& deviceId);
+    virtual QString disconnectDevice(const QByteArray& deviceId) override;
+
+    /**
+     * Drops connection to all discovered devices.
+     */
+    virtual void disconnectAllDevices() override;
 
 signals:
     void discoveryFinished(DiscoveryFinishStatus status, QString errorString);

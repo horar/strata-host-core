@@ -103,7 +103,7 @@ bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
         return false;
     }
 
-    return scanner_->mockDeviceLost(deviceId);
+    return scanner_->disconnectDevice(deviceId).isEmpty();
 }
 
 void SciMockDeviceModel::disconnectAllMockDevices() {
@@ -111,7 +111,7 @@ void SciMockDeviceModel::disconnectAllMockDevices() {
         return;
     }
 
-    return scanner_->mockAllDevicesLost();
+    scanner_->disconnectAllDevices();
 }
 
 QString SciMockDeviceModel::getLatestMockDeviceName() const {

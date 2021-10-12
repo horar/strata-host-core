@@ -47,19 +47,47 @@ void TcpDeviceScanner::deinit()
     disconnect(udpSocket_.get(), nullptr, this, nullptr);
     scanRunning_ = false;
 
-    for (const auto &deviceId : discoveredDevices_) {
+    TcpDeviceScanner::disconnectAllDevices();
+}
+
+QList<QByteArray> TcpDeviceScanner::discoveredDevices() const
+{
+    return discoveredDevices_.values();
+}
+
+QString TcpDeviceScanner::connectDevice(const QByteArray& deviceId)
+{
+    Q_UNUSED(deviceId)
+
+    return "Method not supported";
+}
+
+QString TcpDeviceScanner::disconnectDevice(const QByteArray& deviceId)
+{
+    if (discoveredDevices_.remove(deviceId) == false) {
+        return "Device not found";
+    }
+
+    emit deviceLost(deviceId);
+    return "";
+}
+
+void TcpDeviceScanner::disconnectAllDevices() {
+    for (const auto& deviceId: qAsConst(discoveredDevices_)) {
         emit deviceLost(deviceId);
     }
     discoveredDevices_.clear();
 }
 
-void TcpDeviceScanner::setProperties(quint32 flags) {
+void TcpDeviceScanner::setProperties(quint32 flags)
+{
     if (flags & TcpDeviceScanner::DisableAutomaticScan) {
         stopAutomaticScan();
     }
 }
 
-void TcpDeviceScanner::unsetProperties(quint32 flags) {
+void TcpDeviceScanner::unsetProperties(quint32 flags)
+{
     if (flags & TcpDeviceScanner::DisableAutomaticScan) {
         startAutomaticScan();
     }
@@ -115,37 +143,8 @@ void TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
     DevicePtr device = std::make_shared<TcpDevice>(createDeviceId(TcpDevice::createUniqueHash(deviceAddress)), deviceAddress, tcpPort);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    connect(platform.get(), &platform::Platform::deviceError,
-            this, &TcpDeviceScanner::deviceErrorHandler);
-
     discoveredDevices_.insert(platform->deviceId());
     emit deviceDetected(platform);
-}
-
-void TcpDeviceScanner::deviceErrorHandler(Device::ErrorCode error, QString errorString)
-{
-    Q_UNUSED(errorString)
-
-    platform::Platform *platform = qobject_cast<platform::Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to platform object";
-        return;
-    }
-
-    if (error == Device::ErrorCode::DeviceDisconnected ||
-        error == Device::ErrorCode::DeviceError) {
-        // loss is reported after error is processed in Platform
-        QByteArray deviceId = platform->deviceId();
-        auto it = discoveredDevices_.find(deviceId);
-        if (it != discoveredDevices_.end()) {
-            discoveredDevices_.erase(it);
-        }
-
-        QTimer::singleShot(0, this, [this, deviceId](){
-            qCDebug(logCategoryDeviceScanner) << "device loss is about to be reported for" << deviceId;
-            emit deviceLost(deviceId);
-        });
-    }
 }
 
 bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
