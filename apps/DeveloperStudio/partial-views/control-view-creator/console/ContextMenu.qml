@@ -18,6 +18,7 @@ Item {
     id: root
     anchors.fill: parent
 
+    property bool copyEnabled: false
     property alias contextMenuEdit: contextMenuEdit
 
     TextEdit {
@@ -31,6 +32,7 @@ Item {
         Action {
             id: copyAction
             text: qsTr("Copy")
+            enabled: copyEnabled
             onTriggered: {
                 root.copySelected()
             }
@@ -88,6 +90,7 @@ Item {
 
     // Highlight all the text in the console. Then the user can copy all.
     function selectAll() {
+        copyEnabled = true
         for (var i = 0; i < consoleLogs.model.count; i++) {
             var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i))
             listElement.state = "allSelected" // sets state of every index to allSelected
