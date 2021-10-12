@@ -40,7 +40,6 @@ Menu {
     MenuItem {
         text: "Show in Explorer/Finder"
         onTriggered: {
-            console.info(treeModel.projectDirectory)
             SGUtilsCpp.showFileInFolder(treeModel.projectDirectory)
         }
     }
