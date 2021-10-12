@@ -25,7 +25,7 @@ var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml"
 /*
   Login: Send information to server
 */
-function login(login_info){
+function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
     let headers = {
@@ -521,6 +521,7 @@ function validate_token()
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
+            "anonymous": Rest.anonymous
         }
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
@@ -574,7 +575,7 @@ function update_anonymous(hasOptedOut) {
     Rest.anonymous = hasOptedOut
     var headers = {"app": "strata"}
     Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
-    if (Rest.jwt !== ""){
+    if (Rest.jwt !== "") {
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
