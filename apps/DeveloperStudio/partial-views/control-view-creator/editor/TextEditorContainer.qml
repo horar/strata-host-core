@@ -109,15 +109,15 @@ ColumnLayout {
 
             textEditorSavedFile(model.filepath)
 
+            // Force QRC model reload if QRC file is changed and saved
+            if (model.filepath === treeModel.url) {
+                treeModel.reloadQrcModel()
+            }
+
             if (closeFile) {
                 openFilesModel.closeTabAt(modelIndex)
             } else {
                 visualEditor.functions.checkFile()
-            }
-
-            // Force QRC model reload if QRC file is changed and saved
-            if (model.filepath === treeModel.url) {
-                treeModel.reloadQrcModel()
             }
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."

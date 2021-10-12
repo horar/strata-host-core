@@ -90,8 +90,10 @@ Item {
         anchors {
             fill: consoleMessage
         }
+
         property int start:-1
         property int end:-1
+        property bool closestSelected: false
 
         onEntered: {
             if (index > consoleLogs.indexDragStarted) {
@@ -102,11 +104,29 @@ Item {
 
             model.state = "someSelected"
             consoleLogs.selectInBetween(index)
+
+            if (index !== consoleLogs.indexDragStarted) { // if index is not the starting index, get the "selected" state from the most recently dragged index
+                let closestIndex
+                if (consoleLogs.indexDragStarted < index) {
+                    closestIndex = index - 1
+                } else {
+                    closestIndex = index + 1
+                }
+                let closestEntry = consoleLogs.model.get(consoleLogs.model.mapIndexToSource(closestIndex))
+                closestSelected = closestEntry.selection !== ""
+            } else {
+                closestSelected = false
+            }
         }
 
         onPositionChanged: {
             end = consoleMessage.positionAt(drag.x, drag.y)
             consoleMessage.select(start, end)
+            if (consoleMessage.selectedText !== "") {
+                 contextMenu.copyEnabled = true
+            } else {
+                 contextMenu.copyEnabled = closestSelected
+            }
         }
     }
 
