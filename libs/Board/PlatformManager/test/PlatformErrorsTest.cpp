@@ -187,9 +187,20 @@ void PlatformErrorsTest::errorBeforeOperationTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
 
     mockDevice_->mockEmitError(Device::ErrorCode::DeviceError, "Device Error");
+
+    QVERIFY((platformErrorSignal.count() == 1) || (platformErrorSignal.wait(100) == true));
+
+    QList<QVariant> arguments = platformErrorSignal.takeFirst();
+    QVERIFY(arguments.at(0).type() == QVariant::UserType);
+    QVERIFY(arguments.at(1).type() == QVariant::String);
+    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceError);
+
+    QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(100) == true));
 
     platformOperation->run();
 
@@ -197,12 +208,6 @@ void PlatformErrorsTest::errorBeforeOperationTest()
     QCOMPARE(platformOperation->hasStarted(), false);
     QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isFinished(), true, 1000);
     QCOMPARE(platformOperation->isSuccessfullyFinished(), false);
-
-    QVERIFY(platformErrorSignal.count() == 1);
-    QList<QVariant> arguments = platformErrorSignal.takeFirst();
-    QVERIFY(arguments.at(0).type() == QVariant::UserType);
-    QVERIFY(arguments.at(1).type() == QVariant::String);
-    QCOMPARE(qvariant_cast<Device::ErrorCode>(arguments.at(0)), Device::ErrorCode::DeviceError);
 }
 
 void PlatformErrorsTest::errorDuringOperationTest()
