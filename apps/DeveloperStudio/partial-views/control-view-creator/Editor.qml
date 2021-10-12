@@ -85,10 +85,10 @@ Item {
             sequence: "Ctrl+R"
             enabled: editor.fileTreeModel.url.toString() !== ''
             onActivated: {
-                if (cvcUserSettings.openViewOnBuild) {
+                recompileControlViewQrc()
+                if (cvcUserSettings.openViewOnBuild && !confirmBuildClean.opened) {
                     viewStack.currentIndex = 2
                 }
-                recompileControlViewQrc()
             }
         }
 
