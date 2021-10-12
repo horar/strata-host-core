@@ -42,7 +42,7 @@ void MockDevice::open()
     if (opened_) {
         emit Device::opened();
     } else {
-        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpen, "Unable to open mock device (mockSetOpenEnabled set to false).");
+        emit Device::deviceError(device::Device::ErrorCode::DeviceFailedToOpenGoingToRetry, "Unable to open mock device (mockSetOpenEnabled set to false).");
     }
 }
 
