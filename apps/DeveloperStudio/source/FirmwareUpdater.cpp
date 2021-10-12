@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
+
 #include "FirmwareUpdater.h"
 
 #include <StrataRPC/StrataClient.h>
@@ -21,9 +30,9 @@ FirmwareUpdater::~FirmwareUpdater()
 {
 }
 
-bool FirmwareUpdater::programAssisted(QString deviceId)
+bool FirmwareUpdater::programAssistedController(QString deviceId)
 {
-    if (requestDevice(deviceId, Action::ProgramAssisted, QString(), QString()) == false) {
+    if (requestDevice(deviceId, Action::ProgramAssistedController, QString(), QString()) == false) {
         return false;
     }
 
@@ -34,22 +43,23 @@ bool FirmwareUpdater::programAssisted(QString deviceId)
     return sendCommand(deviceId, QStringLiteral("program_controller"), cmdPayloadObject);
 }
 
-bool FirmwareUpdater::programEmbedded(QString deviceId)
+bool FirmwareUpdater::programEmbeddedWithoutFw(QString deviceId)
 {
-    if (requestDevice(deviceId, Action::ProgramEmbedded, QString(), QString()) == false) {
+    if (requestDevice(deviceId, Action::ProgramEmbeddedWithoutFw, QString(), QString()) == false) {
         return false;
     }
 
     QJsonObject cmdPayloadObject {
-        { "device_id", deviceId }
+        { "device_id", deviceId },
+        { "no_backup", true }
     };
 
     return sendCommand(deviceId, QStringLiteral("update_firmware"), cmdPayloadObject);
 }
 
-bool FirmwareUpdater::programSpecificFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
+bool FirmwareUpdater::programFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5)
 {
-    if (requestDevice(deviceId, Action::ProgramSpecificFirmware, firmwareUri, firmwareMD5) == false) {
+    if (requestDevice(deviceId, Action::ProgramFirmware, firmwareUri, firmwareMD5) == false) {
         return false;
     }
 
@@ -189,14 +199,14 @@ void FirmwareUpdater::jobUpdateHandler(QJsonObject payload)
     const Action action = deviceIter.value().action;
 
     switch (action) {
-    case Action::ProgramAssisted :
-        finished = programAssistedController(deviceIter, payload);
+    case Action::ProgramAssistedController :
+        finished = programAssistCntrlHandler(deviceIter, payload);
         break;
-    case Action::ProgramEmbedded :
-        finished = programFirmware(deviceIter, payload);
+    case Action::ProgramEmbeddedWithoutFw :
+        finished = onlyProgramFwHandler(deviceIter, payload);
         break;
-    case Action::ProgramSpecificFirmware :
-        finished = backupAndProgram(deviceIter, payload);
+    case Action::ProgramFirmware :
+        finished = backupAndProgramFwHandler(deviceIter, payload);
         break;
     }
 
@@ -206,7 +216,7 @@ void FirmwareUpdater::jobUpdateHandler(QJsonObject payload)
     }
 }
 
-bool FirmwareUpdater::programAssistedController(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+bool FirmwareUpdater::programAssistCntrlHandler(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
 
@@ -239,7 +249,7 @@ bool FirmwareUpdater::programAssistedController(const QHash<QString,FlashingData
     return finished;
 }
 
-bool FirmwareUpdater::programFirmware(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+bool FirmwareUpdater::onlyProgramFwHandler(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> Flash -> Finished
 
@@ -266,7 +276,7 @@ bool FirmwareUpdater::programFirmware(const QHash<QString,FlashingData>::Iterato
     return finished;
 }
 
-bool FirmwareUpdater::backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
+bool FirmwareUpdater::backupAndProgramFwHandler(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload)
 {
     // Download -> Prepare -> Backup -> (ClearFwClassId) -> Flash -> (Restore) -> (SetFwClassId) -> Finished
 
@@ -427,17 +437,17 @@ float FirmwareUpdater::resolveOverallProgress(Action action, JobType jobType, fl
     float backupRange = 0.0f, clearDataRange = 0.0f, programRange = 0.0f, setDataRange = 0.0f;
 
     switch (action) {
-    case Action::ProgramAssisted :
+    case Action::ProgramAssistedController :
         // Download -> Prepare -> ClearFwClassId -> (Flash) -> SetFwClassId -> Finished
         clearDataRange = 0.01f;
         programRange = 0.82f;
         setDataRange = 0.01f;
         break;
-    case Action::ProgramEmbedded :
+    case Action::ProgramEmbeddedWithoutFw :
         // Download -> Prepare -> Flash -> Finished
         programRange = 0.84f;
         break;
-    case Action::ProgramSpecificFirmware :
+    case Action::ProgramFirmware :
         // Download -> Prepare -> Backup -> (ClearFwClassId) -> Flash -> (Restore) -> (SetFwClassId) -> Finished
         backupRange = 0.41f;
         clearDataRange = 0.01f;

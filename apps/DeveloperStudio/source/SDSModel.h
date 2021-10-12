@@ -50,6 +50,7 @@ class SDSModel: public QObject
     Q_PROPERTY(BleDeviceModel* bleDeviceModel READ bleDeviceModel CONSTANT)
     Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
     Q_PROPERTY(PlatformOperation* platformOperation READ platformOperation CONSTANT)
+    Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled NOTIFY debugFeaturesEnabledChanged)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -71,6 +72,8 @@ public:
     BleDeviceModel *bleDeviceModel() const;
     strata::strataRPC::StrataClient *strataClient() const;
     PlatformOperation* platformOperation() const;
+    bool debugFeaturesEnabled();
+    void setDebugFeaturesEnabled(bool enabled);
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -81,6 +84,7 @@ public slots:
 
 signals:
     void hcsConnectedChanged();
+    void debugFeaturesEnabledChanged();
     void notifyQmlError(QString notifyQmlError);
 
 private slots:
@@ -104,6 +108,7 @@ private:
     QPointer<QProcess> hcsProcess_;
     BleDeviceModel *bleDeviceModel_{nullptr};
     const unsigned hcsIdentifier_;
+    bool debugFeaturesEnabled_ = false;
 
     void setHcsConnected(bool hcsConnected);
 };

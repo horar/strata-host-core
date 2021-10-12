@@ -58,7 +58,7 @@ Item {
         case "debug": return Theme.palette.lightBlue
         case "warning": return Theme.palette.warning
         case "error": return Theme.palette.error
-        case "info": return Theme.palette.onsemiOrange
+        case "info": return Theme.palette.green
         default: return "#aaa"
         }
     }

@@ -131,5 +131,6 @@ var uuid_map = {
     "b1133641-5b46-4d11-9b96-9126b9d2a109": "mv-mdk",
     "1917934f-3b79-4e8b-b37a-b1bd92d2afd5": "mv-mdk",
     "d5029d50-9f39-4e44-8c35-589686b511cb": "lighting-kit-demo",
-    "12ef019d-4c18-4898-984e-6dc301d4be56": "ncv7685-rear"
+    "12ef019d-4c18-4898-984e-6dc301d4be56": "ncv7685-rear",
+    "aade6dda-6c67-4c72-b80d-18b086fe3abf": "NCS32200",
 }

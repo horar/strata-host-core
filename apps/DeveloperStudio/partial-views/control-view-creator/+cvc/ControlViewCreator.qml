@@ -185,7 +185,7 @@ Rectangle {
     Loader {
         id: newWindowLoader
         active: popupWindow
-        source: "Console/NewWindowConsoleLog.qml"
+        source: "console/NewWindowConsoleLog.qml"
     }
 
     Loader {
@@ -211,6 +211,10 @@ Rectangle {
 
             if (closeReason === acceptCloseReason) {
                 editor.openFilesModel.saveAll(false)
+            }
+
+            if (cvcUserSettings.openViewOnBuild) {
+                viewStack.currentIndex = 2
             }
 
             requestRecompile()
@@ -284,7 +288,7 @@ Rectangle {
         padding: 0
         closePolicy: Popup.NoAutoClose
 
-        acceptButtonColor: Theme.palette.onsemiOrange
+        acceptButtonColor: Theme.palette.green
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Clean"
         cancelButtonText: "Cancel"

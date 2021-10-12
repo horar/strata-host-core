@@ -62,6 +62,7 @@ void FirmwareUpdateController::changeFirmware(const ChangeFirmwareData &data)
 {
     switch (data.action) {
     case ChangeFirmwareAction::UpdateFirmware :
+    case ChangeFirmwareAction::ProgramFirmware :
         break;
     case ChangeFirmwareAction::ProgramController :
         if (data.firmwareClassId.isNull()) {
@@ -104,6 +105,7 @@ void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
 
     switch(data.action) {
     case ChangeFirmwareAction::UpdateFirmware :
+    case ChangeFirmwareAction::ProgramFirmware :
         programController = false;
         [[fallthrough]];
     case ChangeFirmwareAction::ProgramController :
@@ -126,8 +128,10 @@ void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
     case ChangeFirmwareAction::UpdateFirmware :
         fwUpdater->updateFirmware(true);
         break;
+    case ChangeFirmwareAction::ProgramFirmware :
     case ChangeFirmwareAction::ProgramController :
-        // there is no need to backup old firmware if programming aasisted controller (dongle)
+        // there is no need to backup old firmware if programming embedded board without
+        // firmware or if programming assisted controller (dongle)
         fwUpdater->updateFirmware(false);
         break;
     case ChangeFirmwareAction::SetControllerFwClassId :

@@ -79,6 +79,16 @@ Item {
                 onClicked: mainWindow.resetWindowSize()
             }
 
+            CheckBox {
+                //feel free to reuse this flag for other debug purposes as well
+                id: debugFeatures
+                text: "Debug Features"
+                checked: sdsModel.debugFeaturesEnabled
+                onCheckedChanged: {
+                    sdsModel.debugFeaturesEnabled = debugFeatures.checked
+                }
+            }
+
             Button {
                 text: "Login as Guest"
                 onClicked: {

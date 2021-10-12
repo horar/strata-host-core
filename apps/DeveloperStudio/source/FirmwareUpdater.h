@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
+
 #pragma once
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -20,11 +29,12 @@ public:
     FirmwareUpdater(strata::strataRPC::StrataClient *strataClient, CoreInterface *coreInterface, QObject *parent = nullptr);
     ~FirmwareUpdater();
 
-    // program platform with newest firmware (no backup):
-    Q_INVOKABLE bool programAssisted(QString deviceId);
-    Q_INVOKABLE bool programEmbedded(QString deviceId);
-    // program platform with specific firmware:
-    Q_INVOKABLE bool programSpecificFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5);
+    // program assisted controller with the newest firmware (no backup):
+    Q_INVOKABLE bool programAssistedController(QString deviceId);
+    // program embedded platform without firmware with the newest firmware (no backup):
+    Q_INVOKABLE bool programEmbeddedWithoutFw(QString deviceId);
+    // program (update) platform with new firmware (do old firmware backup):
+    Q_INVOKABLE bool programFirmware(QString deviceId, QString firmwareUri, QString firmwareMD5);
 
     Q_INVOKABLE bool isFirmwareUpdateInProgress(QString deviceId) const;
     Q_INVOKABLE QJsonObject getFirmwareUpdateData(QString deviceId, QString firmwareUri, QString firmwareMD5) const;
@@ -41,9 +51,9 @@ private slots:
 
 private:
     enum class Action {
-        ProgramAssisted,
-        ProgramEmbedded,
-        ProgramSpecificFirmware
+        ProgramAssistedController,
+        ProgramEmbeddedWithoutFw,
+        ProgramFirmware
     };
     enum class JobType {
         Download,
@@ -82,9 +92,9 @@ private:
 
     bool sendCommand(const QString& deviceId, const QString& command, const QJsonObject& payload);
 
-    bool programAssistedController(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
-    bool programFirmware(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
-    bool backupAndProgram(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
+    bool programAssistCntrlHandler(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
+    bool onlyProgramFwHandler(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
+    bool backupAndProgramFwHandler(const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
 
     void simpleJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload, float progress);
     void progressJob(JobType jobType, const QHash<QString,FlashingData>::Iterator deviceIter, const QJsonObject& payload);
