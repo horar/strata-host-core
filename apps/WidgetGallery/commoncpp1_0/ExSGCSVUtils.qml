@@ -16,8 +16,6 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 ColumnLayout {
     id: exExportCsv
 
-    property string filePath: ""
-
     Component.onCompleted: {
         csvUtil.clear()
         csvUtil.appendRow(["dac","io","rev"])
@@ -56,15 +54,7 @@ ColumnLayout {
             }
 
             SGWidgets.SGButton {
-                text: "Export to Folder"
-
-                onClicked: {
-                    exportDialog.open()
-                }
-            }
-
-            SGWidgets.SGButton {
-                text: "Append to Row"
+                text: "Append Row"
 
                 onClicked: {
                     let data = [Math.random(1000).toFixed(2), Math.random(1000).toFixed(0) % 2 === 0, Math.random(1000).toFixed(2)]
@@ -113,27 +103,11 @@ ColumnLayout {
                 }
             }
 
-            RowLayout {
-                Layout.preferredWidth: exExportCsv.width
-                spacing: 0
-                SGWidgets.SGButton {
-                    text: "Write to file"
+            SGWidgets.SGButton {
+                text: "Write to file"
 
-                    onClicked: {
-                       if (exExportCsv.filePath.length > 0 && (exportName.text.length > 0 && exportName.text.endsWith(".csv"))) {
-                            csvUtil.writeToFile(CommonCpp.SGUtilsCpp.joinFilePath(exExportCsv.filePath, exportName.text))
-                       }
-                    }
-                }
-
-                SGWidgets.SGText {
-                    text: "Filename: "
-                }
-
-                SGWidgets.SGTextField {
-                    id: exportName
-                    Layout.preferredWidth: 250
-                    placeholderText: "Write to file.csv"
+                onClicked: {
+                    exportDialog.open()
                 }
             }
         }
@@ -148,7 +122,7 @@ ColumnLayout {
         onAccepted: {
             textEdit.clear()
             let data = csvUtil.importFromFile(importDialog.fileUrl);
-            console.info(data);
+            console.info(JSON.stringify(data));
             for (let i = 0; i < data.length; i++) {
                 textEdit.text += JSON.stringify(data[i]) + "\n"
             }
@@ -157,11 +131,13 @@ ColumnLayout {
 
     FileDialog {
         id: exportDialog
-        selectFolder: true
+        selectFolder: false
+        selectExisting: false
         selectMultiple: false
+        nameFilters: [ "CSV files (*.csv)" ]
 
         onAccepted: {
-            exExportCsv.filePath = fileUrl
+            csvUtil.writeToFile(fileUrl)
         }
     }
 

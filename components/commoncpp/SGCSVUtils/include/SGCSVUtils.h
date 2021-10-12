@@ -32,5 +32,4 @@ signals:
 
 private:
     QVector<QVariant> data_;
-    const QString defaultFileName_ = QString(QDateTime::currentDateTime().toString("yyyy.MM.dd") + " at " + QDateTime::currentDateTime().toString("hh.mm.ss") + ".csv");
 };
