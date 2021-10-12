@@ -39,7 +39,7 @@ public:
     Q_INVOKABLE QString fileAbsolutePath(const QString &file);
     Q_INVOKABLE QString dirName(const QString &path);
     Q_INVOKABLE QUrl pathToUrl(const QString &path, const QString &scheme=QString("file"));
-    Q_INVOKABLE static void showFileInFolder(const QString &path);
+    Q_INVOKABLE void showFileInFolder(const QString &path);
 
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);
     Q_INVOKABLE QString readTextFileContent(const QString &path);
