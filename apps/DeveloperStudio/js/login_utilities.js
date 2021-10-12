@@ -26,11 +26,12 @@ var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml"
   Login: Send information to server
 */
 function login(login_info){
-    var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone, "anonymous": Rest.anonymous};
+    var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
+        "anonymous": Rest.anonymous
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -80,7 +81,6 @@ function login_result(response)
         "first_name": response.firstname,
         "last_name": response.lastname,
         "user_id": response.user,
-        "anonymous": response.anonymous
     }
 
     // [TODO][prasanth]: jwt will be created/received in the hcs
@@ -210,9 +210,9 @@ function register(registration_info){
         "password":registration_info.password,
         "title": registration_info.title,
         "company": registration_info.company,
-        "anonymous": registration_info.anonymous
     };
-    Rest.xhr("post", "signup", data, register_result, register_error, null)
+    Rest.anonymous = registration_info.anonymous
+    Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": registration_info.anonymous })
 
     /*
       * Possible valid outcomes:
@@ -567,6 +567,20 @@ function validation_result (response) {
         } else {
             SignalsModule.Signals.validationResult("Error")
         }
+    }
+}
+
+function update_anonymous(hasOptedOut) {
+    Rest.anonymous = hasOptedOut
+    var headers = {"app": "strata"}
+    Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
+    if (Rest.jwt !== ""){
+        let headers = {
+            "app": "strata",
+            "version": Rest.versionNumber(),
+            "anonymous": hasOptedOut
+        }
+        Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     }
 }
 
