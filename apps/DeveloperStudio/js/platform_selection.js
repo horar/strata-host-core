@@ -219,35 +219,29 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 
         let previousIndex = previousDeviceIndex(platform.device_id)
         if (previousIndex > -1) {
-            if (platform.controller_class_id === undefined) {
-                if (previouslyConnected[previousIndex].class_id !== platform.class_id
-                        || previouslyConnected[previousIndex].platform_id !== platform.platform_id
-                        || previouslyConnected[previousIndex].firmware_version !== platform.firmware_version
-                        || previouslyConnected[previousIndex].active !== platform.active ) {
+            let previousPlatform = previouslyConnected[previousIndex]
 
-                    disconnectPlatform(previouslyConnected[previousIndex])
-                    addConnectedPlatform(platform)
-                } else {
-                    refreshFirmwareVersion(platform)
-                }
-            } else {
-                // Assisted Strata
+            let platformChanged = previousPlatform.class_id !== platform.class_id
+                || previousPlatform.platform_id !== platform.platform_id
+                || previousPlatform.firmware_version !== platform.firmware_version
+                || previousPlatform.active !== platform.active
+
+            if (platform.controller_class_id !== undefined) {
+                // Assisted Strata has additional properties
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
-                if(
-                        previouslyConnected[previousIndex].class_id !== platform.class_id ||
-                        previouslyConnected[previousIndex].controller_class_id !== platform.controller_class_id ||
-                        previouslyConnected[previousIndex].fw_class_id !== platform.fw_class_id ||
-                        previouslyConnected[previousIndex].platform_id !== platform.platform_id ||
-                        previouslyConnected[previousIndex].controller_platform_id !== platform.controller_platform_id ||
-                        previouslyConnected[previousIndex].firmware_version !== platform.firmware_version ||
-                        previouslyConnected[previousIndex].active !== platform.active) {
-
-                    disconnectPlatform(previouslyConnected[previousIndex])
-                    addConnectedPlatform(platform)
-                } else {
-                    refreshFirmwareVersion(platform)
-                }
+                platformChanged = platformChanged
+                    || previousPlatform.controller_class_id !== platform.controller_class_id
+                    || previousPlatform.fw_class_id !== platform.fw_class_id
+                    || previousPlatform.controller_platform_id !== platform.controller_platform_id
             }
+
+            if (platformChanged) {
+                disconnectPlatform(previousPlatform)
+                addConnectedPlatform(platform)
+            } else {
+                refreshFirmwareVersion(platform)
+            }
+
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(previousIndex, 1);
             continue
