@@ -30,7 +30,7 @@ Button {
         radius: 20
         border.width: 1
         border.color: Theme.palette.onsemiDark
-        color: mouse.containsMouse ? Theme.palette.lightGray : "transparent"
+        color: mouse.containsMouse ? Theme.palette.onsemiDark : "transparent"
 
         MouseArea {
             id: mouse
@@ -69,7 +69,7 @@ Button {
             SGText {
                 text: model.text
                 fontSizeMultiplier: 0.9
-                color: Theme.palette.onsemiDark
+                color: !mouse.containsMouse ? Theme.palette.onsemiDark : Theme.palette.white
                 elide: textMetrics.boundingRect.width > 150 ? Text.ElideRight : Text.ElideNone
                 anchors.fill: wrapper
             }
