@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick.Controls 2.12
+import tech.strata.commoncpp 1.0
 
 Menu {
     id: folderContextMenu
@@ -35,6 +36,13 @@ Menu {
             importFileOrFolderPopup.callerIndex = styleData.index
             importFileOrFolderPopup.open()
             folderContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
+        text: "Show in explorer/finder"
+        onTriggered: {
+            SGUtilsCpp.showFileInFolder(model.filepath)
         }
     }
 

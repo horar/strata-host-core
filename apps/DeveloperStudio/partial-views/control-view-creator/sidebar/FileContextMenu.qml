@@ -12,7 +12,6 @@ import tech.strata.commoncpp 1.0
 Menu {
     id: fileContextMenu
 
-
     MenuItem {
         text: "Add to Qrc"
         enabled: !model.inQrc && model.filetype !== "rcc"
@@ -33,11 +32,8 @@ Menu {
 
     MenuItem {
         text: "Show in explorer/finder"
-        //enabled: model.inQrc && renameFileMenuItem.enabled
         onTriggered: {
-            console.info(model.filepath)
             SGUtilsCpp.showFileInFolder(model.filepath)
-
         }
     }
 
