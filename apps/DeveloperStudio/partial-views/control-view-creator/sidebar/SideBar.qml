@@ -37,14 +37,26 @@ Item {
 
     QtQC1.TreeView {
         id: treeView
-
-        anchors.fill: parent
-
         model: treeModel
+        anchors.fill: parent
         backgroundVisible: false
         frameVisible: false
         alternatingRowColors: false
         style: TreeViewStyle {
+            scrollBarBackground: Item {
+                implicitWidth: 7
+            }
+
+            handle: Rectangle {
+                color: styleData.pressed ? "#aaa" : "#ccc"
+                implicitWidth: 7
+                radius: 20
+            }
+
+            incrementControl: null
+            decrementControl: null
+            frame: null
+
             branchDelegate: Item {
                 width: 12
                 height: 12
