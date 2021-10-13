@@ -61,7 +61,6 @@ Rectangle {
         Help.registerTarget(help_tour, "When a platform has been selected, its tab will come into view.", 2, "selectorHelp")
         userSettings.loadSettings()
         alertIconContainer.visible = hasNotifications
-        Authenticator.update_anonymous(userSettings.hasOptedOut)
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -622,14 +621,6 @@ Rectangle {
                     width: profileMenu.width
                 }
             }
-        }
-    }
-
-    Connections {
-        target: userSettings
-
-        onHasOptedOutChanged: {
-            Authenticator.update_anonymous(userSettings.hasOptedOut)
         }
     }
 

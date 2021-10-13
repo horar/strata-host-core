@@ -10,6 +10,7 @@
 
 .import "restclient.js" as Rest
 .import "utilities.js" as Utility
+
 .import QtQuick 2.0 as QtQuickModule
 
 .import tech.strata.logger 1.0 as LoggerModule
@@ -21,12 +22,19 @@ var initialized = false
   Settings: Store/retrieve login information
 */
 var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+const userSettings = Qt.createQmlObject(`import tech.strata.commoncpp 1.0; SGUserSettings {classId: "general-settings";}`, Qt.application, "SGUserSettings")
 
 /*
   Login: Send information to server
 */
 function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
+
+    userSettings.user = login_info.user
+    const settings = userSettings.readFile("general-settings.json")
+    if (settings.hasOwnProperty("hasOptedOut")) {
+        Rest.anonymous = settings.hasOptedOut
+    }
 
     let headers = {
         "app": "strata",
@@ -212,7 +220,7 @@ function register(registration_info){
         "company": registration_info.company,
     };
     Rest.anonymous = registration_info.anonymous
-    Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": registration_info.anonymous })
+    Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": Rest.anonymous })
 
     /*
       * Possible valid outcomes:
@@ -575,6 +583,7 @@ function update_anonymous(hasOptedOut) {
     Rest.anonymous = hasOptedOut
     var headers = {"app": "strata"}
     Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
+    Rest.session = ""
     if (Rest.jwt !== "") {
         let headers = {
             "app": "strata",

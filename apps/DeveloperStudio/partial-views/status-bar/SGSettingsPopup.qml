@@ -65,7 +65,7 @@ SGStrataPopup {
         }
 
         SGSettingsCheckbox {
-            text: "Request to opt-out of metric tracking"
+            text: "Request to opt-out of metric tracking (note: will take effect after session end)"
             checked: userSettings.hasOptedOut
 
             onCheckedChanged: {
