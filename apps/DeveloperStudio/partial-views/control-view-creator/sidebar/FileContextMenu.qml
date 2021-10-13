@@ -31,7 +31,7 @@ Menu {
     }
 
     MenuItem {
-        text: Qt.platform === "windows" ? "Show in Explorer" : "Show in Finder"
+        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
         onTriggered: {
             SGUtilsCpp.showFileInFolder(model.filepath)
         }
