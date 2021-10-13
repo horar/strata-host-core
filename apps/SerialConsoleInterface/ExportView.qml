@@ -71,26 +71,35 @@ FocusScope {
 
             SGWidgets.SGTag {
                 id: exportErrorTag
-
                 font.bold: true
                 textColor: "white"
+                mask: "A"
                 color: TangoTheme.palette.error
+                sizeByMask: text.length === 0
             }
 
             SGWidgets.SGButton {
                 text: "Export"
 
                 onClicked: {
-                    exportErrorTag.text = ""
-                    var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
-                    if (errorString.length > 0) {
-                        exportErrorTag.text = errorString
-                        infoPopup.showFailed("Export Failed")
-                        console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
-
+                    var error = exportPathPicker.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    exportView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Export Failed",
+                                    error)
                     } else {
-                        infoPopup.showSuccess("Export Done")
-                        console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
+                        exportErrorTag.text = ""
+                        var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
+                        if (errorString.length > 0) {
+                            exportErrorTag.text = errorString
+                            infoPopup.showFailed("Export Failed")
+                            console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
+                        } else {
+                            infoPopup.showSuccess("Export Done")
+                            console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
+                        }
                     }
                 }
             }
@@ -213,7 +222,16 @@ FocusScope {
 
                 text: model.platform.scrollbackModel.autoExportIsActive ? "Stop" : "Start"
                 onClicked: {
-                    if (model.platform.scrollbackModel.autoExportIsActive) {
+                    var error = autoExportPathPicker.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    exportView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Continuous Export Failed",
+                                    error)
+                    }
+
+                    else if (model.platform.scrollbackModel.autoExportIsActive) {
                         model.platform.scrollbackModel.stopAutoExport()
                     } else {
                         model.platform.scrollbackModel.startAutoExport(autoExportPathPicker.filePath)

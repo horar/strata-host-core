@@ -236,7 +236,16 @@ FocusScope {
                     enabled: saveFirmwareView.editable
                              && model.platform.status === Sci.SciPlatform.Ready
                     onClicked: {
-                        startBackupProcess(saveFirmwarePathEdit.filePath)
+                        var error = saveFirmwarePathEdit.inputValidationErrorMsg()
+                        if (error.length > 0) {
+                            SGWidgets.SGDialogJS.showMessageDialog(
+                                        saveFirmwareView,
+                                        SGWidgets.SGMessageDialog.Error,
+                                        "Save Firmware Failed",
+                                        error)
+                        } else {
+                            startBackupProcess(saveFirmwarePathEdit.filePath)
+                        }
                     }
                 }
             }
