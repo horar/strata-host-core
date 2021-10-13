@@ -38,7 +38,7 @@ Menu {
     }
 
     MenuItem {
-        text: "Show in Explorer/Finder"
+        text: Qt.platform === "windows" ? "Show in Explorer" : "Show in Finder"
         onTriggered: {
             SGUtilsCpp.showFileInFolder(treeModel.projectDirectory)
         }

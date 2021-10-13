@@ -322,10 +322,10 @@ QList<QString> SGUtilsCpp::getQrcPaths(QString path) {
 }
 
 void SGUtilsCpp::showFileInFolder(const QString &path){
-    #ifdef _WIN32
-        QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(path)});
-    #elif defined(Q_OS_MAC)
+    #ifdef Q_OS_MACOS
         QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\""});
         QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to activate"});
+    #elif Q_OS_WIN
+        QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(path)});
     #endif
 }
