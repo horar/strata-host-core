@@ -51,7 +51,8 @@ Rectangle {
                     spacing: 5
 
                     Rectangle {
-                        Layout.preferredWidth: 45
+                        Layout.minimumWidth: 45
+                        Layout.preferredWidth: warningIcon.width + 5 + textWarning.width + 7
                         Layout.preferredHeight: 30
                         color: filterTypeWarning || warningMouseArea.containsMouse ? "#888" : "transparent"
 
@@ -77,7 +78,8 @@ Rectangle {
                         }
 
                         SGText {
-                            text: consoleLogWarningCount
+                            id: textWarning
+                            text: consoleLogWarningCount > 999 ? "999+" : consoleLogWarningCount
                             anchors.left: warningIcon.right
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.leftMargin: 2
@@ -100,7 +102,8 @@ Rectangle {
 
                     Rectangle {
                         Layout.preferredHeight: 30
-                        Layout.preferredWidth: 45
+                        Layout.minimumWidth: 45
+                        Layout.preferredWidth: errorIcon.width + 5 + textError.width + 7
                         color: filterTypeError || errorMouseArea.containsMouse ? "#888" : "transparent"
 
                         Rectangle {
@@ -125,7 +128,8 @@ Rectangle {
                         }
 
                         SGText {
-                            text: consoleLogErrorCount
+                            id: textError
+                            text: consoleLogErrorCount > 999 ? "999+" : consoleLogErrorCount
                             anchors.left: errorIcon.right
                             anchors.leftMargin: 2
                             anchors.verticalCenter: parent.verticalCenter
