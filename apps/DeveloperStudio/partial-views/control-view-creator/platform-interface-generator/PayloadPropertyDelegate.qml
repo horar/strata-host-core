@@ -106,15 +106,16 @@ Rectangle {
                             unsavedChanges = true
                         }
 
+                        let commands = finishedModel.get(commandsListView.modelIndex).data
+                        let payload = commands.get(commandsColumn.modelIndex).payload
                         if (model.duplicate) {
                             model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
-                            let commands = finishedModel.get(commandsListView.modelIndex).data
-                            let payload = commands.get(commandsColumn.modelIndex).payload
                             functions.loopOverDuplicates(payload, index)
                         }
                         if (!model.valid) {
                             functions.invalidCount--
                         }
+                        functions.checkAllValidArrayObject(payload.get(index), true)
                         payloadModel.remove(index)
                     }
                 }
