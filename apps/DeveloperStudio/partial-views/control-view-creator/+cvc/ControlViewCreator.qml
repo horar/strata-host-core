@@ -213,6 +213,10 @@ Rectangle {
                 editor.openFilesModel.saveAll(false)
             }
 
+            if (cvcUserSettings.openViewOnBuild) {
+                viewStack.currentIndex = 2
+            }
+
             requestRecompile()
         }
     }

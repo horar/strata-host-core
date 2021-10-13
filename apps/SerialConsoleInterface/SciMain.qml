@@ -316,7 +316,6 @@ Item {
             }
         }
 
-        sciModel.platformModel.releasePort(index);
         sciModel.platformModel.removePlatform(index)
     }
 

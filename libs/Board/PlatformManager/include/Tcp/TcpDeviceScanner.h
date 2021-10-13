@@ -54,6 +54,31 @@ public:
     virtual void deinit() override;
 
     /**
+     * Return list of deviceIds of all discovered devices
+     * @return list of discovered devices
+     */
+    virtual QList<QByteArray> discoveredDevices() const override;
+
+    /**
+     * Initiates connection to discovered device.
+     * @param deviceId device ID, returned by discoveredDevices()
+     * @return empty string if connecting started, error message if there was an error
+     */
+    virtual QString connectDevice(const QByteArray& deviceId) override;
+
+    /**
+     * Drops connection to discovered device.
+     * @param deviceId device ID
+     * @return empty string if disconnected, error message if there was an error.
+     */
+    virtual QString disconnectDevice(const QByteArray& deviceId) override;
+
+    /**
+     * Drops connection to all discovered devices.
+     */
+    virtual void disconnectAllDevices() override;
+
+    /**
      * Set properties for TCP device scanner.
      * Calling setProperties(A | B) is equivalent to calling setProperties(A) and then setProperties(B).
      * @param flags flags defining properties for TCP device scanner
@@ -71,7 +96,6 @@ public:
 
 private slots:
     void processPendingDatagrams();
-    void deviceErrorHandler(Device::ErrorCode error, QString errorString);
 
 private:
     void startAutomaticScan();
