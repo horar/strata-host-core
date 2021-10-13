@@ -252,8 +252,11 @@ void SciBleDeviceModel::populateModel()
         item.deviceId = info.deviceId;
         item.name = info.name;
         item.address = info.address;
+        item.rssi = info.rssi;
+        item.manufacturerIds = info.manufacturerIds;
         item.isStrata = info.isStrata;
         item.isConnected = connectedDeviceIds_.contains(item.deviceId);
+        item.connectionInProgress = false;
 
         data_.append(item);
     }

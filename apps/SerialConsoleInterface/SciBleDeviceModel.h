@@ -11,9 +11,11 @@ struct SciBleDeviceModelItem {
     QString name;
     QString address;
     QString errorString;
-    bool isStrata = false;
-    bool isConnected = false;
-    bool connectionInProgress = false;
+    qint16 rssi;
+    QVector<quint16> manufacturerIds;
+    bool isStrata;
+    bool isConnected;
+    bool connectionInProgress;
 };
 
 class SciBleDeviceModel : public QAbstractListModel
