@@ -57,6 +57,7 @@ StackLayout {
     onPlatformOutOfDateChanged: {
         launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
     }
+
     onFullyInitializedChanged: {
         initialize()
     }
