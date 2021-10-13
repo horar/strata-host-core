@@ -78,14 +78,16 @@ Rectangle {
                             unsavedChanges = true
                         }
 
+                        let payload = objectPropertyContainer.parentListModel
                         if (model.duplicate) {
                             model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
-                            functions.loopOverDuplicates(objectPropertyContainer.parentListModel, modelIndex)
+                            functions.loopOverDuplicates(payload, modelIndex)
                         }
                         if (!model.valid) {
                             functions.invalidCount--
                         }
-                        objectPropertyContainer.parentListModel.remove(modelIndex)
+                        functions.checkAllValidArrayObject(payload.get(modelIndex), true)
+                        payload.remove(modelIndex)
                     }
                 }
             }

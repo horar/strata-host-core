@@ -29,8 +29,8 @@ QtObject {
         "real","return","set","short","static","string","super","switch","synchronized","this","throw",
         "throws","transient","true","try","typeof","url","var","void","volatile","while","with","yield"]
 
-    // various logs for the 3 errors that can be found. Empty keys, JS keys, and duplicate keys
-    property var errorLog
+    // various logs for the 4 errors that can be found. Empty keys, invalid keys, JS keys, and duplicate keys
+    property var errorLog: ""
     property var emptyLog: []
     property var jsLog: []
     property var duplicateLog: []
@@ -78,19 +78,31 @@ QtObject {
             errorLog += "Invalid syntax with key name(s) '" + regexLog + "' found\n"
         }
 
+        if (allValid) {
+            invalidCount = 0
+        }
+
         return allValid
     }
 
     /**
       * checkAllValidFlag begins recursive checking of the valid property and updates respective logs
+      * deletion is false by default, if set to true, this means the model is being removed.
+      * invalid count must be decremented if needed, and the model should be cleared.
     **/
-    function checkAllValidFlag(payload) {
+    function checkAllValidFlag(payload, deletion = false) {
+        if (!payload) {
+            return true
+        }
+
         let allValid = true
 
         for (let i = 0; i < payload.count; i++) {
             let item = payload.get(i)
             if (!item.valid) {
-                if (!item.name) {
+                if (deletion) {
+                    invalidCount--
+                } else if (!item.name) {
                     emptyLog.push(i)
                 } else if (item.keyword && !jsLog.includes(item.name)) {
                     jsLog.push(item.name)
@@ -99,11 +111,16 @@ QtObject {
                 } else if (!item.valid && !regexLog.includes(item.name) && !item.duplicate && !item.keyword) { // if invalid, and other flags are not set, the regex failed to pass
                     regexLog.push(item.name)
                 }
+                
                 allValid = false
             }
-            if (!checkAllValidArrayObject(item)) { // returns true if not an array/object
+            if (!checkAllValidArrayObject(item, deletion)) { // returns true if not an array/object
                 allValid = false
             }
+        }
+
+        if (deletion) {
+            payload.clear()
         }
         return allValid
     }
@@ -111,19 +128,19 @@ QtObject {
     /**
       * checkForValidArrayObject checks if an array/object is valid, and recursively checks its children
     **/
-    function checkAllValidArrayObject(model) {
+    function checkAllValidArrayObject(model, deletion = false) {
         let staticArray = sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
         let staticObject = sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
         let allValid = true
 
         if (model.type === staticArray) {
             for (let i = 0; i < model.array.count; i++) { // loop to check each array element
-                if (!checkAllValidArrayObject(model.array.get(i))) {
+                if (!checkAllValidArrayObject(model.array.get(i), deletion)) {
                     allValid = false
                 }
             }
         } else if (model.type === staticObject) {
-            if (!checkAllValidFlag(model.object)) {
+            if (!checkAllValidFlag(model.object, deletion)) {
                 allValid = false
             }
         }
