@@ -98,6 +98,7 @@ void SciBleDeviceModel::tryConnectDevice(int index)
 {
     if (index < 0 || index >= data_.count()) {
         qCWarning(logCategorySci) << "index out of range";
+        return;
     }
 
     QByteArray deviceId = data_.at(index).deviceId;
