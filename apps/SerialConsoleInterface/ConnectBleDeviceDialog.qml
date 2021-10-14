@@ -12,7 +12,7 @@ SGWidgets.SGDialog {
     modal: true
 
     property int innerSpacing: 6
-    property bool bleSupported: sciModel.bleDeviceModel.bleSupported()
+    property string bleSupportError: sciModel.bleDeviceModel.bleSupportError()
 
     CommonCpp.SGSortFilterProxyModel {
         id: deviceSortFilterModel
@@ -69,7 +69,7 @@ SGWidgets.SGDialog {
 
         SGWidgets.SGTextField {
             id: filterInput
-            enabled: bleSupported
+            enabled: bleSupportError.length === 0
             anchors {
                 top: parent.top
                 left: parent.left
@@ -92,7 +92,7 @@ SGWidgets.SGDialog {
             hintText: "Refresh list of devices"
             scaleToFit: true
             icon.source: "qrc:/sgimages/sync.svg"
-            enabled: bleSupported && sciModel.bleDeviceModel.inDiscoveryMode === false
+            enabled: bleSupportError.length === 0 && sciModel.bleDeviceModel.inDiscoveryMode === false
 
             minimumContentHeight: filterInput.height - 2*padding
             minimumContentWidth: minimumContentHeight
@@ -279,8 +279,8 @@ SGWidgets.SGDialog {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             text: {
-                if (bleSupported === false) {
-                    return "Bluetooth Low Energy is not supported on this operating system"
+                if (bleSupportError.length !== 0) {
+                    return bleSupportError
                 }
 
                 if (sciModel.bleDeviceModel.lastDiscoveryError.length) {

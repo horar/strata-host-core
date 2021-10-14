@@ -76,15 +76,25 @@ void SciBleDeviceModel::init()
             this, &SciBleDeviceModel::deviceLostHandler);
 }
 
-bool SciBleDeviceModel::bleSupported() const
+QString SciBleDeviceModel::bleSupportError() const
 {
-    if ((QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS) ||
-       ((QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows) &&
-        (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows8))) {
-        return true;
+    if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS)
+    {
+        return "";
     }
-
-    return false;
+    if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows)
+    {
+        if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
+        {
+            return "Bluetooth Low Energy is not supported on this Windows version";
+        }
+        if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+        {
+            return "On Windows operating system, Bluetooth Low Energy requires Qt 5.14+";
+        }
+        return "";
+    }
+    return "Bluetooth Low Energy is not supported on this operating system";
 }
 
 void SciBleDeviceModel::startDiscovery()
