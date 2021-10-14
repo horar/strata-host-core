@@ -570,110 +570,103 @@ function closePlatformView (platform) {
     Insert listing for platform that is not in DB platform_list and does not have a UI
 */
 function insertUnknownListing (platform, class_id_string) {
-    insertErrorListing(generateUnknownListing(platform, class_id_string))
+    let listing_data = {
+        "verbose_name": (platform.verbose_name) ? platform.verbose_name : "Unknown Platform",
+        "class_id": class_id_string,
+        "opn" : "Class id: " + class_id_string,
+        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for unregistered platform
 */
 function insertUnregisteredListing (platform, class_id_string) {
-    insertErrorListing(generateUnregisteredListing(platform, class_id_string))
+    let listing_data = {
+        "verbose_name": "Unregistered platform",
+        "class_id": class_id_string,
+        "description": "Unregistered platform. Contact local support."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for Strata assisted without platform (controller only)
 */
 function insertAssistedNoPlatformListing (platform, class_id_string) {
-    insertErrorListing(generateAssistedNoPlatformListing(platform, class_id_string))
+    let listing_data = {
+        "verbose_name": "Strata Assisted Controller",
+        "class_id": class_id_string,
+        "description": "Please connect platform to controller."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for Strata assisted with platform incompatible with controller
 */
 function insertAssistedIncompatibleListing (platform, class_id_string) {
-    insertErrorListing(generateAssistedIncompatibleListing(platform, class_id_string))
+    let fw_class_id = String(platform.fw_class_id)
+    if (fw_class_id.length === 0) {
+        fw_class_id = "no_firmware"
+    }
+    let listing_data = {
+        "verbose_name": "Strata Assisted (incompatible firmware)",
+        "class_id": class_id_string,
+        "opn": "Class id: " + class_id_string,
+        "description": "Strata Assisted: Firmware (" + fw_class_id + ") not compatible with platform (" + class_id_string + ")."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for platform which is being flashed
 */
 function insertProgramFirmwareListing(platform, class_id_string) {
-    insertErrorListing(generateProgramFirmwareListing(platform, class_id_string))
+    let listing_data = {
+        "verbose_name": (platform.controller_class_id !== undefined)
+                        ? "Strata Assisted Platform"
+                        : "Strata Embedded Platform",
+        "class_id": class_id_string,
+        "program_controller": true
+    }
+    if (classMap.hasOwnProperty(class_id_string)) {
+        listing_data.opn = classMap[class_id_string].original_listing.opn
+        listing_data.verbose_name = classMap[class_id_string].original_listing.verbose_name
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for platform which is booted into bootloader
 */
 function insertBootloaderListing(platform, class_id_string) {
-    insertErrorListing(generateBootloaderListing(platform, class_id_string))
-}
-
-function generateUnknownListing (platform, class_id_string) {
-    let opn = "Class id: " + class_id_string
-    let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
-
-    if (platform.verbose_name) {
-        return generateErrorListing(platform, platform.verbose_name, class_id_string, opn, description)
+    let listing_data = {
+        "verbose_name": "Bootloader",
+        "class_id": class_id_string,
+        "description": "Platform in bootloader mode."
     }
-    return generateErrorListing(platform, "Unknown Platform", class_id_string, opn, description)
-}
-
-function generateUnregisteredListing (platform, class_id_string) {
-    let description = "Unregistered platform. Contact local support."
-    return generateErrorListing(platform, "Unregistered Platform", class_id_string, "N/A", description)
-}
-
-function generateAssistedNoPlatformListing (platform, class_id_string) {
-    let description = "Please connect platform to controller"
-    return generateErrorListing(platform, "Strata Assisted Controller", class_id_string, "N/A", description)
-}
-
-function generateAssistedIncompatibleListing (platform, class_id_string) {
-    let fw_class_id = String(platform.fw_class_id)
-    if (fw_class_id === "") {
-        fw_class_id = "no_firmware"
-    }
-    let opn = "Class id: " + class_id_string
-    let description = "Strata Assisted: Firmware (" + fw_class_id + ") not compatible with platform (" + class_id_string + ")."
-    return generateErrorListing(platform, "Strata Assisted (incompatible firmware)", class_id_string, opn, description)
-}
-
-function generateProgramFirmwareListing(platform, class_id_string) {
-    let opn = "N/A"
-    let verbose_name = (platform.controller_class_id === undefined)
-                       ? "Strata Embedded Platform"
-                       : "Strata Assisted Platform"
-
     if (classMap.hasOwnProperty(class_id_string)) {
-        opn = classMap[class_id_string].original_listing.opn
-        verbose_name = classMap[class_id_string].original_listing.verbose_name
+        listing_data.opn = classMap[class_id_string].original_listing.opn
     }
 
-    return generateErrorListing(platform, verbose_name, class_id_string, opn, "", true)
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
-function generateBootloaderListing (platform, class_id_string) {
-    let description = "Platform in bootloader mode"
-    let opn = "N/A"
-    if (classMap.hasOwnProperty(class_id_string)) {
-        opn = classMap[class_id_string].original_listing.opn
-    }
-
-    return generateErrorListing(platform, "Bootloader", class_id_string, opn, description)
-}
-
-function generateErrorListing (platform, verbose_name, class_id_string, opn, description, program_controller) {
-    if (program_controller === undefined) {
-        program_controller = false
-    }
-
+function generateErrorListing (platform, listing_data) {
     let error = {
-        "verbose_name" : verbose_name,
+        "verbose_name" : "",
         "connected" : true,
-        "class_id" :  class_id_string,
-        "device_id":  platform.device_id,
-        "opn": opn,
-        "description": description,
+        "class_id" : "",
+        "device_id": platform.device_id,
+        "opn": "N/A",
+        "description": "",
         "image": "", // Assigns 'not found' image
         "available": {
             "control": false,
@@ -687,12 +680,17 @@ function generateErrorListing (platform, verbose_name, class_id_string, opn, des
         "view_open": false,
         "parts_list": [],
         "firmware_version": platform.firmware_version,
-        "program_controller": program_controller,
+        "program_controller": false,
         "program_controller_progress": 0.0,
         "program_controller_error_string": "",
         "controller_class_id": "",
-        "is_assisted": false,
+        "is_assisted": (platform.controller_class_id !== undefined)
     }
+
+    for (var attribute in listing_data) {
+        error[attribute] = listing_data[attribute]
+    }
+
     return error
 }
 
