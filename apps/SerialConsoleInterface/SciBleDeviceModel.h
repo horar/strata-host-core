@@ -10,9 +10,12 @@ struct SciBleDeviceModelItem {
     QByteArray deviceId;
     QString name;
     QString address;
+    QString errorString;
     qint16 rssi;
     QVector<quint16> manufacturerIds;
     bool isStrata;
+    bool isConnected;
+    bool connectionInProgress;
 };
 
 class SciBleDeviceModel : public QAbstractListModel
@@ -21,6 +24,7 @@ class SciBleDeviceModel : public QAbstractListModel
     Q_DISABLE_COPY(SciBleDeviceModel)
 
     Q_PROPERTY(bool inDiscoveryMode READ inDiscoveryMode NOTIFY inDiscoveryModeChanged)
+    Q_PROPERTY(QString lastDiscoveryError READ lastDiscoveryError NOTIFY lastDiscoveryErrorChanged)
 
 public:
 
@@ -30,6 +34,10 @@ public:
     enum ModelRole {
         NameRole = Qt::UserRole + 1,
         AddressRole,
+        ErrorStringRole,
+        IsStrataRole,
+        IsConnectedRole,
+        ConnectionInProgressRole
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -39,13 +47,15 @@ public:
     Q_INVOKABLE bool bleSupported() const;
     Q_INVOKABLE void startDiscovery();
     Q_INVOKABLE void tryConnectDevice(int index);
+    Q_INVOKABLE void tryDisconnectDevice(int index);
     Q_INVOKABLE QVariantMap get(int row);
 
     bool inDiscoveryMode() const;
+    QString lastDiscoveryError() const;
 
 signals:
     void inDiscoveryModeChanged();
-    void discoveryFinished(QString errorString);
+    void lastDiscoveryErrorChanged();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
@@ -54,17 +64,25 @@ private slots:
     void discoveryFinishedHandler(
             BluetoothLowEnergyScanner::DiscoveryFinishStatus status,
             QString errorString);
-
-    void populateModel();
-    void clearModel();
+    void connectDeviceFinishedHandler(const QByteArray deviceId);
+    void connectDeviceFailedHandler(const QByteArray deviceId, const QString errorString);
+    void deviceLostHandler(QByteArray deviceId);
 
 private:
+    void populateModel();
+    void clearModel();
     void setModelRoles();
+    int findDeviceIndex(const QString &deviceId);
+    void setPropertyAt(int row, const QVariant &value, int role);
     void setInDiscoveryMode(bool inDiscoveryMode);
+    void setLastDiscoveryError(QString lastDiscoveryError);
 
     strata::PlatformManager *platformManager_ = nullptr;
     strata::device::scanner::BluetoothLowEnergyScannerPtr scanner_;
     QList<SciBleDeviceModelItem> data_;
     QHash<int, QByteArray> roleByEnumHash_;
+    QSet<QByteArray> requestedIds_;
+    QSet<QByteArray> connectedDeviceIds_;
     bool inDiscoveryMode_ = false;
+    QString lastDiscoveryError_;
 };
