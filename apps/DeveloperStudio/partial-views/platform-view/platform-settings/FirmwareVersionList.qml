@@ -78,9 +78,20 @@ ColumnLayout {
             }
         }
 
-        Repeater {
+        ListView {
             id: firmwareRepeater
             model: []
+            clip: true
+            spacing: 5
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: contentHeight
+
+            ScrollBar.vertical: ScrollBar {
+                id: firmwareScrollbar
+                policy: ScrollBar.AlwaysOn
+                visible: firmwareRepeater.height < firmwareRepeater.contentHeight
+            }
 
             property bool flashingDeviceInProgress: false // one of the firmwares is being flashed to this device
 
@@ -90,8 +101,8 @@ ColumnLayout {
 
             delegate: Rectangle {
                 id: firmwareRow
-                Layout.preferredHeight: firmwareDataColumn.height
-                Layout.fillWidth: true
+                width: firmwareHeader.width
+                height: firmwareDataColumn.height
 
                 property bool flashingFirmwareInProgress: false // this particular firmware is being flashed to device
 
@@ -162,6 +173,7 @@ ColumnLayout {
                             id: imageContainer
                             Layout.preferredHeight: 30
                             Layout.preferredWidth: 30
+                            Layout.rightMargin: firmwareScrollbar.visible ? firmwareScrollbar.width : 0
 
                             SGIcon {
                                 id: installIcon
