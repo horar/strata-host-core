@@ -52,29 +52,54 @@ void TcpDeviceScanner::deinit()
 
 QList<QByteArray> TcpDeviceScanner::discoveredDevices() const
 {
-    return discoveredDevices_.values();
+    QList<QByteArray> discoveredDeviceIds;
+    for(const auto &tcpDeviceInfo : discoveredDevices_) {
+        discoveredDeviceIds.push_back(tcpDeviceInfo.deviceId);
+    }
+    return discoveredDeviceIds;
 }
 
-QString TcpDeviceScanner::connectDevice(const QByteArray& deviceId)
+QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
 {
-    Q_UNUSED(deviceId)
+    auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                           [&deviceId](const TcpDeviceInfo &tcpDeviceInfo) {
+                               return tcpDeviceInfo.deviceId == deviceId;
+                           });
 
-    return "Method not supported";
+    if (it == discoveredDevices_.end()) {
+        QString errorMessage(QStringLiteral("Device ID not found in discovered devices list"));
+        qCCritical(logCategoryDeviceScanner) << errorMessage;
+        return errorMessage;
+    }
+
+    DevicePtr device = std::make_shared<TcpDevice>(it->deviceId, it->deviceIpAddress, it->port);
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    emit deviceDetected(platform);
+
+    return "";
 }
 
-QString TcpDeviceScanner::disconnectDevice(const QByteArray& deviceId)
+QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
 {
-    if (discoveredDevices_.remove(deviceId) == false) {
+    auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                           [&deviceId](const TcpDeviceInfo &tcpDeviceInfo) {
+                               return tcpDeviceInfo.deviceId == deviceId;
+                           });
+
+    if (it == discoveredDevices_.end()) {
         return "Device not found";
     }
+
+    discoveredDevices_.erase(it);
 
     emit deviceLost(deviceId);
     return "";
 }
 
 void TcpDeviceScanner::disconnectAllDevices() {
-    for (const auto &deviceId : qAsConst(discoveredDevices_)) {
-        emit deviceLost(deviceId);
+    for (const auto &tcpDeviceInfo : qAsConst(discoveredDevices_)) {
+        emit deviceLost(tcpDeviceInfo.deviceId);
     }
     discoveredDevices_.clear();
 }
@@ -124,27 +149,26 @@ void TcpDeviceScanner::processPendingDatagrams()
         udpSocket_->readDatagram(buffer.data(), buffer.size(), &clientAddress);
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
-            if (discoveredDevices_.contains(createDeviceId(TcpDevice::createUniqueHash(clientAddress)))) {
-                qCCritical(logCategoryDeviceScanner).noquote()
-                    << "Tcp device" << clientAddress.toString() << "already discovered";
-                return;
+            auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                                   [&clientAddress](TcpDeviceInfo &tcpDeviceInfo) {
+                                       return tcpDeviceInfo.deviceIpAddress == clientAddress;
+                                   });
+
+            if (it != discoveredDevices_.end()) {
+                qCDebug(logCategoryDeviceScanner) << "Device already discovered";
+                continue;
             }
+
+            discoveredDevices_.push_back(
+                {createDeviceId(TcpDevice::createUniqueHash(clientAddress)),
+                 clientAddress.toString(), clientAddress, tcpPort});
 
             qCDebug(logCategoryDeviceScanner).noquote().nospace()
                 << "Discovered new platfrom. IP: " << clientAddress.toString()
                 << ", TCP port: " << tcpPort;
-            addTcpDevice(clientAddress, tcpPort);
+            connectDevice(createDeviceId(TcpDevice::createUniqueHash(clientAddress)));
         }
     }
-}
-
-void TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
-{
-    DevicePtr device = std::make_shared<TcpDevice>(createDeviceId(TcpDevice::createUniqueHash(deviceAddress)), deviceAddress, tcpPort);
-    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
-
-    discoveredDevices_.insert(platform->deviceId());
-    emit deviceDetected(platform);
 }
 
 bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)

@@ -17,6 +17,14 @@
 
 namespace strata::device::scanner
 {
+
+struct TcpDeviceInfo {
+    QByteArray deviceId;
+    QString deviceName;
+    QHostAddress deviceIpAddress;
+    quint16 port;
+};
+
 class TcpDeviceScanner : public DeviceScanner
 {
     Q_OBJECT;
@@ -100,11 +108,10 @@ private slots:
 private:
     void startAutomaticScan();
     void stopAutomaticScan();
-    void addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
-    QSet<QByteArray> discoveredDevices_;
+    QList<TcpDeviceInfo> discoveredDevices_;
 
     bool scanRunning_;
 
