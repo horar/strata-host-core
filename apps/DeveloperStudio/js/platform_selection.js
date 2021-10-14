@@ -602,6 +602,12 @@ function insertAssistedNoPlatformListing (platform, class_id_string) {
         "class_id": class_id_string,
         "description": "Please connect platform to controller."
     }
+    const class_id = platform.controller_class_id
+    if (classMap.hasOwnProperty(class_id)) {
+        listing_data.verbose_name = classMap[class_id].original_listing.verbose_name
+        listing_data.description = classMap[class_id].original_listing.description
+        listing_data.image = classMap[class_id].original_listing.image
+    }
 
     insertErrorListing(generateErrorListing(platform, listing_data))
 }
