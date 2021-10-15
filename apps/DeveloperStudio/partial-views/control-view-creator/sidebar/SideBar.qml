@@ -52,7 +52,7 @@ Item {
             handle: Rectangle {
                 color: styleData.pressed ? "#aaa" : "#ccc"
                 implicitWidth: 7
-                radius: 20
+                radius: width/2
             }
 
             incrementControl: null
