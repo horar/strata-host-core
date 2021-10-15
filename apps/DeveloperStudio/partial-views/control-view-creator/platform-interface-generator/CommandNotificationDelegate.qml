@@ -193,7 +193,9 @@ Rectangle {
 
             property int leftMargin: 20
             property int rightMargin: 0
+
             property alias text: defaultValueTextField.text
+            property alias checked: defaultValueSwitch.checked
 
             RowLayout {
                 anchors {
@@ -206,12 +208,29 @@ Rectangle {
                     text: "Default Value:"
                 }
 
-                TextField {
-                    id: defaultValueTextField
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    selectByMouse: true
-                    persistentSelection: true // must deselect manually
+
+                    TextField {
+                        id: defaultValueTextField
+                        enabled: !defaultValueSwitch.enabled
+                        visible: enabled
+                        width: parent.width
+                        height: parent.height
+                        selectByMouse: true
+                        persistentSelection: true // must deselect manually
+                    }
+
+                    SGSwitch {
+                        id: defaultValueSwitch
+                        x: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        enabled: isBool
+                        visible: enabled
+                        checkedLabel: "True"
+                        uncheckedLabel: "False"
+                    }
                 }
             }
 
@@ -219,6 +238,7 @@ Rectangle {
                 anchors.fill: parent
                 cursorShape: Qt.IBeamCursor
                 acceptedButtons: Qt.RightButton
+                visible: !defaultValueSwitch.enabled
 
                 onClicked: {
                     defaultValueTextField.forceActiveFocus()

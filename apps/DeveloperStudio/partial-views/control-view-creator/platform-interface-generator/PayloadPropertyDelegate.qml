@@ -211,18 +211,40 @@ Rectangle {
         }
 
         Loader {
-            sourceComponent: defaultValue
+            sourceComponent: defaultValue; isBool: propertyType.currentIndex === 3
             Layout.fillWidth: true
             Layout.preferredHeight: 30
             active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
             visible: active
 
+            property bool isBool
+
+            onIsBoolChanged: {
+                // reseting text, value, and checked to base states
+                if (propertyType.currentIndex !== 3) {
+                    model.value = "0"
+                    item.text = "0"
+                    item.checked = false
+                } else {
+                    model.value = "false"
+                    model.checked = false
+                }
+            }
+
             onItemChanged: {
                 if (item) {
                     item.leftMargin = 20
                     item.text = model.value
+                    item.checked = (model.value === "true") ? true : false
+                    item.checkedChanged.connect(checkedChanged)
                     item.textChanged.connect(textChanged)
                 }
+            }
+
+            function checkedChanged() {
+                // with current API, all model.values are stored as strings, so the state of checked must be converted
+                let value = item.checked
+                model.value = value.toString()
             }
 
             function textChanged() {
