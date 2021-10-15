@@ -16,7 +16,7 @@ SGStrataPopup {
     closePolicy: Popup.CloseOnEscape
 
     property int innerSpacing: 6
-    property bool bleSupported: sdsModel.bleDeviceModel.bleSupported()
+    property string bleSupportError: sdsModel.bleDeviceModel.bleSupportError()
 
     CommonCpp.SGSortFilterProxyModel {
         id: deviceSortFilterModel
@@ -63,7 +63,7 @@ SGStrataPopup {
 
         SGWidgets.SGTextField {
             id: filterInput
-            enabled: bleSupported
+            enabled: bleSupportError.length === 0
             anchors {
                 top: parent.top
                 left: parent.left
@@ -87,7 +87,7 @@ SGStrataPopup {
 
             icon.source: "qrc:/sgimages/sync.svg"
             icon.color: "white"
-            enabled: bleSupported && sdsModel.bleDeviceModel.inScanMode === false
+            enabled: bleSupportError.length === 0 && sdsModel.bleDeviceModel.inScanMode === false
             focusPolicy: Qt.NoFocus
             opacity: enabled ? 1.0 : 0.7
 
@@ -407,8 +407,8 @@ SGStrataPopup {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             text: {
-                if (bleSupported === false) {
-                    return "Bluetooth Low Energy is not supported on this operating system"
+                if (bleSupportError.length !== 0) {
+                    return bleSupportError
                 }
 
                 if (sdsModel.bleDeviceModel.lastScanError.length) {
