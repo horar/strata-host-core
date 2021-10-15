@@ -62,7 +62,7 @@ ColumnLayout {
         }
 
         Connections {
-            // Note: does not works if placed inside firmwareListView
+            // Note: does not work if placed inside firmwareListView
             target: sdsModel.firmwareUpdater
 
             onJobFinished: {
