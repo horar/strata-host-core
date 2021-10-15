@@ -688,6 +688,66 @@ FocusScope {
                             return "black"
                         }
                     }
+
+                    Item {
+                        id: messageRxIndicator
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: filterCountTag.height - 8
+                        width: height
+
+                        Rectangle {
+                            id: messageRxFill
+                            anchors.fill: parent
+                            radius: height/2
+                            color: TangoTheme.palette.chameleon2
+                            opacity: 0
+                        }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            border.width: 1
+                            border.color: tabBorderColor
+                            radius: height/2
+                            color: "transparent"
+                        }
+
+                        Connections {
+                            target: model.platform
+                            onMessageReceived: {
+                                messageRxAnimation.restart();
+                            }
+                        }
+
+                        SequentialAnimation {
+                            id: messageRxAnimation
+
+                            PropertyAction {
+                                target: messageRxFill
+                                property: "opacity"
+                                value: 0
+                            }
+
+                            PauseAnimation {
+                                duration: 10
+                            }
+
+                            PropertyAction {
+                                target: messageRxFill
+                                property: "opacity"
+                                value: 1
+                            }
+
+                            PauseAnimation {
+                                duration: 100
+                            }
+
+                            PropertyAction {
+                                target: messageRxFill
+                                property: "opacity"
+                                value: 0
+                            }
+                        }
+                    }
                 }
             }
 
