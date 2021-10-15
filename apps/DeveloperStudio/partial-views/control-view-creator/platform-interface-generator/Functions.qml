@@ -30,7 +30,7 @@ QtObject {
         "throws","transient","true","try","typeof","url","var","void","volatile","while","with","yield"]
 
     // various logs for the 4 errors that can be found. Empty keys, invalid keys, JS keys, and duplicate keys
-    property var errorLog: ""
+    property string errorLog: ""
     property var emptyLog: []
     property var jsLog: []
     property var duplicateLog: []
