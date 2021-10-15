@@ -101,13 +101,13 @@ public:
      */
     void unsetProperties(quint32 flags);
 
+    void startDiscovery();
+    void stopDiscovery();
 
 private slots:
     void processPendingDatagrams();
 
 private:
-    void startAutomaticScan();
-    void stopAutomaticScan();
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;

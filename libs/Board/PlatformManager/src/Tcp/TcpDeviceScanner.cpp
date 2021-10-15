@@ -37,7 +37,7 @@ void TcpDeviceScanner::init(quint32 flags)
         return;
     }
     if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
-        startAutomaticScan();
+        startDiscovery();
     }
 }
 
@@ -107,18 +107,18 @@ void TcpDeviceScanner::disconnectAllDevices() {
 void TcpDeviceScanner::setProperties(quint32 flags)
 {
     if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        stopAutomaticScan();
+        stopDiscovery();
     }
 }
 
 void TcpDeviceScanner::unsetProperties(quint32 flags)
 {
     if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        startAutomaticScan();
+        startDiscovery();
     }
 }
 
-void TcpDeviceScanner::startAutomaticScan()
+void TcpDeviceScanner::startDiscovery()
 {
     if (scanRunning_) {
         qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
@@ -129,7 +129,7 @@ void TcpDeviceScanner::startAutomaticScan()
     }
 }
 
-void TcpDeviceScanner::stopAutomaticScan()
+void TcpDeviceScanner::stopDiscovery()
 {
     if (scanRunning_) {
         disconnect(udpSocket_.get(), nullptr, this, nullptr);
