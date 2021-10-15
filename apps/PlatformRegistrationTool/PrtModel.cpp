@@ -10,6 +10,7 @@
 #include "logging/LoggingQtCategories.h"
 #include <SGUtilsCpp.h>
 
+#include <Operations/Identify.h>
 #include <Operations/StartBootloader.h>
 #include <Operations/StartApplication.h>
 #include <Operations/SetPlatformId.h>
@@ -134,6 +135,34 @@ bool PrtModel::isAssistedDeviceConnected() const
     }
 
     return platformList_.first()->isControllerConnectedToPlatform();
+}
+
+void PrtModel::identifyBootloader()
+{
+    using strata::platform::operation::Identify;
+    using strata::platform::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit identifyBootloaderFinished(errorString);
+        return;
+    }
+
+    Identify *operation = new Identify(platformList_.first(), false);
+    connect(operation, &Identify::finished, [this, operation](Result result, int status, QString errorString) {
+        Q_UNUSED(status)
+
+        if (result == Result::Success) {
+            emit identifyBootloaderFinished("");
+        } else {
+            emit identifyBootloaderFinished(errorString);
+        }
+
+        operation->deleteLater();
+    });
+
+    operation->run();
 }
 
 void PrtModel::programDevice()
