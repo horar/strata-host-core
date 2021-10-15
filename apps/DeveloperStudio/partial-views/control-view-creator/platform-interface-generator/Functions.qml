@@ -111,13 +111,7 @@ QtObject {
                 } else if (!item.valid && !regexLog.includes(item.name) && !item.duplicate && !item.keyword) { // if invalid, and other flags are not set, the regex failed to pass
                     regexLog.push(item.name)
                 }
-<<<<<<< HEAD
                 
-=======
-                if (deletion) {
-                    invalidCount--
-                }
->>>>>>> 7a82c2eb6b5cb06369d0c1df24d4d871a501d967
                 allValid = false
             }
             if (!checkAllValidArrayObject(item, deletion)) { // returns true if not an array/object
@@ -134,11 +128,7 @@ QtObject {
     /**
       * checkForValidArrayObject checks if an array/object is valid, and recursively checks its children
     **/
-<<<<<<< HEAD
     function checkAllValidArrayObject(model, deletion = false) {
-=======
-    function checkAllValidArrayObject(model, deletion) {
->>>>>>> 7a82c2eb6b5cb06369d0c1df24d4d871a501d967
         let staticArray = sdsModel.platformInterfaceGenerator.TYPE_ARRAY_STATIC
         let staticObject = sdsModel.platformInterfaceGenerator.TYPE_OBJECT_STATIC
         let allValid = true
