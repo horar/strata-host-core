@@ -174,15 +174,9 @@ Item {
 
             Button {
                 id: nextButton
-                text: "Next"
+                text: (root.index + 1) === Help.tour_count ? "End Tour" : "Next"
 
                 property bool showToolTip: false
-
-                onVisibleChanged: {
-                    if (visible) {
-                        text = (root.index + 1) === Help.tour_count ? "End Tour" : "Next"
-                    }
-                }
 
                 onClicked: {
                     Help.next(root.index)
