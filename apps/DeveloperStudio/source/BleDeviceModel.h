@@ -19,6 +19,7 @@ struct BleDeviceModelItem {
     QString deviceId;
     QString name;
     QString address;
+    QString errorString;
     int rssi = 0;
     bool isStrata = false;
     bool isConnected = false;
@@ -41,6 +42,7 @@ public:
     enum ModelRole {
         NameRole = Qt::UserRole + 1,
         AddressRole,
+        ErrorStringRole,
         RssiRole,
         IsStrataRole,
         IsConnectedRole,

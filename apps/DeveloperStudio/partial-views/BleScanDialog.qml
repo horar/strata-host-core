@@ -292,12 +292,28 @@ SGStrataPopup {
                     ]
                 }
 
+                SGWidgets.SGText {
+                    id: connectErrorText
+                    anchors {
+                        top: rssiTag.bottom
+                        topMargin: delegate.innerSpacing
+                        left: nameText.left
+                        right: connectButton.visible ? connectButton.left : parent.right
+                        rightMargin: connectButton.visible ? delegate.innerSpacing : delegate.horizontalOuterSpacing
+                    }
+
+                    visible: text !== ""
+                    text: model.errorString
+                    color: Theme.palette.red
+                    elide: Text.ElideRight
+                }
+
                 Rectangle {
                     id: divider
                     width: parent.width
                     height: 1
                     anchors {
-                        top: rssiTag.bottom
+                        top: connectErrorText.visible ? connectErrorText.bottom : rssiTag.bottom
                         topMargin: delegate.verticalOuterSpacing
                     }
 

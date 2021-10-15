@@ -51,6 +51,8 @@ QVariant BleDeviceModel::data(const QModelIndex &index, int role) const
         return item.name;
     case AddressRole:
         return item.address;
+    case ErrorStringRole:
+        return item.errorString;
     case RssiRole:
         return item.rssi;
     case IsStrataRole:
@@ -105,6 +107,7 @@ void BleDeviceModel::tryConnect(int row)
     requestedIds_.insert(data_.at(row).deviceId);
 
     setPropertyAt(row, true, ConnectionInProgressRole);
+    setPropertyAt(row, "", ErrorStringRole);
 
     QJsonObject payload
     {
@@ -131,6 +134,7 @@ void BleDeviceModel::tryDisconnect(int row)
     requestedIds_.insert(deviceId);
 
     setPropertyAt(row, true, ConnectionInProgressRole);
+    setPropertyAt(row, "", ErrorStringRole);
 
     QJsonObject payload
     {
@@ -210,7 +214,7 @@ void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
     QString errorString = payload.value("error_string").toString();
     if (errorString.isEmpty() == false) {
         qCCritical(logCategoryStrataDevStudio) << "connection attempt failed" << deviceId << errorString;
-
+        setPropertyAt(row, errorString, ErrorStringRole);
     }
 
     emit tryConnectFinished(errorString);
@@ -237,6 +241,7 @@ void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
     QString errorString = payload.value("error_string").toString();
     if (errorString.isEmpty() == false) {
         qCCritical(logCategoryStrataDevStudio) << "disconnection attempt failed" << deviceId << errorString;
+        setPropertyAt(row, errorString, ErrorStringRole);
     }
 
     emit tryDisconnectFinished(errorString);
@@ -263,6 +268,7 @@ void BleDeviceModel::setModelRoles()
     roleByEnumHash_.clear();
     roleByEnumHash_[NameRole] = "name";
     roleByEnumHash_[AddressRole] = "address";
+    roleByEnumHash_[ErrorStringRole] = "errorString";
     roleByEnumHash_[RssiRole] = "rssi";
     roleByEnumHash_[IsStrataRole] = "isStrata";
     roleByEnumHash_[IsConnectedRole] = "isConnected";
@@ -345,6 +351,12 @@ void BleDeviceModel::setPropertyAt(int row, const QVariant &value, int role)
         }
         item.address = value.toString();
         break;
+    case ErrorStringRole:
+        if (item.errorString == value) {
+            return;
+        }
+        item.errorString = value.toString();
+        break;
     case RssiRole:
         if (item.rssi == value) {
             return;
@@ -371,7 +383,7 @@ void BleDeviceModel::setPropertyAt(int row, const QVariant &value, int role)
         break;
     }
 
-    dataChanged(
+    emit dataChanged(
                 createIndex(row, 0),
                 createIndex(row, 0),
                 {role});
