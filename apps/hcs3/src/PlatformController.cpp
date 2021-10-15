@@ -54,8 +54,8 @@ void PlatformController::initialize() {
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
     if (bleDeviceScanner != nullptr) {
         connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::discoveryFinished, this, &PlatformController::bleDiscoveryFinishedHandler);
-        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::connectDeviceFinished, this, &PlatformController::connectDeviceFinishedHandler);
-        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::connectDeviceFailed, this, &PlatformController::connectDeviceFailedHandler);
+        connect(bleDeviceScanner.get(), &DeviceScanner::connectDeviceFinished, this, &PlatformController::connectDeviceFinishedHandler);
+        connect(bleDeviceScanner.get(), &DeviceScanner::connectDeviceFailed, this, &PlatformController::connectDeviceFailedHandler);
     }
 }
 

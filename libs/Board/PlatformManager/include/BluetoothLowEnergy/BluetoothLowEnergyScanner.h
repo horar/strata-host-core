@@ -88,8 +88,6 @@ public:
 
 signals:
     void discoveryFinished(DiscoveryFinishStatus status, QString errorString);
-    void connectDeviceFinished(const QByteArray deviceId);
-    void connectDeviceFailed(const QByteArray deviceId, const QString errorString);
 
 private slots:
     void discoveryFinishedHandler();
