@@ -30,12 +30,13 @@ TcpDeviceScanner::~TcpDeviceScanner()
 
 void TcpDeviceScanner::init(quint32 flags)
 {
-    if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
-        qCCritical(logCategoryDeviceScanner).nospace().noquote()
-            << "Failed to bind UDP socket to port " << UDP_LISTEN_PORT << ": "
-            << udpSocket_->errorString();
-        return;
-    }
+    connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
+            &TcpDeviceScanner::processPendingDatagrams);
+
+    discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
+    discoveryTimer_.setSingleShot(true);
+    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::discoveryFinished);
+
     if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
         startDiscovery();
     }
@@ -123,16 +124,23 @@ void TcpDeviceScanner::startDiscovery()
     if (scanRunning_) {
         qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
     } else {
-        connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
-                &TcpDeviceScanner::processPendingDatagrams);
+        if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
+            qCCritical(logCategoryDeviceScanner).nospace().noquote()
+                << "Failed to bind UDP socket to port " << UDP_LISTEN_PORT << ": "
+                << udpSocket_->errorString();
+            return;
+        }
+
         scanRunning_ = true;
+        discoveryTimer_.start();
+        qCDebug(logCategoryDeviceScanner) << "TcpDevice discovery started...";
     }
 }
 
 void TcpDeviceScanner::stopDiscovery()
 {
     if (scanRunning_) {
-        disconnect(udpSocket_.get(), nullptr, this, nullptr);
+        udpSocket_->disconnectFromHost();
         scanRunning_ = false;
     } else {
         qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
@@ -212,5 +220,11 @@ bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPor
 
     tcpPort = static_cast<quint16>(port);
     return true;
+}
+
+void TcpDeviceScanner::discoveryFinished()
+{
+    qCDebug(logCategoryDeviceScanner) << "TcpDevice discovery Finished";
+    stopDiscovery();
 }
 }  // namespace strata::device::scanner

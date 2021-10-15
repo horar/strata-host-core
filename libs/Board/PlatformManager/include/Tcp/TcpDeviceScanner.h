@@ -106,15 +106,17 @@ public:
 
 private slots:
     void processPendingDatagrams();
+    void discoveryFinished();
 
 private:
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
     QList<TcpDeviceInfo> discoveredDevices_;
-
+    QTimer discoveryTimer_;
     bool scanRunning_;
 
     static constexpr qint16 UDP_LISTEN_PORT{5146};
+    static constexpr std::chrono::milliseconds DISCOVERY_TIMEOUT{5000};
 };
 }  // namespace strata::device::scanner
