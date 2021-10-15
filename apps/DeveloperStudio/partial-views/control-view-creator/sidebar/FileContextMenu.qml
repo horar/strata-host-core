@@ -90,6 +90,14 @@ Menu {
     }
 
     MenuItem {
+        text: "Create New Folder"
+        onTriggered: {
+            createFolderPopup.open()
+            fileContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
         text: "Import Files/Folder to Project"
         onTriggered: {
             importFileOrFolderPopup.callerIndex = styleData.index.parent
