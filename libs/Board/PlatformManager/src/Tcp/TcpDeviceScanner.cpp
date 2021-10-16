@@ -76,6 +76,7 @@ QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
     DevicePtr device = std::make_shared<TcpDevice>(it->deviceId, it->deviceIpAddress, it->port);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
+    createdDevices_.insert(it->deviceId, *it);
     emit deviceDetected(platform);
 
     return "";
@@ -83,16 +84,11 @@ QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
 
 QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
 {
-    auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
-                           [&deviceId](const TcpDeviceInfo &tcpDeviceInfo) {
-                               return tcpDeviceInfo.deviceId == deviceId;
-                           });
-
-    if (it == discoveredDevices_.end()) {
+    if (false == createdDevices_.contains(deviceId)) {
         return "Device not found";
     }
 
-    discoveredDevices_.erase(it);
+    createdDevices_.remove(deviceId);
 
     emit deviceLost(deviceId);
     return "";
@@ -130,6 +126,8 @@ void TcpDeviceScanner::startDiscovery()
                 << udpSocket_->errorString();
             return;
         }
+
+        discoveredDevices_.clear();
 
         scanRunning_ = true;
         discoveryTimer_.start();

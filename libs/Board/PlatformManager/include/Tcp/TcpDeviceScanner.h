@@ -113,6 +113,7 @@ private:
 
     std::unique_ptr<QUdpSocket> udpSocket_;
     QList<TcpDeviceInfo> discoveredDevices_;
+    QHash<QByteArray, TcpDeviceInfo> createdDevices_;
     QTimer discoveryTimer_;
     bool scanRunning_;
 
