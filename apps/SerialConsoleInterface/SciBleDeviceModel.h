@@ -35,6 +35,7 @@ public:
         NameRole = Qt::UserRole + 1,
         AddressRole,
         ErrorStringRole,
+        RssiRole,
         IsStrataRole,
         IsConnectedRole,
         ConnectionInProgressRole

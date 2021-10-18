@@ -173,7 +173,10 @@ SGWidgets.SGDialog {
                         rightMargin: connectButton.visible ? delegate.innerSpacing : 2*delegate.horizontalOuterSpacing
                     }
 
-                    text: model.name
+                    property bool nameAvailable: model.name.length
+
+                    text: nameAvailable ? model.name : "N/A"
+                    opacity: nameAvailable ? 1 : 0.5
                     fontSizeMultiplier: 1.5
                     alternativeColorEnabled: delegate.ListView.isCurrentItem
                     elide: Text.ElideRight
@@ -195,12 +198,99 @@ SGWidgets.SGDialog {
                     elide: Text.ElideRight
                 }
 
+                SGWidgets.SGTag {
+                    id: rssiTag
+                    anchors {
+                        left: nameText.left
+                        top: statusText.bottom
+                        topMargin: delegate.innerSpacing
+                    }
+
+                    text: model.rssi + " dBm"
+                    iconSource: "qrc:/sgimages/signal.svg"
+                    color: Theme.palette.lightGray
+                }
+
+                SGWidgets.SGTag {
+                    id: isStrataTag
+                    anchors {
+                        left: rssiTag.right
+                        leftMargin: 2*delegate.innerSpacing
+                        top: statusText.bottom
+                        topMargin: delegate.innerSpacing
+                    }
+
+                    text: "STRATA COMPATIBLE"
+                    visible: model.isStrata
+                    color: Theme.palette.lightGray
+                }
+
+                SGWidgets.SGTag {
+                    id: isConnectedTag
+                    anchors {
+                        left: isStrataTag.right
+                        leftMargin: 2*delegate.innerSpacing
+                        top: statusText.bottom
+                        topMargin: delegate.innerSpacing
+                    }
+
+                    states: [
+                        State {
+                            id: connectingState
+                            when: model.isConnected === false && model.connectionInProgress
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "Connecting..."
+                                textColor: "black"
+                                color: "transparent"
+                            }
+                        },
+                        State {
+                            id: disconnectingState
+                            when: model.isConnected && model.connectionInProgress
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "Disconnecting..."
+                                textColor: "black"
+                                color: "transparent"
+                            }
+                        },
+                        State {
+                            id: connectedState
+                            when: model.isConnected && model.connectionInProgress === false
+                            PropertyChanges {
+                                target: isConnectedTag
+                                text: "CONNECTED"
+                                textColor: "white"
+                                color: Theme.palette.green
+                                font.bold: true
+                            }
+                        }
+                    ]
+                }
+
+                SGWidgets.SGText {
+                    id: connectErrorText
+                    anchors {
+                        top: rssiTag.bottom
+                        topMargin: delegate.innerSpacing
+                        left: nameText.left
+                        right: connectButton.visible ? connectButton.left : parent.right
+                        rightMargin: connectButton.visible ? delegate.innerSpacing : delegate.horizontalOuterSpacing
+                    }
+
+                    visible: text !== ""
+                    text: model.errorString
+                    color: Theme.palette.red
+                    elide: Text.ElideRight
+                }
+
                 Item {
                     id: divider
                     height: 1
                     width: parent.width
                     anchors {
-                        top: statusText.bottom
+                        top: connectErrorText.visible ? connectErrorText.bottom : rssiTag.bottom
                         topMargin: delegate.verticalOuterSpacing
                     }
 
@@ -237,7 +327,7 @@ SGWidgets.SGDialog {
                     enabled: model.connectionInProgress === false
                     opacity: enabled ? 1.0 : 0.7
                     hintText: model.isConnected ? "Try disconnect" : "Try connect"
-                    iconSize: Math.floor(0.6*parent.height)
+                    iconSize: scanButton.height
                     icon.source: model.isConnected ? "qrc:/sgimages/unlink.svg" : "qrc:/sgimages/link.svg"
                     visible: delegate.ListView.isCurrentItem || delegateMouseArea.containsMouse || hovered
                     onClicked: {
