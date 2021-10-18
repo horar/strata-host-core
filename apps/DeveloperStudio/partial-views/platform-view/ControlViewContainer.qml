@@ -208,21 +208,19 @@ Item {
 
         if (newVersion !== "") {
             let versionControl = versionSettings.readFile("versionControl.json");
-            saveInstalledVersion(newVersion, newPath, versionControl)
+            const versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl)
+            if (versionInstalled
+                    && versionInstalled.path !== newPath
+                    && !versionInUseOnSystem(versionInstalled.version, versionControl)) {
+                otaVersionsToRemove.push(versionInstalled)
+            }
 
+            saveInstalledVersion(newVersion, newPath, versionControl)
             for (let i = 0; i < controlViewListCount; i++) {
                 if (controlViewList.version(i) === newVersion) {
                     controlViewList.setInstalled(i, true);
                     controlViewList.setFilepath(i, newPath);
-                } else if (controlViewList.version(i) !== newVersion
-                           && controlViewList.installed(i) === true
-                           && !versionInUseOnSystem(controlViewList.version(i), versionControl)) {
-                    controlViewList.setInstalled(i, false);
-                    let versionToRemove = {
-                        "version": controlViewList.version(i),
-                        "filepath": controlViewList.filepath(i)
-                    }
-                    otaVersionsToRemove.push(versionToRemove);
+                    break
                 }
             }
 
@@ -242,7 +240,7 @@ Item {
     */
     function cleanUpResources() {
         for (let i = 0; i < otaVersionsToRemove.length; i++) {
-            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlLoader);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].path, otaVersionsToRemove[i].version, controlLoader);
         }
 
         otaVersionsToRemove = []
@@ -299,7 +297,7 @@ Item {
             return null;
         }
 
-        return versionsInstalled[user_id];
+        return JSON.parse(JSON.stringify(versionsInstalled[user_id]))
     }
 
     /*
