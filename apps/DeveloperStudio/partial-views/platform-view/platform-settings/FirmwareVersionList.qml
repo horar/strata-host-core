@@ -22,6 +22,7 @@ ColumnLayout {
     Layout.topMargin: 10
 
     property alias firmwareModel: firmwareListView.model
+    property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
 
     ColumnLayout{
         id: firmwareVersions
@@ -141,7 +142,7 @@ ColumnLayout {
                         }
 
                         SGText {
-                            text: model.timestamp
+                            text: SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             Layout.fillWidth: true
                             fontSizeMultiplier: 1.38
                             color: "#666"
