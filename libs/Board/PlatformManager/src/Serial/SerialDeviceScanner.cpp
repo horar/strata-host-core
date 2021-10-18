@@ -67,6 +67,7 @@ QString SerialDeviceScanner::connectDevice(const QByteArray& deviceId) {
         << "Created new serial device: ID: " << deviceId << ", name: '" << name << "'";
 
     emit deviceDetected(platform);
+    emit connectDeviceFinished(platform->deviceId());
 
     return "";
 }

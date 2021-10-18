@@ -25,6 +25,8 @@ using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
 using strata::platform::PlatformMessage;
+using strata::device::scanner::DeviceScanner;
+using strata::device::scanner::DeviceScannerPtr;
 using strata::device::scanner::BluetoothLowEnergyScanner;
 
 namespace operation = strata::platform::operation;
@@ -52,8 +54,8 @@ void PlatformController::initialize() {
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
     if (bleDeviceScanner != nullptr) {
         connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::discoveryFinished, this, &PlatformController::bleDiscoveryFinishedHandler);
-        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::connectDeviceFinished, this, &PlatformController::bleConnectDeviceFinishedHandler);
-        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::connectDeviceFailed, this, &PlatformController::bleConnectDeviceFailedHandler);
+        connect(bleDeviceScanner.get(), &DeviceScanner::connectDeviceFinished, this, &PlatformController::connectDeviceFinishedHandler);
+        connect(bleDeviceScanner.get(), &DeviceScanner::connectDeviceFailed, this, &PlatformController::connectDeviceFailedHandler);
     }
 }
 
@@ -228,11 +230,10 @@ void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::Bl
 }
 
 void PlatformController::connectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
-    std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
-        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
-    if (bleDeviceScanner != nullptr) {
+    DeviceScannerPtr deviceScanner = platformManager_.getScanner(DeviceScanner::scannerType(deviceId));
+    if (deviceScanner != nullptr) {
         if (false == connectDeviceRequests_.contains(deviceId)) {
-            QString errorMessage = bleDeviceScanner->connectDevice(deviceId);
+            QString errorMessage = deviceScanner->connectDevice(deviceId);
             if (false == errorMessage.isEmpty()) {
                 emit connectDeviceFailed(deviceId, clientId, errorMessage);
             } else {
@@ -245,15 +246,15 @@ void PlatformController::connectDevice(const QByteArray &deviceId, const QByteAr
         }
     } else
     {
-        emit connectDeviceFailed(deviceId, clientId, "BluetoothLowEnergyScanner not initialized.");
+        emit connectDeviceFailed(deviceId, clientId, "Scanner not initialized.");
     }
 }
 
-void PlatformController::bleConnectDeviceFinishedHandler(const QByteArray& deviceId) {
+void PlatformController::connectDeviceFinishedHandler(const QByteArray& deviceId) {
     QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
     int notifiedCount = connectDeviceRequests_.remove(deviceId);
     if (notifiedCount == 0) {
-        qCWarning(logCategoryHcsPlatform).noquote() << "BLE device connection finished, no client waiting for response:" << deviceId;
+        qCWarning(logCategoryHcsPlatform).noquote() << "Device connection finished, no client waiting for response:" << deviceId;
     } else {
         for (const auto &clientId : clients) {
             emit connectDeviceFinished(deviceId, clientId);
@@ -261,11 +262,11 @@ void PlatformController::bleConnectDeviceFinishedHandler(const QByteArray& devic
     }
 }
 
-void PlatformController::bleConnectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString) {
+void PlatformController::connectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString) {
     QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
     int notifiedCount = connectDeviceRequests_.remove(deviceId);
     if (notifiedCount == 0) {
-        qCWarning(logCategoryHcsPlatform).noquote() << "BLE device connection failed, no client waiting for response:" << deviceId;
+        qCWarning(logCategoryHcsPlatform).noquote() << "Device connection failed, no client waiting for response:" << deviceId;
     } else {
         for (const auto &clientId : clients) {
             emit connectDeviceFailed(deviceId, clientId, errorString);
@@ -274,10 +275,9 @@ void PlatformController::bleConnectDeviceFailedHandler(const QByteArray& deviceI
 }
 
 void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
-    std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
-        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
-    if (bleDeviceScanner != nullptr) {
-        QString errorMessage = bleDeviceScanner->disconnectDevice(deviceId);
+    DeviceScannerPtr deviceScanner = platformManager_.getScanner(DeviceScanner::scannerType(deviceId));
+    if (deviceScanner != nullptr) {
+        QString errorMessage = deviceScanner->disconnectDevice(deviceId);
         if (errorMessage.isEmpty()) {
             QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
             connectDeviceRequests_.remove(deviceId);
@@ -289,7 +289,7 @@ void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByt
             emit disconnectDeviceFailed(deviceId, clientId, errorMessage);
         }
     } else {
-        emit disconnectDeviceFailed(deviceId, clientId, "BluetoothLowEnergyScanner not initialized.");
+        emit disconnectDeviceFailed(deviceId, clientId, "Scanner not initialized.");
     }
 }
 

@@ -52,6 +52,10 @@ public:
 
     /**
      * Initiates connection to discovered device.
+     * Possible outcomes:
+     * - immediate error -> will return non-empty string
+     * - error during connecting -> will emit connectDeviceFailed
+     * - success -> will emit connectDeviceFinished
      * @param deviceId device ID, returned by discoveredDevices()
      * @return empty string if connecting started, error message if there was an error
      */
@@ -107,6 +111,18 @@ signals:
      * @param device id
      */
     void deviceLost(QByteArray deviceId);
+
+    /**
+     * Emitted when connectDevice was successful
+     * @param deviceId device ID of the connected device
+     */
+    void connectDeviceFinished(const QByteArray deviceId);
+
+    /**
+     * Emitted when connectDevice was unsuccessful
+     * @param deviceId device ID of the connecting device
+     */
+    void connectDeviceFailed(const QByteArray deviceId, const QString errorString);
 
 protected:
     /**

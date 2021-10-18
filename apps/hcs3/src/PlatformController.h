@@ -119,8 +119,8 @@ private slots:
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
     void bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
-    void bleConnectDeviceFinishedHandler(const QByteArray& deviceId);
-    void bleConnectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString);
+    void connectDeviceFinishedHandler(const QByteArray& deviceId);
+    void connectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString);
 
     // slot for signal from PlatformOperations
     void operationFinished(QByteArray deviceId,
