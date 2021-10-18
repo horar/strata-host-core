@@ -52,7 +52,7 @@ Rectangle {
 
                     Rectangle {
                         Layout.minimumWidth: 45
-                        Layout.preferredWidth: warningIcon.width + 5 + textWarning.width + 7
+                        Layout.preferredWidth: (warningIcon.anchors.leftMargin * 2) + warningIcon.width + textWarning.anchors.leftMargin + textWarning.width
                         Layout.preferredHeight: 30
                         color: filterTypeWarning || warningMouseArea.containsMouse ? "#888" : "transparent"
 
