@@ -94,6 +94,7 @@ BaseStateMachine {
             prtModel.clearBinaries();
             taskbarButton.progress.resume()
             taskbarButton.progress.show()
+            continueButton.visible = false
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
@@ -462,6 +463,18 @@ BaseStateMachine {
         onEntered: {
             stateMachine.statusText = "Controller Registration Failed"
             taskbarButton.progress.stop()
+            continueButton.visible = true
+        }
+
+        onExited: {
+            continueButton.visible = false
+        }
+
+        Binding {
+            target: continueButton
+            property: "enabled"
+            value: prtModel.deviceCount === 0
+            when: stateLoopFailed.active
         }
 
         DSM.SignalTransition {
