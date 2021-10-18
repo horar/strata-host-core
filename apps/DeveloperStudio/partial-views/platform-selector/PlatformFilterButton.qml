@@ -68,6 +68,7 @@ Button {
         anchors.margins: 5
 
         SGText {
+            id: mainText
             text: model.text
             fontSizeMultiplier: 0.9
             color: !mouse.containsMouse ? Theme.palette.onsemiDark : Theme.palette.white
@@ -81,7 +82,7 @@ Button {
         id: textMetrics
 
         text: model.text
-        font.pixelSize: 12
+        font.pixelSize: mainText.font.pixelSize
 
         property real wideWidth: width + 5
     }
