@@ -39,13 +39,11 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        if(platformTabRoot.state === "help_tour"){
+        if (platformTabRoot.state === "help_tour") {
             Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
-            for(var i = 0; i < repeater.count; i++){
-                Help.registerTarget(repeater.itemAt(i).toolItem, (6 + i === 6) ? "Use this menu item to open the platform and control a board" :
-                                                                 (i + 6 < repeater.count + 5) ? "Use this menu item to view documentation":
-                                                                 "Use this menu item to close the platform", 6 + i, "selectorHelp")
-            }
+            Help.registerTarget(repeater.itemAt(0).toolItem, "Use this menu item to open the platform and control a board", 6, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(1).toolItem, "Use this menu item to view documentation", 7, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to close the platform", 8, "selectorHelp")
         }
     }
 
@@ -55,20 +53,21 @@ Item {
 
     Connections {
         target: Help.utility
+        enabled: Help.utility.runningTourName === "selectorHelp"
         // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
         onInternal_tour_indexChanged: {
-            if(platformTabRoot.state === "help_tour"){
-                if(Help.current_tour_targets[index]["target"] === menu) {
+            if (platformTabRoot.state === "help_tour") {
+                if (Help.current_tour_targets[index]["target"] === menu) {
                     dropDownPopup.open()
                     menu.state = "help_tour"
-                } else if(Help.current_tour_targets[index]["target"] === currIcon) {
+                } else if (Help.current_tour_targets[index]["target"] === currIcon) {
                     dropDownPopup.close()
                 }
             }
         }
 
         onTour_runningChanged: {
-            if(!tour_running){
+            if (!tour_running) {
                 menu.state = "normal"
                 dropDownPopup.close()
             }
@@ -271,7 +270,7 @@ Item {
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
         onOpened: {
-            if(menu.state === "help_tour"){
+            if (menu.state === "help_tour") {
                 Help.refreshView(Help.internal_tour_index)
             }
         }
@@ -284,7 +283,7 @@ Item {
             state: "normal"
 
             onStateChanged: {
-                if(state === "help_tour"){
+                if (state === "help_tour") {
                     Help.refreshView(Help.internal_tour_index)
                 }
             }
