@@ -21,11 +21,13 @@ Item {
 
      function setTarget(target) {
          mockTarget.x = Qt.binding(function() {
-             target.x // dummy to force evaluation
+             target.x // dummy statements to force binding re-evaluation
+             Help.window.width
              return target.mapToItem(root.parent, 0, 0).x
          })
          mockTarget.y = Qt.binding(function() {
-             target.y // dummy to force evaluation
+             target.y // dummy statements to force binding re-evaluation
+             Help.window.height
              return target.mapToItem(root.parent, 0, 0).y
          })
          mockTarget.width = Qt.binding(function() { return target.width })

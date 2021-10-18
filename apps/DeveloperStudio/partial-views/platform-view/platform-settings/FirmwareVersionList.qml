@@ -21,11 +21,11 @@ ColumnLayout {
     spacing: 0
     Layout.topMargin: 10
 
-    property alias firmwareRepeater: firmwareRepeater
+    property alias firmwareModel: firmwareListView.model
 
     ColumnLayout{
         id: firmwareVersions
-        visible: firmwareRepeater.model.count > 0
+        visible: firmwareListView.model.count > 0
 
         SGText {
             text: "Latest firmware available:"
@@ -62,36 +62,47 @@ ColumnLayout {
         }
 
         Connections {
-            // Note: does not works if placed inside firmwareRepeater
+            // Note: does not work if placed inside firmwareListView
             target: sdsModel.firmwareUpdater
 
             onJobFinished: {
-                if (firmwareRepeater.flashingDeviceInProgress && (deviceId === platformStack.device_id)) {
-                    firmwareRepeater.flashingDeviceInProgress = false
+                if (firmwareListView.flashingDeviceInProgress && (deviceId === platformStack.device_id)) {
+                    firmwareListView.flashingDeviceInProgress = false
                 }
             }
 
             onJobError: {
-                if (firmwareRepeater.flashingDeviceInProgress && (deviceId === platformStack.device_id)) {
+                if (firmwareListView.flashingDeviceInProgress && (deviceId === platformStack.device_id)) {
                     console.warn(Logger.devStudioCategory, "Failure during firmware flashing:", errorString)
                 }
             }
         }
 
-        Repeater {
-            id: firmwareRepeater
+        ListView {
+            id: firmwareListView
             model: []
+            clip: true
+            spacing: 5
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.maximumHeight: contentHeight
+
+            ScrollBar.vertical: ScrollBar {
+                id: firmwareScrollbar
+                policy: ScrollBar.AlwaysOn
+                visible: firmwareListView.height < firmwareListView.contentHeight
+            }
 
             property bool flashingDeviceInProgress: false // one of the firmwares is being flashed to this device
 
             Component.onCompleted: {
-                firmwareRepeater.flashingDeviceInProgress = sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platformStack.device_id)
+                firmwareListView.flashingDeviceInProgress = sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platformStack.device_id)
             }
 
             delegate: Rectangle {
                 id: firmwareRow
-                Layout.preferredHeight: firmwareDataColumn.height
-                Layout.fillWidth: true
+                width: firmwareHeader.width
+                height: firmwareDataColumn.height
 
                 property bool flashingFirmwareInProgress: false // this particular firmware is being flashed to device
 
@@ -148,10 +159,10 @@ ColumnLayout {
                             property string currentStatus: ""
 
                             Connections {
-                                target: firmwareRepeater
+                                target: firmwareListView
 
                                 onFlashingDeviceInProgressChanged: {
-                                    if (firmwareRepeater.flashingDeviceInProgress && firmwareDescription.currentStatus !== "") {
+                                    if (firmwareListView.flashingDeviceInProgress && firmwareDescription.currentStatus !== "") {
                                         firmwareDescription.currentStatus = ""
                                     }
                                 }
@@ -162,6 +173,7 @@ ColumnLayout {
                             id: imageContainer
                             Layout.preferredHeight: 30
                             Layout.preferredWidth: 30
+                            Layout.rightMargin: firmwareScrollbar.visible ? firmwareScrollbar.width : 0
 
                             SGIcon {
                                 id: installIcon
@@ -170,7 +182,7 @@ ColumnLayout {
                                 }
                                 source: model.installed ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/download.svg"
                                 iconColor: {
-                                    if (platformStack.connected === false || firmwareRepeater.flashingDeviceInProgress) {
+                                    if (platformStack.connected === false || firmwareListView.flashingDeviceInProgress) {
                                         return "#ddd" // disabled - light greyed out
                                     } else if (model.installed) {
                                         return "lime"
@@ -184,8 +196,8 @@ ColumnLayout {
                                     id: installMouse
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    cursorShape: model.installed || firmwareRepeater.flashingDeviceInProgress || platformStack.connected === false ? Qt.ArrowCursor : Qt.PointingHandCursor
-                                    enabled: model.installed === false && !firmwareRepeater.flashingDeviceInProgress && platformStack.connected
+                                    cursorShape: model.installed || firmwareListView.flashingDeviceInProgress || platformStack.connected === false ? Qt.ArrowCursor : Qt.PointingHandCursor
+                                    enabled: model.installed === false && !firmwareListView.flashingDeviceInProgress && platformStack.connected
 
                                     onClicked: {
                                         if (platformStack.firmware_version !== "") {
@@ -267,13 +279,13 @@ ColumnLayout {
 
                         function startFlash(already_started) {
                             if ((already_started === false) &&
-                                (firmwareRepeater.flashingDeviceInProgress === false)) {
+                                (firmwareListView.flashingDeviceInProgress === false)) {
                                 already_started = sdsModel.firmwareUpdater.programFirmware(platformStack.device_id, model.uri, model.md5)
                             }
 
                             if (already_started) {
                                 firmwareRow.flashingFirmwareInProgress = true
-                                firmwareRepeater.flashingDeviceInProgress = true // call before changing the currentStatus
+                                firmwareListView.flashingDeviceInProgress = true // call before changing the currentStatus
                                 firmwareDescription.currentStatus = "Do not unplug your board during this process"
                                 flashStatus.visible = true
                             } else {

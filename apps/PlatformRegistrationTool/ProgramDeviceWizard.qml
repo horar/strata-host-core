@@ -444,7 +444,6 @@ FocusScope {
         SGWidgets.SGButton {
             id: continueBtn
             text: "Continue"
-            visible: wizard.stateLoopFailedActive
         }
     }
 
