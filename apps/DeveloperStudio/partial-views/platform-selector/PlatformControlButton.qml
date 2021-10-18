@@ -39,7 +39,7 @@ Item {
             color: mouse.containsMouse && enabled ? Qt.darker(Theme.palette.onsemiOrange, 1.1) : control.pressed ? Theme.palette.gray : Theme.palette.onsemiOrange
             implicitHeight: 25
             implicitWidth: control.contentItem.implicitWidth + 20
-            radius: 10
+            radius: height/2
         }
 
         contentItem: SGText {
