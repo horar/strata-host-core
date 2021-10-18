@@ -19,6 +19,8 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 
 Button {
     id: filterButtonRoot
+    implicitHeight: textMetrics.boundingRect.height + (textColumn.anchors.margins * 2)
+    implicitWidth: Math.min((textColumn.anchors.margins * 2) + textMetrics.wideWidth, flow.width)
 
     onYChanged: {
         if (parent === flow) {
@@ -60,19 +62,18 @@ Button {
         PlatformFilters.setFilterActive(model.filterName, true)
     }
 
-    contentItem: ColumnLayout {
-        Item {
-            id: wrapper
-            Layout.preferredWidth: textMetrics.boundingRect.width > 150 ? 150 : textMetrics.boundingRect.width
-            Layout.preferredHeight: textMetrics.boundingRect.height
+    ColumnLayout {
+        id: textColumn
+        anchors.fill: filterButtonRoot
+        anchors.margins: 5
 
-            SGText {
-                text: model.text
-                fontSizeMultiplier: 0.9
-                color: !mouse.containsMouse ? Theme.palette.onsemiDark : Theme.palette.white
-                elide: textMetrics.boundingRect.width > 150 ? Text.ElideRight : Text.ElideNone
-                anchors.fill: wrapper
-            }
+        SGText {
+            text: model.text
+            fontSizeMultiplier: 0.9
+            color: !mouse.containsMouse ? Theme.palette.onsemiDark : Theme.palette.white
+            elide: Text.ElideRight
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 
@@ -81,5 +82,7 @@ Button {
 
         text: model.text
         font.pixelSize: 12
+
+        property real wideWidth: width + 5
     }
 }
