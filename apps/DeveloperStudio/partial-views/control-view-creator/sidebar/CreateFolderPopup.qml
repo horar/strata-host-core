@@ -98,7 +98,6 @@ SGStrataPopup {
                     } else {
                         createFolderPopup.close()
                     }
-
                 }
             }
         }
