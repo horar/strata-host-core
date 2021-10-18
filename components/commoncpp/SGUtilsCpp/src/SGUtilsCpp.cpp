@@ -23,6 +23,7 @@
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QKeySequence>
+#include <QProcess>
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
@@ -318,4 +319,13 @@ QList<QString> SGUtilsCpp::getQrcPaths(QString path) {
         pathList.append(it.next());
     }
     return pathList;
+}
+
+void SGUtilsCpp::showFileInFolder(const QString &path){
+    #ifdef Q_OS_WIN
+        QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(path)});
+    #else
+        QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\""});
+        QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to activate"});
+    #endif
 }
