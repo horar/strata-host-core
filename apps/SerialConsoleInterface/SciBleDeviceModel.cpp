@@ -36,6 +36,8 @@ QVariant SciBleDeviceModel::data(const QModelIndex &index, int role) const
         return item.address;
     case ErrorStringRole:
         return item.errorString;
+    case RssiRole:
+        return item.rssi;
     case IsStrataRole:
         return item.isStrata;
     case IsConnectedRole:
@@ -287,6 +289,7 @@ void SciBleDeviceModel::setModelRoles()
     roleByEnumHash_[NameRole] = "name";
     roleByEnumHash_[AddressRole] = "address";
     roleByEnumHash_[ErrorStringRole] = "errorString";
+    roleByEnumHash_[RssiRole] = "rssi";
     roleByEnumHash_[IsStrataRole] = "isStrata";
     roleByEnumHash_[IsConnectedRole] = "isConnected";
     roleByEnumHash_[ConnectionInProgressRole] = "connectionInProgress";
@@ -330,6 +333,12 @@ void SciBleDeviceModel::setPropertyAt(int row, const QVariant &value, int role)
             return;
         }
         item.errorString = value.toString();
+        break;
+    case RssiRole:
+        if (item.rssi == value) {
+            return;
+        }
+        item.rssi = value.toInt();
         break;
     case IsStrataRole:
         if (item.isStrata == value) {
