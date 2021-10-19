@@ -82,7 +82,7 @@ QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
     createdDevices_.insert(it->deviceId, *it);
     emit deviceDetected(platform);
 
-    return "";
+    return QString();
 }
 
 QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
@@ -94,7 +94,7 @@ QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
     createdDevices_.remove(deviceId);
 
     emit deviceLost(deviceId);
-    return "";
+    return QString();
 }
 
 void TcpDeviceScanner::disconnectAllDevices() {
