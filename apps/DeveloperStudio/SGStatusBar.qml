@@ -18,6 +18,7 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/restclient.js" as Rest
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
@@ -655,7 +656,7 @@ Rectangle {
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
-        property bool hasOptedOut: false
+        property bool hasOptedOut: Rest.anonymous
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
