@@ -129,6 +129,7 @@ void TcpDeviceScanner::stopDiscovery()
     if (scanRunning_) {
         udpSocket_->disconnectFromHost();
         scanRunning_ = false;
+        emit discoveryFinished();
     } else {
         qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
     }
@@ -161,7 +162,6 @@ void TcpDeviceScanner::processPendingDatagrams()
             qCDebug(logCategoryDeviceScanner).noquote().nospace()
                 << "Discovered new platfrom. IP: " << clientAddress.toString()
                 << ", TCP port: " << tcpPort;
-            connectDevice(createDeviceId(TcpDevice::createUniqueHash(clientAddress)));
         }
     }
 }
