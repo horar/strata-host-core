@@ -38,6 +38,8 @@ Item {
         "type": "value",
         "name": "",
         "valid": false,
+        "keyword": false,
+        "duplicate": false,
         "payload": [],
         "editing": false
     })
@@ -46,6 +48,8 @@ Item {
         "type": "cmd",
         "name": "",
         "valid": false,
+        "keyword": false,
+        "duplicate": false,
         "payload": [],
         "editing": false
     })
@@ -55,6 +59,8 @@ Item {
         "type": sdsModel.platformInterfaceGenerator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
         "indexSelected": 0,
         "valid": false,
+        "keyword": false,
+        "duplicate": false,
         "array": [], // This is only filled if the type == "array"
         "object": [],
         "value": "0"
@@ -460,7 +466,13 @@ Item {
                     if (!generateButton.enabled) {
                         return "lightgrey"
                     }
-                    return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
+                    return (generateButtonMouseArea.containsMouse && generateButtonMouseArea.valid) ? Qt.darker("grey", 1.5) : "grey"
+                }
+                opacity: {
+                    if (functions.invalidCount > 0) {
+                        return 0.25
+                    }
+                    return 1
                 }
             }
 
@@ -471,32 +483,60 @@ Item {
                 verticalAlignment: Text.AlignVCenter
             }
 
+            ToolTip {
+                id: errorToolTip
+                visible: (generateButtonMouseArea.containsMouse && !generateButtonMouseArea.valid)
+
+                function generationCheck() {
+                    if (generateButtonMouseArea.containsMouse) {
+                        let result = functions.checkForAllValid()
+                        generateButtonMouseArea.valid = result
+                        if (result) {
+                            alertToast.hide()
+                        }
+                    }
+
+                    // removes endline from text
+                    if (functions.errorLog.endsWith("\n")) {
+                        text = functions.errorLog.substring(0, functions.errorLog.length-1)
+                    } else {
+                        text = functions.errorLog
+                    }
+                }
+            }
+
             MouseArea {
                 id: generateButtonMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
+                cursorShape: (containsMouse && valid) ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                property bool valid: true
+
+                onContainsMouseChanged: {
+                    if (containsMouse) {
+                        errorToolTip.generationCheck()
+                    }
+                }
 
                 onClicked: {
-                    let valid = functions.checkForAllValid()
                     if (!valid) {
-                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique."
+                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique, not a JavaScript keyword, and nonempty."
                         alertToast.textColor = "white"
                         alertToast.color = "#D10000"
                         alertToast.interval = 0
                         alertToast.show()
                         return
-                    }
+                    } else {
+                        // If the file already exists, prompt a popup confirming they want to overwrite
+                        let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
+                        if (SGUtilsCpp.isFile(fileName)) {
+                            confirmOverwriteDialog.open()
+                            return
+                        }
 
-                    // If the file already exists, prompt a popup confirming they want to overwrite
-                    let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
-                    if (SGUtilsCpp.isFile(fileName)) {
-                        confirmOverwriteDialog.open()
-                        return
+                        functions.generatePlatformInterface()
                     }
-
-                    functions.generatePlatformInterface()
                 }
             }
         }

@@ -66,6 +66,17 @@ Rectangle {
                         if (cmdNotifName.text !== "") {
                             unsavedChanges = true
                         }
+
+                        let commands = finishedModel.get(commandsListView.modelIndex).data
+                        let payload = commands.get(commandsColumn.modelIndex).payload
+                        if (model.duplicate) {
+                            model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
+                            functions.loopOverDuplicates(commands, index)
+                        }
+                        if (!model.valid) {
+                            functions.invalidCount--
+                        }
+                        functions.checkAllValidFlag(payload, true)
                         commandColumn.commandModel.remove(index)
                     }
                 }
@@ -80,7 +91,7 @@ Rectangle {
                 placeholderText: commandColumn.isNoti ? "Notification name" : "Command name"
 
                 validator: RegExpValidator {
-                    regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]+/
+                    regExp: /^[a-z_][a-zA-Z0-9_]*/
                 }
 
                 background: Rectangle {
@@ -99,6 +110,10 @@ Rectangle {
 
                 Component.onCompleted: {
                     text = model.name
+                    if (!text) {
+                        model.valid = false
+                        functions.invalidCount++
+                    }
                     forceActiveFocus()
                 }
 
@@ -109,11 +124,8 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    if (text.length > 0) {
-                        functions.checkForDuplicateIds(commandsListView.modelIndex)
-                    } else {
-                        model.valid = false
-                    }
+                    let commands = finishedModel.get(commandsListView.modelIndex).data
+                    functions.checkForValidKey(commands, index, model.valid)
                 }
 
                 onActiveFocusChanged: {
