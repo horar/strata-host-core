@@ -11,8 +11,28 @@ project(Platform
     LANGUAGES CXX
 )
 
+if(APPS_CORESW_SDS_PLUGIN_BLE)
+    set(CONDITIONAL_PACKAGES
+        Bluetooth
+    )
+    set(CONDITIONAL_SOURCE_FILES
+        src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
+        src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
+        src/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.cpp
+        src/BluetoothLowEnergy/BluetoothLowEnergyController.cpp
+        include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
+        include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
+        include/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h
+        include/BluetoothLowEnergy/BluetoothLowEnergyController.h
+    )
+    set(CONDITIONAL_LIBRARIES
+        PUBLIC Qt5::Bluetooth
+    )
+    add_compile_definitions(APPS_CORESW_SDS_PLUGIN_BLE=true)
+endif()
+
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort Network Bluetooth
+    COMPONENTS Core SerialPort Network ${CONDITIONAL_PACKAGES}
     REQUIRED
 )
 
@@ -26,10 +46,6 @@ add_library(${PROJECT_NAME}
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
     src/Tcp/TcpDevice.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyController.cpp
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp
     src/Operations/Commands/CmdRequestPlatformId.cpp
@@ -62,13 +78,11 @@ add_library(${PROJECT_NAME}
     include/Mock/MockDeviceControl.h
     include/Mock/MockDeviceConstants.h
     include/Tcp/TcpDevice.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyController.h
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h
     include/Operations/PlatformOperations.h
+
+    ${CONDITIONAL_SOURCE_FILES}
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -86,12 +100,13 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
     PUBLIC Qt5::Network
-    PUBLIC Qt5::Bluetooth
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PRIVATE strata::CommandValidator
     PRIVATE strata::base64
     PRIVATE strata::crc16
+
+    ${CONDITIONAL_LIBRARIES}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

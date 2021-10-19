@@ -407,6 +407,7 @@ Rectangle {
         }
 
         Rectangle {
+            visible: (typeof APPS_CORESW_SDS_PLUGIN_BLE !== "undefined") && APPS_CORESW_SDS_PLUGIN_BLE
             height: bleIconHover.containsMouse ? bleIconContainer.height : bleIconContainer.height - 6
             width: height
             anchors.centerIn: bleIconContainer
@@ -428,6 +429,7 @@ Rectangle {
 
         MouseArea {
             id: bleIconHover
+            visible: (typeof APPS_CORESW_SDS_PLUGIN_BLE !== "undefined") && APPS_CORESW_SDS_PLUGIN_BLE
             anchors.fill: bleIconContainer
 
             hoverEnabled: true

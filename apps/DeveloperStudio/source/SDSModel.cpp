@@ -15,7 +15,9 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
+#ifdef APPS_CORESW_SDS_PLUGIN_BLE
 #include "BleDeviceModel.h"
+#endif // APPS_CORESW_SDS_PLUGIN_BLE
 #include "FirmwareUpdater.h"
 #include "PlatformOperation.h"
 
@@ -47,7 +49,9 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       platformOperation_(new PlatformOperation(strataClient_, this)),
+#ifdef APPS_CORESW_SDS_PLUGIN_BLE
       bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
+#endif // APPS_CORESW_SDS_PLUGIN_BLE
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -227,10 +231,12 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
     return std::addressof(strata::loggers::QtLogger::instance());
 }
 
+#ifdef APPS_CORESW_SDS_PLUGIN_BLE
 BleDeviceModel *SDSModel::bleDeviceModel() const
 {
     return bleDeviceModel_;
 }
+#endif // APPS_CORESW_SDS_PLUGIN_BLE
 
 strata::strataRPC::StrataClient *SDSModel::strataClient() const
 {

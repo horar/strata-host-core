@@ -96,7 +96,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciMockCommandModel>("tech.strata.sci", 1, 0, "SciMockCommandModel", "cannot instantiate SciMockCommandModel in qml");
     qmlRegisterUncreatableType<SciMockResponseModel>("tech.strata.sci", 1, 0, "SciMockResponseModel", "cannot instantiate SciMockResponseModel in qml");
     qmlRegisterUncreatableType<SciMockVersionModel>("tech.strata.sci", 1, 0, "SciMockVersionModel", "cannot instantiate SciMockVersionModel in qml");
+#ifdef APPS_CORESW_SDS_PLUGIN_BLE
     qmlRegisterUncreatableType<SciBleDeviceModel>("tech.strata.sci", 1, 0, "SciBleDeviceModel", "cannot instantiate SciBleDeviceModel in qml");
+#endif // APPS_CORESW_SDS_PLUGIN_BLE
 
     qmlRegisterUncreatableType<strata::device::MockDevice>("tech.strata.sci", 1, 0, "MockDevice", "cannot instantiate MockDevice in qml");
     qRegisterMetaType<strata::device::MockCommand>("MockCommand");
@@ -122,6 +124,10 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
+
+#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+    engine.rootContext()->setContextProperty ("APPS_CORESW_SDS_PLUGIN_BLE", QVariant(APPS_CORESW_SDS_PLUGIN_BLE));
+#endif // APPS_CORESW_SDS_PLUGIN_BLE
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
