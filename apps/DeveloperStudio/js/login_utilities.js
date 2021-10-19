@@ -10,7 +10,6 @@
 
 .import "restclient.js" as Rest
 .import "utilities.js" as Utility
-
 .import QtQuick 2.0 as QtQuickModule
 
 .import tech.strata.logger 1.0 as LoggerModule
@@ -82,13 +81,12 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
-
     var result = {
         "response":"Connected",
         "jwt": response.token,
         "first_name": response.firstname,
         "last_name": response.lastname,
-        "user_id": response.user,
+        "user_id": response.user
     }
 
     // [TODO][prasanth]: jwt will be created/received in the hcs
@@ -217,7 +215,7 @@ function register(registration_info){
         "username":registration_info.username,
         "password":registration_info.password,
         "title": registration_info.title,
-        "company": registration_info.company,
+        "company": registration_info.company
     };
     Rest.anonymous = registration_info.anonymous
     Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": Rest.anonymous })
@@ -576,21 +574,6 @@ function validation_result (response) {
         } else {
             SignalsModule.Signals.validationResult("Error")
         }
-    }
-}
-
-function update_anonymous(hasOptedOut) {
-    Rest.anonymous = hasOptedOut
-    var headers = {"app": "strata"}
-    Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
-    Rest.session = ""
-    if (Rest.jwt !== "") {
-        let headers = {
-            "app": "strata",
-            "version": Rest.versionNumber(),
-            "anonymous": hasOptedOut
-        }
-        Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     }
 }
 
