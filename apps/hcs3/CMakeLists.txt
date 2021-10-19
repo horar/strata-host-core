@@ -12,7 +12,7 @@ project(HostControllerService
 )
 
 set(PROJECT_BUNDLE_ID com.onsemi.strata.hcs)
-if(APPS_CORESW_SDS_PLUGIN_BLE)
+if(APPS_FEATURE_BLE)
     string(CONCAT PROJECT_BUNDLE_ADDON
         "<key>NSBluetoothAlwaysUsageDescription</key>"
         "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"

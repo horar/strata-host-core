@@ -13,9 +13,9 @@
 #include <QHash>
 
 #include <PlatformManager.h>
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
 #include <BluetoothLowEnergy/BluetoothLowEnergyScanner.h>
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 #include <Operations/PlatformOperations.h>
 
 /*
@@ -74,12 +74,12 @@ public:
      */
     QJsonObject createPlatformsList();
 
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     /**
      * Starts scanning for BLE devices. Will send a notification upon success/failure.
      */
     void startBluetoothScan();
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 
     /**
      * Connects a device (don't confuse with a platform)
@@ -105,9 +105,9 @@ signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
     void platformMessage(QString platformId, QJsonObject message);
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     void bluetoothScanFinished(const QJsonObject payload);
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
     void connectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
     void connectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
     void disconnectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
@@ -124,9 +124,9 @@ private slots:
     void closeConnection(const QByteArray& deviceId);
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     void bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
     void connectDeviceFinishedHandler(const QByteArray& deviceId);
     void connectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString);
 
@@ -138,7 +138,7 @@ private slots:
                            QString errorString);
 
 private:
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     /**
      * Creates bluetooth_scan notification payload, with list of found BLE devices
      * @param reference to the bluetooth scanner, used as data source
@@ -151,7 +151,7 @@ private:
      * @return bluetooth_scan error notification payload
      */
     static  QJsonObject createBluetoothScanErrorPayload(QString errorString);
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 
     struct PlatformData {
         PlatformData(strata::platform::PlatformPtr p, bool b);

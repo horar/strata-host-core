@@ -11,22 +11,22 @@ project(PlatformManager
     LANGUAGES CXX
 )
 
-if(APPS_CORESW_SDS_PLUGIN_BLE)
-    set(CONDITIONAL_PACKAGES
+if(APPS_FEATURE_BLE)
+    set(BLUETOOTH_PACKAGES
         Bluetooth
     )
-    set(CONDITIONAL_SOURCE_FILES
+    set(BLUETOOTH_SOURCES
         src/BluetoothLowEnergy/BluetoothLowEnergyScanner.cpp
         include/BluetoothLowEnergy/BluetoothLowEnergyScanner.h
     )
-    set(CONDITIONAL_LIBRARIES
+    set(BLUETOOTH_LIBRARIES
         PUBLIC Qt5::Bluetooth
     )
-    add_compile_definitions(APPS_CORESW_SDS_PLUGIN_BLE=true)
+    add_compile_definitions(APPS_FEATURE_BLE=true)
 endif()
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort Network ${CONDITIONAL_PACKAGES}
+    COMPONENTS Core SerialPort Network ${BLUETOOTH_PACKAGES}
     REQUIRED
 )
 
@@ -45,7 +45,7 @@ add_library(${PROJECT_NAME}
     include/Mock/MockDeviceScanner.h
     include/Tcp/TcpDeviceScanner.h
 
-    ${CONDITIONAL_SOURCE_FILES}
+    ${BLUETOOTH_SOURCES}
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -65,7 +65,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC strata::Platform
     PRIVATE strata::CommandValidator
 
-    ${CONDITIONAL_LIBRARIES}
+    ${BLUETOOTH_LIBRARIES}
 )
 
 if(WIN32)

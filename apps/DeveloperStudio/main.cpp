@@ -43,9 +43,9 @@
 #include "RunGuard.h"
 #include "FirmwareUpdater.h"
 #include "PlatformInterfaceGenerator.h"
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
 #include "BleDeviceModel.h"
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
 
@@ -164,9 +164,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     qmlRegisterUncreatableType<BleDeviceModel>("tech.strata.BleDeviceModel", 1, 0, "BleDeviceModel", "You can't instantiate BleDeviceModel in QML");
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
     qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterUncreatableType<PlatformOperation>("tech.strata.PlatformOperation", 1, 0, "PlatformOperation", "You can't instantiate PlatformOperation in QML");
@@ -199,9 +199,9 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
 
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
-    engine.rootContext()->setContextProperty ("APPS_CORESW_SDS_PLUGIN_BLE", QVariant(APPS_CORESW_SDS_PLUGIN_BLE));
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
+    engine.rootContext()->setContextProperty ("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
+#endif // APPS_FEATURE_BLE
 
     AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(

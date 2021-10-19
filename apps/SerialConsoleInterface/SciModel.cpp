@@ -15,20 +15,20 @@ SciModel::SciModel(QObject *parent)
       platformManager_(true, true, true),
       platformModel_(&platformManager_),
       mockDeviceModel_(&platformManager_)
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
       ,bleDeviceModel_(&platformManager_)
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 {
     platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
     platformManager_.addScanner(strata::device::Device::Type::MockDevice);
     platformManager_.addScanner(strata::device::Device::Type::TcpDevice);
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     platformManager_.addScanner(strata::device::Device::Type::BLEDevice);
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
     mockDeviceModel_.init();
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     bleDeviceModel_.init();
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 }
 
 SciModel::~SciModel()
@@ -50,9 +50,9 @@ SciMockDeviceModel *SciModel::mockDeviceModel()
     return &mockDeviceModel_;
 }
 
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
 SciBleDeviceModel *SciModel::bleDeviceModel()
 {
     return &bleDeviceModel_;
 }
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE

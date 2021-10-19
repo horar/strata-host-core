@@ -14,12 +14,12 @@ project(StrataDeveloperStudio
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
-if(APPS_CORESW_SDS_PLUGIN_BLE)
+if(APPS_FEATURE_BLE)
     string(CONCAT PROJECT_BUNDLE_ADDON
         "<key>NSBluetoothAlwaysUsageDescription</key>"
         "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
     )
-    set(CONDITIONAL_EXECUTABLES
+    set(BLUETOOTH_SOURCES
         source/BleDeviceModel.cpp
     )
 endif()
@@ -78,7 +78,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
-    ${CONDITIONAL_EXECUTABLES}
+    ${BLUETOOTH_SOURCES}
 )
 
 set(${PROJECT_NAME}_ENABLED_PLUGINS "")
@@ -128,8 +128,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON
     #AUTORCC_OPTIONS "--compress;9"
-
-    ${CONDITIONAL_PROPERTIES}
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>

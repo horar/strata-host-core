@@ -14,12 +14,12 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
-if(APPS_CORESW_SDS_PLUGIN_BLE)
+if(APPS_FEATURE_BLE)
     string(CONCAT PROJECT_BUNDLE_ADDON
         "<key>NSBluetoothAlwaysUsageDescription</key>"
         "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
     )
-    set(CONDITIONAL_EXECUTABLES
+    set(BLUETOOTH_SOURCES
         SciBleDeviceModel.cpp
     )
 endif()
@@ -56,7 +56,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
 
-    ${CONDITIONAL_EXECUTABLES}
+    ${BLUETOOTH_SOURCES}
 )
 
 generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)

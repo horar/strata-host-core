@@ -47,6 +47,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
-if(APPS_CORESW_SDS_PLUGIN_BLE)
-    add_compile_definitions(APPS_CORESW_SDS_PLUGIN_BLE=true)
+if(APPS_FEATURE_BLE)
+    add_compile_definitions(APPS_FEATURE_BLE=true)
 endif()

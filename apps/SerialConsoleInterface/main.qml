@@ -57,7 +57,7 @@ SGWidgets.SGMainWindow {
 
         QtLabsPlatform.Menu {
             title: qsTr("&Bluetooth")
-            visible: (typeof APPS_CORESW_SDS_PLUGIN_BLE !== "undefined") && APPS_CORESW_SDS_PLUGIN_BLE
+            visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
 
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Connect Device...")

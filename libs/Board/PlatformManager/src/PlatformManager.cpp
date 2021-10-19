@@ -13,9 +13,9 @@
 #include <Serial/SerialDeviceScanner.h>
 #include <Mock/MockDeviceScanner.h>
 #include <Tcp/TcpDeviceScanner.h>
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
 #include <BluetoothLowEnergy/BluetoothLowEnergyScanner.h>
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 
 
 namespace strata {
@@ -28,9 +28,9 @@ using device::scanner::DeviceScannerPtr;
 using device::scanner::MockDeviceScanner;
 using device::scanner::SerialDeviceScanner;
 using device::scanner::TcpDeviceScanner;
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
 using device::scanner::BluetoothLowEnergyScanner;
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
 
 namespace operation = platform::operation;
 
@@ -88,11 +88,11 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     case Device::Type::TcpDevice: {
         scanner = std::make_shared<TcpDeviceScanner>();
     } break;
-#ifdef APPS_CORESW_SDS_PLUGIN_BLE
+#ifdef APPS_FEATURE_BLE
     case Device::Type::BLEDevice: {
         scanner = std::make_shared<BluetoothLowEnergyScanner>();
     } break;
-#endif // APPS_CORESW_SDS_PLUGIN_BLE
+#endif // APPS_FEATURE_BLE
     default: {
         qCCritical(logCategoryPlatformManager) << "Invalid DeviceScanner type:" << scannerType;
         return;
