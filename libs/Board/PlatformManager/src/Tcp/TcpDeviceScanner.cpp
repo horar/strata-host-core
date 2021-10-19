@@ -60,6 +60,11 @@ QList<QByteArray> TcpDeviceScanner::discoveredDevices() const
     return discoveredDeviceIds;
 }
 
+const QList<TcpDeviceInfo> TcpDeviceScanner::discoveredTcpDevices() const
+{
+    return discoveredDevices_;
+}
+
 QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
 {
     auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),

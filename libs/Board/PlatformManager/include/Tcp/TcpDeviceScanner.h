@@ -68,6 +68,12 @@ public:
     virtual QList<QByteArray> discoveredDevices() const override;
 
     /**
+     * Return list of information of all discovered devices
+     * @return list of TcpDeviceInfo
+     */
+    const QList<TcpDeviceInfo> discoveredTcpDevices() const;
+
+    /**
      * Initiates connection to discovered device.
      * @param deviceId device ID, returned by discoveredDevices()
      * @return empty string if connecting started, error message if there was an error
@@ -104,6 +110,9 @@ public:
     void startDiscovery();
     void stopDiscovery();
 
+signals:
+    void discoveryFinished();
+
 private slots:
     void processPendingDatagrams();
     void discoveryFinished();
@@ -120,4 +129,7 @@ private:
     static constexpr qint16 UDP_LISTEN_PORT{5146};
     static constexpr std::chrono::milliseconds DISCOVERY_TIMEOUT{5000};
 };
+
+typedef std::shared_ptr<TcpDeviceScanner> TcpDeviceScannerPtr;
+
 }  // namespace strata::device::scanner
