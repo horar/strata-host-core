@@ -14,6 +14,7 @@
 #include "SGQwtPlot.h"
 #include "SGUserSettings.h"
 #include "SGVersionUtils.h"
+#include "SGCSVUtils.h"
 #include "mqtt/SGMqttClient.h"
 #include "mqtt/SGSslConfiguration.h"
 #include "SGJsonSyntaxHighlighter.h"
@@ -42,6 +43,7 @@ void CommonCppPlugin::registerTypes(const char *uri)
         return formatter;
     });
 
+    qmlRegisterType<SGCSVUtils>(uri, 1, 0,"SGCSVUtils");
     qmlRegisterType<SGJLinkConnector>(uri, 1, 0, "SGJLinkConnector");
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
     qmlRegisterType<SGQwtPlot>(uri, 1, 0, "SGQwtPlot");
