@@ -21,7 +21,7 @@ var initialized = false
 /*
   Settings: Store/retrieve login information
 */
-var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+const settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
 const userSettings = Qt.createQmlObject(`import tech.strata.commoncpp 1.0; SGUserSettings {classId: "general-settings";}`, Qt.application, "SGUserSettings")
 
 /*

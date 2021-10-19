@@ -65,13 +65,22 @@ SGStrataPopup {
         }
 
         SGSettingsCheckbox {
-            text: "Request to opt-out of metric tracking (note: will take effect after session end)"
+            text: "Request to opt-out of metric tracking"
             checked: userSettings.hasOptedOut
 
             onCheckedChanged: {
                 userSettings.hasOptedOut = checked
                 userSettings.saveSettings()
             }
+        }
+
+        SGText {
+            text: "Request to opt-out will take effect after session end"
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            fontSizeMultiplier: 0.9
+            Layout.leftMargin: 10
+            font.underline: true
         }
 
             // to be uncommented in CS-880

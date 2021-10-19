@@ -715,4 +715,14 @@ Rectangle {
         PlatformSelection.logout()
         sdsModel.strataClient.sendRequest("unregister", {})
     }
+
+    Connections {
+        target: userSettings
+
+        onHasOptedOutChanged: {
+            if (Authenticator.settings.rememberMe) {
+                Authenticator.settings.rememberMe = false
+            }
+        }
+    }
 }
