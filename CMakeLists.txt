@@ -100,6 +100,7 @@ add_subdirectory(libs)
 add_subdirectory(utils)
 add_subdirectory(components)
 
+
 message(STATUS "=============================================================================")
 message(STATUS "QML import paths:")
 foreach(QML_PATH IN LISTS QML_IMPORT_PATH)

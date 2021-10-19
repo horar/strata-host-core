@@ -31,6 +31,7 @@ endif()
 qt5_generate_repc(NODE_RO_SRCS ${CMAKE_SOURCE_DIR}/apps/hcs3/src/HostControllerService.rep REPLICA)
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
+    doc/license-header.h
     main.cpp
     source/AppUi.cpp
     source/SDSModel.cpp
@@ -59,6 +60,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     signals/qml/tech/strata/signals/qml.qrc
     notifications/qml/tech/strata/notifications/qml.qrc
     partial-views/control-view-creator/template-views.qrc
+
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
