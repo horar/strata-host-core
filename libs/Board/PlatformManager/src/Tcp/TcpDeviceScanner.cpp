@@ -35,7 +35,7 @@ void TcpDeviceScanner::init(quint32 flags)
 
     discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
     discoveryTimer_.setSingleShot(true);
-    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::discoveryFinished);
+    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::discoveryFinishedHandler);
 
     if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
         startDiscovery();
@@ -225,7 +225,7 @@ bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPor
     return true;
 }
 
-void TcpDeviceScanner::discoveryFinished()
+void TcpDeviceScanner::discoveryFinishedHandler()
 {
     qCDebug(logCategoryDeviceScanner) << "TcpDevice discovery Finished";
     stopDiscovery();

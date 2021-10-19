@@ -107,7 +107,15 @@ public:
      */
     void unsetProperties(quint32 flags);
 
+    /**
+     * Starts searching for tcp devices
+     * Note: search will last for 5 seconds.
+     */
     void startDiscovery();
+    
+    /**
+     * Stops searching for tcp devices
+     */
     void stopDiscovery();
 
 signals:
@@ -115,7 +123,7 @@ signals:
 
 private slots:
     void processPendingDatagrams();
-    void discoveryFinished();
+    void discoveryFinishedHandler();
 
 private:
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
