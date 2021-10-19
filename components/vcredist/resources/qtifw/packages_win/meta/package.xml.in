@@ -8,20 +8,17 @@
    Terms and Conditions of Sale, Section 8 Software”).
   -->
 <Package>
-    <DisplayName>FTDI Driver</DisplayName>
-    <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
-    <!--
-        This version is used also in installscript.js when doing uninstall, will change when we update driver
-        TODO: find out if we can generate this automatically
-    -->
-    <Version>2.12.28</Version>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>The Visual C++ Redistributable Packages install run-time components that are required to run C++ applications built using Visual Studio 2017</Description>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_OPTIONAL@-@BUILD_ID@</Version>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>40</SortingPriority>
+    <SortingPriority>50</SortingPriority>
     <!--we need admin rights to install this component-->
     <RequiresAdminRights>true</RequiresAdminRights>
     <Script>installscript.js</Script>
-    <ReleaseDate>2017-08-16</ReleaseDate>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Virtual>True</Virtual>
     <Licenses>
-        <License name="FTDI Driver License Agreement" file="ftdi_license.txt" />
+        <License name="Microsoft VS 2017 Tools, Add-ONs and Extensions License Agreement" file="vcredist_license.html" />
     </Licenses>
 </Package>
