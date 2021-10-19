@@ -31,6 +31,13 @@ Menu {
     }
 
     MenuItem {
+        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
+        onTriggered: {
+            SGUtilsCpp.showFileInFolder(model.filepath)
+        }
+    }
+
+    MenuItem {
         id: renameFileMenuItem
         text: "Rename File"
         enabled: {

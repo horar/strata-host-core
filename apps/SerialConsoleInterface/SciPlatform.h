@@ -122,6 +122,7 @@ signals:
 
     void flasherFinished(strata::FlasherConnector::Result result);
     void sendMessageResultReceived(SendMessageErrorType type, QVariantMap data);
+    void messageReceived();
 
 private slots:
     void messageFromDeviceHandler(strata::platform::PlatformMessage message);

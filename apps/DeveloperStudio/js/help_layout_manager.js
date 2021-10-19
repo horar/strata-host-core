@@ -25,7 +25,12 @@ var control_view_creator = null
 var help_object = null
 var font_size_multiplier = 1
 
-var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(bool tour_running)}', Qt.application, 'HelpUtility');
+var utility = Qt.createQmlObject('import QtQuick 2.0;\
+    QtObject { \
+        signal internal_tour_indexChanged(int index);\
+        signal tour_runningChanged(bool tour_running);\
+        property string runningTourName: "";\
+    }', Qt.application, 'HelpUtility');
 
 
 /*******
@@ -135,6 +140,7 @@ function startHelpTour(tourName, device_id) {
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
     tour_running = true
+    utility.runningTourName = tourName
     utility.tour_runningChanged(tour_running)
 
     findTourStop(0)
@@ -171,6 +177,7 @@ function closeTour() {
         font_size_multiplier = 1
         tour_running = false
         utility.tour_runningChanged(tour_running)
+        utility.runningTourName = ""
     }
 }
 

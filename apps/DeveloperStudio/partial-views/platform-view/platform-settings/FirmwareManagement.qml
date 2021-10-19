@@ -21,7 +21,7 @@ ColumnLayout {
     Component.onCompleted: {
         firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
         firmwareSortFilterModel.sourceModel = firmwareListModel
-        firmwareList.firmwareRepeater.model = firmwareSortFilterModel
+        firmwareList.firmwareModel = firmwareSortFilterModel
     }
 
     property var firmwareListModel: null
