@@ -30,16 +30,14 @@ TcpDeviceScanner::~TcpDeviceScanner()
 
 void TcpDeviceScanner::init(quint32 flags)
 {
+    Q_UNUSED(flags);
+
     connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
             &TcpDeviceScanner::processPendingDatagrams);
 
     discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
     discoveryTimer_.setSingleShot(true);
     connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::discoveryFinishedHandler);
-
-    if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
-        startDiscovery();
-    }
 }
 
 void TcpDeviceScanner::deinit()
@@ -104,20 +102,6 @@ void TcpDeviceScanner::disconnectAllDevices() {
         emit deviceLost(tcpDeviceInfo.deviceId);
     }
     discoveredDevices_.clear();
-}
-
-void TcpDeviceScanner::setProperties(quint32 flags)
-{
-    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        stopDiscovery();
-    }
-}
-
-void TcpDeviceScanner::unsetProperties(quint32 flags)
-{
-    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        startDiscovery();
-    }
 }
 
 void TcpDeviceScanner::startDiscovery()

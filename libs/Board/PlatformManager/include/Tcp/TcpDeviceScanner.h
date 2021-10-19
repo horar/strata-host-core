@@ -32,15 +32,6 @@ class TcpDeviceScanner : public DeviceScanner
 
 public:
     /**
-     * Flags defining properties for TCP device scanner.
-     * By default, scanner starts with all flags unset.
-     */
-    enum TcpScannerFlag {
-        DisableAutomaticScan = 0x0001
-    };
-    Q_DECLARE_FLAGS(TcpScannerProperty, TcpScannerFlag)
-
-    /**
      * TcpDeviceScanner constructor
      */
     TcpDeviceScanner();
@@ -91,21 +82,6 @@ public:
      * Drops connection to all discovered devices.
      */
     virtual void disconnectAllDevices() override;
-
-    /**
-     * Set properties for TCP device scanner.
-     * Calling setProperties(A | B) is equivalent to calling setProperties(A) and then setProperties(B).
-     * @param flags flags defining properties for TCP device scanner
-     */
-    void setProperties(quint32 flags);
-
-    /**
-     * Unset properties for TCP device scanner.
-     * Calling unsetProperties(A | B) is equivalent to calling unsetProperties(A) and then unsetProperties(B).
-     * To unset all properties (restore default values), call unsetProperties(0xFFFFFFFF).
-     * @param flags flags defining properties for TCP device scanner
-     */
-    void unsetProperties(quint32 flags);
 
     /**
      * Starts searching for tcp devices
