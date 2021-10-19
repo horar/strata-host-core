@@ -361,6 +361,7 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage message)
 {
     scrollbackModel_->append(message.raw(), false);
+    emit messageReceived();
     filterSuggestionModel_->add(message.raw());
 }
 

@@ -91,21 +91,21 @@ Rectangle {
         }
         spacing: 1
 
-    	Item {
-        	id: logoContainer
-        	Layout.preferredHeight: container.height
-        	Layout.preferredWidth: 70
+        Item {
+            id: logoContainer
+            Layout.preferredHeight: container.height
+            Layout.preferredWidth: 70
 
-        	Image {
-            	source: "qrc:/images/strata-logo-reverse.svg"
-            	height: 30
-            	width: 60
-            	mipmap: true
-            	anchors {
-                	centerIn: logoContainer
-            	}
-        	}
-    	}
+            Image {
+                source: "qrc:/images/strata-logo-reverse.svg"
+                height: 30
+                width: 60
+                mipmap: true
+                anchors {
+                    centerIn: logoContainer
+                }
+            }
+        }
 
         Rectangle {
             id: platformSelector
@@ -211,32 +211,34 @@ Rectangle {
             state: "help_tour"
             Layout.preferredWidth: 250
             Layout.fillHeight: true
+
             onXChanged: {
                 if (visible) {
                     Help.refreshView(Help.internal_tour_index)
                 }
             }
 
-           Component.onCompleted: {
-               Help.registerTarget(help_tour.currIcon, "This button opens the platform dropdown menu.", 4, "selectorHelp")
-               Help.registerTarget(help_tour.platformName, "Clicking here will bring the platform's interface into view. ", 3, "selectorHelp")
-           }
+            Component.onCompleted: {
+                Help.registerTarget(help_tour.currIcon, "This button opens the platform dropdown menu.", 4, "selectorHelp")
+                Help.registerTarget(help_tour.platformName, "Clicking here will bring the platform's interface into view. ", 3, "selectorHelp")
+            }
 
-           Connections {
-               target: Help.utility
+            Connections {
+                target: Help.utility
+                enabled: Help.utility.runningTourName === "selectorHelp"
 
-               onTour_runningChanged: {
-                   if(!tour_running){
-                       help_tour.visible = false
-                   }
-               }
+                onTour_runningChanged: {
+                    if (!tour_running) {
+                        help_tour.visible = false
+                    }
+                }
 
-               onInternal_tour_indexChanged: {
-                   if(Help.current_tour_targets[index]["target"] === help_tour){
+                onInternal_tour_indexChanged: {
+                    if (Help.current_tour_targets[index]["target"] === help_tour) {
                         help_tour.visible = true
-                   }
-               }
-           }
+                    }
+                }
+            }
         }
 
         ListView {

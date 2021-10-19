@@ -14,19 +14,16 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     // Install Microsoft Visual C++ 2017 X64 Additional Runtime
-    if (Component.prototype.isVCRedistInstalled() == false) {
-        console.log("will install Microsoft Visual C++ 2017 X64 Additional Runtime libraries...");
-        // status code 0 means succefull installaion
-        // status code 1638 means VC already exist. Therefore, no need to show warnings.
-        // status code 3010 means that the oporation is successful but a restart is required
-        //component.addOperation("Execute", "{0,1638,3010}", installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\vc_redist.x64.exe", "/install", "/quiet", "/norestart");
-
-        // we need to do it like this to capture the exit code, so we know if we need to restart computer (it will be written in the vc_redist_out.txt)
-        component.addElevatedOperation("Execute", "{0,1638,3010}", installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\run_vc_redist.bat");
+    if (Component.prototype.isFTDIInstalled() == false)  {
+        console.log("installing FTDI CDM Drivers...");
+        // status code 512 means succefull installaion
+        // status code 2 means succefull installation with a device plugged in
+        component.addElevatedOperation("Execute", "{2,512}", installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\FTDI\\dpinst-amd64.exe", "/S", "/SE", "/F");
     } else {
-        console.log("Microsoft Visual C++ 2017 X64 Additional Runtime already installed");
+        console.log("FTDI CDM Drivers already installed");
     }
 }
+
 
 // Return 1 if a > b
 // Return -1 if a < b
@@ -67,6 +64,25 @@ function compare(a, b) {
     return 0;
 }
 
+function getVersion(a) {
+    if (a == null) {
+       return "";
+    }
+
+    var a_components = a.split(" ");    // example "08/16/2017 2.12.28"
+    var len = a_components.length;
+
+    if (len == 0) {
+        return a;       // maybe different in other version
+    } else if (len == 1) {
+        return a;       // maybe different in other version
+    } else if (len == 2) {
+        return a_components[1];         // we need the second half
+    } else {
+        return a;
+    }
+}
+
 function getPowershellElement(str, element_name) {
     var res = [];
     var x = str.split('\r\n');
@@ -89,9 +105,9 @@ function getPowershellElement(str, element_name) {
     return res;
 }
 
-Component.prototype.isVCRedistInstalled = function()
+Component.prototype.isFTDIInstalled = function()
 {
-    var programName = "Microsoft Visual C\\+\\+ 201[75](\\-\\d{4})? Redistributable \\(x64\\)";    // this is the correct program to be uninstalled
+    var programName = "Windows Driver Package \\- FTDI CDM Driver Package";
     var powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -match '" + programName + "' })";
 
     console.log("executing powershell command '" + powerShellCommand + "'");
@@ -114,7 +130,7 @@ Component.prototype.isVCRedistInstalled = function()
         if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
             for (var i = 0; i < display_version.length; i++) {
 
-                var result = compare(display_version[i], component.value("Version"));    // example "14.16.27033"
+                var result = compare(getVersion(display_version[i]), component.value("Version").split('-')[0]);    // example "08/16/2017 2.12.28"
 
                 if (result == 1) {
                     up_to_date = true;
@@ -124,11 +140,9 @@ Component.prototype.isVCRedistInstalled = function()
                     console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                 } else {
                     console.log("program is older, will replace with new version if newer is not available, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
-
-                    // do not uninstall vcredist, it might cause issue, just let the updater do its job and hope it works correctly
-                    //console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");
-                    //var e = installer.execute(uninstall_string[i], ["/norestart", "/quiet"]);
-                    //console.log(e);
+                    console.log("executing FTDI uninstall command: '" + uninstall_string[i] + "'");
+                    var e = installer.execute(uninstall_string[i], ["/SW"]);
+                    console.log(e);
                 }
             }
         }
