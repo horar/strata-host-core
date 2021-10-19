@@ -115,12 +115,10 @@ void SciBleDeviceModel::tryConnectDevice(int index)
 
     QByteArray deviceId = data_.at(index).deviceId;
 
-    if (requestedIds_.contains(deviceId)) {
+    if (addConnectingDevice(deviceId) == false) {
         qCWarning(logCategorySci) << "request already in progress" << deviceId;
         return;
     }
-
-    requestedIds_.insert(deviceId);
 
     setPropertyAt(index, true, ConnectionInProgressRole);
 
@@ -138,12 +136,10 @@ void SciBleDeviceModel::tryDisconnectDevice(int index)
 
     QByteArray deviceId = data_.at(index).deviceId;
 
-    if (requestedIds_.contains(deviceId)) {
+    if (addConnectingDevice(deviceId) == false) {
         qCWarning(logCategorySci) << "request already in progress" << deviceId;
         return;
     }
-
-    requestedIds_.insert(deviceId);
 
     setPropertyAt(index, true, ConnectionInProgressRole);
 
@@ -168,6 +164,11 @@ QVariantMap SciBleDeviceModel::get(int row)
 bool SciBleDeviceModel::inDiscoveryMode() const
 {
     return inDiscoveryMode_;
+}
+
+bool SciBleDeviceModel::isConnecting() const
+{
+    return (requestedIds_.isEmpty() == false);
 }
 
 QString SciBleDeviceModel::lastDiscoveryError() const
@@ -210,9 +211,7 @@ void SciBleDeviceModel::connectDeviceFinishedHandler(const QByteArray deviceId)
 
     connectedDeviceIds_.insert(deviceId);
 
-    if (requestedIds_.contains(deviceId)) {
-        requestedIds_.remove(deviceId);
-    }
+    removeConnectingDevice(deviceId);
 }
 
 void SciBleDeviceModel::connectDeviceFailedHandler(const QByteArray deviceId, const QString errorString)
@@ -228,9 +227,7 @@ void SciBleDeviceModel::connectDeviceFailedHandler(const QByteArray deviceId, co
         connectedDeviceIds_.remove(deviceId);
     }
 
-    if (requestedIds_.contains(deviceId)) {
-        requestedIds_.remove(deviceId);
-    }
+    removeConnectingDevice(deviceId);
 }
 
 void SciBleDeviceModel::deviceLostHandler(QByteArray deviceId)
@@ -245,9 +242,7 @@ void SciBleDeviceModel::deviceLostHandler(QByteArray deviceId)
         connectedDeviceIds_.remove(deviceId);
     }
 
-    if (requestedIds_.contains(deviceId)) {
-        requestedIds_.remove(deviceId);
-    }
+    removeConnectingDevice(deviceId);
 }
 
 void SciBleDeviceModel::populateModel()
@@ -384,4 +379,32 @@ void SciBleDeviceModel::setLastDiscoveryError(QString lastDiscoveryError)
 
     lastDiscoveryError_ = lastDiscoveryError;
     emit lastDiscoveryErrorChanged();
+}
+
+bool SciBleDeviceModel::addConnectingDevice(const QByteArray &deviceId)
+{
+    if (requestedIds_.contains(deviceId)) {
+        return false;
+    }
+
+    requestedIds_.insert(deviceId);
+
+    if (requestedIds_.size() == 1) {
+        emit isConnectingChanged();
+    }
+    return true;
+}
+
+bool SciBleDeviceModel::removeConnectingDevice(const QByteArray &deviceId)
+{
+    if (requestedIds_.contains(deviceId) == false) {
+        return false;
+    }
+
+    requestedIds_.remove(deviceId);
+
+    if (requestedIds_.isEmpty()) {
+        emit isConnectingChanged();
+    }
+    return true;
 }

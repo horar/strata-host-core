@@ -109,12 +109,10 @@ void BleDeviceModel::tryConnect(int row)
 
     QString deviceId = data_.at(row).deviceId;
 
-    if (requestedIds_.contains(deviceId)) {
+    if (addConnectingDevice(deviceId) == false) {
         qCWarning(logCategoryStrataDevStudio) << "request already in progress" << deviceId;
         return;
     }
-
-    requestedIds_.insert(data_.at(row).deviceId);
 
     setPropertyAt(row, true, ConnectionInProgressRole);
     setPropertyAt(row, "", ErrorStringRole);
@@ -136,12 +134,10 @@ void BleDeviceModel::tryDisconnect(int row)
 
     QString deviceId = data_.at(row).deviceId;
 
-    if (requestedIds_.contains(deviceId)) {
+    if (addConnectingDevice(deviceId) == false) {
         qCWarning(logCategoryStrataDevStudio) << "request already in progress" << deviceId;
         return;
     }
-
-    requestedIds_.insert(deviceId);
 
     setPropertyAt(row, true, ConnectionInProgressRole);
     setPropertyAt(row, "", ErrorStringRole);
@@ -170,6 +166,11 @@ QVariantMap BleDeviceModel::get(int row)
 bool BleDeviceModel::inScanMode() const
 {
     return inScanMode_;
+}
+
+bool BleDeviceModel::isConnecting() const
+{
+    return (requestedIds_.isEmpty() == false);
 }
 
 QString BleDeviceModel::lastScanError() const
@@ -207,12 +208,10 @@ void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
 {
     QString deviceId = payload.value("device_id").toString();
 
-    if (requestedIds_.contains(deviceId) == false) {
-        //not our request
+    if (removeConnectingDevice(deviceId) == false) {
+        // not our request
         return;
     }
-
-    requestedIds_.remove(deviceId);
 
     int row = findDeviceIndex(deviceId);
     if (row < 0) {
@@ -234,12 +233,10 @@ void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
 {
     QString deviceId = payload.value("device_id").toString();
 
-    if (requestedIds_.contains(deviceId) == false) {
-        //not our request
+    if (removeConnectingDevice(deviceId) == false) {
+        // not our request
         return;
     }
-
-    requestedIds_.remove(deviceId);
 
     int row = findDeviceIndex(deviceId);
     if (row < 0) {
@@ -418,4 +415,33 @@ void BleDeviceModel::setLastScanError(QString lastScanError)
     lastScanError_ = lastScanError;
     emit lastScanErrorChanged();
 }
+
+bool BleDeviceModel::addConnectingDevice(const QString &deviceId)
+{
+    if (requestedIds_.contains(deviceId)) {
+        return false;
+    }
+
+    requestedIds_.insert(deviceId);
+
+    if (requestedIds_.size() == 1) {
+        emit isConnectingChanged();
+    }
+    return true;
+}
+
+bool BleDeviceModel::removeConnectingDevice(const QString &deviceId)
+{
+    if (requestedIds_.contains(deviceId) == false) {
+        return false;
+    }
+
+    requestedIds_.remove(deviceId);
+
+    if (requestedIds_.isEmpty()) {
+        emit isConnectingChanged();
+    }
+    return true;
+}
+
 
