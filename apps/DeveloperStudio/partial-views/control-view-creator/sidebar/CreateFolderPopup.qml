@@ -86,7 +86,6 @@ SGStrataPopup {
 
                 onClicked: {
                     let url
-                    console.log(createFolderPopup.folderPath)
                     if (createFolderPopup.folderPath) {
                         url = SGUtilsCpp.joinFilePath(createFolderPopup.folderPath, folderNameInfobox.text)
                     } else {
