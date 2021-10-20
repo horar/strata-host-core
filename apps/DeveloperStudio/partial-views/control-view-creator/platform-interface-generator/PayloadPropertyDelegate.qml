@@ -51,14 +51,14 @@ Rectangle {
                 // static array
                 if (arrayListModel.count === 0) {
                     objectListModel.clear()
-                    arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0"})
+                    arrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel, "value": "0", "keyword": false, "duplicate": false})
                     commandsListView.contentY += 50
                 }
             } else if (index === 6) {
                 // Object with known properties
                 if (objectListModel.count === 0) {
                     arrayListModel.clear()
-                    objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0"})
+                    objectListModel.append({"name": "", "type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel, "value": "0", "keyword": false, "duplicate": false})
                 }
             } else {
                 arrayListModel.clear()
@@ -105,6 +105,17 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
+
+                        let commands = finishedModel.get(commandsListView.modelIndex).data
+                        let payload = commands.get(commandsColumn.modelIndex).payload
+                        if (model.duplicate) {
+                            model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
+                            functions.loopOverDuplicates(payload, index)
+                        }
+                        if (!model.valid) {
+                            functions.invalidCount--
+                        }
+                        functions.checkAllValidArrayObject(payload.get(index), true)
                         payloadModel.remove(index)
                     }
                 }
@@ -119,7 +130,7 @@ Rectangle {
                 placeholderText: "Property key"
 
                 validator: RegExpValidator {
-                    regExp: /^(?!default)[a-z_][a-zA-Z0-9_]*/
+                    regExp: /^[a-z_][a-zA-Z0-9_]*/
                 }
 
                 background: Rectangle {
@@ -138,6 +149,10 @@ Rectangle {
 
                 Component.onCompleted: {
                     text = model.name
+                    if (!text) {
+                        model.valid = false
+                        functions.invalidCount++
+                    }
                     forceActiveFocus()
                 }
 
@@ -148,11 +163,9 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    if (text.length > 0) {
-                        functions.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
-                    } else {
-                        model.valid = false
-                    }
+                    let commands = finishedModel.get(commandsListView.modelIndex).data
+                    let payload = commands.get(commandsColumn.modelIndex).payload
+                    functions.checkForValidKey(payload, index, model.valid)
                 }
 
                 onActiveFocusChanged: {
@@ -302,9 +315,9 @@ Rectangle {
 
                 onClicked: {
                     if (propertyType.currentIndex === 4) {
-                        payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0"})
+                        payloadContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subArrayListModel, "value": "0", "keyword": false, "duplicate": false})
                     } else {
-                        payloadContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subObjectListModel, "value": "0"})
+                        payloadContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": payloadContainer.subObjectListModel, "value": "0", "keyword": false, "duplicate": false})
                     }
                     commandsListView.contentY += 40
                 }

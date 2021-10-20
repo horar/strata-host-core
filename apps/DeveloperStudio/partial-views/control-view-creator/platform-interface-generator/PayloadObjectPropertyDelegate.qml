@@ -77,7 +77,17 @@ Rectangle {
                         if (propertyKey.text !== "") {
                             unsavedChanges = true
                         }
-                        objectPropertyContainer.parentListModel.remove(modelIndex)
+
+                        let payload = objectPropertyContainer.parentListModel
+                        if (model.duplicate) {
+                            model.name = "A" // use 'A' because the name can't be an uppercase. So this won't produce duplicates
+                            functions.loopOverDuplicates(payload, modelIndex)
+                        }
+                        if (!model.valid) {
+                            functions.invalidCount--
+                        }
+                        functions.checkAllValidArrayObject(payload.get(modelIndex), true)
+                        payload.remove(modelIndex)
                     }
                 }
             }
@@ -90,7 +100,7 @@ Rectangle {
                 placeholderText: "Key"
                 selectByMouse: true
                 validator: RegExpValidator {
-                    regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+                    regExp: /^[a-z_][a-zA-Z0-9_]*/
                 }
 
                 background: Rectangle {
@@ -110,8 +120,11 @@ Rectangle {
                 }
 
                 Component.onCompleted: {
-                    if(model.name) {
+                    if (model.name) {
                         text = model.name
+                    } else {
+                        model.valid = false
+                        functions.invalidCount++
                     }
                     forceActiveFocus()
                 }
@@ -123,11 +136,7 @@ Rectangle {
                     unsavedChanges = true
 
                     model.name = text
-                    if (text.length > 0) {
-                        model.valid = functions.checkForDuplicateObjectPropertyNames(objectPropertyContainer.parentListModel, modelIndex)
-                    } else {
-                        model.valid = false
-                    }
+                    functions.checkForValidKey(objectPropertyContainer.parentListModel, modelIndex, model.valid)
                 }
             }
 
@@ -264,10 +273,10 @@ Rectangle {
 
                 onClicked: {
                     if (propertyType.currentIndex === 4) {
-                        objectPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subArrayListModel, "value": "0"})
+                        objectPropertyContainer.subArrayListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subArrayListModel, "value": "0", "keyword": false, "duplicate": false})
                     }
                     else {
-                        objectPropertyContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subObjectListModel, "value": "0"})
+                        objectPropertyContainer.subObjectListModel.append({"type": sdsModel.platformInterfaceGenerator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": objectPropertyContainer.subObjectListModel, "value": "0", "keyword": false, "duplicate": false})
                     }
                     commandsListView.contentY += 40
                 }

@@ -330,6 +330,12 @@ QString SciPlatform::saveDeviceFirmware(QString filePath) {
         return errorString;
     }
 
+    if (SGUtilsCpp().containsForbiddenCharacters(fileInfo.fileName())) {
+        QString errorString("A filename cannot contain any of the following characters: " + SGUtilsCpp().joinForbiddenCharacters());
+        qCCritical(logCategorySci) << platform_ << errorString;
+        return errorString;
+    }
+
     flasherConnector_ = new strata::FlasherConnector(platform_, filePath, this);
 
     connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);
@@ -361,6 +367,7 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 void SciPlatform::messageFromDeviceHandler(strata::platform::PlatformMessage message)
 {
     scrollbackModel_->append(message.raw(), false);
+    emit messageReceived();
     filterSuggestionModel_->add(message.raw());
 }
 
