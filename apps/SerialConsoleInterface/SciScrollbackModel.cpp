@@ -203,8 +203,8 @@ QString SciScrollbackModel::exportToFile(QString filePath)
         return errorString;
     }
 
-    if (SGUtilsCpp().containsForbiddenCharacters(fileInfo.fileName())) {
-        QString errorString("A filename cannot contain any of the following characters: " +  SGUtilsCpp().joinForbiddenCharacters());
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        QString errorString("A filename cannot contain any of the following characters: " +  SGUtilsCpp::joinForbiddenCharacters());
         qCCritical(logCategorySci) << errorString;
         return errorString;
     }
@@ -261,8 +261,8 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
         return false;
     }
 
-    if (SGUtilsCpp().containsForbiddenCharacters(fileInfo.fileName())) {
-        errorString = "A filename cannot contain any of the following characters: " + SGUtilsCpp().joinForbiddenCharacters();
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        errorString = "A filename cannot contain any of the following characters: " + SGUtilsCpp::joinForbiddenCharacters();
         qCCritical(logCategorySci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
