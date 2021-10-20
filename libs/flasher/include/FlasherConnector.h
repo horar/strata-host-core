@@ -17,6 +17,7 @@
 
 #include <Platform.h>
 #include <Flasher.h>
+#include <Operations/PlatformOperations.h>
 
 namespace strata {
 
@@ -184,19 +185,30 @@ signals:
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
     void handleFlasherState(Flasher::State flasherState, bool done);
+    void handlePlatfOperFinished(QByteArray deviceId,
+                                 strata::platform::operation::Type type,
+                                 strata::platform::operation::Result result,
+                                 int status,
+                                 QString errorString);
 
 private:
     // deleter for flasher_ unique pointer
     static void flasherDeleter(Flasher* flasher);
 
-    void flashFirmware(bool flashOld);
-    void backupFirmware(bool backupOld, Flasher::FinalAction finalAction);
+    void flashFirmware(bool flashOldFw);
+    void backupFirmware(bool backupOldFw, Flasher::FinalAction finalAction);
     void processStartupError(const QString& errorString);
+
+    void removeBackupFile();
+
+    void startApplicationFailed(const QString& errorString);
 
     platform::PlatformPtr platform_;
 
     typedef std::unique_ptr<Flasher, void(*)(Flasher*)> FlasherPtr;
     FlasherPtr flasher_;
+
+    platform::operation::PlatformOperations platformOperations_;
 
     const QString filePath_;
     const QString newFirmwareMD5_;
