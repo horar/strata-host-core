@@ -32,8 +32,8 @@ void TcpDeviceScanner::init(quint32 flags)
 {
     Q_UNUSED(flags);
 
-    connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
-            &TcpDeviceScanner::processPendingDatagrams);
+    connect(udpSocket_.get(), &QUdpSocket::readyRead, 
+            this, &TcpDeviceScanner::processPendingDatagrams);
 
     discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
     discoveryTimer_.setSingleShot(true);
