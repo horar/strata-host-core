@@ -32,7 +32,8 @@
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
     : QObject(parent),
-      fileSizePrefixList_(QStringList() <<"B"<<"KB"<<"MB"<<"GB"<<"TB"<<"PB"<<"EB")
+      fileSizePrefixList_(QStringList() <<"B"<<"KB"<<"MB"<<"GB"<<"TB"<<"PB"<<"EB"),
+      forbiddenCharactersList_{'<','>',':','"','/','\\','?','|','*'}
 {
 }
 
@@ -109,6 +110,12 @@ bool SGUtilsCpp::isRelative(const QString &file)
 {
     QFileInfo info(file);
     return info.isRelative();
+}
+
+bool SGUtilsCpp::containsForbiddenCharacters(const QString &fileName)
+{
+    return std::any_of(forbiddenCharactersList_.constBegin(), forbiddenCharactersList_.constEnd(),
+                       [&fileName](const auto& s) { return fileName.contains(s); });
 }
 
 QString SGUtilsCpp::fileName(const QString &file)
@@ -328,4 +335,18 @@ void SGUtilsCpp::showFileInFolder(const QString &path){
         QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\""});
         QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to activate"});
     #endif
+}
+
+QString SGUtilsCpp::joinForbiddenCharacters(QString separator)
+{
+    return getForbiddenCharacters().join(separator);
+}
+
+QStringList SGUtilsCpp::getForbiddenCharacters()
+{
+    QStringList list;
+    for (int i = 0; i < forbiddenCharactersList_.length(); i++) {
+        list.append(forbiddenCharactersList_[i]);
+    }
+    return list;
 }
