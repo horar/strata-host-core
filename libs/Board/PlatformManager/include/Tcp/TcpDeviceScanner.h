@@ -88,7 +88,8 @@ public:
      * Note: search will last for 5 seconds.
      */
     void startDiscovery();
-    
+
+public slots:
     /**
      * Stops searching for tcp devices
      */
@@ -99,7 +100,6 @@ signals:
 
 private slots:
     void processPendingDatagrams();
-    void discoveryFinishedHandler();
 
 private:
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);

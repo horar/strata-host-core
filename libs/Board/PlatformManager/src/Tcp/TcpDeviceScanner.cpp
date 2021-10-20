@@ -37,7 +37,7 @@ void TcpDeviceScanner::init(quint32 flags)
 
     discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
     discoveryTimer_.setSingleShot(true);
-    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::discoveryFinishedHandler);
+    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::stopDiscovery);
 }
 
 void TcpDeviceScanner::deinit()
@@ -129,6 +129,7 @@ void TcpDeviceScanner::stopDiscovery()
     if (scanRunning_) {
         udpSocket_->disconnectFromHost();
         scanRunning_ = false;
+        qCDebug(logCategoryDeviceScanner) << "TcpDevice discovery Finished";
         emit discoveryFinished();
     } else {
         qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
@@ -207,11 +208,5 @@ bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPor
 
     tcpPort = static_cast<quint16>(port);
     return true;
-}
-
-void TcpDeviceScanner::discoveryFinishedHandler()
-{
-    qCDebug(logCategoryDeviceScanner) << "TcpDevice discovery Finished";
-    stopDiscovery();
 }
 }  // namespace strata::device::scanner
