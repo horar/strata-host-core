@@ -117,13 +117,11 @@ Rectangle {
         }
 
         Loader {
-            sourceComponent: defaultValue; isBool: propertyType.currentIndex === 3
+            sourceComponent: defaultValue; property bool isBool: propertyType.currentIndex === 3
             Layout.fillWidth: true
             Layout.preferredHeight: 30
             active: propertyType.currentIndex < 4 // not shown in some cases; array- and object-types
             visible: active
-
-            property bool isBool
 
             onIsBoolChanged: {
                 // reseting text, value, and checked to base states
