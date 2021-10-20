@@ -510,11 +510,21 @@ function insertUnknownListing (platform) {
     Insert listing for platform that is not in DB platform_list but does have a UI
 */
 function insertUnlistedListing (platform) {
-    let platform_info = generateUnknownListing(platform)
-    platform_info.available.control = true
-    platform_info.description = "No information to display."
+    let class_id = String(platform.class_id)
+    let listing_data = {
+        "verbose_name": (platform.verbose_name) ? platform.verbose_name : "Unknown Platform",
+        "class_id": class_id,
+        "opn" : "Class id: " + class_id,
+        "description": "No information to display.",
+        "available": {
+            "control": true,
+            "documents": false,
+            "unlisted": false,
+            "order": false
+        }
+    }
 
-    let index = insertErrorListing(platform_info)
+    let index = insertErrorListing(generateErrorListing(platform, listing_data))
 
     if(NavigationControl.userSettings.autoOpenView){
         let data = {
