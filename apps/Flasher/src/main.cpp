@@ -6,10 +6,10 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include <QCoreApplication>
-#include <QSettings>
 #include <QCommandLineParser>
+#include <QCoreApplication>
 #include <QObject>
+#include <QSettings>
 #include <QTimer>
 
 #include <QtLoggerConstants.h>
@@ -17,17 +17,20 @@
 
 #include "logging/LoggingQtCategories.h"
 
-#include "Commands.h"
 #include "CliParser.h"
 
-#include "Version.h"
 #include "Timestamp.h"
+#include "Version.h"
 
+using strata::flasher::CommandShPtr;
+using strata::flasher::CliParser;
+using strata::flasher::commands::Command;
 using strata::loggers::QtLoggerSetup;
 
 namespace constants = strata::loggers::contants;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
@@ -44,13 +47,12 @@ int main(int argc, char *argv[]) {
     qCDebug(logCategoryFlasherCli) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCDebug(logCategoryFlasherCli) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
 
-    strata::CliParser parser(QCoreApplication::arguments());
+    CliParser parser(QCoreApplication::arguments());
+    CommandShPtr command = parser.parse();
 
-    strata::CommandShPtr command = parser.parse();
+    QObject::connect(command.get(), &Command::finished, &app, &QCoreApplication::exit, Qt::QueuedConnection);
 
-    QObject::connect(command.get(), &strata::Command::finished, &app, &QCoreApplication::exit, Qt::QueuedConnection);
-
-    QTimer::singleShot(0, command.get(), &strata::Command::process);
+    QTimer::singleShot(0, command.get(), &Command::process);
 
     return app.exec();
 }

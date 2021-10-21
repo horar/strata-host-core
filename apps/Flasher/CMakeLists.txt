@@ -23,10 +23,19 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
-    src/Commands.cpp
     src/CliParser.cpp
     src/SerialPortList.cpp
+
     src/logging/LoggingQtCategories.cpp
+
+    src/commands/Command.cpp
+    src/commands/DeviceCommand.cpp
+    src/commands/FlasherCommand.cpp
+    src/commands/HelpCommand.cpp
+    src/commands/InfoCommand.cpp
+    src/commands/ListCommand.cpp
+    src/commands/VersionCommand.cpp
+    src/commands/WrongCommand.cpp
 )
 
 generate_app_version(GITTAG_PREFIX "${PROJECT_NAME}_" MACBUNDLE OFF)
@@ -38,6 +47,10 @@ target_link_libraries(${PROJECT_NAME}
     strata::QtLogger
     strata::Flasher
     strata::Platform
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

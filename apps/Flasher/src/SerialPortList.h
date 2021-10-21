@@ -6,15 +6,15 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#ifndef SERIAL_PORT_LIST_H
-#define SERIAL_PORT_LIST_H
+#pragma once
 
-#include <QString>
 #include <QList>
+#include <QString>
 
-namespace strata {
-
-class SerialPortList {
+namespace strata::flasher
+{
+class SerialPortList
+{
 public:
     /*!
      * SerialPortList constructor.
@@ -44,6 +44,4 @@ private:
     QList<QString> portNames_;
 };
 
-}  // namespace
-
-#endif
+}  // namespace strata::flasher
