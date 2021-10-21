@@ -28,9 +28,9 @@ bool HcsNode::hcsConnected() const
 
 void HcsNode::initConnections()
 {
-    qCDebug(logCategoryDevStudioNode) << "connecting for source node";
+    qCDebug(lcDevStudioNode) << "connecting for source node";
     if (replicaNode_.connectToNode(QUrl(QStringLiteral("local:hcs3"))) == false) {
-        qCCritical(logCategoryDevStudioNode)
+        qCCritical(lcDevStudioNode)
             << QStringLiteral("connection to source node failed: %1").arg(replicaNode_.lastError());
         return;
     }
@@ -45,7 +45,7 @@ void HcsNode::initConnections()
 
 void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 {
-    qCInfo(logCategoryDevStudioNode) << QStringLiteral("Connected to: %1 %2")
+    qCInfo(lcDevStudioNode) << QStringLiteral("Connected to: %1 %2")
                                                   .arg(appInfoPod.appName())
                                                   .arg(appInfoPod.appVersion());
 }
@@ -53,7 +53,7 @@ void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
                                 QRemoteObjectReplica::State oldState)
 {
-    qCDebug(logCategoryDevStudioNode) << oldState << "->" << state;
+    qCDebug(lcDevStudioNode) << oldState << "->" << state;
 
     setHcsConnected(state == QRemoteObjectReplica::Valid);
 }
@@ -61,11 +61,11 @@ void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
 void HcsNode::shutdownService(unsigned hcsIdentifier)
 {
     if ((replica_->isReplicaValid() == false) && ((replica_->isInitialized() == true) || (replica_.data()->waitForSource(500) == false))) {
-        qCWarning(logCategoryDevStudioNode) << "can't shutdown, not connected to HCS";
+        qCWarning(lcDevStudioNode) << "can't shutdown, not connected to HCS";
         return;
     }
 
-    qCDebug(logCategoryDevStudioNode) << "requesting HCS to shut down";
+    qCDebug(lcDevStudioNode) << "requesting HCS to shut down";
     replica_->shutdown_cb(hcsIdentifier);
 }
 

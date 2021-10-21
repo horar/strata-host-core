@@ -41,7 +41,7 @@ bool Url::strictlyValid() const
 {
     const bool valid{isValid()};
     if (valid == false) {
-        qCCritical(logCategoryDevStudioConfig) << "invalid url:" << errorString();
+        qCCritical(lcDevStudioConfig) << "invalid url:" << errorString();
     }
     const bool hasScheme{scheme().isEmpty() == false};
     const bool hasHost{host().isEmpty() == false};

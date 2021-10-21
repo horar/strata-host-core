@@ -29,7 +29,7 @@ QString &ResourcePath::coreResourcePath()
 #else
         coreResourcePath_ = QCoreApplication::applicationDirPath();
 #endif
-        qCDebug(logCategoryDevStudio(), "app core resources path: '%s'",
+        qCDebug(lcDevStudio(), "app core resources path: '%s'",
                 qUtf8Printable(coreResourcePath_));
     }
 
@@ -40,7 +40,7 @@ QString &ResourcePath::viewsResourcePath()
 {
     if (viewsResourcePath_.isEmpty()) {
         viewsResourcePath_ = QStringLiteral("%1/views").arg(coreResourcePath());
-        qCDebug(logCategoryDevStudio(), "app views resources path: '%s'",
+        qCDebug(lcDevStudio(), "app views resources path: '%s'",
                 qUtf8Printable(viewsResourcePath_));
     }
 
