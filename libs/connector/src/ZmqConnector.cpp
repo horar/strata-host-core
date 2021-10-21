@@ -22,7 +22,7 @@ ZmqConnector::ZmqConnector(int type)
     int minor{0};
     int patch{0};
     zmq_version(&major, &minor, &patch);
-    qCInfo(logCategoryZmqConnector).nospace() << "0MQ API version: " << major << "." << minor << "." << patch;
+    qCInfo(lcZmqConnector).nospace() << "0MQ API version: " << major << "." << minor << "." << patch;
 }
 
 ZmqConnector::~ZmqConnector()
@@ -50,7 +50,7 @@ bool ZmqConnector::close()
     socketClose();  // must be called before contextClose
     contextClose();
 
-    qCDebug(logCategoryZmqConnector) << "Context was closed";
+    qCDebug(lcZmqConnector) << "Context was closed";
     return true;
 }
 
@@ -63,24 +63,24 @@ bool ZmqConnector::shutdown()
     setConnectionState(false);
     contextShutdown();          // will emit interrupt signal for all read/write operations
 
-    qCDebug(logCategoryZmqConnector) << "Context was terminated";
+    qCDebug(lcZmqConnector) << "Context was terminated";
     return true;
 }
 
 bool ZmqConnector::send(const std::string& message)
 {
     if (false == socketValid()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to send messages, socket not open";
+        qCCritical(lcZmqConnector) << "Unable to send messages, socket not open";
         return false;
     }
 
     if (false == socketSend(message)) {
-        qCWarning(logCategoryZmqConnector).nospace().noquote()
+        qCWarning(lcZmqConnector).nospace().noquote()
                 << "Failed to send message: '" << QString::fromStdString(message) << "'";
         return false;
     }
 
-    qCDebug(logCategoryZmqConnector).nospace().noquote()
+    qCDebug(lcZmqConnector).nospace().noquote()
             << "Tx'ed message: '" << QString::fromStdString(message) << "'";
     return true;
 }
@@ -100,7 +100,7 @@ bool ZmqConnector::read(std::string& message, ReadMode read_mode)
             }
             break;
         default:
-            qCCritical(logCategoryZmqConnector) << "Invalid read mode, read failed";
+            qCCritical(lcZmqConnector) << "Invalid read mode, read failed";
             break;
     }
     return false;
@@ -109,17 +109,17 @@ bool ZmqConnector::read(std::string& message, ReadMode read_mode)
 bool ZmqConnector::read(std::string& message)
 {
     if (false == socketValid()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to read messages, socket not open";
+        qCCritical(lcZmqConnector) << "Unable to read messages, socket not open";
         return false;
     }
 
     if (true == hasReadEvent()) {
         if (socketRecv(message)) {
-            qCDebug(logCategoryZmqConnector).nospace().noquote()
+            qCDebug(lcZmqConnector).nospace().noquote()
                     << "Rx'ed message: '" << QString::fromStdString(message) << "'";
             return true;
         } else {
-            qCWarning(logCategoryZmqConnector) << "Failed to read messages";
+            qCWarning(lcZmqConnector) << "Failed to read messages";
         }
     }
 
@@ -129,20 +129,20 @@ bool ZmqConnector::read(std::string& message)
 bool ZmqConnector::blockingRead(std::string& message)
 {
     if (false == socketValid()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to blocking read messages, socket not open";
+        qCCritical(lcZmqConnector) << "Unable to blocking read messages, socket not open";
         return false;
     }
 
     if (socketRecv(message)) {
-        qCDebug(logCategoryZmqConnector).nospace().noquote()
+        qCDebug(lcZmqConnector).nospace().noquote()
                 << "Rx'ed blocking message: '" << QString::fromStdString(message) << "'";
         return true;
     }
 
     if(false == socketValid()) {
-        qCDebug(logCategoryZmqConnector) << "Context was terminated, blocking read was interrupted";
+        qCDebug(lcZmqConnector) << "Context was terminated, blocking read was interrupted";
     } else {
-        qCWarning(logCategoryZmqConnector) << "Failed to blocking read messages";
+        qCWarning(lcZmqConnector) << "Failed to blocking read messages";
     }
 
     return false;
@@ -158,7 +158,7 @@ connector_handle_t ZmqConnector::getFileDescriptor()
 #endif
 
     if (false == socketValid()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to acquire File Descriptor handle, socket not open";
+        qCCritical(lcZmqConnector) << "Unable to acquire File Descriptor handle, socket not open";
         return defaultHandle;
     }
 
@@ -205,20 +205,20 @@ bool ZmqConnector::socketRecv(std::string & ostring, zmq::recv_flags flags)
         }
     } catch (const zmq::error_t& zErr) {
         if (zErr.num() == ETERM) {
-            qCInfo(logCategoryZmqConnector).nospace()
+            qCInfo(lcZmqConnector).nospace()
                     << "Receive of messages was interrupted (flags: "
                     << static_cast<int>(flags) << "), reason: " << zErr.what();
         } else {
-            qCCritical(logCategoryZmqConnector).nospace()
+            qCCritical(lcZmqConnector).nospace()
                     << "Unable to receive message (flags: "
                     << static_cast<int>(flags) << "), reason: " << zErr.what();
         }
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
+        qCCritical(lcZmqConnector).nospace()
                 << "Unable to receive message (flags: "
                 << static_cast<int>(flags) << "), unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace()
+        qCCritical(lcZmqConnector).nospace()
                 << "Unable to receive message (flags: "
                 << static_cast<int>(flags) << "), unhandled exception";
     }
@@ -235,20 +235,20 @@ bool ZmqConnector::socketSend(const std::string & istring, zmq::send_flags flags
         return (ret != 0);
     } catch (const zmq::error_t& zErr) {
         if (zErr.num() == ETERM) {
-            qCInfo(logCategoryZmqConnector).nospace().noquote()
+            qCInfo(lcZmqConnector).nospace().noquote()
                     << "Sending of message was interrupted '" << QString::fromStdString(istring)
                     << "' (flags: " << static_cast<int>(flags) << "), reason: " << zErr.what();
         } else {
-            qCCritical(logCategoryZmqConnector).nospace().noquote()
+            qCCritical(lcZmqConnector).nospace().noquote()
                     << "Unable to send message '" << QString::fromStdString(istring)
                     << "' (flags: " << static_cast<int>(flags) << "), reason: " << zErr.what();
         }
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to send message '" << QString::fromStdString(istring)
                 << "' (flags: " << static_cast<int>(flags) << "), unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to send message '" << QString::fromStdString(istring)
                 << "' (flags: " << static_cast<int>(flags) << "), unhandled exception";
     }
@@ -265,21 +265,21 @@ bool ZmqConnector::socketSendMore(const std::string & istring)
         return (ret != 0);
     } catch (const zmq::error_t& zErr) {
         if (zErr.num() == ETERM) {
-            qCInfo(logCategoryZmqConnector).nospace().noquote()
+            qCInfo(lcZmqConnector).nospace().noquote()
                     << "Sending of multipart message was interrupted '"
                     << QString::fromStdString(istring) << "', reason: " << zErr.what();
         } else {
-            qCCritical(logCategoryZmqConnector).nospace().noquote()
+            qCCritical(lcZmqConnector).nospace().noquote()
                     << "Unable to send multipart message '"
                     << QString::fromStdString(istring) << "', reason: " << zErr.what();
         }
 
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to send multipart message '"
                 << QString::fromStdString(istring) << "', unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to send multipart message '"
                 << QString::fromStdString(istring) << "', unhandled exception";
     }
@@ -293,15 +293,15 @@ bool ZmqConnector::socketConnect(const std::string & address)
         socket_->connect(address);
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to connect socket to address '" << QString::fromStdString(address)
                 << "', reason: " << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to connect socket to address '" << QString::fromStdString(address)
                 << "', unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to connect socket to address '" << QString::fromStdString(address)
                 << "', unhandled exception";
     }
@@ -315,15 +315,15 @@ bool ZmqConnector::socketBind(const std::string & address)
         socket_->bind(address);
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to bind socket to address '" << QString::fromStdString(address)
                 << "', reason: " << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to bind socket to address '" << QString::fromStdString(address)
                 << "', unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace().noquote()
+        qCCritical(lcZmqConnector).nospace().noquote()
                 << "Unable to bind socket to address '" << QString::fromStdString(address)
                 << "', unhandled exception";
     }
@@ -338,11 +338,11 @@ bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
             return true;
         }
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector) << "Unable to poll items, reason:" << zErr.what();
+        qCCritical(lcZmqConnector) << "Unable to poll items, reason:" << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector) << "Unable to poll items, unexpected reason:" << sErr.what();
+        qCCritical(lcZmqConnector) << "Unable to poll items, unexpected reason:" << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector) << "Unable to poll items, unhandled exception";
+        qCCritical(lcZmqConnector) << "Unable to poll items, unhandled exception";
     }
 
     return false;
@@ -354,12 +354,12 @@ bool ZmqConnector::socketAndContextOpen()
         if ((nullptr != socket_) && (nullptr != context_) &&
             (nullptr == context_->handle()) && (false == socket_->connected()) &&
             (false == isConnected())) {
-            qCInfo(logCategoryZmqConnector) << "Reopening socket";
+            qCInfo(lcZmqConnector) << "Reopening socket";
             // must be reset in this order
             socket_.reset();
             context_.reset();
         } else {
-            qCCritical(logCategoryZmqConnector) << "Unable to open socket, it is already open";
+            qCCritical(lcZmqConnector) << "Unable to open socket, it is already open";
             return false;
         }
     }
@@ -368,14 +368,14 @@ bool ZmqConnector::socketAndContextOpen()
         // will init socket and context
         context_.reset(new zmq::context_t());
         socket_.reset(new zmq::socket_t(*context_, socketType));
-        qCDebug(logCategoryZmqConnector) << "Socket and context was open";
+        qCDebug(lcZmqConnector) << "Socket and context was open";
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector) << "Unable to open socket, reason:" << zErr.what();
+        qCCritical(lcZmqConnector) << "Unable to open socket, reason:" << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector) << "Unable to open socket, unexpected reason:" << sErr.what();
+        qCCritical(lcZmqConnector) << "Unable to open socket, unexpected reason:" << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector) << "Unable to open socket, unhandled exception";
+        qCCritical(lcZmqConnector) << "Unable to open socket, unhandled exception";
     }
 
     socket_.reset();
