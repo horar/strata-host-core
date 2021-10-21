@@ -16,8 +16,8 @@
 
 #include "logging/LoggingQtCategories.h"
 
+#include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
-
 #include <CbLoggerSetup.h>
 
 #include <QCoreApplication>
@@ -29,6 +29,11 @@
 #if !defined(Q_OS_WIN)
 #include "unix/SignalHandlers.h"
 #endif
+
+using strata::loggers::QtLoggerSetup;
+using strata::loggers::cbLoggerSetup;
+
+namespace constants = strata::loggers::contants;
 
 int main(int argc, char *argv[])
 {
@@ -105,17 +110,22 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
+    const QtLoggerSetup loggerInitialization(app);
+    cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
-    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
-    qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
-    qCInfo(logCategoryHcs) << QStringLiteral("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategoryHcs) << QStringLiteral("--------------------------------------------------------------------------------");
-    qCInfo(logCategoryHcs) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
-    qCInfo(logCategoryHcs) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
-    qCInfo(logCategoryHcs) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
+    qCInfo(logCategoryHcs) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategoryHcs) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(logCategoryHcs) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(logCategoryHcs) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCInfo(logCategoryHcs) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(logCategoryHcs) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    if (QSslSocket::supportsSsl()) {
+        qCInfo(logCategoryHcs) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
+    } else {
+        qCCritical(logCategoryHcs) << QString("No SSL support!!");
+    }
+    qCInfo(logCategoryHcs) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(logCategoryHcs) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
