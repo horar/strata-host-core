@@ -72,7 +72,7 @@ bool CmdGetFirmwareInfo::processNotification(const rapidjson::Document& doc, Com
 CommandResult CmdGetFirmwareInfo::onTimeout() {
     if (retriesCount_ < maxRetries_) {
         ++retriesCount_;
-        qCInfo(logCategoryPlatformCommand) << platform_ << "Going to retry to get firmware info.";
+        qCInfo(lcPlatformCommand) << platform_ << "Going to retry to get firmware info.";
         return CommandResult::Retry;
     } else {
         if (requireResponse_) {

@@ -29,7 +29,7 @@ PlatformMessageData::PlatformMessageData(const QByteArray& rawMessage)
         jsonErrorString_ = rapidjson::GetParseError_En(result.Code());
         jsonErrorOffset_ = static_cast<ulong>(result.Offset());
 
-        qCWarning(logCategoryPlatformMessage).nospace().noquote()
+        qCWarning(lcPlatformMessage).nospace().noquote()
             << QStringLiteral("JSON parse error at offset ") << jsonErrorOffset_
             << QStringLiteral(": ") << jsonErrorString_
             << QStringLiteral(" Invalid JSON: '") << raw_ << '\'';
