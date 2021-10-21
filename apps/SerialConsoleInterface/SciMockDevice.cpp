@@ -55,76 +55,76 @@ bool SciMockDevice::reopenMockDevice()
 {
     PlatformPtr platform = platformManager_->getPlatform(deviceId_, false, true);
     if (platform == nullptr) {
-        qCDebug(logCategorySci) << "Closed Mock Device not found (probably already erased):" << deviceId_;
+        qCDebug(lcSci) << "Closed Mock Device not found (probably already erased):" << deviceId_;
         return false;
     }
 
     if (platform->deviceType() != Device::Type::MockDevice) {
-        qCWarning(logCategorySci) << "non-Mock device acquired, it cannot be reopen:" << deviceId_;
+        qCWarning(lcSci) << "non-Mock device acquired, it cannot be reopen:" << deviceId_;
         return false;
     }
 
     auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
     if (mockScanner == nullptr) {
-        qCCritical(logCategorySci) << "Cannot get scanner for mock devices.";
+        qCCritical(lcSci) << "Cannot get scanner for mock devices.";
         return false;
     }
 
     DevicePtr device = mockScanner->getMockDevice(deviceId_);
     if (device == nullptr) {
-        qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId_;
+        qCCritical(lcSci) << "Invalid device pointer in platform:" << deviceId_;
         return false;
     }
 
     MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
     if (mockDevice == nullptr) {
-        qCCritical(logCategorySci) << "Corrupt device pointer in platform:" << deviceId_;
+        qCCritical(lcSci) << "Corrupt device pointer in platform:" << deviceId_;
         return false;
     }
 
     if ((mockDevice->isConnected() == false) && (mockDevice->mockIsOpenEnabled() == false)) {
         mockDevice->mockSetOpenEnabled(true);
         mockDevice->open();
-        qCDebug(logCategorySci) << "Mock Device reopened:" << deviceId_;
+        qCDebug(lcSci) << "Mock Device reopened:" << deviceId_;
         emit canReopenMockDeviceChanged();
         return true;
     }
 
-    qCWarning(logCategorySci) << "Mock Device in invalid state:" << deviceId_;
+    qCWarning(lcSci) << "Mock Device in invalid state:" << deviceId_;
     return false;
 }
 
 bool SciMockDevice::canReopenMockDevice() const {
     const PlatformPtr platform = platformManager_->getPlatform(deviceId_, true, true);
     if (platform == nullptr) {
-        qCDebug(logCategorySci) << "Mock Device not found:" << deviceId_;
+        qCDebug(lcSci) << "Mock Device not found:" << deviceId_;
         return false;
     }
 
     if (platform->deviceType() != Device::Type::MockDevice) {
-        qCWarning(logCategorySci) << "non-Mock device acquired:" << deviceId_;
+        qCWarning(lcSci) << "non-Mock device acquired:" << deviceId_;
         return false;
     }
 
     auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
     if (mockScanner == nullptr) {
-        qCCritical(logCategorySci) << "Cannot get scanner for mock devices.";
+        qCCritical(lcSci) << "Cannot get scanner for mock devices.";
         return false;
     }
 
     const DevicePtr device = mockScanner->getMockDevice(deviceId_);
     if (device == nullptr) {
-        qCCritical(logCategorySci) << "Invalid device pointer in platform:" << deviceId_;
+        qCCritical(lcSci) << "Invalid device pointer in platform:" << deviceId_;
         return false;
     }
 
     const MockDevicePtr mockDevice = std::dynamic_pointer_cast<MockDevice>(device);
     if (mockDevice == nullptr) {
-        qCCritical(logCategorySci) << "Corrupt device pointer in platform:" << deviceId_;
+        qCCritical(lcSci) << "Corrupt device pointer in platform:" << deviceId_;
         return false;
     }
 
-    qCDebug(logCategorySci) << "Mock Device is valid:" << deviceId_ << "open enabled:" << mockDevice->mockIsOpenEnabled();
+    qCDebug(lcSci) << "Mock Device is valid:" << deviceId_ << "open enabled:" << mockDevice->mockIsOpenEnabled();
     return !mockDevice->mockIsOpenEnabled();
 }
 
