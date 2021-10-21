@@ -22,9 +22,13 @@ if(APPS_FEATURE_BLE)
     set(BLUETOOTH_LIBRARIES
         PUBLIC Qt5::Bluetooth
     )
-    set(BLUETOOTH_LIBRARIES_WIN32
-        PRIVATE Bthprops
-    )
+    if(WIN32)
+        set(BLUETOOTH_LIBRARIES
+            ${BLUETOOTH_LIBRARIES}
+            PRIVATE Bthprops
+            PRIVATE ws2_32
+        )
+    endif()
 endif()
 
 find_package(Qt5 ${VERSION_QT5}
@@ -69,14 +73,6 @@ target_link_libraries(${PROJECT_NAME}
 
     ${BLUETOOTH_LIBRARIES}
 )
-
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE ws2_32
-
-        ${BLUETOOTH_LIBRARIES_WIN32}
-    )
-endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS
