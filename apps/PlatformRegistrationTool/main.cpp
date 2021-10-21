@@ -18,8 +18,14 @@
 #include <QIcon>
 #include <QQmlFileSelector>
 
-#include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
+
+#include <QtLoggerConstants.h>
+#include <QtLoggerSetup.h>
+
+using strata::loggers::QtLoggerSetup;
+
+namespace constants = strata::loggers::contants;
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -67,15 +73,27 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
+    QCoreApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/prt-logo.svg"));
 
-    const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryPrt) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    const QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategoryPrt) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCInfo(logCategoryPrt) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(logCategoryPrt) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    if (QSslSocket::supportsSsl()) {
+        qCInfo(logCategoryPrt) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
+    } else {
+        qCCritical(logCategoryPrt) << QString("No SSL support!!");
+    }
+    qCInfo(logCategoryPrt) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
 
     loadResources();
 
