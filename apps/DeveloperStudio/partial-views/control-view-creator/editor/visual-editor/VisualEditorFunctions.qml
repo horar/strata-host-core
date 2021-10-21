@@ -247,7 +247,7 @@ QtObject {
     }
 
     function bringToFront(uuid, save = true) {
-        let copy = getObjectFromString(uuid)
+        let copy = getObjectFromString(uuid, fileContents, "Bring To Front")
         if (copy === null) {
             return
         }
@@ -291,6 +291,7 @@ QtObject {
     }
 
     function getObjectFromString(uuid, string = fileContents) {
+
         let objectString
         try {
             objectString = string.match(captureObjectByUuidRegex(uuid))[0]
@@ -463,6 +464,14 @@ QtObject {
         return string.match(objectDeclarationRegex)
     }
 
+    function isUuidValid(uuid) {
+        if (fileContents.match("\\s*{\\s*\/\/\\s*start_" + uuid)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     function getType(uuid) {
         const capture1 = "([A-Z][A-Za-z0-9_]*)" // qml object type, e.g. Rectangle
         const capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
@@ -501,14 +510,16 @@ QtObject {
 
     // This will check if item can be exactly centered
     function exactCenterCheck(uuid, horOrVert) {
-        if (horOrVert === "horizontal") {
-            const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
-            const isExact = calculation % 1 === 0
-            return isExact
-        } else {
-            const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
-            const isExact = calculation % 1 === 0
-            return isExact
+        if (isUuidValid(uuid)) {
+            if (horOrVert === "horizontal") {
+                const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+                const isExact = calculation % 1 === 0
+                return isExact
+            } else {
+                const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+                const isExact = calculation % 1 === 0
+                return isExact
+            }
         }
     }
 
@@ -543,12 +554,12 @@ QtObject {
 
     function startOfObjectRegexString(uuid = uuidRegex()) {
         // matches "   <ObjectName> { // start_<uuid> " where [^\S\r\n] is whitespace-but-not-newline"
-        return "[^\S\r\n]*[A-Z][A-Za-z0-9_]*\\s*\\{\\s*\\/\\/\\s*start_" + uuid + ".*"
+        return "[^\\S\\r\\n]*[A-Z][A-Za-z0-9_]*\\s*\\{\\s*\/\/\\s*start_" + uuid + ".*"
     }
 
     function endOfObjectRegexString(uuid = uuidRegex()) {
         // matches "   } // end_<uuid> "
-        return "[^\S\r\n]*\\}\\s*\\/\\/\\s*end_" + uuid + ".*"
+        return "[^\\S\\r\\n]*\\}\\s*\/\/\\s*end_" + uuid + ".*"
     }
 
     // returns whether object uuid is part of multi-item selection
