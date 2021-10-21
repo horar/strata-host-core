@@ -92,7 +92,9 @@ SGWidgets.SGDialog {
             hintText: "Refresh list of devices"
             scaleToFit: true
             icon.source: "qrc:/sgimages/sync.svg"
-            enabled: bleSupportError.length === 0 && sciModel.bleDeviceModel.inDiscoveryMode === false
+            enabled: (bleSupportError.length === 0) &&
+                     (sciModel.bleDeviceModel.inDiscoveryMode === false) &&
+                     (sciModel.bleDeviceModel.isConnecting === false)
 
             minimumContentHeight: filterInput.height - 2*padding
             minimumContentWidth: minimumContentHeight

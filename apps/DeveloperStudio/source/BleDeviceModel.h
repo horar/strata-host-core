@@ -32,6 +32,7 @@ class BleDeviceModel : public QAbstractListModel
     Q_DISABLE_COPY(BleDeviceModel)
 
     Q_PROPERTY(bool inScanMode READ inScanMode NOTIFY inScanModeChanged)
+    Q_PROPERTY(bool isConnecting READ isConnecting NOTIFY isConnectingChanged)
     Q_PROPERTY(QString lastScanError READ lastScanError NOTIFY lastScanErrorChanged)
 
 public:
@@ -59,10 +60,12 @@ public:
     Q_INVOKABLE QVariantMap get(int row);
 
     bool inScanMode() const;
+    bool isConnecting() const;
     QString lastScanError() const;
 
 signals:
     void inScanModeChanged();
+    void isConnectingChanged();
     void lastScanErrorChanged();
 
     void tryConnectFinished(QString errorString);
@@ -85,6 +88,8 @@ private:
     void setPropertyAt(int row, const QVariant &value, int role);
     void setInScanMode(bool inScanMode);
     void setLastScanError(QString lastScanError);
+    bool addConnectingDevice(const QString &deviceId);
+    bool removeConnectingDevice(const QString &deviceId);
 
     strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;

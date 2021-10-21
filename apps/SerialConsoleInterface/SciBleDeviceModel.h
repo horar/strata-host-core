@@ -24,6 +24,7 @@ class SciBleDeviceModel : public QAbstractListModel
     Q_DISABLE_COPY(SciBleDeviceModel)
 
     Q_PROPERTY(bool inDiscoveryMode READ inDiscoveryMode NOTIFY inDiscoveryModeChanged)
+    Q_PROPERTY(bool isConnecting READ isConnecting NOTIFY isConnectingChanged)
     Q_PROPERTY(QString lastDiscoveryError READ lastDiscoveryError NOTIFY lastDiscoveryErrorChanged)
 
 public:
@@ -52,10 +53,12 @@ public:
     Q_INVOKABLE QVariantMap get(int row);
 
     bool inDiscoveryMode() const;
+    bool isConnecting() const;
     QString lastDiscoveryError() const;
 
 signals:
     void inDiscoveryModeChanged();
+    void isConnectingChanged();
     void lastDiscoveryErrorChanged();
 
 protected:
@@ -77,6 +80,8 @@ private:
     void setPropertyAt(int row, const QVariant &value, int role);
     void setInDiscoveryMode(bool inDiscoveryMode);
     void setLastDiscoveryError(QString lastDiscoveryError);
+    bool addConnectingDevice(const QByteArray &deviceId);
+    bool removeConnectingDevice(const QByteArray &deviceId);
 
     strata::PlatformManager *platformManager_ = nullptr;
     strata::device::scanner::BluetoothLowEnergyScannerPtr scanner_;
