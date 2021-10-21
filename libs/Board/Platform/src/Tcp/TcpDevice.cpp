@@ -32,7 +32,7 @@ TcpDevice::~TcpDevice()
 
 void TcpDevice::open()
 {
-    qDebug(logCategoryDeviceTcp)
+    qCDebug(logCategoryDeviceTcp)
         << this << "Connecting TCP - IP: " << deviceAddress_.toString()
         << ", port: " << tcpPort_;
 
