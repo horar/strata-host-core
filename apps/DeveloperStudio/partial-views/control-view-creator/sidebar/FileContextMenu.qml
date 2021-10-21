@@ -91,19 +91,19 @@ Menu {
     }
 
     MenuItem {
-        text: "Create New Folder"
+        text: "Import Files/Folder to Project"
         onTriggered: {
-            createFolderPopup.folderPath = "file://"+ SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath))
-            createFolderPopup.open()
+            importFileOrFolderPopup.callerIndex = styleData.index.parent
+            importFileOrFolderPopup.open()
             fileContextMenu.dismiss()
         }
     }
 
     MenuItem {
-        text: "Import Files/Folder to Project"
+        text: "Create New Folder"
         onTriggered: {
-            importFileOrFolderPopup.callerIndex = styleData.index.parent
-            importFileOrFolderPopup.open()
+            createFolderPopup.folderPath = "file://"+ SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath))
+            createFolderPopup.open()
             fileContextMenu.dismiss()
         }
     }
