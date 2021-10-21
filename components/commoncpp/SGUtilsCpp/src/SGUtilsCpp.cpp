@@ -211,7 +211,7 @@ bool SGUtilsCpp::exists(const QString &filepath)
 }
 
 QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
-{  
+{
     if (bytes == 0) {
         return "0 "+ fileSizePrefixList_.at(0);
     }
