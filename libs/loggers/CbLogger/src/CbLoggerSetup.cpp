@@ -39,7 +39,7 @@ void c4LogCallback(CBLLogDomain domain, CBLLogLevel level, const char *message)
                                                    {CBLLogWarning, QtWarningMsg},
                                                    {CBLLogError, QtCriticalMsg}};
 
-    if (const auto msgType{cb2qtLevels[level]}; logCategoryCbLogger().isEnabled(msgType)) {
+    if (const auto msgType{cb2qtLevels[level]}; lcCbLogger().isEnabled(msgType)) {
         static const std::unordered_map<CBLLogDomain, std::string> cbDomain2string{
             {kCBLLogDomainAll, "All"},
             {kCBLLogDomainDatabase, "Database"},
@@ -48,7 +48,7 @@ void c4LogCallback(CBLLogDomain domain, CBLLogLevel level, const char *message)
             {kCBLLogDomainNetwork, "Network"}};
 
         using namespace std::string_literals;
-        const std::string tag = logCategoryCbLoggerName + "."s + cbDomain2string.at(domain);
+        const std::string tag = lcCbLoggerName + "."s + cbDomain2string.at(domain);
 
         const QMessageLogContext context{nullptr, 0, "n/a", tag.c_str()};
 
