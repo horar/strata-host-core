@@ -10,6 +10,7 @@
 #include "FileModel.h"
 
 #include "Version.h"
+#include "Timestamp.h"
 
 #include <QCommandLineParser>
 #include <QGuiApplication>
@@ -97,6 +98,7 @@ int main(int argc, char *argv[]) {
 
     qCInfo(lcLogViewer) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
     qCInfo(lcLogViewer) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcLogViewer) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcLogViewer) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
     qCInfo(lcLogViewer) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(lcLogViewer) << QString("Running on %1").arg(QSysInfo::prettyProductName());
