@@ -33,7 +33,7 @@ void ListCommand::process()
             message.append(portList.at(i));
         }
     }
-    qCInfo(logCategoryFlasherCli).noquote() << message;
+    qCInfo(lcFlasherCli).noquote() << message;
     emit finished(EXIT_SUCCESS);
 }
 

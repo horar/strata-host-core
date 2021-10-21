@@ -20,7 +20,7 @@ HelpCommand::HelpCommand(const QString& helpText) : helpText_(helpText)
 
 void HelpCommand::process()
 {
-    qCInfo(logCategoryFlasherCli).noquote() << helpText_;
+    qCInfo(lcFlasherCli).noquote() << helpText_;
     emit finished(EXIT_SUCCESS);
 }
 
