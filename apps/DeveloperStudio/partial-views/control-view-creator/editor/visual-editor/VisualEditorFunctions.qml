@@ -247,7 +247,7 @@ QtObject {
     }
 
     function bringToFront(uuid, save = true) {
-        let copy = getObjectFromString(uuid, fileContents)
+        let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
         }
