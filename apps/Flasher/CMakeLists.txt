@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
 )
 
 generate_app_version(GITTAG_PREFIX "${PROJECT_NAME}_" MACBUNDLE OFF)
+generate_app_build_timestamp()
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core

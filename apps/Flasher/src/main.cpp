@@ -18,6 +18,7 @@
 #include "CliParser.h"
 
 #include "Version.h"  // CMake generated file
+#include "Timestamp.h"
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
