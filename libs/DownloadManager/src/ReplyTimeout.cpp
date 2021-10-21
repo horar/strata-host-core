@@ -24,12 +24,12 @@ void ReplyTimeout::timerEvent(QTimerEvent *ev)
 
     if (reply->isRunning()){
         if (reply->property("newProgress").toBool()) {
-            qCDebug(logCategoryDownloadManager) << "Restarting timeout timer for:" << reply->url();
+            qCDebug(lcDownloadManager) << "Restarting timeout timer for:" << reply->url();
             mSec_timer_.start(this->milliseconds_, this);
             reply->setProperty("newProgress", false);
             return;
         } else {
-            qCDebug(logCategoryDownloadManager) << "Time is up. Manually closing:" << reply->url();
+            qCDebug(lcDownloadManager) << "Time is up. Manually closing:" << reply->url();
             reply->close();
         }
     }
