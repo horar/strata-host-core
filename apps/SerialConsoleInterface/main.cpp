@@ -12,6 +12,8 @@
 #include "HexModel.h"
 
 #include "Version.h"
+#include "Timestamp.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -89,6 +91,7 @@ int main(int argc, char *argv[])
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategorySci) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
     qCInfo(logCategorySci) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(logCategorySci) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(logCategorySci) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
     qCInfo(logCategorySci) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(logCategorySci) << QString("Running on %1").arg(QSysInfo::prettyProductName());

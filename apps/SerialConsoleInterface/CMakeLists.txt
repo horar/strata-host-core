@@ -49,6 +49,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 )
 
 generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)
+generate_app_build_timestamp()
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
