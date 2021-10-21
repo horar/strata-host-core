@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryWg, "strata.wg")
+Q_LOGGING_CATEGORY(lcWg, "strata.wg")
