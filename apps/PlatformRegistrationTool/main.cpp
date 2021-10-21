@@ -7,6 +7,10 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "PrtModel.h"
+
+#include "Timestamp.h"
+#include "Version.h"
+
 #include <PlatformManager.h>
 
 #include <QGuiApplication>
@@ -84,6 +88,7 @@ int main(int argc, char *argv[])
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
     qCInfo(logCategoryPrt) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(logCategoryPrt) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
     qCInfo(logCategoryPrt) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(logCategoryPrt) << QString("Running on %1").arg(QSysInfo::prettyProductName());
