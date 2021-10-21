@@ -22,6 +22,9 @@ if(APPS_FEATURE_BLE)
     set(BLUETOOTH_LIBRARIES
         PUBLIC Qt5::Bluetooth
     )
+    set(BLUETOOTH_LIBRARIES_WIN32
+        PRIVATE Bthprops
+    )
 endif()
 
 find_package(Qt5 ${VERSION_QT5}
@@ -69,8 +72,9 @@ target_link_libraries(${PROJECT_NAME}
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME}
-        PRIVATE Bthprops
         PRIVATE ws2_32
+
+        ${BLUETOOTH_LIBRARIES_WIN32}
     )
 endif()
 
