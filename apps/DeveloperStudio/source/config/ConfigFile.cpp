@@ -27,16 +27,16 @@ strata::sds::config::ConfigFile::ConfigFile(const QString &name, QObject *parent
 
 std::tuple<QByteArray, bool> strata::sds::config::ConfigFile::loadData()
 {
-    qCInfo(logCategoryStrataDevStudioConfig) << "loading configuration from" << fileName();
+    qCInfo(logCategoryDevStudioConfig) << "loading configuration from" << fileName();
 
     QByteArray data;
     if (open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "opening failed:" << errorString();
+        qCCritical(logCategoryDevStudioConfig) << "opening failed:" << errorString();
         return std::make_tuple(std::move(data), false);
     }
 
     if (size() == 0) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "empty file";
+        qCCritical(logCategoryDevStudioConfig) << "empty file";
         return std::make_tuple(std::move(data), false);
     }
 

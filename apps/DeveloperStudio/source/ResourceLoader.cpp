@@ -218,11 +218,11 @@ void ResourceLoader::loadCoreResources()
             QString("%1/%2").arg(ResourcePath::coreResourcePath()).arg(resourceName));
 
         if (QFile::exists(resourceFile) == false) {
-            qCCritical(logCategoryStrataDevStudio(), "Missing '%s' resource file!!",
+            qCCritical(logCategoryDevStudio(), "Missing '%s' resource file!!",
                        qUtf8Printable(resourceName));
             continue;
         }
-        qCDebug(logCategoryStrataDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
+        qCDebug(logCategoryDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
                 QResource::registerResource(resourceFile));
     }
 }
@@ -231,7 +231,7 @@ void ResourceLoader::loadPluginResources()
 {
     const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
     if (supportedPLugins.empty()) {
-        qCDebug(logCategoryStrataDevStudio) << "No supported plugins";
+        qCDebug(logCategoryDevStudio) << "No supported plugins";
         return;
     }
 
@@ -240,11 +240,11 @@ void ResourceLoader::loadPluginResources()
             QStringLiteral("%1/plugins/sds-%2.rcc").arg(ResourcePath::coreResourcePath(), pluginName));
 
         if (QFile::exists(resourceFile) == false) {
-            qCDebug(logCategoryStrataDevStudio(), "Skipping '%s' plugin resource file...",
+            qCDebug(logCategoryDevStudio(), "Skipping '%s' plugin resource file...",
                     qUtf8Printable(pluginName));
             continue;
         }
-        qCDebug(logCategoryStrataDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
+        qCDebug(logCategoryDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
                 QResource::registerResource(resourceFile));
     }
 }
@@ -371,7 +371,7 @@ bool ResourceLoader::findRccCompiler() {
     }
 
     QString error_str = "Could not find RCC executable at " + rccExecutablePath;
-    qCWarning(logCategoryStrataDevStudio) << error_str;
+    qCWarning(logCategoryDevStudio) << error_str;
     setLastLoggedError(error_str);
     emit finishedRecompiling(QString());
     return false;
@@ -405,7 +405,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     QFile qrcFile(qrcFilePath);
     if (!qrcFile.exists()) {
         QString error_str = "Could not find QRC file at " + qrcFilePath;
-        qCWarning(logCategoryStrataDevStudio) << error_str;
+        qCWarning(logCategoryDevStudio) << error_str;
         setLastLoggedError(error_str);
         emit finishedRecompiling(QString());
         return;
@@ -421,7 +421,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
         foreach (QString dirItem, qrcDevControlView.entryList()) {
             if (!qrcDevControlView.remove(dirItem)) {
                 QString error_str = "Error: could not delete " + dirItem;
-                qCWarning(logCategoryStrataDevStudio) << error_str;
+                qCWarning(logCategoryDevStudio) << error_str;
                 setLastLoggedError(error_str);
                 emit finishedRecompiling(QString());
                 return;
@@ -433,7 +433,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
             QDir subDir(qrcDevControlView.absoluteFilePath(dirItem));
             if (!subDir.removeRecursively()) {
                 QString error_str = "Error: could not delete " + dirItem;
-                qCWarning(logCategoryStrataDevStudio) << error_str;
+                qCWarning(logCategoryDevStudio) << error_str;
                 setLastLoggedError(error_str);
                 emit finishedRecompiling(QString());
                 return;
@@ -462,7 +462,7 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
 void ResourceLoader::onOutputRead() {
     QString error_str = rccCompilerProcess_->readAllStandardError();
-    qCCritical(logCategoryStrataDevStudio) << error_str;
+    qCCritical(logCategoryDevStudio) << error_str;
     setLastLoggedError(error_str);
 }
 

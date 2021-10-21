@@ -28,38 +28,38 @@ bool AppConfig::parse()
         QJsonParseError parseError;
         loadDoc = QJsonDocument::fromJson(data, &parseError);
         if (parseError.error != QJsonParseError::NoError) {
-            qCCritical(logCategoryStrataDevStudioConfig) << "raw data:" << qUtf8Printable(data);
-            qCCritical(logCategoryStrataDevStudioConfig) << "parsing failed:" << parseError.errorString()
+            qCCritical(logCategoryDevStudioConfig) << "raw data:" << qUtf8Printable(data);
+            qCCritical(logCategoryDevStudioConfig) << "parsing failed:" << parseError.errorString()
                                                    << "(offset:" << parseError.offset << ")";
             return false;
         }
 
-        qCDebug(logCategoryStrataDevStudioConfig) << "json doc:" << loadDoc;
+        qCDebug(logCategoryDevStudioConfig) << "json doc:" << loadDoc;
     } else {
         return false;
     }
 
     QJsonValue value = loadDoc[QLatin1String("host_controller_service")];
     if (value == QJsonValue::Undefined) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'host_controller_service' key";
+        qCCritical(logCategoryDevStudioConfig) << "missing 'host_controller_service' key";
         return false;
     }
     value = value[QLatin1String("dealer_address")];
     if (value == QJsonValue::Undefined) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'dealer_address' key";
+        qCCritical(logCategoryDevStudioConfig) << "missing 'dealer_address' key";
         return false;
     }
 
     if (value.isString() == false) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "'dealer_address' value is not a string";
+        qCCritical(logCategoryDevStudioConfig) << "'dealer_address' value is not a string";
         return false;
     }
     hcsDealerAddresss_ = value.toString();
     if (hcsDealerAddresss_.strictlyValid() == false) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "incomplete HCS dealer address";
+        qCCritical(logCategoryDevStudioConfig) << "incomplete HCS dealer address";
         return false;
     }
-    qCDebug(logCategoryStrataDevStudioConfig) << "HCS dealer addresss:" << hcsDealerAddresss_;
+    qCDebug(logCategoryDevStudioConfig) << "HCS dealer addresss:" << hcsDealerAddresss_;
 
     return true;
 }

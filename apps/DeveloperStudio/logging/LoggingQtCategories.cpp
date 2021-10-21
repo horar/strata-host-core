@@ -8,11 +8,11 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryStrataDevStudio, "strata.devstudio")
-Q_LOGGING_CATEGORY(logCategoryDocumentManager, "strata.documentManager")
-Q_LOGGING_CATEGORY(logCategoryStrataDevStudioNode, "strata.devstudio.node")
-Q_LOGGING_CATEGORY(logCategoryStrataDevStudioConfig, "strata.devstudio.config")
-Q_LOGGING_CATEGORY(logCategoryResourceLoader, "strata.resourceloader")
-Q_LOGGING_CATEGORY(logCategoryControlViewCreator, "strata.controlViewCreator")
+Q_LOGGING_CATEGORY(logCategoryDevStudio, "strata.devstudio")
+Q_LOGGING_CATEGORY(logCategoryDocumentManager, "strata.devstudio.documentManager")
+Q_LOGGING_CATEGORY(logCategoryDevStudioNode, "strata.devstudio.node")
+Q_LOGGING_CATEGORY(logCategoryDevStudioConfig, "strata.devstudio.config")
+Q_LOGGING_CATEGORY(logCategoryResourceLoader, "strata.devstudio.resourceloader")
+Q_LOGGING_CATEGORY(logCategoryControlViewCreator, "strata.devstudio.controlViewCreator")
 
-Q_LOGGING_CATEGORY(logCategoryHcs, "strata.hcs")
+Q_LOGGING_CATEGORY(logCategoryHcs, "strata.devstudio.hcs")

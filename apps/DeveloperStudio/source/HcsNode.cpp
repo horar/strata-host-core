@@ -28,9 +28,9 @@ bool HcsNode::hcsConnected() const
 
 void HcsNode::initConnections()
 {
-    qCDebug(logCategoryStrataDevStudioNode) << "connecting for source node";
+    qCDebug(logCategoryDevStudioNode) << "connecting for source node";
     if (replicaNode_.connectToNode(QUrl(QStringLiteral("local:hcs3"))) == false) {
-        qCCritical(logCategoryStrataDevStudioNode)
+        qCCritical(logCategoryDevStudioNode)
             << QStringLiteral("connection to source node failed: %1").arg(replicaNode_.lastError());
         return;
     }
@@ -45,7 +45,7 @@ void HcsNode::initConnections()
 
 void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 {
-    qCInfo(logCategoryStrataDevStudioNode) << QStringLiteral("Connected to: %1 %2")
+    qCInfo(logCategoryDevStudioNode) << QStringLiteral("Connected to: %1 %2")
                                                   .arg(appInfoPod.appName())
                                                   .arg(appInfoPod.appVersion());
 }
@@ -53,7 +53,7 @@ void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
                                 QRemoteObjectReplica::State oldState)
 {
-    qCDebug(logCategoryStrataDevStudioNode) << oldState << "->" << state;
+    qCDebug(logCategoryDevStudioNode) << oldState << "->" << state;
 
     setHcsConnected(state == QRemoteObjectReplica::Valid);
 }
@@ -61,11 +61,11 @@ void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
 void HcsNode::shutdownService(unsigned hcsIdentifier)
 {
     if ((replica_->isReplicaValid() == false) && ((replica_->isInitialized() == true) || (replica_.data()->waitForSource(500) == false))) {
-        qCWarning(logCategoryStrataDevStudioNode) << "can't shutdown, not connected to HCS";
+        qCWarning(logCategoryDevStudioNode) << "can't shutdown, not connected to HCS";
         return;
     }
 
-    qCDebug(logCategoryStrataDevStudioNode) << "requesting HCS to shut down";
+    qCDebug(logCategoryDevStudioNode) << "requesting HCS to shut down";
     replica_->shutdown_cb(hcsIdentifier);
 }
 
