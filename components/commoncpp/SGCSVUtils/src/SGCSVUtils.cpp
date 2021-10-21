@@ -34,14 +34,13 @@ void SGCSVUtils::appendRow(const QVariantList data)
 
 QVariantList SGCSVUtils::importFromFile(const QString &filePath)
 {
-    SGUtilsCpp utils;
-    QString path = utils.urlToLocalFile(filePath);
-    if (!utils.exists(path)) {
+    QString path = SGUtilsCpp::urlToLocalFile(filePath);
+    if (!SGUtilsCpp::exists(path)) {
         qCCritical(logCategoryCsvUtils) << "This file does not exist" << path;
         return QVariantList();
     }
     data_.clear();
-    QStringList data = utils.readTextFileContent(path).split("\n");
+    QStringList data = SGUtilsCpp::readTextFileContent(path).split("\n");
     for (QString d: data.toVector()) {
         QVariant line = d.split(",");
         QVariantList eachItem;

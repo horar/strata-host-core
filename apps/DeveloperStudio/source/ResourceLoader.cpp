@@ -519,10 +519,9 @@ QString ResourceLoader::getProjectNameFromCmake(const QString &qrcPath) {
     }
 
     // Find QRC file's parent directory, then read CMakeLists.txt in it
-    SGUtilsCpp utils;
-    const QDir parentDir(utils.parentDirectoryPath(qrcPath));
+    const QDir parentDir(SGUtilsCpp::parentDirectoryPath(qrcPath));
     const QString cmakePath = parentDir.filePath("CMakeLists.txt");
-    const QString cmakeText = utils.readTextFileContent(cmakePath);
+    const QString cmakeText = SGUtilsCpp::readTextFileContent(cmakePath);
     if (cmakeText.isEmpty()) {
         return QString();
     }
