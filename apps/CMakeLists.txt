@@ -31,13 +31,6 @@ if(NOT MINGW)
     cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_CVC "Build DevStudio 'CVC' plugin" ON
         "APPS_CORESW_SDS" OFF)
     add_feature_info(APPS_CORESW_SDS_PLUGIN_CVC APPS_CORESW_SDS_PLUGIN_CVC "DevStudio 'Control View Creator' plugin")
-
-    cmake_dependent_option(APPS_FEATURE_BLE "Build DevStudio 'BLE' plugin" ON
-        "APPS_CORESW_SDS" OFF)
-    add_feature_info(APPS_FEATURE_BLE APPS_FEATURE_BLE "DevStudio 'Bluetooth Low Energy' plugin")
-    if(APPS_FEATURE_BLE)
-        add_compile_definitions(APPS_FEATURE_BLE=true)
-    endif()
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()

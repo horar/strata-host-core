@@ -28,7 +28,6 @@ if(APPS_FEATURE_BLE)
     set(BLUETOOTH_LIBRARIES
         PUBLIC Qt5::Bluetooth
     )
-    add_compile_definitions(APPS_FEATURE_BLE=true)
 endif()
 
 find_package(Qt5 ${VERSION_QT5}
