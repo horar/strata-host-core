@@ -31,15 +31,16 @@
 #include <rapidjson/error/en.h>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
-    : QObject(parent),
-      fileSizePrefixList_(QStringList() <<"B"<<"KB"<<"MB"<<"GB"<<"TB"<<"PB"<<"EB"),
-      forbiddenCharactersList_{'<','>',':','"','/','\\','?','|','*'}
+    : QObject(parent)
 {
 }
 
 SGUtilsCpp::~SGUtilsCpp()
 {
 }
+
+const QStringList SGUtilsCpp::fileSizePrefixList_{"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+const QList<QChar> SGUtilsCpp::forbiddenCharactersList_{'<','>',':','"','/','\\','?','|','*'};
 
 QString SGUtilsCpp::urlToLocalFile(const QUrl &url, const bool toNativeSeparators)
 {

@@ -330,8 +330,8 @@ QString SciPlatform::saveDeviceFirmware(QString filePath) {
         return errorString;
     }
 
-    if (SGUtilsCpp().containsForbiddenCharacters(fileInfo.fileName())) {
-        QString errorString("A filename cannot contain any of the following characters: " + SGUtilsCpp().joinForbiddenCharacters());
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        QString errorString("A filename cannot contain any of the following characters: " + SGUtilsCpp::joinForbiddenCharacters());
         qCCritical(logCategorySci) << platform_ << errorString;
         return errorString;
     }
