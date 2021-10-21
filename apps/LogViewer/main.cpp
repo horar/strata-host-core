@@ -44,7 +44,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qCInfo(logCategoryLogViewer)
+        qCInfo(lcLogViewer)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
@@ -63,7 +63,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     bool status = applicationDir.cd("imports");
 
     if (status == false) {
-        qCCritical(logCategoryLogViewer) << "Failed to find import path.";
+        qCCritical(lcLogViewer) << "Failed to find import path.";
     }
     engine->addImportPath(applicationDir.path());
     engine->addImportPath("qrc:///");
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     parser.addHelpOption();
     parser.process(app);
 
-    qCInfo(logCategoryLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(lcLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QQmlApplicationEngine engine;
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategoryLogViewer) << "root object is empty";
+        qCCritical(lcLogViewer) << "root object is empty";
         return -1;
     }
     return app.exec();
