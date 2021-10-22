@@ -29,7 +29,7 @@
 
 using strata::loggers::QtLoggerSetup;
 
-namespace constants = strata::loggers::contants;
+namespace logConsts = strata::loggers::contants;
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategorySci) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategorySci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
     qCInfo(logCategorySci) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
     qCInfo(logCategorySci) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategorySci) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCInfo(logCategorySci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(logCategorySci) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(logCategorySci) << QString("Running on %1").arg(QSysInfo::prettyProductName());
     if (QSslSocket::supportsSsl()) {
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
         qCCritical(logCategorySci) << QString("No SSL support!!");
     }
     qCInfo(logCategorySci) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategorySci) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategorySci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "cannot instantiate SciModel in qml");
     qmlRegisterUncreatableType<SciPlatformModel>("tech.strata.sci", 1, 0, "SciPlatformModel", "cannot instantiate SciPlatformModel in qml");

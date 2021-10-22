@@ -29,7 +29,7 @@
 
 using strata::loggers::QtLoggerSetup;
 
-namespace constants = strata::loggers::contants;
+namespace logConsts = strata::loggers::contants;
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -86,10 +86,10 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/prt-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategoryPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
     qCInfo(logCategoryPrt) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
     qCInfo(logCategoryPrt) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCInfo(logCategoryPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(logCategoryPrt) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(logCategoryPrt) << QString("Running on %1").arg(QSysInfo::prettyProductName());
     if (QSslSocket::supportsSsl()) {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
         qCCritical(logCategoryPrt) << QString("No SSL support!!");
     }
     qCInfo(logCategoryPrt) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategoryPrt) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategoryPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     loadResources();
 

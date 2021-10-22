@@ -33,7 +33,7 @@
 using strata::loggers::QtLoggerSetup;
 using strata::loggers::cbLoggerSetup;
 
-namespace constants = strata::loggers::contants;
+namespace logConsts = strata::loggers::contants;
 
 int main(int argc, char *argv[])
 {
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
                 qInfo() << i;
             }
             return EXIT_FAILURE;
-        } 
+        }
         else if (stageArgs.count() > 1) {
             qWarning() << "Too many arguments were entered";
             return EXIT_FAILURE;
@@ -113,10 +113,10 @@ int main(int argc, char *argv[])
     const QtLoggerSetup loggerInitialization(app);
     cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
-    qCInfo(logCategoryHcs) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategoryHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
     qCInfo(logCategoryHcs) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
     qCInfo(logCategoryHcs) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategoryHcs) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCInfo(logCategoryHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(logCategoryHcs) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(logCategoryHcs) << QString("Running on %1").arg(QSysInfo::prettyProductName());
     if (QSslSocket::supportsSsl()) {
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         qCCritical(logCategoryHcs) << QString("No SSL support!!");
     }
     qCInfo(logCategoryHcs) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategoryHcs) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(logCategoryHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");

@@ -27,7 +27,7 @@ using strata::flashercli::CliParser;
 using strata::flashercli::commands::Command;
 using strata::loggers::QtLoggerSetup;
 
-namespace constants = strata::loggers::contants;
+namespace logConsts = strata::loggers::contants;
 
 int main(int argc, char *argv[])
 {
@@ -38,14 +38,14 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     const QtLoggerSetup loggerInitialization(app);
-    qCDebug(logCategoryFlasherCli) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCDebug(logCategoryFlasherCli) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
     qCDebug(logCategoryFlasherCli) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
     qCDebug(logCategoryFlasherCli) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCDebug(logCategoryFlasherCli) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCDebug(logCategoryFlasherCli) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCDebug(logCategoryFlasherCli) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCDebug(logCategoryFlasherCli) << QString("Running on %1").arg(QSysInfo::prettyProductName());
     qCDebug(logCategoryFlasherCli) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCDebug(logCategoryFlasherCli) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCDebug(logCategoryFlasherCli) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     CliParser parser(QCoreApplication::arguments());
     CommandShPtr command = parser.parse();
