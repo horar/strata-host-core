@@ -13,7 +13,6 @@ import "qrc:/partial-views"
 import "qrc:/partial-views/login/registration"
 import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Registration
-import "qrc:/js/restclient.js" as Rest
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
