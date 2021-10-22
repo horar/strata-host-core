@@ -11,8 +11,28 @@ project(PlatformManager
     LANGUAGES CXX
 )
 
+if(APPS_FEATURE_BLE)
+    set(BLUETOOTH_PACKAGES
+        Bluetooth
+    )
+    set(BLUETOOTH_SOURCES
+        src/BluetoothLowEnergy/BluetoothLowEnergyScanner.cpp
+        include/BluetoothLowEnergy/BluetoothLowEnergyScanner.h
+    )
+    set(BLUETOOTH_LIBRARIES
+        PUBLIC Qt5::Bluetooth
+    )
+    if(WIN32)
+        set(BLUETOOTH_LIBRARIES
+            ${BLUETOOTH_LIBRARIES}
+            PRIVATE Bthprops
+            PRIVATE ws2_32
+        )
+    endif()
+endif()
+
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort Network Bluetooth
+    COMPONENTS Core SerialPort Network ${BLUETOOTH_PACKAGES}
     REQUIRED
 )
 
@@ -23,7 +43,6 @@ add_library(${PROJECT_NAME}
     src/Serial/SerialDeviceScanner.cpp
     src/Mock/MockDeviceScanner.cpp
     src/Tcp/TcpDeviceScanner.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyScanner.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/PlatformManager.h
@@ -31,7 +50,8 @@ add_library(${PROJECT_NAME}
     include/Serial/SerialDeviceScanner.h
     include/Mock/MockDeviceScanner.h
     include/Tcp/TcpDeviceScanner.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyScanner.h
+
+    ${BLUETOOTH_SOURCES}
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -47,18 +67,12 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
     PUBLIC Qt5::Network
-    PUBLIC Qt5::Bluetooth
     PUBLIC strata::QtLogger
     PUBLIC strata::Platform
     PRIVATE strata::CommandValidator
-)
 
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME}
-        PRIVATE Bthprops
-        PRIVATE ws2_32
-    )
-endif()
+    ${BLUETOOTH_LIBRARIES}
+)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS

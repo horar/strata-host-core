@@ -14,6 +14,15 @@ project(StrataDeveloperStudio
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
+if(APPS_FEATURE_BLE)
+    string(CONCAT PROJECT_BUNDLE_ADDON
+        "<key>NSBluetoothAlwaysUsageDescription</key>"
+        "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
+    )
+    set(BLUETOOTH_SOURCES
+        source/BleDeviceModel.cpp
+    )
+endif()
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 set(QT5_MINIMUM_VERSION 5.12.4)
 
@@ -49,7 +58,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/RunGuard.cpp
     source/CoreUpdate.cpp
     source/PlatformInterfaceGenerator.cpp
-    source/BleDeviceModel.cpp
     source/VisualEditorUndoStack.cpp
     source/PlatformOperation.cpp
 
@@ -70,6 +78,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
+    ${BLUETOOTH_SOURCES}
 )
 
 set(${PROJECT_NAME}_ENABLED_PLUGINS "")

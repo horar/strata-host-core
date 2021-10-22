@@ -84,9 +84,11 @@ bool HostControllerService::initialize(const QString &config)
         "platform_start_application", std::bind(&HostControllerService::processCmdPlatformStartApplication, this,
                                         std::placeholders::_1));
 
+#ifdef APPS_FEATURE_BLE
     strataServer_->registerHandler(
         "bluetooth_scan", std::bind(&HostControllerService::processCmdBluetoothScan, this,
                                         std::placeholders::_1));
+#endif // APPS_FEATURE_BLE
     strataServer_->registerHandler(
         "connect_device", std::bind(&HostControllerService::processCmdConnectDevice, this,
                                         std::placeholders::_1));
@@ -125,8 +127,10 @@ bool HostControllerService::initialize(const QString &config)
     connect(&platformController_, &PlatformController::platformApplicationStarted, this,
             &HostControllerService::platformStateChanged);
 
+#ifdef APPS_FEATURE_BLE
     connect(&platformController_, &PlatformController::bluetoothScanFinished, this,
             &HostControllerService::bluetoothScanFinished);
+#endif // APPS_FEATURE_BLE
     connect(&platformController_, &PlatformController::connectDeviceFinished, this,
             &HostControllerService::connectDeviceFinished);
     connect(&platformController_, &PlatformController::disconnectDeviceFinished, this,
@@ -435,12 +439,14 @@ void HostControllerService::sendPlatformMessageToClients(const QString &platform
                                 payload, strataRPC::ResponseType::PlatformMessage);
 }
 
+#ifdef APPS_FEATURE_BLE
 void HostControllerService::bluetoothScanFinished(const QJsonObject payload)
 {
     strataServer_->notifyAllClients(
         hcsNotificationTypeToString(hcsNotificationType::bluetoothScan),
         payload);
 }
+#endif // APPS_FEATURE_BLE
 
 void HostControllerService::connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
 {
@@ -750,11 +756,13 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
     storageManager_.requestDownloadControlView(message.clientID, url, md5, classId);
 }
 
+#ifdef APPS_FEATURE_BLE
 void HostControllerService::processCmdBluetoothScan(const strata::strataRPC::Message &message)
 {
     Q_UNUSED(message)
     platformController_.startBluetoothScan();
 }
+#endif // APPS_FEATURE_BLE
 
 void HostControllerService::processCmdConnectDevice(const strata::strataRPC::Message &message)
 {

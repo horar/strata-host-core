@@ -23,7 +23,9 @@ class ResourceLoader;
 class SGNewControlView;
 class FirmwareUpdater;
 class PlatformInterfaceGenerator;
+#ifdef APPS_FEATURE_BLE
 class BleDeviceModel;
+#endif // APPS_FEATURE_BLE
 class VisualEditorUndoStack;
 class PlatformOperation;
 
@@ -47,7 +49,9 @@ class SDSModel: public QObject
     Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
+#ifdef APPS_FEATURE_BLE
     Q_PROPERTY(BleDeviceModel* bleDeviceModel READ bleDeviceModel CONSTANT)
+#endif // APPS_FEATURE_BLE
     Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
     Q_PROPERTY(PlatformOperation* platformOperation READ platformOperation CONSTANT)
     Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled NOTIFY debugFeaturesEnabledChanged)
@@ -69,7 +73,9 @@ public:
     VisualEditorUndoStack* visualEditorUndoStack() const;
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
+#ifdef APPS_FEATURE_BLE
     BleDeviceModel *bleDeviceModel() const;
+#endif // APPS_FEATURE_BLE
     strata::strataRPC::StrataClient *strataClient() const;
     PlatformOperation* platformOperation() const;
     bool debugFeaturesEnabled();
@@ -106,7 +112,9 @@ private:
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
     PlatformOperation *platformOperation_{nullptr};
     QPointer<QProcess> hcsProcess_;
+#ifdef APPS_FEATURE_BLE
     BleDeviceModel *bleDeviceModel_{nullptr};
+#endif // APPS_FEATURE_BLE
     const unsigned hcsIdentifier_;
     bool debugFeaturesEnabled_ = false;
 

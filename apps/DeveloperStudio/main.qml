@@ -206,7 +206,7 @@ SGWidgets.SGMainWindow {
     }
 
     Connections {
-        target: sdsModel.bleDeviceModel
+        target: (sdsModel.bleDeviceModel === undefined)?(null):(sdsModel.bleDeviceModel)
         onTryConnectFinished: {
             if (errorString.length > 0) {
                 showBleNotification("BLE device connection atempt failed", errorString);

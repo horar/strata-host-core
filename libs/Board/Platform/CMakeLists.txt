@@ -11,8 +11,27 @@ project(Platform
     LANGUAGES CXX
 )
 
+if(APPS_FEATURE_BLE)
+    set(BLUETOOTH_PACKAGES
+        Bluetooth
+    )
+    set(BLUETOOTH_SOURCES
+        src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
+        src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
+        src/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.cpp
+        src/BluetoothLowEnergy/BluetoothLowEnergyController.cpp
+        include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
+        include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
+        include/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h
+        include/BluetoothLowEnergy/BluetoothLowEnergyController.h
+    )
+    set(BLUETOOTH_LIBRARIES
+        PUBLIC Qt5::Bluetooth
+    )
+endif()
+
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort Network Bluetooth
+    COMPONENTS Core SerialPort Network ${BLUETOOTH_PACKAGES}
     REQUIRED
 )
 
@@ -26,10 +45,6 @@ add_library(${PROJECT_NAME}
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
     src/Tcp/TcpDevice.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyDevice.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.cpp
-    src/BluetoothLowEnergy/BluetoothLowEnergyController.cpp
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp
     src/Operations/Commands/CmdRequestPlatformId.cpp
@@ -62,13 +77,11 @@ add_library(${PROJECT_NAME}
     include/Mock/MockDeviceControl.h
     include/Mock/MockDeviceConstants.h
     include/Tcp/TcpDevice.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyDevice.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyJsonEncoder.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyControllerFactory.h
-    include/BluetoothLowEnergy/BluetoothLowEnergyController.h
     include/Operations/BasePlatformOperation.h
     include/Operations/Identify.h
     include/Operations/PlatformOperations.h
+
+    ${BLUETOOTH_SOURCES}
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -86,12 +99,13 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
     PUBLIC Qt5::Network
-    PUBLIC Qt5::Bluetooth
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PRIVATE strata::CommandValidator
     PRIVATE strata::base64
     PRIVATE strata::crc16
+
+    ${BLUETOOTH_LIBRARIES}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

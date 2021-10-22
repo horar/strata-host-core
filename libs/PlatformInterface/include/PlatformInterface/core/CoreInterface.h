@@ -147,11 +147,13 @@ signals:
      */
     void downloadPlatformFilesFinished(const QJsonObject &payload);
 
+#ifdef APPS_FEATURE_BLE
     /**
      * Signal emitted when bluetooth_scan notification is received.
      * @param [in] payload QJsonObject of bluetooth_scan notification payload.
      */
     void bluetoothScan(const QJsonObject &payload);
+#endif // APPS_FEATURE_BLE
 
     /**
      * Signal emitted when connect_device notification is received.
@@ -178,7 +180,9 @@ private:
     void processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload);
     void processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload);
     void processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload);
+#ifdef APPS_FEATURE_BLE
     void processBluetoothScanNotification(const QJsonObject &payload);
+#endif // APPS_FEATURE_BLE
     void processConnectDeviceNotification(const QJsonObject &payload);
     void processDisconnectDeviceNotification(const QJsonObject &payload);
 

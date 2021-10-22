@@ -55,10 +55,12 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
         "download_platform_files_finished",
         std::bind(&CoreInterface::processDownloadPlatformFilesFinishedNotification, this,
                   std::placeholders::_1));
+#ifdef APPS_FEATURE_BLE
     strataClient_->registerHandler(
         "bluetooth_scan",
         std::bind(&CoreInterface::processBluetoothScanNotification, this,
                   std::placeholders::_1));
+#endif // APPS_FEATURE_BLE
     strataClient_->registerHandler(
         "connect_device",
         std::bind(&CoreInterface::processConnectDeviceNotification, this,
@@ -154,10 +156,12 @@ void CoreInterface::processDownloadPlatformFilesFinishedNotification(const QJson
     emit downloadPlatformFilesFinished(payload);
 }
 
+#ifdef APPS_FEATURE_BLE
 void CoreInterface::processBluetoothScanNotification(const QJsonObject &payload)
 {
     emit bluetoothScan(payload);
 }
+#endif // APPS_FEATURE_BLE
 
 void CoreInterface::processConnectDeviceNotification(const QJsonObject &payload)
 {

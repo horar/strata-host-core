@@ -134,7 +134,9 @@ private slots:
 
     void platformStateChanged(const QByteArray& deviceId);
 
+#ifdef APPS_FEATURE_BLE
     void bluetoothScanFinished(const QJsonObject payload);
+#endif // APPS_FEATURE_BLE
     void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
     void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
 
@@ -175,7 +177,9 @@ private:
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
     void processCmdProgramController(const strata::strataRPC::Message &message);
     void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
+#ifdef APPS_FEATURE_BLE
     void processCmdBluetoothScan(const strata::strataRPC::Message &message);
+#endif // APPS_FEATURE_BLE
     void processCmdConnectDevice(const strata::strataRPC::Message &message);
     void processCmdDisconnectDevice(const strata::strataRPC::Message &message);
     void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
