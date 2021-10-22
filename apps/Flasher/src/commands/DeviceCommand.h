@@ -13,7 +13,7 @@
 
 #include <Platform.h>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class DeviceCommand : public Command
 {
@@ -39,4 +39,4 @@ protected:
     platform::PlatformPtr platform_;
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

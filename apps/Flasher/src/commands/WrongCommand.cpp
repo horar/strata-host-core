@@ -13,7 +13,7 @@
 
 #include <cstdlib>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 WrongCommand::WrongCommand(const QString& message) : message_(message)
 {
@@ -25,4 +25,4 @@ void WrongCommand::process()
     emit finished(EXIT_FAILURE);
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

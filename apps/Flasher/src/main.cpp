@@ -22,9 +22,9 @@
 #include "Timestamp.h"
 #include "Version.h"
 
-using strata::flasher::CommandShPtr;
-using strata::flasher::CliParser;
-using strata::flasher::commands::Command;
+using strata::flashercli::CommandShPtr;
+using strata::flashercli::CliParser;
+using strata::flashercli::commands::Command;
 using strata::loggers::QtLoggerSetup;
 
 namespace constants = strata::loggers::contants;

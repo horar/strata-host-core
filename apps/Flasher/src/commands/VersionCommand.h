@@ -11,7 +11,7 @@
 
 #include "Command.h"
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class VersionCommand : public Command
 {
@@ -28,4 +28,4 @@ private:
     const QString appVersion_;
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

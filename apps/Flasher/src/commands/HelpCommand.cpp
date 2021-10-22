@@ -12,7 +12,7 @@
 
 #include <cstdlib>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 HelpCommand::HelpCommand(const QString& helpText) : helpText_(helpText)
 {
@@ -24,4 +24,4 @@ void HelpCommand::process()
     emit finished(EXIT_SUCCESS);
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

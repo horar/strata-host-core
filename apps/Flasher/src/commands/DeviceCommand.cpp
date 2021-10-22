@@ -14,7 +14,7 @@
 
 #include <Serial/SerialDevice.h>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 constexpr int OPEN_MAX_RETRIES(4);
 
@@ -31,7 +31,7 @@ DeviceCommand::~DeviceCommand()
 
 bool DeviceCommand::createSerialDevice()
 {
-    flasher::SerialPortList serialPorts;
+    flashercli::SerialPortList serialPorts;
 
     if (serialPorts.count() == 0) {
         qCCritical(logCategoryFlasherCli) << "No board is connected.";
@@ -85,4 +85,4 @@ void DeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString
     }
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

@@ -14,7 +14,7 @@
 #include <Operations/Identify.h>
 #include <Platform.h>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 InfoCommand::InfoCommand(int deviceNumber) : DeviceCommand(deviceNumber)
 {
@@ -113,4 +113,4 @@ void InfoCommand::handleCriticalDeviceError()
     }
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

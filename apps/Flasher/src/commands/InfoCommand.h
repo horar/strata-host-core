@@ -13,7 +13,7 @@
 
 #include <Operations/Identify.h>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class InfoCommand : public DeviceCommand
 {
@@ -34,4 +34,4 @@ private:
     std::unique_ptr<platform::operation::Identify> identifyOperation_;
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

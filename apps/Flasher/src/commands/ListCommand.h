@@ -11,7 +11,7 @@
 
 #include "Command.h"
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class ListCommand : public Command
 {
@@ -23,4 +23,4 @@ public:
     void process() override;
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

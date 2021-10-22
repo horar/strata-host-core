@@ -19,7 +19,7 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::flasher
+namespace strata::flashercli
 {
 CliParser::CliParser(const QStringList &args) : args_(args),
       listOption_({QStringLiteral("l"), QStringLiteral("list")},
@@ -120,4 +120,4 @@ CommandShPtr CliParser::parse()
     return std::make_unique<commands::WrongCommand>(message);
 }
 
-}  // namespace strata::flasher
+}  // namespace strata::flashercli

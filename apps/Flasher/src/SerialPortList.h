@@ -11,7 +11,7 @@
 #include <QList>
 #include <QString>
 
-namespace strata::flasher
+namespace strata::flashercli
 {
 class SerialPortList
 {
@@ -44,4 +44,4 @@ private:
     QList<QString> portNames_;
 };
 
-}  // namespace strata::flasher
+}  // namespace strata::flashercli

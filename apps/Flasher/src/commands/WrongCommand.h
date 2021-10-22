@@ -11,7 +11,7 @@
 
 #include "Command.h"
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class WrongCommand : public Command
 {
@@ -26,4 +26,4 @@ private:
     const QString message_;
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

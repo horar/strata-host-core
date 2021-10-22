@@ -11,7 +11,7 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 VersionCommand::VersionCommand(const QString &appName, const QString &appDescription, const QString &appVersion)
     : appName_(appName), appDescription_(appDescription), appVersion_(appVersion)
@@ -24,4 +24,4 @@ void VersionCommand::process()
     emit finished(EXIT_SUCCESS);
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

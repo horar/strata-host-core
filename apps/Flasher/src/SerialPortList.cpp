@@ -10,7 +10,7 @@
 
 #include <QSerialPortInfo>
 
-namespace strata::flasher
+namespace strata::flashercli
 {
 SerialPortList::SerialPortList()
 {
@@ -57,4 +57,4 @@ int SerialPortList::count() const
     return portNames_.count();
 }
 
-}  // namespace strata::flasher
+}  // namespace strata::flashercli

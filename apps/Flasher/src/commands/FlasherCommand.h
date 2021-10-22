@@ -16,7 +16,7 @@ namespace strata
 class Flasher;
 }
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class FlasherCommand : public DeviceCommand
 {
@@ -39,4 +39,4 @@ private:
     const CmdType command_;
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

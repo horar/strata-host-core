@@ -15,7 +15,7 @@
 
 #include "commands/Command.h"
 
-namespace strata::flasher
+namespace strata::flashercli
 {
 typedef std::unique_ptr<commands::Command> CommandShPtr;
 
@@ -45,4 +45,4 @@ private:
     QCommandLineParser parser_;
 };
 
-}  // namespace strata::flasher
+}  // namespace strata::flashercli

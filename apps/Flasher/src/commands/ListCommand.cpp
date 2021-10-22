@@ -12,7 +12,7 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 ListCommand::ListCommand()
 {
@@ -20,7 +20,7 @@ ListCommand::ListCommand()
 
 void ListCommand::process()
 {
-    flasher::SerialPortList serialPorts;
+    flashercli::SerialPortList serialPorts;
     auto const portList = serialPorts.list();
     QString message(QStringLiteral("List of available boards (serial devices):"));
     if (portList.isEmpty()) {
@@ -37,4 +37,4 @@ void ListCommand::process()
     emit finished(EXIT_SUCCESS);
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

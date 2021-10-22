@@ -13,7 +13,7 @@
 
 using strata::Flasher;
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 
 FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command)
@@ -66,4 +66,4 @@ void FlasherCommand::handleCriticalDeviceError()
     }
 }
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands

@@ -11,7 +11,7 @@
 
 #include <QObject>
 
-namespace strata::flasher::commands
+namespace strata::flashercli::commands
 {
 class Command : public QObject
 {
@@ -27,4 +27,4 @@ signals:
     void finished(int returnCode);
 };
 
-}  // namespace strata::flasher::commands
+}  // namespace strata::flashercli::commands
