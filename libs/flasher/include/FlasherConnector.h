@@ -185,11 +185,11 @@ signals:
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
     void handleFlasherState(Flasher::State flasherState, bool done);
-    void handlePlatfOperFinished(QByteArray deviceId,
-                                 strata::platform::operation::Type type,
-                                 strata::platform::operation::Result result,
-                                 int status,
-                                 QString errorString);
+    void handlePlatformOperationFinished(QByteArray deviceId,
+                                         platform::operation::Type type,
+                                         platform::operation::Result result,
+                                         int status,
+                                         QString errorString);
 
 private:
     // deleter for flasher_ unique pointer

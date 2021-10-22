@@ -14,8 +14,6 @@
 
 #include <cstring>
 
-namespace platfOperation = strata::platform::operation;
-
 namespace strata {
 
 using platform::PlatformPtr;
@@ -55,7 +53,7 @@ FlasherConnector::FlasherConnector(const PlatformPtr& platform,
 {
     oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : platform_->firmwareClassId();
 
-    connect(&platformOperations_, &platfOperation::PlatformOperations::finished, this, &FlasherConnector::handlePlatfOperFinished);
+    connect(&platformOperations_, &platform::operation::PlatformOperations::finished, this, &FlasherConnector::handlePlatformOperationFinished);
 }
 
 FlasherConnector::~FlasherConnector()
@@ -185,8 +183,9 @@ void FlasherConnector::flashFirmware(bool flashOldFw) {
                     readNew = newFw.read(newBuffer, bufferSize);
                     if (readOld > 0 && readOld == readNew && std::memcmp(oldBuffer, newBuffer, readOld) != 0) {
                         skipFlash = false;
+                        break;
                     }
-                } while (skipFlash && (readOld > 0));
+                } while (readOld > 0);
             }
         }
     }
@@ -438,20 +437,20 @@ void FlasherConnector::handleFlasherState(Flasher::State flasherState, bool done
     }
 }
 
-void FlasherConnector::handlePlatfOperFinished(QByteArray deviceId,
-                                               platfOperation::Type type,
-                                               platfOperation::Result result,
-                                               int status,
-                                               QString errorString)
+void FlasherConnector::handlePlatformOperationFinished(QByteArray deviceId,
+                                                       platform::operation::Type type,
+                                                       platform::operation::Result result,
+                                                       int status,
+                                                       QString errorString)
 {
     Q_UNUSED(status)
 
-    if (type == platfOperation::Type::StartApplication) {
+    if (type == platform::operation::Type::StartApplication) {
         // Current firmware was started instead of flashing new one.
         // Emit the same signals as during normal flashing (by calling
         // slots for Flasher signals if possible).
 
-        if (result == platfOperation::Result::Success) {
+        if (result == platform::operation::Result::Success) {
             emit flashProgress(1, 1);
             emit devicePropertiesChanged();
             handleFlasherState(Flasher::State::FlashFirmware, true);
