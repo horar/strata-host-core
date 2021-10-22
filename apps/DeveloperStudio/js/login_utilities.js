@@ -217,8 +217,8 @@ function register(registration_info){
         "title": registration_info.title,
         "company": registration_info.company
     };
-    Rest.anonymous = registration_info.anonymous
-    Rest.xhr("post", "signup", data, register_result, register_error, { "anonymous": Rest.anonymous })
+
+    Rest.xhr("post", "signup", data, register_result, register_error, null)
 
     /*
       * Possible valid outcomes:
