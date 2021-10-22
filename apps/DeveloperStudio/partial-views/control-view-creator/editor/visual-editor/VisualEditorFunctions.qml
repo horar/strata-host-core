@@ -464,14 +464,6 @@ QtObject {
         return string.match(objectDeclarationRegex)
     }
 
-    function isUuidValid(uuid) {
-        if (fileContents.match("\\s*{\\s*\/\/\\s*start_" + uuid)) {
-            return true
-        } else {
-            return false
-        }
-    }
-
     function getType(uuid) {
         const capture1 = "([A-Z][A-Za-z0-9_]*)" // qml object type, e.g. Rectangle
         const capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
@@ -510,16 +502,14 @@ QtObject {
 
     // This will check if item can be exactly centered
     function exactCenterCheck(uuid, horOrVert) {
-        if (isUuidValid(uuid)) {
-            if (horOrVert === "horizontal") {
-                const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
-                const isExact = calculation % 1 === 0
-                return isExact
-            } else {
-                const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
-                const isExact = calculation % 1 === 0
-                return isExact
-            }
+        if (horOrVert === "horizontal") {
+            const calculation = (overlayContainer.columnCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.columnsWide") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
+        } else {
+            const calculation = (overlayContainer.rowCount / 2) - (getObjectPropertyValue(uuid, "layoutInfo.rowsTall") / 2)
+            const isExact = calculation % 1 === 0
+            return isExact
         }
     }
 
