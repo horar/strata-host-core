@@ -247,7 +247,7 @@ QtObject {
     }
 
     function bringToFront(uuid, save = true) {
-        let copy = getObjectFromString(uuid, fileContents, "Bring To Front")
+        let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
         }
@@ -291,7 +291,6 @@ QtObject {
     }
 
     function getObjectFromString(uuid, string = fileContents) {
-
         let objectString
         try {
             objectString = string.match(captureObjectByUuidRegex(uuid))[0]
