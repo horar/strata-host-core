@@ -72,13 +72,6 @@ Menu {
         }
     }
 
-    MenuItem {
-        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
-        onTriggered: {
-            SGUtilsCpp.showFileInFolder(model.filepath)
-        }
-    }
-
     MenuSeparator {}
 
     MenuItem {
@@ -87,6 +80,13 @@ Menu {
             createFilePopup.directoryPath =  "file://"+ SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath))
             createFilePopup.open()
             fileContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
+        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
+        onTriggered: {
+            SGUtilsCpp.showFileInFolder(model.filepath)
         }
     }
 
