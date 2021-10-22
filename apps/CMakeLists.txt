@@ -63,9 +63,9 @@ add_feature_info(APPS_TOOLBOX_LV APPS_TOOLBOX_LV "LogViewer")
 cmake_dependent_option(APPS_TOOLBOX_WG "Build 'Widget Gallery'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Widget Gallery")
-cmake_dependent_option(APPS_TOOLBOX_WG "Build 'LoggingConfigurationUtility'" ON
+cmake_dependent_option(APPS_TOOLBOX_LCU "Build 'LoggingConfigurationUtility'" ON
                         "APPS_TOOLBOX" OFF)
-add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Logging Configuration Utility")
+add_feature_info(APPS_TOOLBOX_LCU APPS_TOOLBOX_LCU "Logging Configuration Utility")
 
 if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)
@@ -110,6 +110,6 @@ if (APPS_TOOLBOX_WG)
     add_subdirectory(WidgetGallery)
 endif()
 
-if (APPS_TOOLBOX_WG)
+if (APPS_TOOLBOX_LCU)
     add_subdirectory(LoggingConfigurationUtility)
 endif()
