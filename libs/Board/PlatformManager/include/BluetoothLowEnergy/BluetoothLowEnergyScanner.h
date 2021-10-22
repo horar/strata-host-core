@@ -65,8 +65,6 @@ public:
      * Initiates connection to discovered BLE device.
      * Possible outcomes:
      * - immediate error -> will return non-empty string
-     * - error during connecting -> will emit connectDeviceFailed
-     * - success -> will emit connectDeviceFinished
      * @param deviceId device ID, returned by discoveredDevices()
      * @return empty string if connecting started (doesn't mean successful connection, only initiation of connection process).
      * Error message if there was an error.
@@ -93,8 +91,6 @@ private slots:
     void discoveryFinishedHandler();
     void discoveryCancelledHandler();
     void discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error);
-    void deviceOpenedHandler();
-    void deviceErrorHandler(Device::ErrorCode error, QString errorString);
 
 private:
     bool isEligible(const QBluetoothDeviceInfo &info) const;

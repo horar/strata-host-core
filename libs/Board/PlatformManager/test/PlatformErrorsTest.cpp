@@ -63,7 +63,7 @@ void PlatformErrorsTest::addMockDevice()
 {
     devicesCount_ = platformManager_->getDeviceIds().count();
 
-    QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
+    QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformOpened(QByteArray)));
     QVERIFY(mockDeviceScanner_->mockDeviceDetected(deviceId_, "Mock device", true).isEmpty());
     QVERIFY((platformAddedSignal.count() == 1) || (platformAddedSignal.wait(100) == true));
 

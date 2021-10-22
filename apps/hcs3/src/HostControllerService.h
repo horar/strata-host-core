@@ -135,10 +135,9 @@ private slots:
     void platformStateChanged(const QByteArray& deviceId);
 
     void bluetoothScanFinished(const QJsonObject payload);
-    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
-    void connectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
-    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
-    void disconnectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+
 private:
     enum class hcsNotificationType {
         downloadPlatformFilepathChanged,

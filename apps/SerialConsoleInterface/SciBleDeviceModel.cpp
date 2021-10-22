@@ -13,6 +13,12 @@ SciBleDeviceModel::SciBleDeviceModel(
       platformManager_(platformManager)
 {
     setModelRoles();
+
+    connect(platformManager_, &strata::PlatformManager::platformOpened,
+            this, &SciBleDeviceModel::platformOpenedHandler);
+
+    connect(platformManager_, &strata::PlatformManager::platformRemoved,
+            this, &SciBleDeviceModel::platformRemovedHandler);
 }
 
 SciBleDeviceModel::~SciBleDeviceModel()
@@ -67,15 +73,6 @@ void SciBleDeviceModel::init()
 
     connect(scanner_.get(), &BluetoothLowEnergyScanner::discoveryFinished,
             this, &SciBleDeviceModel::discoveryFinishedHandler);
-
-    connect(scanner_.get(), &BluetoothLowEnergyScanner::connectDeviceFinished,
-            this, &SciBleDeviceModel::connectDeviceFinishedHandler);
-
-    connect(scanner_.get(), &BluetoothLowEnergyScanner::connectDeviceFailed,
-            this, &SciBleDeviceModel::connectDeviceFailedHandler);
-
-    connect(scanner_.get(), &BluetoothLowEnergyScanner::deviceLost,
-            this, &SciBleDeviceModel::deviceLostHandler);
 }
 
 QString SciBleDeviceModel::bleSupportError() const
@@ -121,10 +118,13 @@ void SciBleDeviceModel::tryConnectDevice(int index)
     }
 
     setPropertyAt(index, true, ConnectionInProgressRole);
+    setPropertyAt(index, QString(), ErrorStringRole);
 
     QString err = scanner_->connectDevice(deviceId);
 
-    setPropertyAt(index, err, ErrorStringRole);
+    if (err.isEmpty() == false) {
+        setPropertyAt(index, err, ErrorStringRole);
+    }
 }
 
 void SciBleDeviceModel::tryDisconnectDevice(int index)
@@ -142,10 +142,13 @@ void SciBleDeviceModel::tryDisconnectDevice(int index)
     }
 
     setPropertyAt(index, true, ConnectionInProgressRole);
+    setPropertyAt(index, QString(), ErrorStringRole);
 
     QString err = scanner_->disconnectDevice(deviceId);
 
-    setPropertyAt(index, err, ErrorStringRole);
+    if (err.isEmpty() == false) {
+        setPropertyAt(index, err, ErrorStringRole);
+    }
 }
 
 QVariantMap SciBleDeviceModel::get(int row)
@@ -200,13 +203,13 @@ void SciBleDeviceModel::discoveryFinishedHandler(
     setLastDiscoveryError(effectiveErrorString);
 }
 
-void SciBleDeviceModel::connectDeviceFinishedHandler(const QByteArray deviceId)
+void SciBleDeviceModel::platformOpenedHandler(const QByteArray deviceId)
 {
     int row = findDeviceIndex(deviceId);
     if (row >= 0) {
         setPropertyAt(row, false, ConnectionInProgressRole);
         setPropertyAt(row, true, IsConnectedRole);
-        setPropertyAt(row, "", ErrorStringRole);
+        setPropertyAt(row, QString(), ErrorStringRole);
     }
 
     connectedDeviceIds_.insert(deviceId);
@@ -214,28 +217,13 @@ void SciBleDeviceModel::connectDeviceFinishedHandler(const QByteArray deviceId)
     removeConnectingDevice(deviceId);
 }
 
-void SciBleDeviceModel::connectDeviceFailedHandler(const QByteArray deviceId, const QString errorString)
+void SciBleDeviceModel::platformRemovedHandler(const QByteArray deviceId, const QString errorString)
 {
     int row = findDeviceIndex(deviceId);
     if (row >= 0) {
         setPropertyAt(row, false, ConnectionInProgressRole);
         setPropertyAt(row, false, IsConnectedRole);
         setPropertyAt(row, errorString, ErrorStringRole);
-    }
-
-    if (connectedDeviceIds_.contains(deviceId)) {
-        connectedDeviceIds_.remove(deviceId);
-    }
-
-    removeConnectingDevice(deviceId);
-}
-
-void SciBleDeviceModel::deviceLostHandler(QByteArray deviceId)
-{
-    int row = findDeviceIndex(deviceId);
-    if (row >= 0) {
-        setPropertyAt(row, false, ConnectionInProgressRole);
-        setPropertyAt(row, false, IsConnectedRole);
     }
 
     if (connectedDeviceIds_.contains(deviceId)) {
