@@ -116,11 +116,19 @@ FocusScope {
             filePath: {
                 let fileName = "application"
                 if (model.platform.verboseName.length > 0 && model.platform.verboseName !== "Bootloader") {
-                    fileName = model.platform.verboseName.replace(/\s+/g,"_")
+                    fileName = model.platform.verboseName
                 }
                 if (model.platform.appVersion.length > 0) {
                     fileName = fileName + "_v" + model.platform.appVersion
                 }
+
+                let forbiddenCharacters = CommonCpp.SGUtilsCpp.getForbiddenCharacters()
+                for (let i = 0; i < forbiddenCharacters.length; i++) {
+                    fileName = replaceAll(fileName,forbiddenCharacters[i],"_")
+                }
+
+                fileName = fileName.replace(/\s+/g,"_") //replaces white-space
+
                 fileName = fileName + "_" + currentTimestamp() + ".bin"
 
                 let destination = Sci.Settings.lastSavedFirmwarePath
@@ -143,6 +151,8 @@ FocusScope {
                     return qsTr("Absolute path for firmware binary file is required")
                 } else if (CommonCpp.SGUtilsCpp.isFile(filePath)) {
                     return qsTr("Selected file exists, it will be overwritten")
+                } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                    return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
                 }
 
                 return ""
@@ -226,7 +236,16 @@ FocusScope {
                     enabled: saveFirmwareView.editable
                              && model.platform.status === Sci.SciPlatform.Ready
                     onClicked: {
-                        startBackupProcess(saveFirmwarePathEdit.filePath)
+                        var error = saveFirmwarePathEdit.inputValidationErrorMsg()
+                        if (error.length > 0) {
+                            SGWidgets.SGDialogJS.showMessageDialog(
+                                        saveFirmwareView,
+                                        SGWidgets.SGMessageDialog.Error,
+                                        "Save Firmware Failed",
+                                        error)
+                        } else {
+                            startBackupProcess(saveFirmwarePathEdit.filePath)
+                        }
                     }
                 }
             }
@@ -296,5 +315,9 @@ FocusScope {
         val = date.getSeconds()
         timestamp += (val <= 9) ? "0" + val : val
         return timestamp
+    }
+
+    function replaceAll(string, search, replace) {
+        return string.split(search).join(replace);
     }
 }

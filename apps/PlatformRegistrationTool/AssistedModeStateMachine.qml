@@ -415,7 +415,7 @@ BaseStateMachine {
             }
 
             DSM.SignalTransition {
-                targetState: stateNotifyCloudService
+                targetState: stateValidateBootloader
                 signal: jLinkConnector.programBoardProcessFinished
                 guard: exitedNormally
             }
@@ -427,6 +427,31 @@ BaseStateMachine {
                 onTriggered: {
                     stateMachine.internalSubtext = "JLink process failed"
                     console.error(Logger.prtCategory, "jlink process failed")
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateValidateBootloader
+
+            onEntered: {
+                console.debug(Logger.prtCategory, "programmed bootloader about to be validated")
+                prtModel.identifyBootloader()
+            }
+
+            DSM.SignalTransition {
+                targetState: stateNotifyCloudService
+                signal: prtModel.identifyBootloaderFinished
+                guard: errorString.length === 0
+            }
+
+            DSM.SignalTransition {
+                targetState: stateLoopFailed
+                signal: prtModel.identifyBootloaderFinished
+                guard: errorString.length > 0
+                onTriggered: {
+                    stateMachine.internalSubtext = "Programmed bootloader not valid"
+                    console.error(Logger.prtCategory, "programmed bootloader not valid.")
                 }
             }
         }
