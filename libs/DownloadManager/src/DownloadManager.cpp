@@ -286,9 +286,14 @@ void DownloadManager::networkReplyFinishedHandler()
                 errorString = writeToFile(internalRequest->savedFile, data);
             }
 
-            if (internalRequest->md5.isEmpty() == false) {
-                if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5) == false) {
+            if (internalRequest->md5.isEmpty()) {
+                qCDebug(logCategoryDownloadManager) << "hash not provided, cannot verify downloaded file";
+            } else {
+                if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5)) {
+                    qCDebug(logCategoryDownloadManager) << "hash verification successful";
+                } else {
                     errorString = "hash verification failed";
+                    qCWarning(logCategoryDownloadManager) << errorString;
                 }
             }
         }
