@@ -137,10 +137,9 @@ private slots:
 #ifdef APPS_FEATURE_BLE
     void bluetoothScanFinished(const QJsonObject payload);
 #endif // APPS_FEATURE_BLE
-    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
-    void connectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
-    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId);
-    void disconnectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+
 private:
     enum class hcsNotificationType {
         downloadPlatformFilepathChanged,

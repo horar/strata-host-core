@@ -108,10 +108,8 @@ signals:
 #ifdef APPS_FEATURE_BLE
     void bluetoothScanFinished(const QJsonObject payload);
 #endif // APPS_FEATURE_BLE
-    void connectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
-    void connectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
-    void disconnectDeviceFinished(const QByteArray deviceId, const QByteArray clientId);
-    void disconnectDeviceFailed(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
+    void connectDeviceFinished(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
+    void disconnectDeviceFinished(const QByteArray deviceId, const QByteArray clientId, const QString errorMessage);
     void platformApplicationStarted(QByteArray deviceId);
 
 public slots:
@@ -122,13 +120,12 @@ private slots:
     // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void closeConnection(const QByteArray& deviceId);
+    void removeConnection(const QByteArray& deviceId, const QString& errorString);
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
 #ifdef APPS_FEATURE_BLE
     void bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
 #endif // APPS_FEATURE_BLE
-    void connectDeviceFinishedHandler(const QByteArray& deviceId);
-    void connectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString);
 
     // slot for signal from PlatformOperations
     void operationFinished(QByteArray deviceId,
@@ -170,5 +167,6 @@ private:
 
     strata::platform::operation::PlatformOperations platformOperations_;
 
-    QMultiMap<QByteArray, QByteArray> connectDeviceRequests_; //remember clients who have sent connectDevice requests
+    QMultiMap<QByteArray, QByteArray> connectDeviceRequests_;       // remember clients who have sent connectDevice requests
+    QMultiMap<QByteArray, QByteArray> disconnectDeviceRequests_;    // remember clients who have sent disconnectDevice requests
 };

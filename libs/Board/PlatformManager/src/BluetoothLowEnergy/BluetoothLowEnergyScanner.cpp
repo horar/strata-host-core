@@ -148,11 +148,6 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
     DevicePtr device = std::make_shared<BluetoothLowEnergyDevice>(deviceId, deviceInfo, controllerFactory_);
     platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
 
-    connect(platform.get(), &platform::Platform::opened,
-            this, &BluetoothLowEnergyScanner::deviceOpenedHandler);
-    connect(platform.get(), &platform::Platform::deviceError,
-            this, &BluetoothLowEnergyScanner::deviceErrorHandler);
-
     createdDevices_.insert(deviceId, deviceInfo);
     emit deviceDetected(platform);
     return QString();
@@ -168,7 +163,7 @@ QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
     }
 
     if (createdDevices_.remove(deviceId)) {
-        emit deviceLost(deviceId);
+        emit deviceLost(deviceId, QString());
         return QString();
     }
 
@@ -183,7 +178,7 @@ QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
 
 void BluetoothLowEnergyScanner::disconnectAllDevices() {
     for (auto iter = createdDevices_.keyBegin(); iter != createdDevices_.keyEnd(); ++iter) {
-        emit deviceLost(*iter);
+        emit deviceLost(*iter, QString());
     }
     createdDevices_.clear();
 }
@@ -259,29 +254,6 @@ void BluetoothLowEnergyScanner::discoveryErrorHandler(QBluetoothDeviceDiscoveryA
     qCWarning(logCategoryDeviceScanner()) << error << discoveryAgent_->errorString();
 
     emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, discoveryAgent_->errorString());
-}
-
-void BluetoothLowEnergyScanner::deviceOpenedHandler()
-{
-    platform::Platform *platform = qobject_cast<platform::Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to platform object";
-        return;
-    }
-    emit connectDeviceFinished(platform->deviceId());
-}
-
-void BluetoothLowEnergyScanner::deviceErrorHandler(Device::ErrorCode error, QString errorString)
-{
-    platform::Platform *platform = qobject_cast<platform::Platform*>(QObject::sender());
-    if (platform == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to platform object";
-        return;
-    }
-
-    if (error == Device::ErrorCode::DeviceFailedToOpen) {
-        emit connectDeviceFailed(platform->deviceId(), errorString);
-    }
 }
 
 bool BluetoothLowEnergyScanner::isEligible(const QBluetoothDeviceInfo &info) const

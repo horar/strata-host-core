@@ -87,7 +87,9 @@ SGStrataPopup {
 
             icon.source: "qrc:/sgimages/sync.svg"
             icon.color: "white"
-            enabled: bleSupportError.length === 0 && sdsModel.bleDeviceModel.inScanMode === false
+            enabled: (bleSupportError.length === 0) &&
+                     (sdsModel.bleDeviceModel.inScanMode === false) &&
+                     (sdsModel.bleDeviceModel.isConnecting === false)
             focusPolicy: Qt.NoFocus
             opacity: enabled ? 1.0 : 0.7
 

@@ -17,21 +17,20 @@
 
 namespace strata::device::scanner
 {
+
+struct TcpDeviceInfo {
+    QByteArray deviceId;
+    QString deviceName;
+    QHostAddress deviceIpAddress;
+    quint16 port;
+};
+
 class TcpDeviceScanner : public DeviceScanner
 {
     Q_OBJECT;
     Q_DISABLE_COPY(TcpDeviceScanner);
 
 public:
-    /**
-     * Flags defining properties for TCP device scanner.
-     * By default, scanner starts with all flags unset.
-     */
-    enum TcpScannerFlag {
-        DisableAutomaticScan = 0x0001
-    };
-    Q_DECLARE_FLAGS(TcpScannerProperty, TcpScannerFlag)
-
     /**
      * TcpDeviceScanner constructor
      */
@@ -60,6 +59,12 @@ public:
     virtual QList<QByteArray> discoveredDevices() const override;
 
     /**
+     * Return list of information of all discovered devices
+     * @return list of TcpDeviceInfo
+     */
+    const QList<TcpDeviceInfo> discoveredTcpDevices() const;
+
+    /**
      * Initiates connection to discovered device.
      * @param deviceId device ID, returned by discoveredDevices()
      * @return empty string if connecting started, error message if there was an error
@@ -79,35 +84,36 @@ public:
     virtual void disconnectAllDevices() override;
 
     /**
-     * Set properties for TCP device scanner.
-     * Calling setProperties(A | B) is equivalent to calling setProperties(A) and then setProperties(B).
-     * @param flags flags defining properties for TCP device scanner
+     * Starts searching for tcp devices
+     * Note: search will last for 5 seconds.
      */
-    void setProperties(quint32 flags);
+    void startDiscovery();
 
+public slots:
     /**
-     * Unset properties for TCP device scanner.
-     * Calling unsetProperties(A | B) is equivalent to calling unsetProperties(A) and then unsetProperties(B).
-     * To unset all properties (restore default values), call unsetProperties(0xFFFFFFFF).
-     * @param flags flags defining properties for TCP device scanner
+     * Stops searching for tcp devices
      */
-    void unsetProperties(quint32 flags);
+    void stopDiscovery();
 
+signals:
+    void discoveryFinished();
 
 private slots:
     void processPendingDatagrams();
 
 private:
-    void startAutomaticScan();
-    void stopAutomaticScan();
-    void addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort);
     bool parseDatagram(const QByteArray &datagram, quint16 &tcpPort);
 
     std::unique_ptr<QUdpSocket> udpSocket_;
-    QSet<QByteArray> discoveredDevices_;
-
+    QList<TcpDeviceInfo> discoveredDevices_;
+    QHash<QByteArray, TcpDeviceInfo> createdDevices_;
+    QTimer discoveryTimer_;
     bool scanRunning_;
 
     static constexpr qint16 UDP_LISTEN_PORT{5146};
+    static constexpr std::chrono::milliseconds DISCOVERY_TIMEOUT{5000};
 };
+
+typedef std::shared_ptr<TcpDeviceScanner> TcpDeviceScannerPtr;
+
 }  // namespace strata::device::scanner

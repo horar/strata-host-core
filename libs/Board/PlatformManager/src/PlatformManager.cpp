@@ -56,16 +56,17 @@ PlatformManager::~PlatformManager() {
     for(const PlatformPtr& platform: qAsConst(platforms_)) {
         disconnect(platform.get(), nullptr, this, nullptr);
         const QByteArray deviceId = platform->deviceId();
+        platform->SetTerminationCause("Platform terminated by force");
         if (platform->isOpen()) {
             emit platformAboutToClose(deviceId);
             platform->close();
             emit platformClosed(deviceId);
             platform->terminate();
-            emit platformRemoved(deviceId);
+            emit platformRemoved(deviceId, platform->GetTerminationCause());
             qCDebug(logCategoryPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
         } else {
             platform->terminate();
-            emit platformRemoved(deviceId);
+            emit platformRemoved(deviceId, platform->GetTerminationCause());
         }
     }
     platforms_.clear();
@@ -238,18 +239,23 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
         connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged);
         connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError);
 
+        emit platformAdded(deviceId);
+
         platform->open();
     } else {
         qCCritical(logCategoryPlatformManager) << "Unable to add platform to maps, device Id already exists";
     }
 }
 
-void PlatformManager::handleDeviceLost(QByteArray deviceId) {
+void PlatformManager::handleDeviceLost(QByteArray deviceId, QString errorString) {
     qCInfo(logCategoryPlatformManager).noquote() << "Platform lost: deviceId:" << deviceId;
 
     auto iter = platforms_.constFind(deviceId);
     if (iter != platforms_.constEnd()) {
         qCDebug(logCategoryPlatformManager).noquote().nospace() << "Going to terminate platform, deviceId: " << deviceId;
+        if (errorString.isEmpty() == false) {
+            iter.value()->SetTerminationCause(errorString);
+        }
         iter.value()->terminate();
     }
 }
@@ -268,7 +274,7 @@ void PlatformManager::handlePlatformOpened() {
         PlatformPtr platformPtr = iter.value();
         qCInfo(logCategoryPlatformManager).noquote() << "Platform open, deviceId:" << deviceId;
 
-        emit platformAdded(deviceId);
+        emit platformOpened(deviceId);
 
         startPlatformOperations(platformPtr);
     } else {
@@ -316,9 +322,10 @@ void PlatformManager::handlePlatformTerminated() {
     auto iter = platforms_.find(deviceId);
     if (iter != platforms_.end()) {
         qCDebug(logCategoryPlatformManager).noquote() << "Terminating device:" << deviceId;
+        QString terminationCause = iter.value()->GetTerminationCause();
         disconnect(iter.value().get(), nullptr, this, nullptr);
         platforms_.erase(iter);     // platform gets deleted after this point, do not reuse
-        emit platformRemoved(deviceId);
+        emit platformRemoved(deviceId, terminationCause);
         return;
     } else {
         qCWarning(logCategoryPlatformManager).noquote() << "Unable to terminate, device Id does not exist:" << deviceId;
@@ -341,6 +348,7 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized, bool inBootloa
     if (isRecognized == false && keepDevicesOpen_ == false) {
         qCInfo(logCategoryPlatformManager).noquote()
             << "Platform was not recognized and should be ignored, going to release communication channel, deviceId:" << deviceId;
+        platform->SetTerminationCause("Device not recognized");
         disconnectPlatform(deviceId);
     }
 }
@@ -386,14 +394,17 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     } break;
     case Device::ErrorCode::DeviceFailedToOpen: {
         qCWarning(logCategoryPlatformManager).nospace() << "Platform failed to open: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        platform->SetTerminationCause(errStr);
         disconnectPlatform(deviceId);
     }
     case Device::ErrorCode::DeviceDisconnected: {
         qCWarning(logCategoryPlatformManager).nospace() << "Platform was disconnected: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        platform->SetTerminationCause(errStr);
         disconnectPlatform(deviceId);
     } break;
     case Device::ErrorCode::DeviceError: {
         qCCritical(logCategoryPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        platform->SetTerminationCause(errStr);
         disconnectPlatform(deviceId);
     } break;
     }
