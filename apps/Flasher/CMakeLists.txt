@@ -28,7 +28,7 @@ add_executable(${PROJECT_NAME}
 
     src/logging/LoggingQtCategories.cpp
 
-    src/commands/Command.cpp
+    src/commands/Command.h
     src/commands/DeviceCommand.cpp
     src/commands/FlasherCommand.cpp
     src/commands/HelpCommand.cpp
