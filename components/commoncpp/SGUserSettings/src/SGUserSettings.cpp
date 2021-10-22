@@ -27,23 +27,21 @@ SGUserSettings::~SGUserSettings()
 
 bool SGUserSettings::writeFile(const QString &fileName, const QJsonObject &data, const QString &subdirectory)
 {
-    SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(base_output_path_, subdirectory);
+    QString filePath = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
     makePath(filePath);
-    filePath = utils.joinFilePath(filePath, fileName);
+    filePath = SGUtilsCpp::joinFilePath(filePath, fileName);
     qCDebug(logCategoryUserSettings) << "Writing to" << filePath;
     QJsonDocument doc(data);
 
-    return utils.atomicWrite(filePath, doc.toJson());
+    return SGUtilsCpp::atomicWrite(filePath, doc.toJson());
 }
 
 QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &subdirectory)
 {
-    SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(base_output_path_, subdirectory);
+    QString filePath = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
     QJsonObject returnedObj;
 
-    filePath = utils.joinFilePath(filePath, fileName);
+    filePath = SGUtilsCpp::joinFilePath(filePath, fileName);
 
     QFileInfo fi(filePath);
     if (fi.exists() == false || fi.isFile() == false) {
@@ -51,7 +49,7 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
         return returnedObj;
     }
 
-    QString fileText = utils.readTextFileContent(filePath);
+    QString fileText = SGUtilsCpp::readTextFileContent(filePath);
 
     if (!fileText.isEmpty()) {
         QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8());
@@ -70,11 +68,8 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
 
 QStringList SGUserSettings::listFilesInDirectory(const QString &subdirectory)
 {
-    SGUtilsCpp utils;
+    QString path = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
 
-    QString path = utils.joinFilePath(base_output_path_, subdirectory);
-
-    QDir dir(path);
     QStringList filesInDir;
 
     // Define a directory iterator that only iterates over files.
@@ -93,10 +88,9 @@ QStringList SGUserSettings::listFilesInDirectory(const QString &subdirectory)
 
 bool SGUserSettings::deleteFile(const QString &fileName, const QString &subdirectory)
 {
-    SGUtilsCpp utils;
-    QString filePath = utils.joinFilePath(base_output_path_, subdirectory);
+    QString filePath = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
 
-    filePath = utils.joinFilePath(filePath, fileName);
+    filePath = SGUtilsCpp::joinFilePath(filePath, fileName);
 
     if (!QFile::remove(filePath)) {
         qCCritical(logCategoryUserSettings) << "cannot delete file " << filePath;
@@ -110,13 +104,12 @@ bool SGUserSettings::deleteFile(const QString &fileName, const QString &subdirec
 
 bool SGUserSettings::renameFile(const QString &origFileName, const QString &newFileName, const QString &subdirectory)
 {
-    SGUtilsCpp utils;
-    QString oldFilePath = utils.joinFilePath(base_output_path_, subdirectory);
+    QString oldFilePath = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
 
-    oldFilePath = utils.joinFilePath(oldFilePath, origFileName);
+    oldFilePath = SGUtilsCpp::joinFilePath(oldFilePath, origFileName);
 
-    QString newFilePath = utils.joinFilePath(base_output_path_, subdirectory);
-    newFilePath = utils.joinFilePath(newFilePath, newFileName);
+    QString newFilePath = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
+    newFilePath = SGUtilsCpp::joinFilePath(newFilePath, newFileName);
 
     if (!QFile::rename(oldFilePath, newFilePath)) {
         qCCritical(logCategoryUserSettings) << "Could not rename file from" << oldFilePath << "to" << newFilePath;
@@ -162,7 +155,6 @@ void SGUserSettings::setUser(const QString &user)
 
 void SGUserSettings::setBaseOutputPath()
 {
-    SGUtilsCpp utils;
     const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QString hashedString;
     if (user_ != "") {
@@ -170,12 +162,12 @@ void SGUserSettings::setBaseOutputPath()
         hashedString = QString::number(hashedUser);
     }
 
-    base_output_path_ = utils.joinFilePath(appDataPath, "settings");
+    base_output_path_ = SGUtilsCpp::joinFilePath(appDataPath, "settings");
 
-    base_output_path_ = utils.joinFilePath(base_output_path_, hashedString);
+    base_output_path_ = SGUtilsCpp::joinFilePath(base_output_path_, hashedString);
 
     if (!classId_.isNull() && !classId_.isEmpty()) {
-        base_output_path_ = utils.joinFilePath(base_output_path_, classId_);
+        base_output_path_ = SGUtilsCpp::joinFilePath(base_output_path_, classId_);
     }
 
     qCDebug(logCategoryUserSettings) << "Setting base output path for user settings to" << base_output_path_;

@@ -203,6 +203,12 @@ QString SciScrollbackModel::exportToFile(QString filePath)
         return errorString;
     }
 
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        QString errorString("A filename cannot contain any of the following characters: " +  SGUtilsCpp::joinForbiddenCharacters());
+        qCCritical(logCategorySci) << errorString;
+        return errorString;
+    }
+
     QSaveFile file(filePath);
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
@@ -250,6 +256,13 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
     QFileInfo fileInfo(filePath);
     if (fileInfo.isRelative()) {
         errorString = "Cannot use relative path for export";
+        qCCritical(logCategorySci) << errorString;
+        setAutoExportErrorString(errorString);
+        return false;
+    }
+
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        errorString = "A filename cannot contain any of the following characters: " + SGUtilsCpp::joinForbiddenCharacters();
         qCCritical(logCategorySci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
