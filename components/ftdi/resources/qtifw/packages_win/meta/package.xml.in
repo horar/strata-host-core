@@ -1,4 +1,4 @@
-<?xml version="2.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Copyright (c) 2018-2021 onsemi.
 
@@ -9,12 +9,15 @@
   -->
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
-    <Description>The Strata Developer Studio is a cloud-connected development platform that provides a seamless,
-personalized and secure environment for engineers to evaluate and design with onsemi technologies</Description>
+    <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
-    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
-    <Default>true</Default>
+    <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>40</SortingPriority>
+    <!--we need admin rights to install this component-->
+    <RequiresAdminRights>true</RequiresAdminRights>
     <Script>installscript.js</Script>
-    <SortingPriority>90</SortingPriority>
-    <Dependencies>com.onsemi.strata.hcs</Dependencies>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Licenses>
+        <License name="FTDI Driver License Agreement" file="ftdi_license.txt" />
+    </Licenses>
 </Package>
