@@ -37,6 +37,7 @@ PlatformController::PlatformController()
 {
     connect(&platformManager_, &PlatformManager::platformRecognized, this, &PlatformController::newConnection);
     connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &PlatformController::closeConnection);
+    connect(&platformManager_, &PlatformManager::platformRemoved, this, &PlatformController::removeConnection);
 
     connect(&platformOperations_, &operation::PlatformOperations::finished, this, &PlatformController::operationFinished);
 }
@@ -54,8 +55,6 @@ void PlatformController::initialize() {
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
     if (bleDeviceScanner != nullptr) {
         connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::discoveryFinished, this, &PlatformController::bleDiscoveryFinishedHandler);
-        connect(bleDeviceScanner.get(), &DeviceScanner::connectDeviceFinished, this, &PlatformController::connectDeviceFinishedHandler);
-        connect(bleDeviceScanner.get(), &DeviceScanner::connectDeviceFailed, this, &PlatformController::connectDeviceFailedHandler);
     }
 }
 
@@ -110,14 +109,16 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         qCInfo(logCategoryHcsPlatform).noquote() << "Connected new platform" << deviceId;
 
         emit platformConnected(deviceId);
-    } else {
-        qCWarning(logCategoryHcsPlatform).noquote() << "Connected unknown (unrecognized) platform" << deviceId;
-        // Remove platform if it was previously connected.
-        auto it = platforms_.find(deviceId);
-        if (it != platforms_.end()) {
-            platforms_.erase(it);
-            emit platformDisconnected(deviceId);
+
+        if (connectDeviceRequests_.contains(deviceId)) {
+            QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+            connectDeviceRequests_.remove(deviceId);
+            for (const auto &clientId : clients) {
+                emit connectDeviceFinished(deviceId, clientId, QString());
+            }
         }
+    } else {
+        // no need to handle it will be erased by PlatformManager in a few moments (keepDevicesOpen = false)
     }
 }
 
@@ -135,6 +136,25 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected platform" << deviceId;
 
     emit platformDisconnected(deviceId);
+}
+
+void PlatformController::removeConnection(const QByteArray& deviceId, const QString& errorString)
+{
+    if (connectDeviceRequests_.contains(deviceId)) {
+        QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+        connectDeviceRequests_.remove(deviceId);
+        for (const auto &clientId : clients) {
+            emit connectDeviceFinished(deviceId, clientId, errorString);
+        }
+    }
+
+    if (disconnectDeviceRequests_.contains(deviceId)) {
+        QList<QByteArray> clients = disconnectDeviceRequests_.values(deviceId);
+        disconnectDeviceRequests_.remove(deviceId);
+        for (const auto &clientId : clients) {
+            emit disconnectDeviceFinished(deviceId, clientId, errorString);
+        }
+    }
 }
 
 void PlatformController::messageFromPlatform(PlatformMessage message)
@@ -230,66 +250,54 @@ void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::Bl
 }
 
 void PlatformController::connectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
+    if (disconnectDeviceRequests_.contains(deviceId)) {
+        emit connectDeviceFinished(deviceId, clientId, "Disconnect already in progress.");
+        return;
+    }
     DeviceScannerPtr deviceScanner = platformManager_.getScanner(DeviceScanner::scannerType(deviceId));
     if (deviceScanner != nullptr) {
         if (false == connectDeviceRequests_.contains(deviceId)) {
             QString errorMessage = deviceScanner->connectDevice(deviceId);
             if (false == errorMessage.isEmpty()) {
-                emit connectDeviceFailed(deviceId, clientId, errorMessage);
+                emit connectDeviceFinished(deviceId, clientId, errorMessage);
             } else {
-                //subscribe for the result
+                // subscribe for the result
                 connectDeviceRequests_.insert(deviceId, clientId);
             }
         } else {
             // device already being connected, just subscribe for the result
             connectDeviceRequests_.insert(deviceId, clientId);
         }
-    } else
-    {
-        emit connectDeviceFailed(deviceId, clientId, "Scanner not initialized.");
-    }
-}
-
-void PlatformController::connectDeviceFinishedHandler(const QByteArray& deviceId) {
-    QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
-    int notifiedCount = connectDeviceRequests_.remove(deviceId);
-    if (notifiedCount == 0) {
-        qCWarning(logCategoryHcsPlatform).noquote() << "Device connection finished, no client waiting for response:" << deviceId;
     } else {
-        for (const auto &clientId : clients) {
-            emit connectDeviceFinished(deviceId, clientId);
-        }
-    }
-}
-
-void PlatformController::connectDeviceFailedHandler(const QByteArray& deviceId, const QString &errorString) {
-    QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
-    int notifiedCount = connectDeviceRequests_.remove(deviceId);
-    if (notifiedCount == 0) {
-        qCWarning(logCategoryHcsPlatform).noquote() << "Device connection failed, no client waiting for response:" << deviceId;
-    } else {
-        for (const auto &clientId : clients) {
-            emit connectDeviceFailed(deviceId, clientId, errorString);
-        }
+        emit connectDeviceFinished(deviceId, clientId, "Scanner not initialized.");
     }
 }
 
 void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
+    if (connectDeviceRequests_.contains(deviceId)) {
+        QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+        connectDeviceRequests_.remove(deviceId);
+        for (const auto &client : clients) {
+            emit connectDeviceFinished(deviceId, client, "Cancelled.");
+        }
+    }
+
     DeviceScannerPtr deviceScanner = platformManager_.getScanner(DeviceScanner::scannerType(deviceId));
     if (deviceScanner != nullptr) {
-        QString errorMessage = deviceScanner->disconnectDevice(deviceId);
-        if (errorMessage.isEmpty()) {
-            QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
-            connectDeviceRequests_.remove(deviceId);
-            for (const auto &connectClientId : clients) {
-                emit connectDeviceFailed(deviceId, connectClientId, "Cancelled.");
+        if (false == disconnectDeviceRequests_.contains(deviceId)) {
+            QString errorMessage = deviceScanner->disconnectDevice(deviceId);
+            if (false == errorMessage.isEmpty()) {
+                emit disconnectDeviceFinished(deviceId, clientId, errorMessage);
+            } else {
+                // subscribe for the result
+                disconnectDeviceRequests_.insert(deviceId, clientId);
             }
-            emit disconnectDeviceFinished(deviceId, clientId);
         } else {
-            emit disconnectDeviceFailed(deviceId, clientId, errorMessage);
+            // device already being connected, just subscribe for the result
+            disconnectDeviceRequests_.insert(deviceId, clientId);
         }
     } else {
-        emit disconnectDeviceFailed(deviceId, clientId, "Scanner not initialized.");
+        emit disconnectDeviceFinished(deviceId, clientId, "Scanner not initialized.");
     }
 }
 

@@ -129,12 +129,8 @@ bool HostControllerService::initialize(const QString &config)
             &HostControllerService::bluetoothScanFinished);
     connect(&platformController_, &PlatformController::connectDeviceFinished, this,
             &HostControllerService::connectDeviceFinished);
-    connect(&platformController_, &PlatformController::connectDeviceFailed, this,
-            &HostControllerService::connectDeviceFailed);
     connect(&platformController_, &PlatformController::disconnectDeviceFinished, this,
             &HostControllerService::disconnectDeviceFinished);
-    connect(&platformController_, &PlatformController::disconnectDeviceFailed, this,
-            &HostControllerService::disconnectDeviceFailed);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this,
             &HostControllerService::handleUpdateProgress);
@@ -446,24 +442,22 @@ void HostControllerService::bluetoothScanFinished(const QJsonObject payload)
         payload);
 }
 
-void HostControllerService::connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId)
+void HostControllerService::connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
 {
-    sendDeviceSuccess(hcsNotificationType::connectDevice, deviceId, clientId);
+    if (errorMessage.isEmpty()) {
+        sendDeviceSuccess(hcsNotificationType::connectDevice, deviceId, clientId);
+    } else {
+        sendDeviceError(hcsNotificationType::connectDevice, deviceId, clientId, errorMessage);
+    }
 }
 
-void HostControllerService::connectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
+void HostControllerService::disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
 {
-    sendDeviceError(hcsNotificationType::connectDevice, deviceId, clientId, errorMessage);
-}
-
-void HostControllerService::disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId)
-{
-    sendDeviceSuccess(hcsNotificationType::disconnectDevice, deviceId, clientId);
-}
-
-void HostControllerService::disconnectDeviceFailed(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
-{
-    sendDeviceError(hcsNotificationType::disconnectDevice, deviceId, clientId, errorMessage);
+    if (errorMessage.isEmpty()) {
+        sendDeviceSuccess(hcsNotificationType::disconnectDevice, deviceId, clientId);
+    } else {
+        sendDeviceError(hcsNotificationType::disconnectDevice, deviceId, clientId, errorMessage);
+    }
 }
 
 void HostControllerService::processCmdRequestHcsStatus(const strataRPC::Message &message)

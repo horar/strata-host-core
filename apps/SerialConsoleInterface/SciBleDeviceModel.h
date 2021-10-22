@@ -68,9 +68,8 @@ private slots:
     void discoveryFinishedHandler(
             BluetoothLowEnergyScanner::DiscoveryFinishStatus status,
             QString errorString);
-    void connectDeviceFinishedHandler(const QByteArray deviceId);
-    void connectDeviceFailedHandler(const QByteArray deviceId, const QString errorString);
-    void deviceLostHandler(QByteArray deviceId);
+    void platformOpenedHandler(const QByteArray deviceId);
+    void platformRemovedHandler(const QByteArray deviceId, const QString errorString);
 
 private:
     void populateModel();

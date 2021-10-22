@@ -13,7 +13,7 @@ SciPlatformModel::SciPlatformModel(strata::PlatformManager *platformManager, QOb
     : QAbstractListModel(parent),
       platformManager_(platformManager)
 {
-    connect(platformManager_, &strata::PlatformManager::platformAdded, this, &SciPlatformModel::boardConnectedHandler);
+    connect(platformManager_, &strata::PlatformManager::platformOpened, this, &SciPlatformModel::boardConnectedHandler);
     connect(platformManager_, &strata::PlatformManager::platformRecognized, this, &SciPlatformModel::boardReadyHandler);
     connect(platformManager_, &strata::PlatformManager::platformAboutToClose, this, &SciPlatformModel::boardDisconnectedHandler);
 }
