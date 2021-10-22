@@ -51,7 +51,7 @@
 
 using strata::loggers::QtLoggerSetup;
 
-namespace logConsts = strata::loggers::contants;
+namespace logConsts = strata::loggers::constants;
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {

@@ -27,7 +27,7 @@ using strata::flashercli::CliParser;
 using strata::flashercli::commands::Command;
 using strata::loggers::QtLoggerSetup;
 
-namespace logConsts = strata::loggers::contants;
+namespace logConsts = strata::loggers::constants;
 
 int main(int argc, char *argv[])
 {

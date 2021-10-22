@@ -33,7 +33,7 @@
 using strata::loggers::QtLoggerSetup;
 using strata::loggers::cbLoggerSetup;
 
-namespace logConsts = strata::loggers::contants;
+namespace logConsts = strata::loggers::constants;
 
 int main(int argc, char *argv[])
 {
