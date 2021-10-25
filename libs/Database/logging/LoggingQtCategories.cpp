@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryCouchbaseDatabase, "strata.CouchbaseDatabase")
+Q_LOGGING_CATEGORY(lcCouchbaseDatabase, "strata.CouchbaseDatabase")

@@ -42,7 +42,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
 {
     if (platformController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
-        qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
+        qCCritical(lcHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;
     }
@@ -50,7 +50,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
     auto it = updates_.constFind(deviceId);
     if (it != updates_.constEnd()) {
         QString errStr("Cannot update, another update is running on this device.");
-        qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
+        qCCritical(lcHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;
     }
@@ -58,7 +58,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
     strata::platform::PlatformPtr platform = platformController_->getPlatform(deviceId);
     if (platform == nullptr) {
         QString errStr("Incorrect device ID for update.");
-        qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
+        qCCritical(lcHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;
     }

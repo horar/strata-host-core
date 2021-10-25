@@ -138,7 +138,7 @@ void DocumentListModel::setHistoryState(const QString &doc, const QString &state
     for (int i = 0; i < data_.length(); ++i) {
         DocumentItem* item = data_.at(i);
         if (item == nullptr) {
-            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
+            qCCritical(lcDocumentManager) << "item is empty" << i;
             continue;
         }
 

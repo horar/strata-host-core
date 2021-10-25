@@ -406,7 +406,7 @@ bool SGQrcTreeModel::copyDir(const QString &fromPath, const QString &toPath) {
 
     // Create destination directory
     if (!newDir.cd(toPath) && !newDir.mkpath(toPath)) {
-        qCCritical(logCategoryControlViewCreator) << "Could not create new directory:" << toPath;
+        qCCritical(lcControlViewCreator) << "Could not create new directory:" << toPath;
         return false;
     }
 
@@ -416,7 +416,7 @@ bool SGQrcTreeModel::copyDir(const QString &fromPath, const QString &toPath) {
 
         // Attempt to copy file from old directory to destination directory
         if (!QFile::copy(from.absoluteFilePath(), to.absoluteFilePath())) {
-            qCCritical(logCategoryControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
+            qCCritical(lcControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
             return false;
         }
 
@@ -432,13 +432,13 @@ bool SGQrcTreeModel::copyDir(const QString &fromPath, const QString &toPath) {
         // Make path to the new directory
         QDir root = QDir::root();
         if (!root.mkpath(to.absoluteFilePath())) {
-            qCCritical(logCategoryControlViewCreator) << "Unable to add new directory";
+            qCCritical(lcControlViewCreator) << "Unable to add new directory";
             return false;
         }
 
         // Recursive call to copy child directory
         if (!SGQrcTreeModel::copyDir(from.absoluteFilePath(), to.absoluteFilePath())) {
-            qCCritical(logCategoryControlViewCreator) << "Unable to recursively add files and directories to:" << oldDir.path();
+            qCCritical(lcControlViewCreator) << "Unable to recursively add files and directories to:" << oldDir.path();
             return false;
         }
     }
@@ -490,13 +490,13 @@ QUrl SGQrcTreeModel::projectDirectory() const
 void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        qCCritical(lcControlViewCreator) << "Index is not valid";
         return;
     }
 
     SGQrcTreeNode *node = getNode(index);
     if (node == nullptr) {
-        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        qCCritical(lcControlViewCreator) << "Tree node is not valid";
         return;
     }
 
@@ -521,13 +521,13 @@ void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
 void SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        qCCritical(lcControlViewCreator) << "Index is not valid";
         return;
     }
 
     SGQrcTreeNode *node = getNode(index);
     if (node == nullptr) {
-        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        qCCritical(lcControlViewCreator) << "Tree node is not valid";
         return;
     }
 
@@ -646,7 +646,7 @@ bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFile
 
     stopWatchingPath(oldFileInfo.absolutePath());
     if (!QFile::rename(oldPath, newPath)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to rename" << (node->isDir() ? "folder" : "file") << "from" << oldPath << "to" << newPath;
+        qCCritical(lcControlViewCreator) << "Failed to rename" << (node->isDir() ? "folder" : "file") << "from" << oldPath << "to" << newPath;
         if (wasWatchingOldPath) {
             startWatchingPath(oldPath);
         }
@@ -819,7 +819,7 @@ void SGQrcTreeModel::readQrcFile()
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
 
     if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to open qrc file";
+        qCCritical(lcControlViewCreator) << "Failed to open qrc file";
         qrcFile.close();
         emit finishedReadingQrc(QByteArray());
     } else {
@@ -845,13 +845,13 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
     int errorColumn;
 
     if (!qrcDoc_.setContent(fileText, &errorMessage, &errorLine, &errorColumn)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to parse qrc file." << errorMessage << "-" << QString::number(errorLine) + ":" + QString::number(errorColumn);
+        qCCritical(lcControlViewCreator) << "Failed to parse qrc file." << errorMessage << "-" << QString::number(errorLine) + ":" + QString::number(errorColumn);
         emit errorParsing("Invalid qrc file format.");
         return false;
     }
 
     if (qrcDoc_.elementsByTagName("qresource").count() == 0) {
-        qCCritical(logCategoryControlViewCreator) << "qresource tag missing from qrc file";
+        qCCritical(lcControlViewCreator) << "qresource tag missing from qrc file";
         emit errorParsing("Missing qresource tag.");
         return false;
     }
@@ -866,7 +866,7 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
         qrcItems_.insert(absolutePath);
     }
 
-    qDebug(logCategoryControlViewCreator) << "Successfully parsed qrc file";
+    qDebug(lcControlViewCreator) << "Successfully parsed qrc file";
     return true;
 }
 
@@ -998,7 +998,7 @@ void SGQrcTreeModel::save()
 {
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
     if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
-       qCCritical(logCategoryControlViewCreator) << "Could not open" << url_;
+       qCCritical(lcControlViewCreator) << "Could not open" << url_;
        startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
        return;
     }
@@ -1026,7 +1026,7 @@ void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
     if (index.isValid()) {
         emit dataChanged(index, index, {role});
     } else {
-        qCWarning(logCategoryControlViewCreator) << "Index is not valid";
+        qCWarning(lcControlViewCreator) << "Index is not valid";
     }
 }
 
@@ -1158,7 +1158,7 @@ void SGQrcTreeModel::handleExternalFileAdded(const QUrl path, const QUrl parentP
 {
     QModelIndex parentIndex = findNodeInTree(rootIndex_, parentPath);
     if (!parentIndex.isValid() && parentIndex != rootIndex_) {
-        qCCritical(logCategoryControlViewCreator) << "Could not find path" << parentPath << "in tree";
+        qCCritical(lcControlViewCreator) << "Could not find path" << parentPath << "in tree";
         return;
     }
 
@@ -1176,7 +1176,7 @@ void SGQrcTreeModel::handleExternalFileDeleted(const QString uid)
     QModelIndex deletedIndex = findNodeInTree(rootIndex_, node->filepath());
 
     if (!deletedIndex.isValid()) {
-        qCCritical(logCategoryControlViewCreator) << "Could not find path" << node->filepath() << "in tree";
+        qCCritical(lcControlViewCreator) << "Could not find path" << node->filepath() << "in tree";
         return;
     }
 

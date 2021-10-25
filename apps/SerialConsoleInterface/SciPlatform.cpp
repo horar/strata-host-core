@@ -93,7 +93,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
             auto scanner = platformManager_->getScanner(strata::device::Device::Type::MockDevice);
             auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(scanner);
             if (mockScanner == nullptr) {
-                qCCritical(logCategorySci) << "cannot get scanner for mock devices";
+                qCCritical(lcSci) << "cannot get scanner for mock devices";
                 return;
             }
             strata::device::DevicePtr device = mockScanner->getMockDevice(deviceId_);
@@ -280,12 +280,12 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
 {
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
-        qCWarning(logCategorySci) << "platform not ready";
+        qCWarning(lcSci) << "platform not ready";
         return false;
     }
 
     if (flasherConnector_.isNull() == false) {
-        qCWarning(logCategorySci) << "flasherConnector already exists";
+        qCWarning(lcSci) << "flasherConnector already exists";
         return false;
     }
 
@@ -307,32 +307,32 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
 QString SciPlatform::saveDeviceFirmware(QString filePath) {
     if (status_ != PlatformStatus::Ready) {
         QString errorString(QStringLiteral("platform not ready"));
-        qCWarning(logCategorySci) << platform_ << errorString;
+        qCWarning(lcSci) << platform_ << errorString;
         return errorString;
     }
 
     if (flasherConnector_.isNull() == false) {
         QString errorString(QStringLiteral("flasherConnector already exists"));
-        qCWarning(logCategorySci) << platform_ << errorString;
+        qCWarning(lcSci) << platform_ << errorString;
         return errorString;
     }
 
     if (filePath.isEmpty()) {
         QString errorString(QStringLiteral("no file name specified"));
-        qCCritical(logCategorySci) << platform_ << errorString;
+        qCCritical(lcSci) << platform_ << errorString;
         return errorString;
     }
 
     QFileInfo fileInfo(filePath);
     if (fileInfo.isRelative()) {
         QString errorString(QStringLiteral("cannot use relative path for backup file"));
-        qCCritical(logCategorySci) << platform_ << errorString;
+        qCCritical(lcSci) << platform_ << errorString;
         return errorString;
     }
 
     if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
         QString errorString("A filename cannot contain any of the following characters: " + SGUtilsCpp::joinForbiddenCharacters());
-        qCCritical(logCategorySci) << platform_ << errorString;
+        qCCritical(lcSci) << platform_ << errorString;
         return errorString;
     }
 
@@ -393,7 +393,7 @@ void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, uint msgNumber, 
         errorType = SendMessageErrorType::PlatformError;
         result.insert("error_string", errorString);
 
-        qCWarning(logCategorySci) << platform_ << "Error '" << errorString
+        qCWarning(lcSci) << platform_ << "Error '" << errorString
             << "' occured while sending message '" << rawMessage << '\'';
     }
 

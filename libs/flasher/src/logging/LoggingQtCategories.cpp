@@ -8,5 +8,5 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryFlasher, "strata.flasher")
-Q_LOGGING_CATEGORY(logCategoryFlasherConnector, "strata.flasherConnector")
+Q_LOGGING_CATEGORY(lcFlasher, "strata.flasher")
+Q_LOGGING_CATEGORY(lcFlasherConnector, "strata.flasherConnector")

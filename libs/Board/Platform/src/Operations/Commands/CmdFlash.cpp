@@ -84,10 +84,10 @@ bool CmdFlash::processNotification(const rapidjson::Document& doc, CommandResult
                 const char* binaryType = (flashFirmware_) ? "firmware" : "bootloader";
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
-                    qCInfo(logCategoryPlatformCommand) << platform_ << "Going to retry to flash " << binaryType << " chunk.";
+                    qCInfo(lcPlatformCommand) << platform_ << "Going to retry to flash " << binaryType << " chunk.";
                     result = CommandResult::Retry;
                 } else {
-                    qCWarning(logCategoryPlatformCommand) << platform_ << "Reached maximum retries for flash " << binaryType << " chunk.";
+                    qCWarning(lcPlatformCommand) << platform_ << "Reached maximum retries for flash " << binaryType << " chunk.";
                 }
             }
         }

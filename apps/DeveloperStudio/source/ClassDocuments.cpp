@@ -97,14 +97,14 @@ void ClassDocuments::updateLoadingProgress(QJsonObject data)
 
 void ClassDocuments::populateModels(QJsonObject data)
 {
-    qCDebug(logCategoryDocumentManager) << "data" << data;
+    qCDebug(lcDocumentManager) << "data" << data;
 
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
 
     if (data.contains("error")) {
-        qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
+        qCWarning(lcDocumentManager) << "Document download error:" << data["error"].toString();
         clearDocuments();
         setErrorString(data["error"].toString());
         setLoading(false);
@@ -123,7 +123,7 @@ void ClassDocuments::populateModels(QJsonObject data)
                 || datasheetObject.contains("opn") == false
                 || datasheetObject.contains("subcategory") == false)
         {
-            qCWarning(logCategoryDocumentManager) << "datasheet object is not complete";
+            qCWarning(lcDocumentManager) << "datasheet object is not complete";
             continue;
         }
 
@@ -134,7 +134,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         if (uri.length() == 0
                 || name.length() == 0)
         {
-            qCWarning(logCategoryDocumentManager) << "Datasheet has missing data";
+            qCWarning(lcDocumentManager) << "Datasheet has missing data";
             continue;
         }
 
@@ -155,7 +155,7 @@ void ClassDocuments::populateModels(QJsonObject data)
                 || documentObject.contains("uri")  == false
                 || documentObject.contains("md5")  == false) {
 
-            qCWarning(logCategoryDocumentManager) << "file object is not complete";
+            qCWarning(lcDocumentManager) << "file object is not complete";
             continue;
         }
 
@@ -169,7 +169,7 @@ void ClassDocuments::populateModels(QJsonObject data)
             if (name == "datasheet") {
                 if (parseDatasheetCSV) {
                     //for datasheets, parse csv file
-                    qCDebug(logCategoryDocumentManager) << "parsing datasheet csv file";
+                    qCDebug(lcDocumentManager) << "parsing datasheet csv file";
                     populateDatasheetList(uri, datasheetList);
                 }
             } else {
@@ -178,7 +178,7 @@ void ClassDocuments::populateModels(QJsonObject data)
             }
         } else if (category == "download") {
             if (documentObject.contains("filesize") == false) {
-                qCWarning(logCategoryDocumentManager) << "file object is not complete";
+                qCWarning(lcDocumentManager) << "file object is not complete";
                 continue;
             }
 
@@ -186,7 +186,7 @@ void ClassDocuments::populateModels(QJsonObject data)
             DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, prettyName, name, md5, filesize);
             downloadList.append(ddi);
         } else {
-            qCWarning(logCategoryDocumentManager) << "unknown category" << category;
+            qCWarning(lcDocumentManager) << "unknown category" << category;
         }
     }
 
@@ -202,7 +202,7 @@ void ClassDocuments::populateModels(QJsonObject data)
 void ClassDocuments::populateMetaData(QJsonObject data)
 {
     if (data.contains("error")) {
-        qCWarning(logCategoryDocumentManager) << "Document metadata error:" << data["error"].toString();
+        qCWarning(lcDocumentManager) << "Document metadata error:" << data["error"].toString();
         setMetaDataInitialized(true);
         return;
     }
@@ -220,7 +220,7 @@ void ClassDocuments::populateMetaData(QJsonObject data)
                 || documentObject.contains("timestamp")  == false
                 || documentObject.contains("version")  == false) {
 
-            qCWarning(logCategoryDocumentManager) << "firmware object is not complete";
+            qCWarning(lcDocumentManager) << "firmware object is not complete";
             continue;
         }
 
@@ -245,7 +245,7 @@ void ClassDocuments::populateMetaData(QJsonObject data)
                 || documentObject.contains("version")  == false
                 || documentObject.contains("filepath") == false) {
 
-            qCWarning(logCategoryDocumentManager) << "control view object is not complete";
+            qCWarning(lcDocumentManager) << "control view object is not complete";
             continue;
         }
 
@@ -311,7 +311,7 @@ void ClassDocuments::populateDatasheetList(const QString &path, QList<DocumentIt
 
     QFile file(path);
     if (file.open(QIODevice::ReadOnly) == false) {
-        qCWarning(logCategoryDocumentManager) << file.errorString();
+        qCWarning(lcDocumentManager) << file.errorString();
         return;
     }
 
@@ -331,7 +331,7 @@ void ClassDocuments::populateDatasheetList(const QString &path, QList<DocumentIt
             DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
             list.append(di);
         } else {
-            qCWarning(logCategoryDocumentManager) << "Skipping datasheet with missing information:" << datasheetLine;
+            qCWarning(lcDocumentManager) << "Skipping datasheet with missing information:" << datasheetLine;
         }
     }
 

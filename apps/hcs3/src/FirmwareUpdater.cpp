@@ -47,7 +47,7 @@ void FirmwareUpdater::updateFirmware()
 {
     if (running_) {
         QString errStr("Cannot update firmware, update is already running.");
-        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
+        qCCritical(lcHcsFwUpdater) << platform_ << errStr;
         emit updaterError(deviceId_, errStr);
         return;
     }
@@ -61,7 +61,7 @@ void FirmwareUpdater::downloadFirmware()
 {
     if (firmwareFile_.open() == false) {
         QString errStr("Cannot create temporary file for firmware download.");
-        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
+        qCCritical(lcHcsFwUpdater) << platform_ << errStr;
         emit updaterError(deviceId_, errStr);
         running_ = false;
         return;
@@ -89,7 +89,7 @@ void FirmwareUpdater::downloadFirmware()
 
     downloadId_ = downloadManager_->download(downloadRequestList, settings);
 
-    qDebug(logCategoryHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device"
+    qDebug(lcHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device"
         << deviceId_ << " to '" << firmwareFile_.fileName() << "'. Download ID: '" << downloadId_ <<"'.";
 }
 
@@ -124,7 +124,7 @@ void FirmwareUpdater::handleFlashFirmware()
 {
     if (flasherConnector_.isNull() == false) {
         QString errStr("Cannot create firmware flasher, other one already exists.");
-        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
+        qCCritical(lcHcsFwUpdater) << platform_ << errStr;
         emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
         emit updaterError(deviceId_, errStr);
         return;
