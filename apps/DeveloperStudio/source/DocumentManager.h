@@ -38,8 +38,6 @@ public:
 
     Q_INVOKABLE ClassDocuments* getClassDocuments(const QString &classId);
 
-    QMap<QString, ClassDocuments*> classes_;
-
 signals:
     void updateProgressRequested(QJsonObject data);
     void populateModelsRequested(QJsonObject data);
@@ -56,6 +54,8 @@ private slots:
 private:
     strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;
+
+    QMap<QString, ClassDocuments*> classes_;
 
     void init();
 };

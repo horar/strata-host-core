@@ -28,6 +28,8 @@ Item {
     }
 
     property string class_id: ""
+    property string controller_class_id: ""
+    property bool is_assisted: false
     property string help_tour_id: ""
     property var classDocuments: null
     property var fakeHelpDocuments: null
@@ -97,14 +99,16 @@ Item {
                 accordion.contentItem.children[1].open = datasheetAccordionState
                 accordion.contentItem.children[2].open = downloadAccordionState
                 currentDocumentCategory = true
-                classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+                const class_id = (view.is_assisted && view.class_id.length === 0) ? view.controller_class_id : view.class_id
+                classDocuments = sdsModel.documentManager.getClassDocuments(class_id)
             }
         }
     }
 
     Component.onCompleted: {
-        classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
-        helpIcon.class_id = view.class_id
+        const class_id = (view.is_assisted && view.class_id.length === 0) ? view.controller_class_id : view.class_id
+        classDocuments = sdsModel.documentManager.getClassDocuments(class_id)
+        helpIcon.class_id = class_id
         let previousDeviceId = Help.current_device_id
         // generate a uuidv4
         help_tour_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

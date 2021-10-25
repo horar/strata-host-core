@@ -46,7 +46,7 @@ ClassDocuments *DocumentManager::getClassDocuments(const QString &classId)
         ClassDocuments *classDocs = new ClassDocuments(classId, strataClient_, coreInterface_, this);
         classes_[classId] = classDocs;
     }
-    else if (classes_[classId]->errorString() != ""){
+    else if (classes_[classId]->errorString().isEmpty() == false) {
         classes_[classId]->loadPlatformDocuments();
     }
     return classes_[classId];

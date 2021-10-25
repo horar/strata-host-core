@@ -577,7 +577,7 @@ function insertUnknownListing (platform, class_id_string) {
         "description": "Strata does not recognize this class_id. Updating Strata may fix this problem."
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
@@ -590,7 +590,7 @@ function insertUnregisteredListing (platform, class_id_string) {
         "description": "Unregistered platform. Contact local support."
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
@@ -600,17 +600,24 @@ function insertAssistedNoPlatformListing (platform, class_id_string) {
     let listing_data = {
         "verbose_name": "Strata Assisted Controller",
         "class_id": class_id_string,
-        "description": "Please connect platform to controller."
+        "description": "Please connect platform to controller.",
+        "available": {
+            "control": false,
+            "documents": true,
+            "unlisted": false,
+            "order": true
+        }
     }
     const class_id = platform.controller_class_id
     if (classMap.hasOwnProperty(class_id)) {
-        listing_data.verbose_name = classMap[class_id].original_listing.verbose_name
-        listing_data.opn = classMap[class_id].original_listing.opn
-        listing_data.description = classMap[class_id].original_listing.description
-        listing_data.image = classMap[class_id].original_listing.image
+        const original_listing = classMap[class_id].original_listing
+        listing_data.verbose_name = original_listing.verbose_name
+        listing_data.opn = original_listing.opn
+        listing_data.description = original_listing.description
+        listing_data.image = original_listing.image
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
@@ -628,7 +635,7 @@ function insertAssistedIncompatibleListing (platform, class_id_string) {
         "description": "Strata Assisted: Firmware (" + fw_class_id + ") not compatible with platform (" + class_id_string + ")."
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
@@ -647,7 +654,7 @@ function insertProgramFirmwareListing(platform, class_id_string) {
         listing_data.verbose_name = classMap[class_id_string].original_listing.verbose_name
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
@@ -663,10 +670,11 @@ function insertBootloaderListing(platform, class_id_string) {
         listing_data.opn = classMap[class_id_string].original_listing.opn
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 function generateErrorListing (platform, listing_data) {
+    const is_assisted = (platform.controller_class_id !== undefined)
     let error = {
         "verbose_name" : "",
         "connected" : true,
@@ -690,8 +698,8 @@ function generateErrorListing (platform, listing_data) {
         "program_controller": false,
         "program_controller_progress": 0.0,
         "program_controller_error_string": "",
-        "controller_class_id": "",
-        "is_assisted": (platform.controller_class_id !== undefined)
+        "controller_class_id": (is_assisted) ? platform.controller_class_id : "",
+        "is_assisted": is_assisted
     }
 
     for (var attribute in listing_data) {
@@ -701,7 +709,7 @@ function generateErrorListing (platform, listing_data) {
     return error
 }
 
-function insertErrorListing (platform) {
+function insertListing (platform) {
     platformSelectorModel.append(platform)
 
     let index = platformSelectorModel.count - 1
