@@ -30,15 +30,16 @@ function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
     userSettings.user = login_info.user
-    const settings = userSettings.readFile("general-settings.json")
-    if (settings.hasOwnProperty("hasOptedOut")) {
-        Rest.anonymous = settings.hasOptedOut
+    const anonymousSettings = userSettings.readFile("general-settings.json")
+    let anonymous = 0
+    if (anonymousSettings.hasOwnProperty("hasOptedOut")) {
+        anonymous = anonymousSettings.hasOptedOut ? 1 : 0
     }
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
-        "anonymous": Rest.anonymous
+        "anonymous": anonymous
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -523,15 +524,22 @@ function change_password_result(response) {
 */
 function validate_token()
 {
-    if (Rest.jwt !== ""){
+    if (Rest.jwt !== "" && settings.user !== ""){
+        userSettings.user = settings.user
+        const anonymousSettings = userSettings.readFile("general-settings.json")
+        let anonymous = 0
+        if (anonymousSettings.hasOwnProperty("hasOptedOut")) {
+            anonymous = anonymousSettings.hasOptedOut ? 1 : 0
+        }
+
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
-            "anonymous": Rest.anonymous
+            "anonymous": anonymous
         }
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate, or no username saved")
     }
 
     /*
