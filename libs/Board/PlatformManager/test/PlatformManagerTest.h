@@ -60,7 +60,7 @@ private slots:
     void handleDeviceError();
 
 protected slots:
-    void onBoardDisconnected(const QByteArray& deviceId);
+    void onBoardDisconnected(const QByteArray& deviceId, const QString& errorString);
 
 private:
     /*!
