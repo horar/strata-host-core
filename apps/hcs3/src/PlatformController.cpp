@@ -218,7 +218,8 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
 }
 
 #ifdef APPS_FEATURE_BLE
-void PlatformController::startBluetoothScan() {
+void PlatformController::startBluetoothScan()
+{
     std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
         platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
     if (bleDeviceScanner != nullptr) {
@@ -228,7 +229,8 @@ void PlatformController::startBluetoothScan() {
     }
 }
 
-void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString) {
+void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString)
+{
     QJsonObject payload;
     switch (status) {
         case strata::device::scanner::BluetoothLowEnergyScanner::Finished:
@@ -256,7 +258,8 @@ void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::Bl
 }
 #endif // APPS_FEATURE_BLE
 
-void PlatformController::connectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
+void PlatformController::connectDevice(const QByteArray &deviceId, const QByteArray &clientId)
+{
     if (disconnectDeviceRequests_.contains(deviceId)) {
         emit connectDeviceFinished(deviceId, clientId, "Disconnect already in progress.");
         return;
@@ -280,7 +283,8 @@ void PlatformController::connectDevice(const QByteArray &deviceId, const QByteAr
     }
 }
 
-void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId) {
+void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId)
+{
     if (connectDeviceRequests_.contains(deviceId)) {
         QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
         connectDeviceRequests_.remove(deviceId);
@@ -309,7 +313,8 @@ void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByt
 }
 
 #ifdef APPS_FEATURE_BLE
-QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner) {
+QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner)
+{
     QJsonArray payloadList;
     const auto discoveredDevices = bleDeviceScanner->discoveredBleDevices();
     for (const auto &device : discoveredDevices) {
@@ -335,7 +340,8 @@ QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr
     return payload;
 }
 
-QJsonObject PlatformController::createBluetoothScanErrorPayload(QString errorString) {
+QJsonObject PlatformController::createBluetoothScanErrorPayload(QString errorString)
+{
     QJsonObject payload {
         { JSON_ERROR_STRING, errorString }
     };
