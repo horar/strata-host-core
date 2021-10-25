@@ -16,7 +16,6 @@ import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
-
 Button {
     id: filterButtonRoot
     implicitHeight: textMetrics.boundingRect.height + (textColumn.anchors.margins * 2)
@@ -80,7 +79,6 @@ Button {
 
     TextMetrics {
         id: textMetrics
-
         text: model.text
         font.pixelSize: mainText.font.pixelSize
 
