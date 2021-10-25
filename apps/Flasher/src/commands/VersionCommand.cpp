@@ -20,7 +20,7 @@ VersionCommand::VersionCommand(const QString &appName, const QString &appDescrip
 
 void VersionCommand::process()
 {
-    qCInfo(logCategoryFlasherCli).noquote().nospace() << appName_ << " (" << appDescription_ << ") " << appVersion_;
+    qCInfo(lcFlasherCli).noquote().nospace() << appName_ << " (" << appDescription_ << ") " << appVersion_;
     emit finished(EXIT_SUCCESS);
 }
 

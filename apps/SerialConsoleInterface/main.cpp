@@ -49,7 +49,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qCInfo(logCategorySci)
+        qCInfo(lcSci)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
@@ -68,7 +68,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
     bool status = applicationDir.cd("imports");
     if (status == false) {
-        qCCritical(logCategorySci) << "failed to find import path.";
+        qCCritical(lcSci) << "failed to find import path.";
     }
 
     engine->addImportPath(applicationDir.path());
@@ -89,19 +89,19 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategorySci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
-    qCInfo(logCategorySci) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
-    qCInfo(logCategorySci) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategorySci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
-    qCInfo(logCategorySci) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
-    qCInfo(logCategorySci) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcSci) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcSci) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
+    qCInfo(lcSci) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(lcSci) << QString("Running on %1").arg(QSysInfo::prettyProductName());
     if (QSslSocket::supportsSsl()) {
-        qCInfo(logCategorySci) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
+        qCInfo(lcSci) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {
-        qCCritical(logCategorySci) << QString("No SSL support!!");
+        qCCritical(lcSci) << QString("No SSL support!!");
     }
-    qCInfo(logCategorySci) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategorySci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcSci) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "cannot instantiate SciModel in qml");
     qmlRegisterUncreatableType<SciPlatformModel>("tech.strata.sci", 1, 0, "SciPlatformModel", "cannot instantiate SciPlatformModel in qml");
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategorySci) << "engine failed to load 'main' qml file; quitting...";
+        qCCritical(lcSci) << "engine failed to load 'main' qml file; quitting...";
         return -1;
     }
 

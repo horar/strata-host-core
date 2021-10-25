@@ -21,7 +21,7 @@ WrongCommand::WrongCommand(const QString& message) : message_(message)
 
 void WrongCommand::process()
 {
-    qCCritical(logCategoryFlasherCli).noquote() << message_;
+    qCCritical(lcFlasherCli).noquote() << message_;
     emit finished(EXIT_FAILURE);
 }
 

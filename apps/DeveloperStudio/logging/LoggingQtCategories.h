@@ -10,11 +10,11 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDevStudio)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDocumentManager)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDevStudioNode)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDevStudioConfig)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryResourceLoader)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryControlViewCreator)
+Q_DECLARE_LOGGING_CATEGORY(lcDevStudio)
+Q_DECLARE_LOGGING_CATEGORY(lcDocumentManager)
+Q_DECLARE_LOGGING_CATEGORY(lcDevStudioNode)
+Q_DECLARE_LOGGING_CATEGORY(lcDevStudioConfig)
+Q_DECLARE_LOGGING_CATEGORY(lcResourceLoader)
+Q_DECLARE_LOGGING_CATEGORY(lcControlViewCreator)
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryHcs)
+Q_DECLARE_LOGGING_CATEGORY(lcDevStudioHcs)

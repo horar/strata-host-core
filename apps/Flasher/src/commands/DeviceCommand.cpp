@@ -34,13 +34,13 @@ bool DeviceCommand::createSerialDevice()
     flashercli::SerialPortList serialPorts;
 
     if (serialPorts.count() == 0) {
-        qCCritical(logCategoryFlasherCli) << "No board is connected.";
+        qCCritical(lcFlasherCli) << "No board is connected.";
         return false;
     }
 
     const QString name = serialPorts.name(deviceNumber_ - 1);
     if (name.isEmpty()) {
-        qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
+        qCCritical(lcFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
         return false;
     }
 
@@ -71,15 +71,15 @@ void DeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QString
             errorMessage.append(QString::number(OPEN_MAX_RETRIES + 1));
 
             if (errCode == device::Device::ErrorCode::DeviceFailedToOpen) {
-                qCCritical(logCategoryFlasherCli).noquote() << errorMessage;
+                qCCritical(lcFlasherCli).noquote() << errorMessage;
                 emit finished(EXIT_FAILURE);
             } else {
-                qCInfo(logCategoryFlasherCli).noquote() << errorMessage;
+                qCInfo(lcFlasherCli).noquote() << errorMessage;
             }
         } break;
         case device::Device::ErrorCode::DeviceDisconnected:
         case device::Device::ErrorCode::DeviceError:
-            qCCritical(logCategoryFlasherCli).noquote() << QStringLiteral("Device error:") << errStr;
+            qCCritical(lcFlasherCli).noquote() << QStringLiteral("Device error:") << errStr;
             emit criticalDeviceError();
             break;
     }

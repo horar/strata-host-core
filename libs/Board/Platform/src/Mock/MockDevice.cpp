@@ -15,7 +15,7 @@ MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bo
     : Device(deviceId, name, Device::Type::MockDevice),
       control_(saveMessages)
 {
-    qCDebug(logCategoryDeviceMock).nospace().noquote()
+    qCDebug(lcDeviceMock).nospace().noquote()
         << "Created new mock device, ID: " << deviceId_ << ", name: " << deviceName_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 
@@ -26,7 +26,7 @@ MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bo
 MockDevice::~MockDevice()
 {
     MockDevice::close();
-    qCDebug(logCategoryDeviceMock).nospace().noquote()
+    qCDebug(lcDeviceMock).nospace().noquote()
         << "Deleted mock device, ID: " <<  deviceId_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -34,7 +34,7 @@ MockDevice::~MockDevice()
 void MockDevice::open()
 {
     if (opened_ == true) {
-        qCWarning(logCategoryDeviceMock) << this << "Attempt to open already opened mock port";
+        qCWarning(lcDeviceMock) << this << "Attempt to open already opened mock port";
     } else {
         opened_ = mockIsOpenEnabled();
     }
@@ -54,7 +54,7 @@ void MockDevice::close()
 
         if (mockIsErrorOnCloseSet()) {
             QString errMsg(QStringLiteral("Unable to properly close mock device (mockSetErrorOnClose set to true)."));
-            qCWarning(logCategoryDeviceMock) << this << errMsg;
+            qCWarning(lcDeviceMock) << this << errMsg;
             emit deviceError(ErrorCode::DeviceError, errMsg);
         }
     }
@@ -71,12 +71,12 @@ unsigned MockDevice::sendMessage(const QByteArray& msg)
 
     if (opened_ == false) {
         QString errMsg(QStringLiteral("Cannot write data to device, device is not open."));
-        qCCritical(logCategoryDeviceMock) << this << errMsg;
+        qCCritical(lcDeviceMock) << this << errMsg;
         emit messageSent(msg, msgNum, errMsg);
         return msgNum;
     }
 
-    qCDebug(logCategoryDeviceMock) << this << "Received request:" << msg;
+    qCDebug(lcDeviceMock) << this << "Received request:" << msg;
 
     if (control_.writeMessage(msg) == msg.size()) {
         emit messageSent(msg, msgNum, QString());
@@ -85,7 +85,7 @@ unsigned MockDevice::sendMessage(const QByteArray& msg)
         }
     } else {
         QString errMsg(QStringLiteral("Cannot write message to device (mockSetWriteErrorOnNthMessage enabled)."));
-        qCWarning(logCategoryDeviceSerial) << this << errMsg;
+        qCWarning(lcDeviceSerial) << this << errMsg;
         emit messageSent(msg, msgNum, errMsg);
     }
     return msgNum;
@@ -104,7 +104,7 @@ void MockDevice::resetReceiving()
 
 void MockDevice::readMessage(QByteArray msg)
 {
-    qCDebug(logCategoryDeviceMock) << this << "Returning response:" << msg;
+    qCDebug(lcDeviceMock) << this << "Returning response:" << msg;
     emit messageReceived(msg);
 }
 

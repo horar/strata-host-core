@@ -52,7 +52,7 @@ void InfoCommand::handleIdentifyOperationFinished(platform::operation::Result re
 
     platform::operation::Identify *identifyOp = qobject_cast<platform::operation::Identify *>(QObject::sender());
     if ((identifyOp == nullptr) || (identifyOp != identifyOperation_.get())) {
-        qCCritical(logCategoryFlasherCli) << "Received corrupt operation pointer:" << identifyOp;
+        qCCritical(lcFlasherCli) << "Received corrupt operation pointer:" << identifyOp;
         emit finished(EXIT_FAILURE);
         return;
     }
@@ -95,11 +95,11 @@ void InfoCommand::handleIdentifyOperationFinished(platform::operation::Result re
             message.append(QStringLiteral("\nFirmware Class Id: "));
             message.append(platform_->firmwareClassId());
 
-            qCInfo(logCategoryFlasherCli).noquote() << message;
+            qCInfo(lcFlasherCli).noquote() << message;
             emit finished(EXIT_SUCCESS);
         } break;
         default: {
-            qCWarning(logCategoryFlasherCli) << "Identify operation failed:" << errStr;
+            qCWarning(lcFlasherCli) << "Identify operation failed:" << errStr;
             emit finished(EXIT_FAILURE);
         } break;
     }

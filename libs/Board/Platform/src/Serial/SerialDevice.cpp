@@ -35,7 +35,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
     if ((port != nullptr) && (port->portName() == name)) {
         serialPort_ = std::move(port);
     } else {
-        qCWarning(logCategoryDeviceSerial).noquote()
+        qCWarning(lcDeviceSerial).noquote()
             << "Provided port will not be used, is not compatible with device " << deviceId_;
         serialPort_ = std::make_unique<QSerialPort>(name);
     }
@@ -47,7 +47,7 @@ SerialDevice::~SerialDevice()
 {
     SerialDevice::close();
     serialPort_.reset();
-    qCDebug(logCategoryDeviceSerial).nospace().noquote()
+    qCDebug(lcDeviceSerial).nospace().noquote()
         << "Deleted serial device, ID: " <<  deviceId_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -71,7 +71,7 @@ void SerialDevice::initSerialDevice(int openRetries)
     openRetryTimer_.setInterval(SERIAL_DEVICE_OPEN_RETRY_INTERVAL);
     connect(&openRetryTimer_, &QTimer::timeout, this, &SerialDevice::open);
 
-    qCDebug(logCategoryDeviceSerial).nospace().noquote()
+    qCDebug(lcDeviceSerial).nospace().noquote()
         << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -169,7 +169,7 @@ unsigned SerialDevice::sendMessage(const QByteArray& data)
         emit messageSent(data, msgNum, QString());
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceSerial) << this << errMsg;
+        qCCritical(lcDeviceSerial) << this << errMsg;
         emit messageSent(data, msgNum, errMsg);
     }
 
@@ -185,7 +185,7 @@ void SerialDevice::resetReceiving()
 {
     if (readBuffer_.empty() == false) {
         readBuffer_.clear();
-        qCDebug(logCategoryDeviceSerial) << this << "Cleared internal buffer for reading of received messages.";
+        qCDebug(lcDeviceSerial) << this << "Cleared internal buffer for reading of received messages.";
     }
 }
 
@@ -205,7 +205,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error)
     switch (error) {
         case QSerialPort::PermissionError :
             // QSerialPort::open() has failed.
-            qCWarning(logCategoryDeviceSerial) << this << errMsg << ". Unable to open serial port.";
+            qCWarning(lcDeviceSerial) << this << errMsg << ". Unable to open serial port.";
             connected_ = false;
             if (openRetries_ == 0) {
                 emit deviceError(ErrorCode::DeviceFailedToOpen, serialPort_->errorString());
@@ -213,7 +213,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error)
                 if (openRetries_ > 0) {  // negative number (-1) = unlimited count of retries
                     --openRetries_;
                 }
-                qCInfo(logCategoryDeviceSerial) << this << "Another attempt to open the serial port will be in "
+                qCInfo(lcDeviceSerial) << this << "Another attempt to open the serial port will be in "
                     << SERIAL_DEVICE_OPEN_RETRY_INTERVAL.count() << " ms.";
                 openRetryTimer_.start();
 
@@ -222,12 +222,12 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error)
             break;
         case QSerialPort::ResourceError :
             // An I/O error occurred when a resource becomes unavailable, e.g. when the device is unexpectedly removed from the system.
-            qCWarning(logCategoryDeviceSerial) << this << errMsg << " (Probably unexpectedly disconnected device.)";
+            qCWarning(lcDeviceSerial) << this << errMsg << " (Probably unexpectedly disconnected device.)";
             connected_ = false;
             emit deviceError(ErrorCode::DeviceDisconnected, serialPort_->errorString());
             break;
         default :
-            qCCritical(logCategoryDeviceSerial) << this << errMsg;
+            qCCritical(lcDeviceSerial) << this << errMsg;
             emit deviceError(ErrorCode::DeviceError, serialPort_->errorString());
             break;
     }

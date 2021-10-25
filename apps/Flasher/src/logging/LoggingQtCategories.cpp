@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryFlasherCli, "strata.flasherCli")
+Q_LOGGING_CATEGORY(lcFlasherCli, "strata.flasherCli")

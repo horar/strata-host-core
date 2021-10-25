@@ -49,7 +49,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qCInfo(logCategoryPrt)
+        qCInfo(lcPrt)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
@@ -67,7 +67,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
     bool status = applicationDir.cd("imports");
     if (status == false) {
-        qCCritical(logCategoryPrt) << "failed to find import path.";
+        qCCritical(lcPrt) << "failed to find import path.";
     }
 
     engine->addImportPath(applicationDir.path());
@@ -86,19 +86,19 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/prt-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
-    qCInfo(logCategoryPrt) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
-    qCInfo(logCategoryPrt) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategoryPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
-    qCInfo(logCategoryPrt) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
-    qCInfo(logCategoryPrt) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    qCInfo(lcPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcPrt) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcPrt) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(lcPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
+    qCInfo(lcPrt) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(lcPrt) << QString("Running on %1").arg(QSysInfo::prettyProductName());
     if (QSslSocket::supportsSsl()) {
-        qCInfo(logCategoryPrt) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
+        qCInfo(lcPrt) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {
-        qCCritical(logCategoryPrt) << QString("No SSL support!!");
+        qCCritical(lcPrt) << QString("No SSL support!!");
     }
-    qCInfo(logCategoryPrt) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategoryPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcPrt) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(lcPrt) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     loadResources();
 

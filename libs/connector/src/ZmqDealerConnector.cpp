@@ -13,7 +13,7 @@ namespace strata::connector
 
 ZmqDealerConnector::ZmqDealerConnector() : ZmqConnector(ZMQ_DEALER)
 {
-    qCInfo(logCategoryZmqDealerConnector) << "ZMQ_DEALER Creating connector object";
+    qCInfo(lcZmqDealerConnector) << "ZMQ_DEALER Creating connector object";
 }
 
 ZmqDealerConnector::~ZmqDealerConnector()
@@ -23,7 +23,7 @@ ZmqDealerConnector::~ZmqDealerConnector()
 bool ZmqDealerConnector::open(const std::string& ip_address)
 {
     if (false == socketAndContextOpen()) {
-        qCCritical(logCategoryZmqDealerConnector) << "Unable to open socket";
+        qCCritical(lcZmqDealerConnector) << "Unable to open socket";
         return false;
     }
 
@@ -33,13 +33,13 @@ bool ZmqDealerConnector::open(const std::string& ip_address)
         socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketConnect(ip_address)) {
         setConnectionState(true);
-        qCInfo(logCategoryZmqDealerConnector).nospace().noquote()
+        qCInfo(lcZmqDealerConnector).nospace().noquote()
                 << "Connected to the server socket '" << QString::fromStdString(ip_address)
                 << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     }
 
-    qCCritical(logCategoryZmqDealerConnector).nospace().noquote()
+    qCCritical(lcZmqDealerConnector).nospace().noquote()
             << "Unable to configure and/or connect to server socket '"
             << QString::fromStdString(ip_address) << "'";
     close();

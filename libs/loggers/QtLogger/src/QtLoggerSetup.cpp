@@ -29,7 +29,7 @@ void QtLoggerSetup::reload()
     QSettings settings;
     const auto logLevel{settings.value(QStringLiteral("log/level")).toString()};
     if (logLevel_ != logLevel) {
-        qCDebug(logCategoryQtLogger, "...reconfiguring loggers...");
+        qCDebug(lcQtLogger, "...reconfiguring loggers...");
 
         setupSpdLog(*QCoreApplication::instance());
         setupQtLog();
@@ -45,7 +45,7 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 
     QSettings settings;
     if (watchdog_.addPath(settings.fileName()) == false) {
-        qCCritical(logCategoryQtLogger, "Failed to register '%s' to system watcher",
+        qCCritical(lcQtLogger, "Failed to register '%s' to system watcher",
                    qUtf8Printable(settings.fileName()));
         return;
     }
@@ -56,7 +56,7 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 
 QtLoggerSetup::~QtLoggerSetup()
 {
-    qCDebug(logCategoryQtLogger) << "...Qt logging finished";
+    qCDebug(lcQtLogger) << "...Qt logging finished";
 }
 
 QtMessageHandler QtLoggerSetup::getQtLogCallback() const
@@ -139,14 +139,14 @@ void QtLoggerSetup::setupQtLog()
 
     qInstallMessageHandler(QtLogger::MsgHandler);
 
-    qCDebug(logCategoryQtLogger) << "Qt logging initiated...";
+    qCDebug(lcQtLogger) << "Qt logging initiated...";
 
-    qCDebug(logCategoryQtLogger) << "Application setup:";
-    qCDebug(logCategoryQtLogger) << "\tini:" << settings.fileName();
-    qCDebug(logCategoryQtLogger) << "\tformat:" << settings.format();
-    qCDebug(logCategoryQtLogger) << "\taccess" << settings.status();
-    qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;
-    qCDebug(logCategoryQtLogger) << "\tlogger message pattern:" << messagePattern;
+    qCDebug(lcQtLogger) << "Application setup:";
+    qCDebug(lcQtLogger) << "\tini:" << settings.fileName();
+    qCDebug(lcQtLogger) << "\tformat:" << settings.format();
+    qCDebug(lcQtLogger) << "\taccess" << settings.status();
+    qCDebug(lcQtLogger) << "\tlogging category filte rules:" << filterRules;
+    qCDebug(lcQtLogger) << "\tlogger message pattern:" << messagePattern;
 }
 
 }  // namespace strata::loggers
