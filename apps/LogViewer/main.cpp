@@ -10,6 +10,7 @@
 #include "FileModel.h"
 
 #include "Version.h"
+#include "Timestamp.h"
 
 #include <QCommandLineParser>
 #include <QGuiApplication>
@@ -22,9 +23,14 @@
 #include <QQuickView>
 #include <QQmlContext>
 
-#include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 
+#include <QtLoggerConstants.h>
+#include <QtLoggerSetup.h>
+
+using strata::loggers::QtLoggerSetup;
+
+namespace constants = strata::loggers::contants;
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -78,7 +84,7 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/lv-logo.png"));
 
-    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    const QtLoggerSetup loggerInitialization(app);
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
@@ -90,7 +96,14 @@ int main(int argc, char *argv[]) {
     parser.addHelpOption();
     parser.process(app);
 
-    qCInfo(lcLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(lcLogViewer) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcLogViewer) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcLogViewer) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(lcLogViewer) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MINOR);
+    qCInfo(lcLogViewer) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(lcLogViewer) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    qCInfo(lcLogViewer) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(lcLogViewer) << QString(constants::LOGLINE_LENGTH, constants::LOGLINE_CHAR_MAJOR);
 
     QQmlApplicationEngine engine;
 
