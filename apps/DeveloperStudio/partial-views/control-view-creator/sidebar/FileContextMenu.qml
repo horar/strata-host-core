@@ -77,7 +77,7 @@ Menu {
     MenuItem {
         text: "Add New File to Qrc"
         onTriggered: {
-            createFilePopup.directoryPath =  "file://"+ SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath))
+            createFilePopup.directoryPath =  SGUtilsCpp.pathToUrl(SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)))
             createFilePopup.open()
             fileContextMenu.dismiss()
         }
@@ -102,7 +102,7 @@ Menu {
     MenuItem {
         text: "Create New Folder"
         onTriggered: {
-            createFolderPopup.folderPath = "file://"+ SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath))
+            createFolderPopup.folderPath = SGUtilsCpp.pathToUrl(SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)))
             createFolderPopup.open()
             fileContextMenu.dismiss()
         }
