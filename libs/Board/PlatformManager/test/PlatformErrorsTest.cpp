@@ -84,7 +84,7 @@ void PlatformErrorsTest::addMockDevice()
 void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
 {
     QSignalSpy platformTerminatedSignal(platform_.get(), SIGNAL(terminated()));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
 
     QVERIFY(mockDeviceScanner_->disconnectDevice(deviceId_).isEmpty());
 
@@ -134,7 +134,7 @@ void PlatformErrorsTest::deviceLostWithDisconnectTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
     mockDevice_->mockEmitError(Device::ErrorCode::DeviceDisconnected, "Device Disconnected");
     QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(100) == true));
     QVERIFY(platformErrorSignal.count() == 1);
@@ -166,7 +166,7 @@ void PlatformErrorsTest::singleErrorTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
 
     mockDevice_->mockEmitError(Device::ErrorCode::DeviceError, "Device Error");
 
@@ -187,7 +187,7 @@ void PlatformErrorsTest::errorBeforeOperationTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
 
@@ -244,7 +244,7 @@ void PlatformErrorsTest::errorAfterOperationTest()
     }
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -315,7 +315,7 @@ void PlatformErrorsTest::multipleOperationsTest()
 
     QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
     QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
 
     std::unique_ptr<Identify> identifyOperation1 = std::make_unique<Identify>(platform_, true, 1, std::chrono::milliseconds(100));
     std::unique_ptr<Identify> identifyOperation2 = std::make_unique<Identify>(platform_, true);
