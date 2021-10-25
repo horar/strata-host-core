@@ -29,12 +29,12 @@ CouchbaseDatabase::~CouchbaseDatabase() {
 
 bool CouchbaseDatabase::open() {
     if (database_) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database (database may already be open).";
+        qCCritical(lcCouchbaseDatabase) << "Failed to open database (database may already be open).";
         return false;
     }
 
     if (database_name_.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Database may not have empty name.";
+        qCCritical(lcCouchbaseDatabase) << "Database may not have empty name.";
         return false;
     }
 
@@ -44,12 +44,12 @@ bool CouchbaseDatabase::open() {
 
     QDir dir(QString::fromStdString(database_path_));
     if (dir.isAbsolute() == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database, an absolute path must be provided.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to open database, an absolute path must be provided.";
         return false;
     }
 
     if (dir.isReadable() == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database, invalid path provided.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to open database, invalid path provided.";
         return false;
     }
 
@@ -59,12 +59,12 @@ bool CouchbaseDatabase::open() {
     try {
         database_ = std::make_unique<cbl::Database>(database_name_.c_str(), db_config);
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
+        qCCritical(lcCouchbaseDatabase) << "Problem with initialization of database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
 
     if (database_ == nullptr || database_->valid() == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database.";
+        qCCritical(lcCouchbaseDatabase) << "Problem with initialization of database.";
         return false;
     }
     return true;
@@ -72,13 +72,13 @@ bool CouchbaseDatabase::open() {
 
 bool CouchbaseDatabase::close() {
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Cannot close database (database not initialized).";
+        qCCritical(lcCouchbaseDatabase) << "Cannot close database (database not initialized).";
         return false;
     }
     try {
         database_->close();
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem closing database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
+        qCCritical(lcCouchbaseDatabase) << "Problem closing database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
     return true;
@@ -86,7 +86,7 @@ bool CouchbaseDatabase::close() {
 
 bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database, verify database is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Problem saving database, verify database is valid and open.";
         return false;
     }
 
@@ -94,7 +94,7 @@ bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     try {
         database_->saveDocument(*doc->mutable_doc_.get());
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
+        qCCritical(lcCouchbaseDatabase) << "Problem saving database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
     return true;
@@ -109,7 +109,7 @@ bool CouchbaseDatabase::documentExistInDB(const std::string &id) {
 
 bool CouchbaseDatabase::deleteDoc(const std::string &id) {
     if (documentExistInDB(id) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document: not found in DB.";
+        qCCritical(lcCouchbaseDatabase) << "Problem deleting document: not found in DB.";
         return false;
     }
     try {
@@ -117,7 +117,7 @@ bool CouchbaseDatabase::deleteDoc(const std::string &id) {
         temp_doc.deleteDoc();
         database_->saveDocument(temp_doc);
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
+        qCCritical(lcCouchbaseDatabase) << "Problem deleting document. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
     return true;
@@ -125,11 +125,11 @@ bool CouchbaseDatabase::deleteDoc(const std::string &id) {
 
 std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id) {
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
         return "";
     }
     if (documentExistInDB(id) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document: not found in DB.";
+        qCCritical(lcCouchbaseDatabase) << "Problem reading document: not found in DB.";
         return "";
     }
     return database_->getDocument(id).propertiesAsJSON();
@@ -137,12 +137,12 @@ std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id) {
 
 QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
         return QJsonObject();
     }
     auto doc = database_->getMutableDocument(id);
     if (doc.valid() == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document: not found in DB.";
+        qCCritical(lcCouchbaseDatabase) << "Problem reading document: not found in DB.";
         return QJsonObject();
     }
     auto doc_json = doc.properties();
@@ -151,7 +151,7 @@ QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
 
 QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to read database, verify database is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to read database, verify database is valid and open.";
         return QJsonObject();
     }
     QJsonObject total_db_object;
@@ -164,7 +164,7 @@ QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
 
 std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to read database, verify database is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to read database, verify database is valid and open.";
         return std::vector<std::string>();
     }
     std::vector<std::string> keys;
@@ -185,17 +185,17 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
     bool continuous) {
 
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
         return false;
     }
 
     if (url.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
         return false;
     }
 
     if (username.empty() && !password.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Username may not be empty if a password is provided.";
+        qCCritical(lcCouchbaseDatabase) << "Username may not be empty if a password is provided.";
         return false;
     }
 
@@ -234,7 +234,7 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
     try {
         replicator_ = std::make_unique<cbl::Replicator>(*replicator_configuration_.get());
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        qCCritical(lcCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
         return false;
     }
 
@@ -259,17 +259,17 @@ bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std
     bool continuous) {
 
     if (database_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
         return false;
     }
 
     if (url.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
         return false;
     }
 
     if (token.empty() || cookieName.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, token and cookie name may not be empty.";
+        qCCritical(lcCouchbaseDatabase) << "Failed to start replicator, token and cookie name may not be empty.";
         return false;
     }
 
@@ -304,7 +304,7 @@ bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std
     try {
         replicator_ = std::make_unique<cbl::Replicator>(*replicator_configuration_.get());
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        qCCritical(lcCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
         return false;
     }
 
@@ -375,11 +375,11 @@ void CouchbaseDatabase::leaveChannel(const QString &strataLoginUsername, const Q
     for(auto it = channels_arr.begin(); it != channels_arr.end(); ++it) {
         QJsonValue this_value = *it;
         if (!this_value.isString()) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: channel is not in string format";
+            qCCritical(lcCouchbaseDatabase) << "Error: channel is not in string format";
             continue;
         }
         if (this_value.toString() == strataLoginUsername) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Found channel, removing:" << this_value.toString();
+            qCCritical(lcCouchbaseDatabase) << "Found channel, removing:" << this_value.toString();
             channels_arr.removeAt(ctr);
             break;
         }
@@ -485,7 +485,7 @@ void CouchbaseDatabase::setLogLevel(const QString &level) {
     } else if (level == "none") {
         CBLLog_SetConsoleLevel(CBLLogNone);
     } else {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: unknown log level";
+        qCCritical(lcCouchbaseDatabase) << "Error: unknown log level";
     }
 }
 
@@ -498,5 +498,5 @@ void CouchbaseDatabase::setLogCallback(void (*callback)(CBLLogDomain domain, CBL
 }
 
 void CouchbaseDatabase::logReceived(CBLLogDomain /*domain*/, CBLLogLevel /*level*/, const char *message) {
-    qCCritical(logCategoryCouchbaseDatabase) << "Received Couchbase log" << message;
+    qCCritical(lcCouchbaseDatabase) << "Received Couchbase log" << message;
 }

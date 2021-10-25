@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategorySci, "strata.sci")
+Q_LOGGING_CATEGORY(lcSci, "strata.sci")

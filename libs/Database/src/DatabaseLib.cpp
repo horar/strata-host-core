@@ -83,7 +83,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
     } else if (replicatorType == "pushandpull") {
         _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
     } else {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, invalid replicator type provided.";
+        qCCritical(lcCouchbaseDatabase) << "Error: Failed to start replicator, invalid replicator type provided.";
     }
 
     if (changeListener) {
@@ -124,7 +124,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
         if (change_listener_callback_) {
             change_listener_callback_(rep, activityLevel);
         } else {
-            qCInfo(logCategoryCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
+            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
         }
     };
 
@@ -140,7 +140,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
 
             document_listener_callback_(rep, isPush, SGDocuments);
         } else {
-            qCInfo(logCategoryCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
+            qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
         }
     };
 

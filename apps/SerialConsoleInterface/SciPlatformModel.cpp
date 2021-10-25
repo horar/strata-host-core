@@ -118,7 +118,7 @@ bool SciPlatformModel::condensedAtStartup() const
 void SciPlatformModel::releasePort(int index, int disconnectDuration)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
         return;
     }
 
@@ -134,7 +134,7 @@ void SciPlatformModel::releasePort(int index, int disconnectDuration)
 void SciPlatformModel::removePlatform(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
         return;
     }
 
@@ -155,7 +155,7 @@ void SciPlatformModel::removePlatform(int index)
 void SciPlatformModel::reconnect(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
     }
 
     platformManager_->reconnectPlatform(platformList_.at(index)->deviceId());
@@ -190,7 +190,7 @@ void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recogn
 
     int index = findPlatform(deviceId);
     if (index < 0) {
-        qCCritical(logCategorySci) << "unknown board" << deviceId;
+        qCCritical(lcSci) << "unknown board" << deviceId;
         return;
     }
 
@@ -240,7 +240,7 @@ void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 {
     strata::platform::PlatformPtr platform = platformManager_->getPlatform(deviceId);
     if (platform == nullptr) {
-        qCWarning(logCategorySci).noquote() << "Platform not found by its id" << deviceId;
+        qCWarning(lcSci).noquote() << "Platform not found by its id" << deviceId;
         return;
     }
 

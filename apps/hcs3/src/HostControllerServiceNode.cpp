@@ -22,7 +22,7 @@ HostControllerServiceNode::~HostControllerServiceNode()
 
 void HostControllerServiceNode::start(const QUrl &hostUrl)
 {
-    qCDebug(logCategoryHcsNode) << "activating" << hostUrl.toString() << "source node";
+    qCDebug(lcHcsNode) << "activating" << hostUrl.toString() << "source node";
 
     srcNode_.setHostUrl(hostUrl);
     srcNode_.enableRemoting(this);
@@ -30,7 +30,7 @@ void HostControllerServiceNode::start(const QUrl &hostUrl)
 
 void HostControllerServiceNode::stop()
 {
-    qCDebug(logCategoryHcsNode) << "deactivating" << srcNode_.hostUrl().toString() << "source node";
+    qCDebug(lcHcsNode) << "deactivating" << srcNode_.hostUrl().toString() << "source node";
 
     srcNode_.disableRemoting(this);
 }
@@ -43,9 +43,9 @@ AppInfoPod HostControllerServiceNode::appInfoPod() const
 void HostControllerServiceNode::shutdown_cb(unsigned hcsIdentifier)
 {
     if (hcsIdentifier_ == hcsIdentifier) {
-        qCDebug(logCategoryHcsNode) << "shutting down on remote requested";
+        qCDebug(lcHcsNode) << "shutting down on remote requested";
         QCoreApplication::exit(0);
     } else {
-        qCDebug(logCategoryHcsNode) << "HCS Identifier not matching, shutdown request ignored, our:" << hcsIdentifier_ << "requested:" << hcsIdentifier;
+        qCDebug(lcHcsNode) << "HCS Identifier not matching, shutdown request ignored, our:" << hcsIdentifier_ << "requested:" << hcsIdentifier;
     }
 }
