@@ -6,21 +6,21 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#ifndef CLI_PARSER_H
-#define CLI_PARSER_H
+#pragma once
 
 #include <memory>
 
-#include <QStringList>
 #include <QCommandLineParser>
+#include <QStringList>
 
-#include "Commands.h"
+#include "commands/Command.h"
 
-namespace strata {
+namespace strata::flashercli
+{
+typedef std::unique_ptr<commands::Command> CommandShPtr;
 
-typedef std::unique_ptr<Command> CommandShPtr;
-
-class CliParser {
+class CliParser
+{
 public:
     /*!
      * CliParser constructor.
@@ -45,6 +45,4 @@ private:
     QCommandLineParser parser_;
 };
 
-}  // namespace
-
-#endif
+}  // namespace strata::flashercli

@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryJLink, "strata.commoncpp.jLinkConnector")
+Q_LOGGING_CATEGORY(lcJLink, "strata.commoncpp.jLinkConnector")

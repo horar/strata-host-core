@@ -30,7 +30,7 @@ bool SGUserSettings::writeFile(const QString &fileName, const QJsonObject &data,
     QString filePath = SGUtilsCpp::joinFilePath(base_output_path_, subdirectory);
     makePath(filePath);
     filePath = SGUtilsCpp::joinFilePath(filePath, fileName);
-    qCDebug(logCategoryUserSettings) << "Writing to" << filePath;
+    qCDebug(lcUserSettings) << "Writing to" << filePath;
     QJsonDocument doc(data);
 
     return SGUtilsCpp::atomicWrite(filePath, doc.toJson());
@@ -45,7 +45,7 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
 
     QFileInfo fi(filePath);
     if (fi.exists() == false || fi.isFile() == false) {
-        qCWarning(logCategoryUserSettings) << "Settings file at" << filePath << "does not exist or is not a file.";
+        qCWarning(lcUserSettings) << "Settings file at" << filePath << "does not exist or is not a file.";
         return returnedObj;
     }
 
@@ -57,10 +57,10 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
         if (!doc.isNull() && doc.isObject()) {
             returnedObj = doc.object();
         } else {
-            qCCritical(logCategoryUserSettings) << "Unable to convert document to object";
+            qCCritical(lcUserSettings) << "Unable to convert document to object";
         }
     } else {
-        qCCritical(logCategoryUserSettings) << "Document at" << filePath << "is not valid JSON";
+        qCCritical(lcUserSettings) << "Document at" << filePath << "is not valid JSON";
     }
 
     return returnedObj;
@@ -81,7 +81,7 @@ QStringList SGUserSettings::listFilesInDirectory(const QString &subdirectory)
         filesInDir.append(fi.fileName());
     }
 
-    qCDebug(logCategoryUserSettings) << filesInDir;
+    qCDebug(lcUserSettings) << filesInDir;
 
     return filesInDir;
 }
@@ -93,11 +93,11 @@ bool SGUserSettings::deleteFile(const QString &fileName, const QString &subdirec
     filePath = SGUtilsCpp::joinFilePath(filePath, fileName);
 
     if (!QFile::remove(filePath)) {
-        qCCritical(logCategoryUserSettings) << "cannot delete file " << filePath;
+        qCCritical(lcUserSettings) << "cannot delete file " << filePath;
         return false;
     }
 
-    qCDebug(logCategoryUserSettings) << "Successfully deleted user setting located at " << filePath;
+    qCDebug(lcUserSettings) << "Successfully deleted user setting located at " << filePath;
 
     return true;
 }
@@ -112,11 +112,11 @@ bool SGUserSettings::renameFile(const QString &origFileName, const QString &newF
     newFilePath = SGUtilsCpp::joinFilePath(newFilePath, newFileName);
 
     if (!QFile::rename(oldFilePath, newFilePath)) {
-        qCCritical(logCategoryUserSettings) << "Could not rename file from" << oldFilePath << "to" << newFilePath;
+        qCCritical(lcUserSettings) << "Could not rename file from" << oldFilePath << "to" << newFilePath;
         return false;
     }
 
-    qCDebug(logCategoryUserSettings) << "Successfully renamed" << oldFilePath << "to" << newFilePath;
+    qCDebug(lcUserSettings) << "Successfully renamed" << oldFilePath << "to" << newFilePath;
     return true;
 }
 
@@ -170,5 +170,5 @@ void SGUserSettings::setBaseOutputPath()
         base_output_path_ = SGUtilsCpp::joinFilePath(base_output_path_, classId_);
     }
 
-    qCDebug(logCategoryUserSettings) << "Setting base output path for user settings to" << base_output_path_;
+    qCDebug(lcUserSettings) << "Setting base output path for user settings to" << base_output_path_;
 }

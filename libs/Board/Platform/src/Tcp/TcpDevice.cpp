@@ -25,19 +25,19 @@ TcpDevice::TcpDevice(const QByteArray& deviceId, QHostAddress deviceAddress, qui
 TcpDevice::~TcpDevice()
 {
     TcpDevice::close();
-    qCDebug(logCategoryDeviceTcp).nospace().noquote()
+    qCDebug(lcDeviceTcp).nospace().noquote()
         << "Deleted TCP device, ID: " <<  deviceId_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 void TcpDevice::open()
 {
-    qCDebug(logCategoryDeviceTcp)
+    qCDebug(lcDeviceTcp)
         << this << "Connecting TCP - IP: " << deviceAddress_.toString()
         << ", port: " << tcpPort_;
 
     if (tcpSocket_->isOpen()) {
-        qCDebug(logCategoryDeviceTcp) << this << "TCP socket already open.";
+        qCDebug(lcDeviceTcp) << this << "TCP socket already open.";
         return;
     }
 
@@ -55,7 +55,7 @@ void TcpDevice::close()
 {
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {
-        qCDebug(logCategoryDeviceTcp) << this << "Disconnecting from TCP - IP: "
+        qCDebug(lcDeviceTcp) << this << "Disconnecting from TCP - IP: "
                                       << deviceAddress_.toString() << ", port: " << tcpPort_;
         tcpSocket_->close();
     }
@@ -67,7 +67,7 @@ unsigned TcpDevice::sendMessage(const QByteArray &message)
 
     if (tcpSocket_->write(message) != message.size() || false == tcpSocket_->flush()) {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceTcp) << this << errMsg;
+        qCCritical(lcDeviceTcp) << this << errMsg;
         emit messageSent(message, msgNum, errMsg);
     } else {
         emit messageSent(message, msgNum, QString());
@@ -85,7 +85,7 @@ void TcpDevice::resetReceiving()
 {
     if (readBuffer_.empty() == false) {
         readBuffer_.clear();
-        qCDebug(logCategoryDeviceSerial)
+        qCDebug(lcDeviceSerial)
             << this << "Cleared internal buffer for reading of received messages.";
     }
 }
@@ -129,14 +129,14 @@ void TcpDevice::handleError(QAbstractSocket::SocketError socketError)
 
 void TcpDevice::deviceDiconnectedHandler()
 {
-    qCDebug(logCategoryDeviceTcp) << this << "Disconnected from TCP address"
+    qCDebug(lcDeviceTcp) << this << "Disconnected from TCP address"
                                   << deviceAddress_.toString();
     emit deviceError(ErrorCode::DeviceDisconnected, "");
 }
 
 void TcpDevice::deviceOpenedHandler()
 {
-    qCDebug(logCategoryDeviceTcp) << this << "Connected to TCP address" << deviceAddress_.toString();
+    qCDebug(lcDeviceTcp) << this << "Connected to TCP address" << deviceAddress_.toString();
     emit Device::opened();
 }
 

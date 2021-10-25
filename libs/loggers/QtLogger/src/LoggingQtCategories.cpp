@@ -10,5 +10,5 @@
 
 namespace strata::loggers
 {
-Q_LOGGING_CATEGORY(logCategoryQtLogger, "strata.logger.qt")
+Q_LOGGING_CATEGORY(lcQtLogger, "strata.logger.qt")
 }
