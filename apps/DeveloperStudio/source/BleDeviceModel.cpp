@@ -26,7 +26,7 @@ BleDeviceModel::BleDeviceModel(
 {
     setModelRoles();
 
-    connect(coreInterface_, &CoreInterface::bluetoothScan, this, &BleDeviceModel::bluetoothScanReplyHandler);
+    connect(coreInterface_, &CoreInterface::bluetoothScan, this, &BleDeviceModel::bluetoothScanFinishedHandler);
     connect(coreInterface_, &CoreInterface::connectDevice, this, &BleDeviceModel::connectReplyHandler);
     connect(coreInterface_, &CoreInterface::disconnectDevice, this, &BleDeviceModel::disconnectReplyHandler);
     connect(coreInterface_, &CoreInterface::connectedPlatformListMessage, this, &BleDeviceModel::updateDeviceConnection);
@@ -95,9 +95,20 @@ QString BleDeviceModel::bleSupportError() const
 
 void BleDeviceModel::startScan()
 {
+    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("bluetooth_scan", QJsonObject());
+
+    if (deferredRequest == nullptr) {
+        QString errorString = "Failed to send 'bluetooth_scan' request";
+        qCCritical(logCategoryStrataDevStudio) << errorString;
+        setLastScanError(errorString);
+        return;
+    }
+
     setLastScanError("");
     setInScanMode(true);
-    strataClient_->sendRequest("bluetooth_scan", QJsonObject());
+
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &BleDeviceModel::bluetoothScanReplyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &BleDeviceModel::bluetoothScanErrorReplyHandler);
 }
 
 void BleDeviceModel::tryConnect(int row)
@@ -184,6 +195,29 @@ QHash<int, QByteArray> BleDeviceModel::roleNames() const
 }
 
 void BleDeviceModel::bluetoothScanReplyHandler(const QJsonObject &payload)
+{
+    if (payload.contains("message") ) {
+        qCDebug(logCategoryStrataDevStudio) << payload.value("message").toString();
+    } else {
+        qCWarning(logCategoryStrataDevStudio) << "Succesfully initiated Bluetooth scan, but received malformated reply";
+    }
+}
+
+void BleDeviceModel::bluetoothScanErrorReplyHandler(const QJsonObject &payload)
+{
+    QString errorString("Unable to initiate Bluetooth scan");
+    if (payload.contains("message") ) {
+        errorString += ": " + payload.value("message").toString();
+    }
+
+    qCWarning(logCategoryStrataDevStudio) << errorString;
+
+    clear();
+    setInScanMode(false);
+    setLastScanError(errorString);
+}
+
+void BleDeviceModel::bluetoothScanFinishedHandler(const QJsonObject &payload)
 {
     setInScanMode(false);
 
