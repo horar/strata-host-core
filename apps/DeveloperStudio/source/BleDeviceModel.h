@@ -76,6 +76,8 @@ protected:
 
 private slots:
     void bluetoothScanReplyHandler(const QJsonObject &payload);
+    void bluetoothScanErrorReplyHandler(const QJsonObject &payload);
+    void bluetoothScanFinishedHandler(const QJsonObject &payload);
     void connectReplyHandler(const QJsonObject &payload);
     void disconnectReplyHandler(const QJsonObject &payload);
     void updateDeviceConnection(const QJsonObject &payload);

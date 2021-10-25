@@ -759,7 +759,9 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
 #ifdef APPS_FEATURE_BLE
 void HostControllerService::processCmdBluetoothScan(const strata::strataRPC::Message &message)
 {
-    Q_UNUSED(message)
+    strataServer_->notifyClient(message, QJsonObject{{"message", "Bluetooth scan initiated"}},
+                                strataRPC::ResponseType::Response);
+
     platformController_.startBluetoothScan();
 }
 #endif // APPS_FEATURE_BLE
