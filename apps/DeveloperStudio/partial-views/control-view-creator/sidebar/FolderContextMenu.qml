@@ -13,40 +13,6 @@ Menu {
     id: folderContextMenu
 
     MenuItem {
-        text: "Add New File to Qrc"
-        onTriggered: {
-            if (!styleData.isExpanded) {
-                treeView.expand(styleData.index)
-            }
-
-            createFilePopup.directoryPath = model.filepath
-            createFilePopup.open()
-            folderContextMenu.dismiss()
-        }
-    }
-
-    MenuItem {
-        text: "Import Files/Folder to Project"
-        onTriggered: {
-            treeView.selectItem(styleData.index)
-            if (!styleData.isExpanded) {
-                treeView.expand(styleData.index)
-            }
-
-            importFileOrFolderPopup.callerIndex = styleData.index
-            importFileOrFolderPopup.open()
-            folderContextMenu.dismiss()
-        }
-    }
-
-    MenuItem {
-        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
-        onTriggered: {
-            SGUtilsCpp.showFileInFolder(model.filepath)
-        }
-    }
-
-    MenuItem {
         text: "Rename Folder"
         onTriggered: {
             treeView.selectItem(styleData.index)
@@ -75,6 +41,42 @@ Menu {
             confirmDeleteFile.index = styleData.index.parent
 
             confirmDeleteFile.open()
+            folderContextMenu.dismiss()
+        }
+    }
+
+    MenuSeparator {}
+
+    MenuItem {
+        text: "Add New File to Qrc"
+        onTriggered: {
+            if (!styleData.isExpanded) {
+                treeView.expand(styleData.index)
+            }
+
+            createFilePopup.directoryPath = model.filepath
+            createFilePopup.open()
+            folderContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
+        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
+        onTriggered: {
+            SGUtilsCpp.showFileInFolder(model.filepath)
+        }
+    }
+
+    MenuItem {
+        text: "Import Files/Folder to Project"
+        onTriggered: {
+            treeView.selectItem(styleData.index)
+            if (!styleData.isExpanded) {
+                treeView.expand(styleData.index)
+            }
+
+            importFileOrFolderPopup.callerIndex = styleData.index
+            importFileOrFolderPopup.open()
             folderContextMenu.dismiss()
         }
     }
