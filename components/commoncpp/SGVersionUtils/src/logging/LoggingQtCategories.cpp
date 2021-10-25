@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryVersionUtils, "strata.commoncpp.versionUtils")
+Q_LOGGING_CATEGORY(lcVersionUtils, "strata.commoncpp.versionUtils")

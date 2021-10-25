@@ -79,9 +79,9 @@ bool SDSModel::startHcs()
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
         hcsConfigPath = QDir::cleanPath(QString("%1/onsemi/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
-        qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath;
+        qCInfo(lcStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath;
     }else{
-        qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
+        qCCritical(lcStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
         return false;
     }
 #else
@@ -120,15 +120,15 @@ bool SDSModel::startHcs()
         arguments << "-f" << hcsConfigPath;
         arguments << "-i" << QString::number(hcsIdentifier_);
 
-        qCDebug(logCategoryStrataDevStudio) << "Starting HCS:" << hcsPath << "(" << hcsConfigPath << "), identifier:" << hcsIdentifier_;
+        qCDebug(lcDevStudio) << "Starting HCS:" << hcsPath << "(" << hcsConfigPath << "), identifier:" << hcsIdentifier_;
 
         hcsProcess_->start(hcsPath, arguments, QIODevice::ReadWrite);
         if (hcsProcess_->waitForStarted() == false) {
-            qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess_->state() << ")";
+            qCWarning(lcDevStudio) << "Process does not started yet (state:" << hcsProcess_->state() << ")";
             return false;
         }
     } else {
-        qCCritical(logCategoryStrataDevStudio) << "Failed to start HCS: does not exist";
+        qCCritical(lcDevStudio) << "Failed to start HCS: does not exist";
         return false;
     }
 
@@ -142,27 +142,27 @@ bool SDSModel::killHcs()
     }
 
     if (hcsProcess_->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "waiting for HCS gracefull finish...";
+        qCDebug(lcDevStudio) << "waiting for HCS gracefull finish...";
         if (hcsProcess_->waitForFinished(5000) == true) {
             return true;
         }
 
 #ifdef Q_OS_UNIX
-        qCDebug(logCategoryStrataDevStudio) << "terminating HCS...";
+        qCDebug(lcDevStudio) << "terminating HCS...";
         hcsProcess_->terminate();
         QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
         if (hcsProcess_->waitForFinished(5000) == true) {
             return true;
         }
-        qCWarning(logCategoryStrataDevStudio) << "Failed to terminate the server";
+        qCWarning(lcDevStudio) << "Failed to terminate the server";
 #endif
 
-        qCDebug(logCategoryStrataDevStudio) << "killing HCS...";
+        qCDebug(lcDevStudio) << "killing HCS...";
         hcsProcess_->kill();
         if (hcsProcess_->waitForFinished(5000) == true) {
             return true;
         }
-        qCCritical(logCategoryStrataDevStudio) << "Failed to kill HCS server";
+        qCCritical(lcDevStudio) << "Failed to kill HCS server";
         return false;
     }
 
@@ -226,14 +226,14 @@ void SDSModel::shutdownService()
 
 void SDSModel::startedProcess()
 {
-    qCInfo(logCategoryStrataDevStudio) << "HCS started";
+    qCInfo(lcDevStudio) << "HCS started";
 
     setHcsConnected(true);
 }
 
 void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qCDebug(logCategoryStrataDevStudio)
+    qCDebug(lcDevStudio)
         << "exitStatus=" << exitStatus
         << "exitCode=" << exitCode;
 
@@ -242,7 +242,7 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 
     if (exitStatus == QProcess::NormalExit && exitCode == (EXIT_FAILURE + 1)) {
         // LC: todo; there was another HCS instance; new one is going down
-        qCDebug(logCategoryStrataDevStudio) << "Quitting - another HCS instance was running";
+        qCDebug(lcDevStudio) << "Quitting - another HCS instance was running";
         return;
     }
 
@@ -253,7 +253,7 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 
 void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 {
-    qCDebug(logCategoryStrataDevStudio) << error << hcsProcess_->errorString();
+    qCDebug(lcDevStudio) << error << hcsProcess_->errorString();
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)
@@ -289,11 +289,11 @@ QString SDSModel::openLogViewer()
 
     QFileInfo logViewerInfo(logViewerPath);
     if (logViewerInfo.exists() == false) {
-        qCCritical(logCategoryStrataDevStudio) << "Log Viewer at location " + logViewerPath + " does not exist.";
+        qCCritical(lcDevStudio) << "Log Viewer at location " + logViewerPath + " does not exist.";
         return "Log Viewer not found.";
     }
     if (logViewerInfo.isExecutable() == false) {
-        qCCritical(logCategoryStrataDevStudio) << "Log Viewer at location " + logViewerPath + " is not executable file.";
+        qCCritical(lcDevStudio) << "Log Viewer at location " + logViewerPath + " is not executable file.";
         return  "Log Viewer is not executable file.";
     }
 
@@ -302,7 +302,7 @@ QString SDSModel::openLogViewer()
     const QString sdsLog = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("Strata Developer Studio.log");
     const QString hcsLog = logDir.filePath("Host Controller Service/Host Controller Service.log");
     if (QProcess::startDetached(logViewerPath, {sdsLog, hcsLog}) == false) {
-        qCCritical(logCategoryStrataDevStudio) << "Log Viewer from location " + logViewerPath + " with log files " + sdsLog + " and " + hcsLog + " failed to start.";
+        qCCritical(lcDevStudio) << "Log Viewer from location " + logViewerPath + " with log files " + sdsLog + " and " + hcsLog + " failed to start.";
         return "Log Viewer failed to start.";
     }
 

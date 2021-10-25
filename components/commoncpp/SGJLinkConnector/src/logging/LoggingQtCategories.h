@@ -10,4 +10,4 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryJLink)
+Q_DECLARE_LOGGING_CATEGORY(lcJLink)

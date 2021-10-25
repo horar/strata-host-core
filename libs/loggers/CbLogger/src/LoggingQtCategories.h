@@ -12,7 +12,7 @@
 
 namespace strata::loggers
 {
-constexpr const char* logCategoryCbLoggerName = "strata.couchbase-lite";
+constexpr const char* lcCbLoggerName = "strata.couchbase-lite";
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryCbLogger)
+Q_DECLARE_LOGGING_CATEGORY(lcCbLogger)
 }  // namespace strata::loggers

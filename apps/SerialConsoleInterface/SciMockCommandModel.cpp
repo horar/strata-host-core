@@ -62,7 +62,7 @@ QVariant SciMockCommandModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= commands_.count()) {
-        qCWarning(logCategorySci) << "Attempting to access out of range index when acquiring data";
+        qCWarning(lcSci) << "Attempting to access out of range index when acquiring data";
         return QVariant();
     }
 

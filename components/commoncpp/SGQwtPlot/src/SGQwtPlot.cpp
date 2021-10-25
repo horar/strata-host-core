@@ -154,7 +154,7 @@ SGQwtPlotCurve* SGQwtPlot::createCurve(QString name)
 SGQwtPlotCurve* SGQwtPlot::curve(int index)
 {
     if (index >= curves_.length() || index < 0) {
-        qCWarning(logCategoryQWTPlot) << "Index out of range:" << index;
+        qCWarning(lcQWTPlot) << "Index out of range:" << index;
         return nullptr;
     }
     return curves_[index];

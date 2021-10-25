@@ -19,7 +19,7 @@ AppUi::AppUi(QQmlApplicationEngine& engine, const QUrl& errorUrl, QObject* paren
 
 void AppUi::loadUrl(const QUrl& url)
 {
-    qCDebug(logCategoryStrataDevStudio) << "loading" << url;
+    qCDebug(lcDevStudio) << "loading" << url;
 
     auto qLaterDeleter = [](QQmlComponent* p) { p->deleteLater(); };
     std::unique_ptr<QQmlComponent, qtLaterDeleterFunction> newComponent(new QQmlComponent(&engine_),
@@ -31,7 +31,7 @@ void AppUi::loadUrl(const QUrl& url)
 
 void AppUi::statusChanged(QQmlComponent::Status status)
 {
-    qCDebug(logCategoryStrataDevStudio) << "loading status" << status;
+    qCDebug(lcDevStudio) << "loading status" << status;
 
     if (status == QQmlComponent::Ready) {
         loadSuccess();
@@ -44,12 +44,12 @@ void AppUi::loadSuccess()
 {
     QObject* object = component_->create();
     if (object == nullptr) {
-        qCCritical(logCategoryStrataDevStudio)
+        qCCritical(lcDevStudio)
             << "component creation critically failed:" << component_->errorString();
         emit uiFails();
         return;
     }
-    qCDebug(logCategoryStrataDevStudio) << "UI ready";
+    qCDebug(lcDevStudio) << "UI ready";
     if (component_->url() != errorUrl_) {
         emit uiLoaded();
     }
@@ -57,13 +57,13 @@ void AppUi::loadSuccess()
 
 void AppUi::loadFailed()
 {
-    qCCritical(logCategoryStrataDevStudio) << "details:";
+    qCCritical(lcDevStudio) << "details:";
     foreach (const QQmlError& error, component_->errors()) {
-        qCCritical(logCategoryStrataDevStudio) << error.toString();
+        qCCritical(lcDevStudio) << error.toString();
     }
 
     if (component_->url() == errorUrl_) {
-        qCCritical(logCategoryStrataDevStudio)
+        qCCritical(lcDevStudio)
             << "hell froze - fails to load error dialog; aborting...";
         emit uiFails();
         return;

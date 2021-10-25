@@ -22,10 +22,8 @@ namespace strata::loggers
  * Optionally, insert default settings into configuration file on application start
  * if these don't exists.
  */
-class QtLoggerSetup final : public QObject
+class QtLoggerSetup final
 {
-    Q_OBJECT
-
 public:
     /**
      * @brief QtLoggerSetup

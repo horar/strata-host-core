@@ -135,7 +135,7 @@ void SciScrollbackModel::append(const QByteArray &message, bool isRequest)
     if (autoExportIsActive_) {
         qint64 bytesWritten = exportFile_.write(stringify(data_.last()));
         if (bytesWritten <= 0) {
-            qCCritical(logCategorySci)  << "write failed" << exportFile_.errorString();
+            qCCritical(lcSci)  << "write failed" << exportFile_.errorString();
             setAutoExportErrorString(exportFile_.errorString());
             stopAutoExport();
         }
@@ -159,7 +159,7 @@ void SciScrollbackModel::setIsCondensedAll(bool condensed)
 void SciScrollbackModel::setIsCondensed(int index, bool condensed)
 {
     if (index < 0 || index >= data_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
         return;
     }
 
@@ -192,27 +192,27 @@ QString SciScrollbackModel::exportToFile(QString filePath)
 {
     if (filePath.isEmpty()) {
         QString errorString(QStringLiteral("No file name specified"));
-        qCCritical(logCategorySci) << errorString;
+        qCCritical(lcSci) << errorString;
         return errorString;
     }
 
     QFileInfo fileInfo(filePath);
     if (fileInfo.isRelative()) {
         QString errorString(QStringLiteral("Cannot use relative path for export"));
-        qCCritical(logCategorySci) << errorString;
+        qCCritical(lcSci) << errorString;
         return errorString;
     }
 
-    if (SGUtilsCpp().containsForbiddenCharacters(fileInfo.fileName())) {
-        QString errorString("A filename cannot contain any of the following characters: " +  SGUtilsCpp().joinForbiddenCharacters());
-        qCCritical(logCategorySci) << errorString;
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        QString errorString("A filename cannot contain any of the following characters: " +  SGUtilsCpp::joinForbiddenCharacters());
+        qCCritical(lcSci) << errorString;
         return errorString;
     }
 
     QSaveFile file(filePath);
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCCritical(logCategorySci) << "open failed:" << file.errorString() << filePath;
+        qCCritical(lcSci) << "open failed:" << file.errorString() << filePath;
         return file.errorString();
     }
 
@@ -222,13 +222,13 @@ QString SciScrollbackModel::exportToFile(QString filePath)
     qint64 bytesWritten = file.write(getTextForExport());
     if (bytesWritten <= 0) {
         QString errorString = exportFile_.errorString();
-        qCCritical(logCategorySci) << "write failed" << file.errorString() << filePath;
+        qCCritical(lcSci) << "write failed" << file.errorString() << filePath;
         return file.errorString();
     }
 
     bool committed = file.commit();
     if (committed == false) {
-        qCCritical(logCategorySci) << "commit failed:" << file.errorString() << filePath;
+        qCCritical(lcSci) << "commit failed:" << file.errorString() << filePath;
         return file.errorString();
     }
 
@@ -241,14 +241,14 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
 
     if (autoExportIsActive_) {
         errorString = "Export already active";
-        qCCritical(logCategorySci) << errorString;
+        qCCritical(lcSci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
     }
 
     if (filePath.isEmpty()) {
         errorString = "No file name specified";
-        qCCritical(logCategorySci) << errorString;
+        qCCritical(lcSci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
     }
@@ -256,14 +256,14 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
     QFileInfo fileInfo(filePath);
     if (fileInfo.isRelative()) {
         errorString = "Cannot use relative path for export";
-        qCCritical(logCategorySci) << errorString;
+        qCCritical(lcSci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
     }
 
-    if (SGUtilsCpp().containsForbiddenCharacters(fileInfo.fileName())) {
-        errorString = "A filename cannot contain any of the following characters: " + SGUtilsCpp().joinForbiddenCharacters();
-        qCCritical(logCategorySci) << errorString;
+    if (SGUtilsCpp::containsForbiddenCharacters(fileInfo.fileName())) {
+        errorString = "A filename cannot contain any of the following characters: " + SGUtilsCpp::joinForbiddenCharacters();
+        qCCritical(lcSci) << errorString;
         setAutoExportErrorString(errorString);
         return false;
     }
@@ -272,7 +272,7 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
     bool ret = exportFile_.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
     if (ret == false ) {
         errorString = exportFile_.errorString();
-        qCCritical(logCategorySci) << "open failed" << filePath << errorString;
+        qCCritical(lcSci) << "open failed" << filePath << errorString;
         setAutoExportErrorString(errorString);
         return false;
     }

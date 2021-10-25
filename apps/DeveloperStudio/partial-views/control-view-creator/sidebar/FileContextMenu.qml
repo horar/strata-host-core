@@ -31,13 +31,6 @@ Menu {
     }
 
     MenuItem {
-        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
-        onTriggered: {
-            SGUtilsCpp.showFileInFolder(model.filepath)
-        }
-    }
-
-    MenuItem {
         id: renameFileMenuItem
         text: "Rename File"
         enabled: {
@@ -84,8 +77,16 @@ Menu {
     MenuItem {
         text: "Add New File to Qrc"
         onTriggered: {
+            createFilePopup.directoryPath =  SGUtilsCpp.pathToUrl(SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)))
             createFilePopup.open()
             fileContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
+        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
+        onTriggered: {
+            SGUtilsCpp.showFileInFolder(model.filepath)
         }
     }
 
@@ -94,6 +95,15 @@ Menu {
         onTriggered: {
             importFileOrFolderPopup.callerIndex = styleData.index.parent
             importFileOrFolderPopup.open()
+            fileContextMenu.dismiss()
+        }
+    }
+
+    MenuItem {
+        text: "Create New Folder"
+        onTriggered: {
+            createFolderPopup.folderPath = SGUtilsCpp.pathToUrl(SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)))
+            createFolderPopup.open()
             fileContextMenu.dismiss()
         }
     }
