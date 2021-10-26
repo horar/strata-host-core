@@ -62,13 +62,13 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
 
         // Attempt to remove file with the same name in destination directory (if exists)
         if (QFile::exists(to.absoluteFilePath()) && resolveConflict && !QFile::remove(to.absoluteFilePath())) {
-            qCCritical(logCategoryControlViewCreator) << "The file" << to.absoluteFilePath() << "could not be removed";
+            qCCritical(lcControlViewCreator) << "The file" << to.absoluteFilePath() << "could not be removed";
             return false;
         }
 
         // Attempt to copy file from old directory to destination directory
         if (!QFile::copy(from.absoluteFilePath(), to.absoluteFilePath())) {
-            qCCritical(logCategoryControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
+            qCCritical(lcControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
             return false;
         }
 
@@ -78,7 +78,7 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
         if (to.fileName() == "qml.qrc") {
             // Checks if is qml.qrc file, set qrcPath_
             qrcPath_ = rootPath_ + oldFile;
-            qCDebug(logCategoryControlViewCreator) << "QRC path:" << qrcPath_;
+            qCDebug(lcControlViewCreator) << "QRC path:" << qrcPath_;
         } else if (to.fileName() == "CMakeLists.txt") {
             // Checks if is CMakeLists.txt file, replace project name
             replaceProjectNameInCMakeListsFile(to.absoluteFilePath());
@@ -93,7 +93,7 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
         // Make path to the new directory
         QDir root = QDir::root();
         if (!root.mkpath(to.absoluteFilePath())) {
-            qCCritical(logCategoryControlViewCreator) << "Unable to add new directory";
+            qCCritical(lcControlViewCreator) << "Unable to add new directory";
             return false;
         }
 
@@ -102,7 +102,7 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
         QDir toDir(to.absoluteFilePath());
         // Recursive call to traverse the whole directory
         if (!copyFiles(fromDir, toDir, resolveConflict)) {
-            qCCritical(logCategoryControlViewCreator) << "The directory is unable to recursively add files and dirs to new directory" << oldDir.path();
+            qCCritical(lcControlViewCreator) << "The directory is unable to recursively add files and dirs to new directory" << oldDir.path();
             return false;
         }
     }
@@ -117,7 +117,7 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolveConflic
 void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeListsFilePath) {
     QFile cmakeInFile(cmakeListsFilePath);
     if (!cmakeInFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to edit CMakeLists template file with project name";
+        qCCritical(lcControlViewCreator) << "Failed to edit CMakeLists template file with project name";
         return;
     }
 
@@ -135,7 +135,7 @@ void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeLi
         QTextStream out(&cmakeOutFile);
         out << cmakeText;
     } else {
-        qCCritical(logCategoryControlViewCreator) << "Failed to edit CMakeLists template file with project name";
+        qCCritical(lcControlViewCreator) << "Failed to edit CMakeLists template file with project name";
     }
 
     cmakeInFile.close();

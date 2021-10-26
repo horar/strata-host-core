@@ -75,12 +75,12 @@ bool FirmwareUpdater::programFirmware(QString deviceId, QString firmwareUri, QSt
 bool FirmwareUpdater::requestDevice(const QString& deviceId, Action action, const QString& firmwareUri, const QString& firmwareMD5)
 {
     if (deviceId.isEmpty()) {
-        qCCritical(logCategoryStrataDevStudio) << "Bad request, device ID is empty.";
+        qCCritical(lcDevStudio) << "Bad request, device ID is empty.";
         return false;
     }
 
     if (requestedDevices_.contains(deviceId)) {
-        qCCritical(logCategoryStrataDevStudio) << "Request for an already processed device ID" << deviceId;
+        qCCritical(lcDevStudio) << "Request for an already processed device ID" << deviceId;
         return false;
     }
 
@@ -94,7 +94,7 @@ bool FirmwareUpdater::sendCommand(const QString& deviceId, const QString& comman
     strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
 
     if (deferredRequest == nullptr) {
-        qCCritical(logCategoryStrataDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
+        qCCritical(lcDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
         requestedDevices_.remove(deviceId);
         return false;
     }
@@ -131,7 +131,7 @@ void FirmwareUpdater::replyHandler(QJsonObject payload)
 {
     const QString deviceId = payload.value(QStringLiteral("device_id")).toString();
     if (deviceId.isEmpty()) {
-        qCCritical(logCategoryStrataDevStudio) << "Bad reply, device ID is missing.";
+        qCCritical(lcDevStudio) << "Bad reply, device ID is missing.";
         return;
     }
 
@@ -159,7 +159,7 @@ void FirmwareUpdater::replyHandler(QJsonObject payload)
     const QString jobId = payload.value(QStringLiteral("job_id")).toString();
     if (jobId.isEmpty()) {
         const QString errorString = QStringLiteral("Bad reply, job ID is missing.");
-        qCCritical(logCategoryStrataDevStudio).noquote() << errorString << "Device ID:" << deviceId;
+        qCCritical(lcDevStudio).noquote() << errorString << "Device ID:" << deviceId;
         emit jobError(deviceId, errorString);
         return;
     }
@@ -174,7 +174,7 @@ void FirmwareUpdater::jobUpdateHandler(QJsonObject payload)
     if ((payload.contains("job_id") == false) ||
         (payload.contains("job_type") == false) ||
         (payload.contains("job_status") == false)) {
-        qCCritical(logCategoryStrataDevStudio) << "Badly formatted JSON, job data is missing.";
+        qCCritical(lcDevStudio) << "Badly formatted JSON, job data is missing.";
         return;
     }
 
@@ -534,6 +534,6 @@ QString FirmwareUpdater::resolveStatus(JobType jobType, float progress) const
 
 void FirmwareUpdater::logError(const QString& errorString, const QString& deviceId, Action action, JobType jobType)
 {
-    qCWarning(logCategoryStrataDevStudio).noquote().nospace() << errorString << ", device ID: " << deviceId
+    qCWarning(lcDevStudio).noquote().nospace() << errorString << ", device ID: " << deviceId
         << " (action " << static_cast<int>(action) << ", job type " << static_cast<int>(jobType) << ").";
 }

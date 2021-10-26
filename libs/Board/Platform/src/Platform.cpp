@@ -87,7 +87,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
     PlatformMessage message(rawMsg);
 
     if (message.isJsonValid() == false) {
-        qCDebug(logCategoryPlatform) << this << "JSON error at offset "
+        qCDebug(lcPlatform) << this << "JSON error at offset "
             << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
@@ -95,7 +95,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
 
     if (message.isJsonValidObject()) {
         if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
-            qCInfo(logCategoryPlatform) << this << "Received 'platform_id_changed' notification";
+            qCInfo(lcPlatform) << this << "Received 'platform_id_changed' notification";
 
             emit platformIdChanged();
         }
@@ -123,7 +123,7 @@ void Platform::open() {
         abortReconnect();
         device_->open();
     } else {
-        qCWarning(logCategoryPlatform) << this << "Attempting to open device in invalid state" << platformState_;
+        qCWarning(lcPlatform) << this << "Attempting to open device in invalid state" << platformState_;
     }
 }
 
@@ -139,7 +139,7 @@ void Platform::close(const std::chrono::milliseconds waitInterval) {
             reconnectTimer_.start(waitInterval.count());
         }
     } else {
-        qCWarning(logCategoryPlatform) << this << "Attempting to close device in invalid state" << platformState_;
+        qCWarning(lcPlatform) << this << "Attempting to close device in invalid state" << platformState_;
     }
 }
 
@@ -153,7 +153,7 @@ void Platform::terminate() {
         platformState_ = PlatformState::Terminated;
         emit terminated();
     } else {
-        qCWarning(logCategoryPlatform) << this << "Attempting to terminate already terminated platform";
+        qCWarning(lcPlatform) << this << "Attempting to terminate already terminated platform";
     }
 }
 
@@ -182,7 +182,7 @@ unsigned Platform::sendMessage(const QByteArray& message, quintptr lockId) {
     }
 
     QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-    qCWarning(logCategoryPlatform) << this << errMsg;
+    qCWarning(lcPlatform) << this << errMsg;
     unsigned messageNumber = device_->nextMessageNumber();
     emit device_->messageSent(msgToWrite, messageNumber, errMsg);
     return messageNumber;
@@ -366,7 +366,7 @@ void Platform::openedHandler() {
         platformState_ = PlatformState::Opened;
         emit opened();
     } else {
-        qCWarning(logCategoryPlatform) << this << "Attempting to emit open() signal in invalid state" << platformState_;
+        qCWarning(lcPlatform) << this << "Attempting to emit open() signal in invalid state" << platformState_;
     }
 }
 

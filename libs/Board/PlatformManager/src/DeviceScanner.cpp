@@ -47,7 +47,7 @@ Device::Type DeviceScanner::scannerType(const QByteArray& deviceId)
             return (*it).first;
         }
     }
-    qCCritical(logCategoryDeviceScanner) << "Unknown device scanner type for deviceId:" << deviceId;
+    qCCritical(lcDeviceScanner) << "Unknown device scanner type for deviceId:" << deviceId;
     return Device::Type::MockDevice;
 }
 
@@ -55,7 +55,7 @@ const QByteArray DeviceScanner::scannerPrefix(const Device::Type type)
 {
     QByteArray retVal = allScannerTypes_.value(type);
     if (retVal.isEmpty()) {
-        qCCritical(logCategoryDeviceScanner) << "Unknown device scanner type:" << type;
+        qCCritical(lcDeviceScanner) << "Unknown device scanner type:" << type;
     }
     return retVal;
 }

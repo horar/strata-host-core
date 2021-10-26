@@ -40,7 +40,7 @@ QVariant BleDeviceModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= data_.count()) {
-        qCWarning(logCategoryStrataDevStudio) << "index out of range";
+        qCWarning(lcDevStudio) << "index out of range";
         return QVariant();
     }
 
@@ -99,7 +99,7 @@ void BleDeviceModel::startScan()
 
     if (deferredRequest == nullptr) {
         QString errorString = "Failed to send 'bluetooth_scan' request";
-        qCCritical(logCategoryStrataDevStudio) << errorString;
+        qCCritical(lcDevStudio) << errorString;
         setLastScanError(errorString);
         return;
     }
@@ -114,14 +114,14 @@ void BleDeviceModel::startScan()
 void BleDeviceModel::tryConnect(int row)
 {
     if (row < 0 || row >= data_.count()) {
-        qCWarning(logCategoryStrataDevStudio) << "index out of range";
+        qCWarning(lcDevStudio) << "index out of range";
         return;
     }
 
     QString deviceId = data_.at(row).deviceId;
 
     if (addConnectingDevice(deviceId) == false) {
-        qCWarning(logCategoryStrataDevStudio) << "request already in progress" << deviceId;
+        qCWarning(lcDevStudio) << "request already in progress" << deviceId;
         return;
     }
 
@@ -139,14 +139,14 @@ void BleDeviceModel::tryConnect(int row)
 void BleDeviceModel::tryDisconnect(int row)
 {
     if (row < 0 || row >= data_.count()) {
-        qCWarning(logCategoryStrataDevStudio) << "index out of range";
+        qCWarning(lcDevStudio) << "index out of range";
         return;
     }
 
     QString deviceId = data_.at(row).deviceId;
 
     if (addConnectingDevice(deviceId) == false) {
-        qCWarning(logCategoryStrataDevStudio) << "request already in progress" << deviceId;
+        qCWarning(lcDevStudio) << "request already in progress" << deviceId;
         return;
     }
 
@@ -197,9 +197,9 @@ QHash<int, QByteArray> BleDeviceModel::roleNames() const
 void BleDeviceModel::bluetoothScanReplyHandler(const QJsonObject &payload)
 {
     if (payload.contains("message") ) {
-        qCDebug(logCategoryStrataDevStudio) << payload.value("message").toString();
+        qCDebug(lcDevStudio) << payload.value("message").toString();
     } else {
-        qCWarning(logCategoryStrataDevStudio) << "Succesfully initiated Bluetooth scan, but received malformated reply";
+        qCWarning(lcDevStudio) << "Succesfully initiated Bluetooth scan, but received malformated reply";
     }
 }
 
@@ -210,7 +210,7 @@ void BleDeviceModel::bluetoothScanErrorReplyHandler(const QJsonObject &payload)
         errorString += ": " + payload.value("message").toString();
     }
 
-    qCWarning(logCategoryStrataDevStudio) << errorString;
+    qCWarning(lcDevStudio) << errorString;
 
     clear();
     setInScanMode(false);
@@ -230,7 +230,7 @@ void BleDeviceModel::bluetoothScanFinishedHandler(const QJsonObject &payload)
 
     if (errorString.isEmpty() == false) {
         clear();
-        qCCritical(logCategoryStrataDevStudio) << errorString;
+        qCCritical(lcDevStudio) << errorString;
         setLastScanError(errorString);
         return;
     }
@@ -256,7 +256,7 @@ void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
 
     QString errorString = payload.value("error_string").toString();
     if (errorString.isEmpty() == false) {
-        qCCritical(logCategoryStrataDevStudio) << "connection attempt failed" << deviceId << errorString;
+        qCCritical(lcDevStudio) << "connection attempt failed" << deviceId << errorString;
         setPropertyAt(row, errorString, ErrorStringRole);
     }
 
@@ -281,7 +281,7 @@ void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
 
     QString errorString = payload.value("error_string").toString();
     if (errorString.isEmpty() == false) {
-        qCCritical(logCategoryStrataDevStudio) << "disconnection attempt failed" << deviceId << errorString;
+        qCCritical(lcDevStudio) << "disconnection attempt failed" << deviceId << errorString;
         setPropertyAt(row, errorString, ErrorStringRole);
     }
 
@@ -341,7 +341,7 @@ void BleDeviceModel::populateModel(const QJsonObject &payload)
                 || device.contains("is_strata") == false
                 || device.contains("rssi") == false)
         {
-            qCCritical(logCategoryStrataDevStudio) << "bluetooth device not valid";
+            qCCritical(lcDevStudio) << "bluetooth device not valid";
             continue;
         }
 
@@ -373,7 +373,7 @@ int BleDeviceModel::findDeviceIndex(const QString &deviceId)
 void BleDeviceModel::setPropertyAt(int row, const QVariant &value, int role)
 {
     if (row < 0 || row >= data_.count()) {
-        qCWarning(logCategoryStrataDevStudio) << "index out of range";
+        qCWarning(lcDevStudio) << "index out of range";
         return;
     }
 

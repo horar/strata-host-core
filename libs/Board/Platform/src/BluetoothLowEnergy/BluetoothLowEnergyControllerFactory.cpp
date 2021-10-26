@@ -27,7 +27,7 @@ BluetoothLowEnergyControllerPtr BluetoothLowEnergyControllerFactory::acquireCont
 {
     BluetoothLowEnergyControllerPtr controller(new BluetoothLowEnergyController(info, this), operationLaterDeleter);
 
-    qCDebug(logCategoryDeviceBLE) << "Creating controller:" << controller.get();
+    qCDebug(lcDeviceBLE) << "Creating controller:" << controller.get();
 
     connect(controller.get(), &BluetoothLowEnergyController::finished,
             this, &BluetoothLowEnergyControllerFactory::handleControllerFinished);
@@ -46,11 +46,11 @@ void BluetoothLowEnergyControllerFactory::handleControllerFinished()
 {
     BluetoothLowEnergyController *controller = qobject_cast<BluetoothLowEnergyController*>(QObject::sender());
     if (controller == nullptr) {
-        qCCritical(logCategoryDeviceBLE) << "Received corrupt operation pointer:" << controller;
+        qCCritical(lcDeviceBLE) << "Received corrupt operation pointer:" << controller;
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << "Erasing controller:" << controller;
+    qCDebug(lcDeviceBLE) << "Erasing controller:" << controller;
 
     controllers_.remove(reinterpret_cast<quintptr>(controller));
 }

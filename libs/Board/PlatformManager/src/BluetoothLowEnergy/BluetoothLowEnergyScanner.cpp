@@ -57,7 +57,7 @@ void BluetoothLowEnergyScanner::startDiscovery()
 {
     if (discoveryAgent_ != nullptr) {
         if (discoveryAgent_->isActive()) {
-            qCDebug(logCategoryDeviceScanner) << "device discovery is already in progress";
+            qCDebug(lcDeviceScanner) << "device discovery is already in progress";
             return;
         } else {
             disconnect(discoveryAgent_, nullptr, this, nullptr);
@@ -67,7 +67,7 @@ void BluetoothLowEnergyScanner::startDiscovery()
     }
 
     if (hasLocalAdapters() == false) {
-        qCWarning(logCategoryDeviceScanner) << "no valid Bluetooth adapters found, unable to start scan";
+        qCWarning(lcDeviceScanner) << "no valid Bluetooth adapters found, unable to start scan";
 
         //make sure signal is emitted after this slot is executed
         QTimer::singleShot(1, this, [this](){
@@ -79,7 +79,7 @@ void BluetoothLowEnergyScanner::startDiscovery()
 
     createDiscoveryAgent();
     if (discoveryAgent_ == nullptr) {
-        qCCritical(logCategoryDeviceScanner) << "discovery agent not created";
+        qCCritical(lcDeviceScanner) << "discovery agent not created";
 
         //make sure signal is emitted after this slot is executed
         QTimer::singleShot(1, this, [this](){
@@ -89,7 +89,7 @@ void BluetoothLowEnergyScanner::startDiscovery()
         return;
     }
 
-    qCDebug(logCategoryDeviceScanner)
+    qCDebug(lcDeviceScanner)
             << "device discovery is about to start"
             << "(duration" << discoveryAgent_->lowEnergyDiscoveryTimeout() << "ms)";
 
@@ -105,7 +105,7 @@ void BluetoothLowEnergyScanner::stopDiscovery()
         return;
     }
 
-    qCDebug(logCategoryDeviceScanner) << "device discovery is about to be cancelled";
+    qCDebug(lcDeviceScanner) << "device discovery is about to be cancelled";
     discoveryAgent_->stop();
 }
 
@@ -121,26 +121,26 @@ const QList<BlootoothLowEnergyInfo> BluetoothLowEnergyScanner::discoveredBleDevi
 
 QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
 {
-    qCDebug(logCategoryDeviceScanner()) << deviceId;
+    qCDebug(lcDeviceScanner()) << deviceId;
 
     if (deviceId.startsWith(scannerPrefix()) == false) {
-        qCWarning(logCategoryDeviceScanner()) << "Device ID for incorrect scanner:" << deviceId;
+        qCWarning(lcDeviceScanner()) << "Device ID for incorrect scanner:" << deviceId;
         return "Device ID for incorrect scanner: " + deviceId;
     }
 
     if (discoveryAgent_ == nullptr) {
-        qCWarning(logCategoryDeviceScanner()) << "Discovery agent not initialized.";
+        qCWarning(lcDeviceScanner()) << "Discovery agent not initialized.";
         return "Discovery agent not initialized.";
     }
 
     if (createdDevices_.contains(deviceId)) {
-        qCWarning(logCategoryDeviceScanner()) << "Device already connected or connecting:" << deviceId;
+        qCWarning(lcDeviceScanner()) << "Device already connected or connecting:" << deviceId;
         return "Device already connected or connecting: " + deviceId;
     }
 
     auto deviceInfoIterator = discoveredDevicesMap_.find(deviceId);
     if (deviceInfoIterator == discoveredDevicesMap_.end()) {
-        qCWarning(logCategoryDeviceScanner()) << "No device with deviceId" << deviceId;
+        qCWarning(lcDeviceScanner()) << "No device with deviceId" << deviceId;
         return "No device with deviceId " + deviceId;
     }
     const QBluetoothDeviceInfo & deviceInfo = *deviceInfoIterator;
@@ -155,10 +155,10 @@ QString BluetoothLowEnergyScanner::connectDevice(const QByteArray& deviceId)
 
 QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
 {
-    qCDebug(logCategoryDeviceScanner()) << deviceId;
+    qCDebug(lcDeviceScanner()) << deviceId;
 
     if (deviceId.startsWith(scannerPrefix()) == false) {
-        qCWarning(logCategoryDeviceScanner()) << "Device ID for incorrect scanner:" << deviceId;
+        qCWarning(lcDeviceScanner()) << "Device ID for incorrect scanner:" << deviceId;
         return "Device ID for incorrect scanner: " + deviceId;
     }
 
@@ -168,11 +168,11 @@ QString BluetoothLowEnergyScanner::disconnectDevice(const QByteArray& deviceId)
     }
 
     if (discoveredDevicesMap_.contains(deviceId)) {
-        qCWarning(logCategoryDeviceScanner()) << "Device not connected:" << deviceId;
+        qCWarning(lcDeviceScanner()) << "Device not connected:" << deviceId;
         return "Device not connected.";
     }
 
-    qCWarning(logCategoryDeviceScanner()) << "No such device ID:" << deviceId;
+    qCWarning(lcDeviceScanner()) << "No such device ID:" << deviceId;
     return "No such device ID.";
 }
 
@@ -187,10 +187,10 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
 {
     const QList<QBluetoothDeviceInfo> infoList = discoveryAgent_->discoveredDevices();
 
-    qCDebug(logCategoryDeviceScanner()) << "discovered devices:" << infoList.length();
+    qCDebug(lcDeviceScanner()) << "discovered devices:" << infoList.length();
 
-    qCDebug(logCategoryDeviceScanner) << "eligible devices:";
-    qCDebug(logCategoryDeviceScanner) << "";
+    qCDebug(lcDeviceScanner) << "eligible devices:";
+    qCDebug(lcDeviceScanner) << "";
     for (const auto &info : infoList) {
         if (isEligible(info)) {
             BlootoothLowEnergyInfo infoItem = convertBlootoothLowEnergyInfo(info);
@@ -198,33 +198,33 @@ void BluetoothLowEnergyScanner::discoveryFinishedHandler()
             discoveredDevices_.append(infoItem);
             discoveredDevicesMap_.insert(infoItem.deviceId, info);
 
-            qCDebug(logCategoryDeviceScanner) << "device ID" << infoItem.deviceId;
-            qCDebug(logCategoryDeviceScanner) << "name" << infoItem.name;
-            qCDebug(logCategoryDeviceScanner) << "address" << info.address();
-            qCDebug(logCategoryDeviceScanner) << "deviceUuid" << info.deviceUuid().toString(QBluetoothUuid::WithoutBraces);
-            qCDebug(logCategoryDeviceScanner) << "rssi" << infoItem.rssi;
-            qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
-            qCDebug(logCategoryDeviceScanner) << "service UUIDs" << info.serviceUuids();
-            qCDebug(logCategoryDeviceScanner) << "is Strata" << infoItem.isStrata;
-            qCDebug(logCategoryDeviceScanner) << "";
+            qCDebug(lcDeviceScanner) << "device ID" << infoItem.deviceId;
+            qCDebug(lcDeviceScanner) << "name" << infoItem.name;
+            qCDebug(lcDeviceScanner) << "address" << info.address();
+            qCDebug(lcDeviceScanner) << "deviceUuid" << info.deviceUuid().toString(QBluetoothUuid::WithoutBraces);
+            qCDebug(lcDeviceScanner) << "rssi" << infoItem.rssi;
+            qCDebug(lcDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
+            qCDebug(lcDeviceScanner) << "service UUIDs" << info.serviceUuids();
+            qCDebug(lcDeviceScanner) << "is Strata" << infoItem.isStrata;
+            qCDebug(lcDeviceScanner) << "";
         }
     }
-    qCDebug(logCategoryDeviceScanner) << "connected devices:";
-    qCDebug(logCategoryDeviceScanner) << "";
+    qCDebug(lcDeviceScanner) << "connected devices:";
+    qCDebug(lcDeviceScanner) << "";
     for (auto it = createdDevices_.keyValueBegin(); it != createdDevices_.keyValueEnd(); it++) {
         BlootoothLowEnergyInfo infoItem = convertBlootoothLowEnergyInfo((*it).second);
         infoItem.deviceId = (*it).first; // just in case, deviceId computation may return different value under certain circumstances
         discoveredDevices_.append(infoItem);
         discoveredDevicesMap_.insert((*it).first, (*it).second);
 
-        qCDebug(logCategoryDeviceScanner) << "device ID" << infoItem.deviceId;
-        qCDebug(logCategoryDeviceScanner) << "name" << infoItem.name;
-        qCDebug(logCategoryDeviceScanner) << "device address" << infoItem.address;
-        qCDebug(logCategoryDeviceScanner) << "rssi" << infoItem.rssi;
-        qCDebug(logCategoryDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
-        qCDebug(logCategoryDeviceScanner) << "service UUIDs" << (*it).second.serviceUuids();
-        qCDebug(logCategoryDeviceScanner) << "is Strata" << infoItem.isStrata;
-        qCDebug(logCategoryDeviceScanner) << "";
+        qCDebug(lcDeviceScanner) << "device ID" << infoItem.deviceId;
+        qCDebug(lcDeviceScanner) << "name" << infoItem.name;
+        qCDebug(lcDeviceScanner) << "device address" << infoItem.address;
+        qCDebug(lcDeviceScanner) << "rssi" << infoItem.rssi;
+        qCDebug(lcDeviceScanner) << "manufacturerIds" << infoItem.manufacturerIds;
+        qCDebug(lcDeviceScanner) << "service UUIDs" << (*it).second.serviceUuids();
+        qCDebug(lcDeviceScanner) << "is Strata" << infoItem.isStrata;
+        qCDebug(lcDeviceScanner) << "";
     }
 
     emit discoveryFinished(DiscoveryFinishStatus::Finished, "");
@@ -244,14 +244,14 @@ BlootoothLowEnergyInfo BluetoothLowEnergyScanner::convertBlootoothLowEnergyInfo(
 
 void BluetoothLowEnergyScanner::discoveryCancelledHandler()
 {
-    qCDebug(logCategoryDeviceScanner()) << "device discovery cancelled";
+    qCDebug(lcDeviceScanner()) << "device discovery cancelled";
 
     emit discoveryFinished(DiscoveryFinishStatus::Cancelled, "");
 }
 
 void BluetoothLowEnergyScanner::discoveryErrorHandler(QBluetoothDeviceDiscoveryAgent::Error error)
 {
-    qCWarning(logCategoryDeviceScanner()) << error << discoveryAgent_->errorString();
+    qCWarning(lcDeviceScanner()) << error << discoveryAgent_->errorString();
 
     emit discoveryFinished(DiscoveryFinishStatus::DiscoveryError, discoveryAgent_->errorString());
 }
@@ -328,7 +328,7 @@ bool BluetoothLowEnergyScanner::hasLocalAdapters()
 #endif
 
     for(const auto& adapter: adapters) {
-        qCDebug(logCategoryDeviceScanner).noquote().nospace() << "Found Bluetooth adapter, name: '" << adapter.name() << "', address: '" << adapter.address() << "'";
+        qCDebug(lcDeviceScanner).noquote().nospace() << "Found Bluetooth adapter, name: '" << adapter.name() << "', address: '" << adapter.address() << "'";
     }
     return (adapters.empty() == false);
 }

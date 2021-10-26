@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryUserSettings, "strata.commoncpp.userSettings")
+Q_LOGGING_CATEGORY(lcUserSettings, "strata.commoncpp.userSettings")

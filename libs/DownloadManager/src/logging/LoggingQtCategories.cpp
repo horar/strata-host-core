@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryDownloadManager, "strata.downloadManager")
+Q_LOGGING_CATEGORY(lcDownloadManager, "strata.downloadManager")

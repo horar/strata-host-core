@@ -17,13 +17,13 @@ namespace strata::device
 QString BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & requestDocument, BluetoothLowEnergyAttribute & attribute)
 {
     if (requestDocument.HasMember("payload") == false) {
-        qCWarning(logCategoryDeviceBLE) << "Request missing payload";
+        qCWarning(lcDeviceBLE) << "Request missing payload";
         return "Request missing payload";
     }
 
     auto *payloadObject = &requestDocument["payload"];
     if (payloadObject->IsObject() == false) {
-        qCWarning(logCategoryDeviceBLE) << "Payload is not an object";
+        qCWarning(lcDeviceBLE) << "Payload is not an object";
         return "Payload is not an object";
     }
 
@@ -33,7 +33,7 @@ QString BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & 
     if (payload.HasMember("service") && payload["service"].IsString()) {
         serviceUuid = payload["service"].GetString();
     } else {
-        qCWarning(logCategoryDeviceBLE) << "Request missing service";
+        qCWarning(lcDeviceBLE) << "Request missing service";
         return "Request missing service";
     }
 
@@ -41,7 +41,7 @@ QString BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & 
     if (payload.HasMember("characteristic") && payload["characteristic"].IsString()) {
         characteristicUuid = payload["characteristic"].GetString();
     } else {
-        qCWarning(logCategoryDeviceBLE) << "Request missing characteristic";
+        qCWarning(lcDeviceBLE) << "Request missing characteristic";
         return "Request missing characteristic";
     }
 
@@ -50,7 +50,7 @@ QString BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & 
         if (payload["descriptor"].IsString()) {
             descriptorUuid = payload["descriptor"].GetString();
         } else {
-            qCWarning(logCategoryDeviceBLE) << "Malformed descriptor";
+            qCWarning(lcDeviceBLE) << "Malformed descriptor";
             return "Malformed descriptor";
         }
     }
@@ -58,20 +58,20 @@ QString BluetoothLowEnergyJsonEncoder::parseRequest(const rapidjson::Document & 
     attribute.service = normalizeBleUuid(serviceUuid);
     if (attribute.service.isNull())
     {
-        qCWarning(logCategoryDeviceBLE) << "Invalid service uuid";
+        qCWarning(lcDeviceBLE) << "Invalid service uuid";
         return "Invalid service uuid";
     }
     attribute.characteristic = normalizeBleUuid(characteristicUuid);
     if (attribute.characteristic.isNull())
     {
-        qCWarning(logCategoryDeviceBLE) << "Invalid characteristic uuid";
+        qCWarning(lcDeviceBLE) << "Invalid characteristic uuid";
         return "Invalid characteristic uuid";
     }
     if (descriptorUuid.empty() == false) {
         attribute.descriptor = normalizeBleUuid(descriptorUuid);
         if (attribute.descriptor.isNull())
         {
-            qCWarning(logCategoryDeviceBLE) << "Invalid descriptor uuid";
+            qCWarning(lcDeviceBLE) << "Invalid descriptor uuid";
             return "Invalid descriptor uuid";
         }
     } else {
@@ -238,7 +238,7 @@ void BluetoothLowEnergyJsonEncoder::parseCharacteristicValue(const QBluetoothUui
         characteristicUuid == ble::STRATA_ID_SERVICE_FW_CLASS_ID) {
 
         if (value.size() != 16) {
-            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 16";
+            qCWarning(lcDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 16";
             return;
         }
         QByteArray reverseValue = value;
@@ -247,14 +247,14 @@ void BluetoothLowEnergyJsonEncoder::parseCharacteristicValue(const QBluetoothUui
     }
     if (characteristicUuid == ble::STRATA_ID_SERVICE_BOARD_CONNECTED) {
         if (value.size() != 1) {
-            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 1";
+            qCWarning(lcDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 1";
             return;
         }
         platformIdentification.insert(characteristicUuid,QString::number((quint8)value[0]));
     }
     if (characteristicUuid == ble::STRATA_ID_SERVICE_CONTROLLER_TYPE) {
         if (value.size() != 2) {
-            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 2";
+            qCWarning(lcDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 2";
             return;
         }
         platformIdentification.insert(characteristicUuid,QString::number(((quint16)value[0]) + (((quint16)value[1]) << 8)));
@@ -262,7 +262,7 @@ void BluetoothLowEnergyJsonEncoder::parseCharacteristicValue(const QBluetoothUui
     if (characteristicUuid == ble::STRATA_ID_SERVICE_BOARD_COUNT ||
         characteristicUuid == ble::STRATA_ID_SERVICE_CONTROLLER_BOARD_COUNT) {
         if (value.size() != 4) {
-            qCWarning(logCategoryDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 4";
+            qCWarning(lcDeviceBLE) << "Invalid size of" << characteristicUuid << "actual" << value.size() << "expected 4";
             return;
         }
         platformIdentification.insert(characteristicUuid,QString::number(((quint32)value[0]) + (((quint32)value[1]) << 8) + (((quint32)value[2]) << 16) + (((quint32)value[3]) << 24)));

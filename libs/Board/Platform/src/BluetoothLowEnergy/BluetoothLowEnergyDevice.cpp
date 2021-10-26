@@ -28,7 +28,7 @@ BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, c
       controllerFactory_(controllerFactory)
 {
 
-    qCDebug(logCategoryDeviceBLE).nospace().noquote()
+    qCDebug(lcDeviceBLE).nospace().noquote()
         << "Created new BLE device, ID: " << deviceId_
         << ", name: '" << deviceName_ << "'"
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
@@ -36,7 +36,7 @@ BluetoothLowEnergyDevice::BluetoothLowEnergyDevice(const QByteArray& deviceId, c
 
 BluetoothLowEnergyDevice::~BluetoothLowEnergyDevice()
 {
-    qCDebug(logCategoryDeviceBLE).nospace().noquote()
+    qCDebug(lcDeviceBLE).nospace().noquote()
         << "Deleted BLE device, ID: " << deviceId_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 
@@ -57,10 +57,10 @@ void BluetoothLowEnergyDevice::open()
         connect(controller_.get(), &BluetoothLowEnergyController::serviceCharacteristicChanged, this, &BluetoothLowEnergyDevice::serviceCharacteristicChangedHandler);
         connect(controller_.get(), &BluetoothLowEnergyController::serviceError, this, &BluetoothLowEnergyDevice::serviceErrorHandler);
 
-        qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
+        qCDebug(lcDeviceBLE) << this << "Connecting to BLE device...";
         controller_->open();
     } else {
-        qCWarning(logCategoryDeviceBLE) << this << "Already connected to a BLE device";
+        qCWarning(lcDeviceBLE) << this << "Already connected to a BLE device";
     }
 }
 
@@ -75,7 +75,7 @@ void BluetoothLowEnergyDevice::close()
 void BluetoothLowEnergyDevice::deinit()
 {
     if (controller_ != nullptr) {
-        qCDebug(logCategoryDeviceBLE) << this << "Deinitializing BLE device";
+        qCDebug(lcDeviceBLE) << this << "Deinitializing BLE device";
 
         disconnect(controller_.get(), nullptr, this, nullptr);
         controller_.reset();
@@ -87,7 +87,7 @@ void BluetoothLowEnergyDevice::deinit()
 
 unsigned BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
 {
-    qCDebug(logCategoryDeviceBLE).nospace().noquote()
+    qCDebug(lcDeviceBLE).nospace().noquote()
         << deviceId_ << message;
 
     unsigned msgNum = Device::nextMessageNumber();
@@ -100,14 +100,14 @@ unsigned BluetoothLowEnergyDevice::sendMessage(const QByteArray &message)
 QString BluetoothLowEnergyDevice::processRequest(const QByteArray &message)
 {
     if (isConnected() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Not connected, refusing message";
+        qCWarning(lcDeviceBLE) << this << "Not connected, refusing message";
         return "Not connected, refusing message";
     }
     rapidjson::Document requestDocument;
     rapidjson::ParseResult parseResult = requestDocument.Parse(message.data(), message.size());
 
     if (parseResult.IsError()) {
-        qCWarning(logCategoryDeviceBLE) << this << "Unable to parse request";
+        qCWarning(lcDeviceBLE) << this << "Unable to parse request";
         return "Unable to parse request";
     }
 
@@ -154,7 +154,7 @@ QString BluetoothLowEnergyDevice::processRequestPlatformIdCommand()
 {
     if (platformIdDataAwaiting_ > 0)
     {
-        qCDebug(logCategoryDeviceBLE) << this << "Already requested request_platform_id, will only send 1 result notification";
+        qCDebug(lcDeviceBLE) << this << "Already requested request_platform_id, will only send 1 result notification";
         return QString();
     }
     platformIdentification_.clear();
@@ -184,11 +184,11 @@ int BluetoothLowEnergyDevice::sendReadPlatformIdentification(const QBluetoothUui
 
     QLowEnergyCharacteristic characteristic = service->characteristic(characteristicUuid);
     if (characteristic.isValid() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Strata ID characteristic not present:" << characteristicUuid;
+        qCWarning(lcDeviceBLE) << this << "Strata ID characteristic not present:" << characteristicUuid;
         return 0;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
+    qCDebug(lcDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
     service->readCharacteristic(characteristic);
     return 1;
 }
@@ -206,7 +206,7 @@ void BluetoothLowEnergyDevice::platformIdentificationReadHandler(const QBluetoot
     } else if (platformIdDataAwaiting_ < 0) {
         platformIdDataAwaiting_ = 0; // just in case the driver sends more responses than we requested -> wrong answer, but no infinite waiting
         platformIdentification_.clear();
-        qCWarning(logCategoryDeviceBLE) << this << "Unexpected Strata ID service response" << characteristicUuid;
+        qCWarning(lcDeviceBLE) << this << "Unexpected Strata ID service response" << characteristicUuid;
     }
 }
 
@@ -220,7 +220,7 @@ QString BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document 
     }
 
     if (attribute.data.isNull()) {
-        qCWarning(logCategoryDeviceBLE) << this << "No data";
+        qCWarning(lcDeviceBLE) << this << "No data";
         return "No data";
     }
 
@@ -231,11 +231,11 @@ QString BluetoothLowEnergyDevice::processWriteCommand(const rapidjson::Document 
 
     QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
+        qCWarning(lcDeviceBLE) << this << "Invalid characteristic";
         return "Invalid characteristic";
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
+    qCDebug(lcDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " data " << attribute.data.toHex();
     service->writeCharacteristic(characteristic, attribute.data);
     return QString();
 }
@@ -249,7 +249,7 @@ QString BluetoothLowEnergyDevice::processWriteDescriptorCommand(const rapidjson:
     }
 
     if (attribute.data.isNull()) {
-        qCWarning(logCategoryDeviceBLE) << this << "No data";
+        qCWarning(lcDeviceBLE) << this << "No data";
         return "No data";
     }
 
@@ -260,16 +260,16 @@ QString BluetoothLowEnergyDevice::processWriteDescriptorCommand(const rapidjson:
 
     QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
+        qCWarning(lcDeviceBLE) << this << "Invalid characteristic";
         return "Invalid characteristic";
     }
 
     QLowEnergyDescriptor descriptor = characteristic.descriptor(attribute.descriptor);
     if (descriptor.isValid() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Invalid descriptor";
+        qCWarning(lcDeviceBLE) << this << "Invalid descriptor";
         return "Invalid descriptor";
     }
-    qCDebug(logCategoryDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
+    qCDebug(lcDeviceBLE) << this << "Writing: service " << service->serviceUuid() << " characteristic " << characteristic.uuid() << " descriptor " << descriptor.uuid() << " data " << attribute.data.toHex();
     service->writeDescriptor(descriptor, attribute.data);
     return QString();
 }
@@ -295,11 +295,11 @@ QString BluetoothLowEnergyDevice::processReadCommand(const rapidjson::Document &
 
     QLowEnergyCharacteristic characteristic = service->characteristic(attribute.characteristic);
     if (characteristic.isValid() == false) {
-        qCWarning(logCategoryDeviceBLE) << this << "Invalid characteristic";
+        qCWarning(lcDeviceBLE) << this << "Invalid characteristic";
         return "Invalid characteristic";
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
+    qCDebug(lcDeviceBLE) << this << "Reading: service " << service->serviceUuid() << " characteristic " << characteristic.uuid();
     service->readCharacteristic(characteristic);
     return QString();
 }
@@ -322,12 +322,12 @@ void BluetoothLowEnergyDevice::resetReceiving()
 void BluetoothLowEnergyDevice::deviceConnectedHandler()
 {
     emit Device::opened();
-    qCDebug(logCategoryDeviceBLE) << this << "Device connected and ready to communicate";
+    qCDebug(lcDeviceBLE) << this << "Device connected and ready to communicate";
 }
 
 void BluetoothLowEnergyDevice::deviceDisconnectedHandler(bool failedToOpen)
 {
-    qCDebug(logCategoryDeviceBLE) << this << "Device disconnected.";
+    qCDebug(lcDeviceBLE) << this << "Device disconnected.";
     deinit();
 
     if (failedToOpen) {
@@ -366,7 +366,7 @@ void BluetoothLowEnergyDevice::deviceErrorHandler(QLowEnergyController::Error er
             statusString = "remote host closed error";
             break;
     }
-    qCDebug(logCategoryDeviceBLE) << this << "Error: " << error;
+    qCDebug(lcDeviceBLE) << this << "Error: " << error;
     emit messageReceived(BluetoothLowEnergyJsonEncoder::encodeNotificationError(
         statusString.toUtf8(),
         errorString.toUtf8()));
@@ -461,7 +461,7 @@ void BluetoothLowEnergyDevice::emitResponses(const std::vector<QByteArray> &resp
     QTimer::singleShot(
         10, this, [=]() {
             for (const QByteArray& response : responses) { // deferred emit (if emitted in the same loop, may cause trouble)
-                qCDebug(logCategoryDeviceBLE) << this << "Returning response:" << response;
+                qCDebug(lcDeviceBLE) << this << "Returning response:" << response;
                 emit messageReceived(response);
             }
         });
@@ -475,7 +475,7 @@ QByteArray BluetoothLowEnergyDevice::createUniqueHash(const QBluetoothDeviceInfo
     } else if (info.address().isNull() == false) {
         idBase = info.address().toString().toUtf8();
     } else {
-        qCWarning(logCategoryDeviceBLE) << "No unique device identifier, using random";
+        qCWarning(lcDeviceBLE) << "No unique device identifier, using random";
         QVector<quint32> data;
         data.resize(4);
         QRandomGenerator::system()->fillRange(data.data(), data.size());

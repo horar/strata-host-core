@@ -10,5 +10,5 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryFlasher)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryFlasherConnector)
+Q_DECLARE_LOGGING_CATEGORY(lcFlasher)
+Q_DECLARE_LOGGING_CATEGORY(lcFlasherConnector)

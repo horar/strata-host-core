@@ -37,7 +37,7 @@ QVariant SciBleDeviceModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= data_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCWarning(lcSci) << "index out of range";
         return QVariant();
     }
 
@@ -75,7 +75,7 @@ void SciBleDeviceModel::init()
                 platformManager_->getScanner(Device::Type::BLEDevice));
 
     if (scanner_ == nullptr) {
-        qCCritical(logCategorySci) << "cannot cast Bluetooth Low Energy Scanner";
+        qCCritical(lcSci) << "cannot cast Bluetooth Low Energy Scanner";
         return;
     }
 
@@ -114,14 +114,14 @@ void SciBleDeviceModel::startDiscovery()
 void SciBleDeviceModel::tryConnectDevice(int index)
 {
     if (index < 0 || index >= data_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCWarning(lcSci) << "index out of range";
         return;
     }
 
     QByteArray deviceId = data_.at(index).deviceId;
 
     if (addConnectingDevice(deviceId) == false) {
-        qCWarning(logCategorySci) << "request already in progress" << deviceId;
+        qCWarning(lcSci) << "request already in progress" << deviceId;
         return;
     }
 
@@ -138,14 +138,14 @@ void SciBleDeviceModel::tryConnectDevice(int index)
 void SciBleDeviceModel::tryDisconnectDevice(int index)
 {
     if (index < 0 || index >= data_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCWarning(lcSci) << "index out of range";
         return;
     }
 
     QByteArray deviceId = data_.at(index).deviceId;
 
     if (addConnectingDevice(deviceId) == false) {
-        qCWarning(logCategorySci) << "request already in progress" << deviceId;
+        qCWarning(lcSci) << "request already in progress" << deviceId;
         return;
     }
 
@@ -300,7 +300,7 @@ int SciBleDeviceModel::findDeviceIndex(const QString &deviceId)
 void SciBleDeviceModel::setPropertyAt(int row, const QVariant &value, int role)
 {
     if (row < 0 || row >= data_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCWarning(lcSci) << "index out of range";
         return;
     }
 

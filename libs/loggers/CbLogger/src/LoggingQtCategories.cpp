@@ -10,5 +10,5 @@
 
 namespace strata::loggers
 {
-Q_LOGGING_CATEGORY(logCategoryCbLogger, logCategoryCbLoggerName)
+Q_LOGGING_CATEGORY(lcCbLogger, lcCbLoggerName)
 }

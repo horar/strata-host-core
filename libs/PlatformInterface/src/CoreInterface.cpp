@@ -83,7 +83,7 @@ void CoreInterface::processPlatformNotification(const QJsonObject &payload)
 
 void CoreInterface::sendCommand(const QString &)
 {
-    qCCritical(logCategoryCoreInterface) << "Deprecated method.";
+    qCCritical(lcCoreInterface) << "Deprecated method.";
 }
 
 void CoreInterface::sendNotification(const QString &method, const QJsonObject &payload)
