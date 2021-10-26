@@ -192,18 +192,22 @@ QHash<int, QByteArray> BleDeviceModel::roleNames() const
 
 void BleDeviceModel::bluetoothScanReplyHandler(const QJsonObject &payload)
 {
-    if (payload.contains("message") ) {
-        qCDebug(lcDevStudio) << payload.value("message").toString();
+    const QJsonValue message = payload.value("message");
+    if (message.isString()) {
+        qCDebug(lcDevStudio) << message.toString();
     } else {
-        qCWarning(lcDevStudio) << "Succesfully initiated Bluetooth scan, but received malformated reply";
+        qCWarning(lcDevStudio) << "Succesfully initiated Bluetooth scan, but received malformated reply:" << payload;
     }
 }
 
 void BleDeviceModel::bluetoothScanErrorReplyHandler(const QJsonObject &payload)
 {
     QString errorString("Unable to initiate Bluetooth scan");
-    if (payload.contains("message") ) {
-        errorString += ": " + payload.value("message").toString();
+    const QJsonValue message = payload.value("message");
+    if (message.isString()) {
+        errorString += ": " + message.toString();
+    } else {
+        qCWarning(lcDevStudio) << "received malformated reply:" << payload;
     }
 
     qCWarning(lcDevStudio) << errorString;
@@ -218,8 +222,9 @@ void BleDeviceModel::bluetoothScanFinishedHandler(const QJsonObject &payload)
     setInScanMode(false);
 
     QString errorString;
-    if (payload.contains("error_string") ) {
-        errorString = payload.value("error_string").toString();
+    const QJsonValue errorStringValue = payload.value("error_string");
+    if (errorStringValue.isString()) {
+        errorString = errorStringValue.toString();
     } else if (payload.contains("list") == false) {
         errorString = "Bluetooth scan reply not valid";
     }
@@ -250,7 +255,12 @@ void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
 
     setPropertyAt(row, false, ConnectionInProgressRole);
 
-    QString errorString = payload.value("error_string").toString();
+    QString errorString;
+    const QJsonValue errorStringValue = payload.value("error_string");
+    if (errorStringValue.isString()) {
+        errorString = errorStringValue.toString();
+    }
+
     if (errorString.isEmpty() == false) {
         qCCritical(lcDevStudio).noquote().nospace() << "connection attempt failed, device ID: " << deviceId << ", error: " << errorString;
         setPropertyAt(row, errorString, ErrorStringRole);
@@ -275,7 +285,12 @@ void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
 
     setPropertyAt(row, false, ConnectionInProgressRole);
 
-    QString errorString = payload.value("error_string").toString();
+    QString errorString;
+    const QJsonValue errorStringValue = payload.value("error_string");
+    if (errorStringValue.isString()) {
+        errorString = errorStringValue.toString();
+    }
+
     if (errorString.isEmpty() == false) {
         qCCritical(lcDevStudio).noquote().nospace() << "disconnection attempt failed, device ID: " << deviceId << ", error: " << errorString;
         setPropertyAt(row, errorString, ErrorStringRole);
@@ -286,12 +301,28 @@ void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
 
 void BleDeviceModel::updateDeviceConnection(const QJsonObject &payload)
 {
-    QJsonArray list = payload.value("list").toArray();
+    const QJsonValue listValue = payload.value("list");
+    if (listValue.isArray() == false) {
+        qCCritical(lcDevStudio) << "malformatted payload received, missing list:" << payload;
+        return;
+    }
+
+    QJsonArray list = listValue.toArray();
     connectedDeviceIds_.clear();
 
     for (const QJsonValueRef value : list) {
-        QString deviceId = value.toObject().value("device_id").toString();
-        connectedDeviceIds_.insert(deviceId);
+        const QJsonValue deviceIdValue = value.toObject().value("device_id");
+
+        if (deviceIdValue.isString()) {
+            QString deviceId = deviceIdValue.toString();
+            if (deviceId.isEmpty() == false) {
+                connectedDeviceIds_.insert(deviceIdValue.toString());
+            } else {
+                qCCritical(lcDevStudio) << "malformatted payload received, empty device_id:" << value;
+            }
+        } else {
+            qCCritical(lcDevStudio) << "malformatted payload received, missing device_id:" << value;
+        }
     }
 
     for (int i = 0; i < data_.length(); ++i) {
@@ -323,30 +354,46 @@ void BleDeviceModel::clear()
 
 void BleDeviceModel::populateModel(const QJsonObject &payload)
 {
-    QJsonArray deviceList = payload.value("list").toArray();
+    const QJsonValue listValue = payload.value("list");
+    if (listValue.isArray() == false) {
+        qCCritical(lcDevStudio) << "malformatted payload received, missing list:" << payload;
+        return;
+    }
+
+    QJsonArray deviceList = listValue.toArray();
 
     beginResetModel();
     data_.clear();
 
     for (const QJsonValueRef value : deviceList) {
-        QJsonObject device = value.toObject();
+        if (value.isObject() == false) {
+            qCCritical(lcDevStudio) << "malformatted payload received, invalid value in list:" << value;
+            return;
+        }
 
-        if (device.contains("device_id") == false
-                || device.contains("name") == false
-                || device.contains("address") == false
-                || device.contains("is_strata") == false
-                || device.contains("rssi") == false)
+        QJsonObject device = value.toObject();
+        const QJsonValue deviceId = device.value("device_id");
+        const QJsonValue name = device.value("name");
+        const QJsonValue address = device.value("address");
+        const QJsonValue rssi = device.value("rssi");
+        const QJsonValue isStrata = device.value("is_strata");
+
+        if (deviceId.isString() == false
+                || name.isString() == false
+                || address.isString() == false
+                || rssi.isDouble() == false
+                || isStrata.isBool() == false)
         {
-            qCCritical(lcDevStudio) << "bluetooth device not valid";
+            qCCritical(lcDevStudio) << "bluetooth device not valid:" << device;
             continue;
         }
 
         BleDeviceModelItem item;
-        item.deviceId = device.value("device_id").toString();
-        item.name = device.value("name").toString();
-        item.address = device.value("address").toString();
-        item.rssi = device.value("rssi").toInt();
-        item.isStrata = device.value("is_strata").toBool();
+        item.deviceId = deviceId.toString();
+        item.name = name.toString();
+        item.address = address.toString();
+        item.rssi = rssi.toInt();
+        item.isStrata = isStrata.toBool();
         item.isConnected = connectedDeviceIds_.contains(item.deviceId);
 
         data_.append(item);
