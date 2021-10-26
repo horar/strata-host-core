@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryCoreInterface, "strata.platformInterface.core")
+Q_LOGGING_CATEGORY(lcCoreInterface, "strata.platformInterface.core")

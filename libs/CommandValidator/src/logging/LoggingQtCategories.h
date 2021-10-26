@@ -10,4 +10,4 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryCommandValidator)
+Q_DECLARE_LOGGING_CATEGORY(lcCommandValidator)

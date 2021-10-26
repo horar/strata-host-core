@@ -8,13 +8,12 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryHcs, "strata.hcs")
-Q_LOGGING_CATEGORY(logCategoryHcsSignals, "strata.hcs.signals")
-Q_LOGGING_CATEGORY(logCategoryHcsStorage, "strata.hcs.storage")
-Q_LOGGING_CATEGORY(logCategoryHcsStorageCache, "strata.hcs.storage.cache")
-Q_LOGGING_CATEGORY(logCategoryHcsPlatformDocument, "strata.hcs.platformDocument")
-Q_LOGGING_CATEGORY(logCategoryHcsPlatform, "strata.hcs.platform")
-Q_LOGGING_CATEGORY(logCategoryHcsNode, "strata.hcs.node")
-Q_LOGGING_CATEGORY(logCategoryHcsFwUpdater, "strata.hcs.firmwareUpdater")
-Q_LOGGING_CATEGORY(logCategoryHcsDb, "strata.hcs.database")
-Q_LOGGING_CATEGORY(logCategoryHcsClients, "strata.hcs.clients")
+Q_LOGGING_CATEGORY(lcHcs, "strata.hcs")
+Q_LOGGING_CATEGORY(lcHcsSignals, "strata.hcs.signals")
+Q_LOGGING_CATEGORY(lcHcsStorage, "strata.hcs.storage")
+Q_LOGGING_CATEGORY(lcHcsStorageCache, "strata.hcs.storage.cache")
+Q_LOGGING_CATEGORY(lcHcsPlatformDocument, "strata.hcs.platformDocument")
+Q_LOGGING_CATEGORY(lcHcsPlatform, "strata.hcs.platform")
+Q_LOGGING_CATEGORY(lcHcsNode, "strata.hcs.node")
+Q_LOGGING_CATEGORY(lcHcsFwUpdater, "strata.hcs.firmwareUpdater")
+Q_LOGGING_CATEGORY(lcHcsDb, "strata.hcs.database")

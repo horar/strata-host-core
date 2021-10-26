@@ -137,7 +137,7 @@ void SciSearchScrollbackModel::sourceRowsInserted(
     }
 
     if (start < this->sourceModel()->rowCount() - 1) {
-        qCWarning(logCategorySci) << "Only append is supported";
+        qCWarning(lcSci) << "Only append is supported";
     }
 
     //expand mapping

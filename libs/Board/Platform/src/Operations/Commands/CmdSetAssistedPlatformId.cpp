@@ -89,7 +89,7 @@ bool CmdSetAssistedPlatformId::processNotification(const rapidjson::Document& do
     } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
         status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
-        qCCritical(logCategoryPlatformCommand) << platform_ << "Unknown status string:" << jsonStatus;
+        qCCritical(lcPlatformCommand) << platform_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

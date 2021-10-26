@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryCommandValidator, "strata.commandValidator")
+Q_LOGGING_CATEGORY(lcCommandValidator, "strata.commandValidator")

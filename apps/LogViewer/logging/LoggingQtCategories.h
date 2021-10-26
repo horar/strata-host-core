@@ -10,4 +10,4 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryLogViewer)
+Q_DECLARE_LOGGING_CATEGORY(lcLogViewer)

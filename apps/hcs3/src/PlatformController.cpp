@@ -50,10 +50,10 @@ void PlatformController::initialize() {
 void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
     auto it = platforms_.find(deviceId);
     if (it == platforms_.end()) {
-        qCWarning(logCategoryHcsPlatform).noquote() << "Cannot send message, platform" << deviceId << "was not found.";
+        qCWarning(lcHcsPlatform).noquote() << "Cannot send message, platform" << deviceId << "was not found.";
         return;
     }
-    qCDebug(logCategoryHcsPlatform).noquote() << "Sending message to platform" << deviceId;
+    qCDebug(lcHcsPlatform).noquote() << "Sending message to platform" << deviceId;
     it.value().sentMessageNumber = it.value().platform->sendMessage(message);
 }
 
@@ -87,7 +87,7 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
     if (recognized) {
         PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
-            qCWarning(logCategoryHcsPlatform).noquote() << "Platform not found by its id" << deviceId;
+            qCWarning(lcHcsPlatform).noquote() << "Platform not found by its id" << deviceId;
             return;
         }
 
@@ -95,11 +95,11 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         connect(platform.get(), &Platform::messageSent, this, &PlatformController::messageToPlatform);
         platforms_.insert(deviceId, PlatformData(platform, inBootloader));
 
-        qCInfo(logCategoryHcsPlatform).noquote() << "Connected new platform" << deviceId;
+        qCInfo(lcHcsPlatform).noquote() << "Connected new platform" << deviceId;
 
         emit platformConnected(deviceId);
     } else {
-        qCWarning(logCategoryHcsPlatform).noquote() << "Connected unknown (unrecognized) platform" << deviceId;
+        qCWarning(lcHcsPlatform).noquote() << "Connected unknown (unrecognized) platform" << deviceId;
         // Remove platform if it was previously connected.
         auto it = platforms_.find(deviceId);
         if (it != platforms_.end()) {
@@ -114,13 +114,13 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     auto it = platforms_.find(deviceId);
     if (it == platforms_.end()) {
         // This situation can occur if unrecognized platform is disconnected.
-        qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected unknown platform" << deviceId;
+        qCInfo(lcHcsPlatform).noquote() << "Disconnected unknown platform" << deviceId;
         return;
     }
 
     platforms_.erase(it);
 
-    qCInfo(logCategoryHcsPlatform).noquote() << "Disconnected platform" << deviceId;
+    qCInfo(lcHcsPlatform).noquote() << "Disconnected platform" << deviceId;
 
     emit platformDisconnected(deviceId);
 }
@@ -156,7 +156,7 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
         { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 
-    qCDebug(logCategoryHcsPlatform).noquote() << "New platform message from device" << deviceId;
+    qCDebug(lcHcsPlatform).noquote() << "New platform message from device" << deviceId;
 
     emit platformMessage(platform->platformId(), payload);
 }
@@ -175,7 +175,7 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
 
     auto it = platforms_.constFind(platform->deviceId());
     if ((it != platforms_.constEnd()) && (it.value().sentMessageNumber == msgNumber)) {
-        qCWarning(logCategoryHcsPlatform) << platform << "Cannot send message: '"
+        qCWarning(lcHcsPlatform) << platform << "Cannot send message: '"
             << rawMessage << "', error: '" << errorString << '\'';
     }
 }
@@ -200,11 +200,11 @@ void PlatformController::operationFinished(QByteArray deviceId,
     if (result == operation::Result::Success) {
         it->startAppFailed = false;
         it->inBootloader = false;
-        qCDebug(logCategoryHcsPlatform).noquote() << "Platform application was started for device" << deviceId;
+        qCDebug(lcHcsPlatform).noquote() << "Platform application was started for device" << deviceId;
         emit platformApplicationStarted(deviceId);
     } else {
         it->startAppFailed = true;
-        qCWarning(logCategoryHcsPlatform).noquote()
+        qCWarning(lcHcsPlatform).noquote()
             << "Cannot start platform application for device" << deviceId << '-' << errorString;
     }
 }
@@ -247,13 +247,13 @@ bool PlatformController::platformStartApplication(const QByteArray& deviceId)
         return false;
     }
     if (it->startAppFailed) {
-        qCWarning(logCategoryHcsPlatform).noquote()
+        qCWarning(lcHcsPlatform).noquote()
             << "Previous attempt to start application for device" << deviceId
             << "has failed. To prevent infinite looping, current attempt will be ignored.";
         return false;
     }
     if (platformOperations_.StartApplication(it->platform) == nullptr) {
-        qCWarning(logCategoryHcsPlatform).noquote()
+        qCWarning(lcHcsPlatform).noquote()
             << "Another start application request for device" << deviceId << "is already running.";
         return false;
     }

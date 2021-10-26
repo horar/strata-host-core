@@ -71,7 +71,7 @@ void StartBootloader::postCommandActions(CommandResult& result, int& status)
             result = CommandResult::FinaliseOperation;
             // set status for 'finished' signal
             status = ALREADY_IN_BOOTLOADER;
-            qCInfo(logCategoryPlatformOperation) << platform_ << "Platform already in bootloader mode.";
+            qCInfo(lcPlatformOperation) << platform_ << "Platform already in bootloader mode.";
         }
         return;
     }

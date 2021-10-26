@@ -40,22 +40,22 @@ bool SGJLinkConnector::checkConnectionRequested()
 bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
 {
     if (device_.isEmpty()) {
-        qCCritical(logCategoryJLink()) << "device is not set";
+        qCCritical(lcJLink()) << "device is not set";
         return false;
     }
 
     if (speed_ <= 0) {
-        qCCritical(logCategoryJLink()) << "speed is not valid";
+        qCCritical(lcJLink()) << "speed is not valid";
         return false;
     }
 
     if (startAddress_ < 0) {
-        qCCritical(logCategoryJLink()) << "start address is not valid";
+        qCCritical(lcJLink()) << "start address is not valid";
         return false;
     }
 
     if (internalBinaryFilename_.isEmpty() == false) {
-        qCCritical(logCategoryJLink) << "another operation in progress";
+        qCCritical(lcJLink) << "another operation in progress";
         return false;
     }
 
@@ -63,7 +63,7 @@ bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
        jlink.exe fails with "Failed to open file" */
     copyToInternalBinary(binaryPath);
     if (internalBinaryFilename_.isEmpty()) {
-        qCCritical(logCategoryJLink) << "cannot create internal copy of binary file";
+        qCCritical(lcJLink) << "cannot create internal copy of binary file";
         return false;
     }
 
@@ -183,7 +183,7 @@ void SGJLinkConnector::setStartAddress(int startAddress)
 
 void SGJLinkConnector::finishedHandler(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qCInfo(logCategoryJLink)
+    qCInfo(lcJLink)
             << "exitCode=" << exitCode
             << "exitStatus=" << exitStatus;
 
@@ -214,7 +214,7 @@ void SGJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
         errorStr = "JLink process unknown error.\n";
     }
 
-    qCWarning(logCategoryJLink) << error << errorStr;
+    qCWarning(lcJLink) << error << errorStr;
 
     finishProcess(false);
 }
@@ -225,13 +225,13 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
     latestOutputInfo_.clear();
 
     if (exePath_.isEmpty()) {
-        qCCritical(logCategoryJLink) << "exePath is empty";
+        qCCritical(lcJLink) << "exePath is empty";
         activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
 
     if (!process_.isNull()) {
-        qCWarning(logCategoryJLink) << "process already in progress";
+        qCWarning(lcJLink) << "process already in progress";
         activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
@@ -239,13 +239,13 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
     configFile_ = new QFile(QDir(QDir::tempPath()).filePath("jlinkconnector.jlink"));
 
     if (configFile_->open(QIODevice::ReadWrite) == false) {
-        qCCritical(logCategoryJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
+        qCCritical(lcJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
         delete configFile_;
         activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
 
-    qCInfo(logCategoryJLink) << "command" << cmd;
+    qCInfo(lcJLink) << "command" << cmd;
 
     QTextStream out(configFile_);
     QStringList arguments;
@@ -269,7 +269,7 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
     connect(process_, &QProcess::errorOccurred,
             this, &SGJLinkConnector::errorOccurredHandler);
 
-    qCInfo(logCategoryJLink) << "let's run"
+    qCInfo(lcJLink) << "let's run"
                              << type
                              << exePath_
                              << arguments;
@@ -282,10 +282,10 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
 
 void SGJLinkConnector::finishProcess(bool exitedNormally)
 {
-    qCDebug(logCategoryJLink) << "exitedNormally=" << exitedNormally;
+    qCDebug(lcJLink) << "exitedNormally=" << exitedNormally;
 
     latestRawOutput_ = process_->readAllStandardOutput();
-    qCDebug(logCategoryJLink).noquote() << "output:"<< endl << latestRawOutput_;
+    qCDebug(lcJLink).noquote() << "output:"<< endl << latestRawOutput_;
 
     if (exitedNormally) {
         parseOutput(activeProcessType_);
@@ -352,7 +352,7 @@ bool SGJLinkConnector::parseReferenceVoltage(const QString &output, float &volta
     QRegularExpressionMatch match = re.match(output);
 
     if (match.hasMatch() == false) {
-        qCWarning(logCategoryJLink()) << "reference voltage could not be determined";
+        qCWarning(lcJLink()) << "reference voltage could not be determined";
         return false;
     }
 
@@ -367,7 +367,7 @@ bool SGJLinkConnector::parseLibraryVersion(const QString &output, QString &versi
     QRegularExpressionMatch match = re.match(output);
 
     if (match.hasMatch() == false) {
-        qCWarning(logCategoryJLink()) << "library version could not be determined";
+        qCWarning(lcJLink()) << "library version could not be determined";
         return false;
     }
 
@@ -383,7 +383,7 @@ bool SGJLinkConnector::parseCommanderVersion(const QString &output, QString &ver
     QRegularExpressionMatch match = re.match(output);
 
     if (match.hasMatch() == false) {
-        qCWarning(logCategoryJLink()) << "commander version could not be determined";
+        qCWarning(lcJLink()) << "commander version could not be determined";
         return false;
     }
 
@@ -399,7 +399,7 @@ bool SGJLinkConnector::parseEmulatorFwVersion(const QString &output, QString &ve
     QRegularExpressionMatch match = re.match(output);
 
     if (match.hasMatch() == false) {
-        qCWarning(logCategoryJLink()) << "emulator fw version could not be determined";
+        qCWarning(lcJLink()) << "emulator fw version could not be determined";
         return false;
     }
 
@@ -425,7 +425,7 @@ void SGJLinkConnector::copyToInternalBinary(const QString &src)
 
     bool copied = QFile::copy(src, uniqueFilePath);
     if (copied == false) {
-        qCWarning(logCategoryJLink) << "cannot copy file";
+        qCWarning(lcJLink) << "cannot copy file";
         return;
     }
 
@@ -440,7 +440,7 @@ void SGJLinkConnector::clearInternalBinary()
 
     QFile internalBinary(internalBinaryFilename_);
     if (internalBinary.remove() == false) {
-        qCCritical(logCategoryJLink)
+        qCCritical(lcJLink)
                 << "cannot remove internal binary"
                 << internalBinary.fileName()
                 << internalBinary.errorString();

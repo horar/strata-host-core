@@ -158,7 +158,7 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCCritical(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        qCCritical(lcUtils) << "cannot open file" << path << file.errorString();
         return false;
     }
 
@@ -182,7 +182,7 @@ QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
-        qCCritical(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        qCCritical(lcUtils) << "cannot open file" << path << file.errorString();
         return QString();
     }
 
@@ -253,10 +253,10 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
     rapidjson::Document jsonDoc;
     rapidjson::ParseResult result = jsonDoc.Parse(json.data());
     if (result.IsError()) {
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "Json is not valid: " << endl << json;
 
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "JSON parse error at offset " << result.Offset()
                 << ": " << rapidjson::GetParseError_En(result.Code());
 
@@ -267,10 +267,10 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
     rapidjson::Document schemaDoc;
     result = schemaDoc.Parse(schema.data());
     if (result.IsError()) {
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "Schema is not valid: " << endl << schema;
 
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "JSON parse error at offset " << result.Offset()
                 << ": " << rapidjson::GetParseError_En(result.Code());
 
@@ -290,8 +290,8 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
         writer.Reset(buffer);
         validator.GetError().Accept(writer);
 
-        qCDebug(logCategoryUtils).nospace().noquote() << "json: " << json;
-        qCCritical(logCategoryUtils).nospace().noquote() << "validate error: " << buffer.GetString();
+        qCDebug(lcUtils).nospace().noquote() << "json: " << json;
+        qCCritical(lcUtils).nospace().noquote() << "validate error: " << buffer.GetString();
 
         return false;
     }
