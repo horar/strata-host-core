@@ -25,8 +25,6 @@ add_library(${PROJECT_NAME} MODULE)
 target_sources(${PROJECT_NAME}
     PRIVATE
     CommonCppPlugin.cpp
-    mqtt/SGMqttClient.cpp
-    mqtt/SGSslConfiguration.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
@@ -47,7 +45,6 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGTranslator
     strata::SGConversion
     strata::SGCSVUtils
-    mqtt::mqtt
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
