@@ -75,24 +75,28 @@ int BleDeviceModel::rowCount(const QModelIndex &parent) const
 QString BleDeviceModel::bleSupportError() const
 {
     if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS) {
-        return QString();
-    } else if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows) {
+        return "";
+    }
+
+    if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows) {
         if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8) {
             return "Bluetooth Low Energy is not supported on this Windows version";
-        } else if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0)) {
-            return "On Windows operating system, Bluetooth Low Energy requires Qt 5.14+";
-        } else {
-            return QString();
         }
-    } else {
-        return "Bluetooth Low Energy is not supported on this operating system";
+
+        if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0)) {
+            return "On Windows operating system, Bluetooth Low Energy requires Qt 5.14+";
+        }
+
+        return "";
     }
+
+    return "Bluetooth Low Energy is not supported on this operating system";
 }
 
 void BleDeviceModel::startScan()
 {
     setInScanMode(true);
-    setLastScanError(QString());
+    setLastScanError("");
 
     strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("bluetooth_scan", QJsonObject());
 
@@ -128,7 +132,7 @@ void BleDeviceModel::tryConnect(int row)
     }
 
     setPropertyAt(row, true, ConnectionInProgressRole);
-    setPropertyAt(row, QString(), ErrorStringRole);
+    setPropertyAt(row, "", ErrorStringRole);
 
     QJsonObject payload
     {
@@ -166,7 +170,7 @@ void BleDeviceModel::tryDisconnect(int row)
     }
 
     setPropertyAt(row, true, ConnectionInProgressRole);
-    setPropertyAt(row, QString(), ErrorStringRole);
+    setPropertyAt(row, "", ErrorStringRole);
 
     QJsonObject payload
     {
