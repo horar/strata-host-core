@@ -15,12 +15,12 @@ import tech.strata.sgwidgets 1.0
 import ".."
 import "../layout-popup-context"
 
-ColumnLayout {
-    spacing: 1
+ActionGroup {
 
-    ContextMenuButton {
+    Action {
         text: "Set From Value"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.fromText.text
@@ -36,9 +36,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set To Value"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.toText.text
@@ -54,9 +55,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Text Color"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
@@ -66,9 +68,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set InputBox Color"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "inputBox.boxColor"

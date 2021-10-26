@@ -15,12 +15,12 @@ import tech.strata.sgwidgets 1.0
 import ".."
 import "../layout-popup-context"
 
-ColumnLayout {
-    spacing: 1
+ActionGroup {
 
-    ContextMenuButton {
+    Action {
         text: "Set Orientation"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"

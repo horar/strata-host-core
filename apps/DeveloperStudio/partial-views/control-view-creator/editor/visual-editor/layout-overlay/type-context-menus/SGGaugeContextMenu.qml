@@ -15,12 +15,12 @@ import tech.strata.sgwidgets 1.0
 import ".."
 import "../layout-popup-context"
 
-ColumnLayout {
-    spacing: 1
+ActionGroup {
 
-    ContextMenuButton {
+    Action {
         text: "Set Min Value"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.doubleValidator.bottom = -2147483647
@@ -36,9 +36,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Max Value"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.doubleValidator.bottom = -2147483647
@@ -54,9 +55,10 @@ ColumnLayout {
 
         }
     }
-    ContextMenuButton {
+    Action {
         text: "Set TickmarkStepSize"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.doubleValidator.bottom = 0
@@ -72,9 +74,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Initial Value"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.value
@@ -90,9 +93,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Unit"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.unitText

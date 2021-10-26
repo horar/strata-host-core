@@ -107,21 +107,7 @@ LayoutContainer {
             onClicked: {
                 if (mouse.button == Qt.RightButton) {
                     contextLoader.active = true
-
-                    // if popup will spawn past edge of window, place it on the opposite side of the click
-                    if (contextLoader.item.height + mouse.y + layoutOverlayRoot.y > layoutOverlayRoot.parent.height) {
-                        contextLoader.item.y = mouse.y - contextLoader.item.height
-                    } else {
-                        contextLoader.item.y = mouse.y
-                    }
-
-                    if (contextLoader.item.width + mouse.x + layoutOverlayRoot.x > layoutOverlayRoot.parent.width) {
-                        contextLoader.item.x = mouse.x - contextLoader.item.width
-                    } else {
-                        contextLoader.item.x = mouse.x
-                    }
-
-                    contextLoader.item.open()
+                    contextLoader.item.popup()
                 } else if (mouse.button == Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier) {
                     if (layoutOverlayRoot.isSelected) {
                         layoutOverlayRoot.isSelected = false
