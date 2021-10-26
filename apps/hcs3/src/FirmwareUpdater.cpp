@@ -86,7 +86,7 @@ void FirmwareUpdater::updateFirmware(bool backupOldFirmware)
 void FirmwareUpdater::setFwClassId()
 {
     if (fwClassId_.isNull()) {
-        logAndEmitError(QStringLiteral("Firmware clas ID was not provided."));
+        logAndEmitError(QStringLiteral("Firmware class ID was not provided."));
         running_ = false;
         return;
     }
@@ -130,7 +130,7 @@ void FirmwareUpdater::downloadFirmware()
 
     downloadId_ = downloadManager_->download(downloadRequestList, settings);
 
-    qCDebug(logCategoryHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device"
+    qCDebug(lcHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device"
         << deviceId_ << " to '" << firmwareFile_.fileName() << "'. Download ID: '" << downloadId_ <<"'.";
 }
 
@@ -164,7 +164,7 @@ void FirmwareUpdater::handleFlashFirmware()
 {
     if (flasherConnector_.isNull() == false) {
         QString errStr("Cannot create firmware flasher, other one already exists.");
-        qCCritical(logCategoryHcsFwUpdater) << platform_ << errStr;
+        qCCritical(lcHcsFwUpdater) << platform_ << errStr;
         emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
         emit updaterError(deviceId_, errStr);
         return;
@@ -290,6 +290,6 @@ void FirmwareUpdater::handleApplicationActive()
 
 void FirmwareUpdater::logAndEmitError(const QString& errorString)
 {
-    qCCritical(logCategoryHcsFwUpdater) << platform_ << errorString;
+    qCCritical(lcHcsFwUpdater) << platform_ << errorString;
     emit updaterError(deviceId_, errorString);
 }

@@ -26,7 +26,7 @@ void CmdWait::sendCommand(quintptr lockId)
 
     connect(platform_.get(), &Platform::deviceError, this, &CmdWait::deviceErrorOccured);
 
-    qCInfo(logCategoryPlatformCommand) << platform_ << description_
+    qCInfo(lcPlatformCommand) << platform_ << description_
         << ". Next command will be sent after " << waitTime_.count() << " milliseconds.";
     responseTimer_.setInterval(waitTime_);
     responseTimer_.start();

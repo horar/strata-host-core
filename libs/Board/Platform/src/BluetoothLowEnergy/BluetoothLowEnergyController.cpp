@@ -50,7 +50,7 @@ void BluetoothLowEnergyController::open()
     controllerActive_ = true;
     openingTimer_.start();
 
-    qCDebug(logCategoryDeviceBLE) << this << "Connecting to BLE device...";
+    qCDebug(lcDeviceBLE) << this << "Connecting to BLE device...";
 
     lowEnergyController_->connectToDevice();
 }
@@ -64,7 +64,7 @@ void BluetoothLowEnergyController::close()
     openingTimer_.stop();
     controllerActive_ = false;
 
-    qCDebug(logCategoryDeviceBLE) << this << "Closing BLE device...";
+    qCDebug(lcDeviceBLE) << this << "Closing BLE device...";
 
 #ifdef Q_OS_WIN
     // only for windows, leave the connecting running until it finishes
@@ -95,7 +95,7 @@ bool BluetoothLowEnergyController::isConnected() const
 
 void BluetoothLowEnergyController::openingTimeoutHandler()
 {
-    qCDebug(logCategoryDeviceBLE) << this << "Timeout while connecting and/or discovering services";
+    qCDebug(lcDeviceBLE) << this << "Timeout while connecting and/or discovering services";
     disconnect();
 }
 
@@ -106,7 +106,7 @@ void BluetoothLowEnergyController::deviceConnectedHandler()
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Device connected, discovering services...";
+    qCDebug(lcDeviceBLE) << this << "Device connected, discovering services...";
     lowEnergyController_->discoverServices();
 }
 
@@ -117,7 +117,7 @@ void BluetoothLowEnergyController::deviceDisconnectedHandler()
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Device disconnected.";
+    qCDebug(lcDeviceBLE) << this << "Device disconnected.";
 
     if(controllerActive_) {
         // this signal came from the device itself
@@ -134,7 +134,7 @@ void BluetoothLowEnergyController::discoveryFinishedHandler()
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Service discovery finished, discovering service details...";
+    qCDebug(lcDeviceBLE) << this << "Service discovery finished, discovering service details...";
     discoverServiceDetails();
 }
 
@@ -146,7 +146,7 @@ void BluetoothLowEnergyController::discoverServiceDetails()
     }
     for (const auto &service : discoveredServices_) {
         if (service.second->state() == QLowEnergyService::DiscoveryRequired) {
-            qCDebug(logCategoryDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";
+            qCDebug(lcDeviceBLE) << this << "Discovering details of service " << service.second->serviceUuid() << " ...";
             service.second->discoverDetails();
         }
     }
@@ -163,9 +163,9 @@ void BluetoothLowEnergyController::checkServiceDetailsDiscovery()
     if (allDiscovered && allDiscovered_ == false) {
         if (lowEnergyController_->state() == QLowEnergyController::DiscoveredState) {
             allDiscovered_ = true;
-            qCDebug(logCategoryDeviceBLE) << this << "Service details discovery finished";
+            qCDebug(lcDeviceBLE) << this << "Service details discovery finished";
             for (const auto &service : discoveredServices_) {
-                qCDebug(logCategoryDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
+                qCDebug(lcDeviceBLE) << this << "Service " << service.second->serviceUuid() << " state " << service.second->state();
             }
             if (deleteLater_ == false) {
                 openingTimer_.stop();
@@ -174,7 +174,7 @@ void BluetoothLowEnergyController::checkServiceDetailsDiscovery()
                 lowEnergyController_->disconnectFromDevice();
             }
         } else {
-            qCWarning(logCategoryDeviceBLE) << this << "Service details discovery finished, but the BLE device is not open.";
+            qCWarning(lcDeviceBLE) << this << "Service details discovery finished, but the BLE device is not open.";
         }
     }
 }
@@ -200,7 +200,7 @@ void BluetoothLowEnergyController::deviceStateChangeHandler(QLowEnergyController
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Device state changed: " << state;
+    qCDebug(lcDeviceBLE) << this << "Device state changed: " << state;
 }
 
 void BluetoothLowEnergyController::descriptorWrittenHandler(const QLowEnergyDescriptor &info, const QByteArray &value)
@@ -250,7 +250,7 @@ void BluetoothLowEnergyController::serviceStateChangedHandler(QLowEnergyService:
         return;
     }
 
-    qCDebug(logCategoryDeviceBLE) << this << "Service state changed: " << newState;
+    qCDebug(lcDeviceBLE) << this << "Service state changed: " << newState;
     checkServiceDetailsDiscovery();
 }
 
@@ -266,21 +266,21 @@ void BluetoothLowEnergyController::serviceErrorHandler(QLowEnergyService::Servic
 
 void BluetoothLowEnergyController::addDiscoveredService(const QBluetoothUuid & serviceUuid)
 {
-    qCDebug(logCategoryDeviceBLE) << this << "Creating service for UUID " << serviceUuid << " ...";
+    qCDebug(lcDeviceBLE) << this << "Creating service for UUID " << serviceUuid << " ...";
     if (discoveredServices_.count(serviceUuid) != 0) {
         // It is allowed to have multiple services with the same UUID, so this is a correct situation.
         // If multiple services with the same UUID need to be accessed, it should be done via handles (to be implemented later)
-        qCInfo(logCategoryDeviceBLE) << this << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
+        qCInfo(lcDeviceBLE) << this << "Duplicate service UUID " << serviceUuid << ", ignoring the latter.";
         return;
     }
     QLowEnergyService * service = lowEnergyController_->createServiceObject(serviceUuid, lowEnergyController_); // will be automatically deleted after controller is erased
     if (service == nullptr) {
-        qCWarning(logCategoryDeviceBLE) << this << "Invalid service";
+        qCWarning(lcDeviceBLE) << this << "Invalid service";
         return;
     }
     if (service->serviceUuid() != serviceUuid) {
         // this should never happen, but we rely on this condition later, so let's better check it
-        qCWarning(logCategoryDeviceBLE) << this << "Invalid service: inconsistent uuid";
+        qCWarning(lcDeviceBLE) << this << "Invalid service: inconsistent uuid";
         delete service;
         return;
     }

@@ -45,7 +45,7 @@ bool HostControllerService::initialize(const QString &config)
 
     if (false == serverConfig.contains("subscriber_address") ||
         false == serverConfig.value("subscriber_address").isString()) {
-        qCCritical(logCategoryHcs) << "Invalid subscriber_address.";
+        qCCritical(lcHcs) << "Invalid subscriber_address.";
         return false;
     }
 
@@ -150,14 +150,14 @@ bool HostControllerService::initialize(const QString &config)
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (true == config_.contains("stage") && true == config_.value("stage").isString()) {
         QString stage = config_.value("stage").toString().toUpper();
-        qCInfo(logCategoryHcs) << "Running in" << stage << "setup";
+        qCInfo(lcHcs) << "Running in" << stage << "setup";
         baseFolder += QString("/%1").arg(stage);
         QDir baseFolderDir{baseFolder};
 
         if (false == baseFolderDir.exists()) {
-            qCDebug(logCategoryHcs) << "Creating base folder" << baseFolder;
+            qCDebug(lcHcs) << "Creating base folder" << baseFolder;
             if (false == baseFolderDir.mkpath(baseFolder)) {
-                qCCritical(logCategoryHcs) << "Failed to create base folder" << baseFolder;
+                qCCritical(lcHcs) << "Failed to create base folder" << baseFolder;
             }
         }
     }
@@ -168,7 +168,7 @@ bool HostControllerService::initialize(const QString &config)
     QJsonObject databaseConfig = config_.value("database").toObject();
 
     if (db_.open(baseFolder, "strata_db") == false) {
-        qCCritical(logCategoryHcs) << "Failed to open database.";
+        qCCritical(lcHcs) << "Failed to open database.";
         return false;
     }
 
@@ -177,15 +177,15 @@ bool HostControllerService::initialize(const QString &config)
 
     QUrl baseUrl = databaseConfig.value("file_server").toString();
 
-    qCInfo(logCategoryHcs) << "file_server url:" << baseUrl.toString();
+    qCInfo(lcHcs) << "file_server url:" << baseUrl.toString();
 
     if (baseUrl.isValid() == false) {
-        qCCritical(logCategoryHcs) << "Provided file_server url is not valid";
+        qCCritical(lcHcs) << "Provided file_server url is not valid";
         return false;
     }
 
     if (baseUrl.scheme().isEmpty()) {
-        qCCritical(logCategoryHcs) << "file_server url does not have scheme";
+        qCCritical(lcHcs) << "file_server url does not have scheme";
         return false;
     }
 
@@ -206,7 +206,7 @@ bool HostControllerService::initialize(const QString &config)
 void HostControllerService::start()
 {
     connect(strataServer_.get(), &strataRPC::StrataServer::initialized, this,
-            []() { qCInfo(logCategoryHcs) << "Host controller service started."; });
+            []() { qCInfo(lcHcs) << "Host controller service started."; });
     strataServer_->initialize();
 }
 
@@ -392,7 +392,7 @@ bool HostControllerService::parseConfig(const QString &config)
 
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly) == false) {
-        qCCritical(logCategoryHcs) << "Unable to open config file:" << filePath;
+        qCCritical(lcHcs) << "Unable to open config file:" << filePath;
         return false;
     }
 
@@ -403,14 +403,14 @@ bool HostControllerService::parseConfig(const QString &config)
     QJsonDocument jsonDocument = QJsonDocument::fromJson(data, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qCCritical(logCategoryHcs)
+        qCCritical(lcHcs)
             << "Unable to parse config file." << jsonParseError.errorString();
-        qCCritical(logCategoryHcs) << data;
+        qCCritical(lcHcs) << data;
         return false;
     }
 
     if (false == jsonDocument.object().contains("host_controller_service")) {
-        qCCritical(logCategoryHcs) << "ERROR: No Host Controller Configuration parameters.";
+        qCCritical(lcHcs) << "ERROR: No Host Controller Configuration parameters.";
         return false;
     }
 
@@ -492,7 +492,7 @@ void HostControllerService::processCmdLoadDocuments(const strataRPC::Message &me
     QString classId = message.payload.value("class_id").toString();
     if (classId.isEmpty()) {
         QString errorMessage(QStringLiteral("class_id attribute is empty or has bad format"));
-        qCWarning(logCategoryHcs) << errorMessage;
+        qCWarning(lcHcs) << errorMessage;
         strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
                                     strataRPC::ResponseType::Error);
         return;
@@ -512,14 +512,14 @@ void HostControllerService::processCmdDownloadFiles(const strataRPC::Message &me
         QString errorMessage(QStringLiteral("destinationDir attribute is empty or has bad format"));
         strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
                                     strataRPC::ResponseType::Error);
-        qCWarning(logCategoryHcs) << errorMessage;
+        qCWarning(lcHcs) << errorMessage;
         return;
     }
 
     QJsonValue filesValue = message.payload.value("files");
     if (filesValue.isArray() == false) {
         QString errorMessage(QStringLiteral("files attribute is not an array"));
-        qCWarning(logCategoryHcs) << errorMessage;
+        qCWarning(lcHcs) << errorMessage;
         strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
                                     strataRPC::ResponseType::Error);
         return;
@@ -621,7 +621,7 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::Message &m
     } while (false);
 
     //send back error
-    qCWarning(logCategoryHcs) <<  errorString;
+    qCWarning(lcHcs) <<  errorString;
 
     QJsonObject payloadBody {
         { "error_string", errorString },
@@ -680,14 +680,14 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
             if (firmware != nullptr) {
                 currentMD5 = firmware->md5;
             } else {
-                qCWarning(logCategoryHcs) << platform << "Cannot find current firmware in database.";
+                qCWarning(lcHcs) << platform << "Cannot find current firmware in database.";
             }
         } else {
-            qCInfo(logCategoryHcs) << platform << "Platform has probably no firmware.";
+            qCInfo(lcHcs) << platform << "Platform has probably no firmware.";
         }
 
         if (currentMD5.isEmpty()) {
-            qCWarning(logCategoryHcs) << platform << "Cannot get MD5 of curent firmware from database.";
+            qCWarning(lcHcs) << platform << "Cannot get MD5 of curent firmware from database.";
         }
 
         firmwareData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -713,7 +713,7 @@ void HostControllerService::processCmdProgramController(const strataRPC::Message
 
     } while (false);
 
-    qCWarning(logCategoryHcs).noquote() << errorString;
+    qCWarning(lcHcs).noquote() << errorString;
 
     QJsonObject payloadBody {
         { "error_string", errorString },
@@ -727,7 +727,7 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
     QString url = message.payload.value("url").toString();
     if (url.isEmpty()) {
         QString errorMessage(QStringLiteral("url attribute is empty or has bad format"));
-        qCWarning(logCategoryHcs) << errorMessage;
+        qCWarning(lcHcs) << errorMessage;
         strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
                                     strataRPC::ResponseType::Error);
         return;
@@ -736,7 +736,7 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
     QString md5 = message.payload.value("md5").toString();
     if (md5.isEmpty()) {
         QString errorMessage(QStringLiteral("md5 attribute is empty or has bad format"));
-        qCWarning(logCategoryHcs) << errorMessage;
+        qCWarning(lcHcs) << errorMessage;
         strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
                                     strataRPC::ResponseType::Error);
         return;
@@ -745,7 +745,7 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
     QString classId = message.payload.value("class_id").toString();
     if (classId.isEmpty()) {
         QString errorMessage(QStringLiteral("class_id attribute is empty or has bad format"));
-        qCWarning(logCategoryHcs) << errorMessage;
+        qCWarning(lcHcs) << errorMessage;
         strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
                                     strataRPC::ResponseType::Error);
         return;
@@ -996,7 +996,7 @@ void HostControllerService::processCmdPlatformStartApplication(const strataRPC::
     };
     if (ok == false) {
         payloadBody.insert("error_string", errorString);
-        qCWarning(logCategoryHcs).noquote() << errorString;
+        qCWarning(lcHcs).noquote() << errorString;
     }
 
     strataServer_->notifyClient(message, payloadBody, ok ? strataRPC::ResponseType::Response : strataRPC::ResponseType::Error);

@@ -10,4 +10,4 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryWg)
+Q_DECLARE_LOGGING_CATEGORY(lcWg)

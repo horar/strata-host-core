@@ -22,7 +22,7 @@ Client::Client(QString clientId, QObject *parent)
       connectionStatus_(false),
       serverTime_()
 {
-    qCInfo(logCategoryStrataClientSample).nospace().noquote()
+    qCInfo(lcStrataClientSample).nospace().noquote()
         << "ClientID 0x" << clientId.toUtf8().toHex();
 
     connect(strataClient_.get(), &StrataClient::connected, this, [this]() {
@@ -70,13 +70,13 @@ QString Client::getServerTime() const
 
 void Client::connectToServer()
 {
-    qCDebug(logCategoryStrataClientSample) << "Connecting to the server.";
+    qCDebug(lcStrataClientSample) << "Connecting to the server.";
     strataClient_->connect();
 }
 
 void Client::disconnectServer()
 {
-    qCDebug(logCategoryStrataClientSample) << "Disconnecting from the server.";
+    qCDebug(lcStrataClientSample) << "Disconnecting from the server.";
     strataClient_->disconnect();
 }
 
@@ -85,31 +85,31 @@ void Client::closeServer()
     auto deferredRequest = strataClient_->sendRequest("close_server", QJsonObject());
 
     if (deferredRequest == nullptr) {
-        qCCritical(logCategoryStrataClientSample) << "Failed To send unregister_client request.";
+        qCCritical(lcStrataClientSample) << "Failed To send unregister_client request.";
         return;
     }
 
     connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
-        qCInfo(logCategoryStrataClientSample) << "Server closed successfully.";
+        qCInfo(lcStrataClientSample) << "Server closed successfully.";
     });
 }
 
 void Client::requestRandomGraph()
 {
-    qCInfo(logCategoryStrataClientSample) << "Requesting random graph from the server.";
+    qCInfo(lcStrataClientSample) << "Requesting random graph from the server.";
     auto deferredRequest = strataClient_->sendRequest("generate_graph", QJsonObject{{"size", 6}});
 
     if (deferredRequest == nullptr) {
-        qCCritical(logCategoryStrataClientSample) << "Failed To send generate_graph request.";
+        qCCritical(lcStrataClientSample) << "Failed To send generate_graph request.";
         return;
     }
 
     connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
-        qCInfo(logCategoryStrataClientSample) << "Server is generating graph.";
+        qCInfo(lcStrataClientSample) << "Server is generating graph.";
     });
 
     connect(deferredRequest, &DeferredRequest::finishedWithError, this, [](const QJsonObject &) {
-        qCCritical(logCategoryStrataClientSample) << "Failed to request graph from the server.";
+        qCCritical(lcStrataClientSample) << "Failed to request graph from the server.";
     });
 }
 
@@ -118,13 +118,13 @@ void Client::requestServerStatus()
     auto deferredRequest = strataClient_->sendRequest("server_status", QJsonObject());
 
     if (deferredRequest == nullptr) {
-        qCCritical(logCategoryStrataClientSample) << "Failed To send server_status request.";
+        qCCritical(lcStrataClientSample) << "Failed To send server_status request.";
         return;
     }
 
     connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
             [this](const QJsonObject &) {
-                qCInfo(logCategoryStrataClientSample) << "Server is alive.";
+                qCInfo(lcStrataClientSample) << "Server is alive.";
                 connectionStatus_ = true;
                 emit connectionStatusUpdated();
             });
@@ -141,7 +141,7 @@ void Client::pingServer()
     auto deferredRequest = strataClient_->sendRequest("ping", QJsonObject());
 
     if (deferredRequest == nullptr) {
-        qCCritical(logCategoryStrataClientSample) << "Failed to send ping request.";
+        qCCritical(lcStrataClientSample) << "Failed to send ping request.";
         delete elapsedTimer;
         return;
     }
@@ -149,14 +149,14 @@ void Client::pingServer()
     connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
             [this, elapsedTimer](const QJsonObject &) {
                 auto serverDelay = elapsedTimer->elapsed();
-                qCDebug(logCategoryStrataClientSample) << "Server Delay:" << serverDelay << "ms.";
+                qCDebug(lcStrataClientSample) << "Server Delay:" << serverDelay << "ms.";
                 emit serverDelayUpdated(serverDelay);
                 delete elapsedTimer;
             });
 
     connect(deferredRequest, &DeferredRequest::finishedWithError, this,
             [this, elapsedTimer](const QJsonObject &) {
-                qCCritical(logCategoryStrataClientSample) << "Failed to get server delay.";
+                qCCritical(lcStrataClientSample) << "Failed to get server delay.";
                 emit serverDelayUpdated(-1);
                 delete elapsedTimer;
             });
@@ -170,7 +170,7 @@ void Client::serverDisconnectedHandler(const QJsonObject &)
 void Client::strataClientErrorHandler(StrataClient::ClientError errorType,
                                       const QString &errorMessage)
 {
-    qCCritical(logCategoryStrataClientSample)
+    qCCritical(lcStrataClientSample)
         << "Client Error:" << errorType << "Message:" << errorMessage;
     emit errorOccurred(errorMessage);
 }

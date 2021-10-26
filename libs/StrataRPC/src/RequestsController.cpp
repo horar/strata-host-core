@@ -32,11 +32,11 @@ std::pair<DeferredRequest *, QByteArray> RequestsController::addNewRequest(
 
     const auto it = requests_.find(currentRequestId_);
     if (it != requests_.end()) {
-        qCCritical(logCategoryRequestsController) << "Duplicate request id.";
+        qCCritical(lcRequestsController) << "Duplicate request id.";
         return {nullptr, QByteArray()};
     }
 
-    qCDebug(logCategoryRequestsController)
+    qCDebug(lcRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
     DeferredRequest *deferredRequest = new DeferredRequest(currentRequestId_, this);
@@ -53,10 +53,10 @@ bool RequestsController::isPendingRequest(const int &id)
 
 bool RequestsController::removePendingRequest(const int &id)
 {
-    qCDebug(logCategoryRequestsController) << "Removing pending request id:" << id;
+    qCDebug(lcRequestsController) << "Removing pending request id:" << id;
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qCDebug(logCategoryRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return false;
     }
     return requests_.remove(id) > 0;
@@ -64,10 +64,10 @@ bool RequestsController::removePendingRequest(const int &id)
 
 std::pair<bool, Request> RequestsController::popPendingRequest(const int &id)
 {
-    qCDebug(logCategoryRequestsController) << "Popping pending request id:" << id;
+    qCDebug(lcRequestsController) << "Popping pending request id:" << id;
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qDebug(logCategoryRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return {false, Request("", QJsonObject({{}}), 0, nullptr)};
     }
     Request request(it.value());
@@ -78,10 +78,10 @@ QString RequestsController::getMethodName(const int &id)
 {
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qCDebug(logCategoryRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return "";
     }
-    qCDebug(logCategoryRequestsController)
+    qCDebug(lcRequestsController)
         << "request id" << it->messageId_ << "method" << it->method_;
     return it->method_;
 }

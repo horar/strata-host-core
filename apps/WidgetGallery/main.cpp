@@ -38,7 +38,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qCInfo(logCategoryWg)
+        qCInfo(lcWg)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
@@ -57,7 +57,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
     bool status = applicationDir.cd("imports");
     if (status == false) {
-        qCCritical(logCategoryWg) << "failed to find import path.";
+        qCCritical(lcWg) << "failed to find import path.";
     }
 
     engine->addImportPath(applicationDir.path());
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(lcWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     loadResources();
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategoryWg) << "engine failed to load 'main' qml file; quitting...";
+        qCCritical(lcWg) << "engine failed to load 'main' qml file; quitting...";
         return -1;
     }
 

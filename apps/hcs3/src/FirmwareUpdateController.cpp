@@ -66,13 +66,17 @@ void FirmwareUpdateController::changeFirmware(const ChangeFirmwareData &data)
         break;
     case ChangeFirmwareAction::ProgramController :
         if (data.firmwareClassId.isNull()) {
-            logAndEmitError(data.deviceId, QStringLiteral("Cannot program controller - firmware class ID was not provided."));
+            QString errStr("Cannot program controller - firmware class ID was not provided.");
+            qCCritical(lcHcsFwUpdater).noquote() << errStr;
+            emit updaterError(data.deviceId, errStr);
             return;
         }
         break;
     case ChangeFirmwareAction::SetControllerFwClassId :
         if (data.firmwareClassId.isNull()) {
-            logAndEmitError(data.deviceId, QStringLiteral("Cannot set controller firmware class ID - it is not provided."));
+            QString errStr("Cannot set controller firmware class ID - it is not provided.");
+            qCCritical(lcHcsFwUpdater).noquote() << errStr;
+            emit updaterError(data.deviceId, errStr);
             return;
         }
         break;
@@ -84,19 +88,25 @@ void FirmwareUpdateController::changeFirmware(const ChangeFirmwareData &data)
 void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
 {
     if (platformController_.isNull() || downloadManager_.isNull()) {
-        logAndEmitError(data.deviceId, QStringLiteral("FirmwareUpdateController is not properly initialized."));
+        QString errStr("FirmwareUpdateController is not properly initialized.");
+        qCCritical(lcHcsFwUpdater).noquote() << errStr;
+        emit updaterError(data.deviceId, errStr);
         return;
     }
 
     auto it = updates_.constFind(data.deviceId);
     if (it != updates_.constEnd()) {
-        logAndEmitError(data.deviceId, QStringLiteral("Cannot update, another update is running on this device."));
+        QString errStr("Cannot update, another update is running on this device.");
+        qCCritical(lcHcsFwUpdater).noquote() << errStr;
+        emit updaterError(data.deviceId, errStr);
         return;
     }
 
     strata::platform::PlatformPtr platform = platformController_->getPlatform(data.deviceId);
     if (platform == nullptr) {
-        logAndEmitError(data.deviceId, QStringLiteral("Incorrect device ID for update."));
+        QString errStr("Incorrect device ID for update.");
+        qCCritical(lcHcsFwUpdater).noquote() << errStr;
+        emit updaterError(data.deviceId, errStr);
         return;
     }
 
@@ -172,12 +182,6 @@ void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, 
         delete updateData;
         updates_.remove(deviceId);
     }
-}
-
-void FirmwareUpdateController::logAndEmitError(const QByteArray& deviceId, const QString& errorString)
-{
-    qCCritical(logCategoryHcsFwUpdater).noquote() << errorString;
-    emit updaterError(deviceId, errorString);
 }
 
 FirmwareUpdateController::UpdateInfo::UpdateInfo(
