@@ -40,15 +40,18 @@ SGWidgets.SGMainWindow {
                 }
             }
         }
-
     }
     Rectangle {
         anchors.fill: parent
         color: "#eeeeee"
     }
-
+    LcuMain {
+        anchors {
+            fill: parent
+            margins: 4
+        }
+    }
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/LcuAboutWindow.qml")
     }
-
 }
