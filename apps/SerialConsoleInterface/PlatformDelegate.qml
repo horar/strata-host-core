@@ -460,6 +460,7 @@ FocusScope {
                         right: parent.right
                     }
 
+                    focus: false
                     placeholderText: "Search..."
                     leftIconSource: "qrc:/sgimages/zoom.svg"
                     showClearButton: true
