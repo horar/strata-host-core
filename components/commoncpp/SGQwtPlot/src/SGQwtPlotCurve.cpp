@@ -159,7 +159,7 @@ QPointF SGQwtPlotCurve::at(int index)
     if (index < curveData_.count()) {
         return curveData_[index];
     } else {
-        qCWarning(logCategoryQWTPlot) << "Index Invalid" << index << "return 0,0";
+        qCWarning(lcQWTPlot) << "Index Invalid" << index << "return 0,0";
         return QPointF(0, 0);
     }
 }

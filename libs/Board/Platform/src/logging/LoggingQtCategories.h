@@ -10,10 +10,10 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDeviceSerial)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDeviceMock)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryDeviceTcp)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatform)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatformOperation)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatformCommand)
-Q_DECLARE_LOGGING_CATEGORY(logCategoryPlatformMessage)
+Q_DECLARE_LOGGING_CATEGORY(lcDeviceSerial)
+Q_DECLARE_LOGGING_CATEGORY(lcDeviceMock)
+Q_DECLARE_LOGGING_CATEGORY(lcDeviceTcp)
+Q_DECLARE_LOGGING_CATEGORY(lcPlatform)
+Q_DECLARE_LOGGING_CATEGORY(lcPlatformOperation)
+Q_DECLARE_LOGGING_CATEGORY(lcPlatformCommand)
+Q_DECLARE_LOGGING_CATEGORY(lcPlatformMessage)

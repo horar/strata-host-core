@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryStrataServerSample, "strata.rpc.sample.server")
+Q_LOGGING_CATEGORY(lcStrataServerSample, "strata.rpc.sample.server")

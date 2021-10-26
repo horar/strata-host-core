@@ -60,6 +60,7 @@ public:
             QString firmwareUrl = QString(),
             QString firmwareMd5 = QString());
 
+    Q_INVOKABLE void identifyBootloader();
     Q_INVOKABLE void programDevice();
     Q_INVOKABLE void notifyServiceAboutRegistration(
             const QString &classId,
@@ -88,6 +89,7 @@ signals:
     void deviceCountChanged();
     void bootloaderFilepathChanged();
     void downloadFirmwareFinished(QString errorString);
+    void identifyBootloaderFinished(QString errorString);
     void flasherOperationStateChanged(
             strata::FlasherConnector::Operation operation,
             strata::FlasherConnector::State state,

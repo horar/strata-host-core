@@ -31,14 +31,16 @@
 #include <rapidjson/error/en.h>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
-    : QObject(parent),
-      fileSizePrefixList_(QStringList() <<"B"<<"KB"<<"MB"<<"GB"<<"TB"<<"PB"<<"EB")
+    : QObject(parent)
 {
 }
 
 SGUtilsCpp::~SGUtilsCpp()
 {
 }
+
+const QStringList SGUtilsCpp::fileSizePrefixList_{"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+const QList<QChar> SGUtilsCpp::forbiddenCharactersList_{'<','>',':','"','/','\\','?','|','*'};
 
 QString SGUtilsCpp::urlToLocalFile(const QUrl &url, const bool toNativeSeparators)
 {
@@ -111,6 +113,12 @@ bool SGUtilsCpp::isRelative(const QString &file)
     return info.isRelative();
 }
 
+bool SGUtilsCpp::containsForbiddenCharacters(const QString &fileName)
+{
+    return std::any_of(forbiddenCharactersList_.constBegin(), forbiddenCharactersList_.constEnd(),
+                       [&fileName](const auto& s) { return fileName.contains(s); });
+}
+
 QString SGUtilsCpp::fileName(const QString &file)
 {
     QFileInfo fi(file);
@@ -150,7 +158,7 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCCritical(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        qCCritical(lcUtils) << "cannot open file" << path << file.errorString();
         return false;
     }
 
@@ -174,7 +182,7 @@ QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
-        qCCritical(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        qCCritical(lcUtils) << "cannot open file" << path << file.errorString();
         return QString();
     }
 
@@ -245,10 +253,10 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
     rapidjson::Document jsonDoc;
     rapidjson::ParseResult result = jsonDoc.Parse(json.data());
     if (result.IsError()) {
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "Json is not valid: " << endl << json;
 
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "JSON parse error at offset " << result.Offset()
                 << ": " << rapidjson::GetParseError_En(result.Code());
 
@@ -259,10 +267,10 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
     rapidjson::Document schemaDoc;
     result = schemaDoc.Parse(schema.data());
     if (result.IsError()) {
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "Schema is not valid: " << endl << schema;
 
-        qCCritical(logCategoryUtils).nospace().noquote()
+        qCCritical(lcUtils).nospace().noquote()
                 << "JSON parse error at offset " << result.Offset()
                 << ": " << rapidjson::GetParseError_En(result.Code());
 
@@ -282,8 +290,8 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
         writer.Reset(buffer);
         validator.GetError().Accept(writer);
 
-        qCDebug(logCategoryUtils).nospace().noquote() << "json: " << json;
-        qCCritical(logCategoryUtils).nospace().noquote() << "validate error: " << buffer.GetString();
+        qCDebug(lcUtils).nospace().noquote() << "json: " << json;
+        qCCritical(lcUtils).nospace().noquote() << "validate error: " << buffer.GetString();
 
         return false;
     }
@@ -328,4 +336,18 @@ void SGUtilsCpp::showFileInFolder(const QString &path){
         QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to reveal POSIX file \"" + path + "\""});
         QProcess::execute("/usr/bin/osascript", {"-e", "tell application \"Finder\" to activate"});
     #endif
+}
+
+QString SGUtilsCpp::joinForbiddenCharacters(QString separator)
+{
+    return getForbiddenCharacters().join(separator);
+}
+
+QStringList SGUtilsCpp::getForbiddenCharacters()
+{
+    QStringList list;
+    for (int i = 0; i < forbiddenCharactersList_.length(); i++) {
+        list.append(forbiddenCharactersList_[i]);
+    }
+    return list;
 }

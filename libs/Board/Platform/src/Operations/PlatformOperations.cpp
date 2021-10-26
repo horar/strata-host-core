@@ -45,7 +45,7 @@ OperationSharedPtr PlatformOperations::processOperation(const OperationSharedPtr
     connect(operation.get(), &operation::BasePlatformOperation::finished,
             this, &PlatformOperations::handleOperationFinished);
 
-    qCDebug(logCategoryPlatformOperation) << "Starting operation" << operation->type()
+    qCDebug(lcPlatformOperation) << "Starting operation" << operation->type()
                                           << "for device Id:" << operation->deviceId();
 
     // in case of queued finished signal, this insert will overwrite the old operation
@@ -61,7 +61,7 @@ OperationSharedPtr PlatformOperations::processOperation(const OperationSharedPtr
 void PlatformOperations::stopOperation(const QByteArray& deviceId) {
     auto it = operations_.find(deviceId);
     if (it != operations_.end()) {
-        qCDebug(logCategoryPlatformOperation) << "Cancelling operation" << it.value()->type()
+        qCDebug(lcPlatformOperation) << "Cancelling operation" << it.value()->type()
                                               << "for device Id:" << deviceId;
         stopOperation(it.value());
     }
@@ -148,14 +148,14 @@ void PlatformOperations::operationLaterDeleter(BasePlatformOperation* operation)
 void PlatformOperations::handleOperationFinished(Result result, int status, QString errorString) {
     operation::BasePlatformOperation *baseOp = qobject_cast<operation::BasePlatformOperation*>(QObject::sender());
     if (baseOp == nullptr) {
-        qCCritical(logCategoryPlatformOperation) << "Corrupt operation pointer:" << QObject::sender();
+        qCCritical(lcPlatformOperation) << "Corrupt operation pointer:" << QObject::sender();
         return;
     }
 
     const QByteArray deviceId = baseOp->deviceId();
     const Type type = baseOp->type();
 
-    qCDebug(logCategoryPlatformOperation) << "Finished operation" << type
+    qCDebug(lcPlatformOperation) << "Finished operation" << type
                                           << "for device Id:" << deviceId
                                           << "result:" << result;
 

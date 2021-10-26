@@ -113,8 +113,13 @@ Menu {
             implicitHeight: 25
         }
 
-        property bool isExactHorizontal: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
-        property bool isExactVertical: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+        property bool isExactHorizontal: false
+        property bool isExactVertical: false
+
+        Component.onCompleted: {
+            isExactHorizontal = visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
+            isExactVertical = visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+        }
 
         Action {
             text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (appx.)"

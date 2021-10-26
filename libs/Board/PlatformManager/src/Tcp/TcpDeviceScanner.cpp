@@ -30,15 +30,14 @@ TcpDeviceScanner::~TcpDeviceScanner()
 
 void TcpDeviceScanner::init(quint32 flags)
 {
-    if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
-        qCCritical(logCategoryDeviceScanner).nospace().noquote()
-            << "Failed to bind UDP socket to port " << UDP_LISTEN_PORT << ": "
-            << udpSocket_->errorString();
-        return;
-    }
-    if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
-        startAutomaticScan();
-    }
+    Q_UNUSED(flags);
+
+    connect(udpSocket_.get(), &QUdpSocket::readyRead,
+            this, &TcpDeviceScanner::processPendingDatagrams);
+
+    discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
+    discoveryTimer_.setSingleShot(true);
+    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::stopDiscovery);
 }
 
 void TcpDeviceScanner::deinit()
@@ -52,65 +51,88 @@ void TcpDeviceScanner::deinit()
 
 QList<QByteArray> TcpDeviceScanner::discoveredDevices() const
 {
-    return discoveredDevices_.values();
+    QList<QByteArray> discoveredDeviceIds;
+    for(const auto &tcpDeviceInfo : discoveredDevices_) {
+        discoveredDeviceIds.push_back(tcpDeviceInfo.deviceId);
+    }
+    return discoveredDeviceIds;
 }
 
-QString TcpDeviceScanner::connectDevice(const QByteArray& deviceId)
+const QList<TcpDeviceInfo> TcpDeviceScanner::discoveredTcpDevices() const
 {
-    Q_UNUSED(deviceId)
-
-    return "Method not supported";
+    return discoveredDevices_;
 }
 
-QString TcpDeviceScanner::disconnectDevice(const QByteArray& deviceId)
+QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
 {
-    if (discoveredDevices_.remove(deviceId) == false) {
+    auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                           [&deviceId](const TcpDeviceInfo &tcpDeviceInfo) {
+                               return tcpDeviceInfo.deviceId == deviceId;
+                           });
+
+    if (it == discoveredDevices_.end()) {
+        QString errorMessage(QStringLiteral("Device ID not found in discovered devices list"));
+        qCCritical(lcDeviceScanner) << errorMessage;
+        return errorMessage;
+    }
+
+    DevicePtr device = std::make_shared<TcpDevice>(it->deviceId, it->deviceIpAddress, it->port);
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    createdDevices_.insert(it->deviceId, *it);
+    emit deviceDetected(platform);
+
+    return QString();
+}
+
+QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
+{
+    if (false == createdDevices_.contains(deviceId)) {
         return "Device not found";
     }
 
+    createdDevices_.remove(deviceId);
+
     emit deviceLost(deviceId);
-    return "";
+    return QString();
 }
 
 void TcpDeviceScanner::disconnectAllDevices() {
-    for (const auto &deviceId : qAsConst(discoveredDevices_)) {
-        emit deviceLost(deviceId);
+    for (const auto &tcpDeviceInfo : qAsConst(discoveredDevices_)) {
+        emit deviceLost(tcpDeviceInfo.deviceId);
     }
     discoveredDevices_.clear();
 }
 
-void TcpDeviceScanner::setProperties(quint32 flags)
-{
-    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        stopAutomaticScan();
-    }
-}
-
-void TcpDeviceScanner::unsetProperties(quint32 flags)
-{
-    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        startAutomaticScan();
-    }
-}
-
-void TcpDeviceScanner::startAutomaticScan()
+void TcpDeviceScanner::startDiscovery()
 {
     if (scanRunning_) {
-        qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
+        qCDebug(lcDeviceScanner) << "Scanning for new devices is already running.";
     } else {
-        connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
-                &TcpDeviceScanner::processPendingDatagrams);
+        if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
+            qCCritical(lcDeviceScanner).nospace().noquote()
+                << "Failed to bind UDP socket to port " << UDP_LISTEN_PORT << ": "
+                << udpSocket_->errorString();
+            return;
+        }
+
+        discoveredDevices_.clear();
+
         scanRunning_ = true;
+        discoveryTimer_.start();
+        qCDebug(lcDeviceScanner) << "TcpDevice discovery started...";
     }
 }
 
-void TcpDeviceScanner::stopAutomaticScan()
+void TcpDeviceScanner::stopDiscovery()
 {
     if (scanRunning_) {
-        disconnect(udpSocket_.get(), nullptr, this, nullptr);
+        udpSocket_->disconnectFromHost();
         scanRunning_ = false;
+        qCDebug(lcDeviceScanner) << "TcpDevice discovery Finished";
+        emit discoveryFinished();
     } else {
-        qCDebug(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
+        qCDebug(lcDeviceScanner) << "Scanning for new devices is already stopped.";
     }
 }
 
@@ -124,27 +146,25 @@ void TcpDeviceScanner::processPendingDatagrams()
         udpSocket_->readDatagram(buffer.data(), buffer.size(), &clientAddress);
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
-            if (discoveredDevices_.contains(createDeviceId(TcpDevice::createUniqueHash(clientAddress)))) {
-                qCCritical(logCategoryDeviceScanner).noquote()
-                    << "Tcp device" << clientAddress.toString() << "already discovered";
-                return;
+            auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                                   [&clientAddress](TcpDeviceInfo &tcpDeviceInfo) {
+                                       return tcpDeviceInfo.deviceIpAddress == clientAddress;
+                                   });
+
+            if (it != discoveredDevices_.end()) {
+                qCDebug(lcDeviceScanner) << "Device already discovered";
+                continue;
             }
 
-            qCDebug(logCategoryDeviceScanner).noquote().nospace()
+            discoveredDevices_.push_back(
+                {createDeviceId(TcpDevice::createUniqueHash(clientAddress)),
+                 clientAddress.toString(), clientAddress, tcpPort});
+
+            qCDebug(lcDeviceScanner).noquote().nospace()
                 << "Discovered new platfrom. IP: " << clientAddress.toString()
                 << ", TCP port: " << tcpPort;
-            addTcpDevice(clientAddress, tcpPort);
         }
     }
-}
-
-void TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
-{
-    DevicePtr device = std::make_shared<TcpDevice>(createDeviceId(TcpDevice::createUniqueHash(deviceAddress)), deviceAddress, tcpPort);
-    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
-
-    discoveredDevices_.insert(platform->deviceId());
-    emit deviceDetected(platform);
 }
 
 bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
@@ -156,33 +176,33 @@ bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPor
     const QJsonDocument jsonDocument = QJsonDocument::fromJson(datagram, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
     // The returned QJsonValue is QJsonValue::Undefined if the key does not exist.
     const QJsonValue notification = jsonDocument.object().value("notification");
     if (false == notification.isObject()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
     const QJsonValue payload = notification.toObject().value("payload");
     if (false == payload.isObject()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
     const QJsonObject datagramPayload = payload.toObject();
     auto tcpPortIter = datagramPayload.constFind("tcp_port");
     if (tcpPortIter == datagramPayload.constEnd() || false == tcpPortIter->isDouble()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
     const long port = static_cast<long>(tcpPortIter->toDouble());
     if (port < 1 || port > std::numeric_limits<quint16>::max()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid port range.";
+        qCDebug(lcDeviceScanner) << "Invalid port range.";
         return false;
     }
 

@@ -405,6 +405,35 @@ Module {
         }
     }
     Component {
+        name: "SGCSVUtils"
+        prototype: "QObject"
+        exports: ["tech.strata.commoncpp/SGCSVUtils 1.0"]
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "getData"
+            type: "QVariant"
+        }
+        Method {
+            name: "importFromFile"
+            Parameter {name: "filePath"; type: "string"}
+        }
+        Method {
+            name: "clear"
+        }
+        Method {
+            name: "writeToFile"
+            Parameter {name: "filePath"; type: "string"}
+        }
+        Method {
+            name: "setData"
+            Parameter {name: "data"; type: "QVariant"}
+        }
+        Method {
+            name: "appendRow"
+            Parameter {name: "data"; type: "QVariant"}
+        }
+    }
+    Component {
         name: "SGConversion"
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGConversion 1.0"]

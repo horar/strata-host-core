@@ -543,12 +543,12 @@ QtObject {
 
     function startOfObjectRegexString(uuid = uuidRegex()) {
         // matches "   <ObjectName> { // start_<uuid> " where [^\S\r\n] is whitespace-but-not-newline"
-        return "[^\S\r\n]*[A-Z][A-Za-z0-9_]*\\s*\\{\\s*\\/\\/\\s*start_" + uuid + ".*"
+        return "[^\\S\\r\\n]*[A-Z][A-Za-z0-9_]*\\s*\\{\\s*\/\/\\s*start_" + uuid + ".*"
     }
 
     function endOfObjectRegexString(uuid = uuidRegex()) {
         // matches "   } // end_<uuid> "
-        return "[^\S\r\n]*\\}\\s*\\/\\/\\s*end_" + uuid + ".*"
+        return "[^\\S\\r\\n]*\\}\\s*\/\/\\s*end_" + uuid + ".*"
     }
 
     // returns whether object uuid is part of multi-item selection

@@ -495,18 +495,36 @@ function closePlatformView (platform) {
     Insert listing for platform that is not in DB platform_list and does not have a UI
 */
 function insertUnknownListing (platform) {
-    insertErrorListing(generateUnknownListing(platform))
+    let class_id = String(platform.class_id)
+    let listing_data = {
+        "verbose_name": (platform.verbose_name) ? platform.verbose_name : "Unknown Platform",
+        "class_id": class_id,
+        "opn" : "Class id: " + class_id,
+        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for platform that is not in DB platform_list but does have a UI
 */
 function insertUnlistedListing (platform) {
-    let platform_info = generateUnknownListing(platform)
-    platform_info.available.control = true
-    platform_info.description = "No information to display."
+    let class_id = String(platform.class_id)
+    let listing_data = {
+        "verbose_name": (platform.verbose_name) ? platform.verbose_name : "Unknown Platform",
+        "class_id": class_id,
+        "opn" : "Class id: " + class_id,
+        "description": "No information to display.",
+        "available": {
+            "control": true,
+            "documents": false,
+            "unlisted": false,
+            "order": false
+        }
+    }
 
-    let index = insertErrorListing(platform_info)
+    let index = insertErrorListing(generateErrorListing(platform, listing_data))
 
     if(NavigationControl.userSettings.autoOpenView){
         let data = {
@@ -527,62 +545,51 @@ function insertUnlistedListing (platform) {
     Insert listing for unregistered platform
 */
 function insertUnregisteredListing (platform) {
-    insertErrorListing(generateUnregisteredListing(platform))
+    let listing_data = {
+        "verbose_name": "Unregistered platform",
+        "description": "Unregistered platform. Contact local support."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for Strata assisted without platform (controller only)
 */
 function insertAssistedNoPlatformListing (platform) {
-    insertErrorListing(generateAssistedNoPlatformListing(platform))
+    let listing_data = {
+        "verbose_name": "Strata Assisted (no platform)",
+        "description": "Connected only Strata Assisted controller without platform."
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for platform which is booted into bootloader
 */
 function insertBootloaderListing(platform) {
-    insertErrorListing(generateBootloaderListing(platform))
-}
-
-function generateUnknownListing (platform) {
-    let class_id = String(platform.class_id)
-    let opn = "Class id: " + class_id
-    let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
-
-    if (platform.verbose_name) {
-        return generateErrorListing(platform, platform.verbose_name, class_id, opn, description)
-    }
-    return generateErrorListing(platform, "Unknown Platform", class_id, opn, description)
-}
-
-function generateUnregisteredListing (platform) {
-    let description = "Unregistered platform. Contact local support."
-    return generateErrorListing(platform, "Unregistered Platform", "", "N/A", description)
-}
-
-function generateAssistedNoPlatformListing (platform) {
-    let description = "Connected only Strata Assisted controller without platform."
-    return generateErrorListing(platform, "Strata Assisted (no platform)", "", "N/A", description)
-}
-
-function generateBootloaderListing (platform) {
     let class_id_string = String(platform.class_id)
-    let description = "Platform in bootloader mode"
-    let opn = "N/A"
-    if (classMap.hasOwnProperty(class_id_string)) {
-        opn = classMap[class_id_string].original_listing.opn
+    let listing_data = {
+        "verbose_name": "Bootloader",
+        "class_id": class_id_string,
+        "description": "Platform in bootloader mode."
     }
-    return generateErrorListing(platform, "Bootloader", class_id_string, opn, description)
+    if (classMap.hasOwnProperty(class_id_string)) {
+        listing_data.opn = classMap[class_id_string].original_listing.opn
+    }
+
+    insertErrorListing(generateErrorListing(platform, listing_data))
 }
 
-function generateErrorListing (platform, verbose_name, class_id, opn, description) {
+function generateErrorListing (platform, listing_data) {
     let error = {
-        "verbose_name" : verbose_name,
+        "verbose_name" : "",
         "connected" : true,
-        "class_id" :  class_id,
-        "device_id":  platform.device_id,
-        "opn": opn,
-        "description": description,
+        "class_id" : "",
+        "device_id": platform.device_id,
+        "opn": "N/A",
+        "description": "",
         "image": "", // Assigns 'not found' image
         "available": {
             "control": false,
@@ -597,6 +604,11 @@ function generateErrorListing (platform, verbose_name, class_id, opn, descriptio
         "parts_list": [],
         "firmware_version": platform.firmware_version
     }
+
+    for (var attribute in listing_data) {
+        error[attribute] = listing_data[attribute]
+    }
+
     return error
 }
 
