@@ -79,9 +79,9 @@ bool SDSModel::startHcs()
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
         hcsConfigPath = QDir::cleanPath(QString("%1/onsemi/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
-        qCInfo(lcStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath;
+        qCInfo(lcDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath;
     }else{
-        qCCritical(lcStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
+        qCCritical(lcDevStudio) << "Failed to get ProgramData path using windows API call...";
         return false;
     }
 #else
