@@ -37,6 +37,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 generate_app_version(GITTAG_PREFIX "lv_" MACBUNDLE ON)
+generate_app_build_timestamp()
 
 if(APPLE)
     find_library(IOKIT_LIB IOKit REQUIRED)

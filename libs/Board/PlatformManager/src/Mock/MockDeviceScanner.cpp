@@ -43,12 +43,12 @@ QString MockDeviceScanner::connectDevice(const QByteArray& deviceId) {
 
 QString MockDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
     if (devices_.remove(deviceId) == 0) {
-        qCWarning(logCategoryDeviceScanner).nospace().noquote()
+        qCWarning(lcDeviceScanner).nospace().noquote()
             << "Unable to erase mock device: ID: " << deviceId << ", device does not exists";
         return "Device not found";
     }
 
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
+    qCInfo(lcDeviceScanner).nospace().noquote()
         << "Erased mock device: ID: " << deviceId;
 
     emit deviceLost(deviceId);
@@ -71,7 +71,7 @@ QByteArray MockDeviceScanner::mockCreateDeviceId(const QString& mockName) {
 QString MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages) {
     if (devices_.constFind(deviceId) != devices_.cend()) {
         QString errorString = "Unable to create new mock device: ID: " + deviceId + ", name: '" + name + "', device already exists.";
-        qCWarning(logCategoryDeviceScanner).noquote() << errorString;
+        qCWarning(lcDeviceScanner).noquote() << errorString;
         return errorString;
     }
 
@@ -80,7 +80,7 @@ QString MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const 
 
     devices_.insert(deviceId, device);
 
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
+    qCInfo(lcDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << deviceId << ", name: '" << name << "'";
 
     emit deviceDetected(platform);
@@ -95,14 +95,14 @@ QString MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
             errorString.append(" Device ID: ");
             errorString.append(mockDevice->deviceId());
         }
-        qCWarning(logCategoryDeviceScanner).noquote() << errorString;
+        qCWarning(lcDeviceScanner).noquote() << errorString;
         return errorString;
     }
 
     if (devices_.find(mockDevice->deviceId()) != devices_.end()) {
         QString errorString = "Unable to create new mock device: ID: " + mockDevice->deviceId()
                               + ", name: '" + mockDevice->deviceName() + "', device already exists.";
-        qCWarning(logCategoryDeviceScanner).noquote() << errorString;
+        qCWarning(lcDeviceScanner).noquote() << errorString;
         return errorString;
     }
 
@@ -110,7 +110,7 @@ QString MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
 
     devices_.insert(mockDevice->deviceId(), mockDevice);
 
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
+    qCInfo(lcDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << mockDevice->deviceId()
         << ", name: '" << mockDevice->deviceName() << "'";
 

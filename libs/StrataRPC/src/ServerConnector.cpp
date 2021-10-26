@@ -26,14 +26,14 @@ bool ServerConnector::initialize()
     using Connector = strata::connector::Connector;
 
     if (connector_) {
-        qInfo(logCategoryStrataClientConnector) << "ZMQ connector already created.";
+        qCInfo(lcStrataClientConnector) << "ZMQ connector already created.";
     } else {
         connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
     }
 
     if (false == connector_->open(serverAddress_.toStdString())) {
         QString errorMessage(QStringLiteral("Failed to open ServerConnector."));
-        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        qCCritical(lcStrataClientConnector) << errorMessage;
         emit errorOccurred(ServerConnectorError::FailedToInitialize, errorMessage);
         return false;
     }
@@ -55,7 +55,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
     readSocketNotifier_->setEnabled(false);
     std::string message;
     while (true == connector_->read(message)) {
-        qCDebug(logCategoryStrataServerConnector).nospace().noquote()
+        qCDebug(lcStrataServerConnector).nospace().noquote()
             << "message received. ClientID: 0x"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
             << QByteArray::fromStdString(message) << "'";
@@ -77,13 +77,13 @@ void ServerConnector::readMessages()
 
 bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServerConnector).nospace().noquote()
+    qCDebug(lcStrataServerConnector).nospace().noquote()
         << "Sending message. ClientID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
     if (nullptr == connector_) {
         QString errorMessage(
             QStringLiteral("Failed to send message. Connector is not initialized."));
-        qCCritical(logCategoryStrataClientConnector) << errorMessage;
+        qCCritical(lcStrataClientConnector) << errorMessage;
         emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
         return false;
     }
@@ -94,7 +94,7 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
 
     if (false == connector_->send(message.toStdString())) {
         QString errorMessage(QStringLiteral("Failed to send message to client."));
-        qCCritical(logCategoryStrataClientConnector).noquote().nospace()
+        qCCritical(lcStrataClientConnector).noquote().nospace()
             << errorMessage << " ClientID 0x:" << clientId.toHex();
         emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
         return false;

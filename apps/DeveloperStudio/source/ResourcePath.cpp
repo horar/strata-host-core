@@ -28,10 +28,9 @@ QString &ResourcePath::coreResourcePath()
 #else
         coreResourcePath_ = QCoreApplication::applicationDirPath();
 #endif
-        qCDebug(logCategoryStrataDevStudio(), "app core resources path: '%s'",
+        qCDebug(lcDevStudio(), "app core resources path: '%s'",
                 qUtf8Printable(coreResourcePath_));
     }
 
     return coreResourcePath_;
 }
-

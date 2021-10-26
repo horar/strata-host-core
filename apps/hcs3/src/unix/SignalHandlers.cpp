@@ -33,7 +33,7 @@ static bool setup_unix_signal_handlers()
     hup_sa.sa_flags |= SA_RESTART;
 
     if (sigaction(SIGINT, &hup_sa, 0)) {
-        qCCritical(logCategoryHcsSignals) << "Failed to setup INT signal action";
+        qCCritical(lcHcsSignals) << "Failed to setup INT signal action";
         return false;
     }
 
@@ -45,7 +45,7 @@ static bool setup_unix_signal_handlers()
     term_sa.sa_flags |= SA_RESTART;
 
     if (sigaction(SIGTERM, &term_sa, 0)) {
-        qCCritical(logCategoryHcsSignals) << "Failed to setup TERM signal action";
+        qCCritical(lcHcsSignals) << "Failed to setup TERM signal action";
         return false;
     }
 
@@ -60,13 +60,13 @@ SignalHandlers::SignalHandlers(QObject *parent) : QObject(parent)
     }
 
     if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sigintFd)) {
-        qCCritical(logCategoryHcsSignals) << QStringLiteral("Couldn't create INT socketpair");
+        qCCritical(lcHcsSignals) << QStringLiteral("Couldn't create INT socketpair");
     }
     snInt_ = new QSocketNotifier(sigintFd[1], QSocketNotifier::Read, this);
     connect(snInt_, SIGNAL(activated(int)), this, SLOT(handleSigInt()));
 
     if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sigtermFd)) {
-        qCCritical(logCategoryHcsSignals) << QStringLiteral("Couldn't create TERM socketpair");
+        qCCritical(lcHcsSignals) << QStringLiteral("Couldn't create TERM socketpair");
     }
     snTerm_ = new QSocketNotifier(sigtermFd[1], QSocketNotifier::Read, this);
     connect(snTerm_, SIGNAL(activated(int)), this, SLOT(handleSigTerm()));
@@ -90,7 +90,7 @@ void SignalHandlers::handleSigTerm()
     char tmp;
     ::read(sigtermFd[1], &tmp, sizeof(tmp));
 
-    qCWarning(logCategoryHcsSignals) << "SIGTERM received; quitting..";
+    qCWarning(lcHcsSignals) << "SIGTERM received; quitting..";
     QCoreApplication::quit();
 
     snTerm_->setEnabled(true);
@@ -102,7 +102,7 @@ void SignalHandlers::handleSigInt()
     char tmp;
     ::read(sigintFd[1], &tmp, sizeof(tmp));
 
-    qCWarning(logCategoryHcsSignals) << "SIGINT received; quitting..";
+    qCWarning(lcHcsSignals) << "SIGINT received; quitting..";
     QCoreApplication::quit();
 
     snInt_->setEnabled(true);

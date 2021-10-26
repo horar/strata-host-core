@@ -87,7 +87,7 @@ Item {
                     } else {
                         let txt = model.verbose_name
                         let idx = model.name_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
 
@@ -111,7 +111,7 @@ Item {
                     } else {
                         let txt = model.opn
                         let idx = model.opn_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
 
@@ -136,7 +136,7 @@ Item {
                     } else {
                         let txt = model.description
                         let idx = model.desc_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
                 Layout.fillWidth: true
@@ -190,7 +190,7 @@ Item {
                                     if (str !== "Matching Part OPNs: ") {
                                         str += ", "
                                     }
-                                    str += part.substring(0, idx) + "<font color=\"orange\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                    str += part.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
                                 } else {
                                     continue
                                 }

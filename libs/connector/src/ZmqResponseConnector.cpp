@@ -13,7 +13,7 @@ namespace strata::connector
 
 ZmqResponseConnector::ZmqResponseConnector() : ZmqConnector(ZMQ_REP)
 {
-    qCInfo(logCategoryZmqResponseConnector) << "ZMQ_REP Creating connector object";
+    qCInfo(lcZmqResponseConnector) << "ZMQ_REP Creating connector object";
 }
 
 ZmqResponseConnector::~ZmqResponseConnector()
@@ -23,7 +23,7 @@ ZmqResponseConnector::~ZmqResponseConnector()
 bool ZmqResponseConnector::open(const std::string& ip_address)
 {
     if (false == socketAndContextOpen()) {
-        qCCritical(logCategoryZmqResponseConnector) << "Unable to open socket";
+        qCCritical(lcZmqResponseConnector) << "Unable to open socket";
         return false;
     }
 
@@ -31,13 +31,13 @@ bool ZmqResponseConnector::open(const std::string& ip_address)
     if (socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketBind(ip_address)) {
         setConnectionState(true);
-        qCInfo(logCategoryZmqResponseConnector).nospace().noquote()
+        qCInfo(lcZmqResponseConnector).nospace().noquote()
                 << "Connected to the server socket '" << QString::fromStdString(ip_address)
                 << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     }
 
-    qCCritical(logCategoryZmqResponseConnector).nospace().noquote()
+    qCCritical(lcZmqResponseConnector).nospace().noquote()
             << "Unable to configure and/or connect to server socket '"
             << QString::fromStdString(ip_address) << "'";
     close();

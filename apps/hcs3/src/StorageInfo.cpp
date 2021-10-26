@@ -35,14 +35,14 @@ StorageInfo::FolderSize scanFolder(const QFileInfo& folderInfo)
 
 StorageInfo::StorageInfo(QObject * /*parent*/, QString cacheDir) : cacheDir_(std::move(cacheDir))
 {
-    qCDebug(logCategoryHcsStorageCache) << "Cache location:" << cacheDir_.absolutePath();
+    qCDebug(lcHcsStorageCache) << "Cache location:" << cacheDir_.absolutePath();
 }
 
 void StorageInfo::calculateSize() const
 {
     const auto dirs{cacheDir_.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)};
     if (dirs.isEmpty()) {
-        qCDebug(logCategoryHcsStorageCache) << "Cache folders not created yet";
+        qCDebug(lcHcsStorageCache) << "Cache folders not created yet";
         return;
     }
 
@@ -51,6 +51,6 @@ void StorageInfo::calculateSize() const
 
     QLocale locale;
     for (const auto& [folderName, folderSize] : future.results()) {
-        qCDebug(logCategoryHcsStorageCache) << locale.formattedDataSize(folderSize) << "in" << folderName;
+        qCDebug(lcHcsStorageCache) << locale.formattedDataSize(folderSize) << "in" << folderName;
     }
 }

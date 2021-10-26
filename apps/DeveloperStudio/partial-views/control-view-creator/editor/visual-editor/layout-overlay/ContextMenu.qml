@@ -148,8 +148,13 @@ Popup {
             text: "Object Alignment"
             chevron: true
 
-            property bool isExactHorizontal: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
-            property bool isExactVertical: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+            property bool isExactHorizontal: false
+            property bool isExactVertical: false
+
+            Component.onCompleted: {
+                isExactHorizontal = visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
+                isExactVertical = visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+            }
 
             subMenu: ColumnLayout {
                 spacing: 0
