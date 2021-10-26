@@ -27,8 +27,8 @@ BleDeviceModel::BleDeviceModel(
     setModelRoles();
 
     connect(coreInterface_, &CoreInterface::bluetoothScan, this, &BleDeviceModel::bluetoothScanFinishedHandler);
-    connect(coreInterface_, &CoreInterface::connectDevice, this, &BleDeviceModel::connectReplyHandler);
-    connect(coreInterface_, &CoreInterface::disconnectDevice, this, &BleDeviceModel::disconnectReplyHandler);
+    connect(coreInterface_, &CoreInterface::connectDevice, this, &BleDeviceModel::connectFinishedHandler);
+    connect(coreInterface_, &CoreInterface::disconnectDevice, this, &BleDeviceModel::disconnectFinishedHandler);
     connect(coreInterface_, &CoreInterface::connectedPlatformListMessage, this, &BleDeviceModel::updateDeviceConnection);
 }
 
@@ -91,20 +91,26 @@ QString BleDeviceModel::bleSupportError() const
 
 void BleDeviceModel::startScan()
 {
+    setInScanMode(true);
+    setLastScanError(QString());
+
     strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("bluetooth_scan", QJsonObject());
 
     if (deferredRequest == nullptr) {
-        QString errorString = "Failed to send 'bluetooth_scan' request";
-        qCCritical(lcDevStudio) << errorString;
-        setLastScanError(errorString);
+        finishScan("Failed to send 'bluetooth_scan' request");
         return;
     }
 
-    setLastScanError(QString());
-    setInScanMode(true);
-
     connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &BleDeviceModel::bluetoothScanReplyHandler);
     connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &BleDeviceModel::bluetoothScanErrorReplyHandler);
+}
+
+void BleDeviceModel::finishScan(const QString& errorString)
+{
+    qCCritical(lcDevStudio) << errorString;
+    clear();    // clear the model if it had any previous data
+    setLastScanError(errorString);
+    setInScanMode(false);
 }
 
 void BleDeviceModel::tryConnect(int row)
@@ -129,7 +135,20 @@ void BleDeviceModel::tryConnect(int row)
         {"device_id",  deviceId}
     };
 
-    strataClient_->sendRequest("connect_device", payload);
+    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("connect_device", payload);
+
+    if (deferredRequest == nullptr) {
+        finishConnection(row, "Failed to send 'connect_device' request");
+        return;
+    }
+
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, [this, deviceId] (const QJsonObject &payload) {
+        connectReplyHandler(deviceId, payload);
+    });
+
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, [this, deviceId] (const QJsonObject &payload) {
+        connectErrorReplyHandler(deviceId, payload);
+    });
 }
 
 void BleDeviceModel::tryDisconnect(int row)
@@ -154,7 +173,27 @@ void BleDeviceModel::tryDisconnect(int row)
         {"device_id",  deviceId}
     };
 
-    strataClient_->sendRequest("disconnect_device", payload);
+    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("disconnect_device", payload);
+
+    if (deferredRequest == nullptr) {
+        finishConnection(row, "Failed to send 'disconnect_device' request");
+        return;
+    }
+
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, [this, deviceId] (const QJsonObject &payload) {
+        disconnectReplyHandler(deviceId, payload);
+    });
+
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, [this, deviceId] (const QJsonObject &payload) {
+        disconnectErrorReplyHandler(deviceId, payload);
+    });
+}
+
+void BleDeviceModel::finishConnection(int row, const QString& errorString)
+{
+    qCCritical(lcDevStudio) << errorString;
+    setPropertyAt(row, errorString, ErrorStringRole);
+    setPropertyAt(row, false, ConnectionInProgressRole);
 }
 
 QVariantMap BleDeviceModel::get(int row)
@@ -210,17 +249,11 @@ void BleDeviceModel::bluetoothScanErrorReplyHandler(const QJsonObject &payload)
         qCWarning(lcDevStudio) << "received malformated reply:" << payload;
     }
 
-    qCWarning(lcDevStudio) << errorString;
-
-    clear();
-    setInScanMode(false);
-    setLastScanError(errorString);
+    finishScan(errorString);
 }
 
 void BleDeviceModel::bluetoothScanFinishedHandler(const QJsonObject &payload)
 {
-    setInScanMode(false);
-
     QString errorString;
     const QJsonValue errorStringValue = payload.value("error_string");
     if (errorStringValue.isString()) {
@@ -230,16 +263,41 @@ void BleDeviceModel::bluetoothScanFinishedHandler(const QJsonObject &payload)
     }
 
     if (errorString.isEmpty() == false) {
-        clear();
-        qCCritical(lcDevStudio) << errorString;
-        setLastScanError(errorString);
+        finishScan(errorString);
         return;
     }
 
     populateModel(payload);
+    setInScanMode(false);
 }
 
-void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
+void BleDeviceModel::connectReplyHandler(const QString& deviceId, const QJsonObject &payload)
+{
+    const QJsonValue message = payload.value("message");
+    if (message.isString()) {
+        qCDebug(lcDevStudio).noquote().nospace() << message.toString() << ", for device ID: " << deviceId;
+    } else {
+        qCWarning(lcDevStudio).noquote().nospace() << "Succesfully initiated connection to device ID: " << deviceId << ", but received malformated reply";
+    }
+}
+
+void BleDeviceModel::connectErrorReplyHandler(const QString& deviceId, const QJsonObject &payload)
+{
+    QJsonObject payloadData;
+    payloadData.insert("device_id", deviceId);
+
+    const QJsonValue message = payload.value("message");
+    if (message.isString()) {
+        payloadData.insert("error_string", message);
+    } else {
+        qCWarning(lcDevStudio) << "received malformated reply:" << payload;
+        payloadData.insert("error_string", "unable to initiate connection");
+    }
+
+    connectFinishedHandler(payloadData);
+}
+
+void BleDeviceModel::connectFinishedHandler(const QJsonObject &payload)
 {
     QString deviceId = payload.value("device_id").toString();
 
@@ -269,7 +327,33 @@ void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
     emit tryConnectFinished(errorString);
 }
 
-void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
+void BleDeviceModel::disconnectReplyHandler(const QString& deviceId, const QJsonObject &payload)
+{
+    const QJsonValue message = payload.value("message");
+    if (message.isString()) {
+        qCDebug(lcDevStudio).noquote().nospace() << message.toString() << ", for device ID: " << deviceId;
+    } else {
+        qCWarning(lcDevStudio).noquote().nospace() << "Succesfully initiated disconnection to device ID: " << deviceId << ", but received malformated reply";
+    }
+}
+
+void BleDeviceModel::disconnectErrorReplyHandler(const QString& deviceId, const QJsonObject &payload)
+{
+    QJsonObject payloadData;
+    payloadData.insert("device_id", deviceId);
+
+    const QJsonValue message = payload.value("message");
+    if (message.isString()) {
+        payloadData.insert("error_string", message);
+    } else {
+        qCWarning(lcDevStudio) << "received malformated reply:" << payload;
+        payloadData.insert("error_string", "unable to initiate disconnection");
+    }
+
+    disconnectFinishedHandler(payloadData);
+}
+
+void BleDeviceModel::disconnectFinishedHandler(const QJsonObject &payload)
 {
     QString deviceId = payload.value("device_id").toString();
 

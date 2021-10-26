@@ -770,9 +770,15 @@ void HostControllerService::processCmdConnectDevice(const strata::strataRPC::Mes
 {
     QByteArray deviceId = message.payload.value("device_id").toVariant().toByteArray();
     if (deviceId.isEmpty()) {
-        sendDeviceError(hcsNotificationType::connectDevice, QByteArray(), message.clientID, "device_id attribute is empty or has bad format");
+        QString errorMessage(QStringLiteral("device_id attribute is empty or has bad format"));
+        qCWarning(lcHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "device connection initiated"}},
+                                strataRPC::ResponseType::Response);
 
     platformController_.connectDevice(deviceId, message.clientID);
 }
@@ -781,9 +787,15 @@ void HostControllerService::processCmdDisconnectDevice(const strata::strataRPC::
 {
     QByteArray deviceId = message.payload.value("device_id").toVariant().toByteArray();
     if (deviceId.isEmpty()) {
-        sendDeviceError(hcsNotificationType::disconnectDevice, QByteArray(), message.clientID, "device_id attribute is empty or has bad format");
+        QString errorMessage(QStringLiteral("device_id attribute is empty or has bad format"));
+        qCWarning(lcHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
         return;
     }
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "device disconnection initiated"}},
+                                strataRPC::ResponseType::Response);
 
     platformController_.disconnectDevice(deviceId, message.clientID);
 }
