@@ -74,23 +74,19 @@ int BleDeviceModel::rowCount(const QModelIndex &parent) const
 
 QString BleDeviceModel::bleSupportError() const
 {
-    if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS)
-    {
-        return "";
-    }
-    if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows)
-    {
-        if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
-        {
+    if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::MacOS) {
+        return QString();
+    } else if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows) {
+        if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8) {
             return "Bluetooth Low Energy is not supported on this Windows version";
-        }
-        if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
-        {
+        } else if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0)) {
             return "On Windows operating system, Bluetooth Low Energy requires Qt 5.14+";
+        } else {
+            return QString();
         }
-        return "";
+    } else {
+        return "Bluetooth Low Energy is not supported on this operating system";
     }
-    return "Bluetooth Low Energy is not supported on this operating system";
 }
 
 void BleDeviceModel::startScan()
@@ -104,7 +100,7 @@ void BleDeviceModel::startScan()
         return;
     }
 
-    setLastScanError("");
+    setLastScanError(QString());
     setInScanMode(true);
 
     connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &BleDeviceModel::bluetoothScanReplyHandler);
@@ -121,12 +117,12 @@ void BleDeviceModel::tryConnect(int row)
     QString deviceId = data_.at(row).deviceId;
 
     if (addConnectingDevice(deviceId) == false) {
-        qCWarning(lcDevStudio) << "request already in progress" << deviceId;
+        qCWarning(lcDevStudio).noquote() << "request already in progress, device ID:" << deviceId;
         return;
     }
 
     setPropertyAt(row, true, ConnectionInProgressRole);
-    setPropertyAt(row, "", ErrorStringRole);
+    setPropertyAt(row, QString(), ErrorStringRole);
 
     QJsonObject payload
     {
@@ -146,12 +142,12 @@ void BleDeviceModel::tryDisconnect(int row)
     QString deviceId = data_.at(row).deviceId;
 
     if (addConnectingDevice(deviceId) == false) {
-        qCWarning(lcDevStudio) << "request already in progress" << deviceId;
+        qCWarning(lcDevStudio).noquote() << "request already in progress, device ID:" << deviceId;
         return;
     }
 
     setPropertyAt(row, true, ConnectionInProgressRole);
-    setPropertyAt(row, "", ErrorStringRole);
+    setPropertyAt(row, QString(), ErrorStringRole);
 
     QJsonObject payload
     {
@@ -256,7 +252,7 @@ void BleDeviceModel::connectReplyHandler(const QJsonObject &payload)
 
     QString errorString = payload.value("error_string").toString();
     if (errorString.isEmpty() == false) {
-        qCCritical(lcDevStudio) << "connection attempt failed" << deviceId << errorString;
+        qCCritical(lcDevStudio).noquote().nospace() << "connection attempt failed, device ID: " << deviceId << ", error: " << errorString;
         setPropertyAt(row, errorString, ErrorStringRole);
     }
 
@@ -281,7 +277,7 @@ void BleDeviceModel::disconnectReplyHandler(const QJsonObject &payload)
 
     QString errorString = payload.value("error_string").toString();
     if (errorString.isEmpty() == false) {
-        qCCritical(lcDevStudio) << "disconnection attempt failed" << deviceId << errorString;
+        qCCritical(lcDevStudio).noquote().nospace() << "disconnection attempt failed, device ID: " << deviceId << ", error: " << errorString;
         setPropertyAt(row, errorString, ErrorStringRole);
     }
 
