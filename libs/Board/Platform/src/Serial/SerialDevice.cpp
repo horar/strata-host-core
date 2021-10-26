@@ -146,7 +146,7 @@ void SerialDevice::readMessage()
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
         from = end;
 
-        // qCDebug(logCategoryDeviceSerial) << this << ": received message: " << QString::fromStdString(readBuffer_);
+        // qCDebug(lcDeviceSerial) << this << ": received message: " << QString::fromStdString(readBuffer_);
         emit messageReceived(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
