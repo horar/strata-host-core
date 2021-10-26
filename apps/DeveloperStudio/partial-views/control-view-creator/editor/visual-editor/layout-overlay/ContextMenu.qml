@@ -10,18 +10,13 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
+import QtQml 2.12
 
-Popup {
+Menu {
     id: contextMenu
-    padding: 0
-    background: Rectangle {
-        layer.enabled: true
-        layer.effect: DropShadow {
-            horizontalOffset: 1
-            verticalOffset: 3
-            samples: 12
-            color: "#99000000"
-        }
+    implicitWidth: 150
+    delegate: MenuItem {
+        implicitHeight: 25
     }
 
     property bool multipleItemsSelected
@@ -34,220 +29,164 @@ Popup {
         contextLoader.active = false
     }
 
-    ColumnLayout {
-        spacing: 1
+    Action {
+        text: "Set ID"
 
-        ContextMenuButton {
-            text: "Set ID"
-            onClicked: {
-                menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
-                menuLoader.active = true
-                menuLoader.item.text = layoutOverlayRoot.objectName
-                menuLoader.item.validator = menuLoader.item.regExpValidator
-                menuLoader.item.label = "Ensure all ID's are unique. ID's must start with lower case letter or underscore, and contain only letters, numbers and underscores."
-                menuLoader.item.sourceProperty = "id"
-                menuLoader.item.isString = false
-                menuLoader.item.mustNotBeEmpty = true
+        onTriggered: {
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
+            menuLoader.active = true
+            menuLoader.item.text = layoutOverlayRoot.objectName
+            menuLoader.item.validator = menuLoader.item.regExpValidator
+            menuLoader.item.label = "Ensure all ID's are unique. ID's must start with lower case letter or underscore, and contain only letters, numbers and underscores."
+            menuLoader.item.sourceProperty = "id"
+            menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
 
-                // Find all existing ID's (except current object's ID) and set as invalidInputs
-                let invalidInputs = []
-                // Returns all strings containing object ID's
-                const existingIDs = visualEditor.functions.getAllObjectIds()
-                for (let indexID = 0; indexID < existingIDs.length; ++indexID) {
-                    // Isolate each <id> from string containing the ID
-                    const id = existingIDs[indexID].split(":").slice(-1).toString().trim()
-                    if (id != layoutOverlayRoot.objectName) {
-                        invalidInputs.push(id)
-                    }
+            // Find all existing ID's (except current object's ID) and set as invalidInputs
+            let invalidInputs = []
+            // Returns all strings containing object ID's
+            const existingIDs = visualEditor.functions.getAllObjectIds()
+            for (let indexID = 0; indexID < existingIDs.length; ++indexID) {
+                // Isolate each <id> from string containing the ID
+                const id = existingIDs[indexID].split(":").slice(-1).toString().trim()
+                if (id != layoutOverlayRoot.objectName) {
+                    invalidInputs.push(id)
                 }
-                menuLoader.item.invalidInputs = invalidInputs
+            }
+            menuLoader.item.invalidInputs = invalidInputs
 
-                menuLoader.item.open()
+            menuLoader.item.open()
+            contextMenu.close()
+        }
+    }
+
+    Action {
+        text: multipleItemsSelected ? "Duplicate Selected" : "Duplicate"
+
+        onTriggered: {
+            visualEditor.functions.duplicateControlSelected()
+            contextMenu.close()
+        }
+    }
+
+    Action {
+        text: multipleItemsSelected ? "Bring Selected To Front" : "Bring To Front"
+
+        onTriggered: {
+            visualEditor.functions.bringToFrontSelected()
+            contextMenu.close()
+        }
+    }
+
+    Action {
+        text: multipleItemsSelected ? "Delete Selected" : "Delete"
+
+        onTriggered: {
+            visualEditor.functions.removeControlSelected()
+            contextMenu.close()
+        }
+    }
+
+    Action {
+        text: "Go to Code"
+
+        onTriggered: {
+            visualEditor.functions.passUUID(layoutOverlayRoot.layoutInfo.uuid)
+            contextMenu.close()
+        }
+    }
+
+    Action {
+        text: "Go to Documentation"
+
+        onTriggered: {
+            Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
+            contextMenu.close()
+        }
+    }
+
+    Menu {
+        id: objectAlignButton
+        title: "Object Alignment"
+        implicitWidth: 170
+        delegate: MenuItem {
+            implicitHeight: 25
+        }
+
+        property bool isExactHorizontal: false
+        property bool isExactVertical: false
+
+        Component.onCompleted: {
+            isExactHorizontal = visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
+            isExactVertical = visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
+        }
+
+        Action {
+            text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (appx.)"
+
+            onTriggered: {
+                visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
                 contextMenu.close()
             }
-
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
-            }
         }
 
-        ContextMenuButton {
-            text: multipleItemsSelected ? "Duplicate Selected" : "Duplicate"
-            onClicked: {
-                visualEditor.functions.duplicateControlSelected()
+        Action {
+            text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (appx.)"
+
+            onTriggered: {
+                visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
                 contextMenu.close()
             }
+        }
+    }
 
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
+    Loader {
+        sourceComponent: MenuSeparator { }
+        active: extraContextLoader.source.toString() !== "" // don't show divider when no extraContent loaded
+    }
+
+    Loader {
+        id: extraContextLoader
+        source: {
+            switch (layoutOverlayRoot.type) {
+            case "LayoutRectangle":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRectangleContextMenu.qml"
+            case "LayoutSGIcon":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGIconContextMenu.qml"
+            case "LayoutSGGraph":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGraphContextMenu.qml"
+            case "LayoutButton":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonContextMenu.qml"
+            case "LayoutText":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGTextContextMenu.qml"
+            case "LayoutSGSwitch":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSwitchContextMenu.qml"
+            case "LayoutDivider":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGDividerContextMenu.qml"
+            case "LayoutSGInfoBox":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGInfoBoxContextMenu.qml"
+            case "LayoutSGSlider":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSliderContextMenu.qml"
+            case "LayoutSGCircularGauge":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGaugeContextMenu.qml"
+            case "LayoutSGStatusLight":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLightContextMenu.qml"
+            case "LayoutRadioButtons":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRadioButtonsContextMenu.qml"
+            case "LayoutSGButtonStrip":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonStripContextMenu.qml"
+            case "LayoutSGStatusLogBox":
+                return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLogBoxContextMenu.qml"
+            default:
+                return ""
             }
         }
 
-        ContextMenuButton {
-            text: multipleItemsSelected ? "Bring Selected To Front" : "Bring To Front"
-            onClicked: {
-                visualEditor.functions.bringToFrontSelected()
-                contextMenu.close()
-            }
-
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
-            }
-        }
-
-        ContextMenuButton {
-            text: multipleItemsSelected ? "Delete Selected" : "Delete"
-            onClicked: {
-                visualEditor.functions.removeControlSelected()
-                contextMenu.close()
-            }
-
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
-            }
-        }
-
-        ContextMenuButton {
-            text: "Go to Code"
-            onClicked : {
-                visualEditor.functions.passUUID(layoutOverlayRoot.layoutInfo.uuid)
-                contextMenu.close()
-            }
-
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
-            }
-        }
-
-        ContextMenuButton {
-            text: "Go to Documentation"
-            onClicked: {
-                Qt.openUrlExternally(`https://confluence.onsemi.com/display/BSK/${layoutOverlayRoot.type}`)
-                contextMenu.close()
-            }
-
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
-            }
-        }
-
-        ContextMenuButton {
-            id: objectAlignButton
-            text: "Object Alignment"
-            chevron: true
-
-            property bool isExactHorizontal: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "horizontal")
-            property bool isExactVertical: visualEditor.functions.exactCenterCheck(layoutOverlayRoot.layoutInfo.uuid, "vertical")
-
-            subMenu: ColumnLayout {
-                spacing: 0
-
-                ContextMenuButton {
-                    text: objectAlignButton.isExactHorizontal ? "Horizontal Center" : "Horizontal Center (appx.)"
-
-                    onClicked: {
-                        visualEditor.functions.alignItem("horCenter", layoutOverlayRoot.layoutInfo.uuid)
-                        contextMenu.close()
-                    }
-                }
-
-                ContextMenuButton {
-                    text: objectAlignButton.isExactVertical ? "Vertical Center" : "Vertical Center (appx.)"
-
-                    onClicked: {
-                        visualEditor.functions.alignItem("verCenter", layoutOverlayRoot.layoutInfo.uuid)
-                        contextMenu.close()
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            // divider
-            color: "grey"
-            Layout.fillWidth: true
-            implicitHeight: 1
-            visible: extraContextLoader.source !== ""
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-
-                onEntered: {
-                    objectAlignButton.content.close()
-                }
-
-                onContainsMouseChanged: {
-                    if (containsMouse) {
-                        objectAlignButton.content.close()
-                    }
-                }
-            }
-        }
-
-        MouseArea {
-            Layout.fillWidth: true
-            Layout.preferredHeight: extraContextLoader.height
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-
-            onContainsMouseChanged: {
-                if (containsMouse) {
-                    objectAlignButton.content.close()
-                }
-            }
-
-            Loader {
-                id: extraContextLoader
-                width: parent.width
-
-                source: {
-                    switch (layoutOverlayRoot.type) {
-                        case "LayoutRectangle":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRectangleContextMenu.qml"
-                        case "LayoutSGIcon":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGIconContextMenu.qml"
-                        case "LayoutSGGraph":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGraphContextMenu.qml"
-                        case "LayoutButton":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonContextMenu.qml"
-                        case "LayoutText":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGTextContextMenu.qml"
-                        case "LayoutSGSwitch":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSwitchContextMenu.qml"
-                        case "LayoutDivider":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGDividerContextMenu.qml"
-                        case "LayoutSGInfoBox":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGInfoBoxContextMenu.qml"
-                        case "LayoutSGSlider":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSliderContextMenu.qml"
-                        case "LayoutSGCircularGauge":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGGaugeContextMenu.qml"
-                        case "LayoutSGStatusLight":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLightContextMenu.qml"
-                        case "LayoutRadioButtons":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGRadioButtonsContextMenu.qml"
-                        case "LayoutSGButtonStrip":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonStripContextMenu.qml"
-                        case "LayoutSGStatusLogBox":
-                            return "qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGStatusLogBoxContextMenu.qml"
-                        default:
-                            return ""
-                    }
-                }
+        onItemChanged: {
+            for (let i = 0; i < item.actions.length; i++) {
+                contextMenu.addAction(item.actions[i])
             }
         }
     }
 }
+

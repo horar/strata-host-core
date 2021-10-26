@@ -29,14 +29,14 @@ BasePlatformOperation::BasePlatformOperation(const PlatformPtr& platform, Type t
 {
     connect(this, &BasePlatformOperation::sendCommand, this, &BasePlatformOperation::handleSendCommand, Qt::QueuedConnection);
 
-    //qCDebug(logCategoryPlatformOperation) << platform_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(lcPlatformOperation) << platform_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
 }
 
 BasePlatformOperation::~BasePlatformOperation()
 {
     platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
-    //qCDebug(logCategoryPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(lcPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
 }
 
 void BasePlatformOperation::run()

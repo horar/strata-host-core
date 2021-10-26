@@ -369,7 +369,7 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     } break;
     case Device::ErrorCode::DeviceFailedToOpenGoingToRetry: {
         // no need to handle this error code
-        // qCDebug(logCategoryPlatformManager).nospace() << "Platform failed to open, going to retry: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        // qCDebug(lcPlatformManager).nospace() << "Platform failed to open, going to retry: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
     } break;
     case Device::ErrorCode::DeviceFailedToOpen: {
         qCWarning(lcPlatformManager).nospace() << "Platform failed to open: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
