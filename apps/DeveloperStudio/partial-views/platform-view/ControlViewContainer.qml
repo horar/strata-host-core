@@ -80,12 +80,12 @@ Item {
                     color: "#666"
                     text: {
                         switch (loadingStatusContainer.state) {
-                        case "downloading":
-                            return "Downloading Control View..."
-                        case "loading":
-                            return "Loading Control View..."
-                        default:
-                            return ""
+                            case "downloading":
+                                return "Downloading Control View..."
+                            case "loading":
+                                return "Loading Control View..."
+                            default:
+                                return ""
                         }
                     }
                 }
