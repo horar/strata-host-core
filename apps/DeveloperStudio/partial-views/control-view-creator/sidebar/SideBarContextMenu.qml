@@ -21,6 +21,13 @@ Menu {
     }
 
     MenuItem {
+        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
+        onTriggered: {
+            SGUtilsCpp.showFileInFolder(treeModel.projectDirectory)
+        }
+    }
+
+    MenuItem {
         text: "Import Files/Folder to Project"
         onTriggered: {
             importFileOrFolderPopup.callerIndex = -1
@@ -34,13 +41,6 @@ Menu {
         onTriggered: {
             createFolderPopup.open()
             sideBarContextMenu.dismiss()
-        }
-    }
-
-    MenuItem {
-        text: Qt.platform.os === "windows" ? "Show in Explorer" : "Show in Finder"
-        onTriggered: {
-            SGUtilsCpp.showFileInFolder(treeModel.projectDirectory)
         }
     }
 }

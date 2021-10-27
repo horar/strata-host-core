@@ -128,8 +128,6 @@ private slots:
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
-    void logAndEmitError(const QByteArray& deviceId, const QString& errorString);
-
     void runUpdate(const ChangeFirmwareData& data);
 
     QPointer<PlatformController> platformController_;

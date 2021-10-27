@@ -45,13 +45,13 @@ bool PlatformDocument::parseDocument(const QString &document)
 
     //documents
     if (rootObject.contains("documents") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "documents key is missing";
+        qCCritical(lcHcsPlatformDocument) << "documents key is missing";
         return false;
     }
 
     QJsonValue documentsValue = rootObject.value("documents");
     if (documentsValue.isObject() == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "value of documents key is not an object";
+        qCCritical(lcHcsPlatformDocument) << "value of documents key is not an object";
         return false;
     }
 
@@ -59,21 +59,21 @@ bool PlatformDocument::parseDocument(const QString &document)
 
     //datasheets
     if (jsonDocument.contains("datasheets") == false) {
-        qCWarning(logCategoryHcsPlatformDocument) << "datasheets key is missing";
+        qCWarning(lcHcsPlatformDocument) << "datasheets key is missing";
         // skip - some older platforms rely on datasheets.csv file instead
     } else {
         QJsonValue datasheetsValue = jsonDocument.value("datasheets");
         if (datasheetsValue.isArray()) {
             populateDatasheetList(datasheetsValue.toArray(), datasheetsList_);
         } else {
-            qCCritical(logCategoryHcsPlatformDocument) << "value of datasheets key is not an array";
+            qCCritical(lcHcsPlatformDocument) << "value of datasheets key is not an array";
             return false;
         }
     }
 
     //downloads
     if (jsonDocument.contains("downloads") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "downloads key is missing";
+        qCCritical(lcHcsPlatformDocument) << "downloads key is missing";
         return false;
     }
 
@@ -81,13 +81,13 @@ bool PlatformDocument::parseDocument(const QString &document)
     if (downloadsValue.isArray()) {
         populateFileList(downloadsValue.toArray(), downloadList_);
     } else {
-        qCCritical(logCategoryHcsPlatformDocument) << "value of downloads key is not an array";
+        qCCritical(lcHcsPlatformDocument) << "value of downloads key is not an array";
         return false;
     }
 
     //views
     if (jsonDocument.contains("views") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "views key is missing";
+        qCCritical(lcHcsPlatformDocument) << "views key is missing";
         return false;
     }
 
@@ -95,20 +95,20 @@ bool PlatformDocument::parseDocument(const QString &document)
     if (viewsValue.isArray()) {
         populateFileList(viewsValue.toArray(), viewList_);
     } else {
-        qCCritical(logCategoryHcsPlatformDocument) << "value of views key is not an array";
+        qCCritical(lcHcsPlatformDocument) << "value of views key is not an array";
         return false;
     }
 
     //platform selector
     QJsonObject jsonPlatformSelector = rootObject.value("platform_selector").toObject();
     if (jsonPlatformSelector.isEmpty()) {
-        qCCritical(logCategoryHcsPlatformDocument) << "platform_selector key is missing";
+        qCCritical(lcHcsPlatformDocument) << "platform_selector key is missing";
         return false;
     }
 
     bool isValid = populateFileObject(jsonPlatformSelector, platformSelector_);
     if (isValid == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "value of platform_selector key is not valid";
+        qCCritical(lcHcsPlatformDocument) << "value of platform_selector key is not valid";
         return false;
     }
 
@@ -117,7 +117,7 @@ bool PlatformDocument::parseDocument(const QString &document)
 
     //firmware
     if (rootObject.contains("firmware") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "firmware key is missing";
+        qCCritical(lcHcsPlatformDocument) << "firmware key is missing";
         // TODO: Nowadays, server does not support firmware object. Return false when it will be supported.
         //return false;
     }
@@ -126,14 +126,14 @@ bool PlatformDocument::parseDocument(const QString &document)
         if (firmwareValue.isArray()) {
             populateFirmwareList(firmwareValue.toArray(), firmwareList_);
         } else {
-            qCCritical(logCategoryHcsPlatformDocument) << "value of firmware key is not an array";
+            qCCritical(lcHcsPlatformDocument) << "value of firmware key is not an array";
             return false;
         }
     }  // TODO: remove this else line
 
     //control view
     if (rootObject.contains("control_view") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "control_view key is missing";
+        qCCritical(lcHcsPlatformDocument) << "control_view key is missing";
         // TODO: Nowadays, server does not support control_view object. Return false when it will be supported.
         //return false;
     }
@@ -142,7 +142,7 @@ bool PlatformDocument::parseDocument(const QString &document)
         if (controlViewValue.isArray()) {
             populateControlViewList(controlViewValue.toArray(), controlViewList_);
         } else {
-            qCCritical(logCategoryHcsPlatformDocument) << "value of control_view key is not an array";
+            qCCritical(lcHcsPlatformDocument) << "value of control_view key is not an array";
             return false;
         }
     }  // TODO: remove this else line
@@ -264,7 +264,7 @@ void PlatformDocument::populateFileList(const QJsonArray &jsonList, QList<Platfo
     foreach (const QJsonValue &value, jsonList) {
         PlatformFileItem fileItem;
         if (populateFileObject(value.toObject() , fileItem) == false) {
-            qCCritical(logCategoryHcsPlatformDocument) << "file object not valid";
+            qCCritical(lcHcsPlatformDocument) << "file object not valid";
             continue;
         }
 
@@ -277,7 +277,7 @@ void PlatformDocument::populateFirmwareList(const QJsonArray &jsonList, QList<Fi
     foreach (const QJsonValue &value, jsonList) {
         FirmwareFileItem firmwareItem;
         if (populateFirmwareObject(value.toObject() , firmwareItem) == false) {
-            qCCritical(logCategoryHcsPlatformDocument) << "firmware object not valid";
+            qCCritical(lcHcsPlatformDocument) << "firmware object not valid";
             continue;
         }
 
@@ -290,7 +290,7 @@ void PlatformDocument::populateControlViewList(const QJsonArray &jsonList, QList
     foreach (const QJsonValue &value, jsonList) {
         ControlViewFileItem controlViewItem;
         if (populateControlViewObject(value.toObject() , controlViewItem) == false) {
-            qCCritical(logCategoryHcsPlatformDocument) << "control view object not valid";
+            qCCritical(lcHcsPlatformDocument) << "control view object not valid";
             continue;
         }
 
@@ -321,7 +321,7 @@ void PlatformDocument::populateDatasheetList(const QJsonArray &jsonList, QList<P
     foreach (const QJsonValue &value, jsonList) {
         PlatformDatasheetItem datasheet;
         if (populateDatasheetObject(value.toObject(), datasheet) == false) {
-            qCCritical(logCategoryHcsPlatformDocument) << "datasheet object not valid";
+            qCCritical(lcHcsPlatformDocument) << "datasheet object not valid";
             continue;
         }
 

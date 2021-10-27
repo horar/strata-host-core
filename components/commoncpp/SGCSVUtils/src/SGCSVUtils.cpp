@@ -34,18 +34,17 @@ void SGCSVUtils::appendRow(const QVariantList data)
 
 QVariantList SGCSVUtils::importFromFile(const QString &filePath)
 {
-    SGUtilsCpp utils;
-    QString path = utils.urlToLocalFile(filePath);
-    if (!utils.exists(path)) {
-        qCCritical(logCategoryCsvUtils) << "This file does not exist" << path;
+    QString path = SGUtilsCpp::urlToLocalFile(filePath);
+    if (!SGUtilsCpp::exists(path)) {
+        qCCritical(lcCsvUtils) << "This file does not exist" << path;
         return QVariantList();
     }
     data_.clear();
-    QStringList data = utils.readTextFileContent(path).split("\n");
-    for (QString d: data.toVector()) {
+    QStringList data = SGUtilsCpp::readTextFileContent(path).split("\n");
+    for (const QString &d: data) {
         QVariant line = d.split(",");
         QVariantList eachItem;
-        for (QVariant member: line.toList()) {
+        for (QVariant &member: line.toList()) {
             eachItem.append(member);
         }
         QVariant convData = eachItem;
@@ -70,7 +69,7 @@ void SGCSVUtils::setData(const QVariantList data)
 void SGCSVUtils::writeToFile(const QString &filePath)
 {
     if (filePath.length() == 0) {
-        qCCritical(logCategoryCsvUtils) << "To write to file, the file path cannot be empty!";
+        qCCritical(lcCsvUtils) << "To write to file, the file path cannot be empty!";
         return;
     }
     SGUtilsCpp utils;
@@ -79,8 +78,8 @@ void SGCSVUtils::writeToFile(const QString &filePath)
         utils.createFile(path);
     }
     QString data = "";
-    for (QVariant lines: data_) {
-        for (QVariant d: lines.toList()) {
+    for (QVariant &lines: data_) {
+        for (QVariant &d: lines.toList()) {
             data += d.toString();
             if (!lines.toList().endsWith(d)) {
                 data += ",";

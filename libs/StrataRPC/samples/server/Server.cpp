@@ -36,7 +36,7 @@ Server::~Server()
 
 void Server::init()
 {
-    qCDebug(logCategoryStrataServerSample) << "Initializing Strata Server.";
+    qCDebug(lcStrataServerSample) << "Initializing Strata Server.";
     strataServer_->initialize();
 }
 
@@ -51,13 +51,13 @@ void Server::start()
 
 void Server::serverErrorHandler(StrataServer::ServerError errorType, const QString &errorMessage)
 {
-    qCDebug(logCategoryStrataServerSample).noquote() << QString(84, '#');
-    qCDebug(logCategoryStrataServerSample) << "Error type:" << errorType;
-    qCDebug(logCategoryStrataServerSample) << "Error message:" << errorMessage;
-    qCDebug(logCategoryStrataServerSample).noquote() << QString(84, '#');
+    qCDebug(lcStrataServerSample).noquote() << QString(84, '#');
+    qCDebug(lcStrataServerSample) << "Error type:" << errorType;
+    qCDebug(lcStrataServerSample) << "Error message:" << errorMessage;
+    qCDebug(lcStrataServerSample).noquote() << QString(84, '#');
 
     if (errorType == StrataServer::ServerError::FailedToInitializeServer) {
-        qCCritical(logCategoryStrataServerSample) << "Failed to initialize the server. Aborting...";
+        qCCritical(lcStrataServerSample) << "Failed to initialize the server. Aborting...";
         emit appDone(-1);
     }
 }
@@ -66,7 +66,7 @@ void Server::closeServerHandler(const Message &message)
 {
     strataServer_->notifyClient(message, QJsonObject{{"message", "server shutdown requested"}},
                                 ResponseType::Response);
-    qCInfo(logCategoryStrataServerSample) << "Closing Strata Server...";
+    qCInfo(lcStrataServerSample) << "Closing Strata Server...";
     emit appDone(0);
 }
 
@@ -78,7 +78,7 @@ void Server::serverStatusHandler(const strata::strataRPC::Message &message)
 void Server::serverTimeBroadcast()
 {
     auto currentTimeString = QDateTime::currentDateTime().toString("hh:mm:ss t");
-    qCInfo(logCategoryStrataServerSample) << "Broadcasting server time." << currentTimeString;
+    qCInfo(lcStrataServerSample) << "Broadcasting server time." << currentTimeString;
 
     strataServer_->notifyAllClients("server_time", QJsonObject{{"time", currentTimeString}});
 }

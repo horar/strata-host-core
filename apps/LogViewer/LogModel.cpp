@@ -36,7 +36,7 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qCWarning(logCategoryLogViewer) << "cannot open file with path " + path + " " + file.errorString();
+        qCWarning(lcLogViewer) << "cannot open file with path " + path + " " + file.errorString();
         return file.errorString();
     }
     if (fileModel_.containsFilePath(path) == false) {
@@ -107,7 +107,7 @@ void LogModel::insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> 
 QString LogModel::followFile(const QString &path)
 {
     if (fileModel_.containsFilePath(path)) {
-        qCWarning(logCategoryLogViewer) << "cannot open file with path " + path + " " + "file is already opened";
+        qCWarning(lcLogViewer) << "cannot open file with path " + path + " " + "file is already opened";
         return "file is already opened";
     } else {
         return populateModel(path, 0);
@@ -121,7 +121,7 @@ void LogModel::removeFile(const QString &path)
         lastPositions_.removeAt(removedAt);
         removeRowsFromModel(qHash(path));
     } else {
-        qCCritical(logCategoryLogViewer) << "path not found";
+        qCCritical(lcLogViewer) << "path not found";
     }
 }
 
@@ -370,7 +370,7 @@ void LogModel::checkFile()
             if (file.size() < lastPositions_[i]) {
                 QFile rotatedFile(getRotatedFilePath(filePath));
                 if (rotatedFile.exists()) {
-                    qCDebug(logCategoryLogViewer) << filePath << "has rotated into" << getRotatedFilePath(filePath) ;
+                    qCDebug(lcLogViewer) << filePath << "has rotated into" << getRotatedFilePath(filePath) ;
                     populateModel(getRotatedFilePath(filePath), lastPositions_[i]);
                 }
                 populateModel(filePath, 0);

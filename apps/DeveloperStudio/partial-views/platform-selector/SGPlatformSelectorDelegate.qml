@@ -56,7 +56,7 @@ Item {
             implicitWidth: imageContainer.implicitWidth
 
             Rectangle {
-                color: model.connected ? Theme.palette.darkGray : Theme.palette.gray
+                color: model.connected ? Theme.palette.onsemiDark : Theme.palette.gray
                 anchors {
                     centerIn: imageContainer
                 }
@@ -87,10 +87,10 @@ Item {
                     } else {
                         let txt = model.verbose_name
                         let idx = model.name_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
-
+                color: Theme.palette.onsemiDark
                 font {
                     pixelSize: 16
                     family: Fonts.franklinGothicBold
@@ -111,7 +111,7 @@ Item {
                     } else {
                         let txt = model.opn
                         let idx = model.opn_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
 
@@ -120,7 +120,7 @@ Item {
                     pixelSize: 13
                     family: Fonts.franklinGothicBook
                 }
-                color: "#333"
+                color: Theme.palette.onsemiDark
                 font.italic: true
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -136,7 +136,7 @@ Item {
                     } else {
                         let txt = model.description
                         let idx = model.desc_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
                 Layout.fillWidth: true
@@ -148,7 +148,7 @@ Item {
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 12
                 lineHeight: 1.2
-                color: "#666"
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
@@ -190,7 +190,7 @@ Item {
                                     if (str !== "Matching Part OPNs: ") {
                                         str += ", "
                                     }
-                                    str += part.substring(0, idx) + "<font color=\"orange\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                    str += part.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
                                 } else {
                                     continue
                                 }
@@ -207,7 +207,7 @@ Item {
                     pixelSize: 12
                     family: Fonts.franklinGothicBook
                 }
-                color: "#666"
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight

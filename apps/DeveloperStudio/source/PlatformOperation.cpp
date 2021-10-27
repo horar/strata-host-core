@@ -33,7 +33,7 @@ bool PlatformOperation::platformStartApplication(QString deviceId)
     strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
 
     if (deferredRequest == nullptr) {
-        qCCritical(logCategoryStrataDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
+        qCCritical(lcDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
         return false;
     }
 
@@ -47,6 +47,6 @@ void PlatformOperation::replyHandler(QJsonObject payload)
 {
     const QString errorString = payload.value(QStringLiteral("error_string")).toString();
     if (errorString.isEmpty() == false) {
-        qCWarning(logCategoryStrataDevStudio).noquote() << "Platform operation has failed:" << errorString;
+        qCWarning(lcDevStudio).noquote() << "Platform operation has failed:" << errorString;
     }
 }

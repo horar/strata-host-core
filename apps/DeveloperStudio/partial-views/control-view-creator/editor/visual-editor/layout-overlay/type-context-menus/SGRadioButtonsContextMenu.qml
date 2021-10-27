@@ -15,12 +15,12 @@ import tech.strata.sgwidgets 1.0
 import ".."
 import "../layout-popup-context"
 
-ColumnLayout {
-    spacing: 1
+ActionGroup {
 
-    ContextMenuButton {
+    Action {
         text: "Set Orientation"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"
@@ -30,9 +30,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set RadioButton Color"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "radioColor"
@@ -42,9 +43,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Text Color"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "textColor"
@@ -54,9 +56,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set radioSize"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "radioSize"
@@ -72,9 +75,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set fontSizeMultiplier"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "fontSizeMultiplier"

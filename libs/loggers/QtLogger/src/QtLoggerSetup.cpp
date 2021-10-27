@@ -7,8 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "QtLoggerSetup.h"
-
-#include "moc_QtLoggerSetup.cpp"
+#include "QtLoggerDefaults.h"
 
 #include "LoggingQtCategories.h"
 #include "QtLogger.h"
@@ -30,7 +29,7 @@ void QtLoggerSetup::reload()
     QSettings settings;
     const auto logLevel{settings.value(QStringLiteral("log/level")).toString()};
     if (logLevel_ != logLevel) {
-        qCDebug(logCategoryQtLogger, "...reconfiguring loggers...");
+        qCDebug(lcQtLogger, "...reconfiguring loggers...");
 
         setupSpdLog(*QCoreApplication::instance());
         setupQtLog();
@@ -46,7 +45,7 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 
     QSettings settings;
     if (watchdog_.addPath(settings.fileName()) == false) {
-        qCCritical(logCategoryQtLogger, "Failed to register '%s' to system watcher",
+        qCCritical(lcQtLogger, "Failed to register '%s' to system watcher",
                    qUtf8Printable(settings.fileName()));
         return;
     }
@@ -57,7 +56,7 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 
 QtLoggerSetup::~QtLoggerSetup()
 {
-    qCDebug(logCategoryQtLogger) << "...Qt logging finished";
+    qCDebug(lcQtLogger) << "...Qt logging finished";
 }
 
 QtMessageHandler QtLoggerSetup::getQtLogCallback() const
@@ -72,10 +71,10 @@ void QtLoggerSetup::generateDefaultSettings() const
 
     // spdlog related settings
     if (settings.contains(QStringLiteral("maxFileSize")) == false) {
-        settings.setValue(QStringLiteral("maxFileSize"), 1024 * 1024 * 5);
+        settings.setValue(QStringLiteral("maxFileSize"), defaults::LOGFILE_MAX_SIZE);
     }
     if (settings.contains(QStringLiteral("maxNoFiles")) == false) {
-        settings.setValue(QStringLiteral("maxNoFiles"), 5);
+        settings.setValue(QStringLiteral("maxNoFiles"), defaults::LOGFILE_MAX_COUNT);
     }
     if (settings.contains(QStringLiteral("level-comment")) == false) {
         settings.setValue(
@@ -83,27 +82,19 @@ void QtLoggerSetup::generateDefaultSettings() const
             QStringLiteral("log level is one of: debug, info, warning, error, critical, off"));
     }
     if (settings.contains(QStringLiteral("level")) == false) {
-        settings.setValue(QStringLiteral("level"), QStringLiteral("info"));
+        settings.setValue(QStringLiteral("level"), defaults::LOGLEVEL);
     }
     if (settings.contains(QStringLiteral("spdlogMessagePattern")) == false) {
         settings.setValue(QStringLiteral("spdlogMessagePattern"),
-                          QStringLiteral("%T.%e %^[%=7l]%$ %v"));
+                          defaults::SPDLOG_MESSAGE_PATTERN_4CONSOLE);
     }
 
     // Qt logging related settings
     if (settings.contains(QStringLiteral("qtFilterRules")) == false) {
-        settings.setValue(QStringLiteral("qtFilterRules"), QStringLiteral("strata.*=true"));
+        settings.setValue(QStringLiteral("qtFilterRules"), defaults::QT_FILTER_RULES);
     }
     if (settings.contains(QStringLiteral("qtMessagePattern")) == false) {
-        settings.setValue(QStringLiteral("qtMessagePattern"),
-                          QStringLiteral("%{if-category}%{category}: %{endif}"
-                                         /*"%{file}:%{line}"*/
-                                         "%{if-debug}%{function}%{endif}"
-                                         "%{if-info}%{function}%{endif}"
-                                         "%{if-warning}%{function}%{endif}"
-                                         "%{if-critical}%{function}%{endif}"
-                                         "%{if-fatal}%{function}%{endif}"
-                                         " - %{message}"));
+        settings.setValue(QStringLiteral("qtMessagePattern"), defaults::QT_MESSAGE_PATTERN);
     }
 
     settings.endGroup();
@@ -117,11 +108,10 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
     const auto maxNoFiles{settings.value(QStringLiteral("maxNoFiles")).toUInt()};
     logLevel_ = {settings.value(QStringLiteral("level")).toString()};
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
-    const auto messagePattern4file{
-        settings
-            .value(QStringLiteral("spdlogFileMessagePattern"),
-                   QStringLiteral("%Y-%m-%dT%T.%e%z\tPID:%P\tTID:%t\t[%L]\t%v"))
-            .toString()};
+    const auto messagePattern4file{settings
+                                       .value(QStringLiteral("spdlogFileMessagePattern"),
+                                              defaults::SPDLOG_MESSAGE_PATTERN_4FILE)
+                                       .toString()};
     settings.endGroup();
 
     const QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
@@ -149,14 +139,14 @@ void QtLoggerSetup::setupQtLog()
 
     qInstallMessageHandler(QtLogger::MsgHandler);
 
-    qCDebug(logCategoryQtLogger) << "Qt logging initiated...";
+    qCDebug(lcQtLogger) << "Qt logging initiated...";
 
-    qCDebug(logCategoryQtLogger) << "Application setup:";
-    qCDebug(logCategoryQtLogger) << "\tini:" << settings.fileName();
-    qCDebug(logCategoryQtLogger) << "\tformat:" << settings.format();
-    qCDebug(logCategoryQtLogger) << "\taccess" << settings.status();
-    qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;
-    qCDebug(logCategoryQtLogger) << "\tlogger message pattern:" << messagePattern;
+    qCDebug(lcQtLogger) << "Application setup:";
+    qCDebug(lcQtLogger) << "\tini:" << settings.fileName();
+    qCDebug(lcQtLogger) << "\tformat:" << settings.format();
+    qCDebug(lcQtLogger) << "\taccess" << settings.status();
+    qCDebug(lcQtLogger) << "\tlogging category filte rules:" << filterRules;
+    qCDebug(lcQtLogger) << "\tlogger message pattern:" << messagePattern;
 }
 
 }  // namespace strata::loggers

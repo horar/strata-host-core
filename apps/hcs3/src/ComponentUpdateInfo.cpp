@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "logging/LoggingQtCategories.h"
 
 #include "ComponentUpdateInfo.h"
@@ -43,7 +51,7 @@ QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJ
     int errorColumn = 0;
     QDomDocument xmlDocument("MaintenanceToolOutput");
     if (xmlDocument.setContent(updateMetadata, false, &errorMsg, &errorColumn) == false) {
-        qCCritical(logCategoryHcs) << "Could not parse updateMetadata: " << errorMsg << ", errorColumn: " << errorColumn;
+        qCCritical(lcHcs) << "Could not parse updateMetadata: " << errorMsg << ", errorColumn: " << errorColumn;
         return "Error parsing update metadata: " + errorMsg;
     }
     return parseUpdateMetadata(xmlDocument, componentMap, updateInfo);
@@ -55,7 +63,7 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
     const QString absPathComponentsXmlFile = applicationDir.filePath("components.xml");
 
     if ((QFileInfo::exists(absPathComponentsXmlFile) == false) || (QFileInfo(absPathComponentsXmlFile).isFile() == false)) {
-        qCCritical(logCategoryHcs) << "File components.xml not found at " << absPathComponentsXmlFile;
+        qCCritical(lcHcs) << "File components.xml not found at " << absPathComponentsXmlFile;
         return "File components.xml not found at " + absPathComponentsXmlFile;
     }
     // Load 'components.xml' file
@@ -69,7 +77,7 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
     QDomDocument xmlDocument("components");
     if (xmlDocument.setContent(&file, false, &errorMsg, &errorColumn) == false) {
         file.close();
-        qCCritical(logCategoryHcs) << "Could not parse components.xml: " << errorMsg << ", errorColumn: " << errorColumn;
+        qCCritical(lcHcs) << "Could not parse components.xml: " << errorMsg << ", errorColumn: " << errorColumn;
         return "Error parsing components.xml: " + errorMsg;
     }
     file.close();
@@ -100,9 +108,9 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
                 }
                 if ((packageNameFound == true) && (packageVersionFound == true)) {
                     componentMap.insert(packageName, packageVersion);
-                    qCInfo(logCategoryHcs) << "Found mandatory elements (Title / Version) in components.xml: " << packageName << ", " << packageVersion;
+                    qCInfo(lcHcs) << "Found mandatory elements (Title / Version) in components.xml: " << packageName << ", " << packageVersion;
                 } else {
-                    qCWarning(logCategoryHcs) << "Missing mandatory elements (Title / Version) in components.xml";
+                    qCWarning(lcHcs) << "Missing mandatory elements (Title / Version) in components.xml";
                 }
             }
         }
@@ -134,17 +142,17 @@ QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument
                     if (componentMap.contains(updateName)) {
                         payload.insert("current_version", componentMap[updateName]);
                     } else {
-                        qCWarning(logCategoryHcs) << "Missing component " << updateName << " in installed componentns: " << componentMap;
+                        qCWarning(lcHcs) << "Missing component " << updateName << " in installed componentns: " << componentMap;
                         // this might be valid, it might be forcing installation of new component which was not installed
                         payload.insert("current_version", "N/A");
                     }
                     updateInfo.push_back(payload);
-                    qCInfo(logCategoryHcs) << "Inserted Update Info: " << payload;
+                    qCInfo(lcHcs) << "Inserted Update Info: " << payload;
                 } else {
-                    qCWarning(logCategoryHcs) << "Missing mandatory attributes (name / version / size) in update metadata";
+                    qCWarning(lcHcs) << "Missing mandatory attributes (name / version / size) in update metadata";
                 }
             } else {
-                qCWarning(logCategoryHcs) << "Unknown element in update metadata: " << updateInfoElement.tagName();
+                qCWarning(lcHcs) << "Unknown element in update metadata: " << updateInfoElement.tagName();
             }
         }
         updateInfoNode = updateInfoNode.nextSibling();
@@ -202,7 +210,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
     absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
 
     if (applicationDir.exists(maintenanceToolFilename) == false) {
-        qCCritical(logCategoryHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
+        qCCritical(lcHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
         return QString("Strata Maintenance Tool not found.");
     }
 
@@ -212,7 +220,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
 #define MAINTENANCE_TOOL_START_TIMEOUT 2000 // msecs
 #define MAINTENANCE_TOOL_FINISH_TIMEOUT 5000 // msecs
 QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata) {
-    qCInfo(logCategoryHcs) << "Launching Strata Maintenance Tool";
+    qCInfo(lcHcs) << "Launching Strata Maintenance Tool";
     QStringList arguments;
     arguments << "--checkupdates" <<  "--verbose";
 
@@ -230,10 +238,10 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
         // Note that when no updates are available, the exit code will be 1
         QString errorOutput = maintenanceToolProcess.readAllStandardError();
         if ((maintenanceToolProcess.exitCode() == EXIT_FAILURE) && errorOutput.startsWith("There are currently no updates available.")) {
-            qCInfo(logCategoryHcs) << "No updates available";
+            qCInfo(lcHcs) << "No updates available";
             return QString();
         } else {
-            qCCritical(logCategoryHcs) << "Error code returned when checking for updates (" +
+            qCCritical(lcHcs) << "Error code returned when checking for updates (" +
                     QString::number(maintenanceToolProcess.error()) + "): " +
                     maintenanceToolProcess.errorString() + ", error output: " + errorOutput;
             return "Error code returned when checking for updates";
@@ -243,7 +251,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     // Read the output
     QByteArray maintenanceToolOutput = maintenanceToolProcess.readAllStandardOutput();
     if (maintenanceToolOutput.isEmpty()) {
-        qCCritical(logCategoryHcs) << "Error acquiring maintenance tool output: no standard output, error output: " +
+        qCCritical(lcHcs) << "Error acquiring maintenance tool output: no standard output, error output: " +
                                       maintenanceToolProcess.readAllStandardError();
         return "Error acquiring maintenance tool output";
     }
@@ -255,13 +263,13 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     int endIdx = updateData.indexOf(updatesEndStr);
 
     if ((beginIdx == -1) || (endIdx == -1) || (endIdx < beginIdx)) {
-        qCCritical(logCategoryHcs) << "Error parsing maintenance tool output:" << updateData;
+        qCCritical(lcHcs) << "Error parsing maintenance tool output:" << updateData;
         return "Error parsing maintenance tool output";
     }
 
     // extract only desired part in case we acquire more information
     updateMetadata = updateData.mid(beginIdx, (endIdx - beginIdx) + updatesEndStr.size());
-    qCInfo(logCategoryHcs) << "Updates available:" << updateMetadata;
+    qCInfo(lcHcs) << "Updates available:" << updateMetadata;
     return QString();
 }
 

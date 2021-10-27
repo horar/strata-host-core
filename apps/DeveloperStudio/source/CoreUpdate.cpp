@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "logging/LoggingQtCategories.h"
 
 #include "CoreUpdate.h"
@@ -35,7 +43,7 @@ QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir, QString &a
     absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
 
     if (applicationDir.exists(maintenanceToolFilename) == false) {
-        qCCritical(logCategoryCoreUpdate) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
+        qCCritical(lcCoreUpdate) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
         return QString("Strata Maintenance Tool not found.");
     }
 
@@ -44,7 +52,7 @@ QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir, QString &a
 
 void CoreUpdate::performCoreUpdate(const QString &absPathMaintenanceTool, const QDir &applicationDir) {
     // Launch Strata Maintenance Tool wizard and quit Strata
-    qCDebug(logCategoryCoreUpdate) << "Launching Strata Maintenance Tool";
+    qCDebug(lcCoreUpdate) << "Launching Strata Maintenance Tool";
     QStringList arguments;
     arguments << "isSilent=true" << "--updater";
 
@@ -54,7 +62,7 @@ void CoreUpdate::performCoreUpdate(const QString &absPathMaintenanceTool, const 
     maintenanceToolProcess.setWorkingDirectory(applicationDir.absolutePath());
     maintenanceToolProcess.startDetached();
 
-    qCInfo(logCategoryCoreUpdate) << "Quitting Strata Developer Studio";
+    qCInfo(lcCoreUpdate) << "Quitting Strata Developer Studio";
     emit applicationTerminationRequested();
     QCoreApplication::quit();
 }

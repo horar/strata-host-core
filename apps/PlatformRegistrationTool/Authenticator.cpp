@@ -39,9 +39,9 @@ void Authenticator::renewSession()
 
         bool isOk = parseRenewSessionReply(data);
         if (isOk) {
-            qCInfo(logCategoryPrtAuth) << "session renew success as" << username_;
+            qCInfo(lcPrtAuth) << "session renew success as" << username_;
         } else {
-            qCInfo(logCategoryPrtAuth) << "session renew failed";
+            qCInfo(lcPrtAuth) << "session renew failed";
         }
 
         emit renewSessionFinished(isOk, "");
@@ -49,7 +49,7 @@ void Authenticator::renewSession()
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
-        qCInfo(logCategoryPrtAuth) << "session renewal failed" << username_ << status << errorString;
+        qCInfo(lcPrtAuth) << "session renewal failed" << username_ << status << errorString;
 
         setSessionId(QByteArray());
         setXAccessToken(QByteArray());
@@ -87,10 +87,10 @@ void Authenticator::login(
 
         bool isOk = parseLoginReply(data);
         if (isOk) {
-            qCInfo(logCategoryPrtAuth) << "login success as" << username_;
+            qCInfo(lcPrtAuth) << "login success as" << username_;
             emit loginFinished(isOk, "");
         } else {
-            qCInfo(logCategoryPrtAuth) << "login failed. Cannot parse reply.";
+            qCInfo(lcPrtAuth) << "login failed. Cannot parse reply.";
             emit loginFinished(isOk, "Cannot parse reply.");
         }
 
@@ -98,7 +98,7 @@ void Authenticator::login(
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
-        qCInfo(logCategoryPrtAuth) << "login failed" << status << errorString;
+        qCInfo(lcPrtAuth) << "login failed" << status << errorString;
 
         setSessionId(QByteArray());
         setXAccessToken(QByteArray());
@@ -122,7 +122,7 @@ void Authenticator::logout()
         Q_UNUSED(status)
         Q_UNUSED(data)
 
-        qCInfo(logCategoryPrtAuth) << "logout success";
+        qCInfo(lcPrtAuth) << "logout success";
         emit logoutFinished(true);
 
         setSessionId(QByteArray());
@@ -131,7 +131,7 @@ void Authenticator::logout()
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
-        qCCritical(logCategoryPrtAuth) << "logout failed" << status << errorString;
+        qCCritical(lcPrtAuth) << "logout failed" << status << errorString;
         emit logoutFinished(false);
 
         setSessionId(QByteArray());
@@ -241,7 +241,7 @@ bool Authenticator::parseLoginReply(const QByteArray &data)
     QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCCritical(logCategoryPrtAuth) << "cannot parse reply" << parseError.errorString();
+        qCCritical(lcPrtAuth) << "cannot parse reply" << parseError.errorString();
         return false;
     }
 
@@ -251,7 +251,7 @@ bool Authenticator::parseLoginReply(const QByteArray &data)
             || doc.object().contains("firstname") == false
             || doc.object().contains("lastname") == false) {
 
-        qCCritical(logCategoryPrtAuth) << "wrong reply format, some field is missing";
+        qCCritical(lcPrtAuth) << "wrong reply format, some field is missing";
         return false;
     }
 
@@ -270,7 +270,7 @@ bool Authenticator::parseRenewSessionReply(const QByteArray &data)
     QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCCritical(logCategoryPrtAuth) << "cannot parse reply" << parseError.errorString();
+        qCCritical(lcPrtAuth) << "cannot parse reply" << parseError.errorString();
         return false;
     }
 
@@ -278,7 +278,7 @@ bool Authenticator::parseRenewSessionReply(const QByteArray &data)
             || doc.object().contains("token") == false
             || doc.object().contains("user") == false) {
 
-        qCCritical(logCategoryPrtAuth) << "wrong reply format, some field is missing" << data;
+        qCCritical(lcPrtAuth) << "wrong reply format, some field is missing" << data;
         return false;
     }
 

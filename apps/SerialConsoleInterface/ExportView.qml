@@ -49,38 +49,57 @@ FocusScope {
                 id: exportPathPicker
                 contextMenuEnabled: true
                 width: content.width
-                hasHelperText: false
                 filePath: model.platform.scrollbackModel.exportFilePath
                 label: "Output File"
+                inputValidation: true
                 dialogLabel: "Export to file"
                 dialogSelectExisting: false
                 dialogDefaultSuffix: "log"
                 dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
                 focus: true
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                        return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
+                    }
+
+                    return ""
+                }
             }
 
             SGWidgets.SGTag {
                 id: exportErrorTag
-
                 font.bold: true
                 textColor: "white"
+                mask: "A"
                 color: TangoTheme.palette.error
+                sizeByMask: text.length === 0
             }
 
             SGWidgets.SGButton {
                 text: "Export"
 
                 onClicked: {
-                    exportErrorTag.text = ""
-                    var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
-                    if (errorString.length > 0) {
-                        exportErrorTag.text = errorString
-                        infoPopup.showFailed("Export Failed")
-                        console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
-
+                    var error = exportPathPicker.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    exportView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Export Failed",
+                                    error)
                     } else {
-                        infoPopup.showSuccess("Export Done")
-                        console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
+                        exportErrorTag.text = ""
+                        var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
+                        if (errorString.length > 0) {
+                            exportErrorTag.text = errorString
+                            infoPopup.showFailed("Export Failed")
+                            console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
+                        } else {
+                            infoPopup.showSuccess("Export Done")
+                            console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
+                        }
                     }
                 }
             }
@@ -150,15 +169,25 @@ FocusScope {
                     topMargin: baseSpacing
                 }
 
-                hasHelperText: false
                 filePath: model.platform.scrollbackModel.autoExportFilePath
                 label: "Output File"
+                inputValidation: true
                 enabled: model.platform.scrollbackModel.autoExportIsActive === false
 
                 dialogLabel: "Export to file"
                 dialogSelectExisting: false
                 dialogDefaultSuffix: "log"
                 dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                        return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
+                    }
+
+                    return ""
+                }
             }
 
             SGWidgets.SGTag {
@@ -193,7 +222,16 @@ FocusScope {
 
                 text: model.platform.scrollbackModel.autoExportIsActive ? "Stop" : "Start"
                 onClicked: {
-                    if (model.platform.scrollbackModel.autoExportIsActive) {
+                    var error = autoExportPathPicker.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    exportView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Continuous Export Failed",
+                                    error)
+                    }
+
+                    else if (model.platform.scrollbackModel.autoExportIsActive) {
                         model.platform.scrollbackModel.stopAutoExport()
                     } else {
                         model.platform.scrollbackModel.startAutoExport(autoExportPathPicker.filePath)

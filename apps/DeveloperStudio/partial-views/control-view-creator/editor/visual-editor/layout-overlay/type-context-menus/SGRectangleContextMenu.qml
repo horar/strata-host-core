@@ -15,12 +15,12 @@ import tech.strata.sgwidgets 1.0
 import ".."
 import "../layout-popup-context"
 
-ColumnLayout {
-    spacing: 1
+ActionGroup {
 
-    ContextMenuButton {
+    Action {
         text: "Set Border Width"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.border.width
@@ -36,9 +36,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Border Color"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "border.color"
@@ -48,9 +49,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Color"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "color"
@@ -60,9 +62,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set radius"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.radius
