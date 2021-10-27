@@ -283,7 +283,6 @@ void SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 
         if (parseError.error != QJsonParseError::NoError) {
             QVariantMap result = extractJsonError(parseError);
-            result["error_code"] = SendMessageErrorType::JsonError;
             emit sendMessageResultReceived(result);
             return;
         }
