@@ -24,6 +24,7 @@ import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/core_update.js" as CoreUpdate
 import "partial-views/control-view-creator"
 
 import tech.strata.fonts 1.0
@@ -66,6 +67,9 @@ Rectangle {
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
     function loginSuccessful() {
         PlatformSelection.getPlatformList()
+
+        // Trigger check for core update
+        CoreUpdate.getUpdateInformation()
     }
 
     Component.onDestruction: {
@@ -450,6 +454,10 @@ Rectangle {
                 source: "qrc:/sgimages/exclamation-circle.svg"
                 iconColor : Theme.palette.error
             }
+
+            Component.onCompleted: {
+                CoreUpdate.registerAlertIcon(this)
+            }
         }
 
         MouseArea {
@@ -542,6 +550,22 @@ Rectangle {
                         profileLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Update")
+                    width: profileMenu.width
+                    enabled: false
+                    iconSource: enabled ? "qrc:/sgimages/exclamation-circle.svg" : ""
+
+                    onClicked: {
+                        profileMenu.close()
+                        CoreUpdate.createUpdatePopup();
+                    }
+
+                    Component.onCompleted: {
+                        CoreUpdate.registerMenuItem(this)
+                    }
                 }
 
                 SGMenuItem {

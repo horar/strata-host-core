@@ -60,6 +60,13 @@ int SGVersionUtils::compare(const QString &version1, const QString &version2, bo
 }
 
 int SGVersionUtils::getGreatestVersion(const QStringList &versions, bool *error) {
+    if (versions.count() == 0) {
+        if (error != nullptr) {
+            *error = true;
+        }
+        return -1;
+    }
+
     int greatestVersion = 0;
     bool err = false;
 

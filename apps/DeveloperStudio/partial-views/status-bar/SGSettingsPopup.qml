@@ -63,30 +63,6 @@ SGStrataPopup {
                 userSettings.saveSettings()
             }
         }
-            // to be uncommented in CS-880
-//            SGText {
-//                text: "Firmware Settings"
-//                fontSizeMultiplier: 1.3
-//            }
-
-//            SGCheckBox {
-//                id: firmwareUpdates
-//                text: "Notify me when firmware and view updates are available"
-//                checked: userSettings.notifyOnFirmwareUpdate
-//                leftPadding: 0
-
-//                onCheckedChanged: {
-//                    userSettings.notifyOnFirmwareUpdate = checked
-//                    userSettings.saveSettings()
-//                }
-//            }
-
-//            SGCheckBox {
-//                text: "Preload firmware versions"
-//                leftPadding: 0
-//                enabled: false
-//            }
-//        }
 
         SGText {
             text: "Notification Settings"
@@ -101,12 +77,21 @@ SGStrataPopup {
         }
 
         SGSettingsCheckbox {
+            text: "Notify me when newer versions of firmware or control views are available"
+            checked: userSettings.notifyOnFirmwareUpdate
+
+            onCheckedChanged: {
+                userSettings.notifyOnFirmwareUpdate = checked
+                userSettings.saveSettings()
+            }
+        }
+
+        SGSettingsCheckbox {
             text: "Notify me when a collateral document is updated"
             checked: userSettings.notifyOnCollateralDocumentUpdate
 
             onCheckedChanged: {
                 userSettings.notifyOnCollateralDocumentUpdate = checked
-                userSettings.saveSettings()
             }
         }
 

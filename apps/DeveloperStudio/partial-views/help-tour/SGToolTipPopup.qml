@@ -15,6 +15,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Popup {
     id: root
     closePolicy: Popup.NoAutoClose
+    z: 100
 
     property bool arrowOnTop: false
     property string horizontalAlignment: "center"

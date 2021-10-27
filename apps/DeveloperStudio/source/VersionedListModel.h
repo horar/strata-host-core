@@ -20,6 +20,7 @@ struct VersionedItem {
             const QString &uri,
             const QString &md5,
             const QString &name,
+            const QString &controller_class_id,
             const QString &timestamp,
             const QString &version,
             const QString &filepath = "")
@@ -27,6 +28,7 @@ struct VersionedItem {
         this->uri = uri;
         this->md5 = md5;
         this->name = name;
+        this->controller_class_id = controller_class_id;
         this->timestamp = timestamp;
         this->version = version;
         this->filepath = filepath;
@@ -36,6 +38,7 @@ struct VersionedItem {
     QString uri;
     QString md5;
     QString name;
+    QString controller_class_id;
     QString timestamp;
     QString version;
     QString filepath;
@@ -58,16 +61,19 @@ public:
     Q_INVOKABLE QString uri(int index);
     Q_INVOKABLE QString md5(int index);
     Q_INVOKABLE QString name(int index);
+    Q_INVOKABLE QString controller_class_id(int index);
     Q_INVOKABLE QString timestamp(int index);
     Q_INVOKABLE QString filepath(int index);
     Q_INVOKABLE bool installed(int index);
-    Q_INVOKABLE int getLatestVersion();
-    Q_INVOKABLE int getInstalledVersion();
+    Q_INVOKABLE int getLatestVersionIndex();
+    Q_INVOKABLE int getLatestVersionIndex(QString controllerClassId);
+    Q_INVOKABLE int getInstalledVersionIndex();
 
     enum {
         UriRole = Qt::UserRole,
         VersionRole,
         NameRole,
+        ControllerClassIdRole,
         TimestampRole,
         Md5Role,
         InstalledRole,

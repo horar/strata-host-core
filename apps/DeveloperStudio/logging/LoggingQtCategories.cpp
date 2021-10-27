@@ -10,6 +10,7 @@
 
 Q_LOGGING_CATEGORY(lcDevStudio, "strata.devstudio")
 Q_LOGGING_CATEGORY(lcDocumentManager, "strata.devstudio.documentManager")
+Q_LOGGING_CATEGORY(lcCoreUpdate, "strata.devstudio.coreUpdate")
 Q_LOGGING_CATEGORY(lcDevStudioNode, "strata.devstudio.node")
 Q_LOGGING_CATEGORY(lcDevStudioConfig, "strata.devstudio.config")
 Q_LOGGING_CATEGORY(lcResourceLoader, "strata.devstudio.resourceloader")

@@ -15,6 +15,8 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
+#include "FirmwareUpdater.h"
+#include "PlatformOperation.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
@@ -33,15 +35,17 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), "", this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), this)),
       coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
+      firmwareUpdater_(new FirmwareUpdater(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
       visualEditorUndoStack_(new VisualEditorUndoStack(this)),
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
+      platformOperation_(new PlatformOperation(strataClient_, this)),
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -60,8 +64,10 @@ SDSModel::~SDSModel()
     delete platformInterfaceGenerator_;
     delete visualEditorUndoStack_;
     delete remoteHcsNode_;
+    delete firmwareUpdater_;
     delete urlConfig_;
     delete strataClient_;
+    delete platformOperation_;
 }
 
 bool SDSModel::startHcs()
@@ -194,6 +200,11 @@ SGNewControlView *SDSModel::newControlView() const
     return newControlView_;
 }
 
+FirmwareUpdater *SDSModel::firmwareUpdater() const
+{
+    return firmwareUpdater_;
+}
+
 PlatformInterfaceGenerator *SDSModel::platformInterfaceGenerator() const
 {
     return platformInterfaceGenerator_;
@@ -217,6 +228,24 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
 strata::strataRPC::StrataClient *SDSModel::strataClient() const
 {
     return strataClient_;
+}
+
+PlatformOperation *SDSModel::platformOperation() const
+{
+    return platformOperation_;
+}
+
+bool SDSModel::debugFeaturesEnabled()
+{
+    return debugFeaturesEnabled_;
+}
+
+void SDSModel::setDebugFeaturesEnabled(bool enabled)
+{
+    if (debugFeaturesEnabled_ != enabled) {
+        debugFeaturesEnabled_ = enabled;
+        emit debugFeaturesEnabledChanged();
+    }
 }
 
 void SDSModel::shutdownService()

@@ -26,7 +26,7 @@ bool ServerConnector::initialize()
     using Connector = strata::connector::Connector;
 
     if (connector_) {
-        qInfo(lcStrataClientConnector) << "ZMQ connector already created.";
+        qCInfo(lcStrataClientConnector) << "ZMQ connector already created.";
     } else {
         connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
     }

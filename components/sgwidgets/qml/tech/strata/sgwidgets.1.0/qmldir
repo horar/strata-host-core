@@ -11,6 +11,7 @@ SGCapacityBar 1.0 SGCapacityBar.qml
 SGCapacityBarElement 1.0 SGCapacityBarElement.qml
 SGCheckBox 1.0 SGCheckBox.qml
 SGCircularGauge 1.0 SGCircularGauge.qml
+SGCircularProgress 1.0 SGCircularProgress.qml
 SGComboBox 1.0 SGComboBox.qml
 SGContextMenuEditActions 1.0 SGContextMenuEditActions.qml
 SGFilePicker 1.0 SGFilePicker.qml

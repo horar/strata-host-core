@@ -23,6 +23,9 @@ Button {
     property alias textColor: buttonText.color
     property alias iconSource: icon.source
 
+    Accessible.name: text
+    Accessible.role: Accessible.Button
+
     contentItem: RowLayout {
         Text {
             id: buttonText

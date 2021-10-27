@@ -19,14 +19,15 @@ import QtQuick.Controls 2.12
 
 StackLayout {
     id: platformStack
+
     currentIndex: {
         switch (model.view) {
-        case "collateral":
-            return 1
-        case "settings":
-            return 2
-        default: // case "control":
-            return 0
+            case "collateral":
+                return 1
+            case "settings":
+                return 2
+            default: // case "control":
+                return 0
         }
     }
 
@@ -35,18 +36,27 @@ StackLayout {
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
     property string name: model.name
-    property alias controlViewContainer: controlViewContainer
     property string view: model.view
-
+    property alias controlViewContainer: controlViewContainer
+    property bool controlViewIsOutOfDate: false
+    property bool firmwareIsOutOfDate: false
     property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
+    property string controller_class_id: model.controller_class_id
+    property bool is_assisted: model.is_assisted
     property bool fullyInitialized: platformStackInitialized &&
                                     userSettingsInitialized &&
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
-    property string notificationUUID: ""
+    property string documentNotificationUUID: ""
+    property string updateNotificationUUID: ""
+    readonly property bool platformOutOfDate: controlViewIsOutOfDate || firmwareIsOutOfDate
+
+    onPlatformOutOfDateChanged: {
+        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
+    }
 
     onFullyInitializedChanged: {
         initialize()
@@ -68,8 +78,11 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
-        if(notificationUUID !== ""){
-            Notifications.destroyNotification(notificationUUID)
+        if(documentNotificationUUID !== ""){
+            Notifications.destroyNotification(documentNotificationUUID)
+        }
+        if(updateNotificationUUID !== ""){
+            Notifications.destroyNotification(updateNotificationUUID)
         }
     }
 
@@ -82,6 +95,10 @@ StackLayout {
                 controlViewContainer.removeControl()
             }
         }
+    }
+
+    function openSettings() {
+        model.view = "settings"
     }
 
     ControlViewContainer {
@@ -137,7 +154,7 @@ StackLayout {
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
-              notificationUUID = Notifications.createNotification(
+              documentNotificationUUID = Notifications.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",
@@ -158,6 +175,57 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
+
+        PlatformSettings {
+            id: platformSettings
+        }
+    }
+
+    Action {
+        id: close
+        text: "Ok"
+        onTriggered: {}
+    }
+
+    Action {
+        id: disableNotifyOnFirmwareUpdate
+        text: "Disable notifications for platform updates"
+        onTriggered: {
+            NavigationControl.userSettings.notifyOnFirmwareUpdate = false
+            NavigationControl.userSettings.saveSettings()
+        }
+    }
+
+    Action {
+        id: goToSettings
+        text: "Go to settings"
+        onTriggered: {
+            openSettings()
+        }
+    }
+
+    function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){
+        if((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && model.view !== "settings" && platformStack.visible){
+            var description = ""
+            if(firmwareOutOfDate && controlViewOutOfDate){
+                description = "Newer versions of firmware and software are available."
+            } else if(firmwareOutOfDate){
+                description = "A newer version of firmware is available."
+            } else{
+                description = "A newer version of software is available."
+            }
+
+           updateNotificationUUID = Notifications.createNotification("Update available",
+                                                Notifications.Info,
+                                                "current",
+                                                {
+                                                    "description": description,
+                                                    "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                                                    "actions": [close,goToSettings,disableNotifyOnFirmwareUpdate],
+                                                    "timeout": 0
+                                                }
+                                             )
+        }
     }
 
     SGUserSettings {

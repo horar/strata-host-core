@@ -8,15 +8,21 @@
  */
 #pragma once
 
-#include <QString>
+#include <QObject>
+#include <QDir>
 
-class ResourcePath final
+class CoreUpdate : public QObject
 {
-public:
-    ResourcePath() = default;
+    Q_OBJECT
 
-    static QString& coreResourcePath();
+public:
+    Q_INVOKABLE QString requestUpdateApplication();
+
+signals:
+    void applicationTerminationRequested();
 
 private:
-    static QString coreResourcePath_;
+    QString locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool);
+
+    void performCoreUpdate(const QString &absPathMaintenanceTool, const QDir &applicationDir);
 };

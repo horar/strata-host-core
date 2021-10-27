@@ -307,8 +307,13 @@ function updateState(event, data)
                     if (view_index !== -1) {
                         connected_view = platform_view_model_.get(view_index)
                         connected_view.device_id = data.device_id
-                        connected_view.firmware_version = data.firmware_version
                         connected_view.connected = true
+                        connected_view.is_assisted = data.is_assisted
+                        if (data.controller_class_id !== undefined) {
+                            connected_view.controller_class_id = data.controller_class_id
+                        }
+                        connected_view.firmware_version = data.firmware_version
+                        //IMPORTANT: firmware_version must be last - it triggers firmware list update, other data must already be set
 
                         if (userSettings.autoOpenView) {
                             updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
@@ -325,6 +330,8 @@ function updateState(event, data)
                         if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                             disconnected_view.connected = false
                             disconnected_view.firmware_version = ""
+                            disconnected_view.controller_class_id = ""
+                            //IMPORTANT: If you add deinitialization here, don't forget to add initialization to case events.PLATFORM_CONNECTED_EVENT
                             break
                         }
                     }

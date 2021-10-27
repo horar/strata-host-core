@@ -304,9 +304,6 @@ bool SGSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &
         return callFilterAcceptsRow(sourceRow);
     }
 
-    QModelIndex sourceIndex =
-        QSortFilterProxyModel::sourceModel()->index(sourceRow, 0, sourceParent);
-    QString value = QSortFilterProxyModel::sourceModel()->data(sourceIndex, QSortFilterProxyModel::filterRole()).toString();
     return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
 

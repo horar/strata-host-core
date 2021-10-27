@@ -87,7 +87,7 @@ public:
     bool verifyFileHash(
             const QString &filePath,
             const QString &checksum,
-            const QCryptographicHash::Algorithm &method=QCryptographicHash::Md5);
+            const QCryptographicHash::Algorithm method = QCryptographicHash::Md5);
 
     QString resolveUniqueFilePath(const QString &filePath);
 

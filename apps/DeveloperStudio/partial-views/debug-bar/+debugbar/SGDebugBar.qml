@@ -19,7 +19,7 @@ import tech.strata.signals 1.0
 import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/uuid_map.js" as UuidMap
+import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
 
@@ -45,144 +45,6 @@ Item {
             }
             layoutDirection: Qt.RightToLeft
             spacing: 2
-
-            // strata view debug button chooser
-            RowLayout {
-                id: comboboxRow
-
-                onXChanged: {
-                    if (visible) {
-                        viewDebugPopup.updatePos()
-                    }
-                }
-
-                Label {
-                    text: qsTr("View:")
-                    leftPadding: 10
-                }
-
-                ComboBox {
-                    id: viewCombobox
-                    delegate: viewButtonDelegate
-                    model: viewFolderModel
-                    popup: viewDebugPopup
-                    textRole: "fileName"
-
-                    onCurrentIndexChanged: {
-                        // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
-                        if (currentText === "") {
-                            let fileName = viewFolderModel.get(currentIndex, "fileName");
-                            if (fileName !== undefined) {
-                                displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
-                            }
-                        } else {
-                            displayText = currentText.replace("views-", "").slice(0, -4)
-                        }
-                    }
-
-                    Popup {
-                        id: viewDebugPopup                      
-                        width: commandBar.width
-                        y: viewCombobox.height
-                        padding: 0
-                        background: Rectangle {
-                            color: "dimgrey"
-                        }
-
-                        onVisibleChanged: {
-                            updatePos()
-                        }
-
-                        function updatePos() {
-                            let pos = viewCombobox.mapToItem(commandBar, 0, 0)
-                            x = -pos.x
-                        }
-
-                        contentItem: GridView {
-                            cellHeight: 25
-                            cellWidth: (commandBar.width / 7) - 0.1
-                            implicitHeight: contentHeight
-                            model: viewCombobox.popup.visible ? viewCombobox.delegateModel : null
-                            currentIndex: viewCombobox.highlightedIndex
-                        }
-                    }
-
-                    FolderListModel {
-                        id: viewFolderModel
-                        showDirs: false
-                        showFiles: true
-                        nameFilters: "views-*.rcc"
-                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
-
-                        onCountChanged: {
-                            viewCombobox.currentIndex = viewFolderModel.count - 1
-                        }
-
-                        onStatusChanged: {
-                            if (viewFolderModel.status === FolderListModel.Ready) {
-                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
-                                //      - if 'folder' url doesn't exists the it loads app folder content
-                                comboboxRow.visible = (viewFolderModel.folder.toString() === sdsModel.resourceLoader.getStaticResourcesUrl().toString())
-                            }
-                        }
-                    }
-
-                    Component {
-                        id: viewButtonDelegate
-
-                        Button {
-                            id: selectButton
-                            width: viewDebugPopup.contentItem.cellWidth - 1
-                            height: viewDebugPopup.contentItem.cellHeight - 1
-                            // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
-                            text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
-                            hoverEnabled: true
-                            background: Rectangle {
-                                color: hovered ? "white" : "lightgrey"
-                            }
-
-                            onClicked: {
-                                if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
-                                }
-
-                                let name = selectButton.text;
-                                let class_id;
-                                for (let key of Object.keys(UuidMap.uuid_map)) {
-                                    if (UuidMap.uuid_map[key] === name) {
-                                        class_id = key;
-                                        break;
-                                    }
-                                }
-
-                                let data = {
-                                    "device_id": Constants.DEBUG_DEVICE_ID,
-                                    "class_id": class_id,
-                                    "name": name,
-                                    "index": null,
-                                    "view": "control",
-                                    "connected": true,
-                                    "available": {
-                                        "control": true,
-                                        "documents": true,
-                                        "unlisted": false,
-                                        "order": false
-                                    },
-                                    "firmware_version": ""
-                                }
-                                let repeaterCount = platformViewRepeater.count
-                                PlatformSelection.openPlatformView(data)
-                                viewCombobox.currentIndex = index
-                                // new tab is always added to the end of the repeater
-                                // in case it was indeed added (did not existed yet), initialize it
-                                if (platformViewRepeater.count > repeaterCount) {
-                                    platformViewRepeater.itemAt(repeaterCount).platformMetaDataInitialized = true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
             Button {
                 text: "Log Viewer App"
@@ -215,6 +77,16 @@ Item {
             Button {
                 text: "Reset Window Size"
                 onClicked: mainWindow.resetWindowSize()
+            }
+
+            CheckBox {
+                //feel free to reuse this flag for other debug purposes as well
+                id: debugFeatures
+                text: "Debug Features"
+                checked: sdsModel.debugFeaturesEnabled
+                onCheckedChanged: {
+                    sdsModel.debugFeaturesEnabled = debugFeatures.checked
+                }
             }
 
             Button {

@@ -32,47 +32,122 @@ FirmwareUpdateController::~FirmwareUpdateController()
     }
 }
 
-void FirmwareUpdateController::initialize(PlatformController *platformController, strata::DownloadManager *downloadManager)
+void FirmwareUpdateController::initialize(
+        PlatformController *platformController,
+        strata::DownloadManager *downloadManager)
 {
     platformController_ = platformController;
     downloadManager_ = downloadManager;
 }
 
-void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const QByteArray& deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
+FirmwareUpdateController::UpdateProgress::UpdateProgress()
+    : complete(-1),
+      total(-1),
+      jobUuid(QString()),
+      programController(false)
+{
+}
+
+FirmwareUpdateController::UpdateProgress::UpdateProgress(
+        const QString& jobUuid,
+        bool programController)
+    : complete(-1),
+      total(-1),
+      jobUuid(jobUuid),
+      programController(programController)
+{
+}
+
+void FirmwareUpdateController::changeFirmware(const ChangeFirmwareData &data)
+{
+    switch (data.action) {
+    case ChangeFirmwareAction::UpdateFirmware :
+    case ChangeFirmwareAction::ProgramFirmware :
+        break;
+    case ChangeFirmwareAction::ProgramController :
+        if (data.firmwareClassId.isNull()) {
+            QString errStr("Cannot program controller - firmware class ID was not provided.");
+            qCCritical(lcHcsFwUpdater).noquote() << errStr;
+            emit updaterError(data.deviceId, errStr);
+            return;
+        }
+        break;
+    case ChangeFirmwareAction::SetControllerFwClassId :
+        if (data.firmwareClassId.isNull()) {
+            QString errStr("Cannot set controller firmware class ID - it is not provided.");
+            qCCritical(lcHcsFwUpdater).noquote() << errStr;
+            emit updaterError(data.deviceId, errStr);
+            return;
+        }
+        break;
+    }
+
+    runUpdate(data);
+}
+
+void FirmwareUpdateController::runUpdate(const ChangeFirmwareData& data)
 {
     if (platformController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
         qCCritical(lcHcsFwUpdater).noquote() << errStr;
-        emit updaterError(deviceId, errStr);
+        emit updaterError(data.deviceId, errStr);
         return;
     }
 
-    auto it = updates_.constFind(deviceId);
+    auto it = updates_.constFind(data.deviceId);
     if (it != updates_.constEnd()) {
         QString errStr("Cannot update, another update is running on this device.");
         qCCritical(lcHcsFwUpdater).noquote() << errStr;
-        emit updaterError(deviceId, errStr);
+        emit updaterError(data.deviceId, errStr);
         return;
     }
 
-    strata::platform::PlatformPtr platform = platformController_->getPlatform(deviceId);
+    strata::platform::PlatformPtr platform = platformController_->getPlatform(data.deviceId);
     if (platform == nullptr) {
         QString errStr("Incorrect device ID for update.");
         qCCritical(lcHcsFwUpdater).noquote() << errStr;
-        emit updaterError(deviceId, errStr);
+        emit updaterError(data.deviceId, errStr);
         return;
     }
 
-    FirmwareUpdater *fwUpdater = new FirmwareUpdater(platform, downloadManager_, firmwareUrl, firmwareMD5);
-    UpdateData *updateData = new UpdateData(clientId, fwUpdater);
-    updates_.insert(deviceId, updateData);
+    FirmwareUpdater *fwUpdater;
+    bool programController = true;
+
+    switch(data.action) {
+    case ChangeFirmwareAction::UpdateFirmware :
+    case ChangeFirmwareAction::ProgramFirmware :
+        programController = false;
+        [[fallthrough]];
+    case ChangeFirmwareAction::ProgramController :
+        fwUpdater = new FirmwareUpdater(platform, downloadManager_, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
+        break;
+    case ChangeFirmwareAction::SetControllerFwClassId :
+        fwUpdater = new FirmwareUpdater(platform, data.firmwareClassId);
+        break;
+    }
+
+    UpdateInfo *updateData = new UpdateInfo(data.clientId, fwUpdater, data.jobUuid, programController);
+    updates_.insert(data.deviceId, updateData);
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
     connect(fwUpdater, &FirmwareUpdater::updaterError, this, &FirmwareUpdateController::updaterError);
     connect(fwUpdater, &FirmwareUpdater::bootloaderActive, this, &FirmwareUpdateController::bootloaderActive);
     connect(fwUpdater, &FirmwareUpdater::applicationActive, this, &FirmwareUpdateController::applicationActive);
 
-    fwUpdater->updateFirmware();
+    switch(data.action) {
+    case ChangeFirmwareAction::UpdateFirmware :
+        fwUpdater->updateFirmware(true);
+        break;
+    case ChangeFirmwareAction::ProgramFirmware :
+    case ChangeFirmwareAction::ProgramController :
+        // there is no need to backup old firmware if programming embedded board without
+        // firmware or if programming assisted controller (dongle)
+        fwUpdater->updateFirmware(false);
+        break;
+    case ChangeFirmwareAction::SetControllerFwClassId :
+        fwUpdater->setFwClassId();
+        break;
+    }
 }
 
 void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
@@ -81,34 +156,23 @@ void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, 
         return;
     }
 
-    UpdateData *updateData = updates_.value(deviceId);
+    UpdateInfo *updateData = updates_.value(deviceId);
     UpdateProgress *progress = &(updateData->updateProgress);
 
     progress->operation = operation;
     progress->status = status;
-    progress->complete = complete;
-    progress->total = total;
-
-    if (errorString.isEmpty() == false) {
-        switch (operation) {
-        case UpdateOperation::Download :
-            progress->downloadError = errorString;
-            break;
-        case UpdateOperation::Prepare :
-            progress->prepareError = errorString;
-            break;
-        case UpdateOperation::Backup :
-            progress->backupError = errorString;
-            break;
-        case UpdateOperation::Flash :
-            progress->flashError = errorString;
-            break;
-        case UpdateOperation::Restore :
-            progress->restoreError = errorString;
-            break;
-        case UpdateOperation::Finished :
-            break;
-        }
+    // 'updateProgress' signal has 'camplete' and 'total' set to -1 when status is 'Failure'.
+    // Preserve previous progress value in this case.
+    if (status != UpdateStatus::Failure) {
+        progress->complete = complete;
+        progress->total = total;
+    }
+    // - UpdateOperation::Finished is special case - it has always empty errorString because
+    //   this operation is bind to FlasherConnector 'finished' signal which doesn't have any
+    //   error string. So, do nothing with last error string in this case.
+    // - Update last error string only if 'errorString' is not empty.
+    if ((operation != UpdateOperation::Finished) && (errorString.isEmpty() == false)) {
+        progress->lastError = errorString;
     }
 
     emit progressOfUpdate(deviceId, updateData->clientId, *progress);
@@ -120,7 +184,13 @@ void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, 
     }
 }
 
-FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater) :
-    clientId(client), fwUpdater(updater)
+FirmwareUpdateController::UpdateInfo::UpdateInfo(
+        const QByteArray& client,
+        FirmwareUpdater* updater,
+        const QString& jobUuid,
+        bool programController)
+    : clientId(client),
+      fwUpdater(updater),
+      updateProgress(jobUuid, programController)
 {
 }

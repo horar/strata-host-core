@@ -65,6 +65,8 @@
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>js/core_update.js</file>
+        <file>partial-views/core-update/SGCoreUpdate.qml</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg</file>
         <file>partial-views/profile-popup/SGProfilePopup.qml</file>
         <file>partial-views/SGConfirmationPopup.qml</file>
@@ -84,7 +86,6 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
-        <file>js/uuid_map.js</file>
         <file>partial-views/platform-view/ControlViewContainer.qml</file>
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
