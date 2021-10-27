@@ -62,10 +62,6 @@ ApplicationWindow {
             overlaycolor: "lightgreen"
             unpoppedWidth: parent.width / 2
             unpoppedHeight: parent.height
-            content: SGGraphtimed {
-                id: graph
-                inputData: graphData.stream
-            }
             anchors {
                 left: column1.right
             }
