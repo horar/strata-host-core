@@ -78,11 +78,17 @@ private slots:
     void bluetoothScanReplyHandler(const QJsonObject &payload);
     void bluetoothScanErrorReplyHandler(const QJsonObject &payload);
     void bluetoothScanFinishedHandler(const QJsonObject &payload);
-    void connectReplyHandler(const QJsonObject &payload);
-    void disconnectReplyHandler(const QJsonObject &payload);
+    void connectReplyHandler(const QString& deviceId, const QJsonObject &payload);
+    void connectErrorReplyHandler(const QString& deviceId, const QJsonObject &payload);
+    void connectFinishedHandler(const QJsonObject &payload);
+    void disconnectReplyHandler(const QString& deviceId, const QJsonObject &payload);
+    void disconnectErrorReplyHandler(const QString& deviceId, const QJsonObject &payload);
+    void disconnectFinishedHandler(const QJsonObject &payload);
     void updateDeviceConnection(const QJsonObject &payload);
 
 private:
+    void finishScan(const QString& errorString);
+    void finishConnection(int row, const QString& errorString);
     void setModelRoles();
     void clear();
     void populateModel(const QJsonObject &payload);
