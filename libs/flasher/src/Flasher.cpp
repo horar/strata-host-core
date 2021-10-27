@@ -314,6 +314,11 @@ void Flasher::runFlasherOperation()
 
 void Flasher::finish(Result result, QString errorString)
 {
+    if (currentOperation_ != operationList_.end() && currentOperation_->operation->isFinished() == false) {
+        // If any operation is currently runing, it must be cancelled.
+        currentOperation_->operation->disconnect(this);  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
+        currentOperation_->operation->cancelOperation();
+    }
     operationList_.clear();
     currentOperation_ = operationList_.end();
     if (sourceFile_.isOpen()) {
@@ -592,9 +597,6 @@ void Flasher::manageBackup(int chunkNumber)
         expectedBackupSize_ = backupOp->backupSize();
         if ((chunkCount_ <= 0) || (expectedBackupSize_ <= 0)) {
             qCWarning(lcFlasher) << "Cannot backup firmware which has 0 chunks or size 0.";
-            // Operation 'Backup' is currently runing, it must be cancelled.
-            currentOperation_->operation->disconnect(this);  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
-            currentOperation_->operation->cancelOperation();
             finish(Result::NoFirmware);
             return;
         }
