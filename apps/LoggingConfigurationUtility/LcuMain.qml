@@ -17,7 +17,7 @@ Item {
     LcuModel { id: lcuModel }
     Column{
         SGWidgets.SGText{
-            text: "Title"
+            text: "Configuration Files"
             width: lcuMain.width
             height: lcuMain.height / 3
             horizontalAlignment: Text.AlignHCenter
@@ -27,8 +27,7 @@ Item {
             SGWidgets.SGComboBox{
                 id: comboBox
                 width: (9./10.)* lcuMain.width
-                displayText: "Select INI file"
-                model: ["Ini1", "Ini2", "Ini3" ]
+                model: lcuModel.getIniFiles()
                 onActivated: lcuModel.configFileSelectionChanged(comboBox.currentText)
             }
             SGWidgets.SGButton{
@@ -36,6 +35,7 @@ Item {
                 text: "Reload"
                 width: (1./10.)* lcuMain.width
                 height: comboBox.height
+                onClicked: lcuModel.reload()
             }
         }
     }
