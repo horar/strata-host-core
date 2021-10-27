@@ -6,6 +6,7 @@
    documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
    Terms and Conditions of Sale, Section 8 Software”).
    ***************************************************************************/
+#include "LcuModel.h"
 
 #include "Version.h"
 
@@ -100,6 +101,8 @@ int main(int argc, char *argv[])
     QQmlFileSelector selector(&engine);
 
     addImportPaths(&engine);
+
+    qmlRegisterType<LcuModel>("tech.strata.lcu", 1, 0, "LcuModel");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

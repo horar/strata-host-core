@@ -10,9 +10,11 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
+import tech.strata.lcu 1.0
 
 Item {
     id: lcuMain
+    LcuModel { id: lcuModel }
     Column{
         SGWidgets.SGText{
             text: "Title"
@@ -27,6 +29,7 @@ Item {
                 width: (9./10.)* lcuMain.width
                 displayText: "Select INI file"
                 model: ["Ini1", "Ini2", "Ini3" ]
+                onActivated: lcuModel.configFileSelectionChanged(comboBox.currentText)
             }
             SGWidgets.SGButton{
                 id: reloadButton
