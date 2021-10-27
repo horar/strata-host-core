@@ -15,12 +15,12 @@ import tech.strata.sgwidgets 1.0
 import ".."
 import "../layout-popup-context"
 
-ColumnLayout {
-    spacing: 1
+ActionGroup {
 
-    ContextMenuButton {
+    Action {
         text: "Set Title"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.title
@@ -31,9 +31,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set X Title"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xTitle
@@ -44,9 +45,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Y Title"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yTitle
@@ -57,9 +59,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set X Min"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMin
@@ -75,9 +78,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set X Max"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.xMax
@@ -93,9 +97,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Y Min"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMin
@@ -111,9 +116,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set Y Max"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
             menuLoader.active = true
             menuLoader.item.text = layoutOverlayRoot.sourceItem.yMax
@@ -129,9 +135,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Set GridColor"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml")
             menuLoader.active = true
             menuLoader.item.color = layoutOverlayRoot.sourceItem.gridColor
@@ -141,9 +148,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Show/hide X Grid"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.xGrid
@@ -154,9 +162,10 @@ ColumnLayout {
         }
     }
 
-    ContextMenuButton {
+    Action {
         text: "Show/hide Y Grid"
-        onClicked: {
+        
+        onTriggered: {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/SwitchPopup.qml")
             menuLoader.active = true
             menuLoader.item.switchChecked = layoutOverlayRoot.sourceItem.yGrid

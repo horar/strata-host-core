@@ -100,9 +100,39 @@ SGStrataPopup {
             checked: userSettings.notifyOnPlatformConnections
 
             onCheckedChanged: {
-                userSettings.notifyOnPlatformConnections  = checked
+                userSettings.notifyOnPlatformConnections = checked
                 userSettings.saveSettings()
             }
+        }
+
+        SGText {
+            text: "Other Settings"
+            fontSizeMultiplier: 1.3
+        }
+
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: "#666"
+        }
+
+        SGSettingsCheckbox {
+            text: "Request to opt-out of data collection"
+            checked: userSettings.hasOptedOut
+
+            onCheckedChanged: {
+                userSettings.hasOptedOut = checked
+                userSettings.saveSettings()
+            }
+        }
+
+        SGText {
+            text: "* Request to opt-out will take effect after logout or app close"
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            fontSizeMultiplier: 0.9
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 }
