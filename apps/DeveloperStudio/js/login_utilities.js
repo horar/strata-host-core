@@ -20,17 +20,26 @@ var initialized = false
 /*
   Settings: Store/retrieve login information
 */
-var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+const settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+const userSettings = Qt.createQmlObject(`import tech.strata.commoncpp 1.0; SGUserSettings {classId: "general-settings";}`, Qt.application, "SGUserSettings")
 
 /*
   Login: Send information to server
 */
-function login(login_info){
+function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
+
+    userSettings.user = login_info.user
+    const anonymousSettings = userSettings.readFile("general-settings.json")
+    let anonymous = 0
+    if (anonymousSettings.hasOwnProperty("hasOptedOut")) {
+        anonymous = anonymousSettings.hasOptedOut ? 1 : 0
+    }
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
+        "anonymous": anonymous
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -209,6 +218,7 @@ function register(registration_info){
         "title": registration_info.title,
         "company": registration_info.company
     };
+
     Rest.xhr("post", "signup", data, register_result, register_error, null)
 
     /*
@@ -514,14 +524,22 @@ function change_password_result(response) {
 */
 function validate_token()
 {
-    if (Rest.jwt !== ""){
+    if (Rest.jwt !== "" && settings.user !== ""){
+        userSettings.user = settings.user
+        const anonymousSettings = userSettings.readFile("general-settings.json")
+        let anonymous = 0
+        if (anonymousSettings.hasOwnProperty("hasOptedOut")) {
+            anonymous = anonymousSettings.hasOptedOut ? 1 : 0
+        }
+
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
+            "anonymous": anonymous
         }
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate, or no username saved")
     }
 
     /*
@@ -571,7 +589,7 @@ function set_token (token) {
     Rest.jwt = token
 }
 
-function getNextId(){
+function getNextId() {
    return Rest.getNextRequestId();
 }
 
