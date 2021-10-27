@@ -50,7 +50,6 @@
         <file alias="editor/visual-editor/VisualEditorMenu.qml">partial-views/control-view-creator/editor/visual-editor/VisualEditorMenu.qml</file>
         <file alias="editor/visual-editor/VisualEditorFunctions.qml">partial-views/control-view-creator/editor/visual-editor/VisualEditorFunctions.qml</file>
         <file alias="editor/visual-editor/layout-overlay/ContextMenu.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/ContextMenu.qml</file>
-        <file alias="editor/visual-editor/layout-overlay/ContextMenuButton.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/ContextMenuButton.qml</file>
         <file alias="editor/visual-editor/layout-overlay/LayoutOverlay.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/LayoutOverlay.qml</file>
         <file alias="editor/visual-editor/layout-overlay/type-context-menus/SGButtonContextMenu.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGButtonContextMenu.qml</file>
         <file alias="editor/visual-editor/layout-overlay/type-context-menus/SGSwitchContextMenu.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/type-context-menus/SGSwitchContextMenu.qml</file>
@@ -70,6 +69,7 @@
         <file alias="editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ColorPopup.qml</file>
         <file alias="editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml</file>
         <file alias="editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml</file>
+        <file alias="editor/visual-editor/layout-overlay/layout-popup-context/IconPopup.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/IconPopup.qml</file>
         <file alias="components/MenuButton.qml">partial-views/control-view-creator/components/MenuButton.qml</file>
         <file alias="editor/visual-editor/layout-overlay/layout-popup-context/SwitchPopup.qml">partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/SwitchPopup.qml</file>
         <file alias="platform-interface-generator/PlatformInterfaceGenerator.qml">partial-views/control-view-creator/platform-interface-generator/PlatformInterfaceGenerator.qml</file>

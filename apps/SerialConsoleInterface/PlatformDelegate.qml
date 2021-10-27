@@ -62,15 +62,18 @@ FocusScope {
                 "clear_scrollback": {"sequence": "Ctrl+D", "action": "clearScrollback", "hint":"Clear scrollback"},
                 "toggle_expand": {"sequence": "Ctrl+E", "action": "toggleExpand", "hint":"Toggle Expand"},
                 "toggle_follow": {"sequence": "Ctrl+F", "action": "toggleFollow", "hint":"Auto scroll down when new message arrives"},
-                "send_message_ent": {"sequence": "Ctrl+Enter", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
-                "send_message_ret": {"sequence": "Ctrl+Return", "action": "sendMessageInputTextAsComand", "hint":"Send message"},
+                "send_message_ent": {"sequence": "Ctrl+Enter", "action": "sendMessages", "hint":"Send message(s)"},
+                "send_message_ret": {"sequence": "Ctrl+Return", "action": "sendMessages", "hint":"Send message(s)"},
             }
 
             Connections {
                 target: model.platform
                 onSendMessageResultReceived: {
-                    messageEditor.messageSendInProgress = false
-                    sendMessageResultHandler(type, data)
+                    sendMessageResultHandler(error)
+                }
+
+                onSendQueueFinished: {
+                    sendMessageResultHandler(error)
                 }
             }
 
@@ -460,6 +463,7 @@ FocusScope {
                         right: parent.right
                     }
 
+                    focus: false
                     placeholderText: "Search..."
                     leftIconSource: "qrc:/sgimages/zoom.svg"
                     showClearButton: true
@@ -497,7 +501,8 @@ FocusScope {
                         rightMargin: 6
                     }
 
-                    enabled: messageSendInProgress === false
+                    enabled: model.platform.sendMessageInProgress === false
+                             && model.platform.sendQueueInProgress === false
                              && (model.platform.status === Sci.SciPlatform.Ready
                              || model.platform.status === Sci.SciPlatform.NotRecognized)
 
@@ -510,8 +515,6 @@ FocusScope {
                     onTextChanged: {
                         model.platform.errorString = "";
                     }
-
-                    property bool messageSendInProgress: false
                 }
 
                 Row {
@@ -616,8 +619,42 @@ FocusScope {
                         return mainPage.resolveKeyboardActionHintText("send_message_ent")
                     }
                     text: qsTr("SEND")
+                    minimumContentWidth: btnAddToQueue.preferredContentWidth
                     onClicked: {
-                        sendMessageInputTextAsComand()
+                        sendMessages()
+                    }
+
+                    SGWidgets.SGTag {
+                        anchors {
+                            right: parent.right
+                            rightMargin: -4
+                            top: parent.top
+                            topMargin: -4
+                        }
+
+                        color: TangoTheme.palette.chameleon2
+                        fontSizeMultiplier: 0.9
+                        text: "+" + model.platform.messageQueueModel.count
+                        textColor: "white"
+                        font.bold: true
+                        visible: model.platform.messageQueueModel.count > 0
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: btnAddToQueue
+                    anchors {
+                        top: btnSend.bottom
+                        topMargin: 6
+                        right: parent.right
+                    }
+
+                    enabled: messageEditor.enabled
+                    text: "ADD TO QUEUE"
+                    hintText: "Add message to queue"
+
+                    onClicked: {
+                        queueMessageInputTextAsComand()
                     }
                 }
             }
@@ -759,29 +796,54 @@ FocusScope {
                 visible: handleMouseArea.pressed
             }
 
+            function sendMessages() {
+                if (model.platform.messageQueueModel.count > 0) {
+                    if (messageEditor.text.length > 0) {
+                        queueMessageInputTextAsComand()
+                        if (model.platform.errorString.length > 0) {
+                            return
+                        }
+                    }
+
+                    model.platform.sendQueue()
+                } else {
+                    sendMessageInputTextAsComand()
+                }
+            }
+
             function sendMessageInputTextAsComand() {
                 if (messageEditor.enabled === false) {
                     return
                 }
 
-                messageEditor.messageSendInProgress = true
                 model.platform.sendMessage(messageEditor.text, validateCheckBox.checked)
             }
 
-            function sendMessageResultHandler(type, data) {
-                if (type === Sci.SciPlatform.NoError) {
+            function queueMessageInputTextAsComand() {
+                if (messageEditor.enabled === false) {
+                    return
+                }
+
+                var result = model.platform.queueMessage(messageEditor.text, validateCheckBox.checked)
+                sendMessageResultHandler(result)
+            }
+
+            function sendMessageResultHandler(error) {
+                if (error.error_code === Sci.SciPlatform.NoError) {
                     model.platform.errorString = ""
                     messageEditor.clear()
-                } else if (type === Sci.SciPlatform.NotConnectedError) {
+                } else if (error.error_code === Sci.SciPlatform.NotConnectedError) {
                     model.platform.errorString = "Device not connected"
-                } else if (type === Sci.SciPlatform.JsonError) {
-                    var pos = messageEditor.resolveCoordinates(data.offset, messageEditor.text)
-                    model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) + " - " + data.message;
-                } else if (type === Sci.SciPlatform.PlatformError) {
+                } else if (error.error_code === Sci.SciPlatform.JsonError) {
+                    var pos = messageEditor.resolveCoordinates(error.offset, messageEditor.text)
+                    model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) + " - " + error.error_string;
+                } else if (error.error_code === Sci.SciPlatform.PlatformError) {
                     model.platform.errorString = data.error_string
+                } else if (error.error_code === Sci.SciPlatform.QueueError) {
+                    model.platform.errorString = "Queue Limit Exceeded"
                 } else {
                     model.platform.errorString = "Unknown error"
-                    console.error("unknown message send error", type, data)
+                    console.error("unknown message send error", JSON.stringify(error))
                 }
             }
 
