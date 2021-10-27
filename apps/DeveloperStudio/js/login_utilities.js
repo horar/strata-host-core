@@ -158,8 +158,7 @@ function logout_error(error){
 function close_session(callback) {
     if (Rest.session !== '' && Rest.jwt !== ''){
         var headers = {
-            "app": "strata",
-            "heartbeat": 0
+            "app": "strata"
         }
         Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
         Rest.session = ""
