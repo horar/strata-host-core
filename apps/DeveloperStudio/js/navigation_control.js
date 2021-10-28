@@ -268,7 +268,12 @@ function updateState(event, data)
         case states.CONTROL_STATE:
             switch(event) {
                 case events.OPEN_PLATFORM_VIEW_EVENT:
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
+                    // even if 'class_id' is not defined, it is contained in 'data' as empty string
+                    let openStr = "Opening Platform View, device_id: " + data.device_id + ", class_id: " + data.class_id
+                    if (data.is_assisted) {
+                        openStr += ", controller_class_id: " + data.controller_class_id
+                    }
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, openStr)
 
                     // If matching view exists, bring it back into focus
                     for (let i = 0; i < platform_view_model_.count; i++) {
@@ -285,7 +290,11 @@ function updateState(event, data)
                     break;
 
                 case events.PLATFORM_CONNECTED_EVENT:
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
+                    let connectedStr = "Platform connected, device_id: " + data.device_id + ", class_id: " + data.class_id
+                    if (data.is_assisted) {
+                        connectedStr += ", controller_class_id: " + data.controller_class_id
+                    }
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, connectedStr)
 
                     let view_index = -1
                     let connected_view
@@ -323,11 +332,18 @@ function updateState(event, data)
                     break;
 
                 case events.PLATFORM_DISCONNECTED_EVENT:
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
+                    let disconnectedStr = "Platform disconnected, device_id: " + data.device_id + ", class_id: " + data.class_id
+                    if (data.is_assisted) {
+                        disconnectedStr += ", controller_class_id: " + data.controller_class_id
+                    }
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, disconnectedStr)
                     // Disconnect any matching open platform view
                     for (let k = 0; k < platform_view_model_.count; k++) {
                         let disconnected_view = platform_view_model_.get(k)
-                        if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
+                        // even if 'class_id' is not defined, it is contained in 'disconnected_view' as empty string
+                        if ((disconnected_view.class_id === data.class_id || (disconnected_view.class_id.length === 0 && data.class_id === undefined))
+                            && disconnected_view.device_id === data.device_id)
+                        {
                             disconnected_view.connected = false
                             disconnected_view.firmware_version = ""
                             disconnected_view.controller_class_id = ""
