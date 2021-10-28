@@ -611,7 +611,12 @@ Item {
                 break
             }
 
-            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(scrollbackView.model.sourceModel.data(sourceIndex, "condensedMessage"))
+            if (scrollbackView.model.sourceModel.data(sourceIndex, "isCondensed")) {
+                text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(scrollbackView.model.sourceModel.data(sourceIndex, "condensedMessage"))
+            } else {
+                text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(scrollbackView.model.sourceModel.data(sourceIndex, "expandedMessage"))
+            }
+
             if (i !== selectionEndIndex) {
                 text += '\n'
             }
