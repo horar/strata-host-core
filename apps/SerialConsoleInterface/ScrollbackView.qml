@@ -220,6 +220,33 @@ Item {
         }
 
         MouseArea {
+            id: selectMessageMouseArea
+            anchors {
+                top: listView.top
+                left: listView.left
+            }
+            height: textSelectionMouseArea.height
+            width: delegateTextX
+
+            drag.target: Item {}
+
+            onPressed: {
+                listView.forceActiveFocus()
+                clearSelection()
+
+                var position = resolvePosition(mouse.x, mouse.y)
+                if (position === undefined) {
+                    return
+                }
+
+                listView.currentIndex = position.delegate_index
+                delegateClicked(position.delegate_index);
+
+                mouse.accepted = false
+            }
+        }
+
+        MouseArea {
             id: textSelectionMouseArea
             height: Math.min(listView.height, listView.contentHeight)
             anchors {
@@ -305,25 +332,6 @@ Item {
                     listView.flick(0, -300)
                 } else if (mouse.y < textSelectionMouseArea.height * 0.05) {
                     listView.flick(0, 300)
-                }
-            }
-
-            function resolvePosition(x,y) {
-                var posInListViewX = listView.contentX + textSelectionMouseArea.x + x
-                var posInListViewY = listView.contentY + textSelectionMouseArea.y + y
-
-                var delegateIndex = listView.indexAt(posInListViewX, posInListViewY)
-                if (delegateIndex < 0) {
-                    return
-                }
-
-                var item = listView.itemAt(posInListViewX, posInListViewY)
-                var posInDelegate = item.mapFromItem(textSelectionMouseArea, x, y)
-                var cursorPos = item.positionAtTextEdit(posInDelegate.x, posInDelegate.y)
-
-                return {
-                    "delegate_index": delegateIndex,
-                    "cursor_pos": cursorPos
                 }
             }
         }
@@ -448,6 +456,7 @@ Item {
                     anchors {
                         left: parent.left
                         leftMargin: dummyIconButton.width + scrollbackView.buttonRowSpacing
+                        verticalCenter: parent.verticalCenter
                     }
 
                     sourceComponent: allowOnlyCondensedMode ? null : condensedButtonComponent
@@ -594,6 +603,25 @@ Item {
         selectionEndIndex = -1
         selectionStartPosition = -1
         selectionEndPosition = -1
+    }
+
+    function resolvePosition(x,y) {
+        var posInListViewX = listView.contentX + textSelectionMouseArea.x + x
+        var posInListViewY = listView.contentY + textSelectionMouseArea.y + y
+
+        var delegateIndex = listView.indexAt(posInListViewX, posInListViewY)
+        if (delegateIndex < 0) {
+            return
+        }
+
+        var item = listView.itemAt(posInListViewX, posInListViewY)
+        var posInDelegate = item.mapFromItem(textSelectionMouseArea, x, y)
+        var cursorPos = item.positionAtTextEdit(posInDelegate.x, posInDelegate.y)
+
+        return {
+            "delegate_index": delegateIndex,
+            "cursor_pos": cursorPos
+        }
     }
 
     function copyToClipboard() {
