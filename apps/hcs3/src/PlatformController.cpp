@@ -15,14 +15,27 @@
 #include "logging/LoggingQtCategories.h"
 #include "JsonStrings.h"
 
+#include <Operations/StartApplication.h>
+
+#include <rapidjson/pointer.h>
+
+#include <cstring>
+
 using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
 using strata::platform::PlatformMessage;
 
-PlatformController::PlatformController(): platformManager_(false, false, true) {
+namespace operation = strata::platform::operation;
+
+PlatformController::PlatformController()
+    : platformManager_(false, false, true),
+      platformOperations_(true, true)
+{
     connect(&platformManager_, &PlatformManager::platformRecognized, this, &PlatformController::newConnection);
     connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &PlatformController::closeConnection);
+
+    connect(&platformOperations_, &operation::PlatformOperations::finished, this, &PlatformController::operationFinished);
 }
 
 PlatformController::~PlatformController() {
@@ -44,22 +57,6 @@ void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArra
     it.value().sentMessageNumber = it.value().platform->sendMessage(message);
 }
 
-void PlatformController::bootloaderActive(QByteArray deviceId)
-{
-    auto it = platforms_.find(deviceId);
-    if (it != platforms_.end()) {
-        it.value().inBootloader = true;
-    }
-}
-
-void PlatformController::applicationActive(QByteArray deviceId)
-{
-    auto it = platforms_.find(deviceId);
-    if (it != platforms_.end()) {
-        it.value().inBootloader = false;
-    }
-}
-
 PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
     auto it = platforms_.constFind(deviceId);
     if (it != platforms_.constEnd()) {
@@ -68,9 +65,25 @@ PlatformPtr PlatformController::getPlatform(const QByteArray& deviceId) const {
     return nullptr;
 }
 
-void PlatformController::newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader) {
-    Q_UNUSED(inBootloader)
+void PlatformController::bootloaderActive(QByteArray deviceId)
+{
+    auto it = platforms_.find(deviceId);
+    if (it != platforms_.end()) {
+        it.value().inBootloader = true;
+        it.value().startAppFailed = false;
+    }
+}
 
+void PlatformController::applicationActive(QByteArray deviceId)
+{
+    auto it = platforms_.find(deviceId);
+    if (it != platforms_.end()) {
+        it.value().inBootloader = false;
+        it.value().startAppFailed = false;
+    }
+}
+
+void PlatformController::newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader) {
     if (recognized) {
         PlatformPtr platform = platformManager_.getPlatform(deviceId);
         if (platform == nullptr) {
@@ -119,6 +132,23 @@ void PlatformController::messageFromPlatform(PlatformMessage message)
         return;
     }
 
+    // do not send 'backup_firmware' and 'flash_firmware' ACKs and notifications to clients
+    if (message.isJsonValidObject()) {
+        const rapidjson::Value *jsonValue = rapidjson::GetValueByPointer(message.json(), "/notification/value");
+        if (jsonValue == nullptr) {
+            jsonValue = rapidjson::GetValueByPointer(message.json(), "/ack");
+        }
+
+        if ((jsonValue != nullptr) && jsonValue->IsString()) {
+            const char *str = jsonValue->GetString();
+            if (str != nullptr) {
+                if ((std::strcmp("flash_firmware", str) == 0) || (std::strcmp("backup_firmware", str) == 0)) {
+                    return;
+                }
+            }
+        }
+    }
+
     const QByteArray deviceId = platform->deviceId();
 
     QJsonObject payload {
@@ -147,6 +177,35 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
     if ((it != platforms_.constEnd()) && (it.value().sentMessageNumber == msgNumber)) {
         qCWarning(lcHcsPlatform) << platform << "Cannot send message: '"
             << rawMessage << "', error: '" << errorString << '\'';
+    }
+}
+
+void PlatformController::operationFinished(QByteArray deviceId,
+                       operation::Type type,
+                       operation::Result result,
+                       int status,
+                       QString errorString)
+{
+    Q_UNUSED(status)
+
+    if (type != operation::Type::StartApplication) {
+        return;
+    }
+
+    auto it = platforms_.find(deviceId);
+    if (it == platforms_.end()) {
+        return;
+    }
+
+    if (result == operation::Result::Success) {
+        it->startAppFailed = false;
+        it->inBootloader = false;
+        qCDebug(lcHcsPlatform).noquote() << "Platform application was started for device" << deviceId;
+        emit platformApplicationStarted(deviceId);
+    } else {
+        it->startAppFailed = true;
+        qCWarning(lcHcsPlatform).noquote()
+            << "Cannot start platform application for device" << deviceId << '-' << errorString;
     }
 }
 
@@ -181,8 +240,30 @@ QJsonObject PlatformController::createPlatformsList() {
     return QJsonObject{{JSON_LIST, arr}};
 }
 
+bool PlatformController::platformStartApplication(const QByteArray& deviceId)
+{
+    auto it = platforms_.constFind(deviceId);
+    if (it == platforms_.constEnd()) {
+        return false;
+    }
+    if (it->startAppFailed) {
+        qCWarning(lcHcsPlatform).noquote()
+            << "Previous attempt to start application for device" << deviceId
+            << "has failed. To prevent infinite looping, current attempt will be ignored.";
+        return false;
+    }
+    if (platformOperations_.StartApplication(it->platform) == nullptr) {
+        qCWarning(lcHcsPlatform).noquote()
+            << "Another start application request for device" << deviceId << "is already running.";
+        return false;
+    }
+
+    return true;
+}
+
 PlatformController::PlatformData::PlatformData(PlatformPtr p, bool b)
     : platform(p),
       inBootloader(b),
+      startAppFailed(false),
       sentMessageNumber(0)
 { }

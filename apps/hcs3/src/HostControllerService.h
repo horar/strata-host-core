@@ -21,6 +21,7 @@
 #include "PlatformController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
+#include "ComponentUpdateInfo.h"
 
 #include <DownloadManager.h>
 #include <StrataRPC/StrataServer.h>
@@ -121,10 +122,39 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
-private:
+    void sendUpdateInfoMessage(
+            const QByteArray &clientId,
+            const QJsonArray &componentList,
+            const QString &errorString);
+
+private slots:
     void sendPlatformMessageToClients(const QString &platformId, const QJsonObject& payload);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
+
+    void platformStateChanged(const QByteArray& deviceId);
+
+private:
+    enum class hcsNotificationType {
+        downloadPlatformFilepathChanged,
+        downloadPlatformSingleFileProgress,
+        downloadPlatformSingleFileFinished,
+        downloadPlatformFilesFinished,
+        allPlatforms,
+        platformMetaData,
+        controlViewDownloadProgress,
+        downloadViewFinished,
+        updatesAvailable,
+        updateFirmware,
+        updateFirmwareJob,
+        programController,
+        programControllerJob,
+        platformDocumentsProgress,
+        platformDocument,
+        platformMessage,
+        connectedPlatforms
+    };
+    constexpr const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
 
     void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
     void processCmdLoadDocuments(const strata::strataRPC::Message &message);
@@ -133,20 +163,11 @@ private:
     void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
     void processCmdDownlodView(const strata::strataRPC::Message &message);
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
-
-    void platformStateChanged(const QByteArray& deviceId);
+    void processCmdProgramController(const strata::strataRPC::Message &message);
+    void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
+    void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);
-
-    void callHandlerForTypeCmd(
-            const QString &cmdName,
-            const QJsonObject &payload,
-            const QByteArray &clientId);
-
-    void callHandlerForTypeHcsCmd(
-            const QString &cmdName,
-            const QJsonObject &payload,
-            const QByteArray &clientId);
 
     PlatformController platformController_;
     Database db_;
@@ -154,6 +175,7 @@ private:
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
+    ComponentUpdateInfo componentUpdateInfo_;
 
     QByteArray currentClient_ = "";   // remove this when platforms are mapped to connected clients.
 

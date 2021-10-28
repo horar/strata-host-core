@@ -73,11 +73,11 @@ Dispatcher<HandlerArgument>::~Dispatcher()
 template <class HandlerArgument>
 bool Dispatcher<HandlerArgument>::registerHandler(const QString &handlerName, Handler handler)
 {
-    qCDebug(lcStrataDispatcher) << "registering " << handlerName << " handler.";
+    qCDebug(lcStrataDispatcher) << "registering" << handlerName << "handler.";
 
     const auto [it, inserted] = handlersList_.insert(std::make_pair(handlerName, handler));
     if (false == inserted) {
-        qCDebug(lcStrataDispatcher()) << handlerName << " is already registered.";
+        qCDebug(lcStrataDispatcher) << handlerName << "is already registered.";
     }
 
     return inserted;
@@ -90,7 +90,7 @@ bool Dispatcher<HandlerArgument>::unregisterHandler(const QString &handlerName)
 
     size_t removedCount = handlersList_.erase(handlerName);
     if (removedCount == 0) {
-        qCCritical(lcStrataDispatcher()) << "Handler not found" << handlerName;
+        qCCritical(lcStrataDispatcher) << "Handler not found:" << handlerName;
     }
 
     return removedCount != 0;
@@ -100,12 +100,12 @@ template <class HandlerArgument>
 bool Dispatcher<HandlerArgument>::dispatch(const QString &handlerName,
                                            const HandlerArgument &argument)
 {
-    // qCDebug(logCategoryStrataDispatcher) << "Dispatching " << handlerName;
+    // qCDebug(lcStrataDispatcher) << "Dispatching " << handlerName;
 
     auto it = handlersList_.find(handlerName);
 
     if (it == handlersList_.end()) {
-        qCCritical(lcStrataDispatcher()) << "Handler not found " << handlerName;
+        qCCritical(lcStrataDispatcher) << "Handler not found:" << handlerName;
         return false;
     }
 

@@ -6,8 +6,7 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#ifndef STORAGE_MANAGER_H
-#define STORAGE_MANAGER_H
+#pragma once
 
 #include <memory>
 
@@ -18,6 +17,7 @@
 #include <QDebug>
 #include <QUrl>
 #include <QPointer>
+#include <QPair>
 
 namespace strata {
 class DownloadManager;
@@ -25,6 +25,7 @@ class DownloadManager;
 
 class PlatformDocument;
 class Database;
+struct FirmwareFileItem;
 
 class StorageManager final : public QObject
 {
@@ -58,6 +59,35 @@ public:
      * @return base URL
      */
     QUrl getBaseUrl() const;
+
+    /**
+     * Finds firmware
+     * @param class ID of device
+     * @param controller class ID
+     * @param version of firmware
+     * @return firmware
+     */
+    const FirmwareFileItem* findFirmware(
+            const QString &classId,
+            const QString &controllerClassId,
+            const QString &version);
+
+    /**
+     * Finds highest firmware
+     * @param class ID of device
+     * @param controller class ID
+     * @return firmware
+     */
+    const FirmwareFileItem* findHighestFirmware(
+            const QString &classId,
+            const QString &controllerClassId);
+
+    /**
+     * Finds highest firmware
+     * @param class ID of device
+     * @return firmware
+     */
+    const FirmwareFileItem* findHighestFirmware(const QString &classId);
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);
@@ -167,5 +197,3 @@ private:
     QHash<QString /*groupId*/, QString /*partialUri*/ > downloadControlViewUris_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
 };
-
-#endif //STORAGE_MANAGER_H

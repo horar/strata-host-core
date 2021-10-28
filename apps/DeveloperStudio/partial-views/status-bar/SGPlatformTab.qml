@@ -77,7 +77,7 @@ Item {
     onViewChanged: {
         setSelectedButton()
     }
-    
+
     function closeTab() {
         let data = {
             "class_id": platformTabRoot.class_id,
@@ -91,6 +91,7 @@ Item {
 
     function menuClicked(index) {
         let selection = buttonModel.get(index)
+
         if (selection.view !== view) {
             dropDownPopup.close()
 
@@ -134,6 +135,14 @@ Item {
             }
             buttonModel.append(buttonData)
         }
+
+        buttonData = {
+            "text": "Settings",
+            "view": "settings",
+            "icon": "qrc:/sgimages/cog.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
 
         buttonData = {
             "text": "Close Platform",
@@ -224,6 +233,12 @@ Item {
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
 
+            Accessible.name: "Open Platform Tab"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                mouseMenu.clicked(mouse)
+            }
+
             MouseArea {
                 id: mouseMenu
                 anchors.fill: parent
@@ -264,10 +279,12 @@ Item {
     Popup {
         id: dropDownPopup
         y: platformTabRoot.height
+        z: 100
         width: menu.width
         height: menu.height
         padding: 0
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
+        focus: true
 
         onOpened: {
             if (menu.state === "help_tour") {
@@ -287,6 +304,9 @@ Item {
                     Help.refreshView(Help.internal_tour_index)
                 }
             }
+
+            Accessible.role: Accessible.Pane
+            Accessible.name: "Platform Tab Popup"
 
             ColumnLayout {
                 id: menuColumn

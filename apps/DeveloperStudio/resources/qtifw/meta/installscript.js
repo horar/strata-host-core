@@ -75,9 +75,7 @@ Component.prototype.createOperations = function()
             console.log("will add Start Menu shortcut to: " + strata_ds_shortcut_dst1);
         }
         if (installer.value("add_desktop_shortcut", "true") == "true", "true") {
-            var valid_shortcut = true;
             var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
-
             // workaround for Parallels https://bugreports.qt.io/browse/QTIFW-1106
             if (strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
                 console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
@@ -86,18 +84,17 @@ Component.prototype.createOperations = function()
                     // the output of command is the first item, and the return code is the second
                     if ((desktopFolder != undefined) && (desktopFolder != null) && (desktopFolder[0] != undefined) && (desktopFolder[0] != null) && (desktopFolder[0] != "")) {
                         strata_ds_shortcut_dst2 = desktopFolder[0].trim() + "\\Strata Developer Studio.lnk";
-                        console.log("new desktop shortcut: " + strata_ds_shortcut_dst2);
+                        component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+                        console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
                     } else {
                         console.log("unable to detect correct Desktop path");
-                        valid_shortcut = false;
                     }
                 } catch(e) {
                     console.log("unable to detect correct Desktop path");
                     console.log(e);
-                    valid_shortcut = false;
                 }
-            }
-            if (valid_shortcut == true) {
+            } else {
                 component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
                                         "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
                 console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);

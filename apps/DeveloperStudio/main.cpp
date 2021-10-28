@@ -36,17 +36,19 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
+#include "CoreUpdate.h"
 #include "SGQrcTreeModel.h"
 #include "SGQrcTreeNode.h"
 #include "SGFileTabModel.h"
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "RunGuard.h"
+#include "FirmwareUpdater.h"
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
+#include "PlatformOperation.h"
 
 #include "AppUi.h"
-
 #include "config/AppConfig.h"
 
 using strata::loggers::QtLoggerSetup;
@@ -164,11 +166,19 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<PlatformInterfaceGenerator>("tech.strata.PlatformInterfaceGenerator", 1, 0, "PlatformInterfaceGenerator", "You can't instantiate PlatformInterfaceGenerator in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
+    qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
+    qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
+    qmlRegisterUncreatableType<PlatformOperation>("tech.strata.PlatformOperation", 1, 0, "PlatformOperation", "You can't instantiate PlatformOperation in QML");
     qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
+
+    std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::aboutToQuit,
+                     sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
+
+    QObject::connect(coreUpdate.get(), &CoreUpdate::applicationTerminationRequested,
                      sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QQmlApplicationEngine engine;
@@ -186,6 +196,8 @@ int main(int argc, char *argv[])
 
     /* deprecated context property, use sdsModel.coreInterface instead */
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
+
+    engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
 
     AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(

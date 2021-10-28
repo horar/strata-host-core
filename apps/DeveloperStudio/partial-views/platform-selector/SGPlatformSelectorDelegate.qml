@@ -56,7 +56,7 @@ Item {
             implicitWidth: imageContainer.implicitWidth
 
             Rectangle {
-                color: model.connected ? Theme.palette.darkGray : Theme.palette.gray
+                color: model.connected ? Theme.palette.onsemiDark : Theme.palette.gray
                 anchors {
                     centerIn: imageContainer
                 }
@@ -66,6 +66,8 @@ Item {
 
             PlatformImage {
                 id: imageContainer
+                text: model.program_controller ? "PROGRAMMING" : defaultText
+                textBgColor: model.program_controller ? Theme.palette.orange : defaultTextBg
             }
         }
 
@@ -88,7 +90,7 @@ Item {
                         return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
-
+                color: Theme.palette.onsemiDark
                 font {
                     pixelSize: 16
                     family: Fonts.franklinGothicBold
@@ -118,7 +120,7 @@ Item {
                     pixelSize: 13
                     family: Fonts.franklinGothicBook
                 }
-                color: "#333"
+                color: Theme.palette.onsemiDark
                 font.italic: true
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -146,11 +148,33 @@ Item {
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 12
                 lineHeight: 1.2
-                color: "#666"
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                visible: model.program_controller === false
+            }
+
+            Text {
+                id: statusText
+                text: {
+                    if (model.program_controller_error_string) {
+                        return "Programming of controller failed.\n" + model.program_controller_error_string
+                    }
+
+                    return "Programming controller. Do not unplug device."
+                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                visible: model.program_controller || model.program_controller_error_string
+                font {
+                    pixelSize: 14
+                    family: Fonts.franklinGothicBook
+                }
+                wrapMode: Text.WordWrap
+                color: model.program_controller_error_string ? Theme.palette.error : "#333"
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
@@ -183,7 +207,7 @@ Item {
                     pixelSize: 12
                     family: Fonts.franklinGothicBook
                 }
-                color: "#666"
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
@@ -330,7 +354,7 @@ Item {
                 ColumnLayout {
                     id: buttonColumn
                     Layout.fillHeight: false
-                    visible: platformControlsColumn.comingSoon === false
+                    visible: model.program_controller === false && platformControlsColumn.comingSoon === false
 
                     function openView(view) {
                         var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
@@ -340,6 +364,8 @@ Item {
                         }
                         let data = {
                             "device_id": model.device_id,
+                            "controller_class_id": model.controller_class_id,
+                            "is_assisted": model.is_assisted,
                             "class_id": model.class_id,
                             "name": model.verbose_name,
                             "index": sourceIndex,
@@ -392,6 +418,17 @@ Item {
                         }
                     }
                 }
+            }
+
+            SGCircularProgress {
+                id: circularProgress
+                Layout.preferredWidth: 100
+                Layout.preferredHeight: 100
+                Layout.alignment: Qt.AlignCenter
+
+                visible: model.program_controller
+                value: model.program_controller_progress
+                highlightColor: Theme.palette.orange
             }
         }
     }

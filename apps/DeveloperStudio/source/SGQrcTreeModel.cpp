@@ -866,7 +866,7 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
         qrcItems_.insert(absolutePath);
     }
 
-    qDebug(lcControlViewCreator) << "Successfully parsed qrc file";
+    qCDebug(lcControlViewCreator) << "Successfully parsed qrc file";
     return true;
 }
 

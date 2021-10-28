@@ -10,6 +10,7 @@
         <file>SGCapacityBarElement.qml</file>
         <file>SGCheckBox.qml</file>
         <file>SGCircularGauge.qml</file>
+        <file>SGCircularProgress.qml</file>
         <file>SGComboBox.qml</file>
         <file>SGContextMenuEditActions.qml</file>
         <file>SGFilePicker.qml</file>

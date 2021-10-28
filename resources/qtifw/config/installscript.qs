@@ -88,15 +88,7 @@ Controller.prototype.IntroductionPageCallback = function()
     }
 
     if (isSilent == true) {
-        gui.clickButton(buttons.NextButton);
-    }
-}
-
-Controller.prototype.WelcomePageCallback = function ()
-{
-    console.log("[GUI] WelcomePageCallback entered");
-    if (isSilent == true) {
-        gui.clickButton(buttons.NextButton, 3000);
+        gui.clickButton(buttons.NextButton, 1000);
     }
 }
 

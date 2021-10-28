@@ -103,11 +103,8 @@ public:
      * @param class_id The class_id of the platform
      * @return Returns the git tagged version for the class_id
      */
+
     Q_INVOKABLE QString getGitTaggedVersion(const QString &class_id);
-
-    Q_INVOKABLE QString getStaticResourcesString();
-
-    Q_INVOKABLE QUrl getStaticResourcesUrl();
 
     /**
      * @brief unregisterAllViews Asynchronously requests resource unregistration for all control view resources

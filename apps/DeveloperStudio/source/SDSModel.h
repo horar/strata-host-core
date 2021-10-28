@@ -21,8 +21,10 @@ class CoreInterface;
 class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
+class FirmwareUpdater;
 class PlatformInterfaceGenerator;
 class VisualEditorUndoStack;
+class PlatformOperation;
 
 namespace strata::strataRPC
 {
@@ -39,11 +41,14 @@ class SDSModel: public QObject
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
+    Q_PROPERTY(FirmwareUpdater* firmwareUpdater READ firmwareUpdater CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
     Q_PROPERTY(VisualEditorUndoStack* visualEditorUndoStack READ visualEditorUndoStack CONSTANT)
     Q_PROPERTY(strata::sds::config::UrlConfig* urls READ urls CONSTANT)
     Q_PROPERTY(strata::loggers::QtLogger* qtLogger READ qtLogger CONSTANT)
     Q_PROPERTY(strata::strataRPC::StrataClient* strataClient READ strataClient CONSTANT)
+    Q_PROPERTY(PlatformOperation* platformOperation READ platformOperation CONSTANT)
+    Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled NOTIFY debugFeaturesEnabledChanged)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -57,11 +62,15 @@ public:
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
+    FirmwareUpdater* firmwareUpdater() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
     VisualEditorUndoStack* visualEditorUndoStack() const;
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
     strata::strataRPC::StrataClient *strataClient() const;
+    PlatformOperation* platformOperation() const;
+    bool debugFeaturesEnabled();
+    void setDebugFeaturesEnabled(bool enabled);
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
@@ -72,6 +81,7 @@ public slots:
 
 signals:
     void hcsConnectedChanged();
+    void debugFeaturesEnabledChanged();
     void notifyQmlError(QString notifyQmlError);
 
 private slots:
@@ -86,12 +96,15 @@ private:
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
+    FirmwareUpdater *firmwareUpdater_{nullptr};
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};
     VisualEditorUndoStack *visualEditorUndoStack_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
     strata::sds::config::UrlConfig *urlConfig_{nullptr};
+    PlatformOperation *platformOperation_{nullptr};
     QPointer<QProcess> hcsProcess_;
     const unsigned hcsIdentifier_;
+    bool debugFeaturesEnabled_ = false;
 
     void setHcsConnected(bool hcsConnected);
 };

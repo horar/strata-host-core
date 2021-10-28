@@ -110,9 +110,9 @@ bool ResourceLoader::registerControlViewResource(const QString &rccPath, const Q
 
 void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
     if (removeFromSystem) {
-        qDebug(lcResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
+        qCDebug(lcResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
     } else {
-        qDebug(lcResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
+        qCDebug(lcResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
     }
     QTimer::singleShot(1, this, [=]{
         if (unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem) == false) {
@@ -166,9 +166,9 @@ bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const
 
 void ResourceLoader::requestUnregisterResource(const QString &path, const QString &prefix, QObject *parent, const bool removeFromSystem) {
     if (removeFromSystem) {
-        qDebug(lcResourceLoader) << "Requesting unregistration and deletion of RCC:" << path;
+        qCDebug(lcResourceLoader) << "Requesting unregistration and deletion of RCC:" << path;
     } else {
-        qDebug(lcResourceLoader) << "Requesting unregistration of RCC:" << path;
+        qCDebug(lcResourceLoader) << "Requesting unregistration of RCC:" << path;
     }
     QTimer::singleShot(1, this, [=]{
         if (unregisterResource(path, prefix, parent, removeFromSystem) == false) {
@@ -227,6 +227,7 @@ void ResourceLoader::loadCoreResources()
     }
 }
 
+
 void ResourceLoader::loadPluginResources()
 {
     const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
@@ -247,17 +248,6 @@ void ResourceLoader::loadPluginResources()
         qCDebug(lcDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
                 QResource::registerResource(resourceFile));
     }
-}
-
-QString ResourceLoader::getStaticResourcesString() {
-    return ResourcePath::viewsResourcePath();
-}
-
-QUrl ResourceLoader::getStaticResourcesUrl() {
-    QUrl url;
-    url.setScheme("file");
-    url.setPath(ResourcePath::viewsResourcePath());
-    return url;
 }
 
 void ResourceLoader::unregisterAllViews(QObject *parent)
@@ -318,7 +308,7 @@ QString ResourceLoader::getVersionJson(const QString &class_id, const QString &v
     QString filepath = ":" + getQResourcePrefix(class_id, version) + "/version.json";
     QFile versionJsonFile(filepath);
 
-    qDebug(lcResourceLoader) << "Looking in" << filepath << "for version.json";
+    qCDebug(lcResourceLoader) << "Looking in" << filepath << "for version.json";
     if (!versionJsonFile.exists()) {
         qCCritical(lcResourceLoader) << "Could not find version.json." << filepath << "does not exist.";
         return QString();

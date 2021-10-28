@@ -18,6 +18,7 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/js/core_update.js" as CoreUpdate
 import "qrc:/partial-views/platform-view"
 
 // imports below must be qrc:/ due to qrc aliases for debug/release differences
@@ -108,7 +109,10 @@ SGWidgets.SGMainWindow {
         NavigationControl.init(statusBarLoader, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
-            PlatformSelection.initialize(sdsModel.coreInterface, sdsModel.strataClient)
+            PlatformSelection.initialize(sdsModel)
+        }
+        if (!CoreUpdate.isInitialized) {
+            CoreUpdate.initialize(sdsModel, updateLoader)
         }
         initialized()
     }
@@ -177,6 +181,39 @@ SGWidgets.SGMainWindow {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
+    }
+
+    Connections {
+        target: sdsModel.firmwareUpdater
+
+        onJobStarted: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", true)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0.0)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", "")
+        }
+
+        onJobProgressUpdate: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", progress)
+        }
+
+        onJobFinished: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", false)
+        }
+
+        onJobError: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
+        }
+    }
+
+    Loader {
+        id: updateLoader
+        active: false
+        anchors {
+            centerIn: parent
+        }
+        width: 500
+        height: 300
+        visible: active
     }
 
     ColumnLayout {
@@ -256,6 +293,12 @@ SGWidgets.SGMainWindow {
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(connectedPlatformList)
+            }
+        }
+
+        onUpdateInfoReceived: {
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
+                CoreUpdate.parseUpdateInfo(payload)
             }
         }
     }

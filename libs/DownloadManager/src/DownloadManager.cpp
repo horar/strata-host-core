@@ -102,7 +102,7 @@ QString DownloadManager::download(
 bool DownloadManager::verifyFileHash(
         const QString &filePath,
         const QString &checksum,
-        const QCryptographicHash::Algorithm &method)
+        const QCryptographicHash::Algorithm method)
 {
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly) == false) {
@@ -369,7 +369,7 @@ bool DownloadManager::postNextDownloadRequest(InternalDownloadRequest *internalR
         return false;
     }
 
-    qCDebug(lcDownloadManager) << "start download " << internalRequest->url << "into" << internalRequest->savedFile.fileName();
+    qCDebug(lcDownloadManager) << "start download " << internalRequest->url.toString() << "into" << internalRequest->savedFile.fileName();
 
     QNetworkReply *reply = postNetworkRequest(internalRequest->url, internalRequest);
     if (reply == nullptr) {
@@ -391,7 +391,7 @@ void DownloadManager::processRequest(InternalDownloadRequest *internalRequest, c
 
     qCDebug(lcDownloadManager)
             << "download item"
-            << internalRequest->url << internalRequest->originalFilePath;
+            << internalRequest->url.toString() << "to" << internalRequest->originalFilePath;
 
     if (request.url.isValid() == false) {
         internalRequest->state = InternalDownloadRequest::DownloadState::FinishedWithError;

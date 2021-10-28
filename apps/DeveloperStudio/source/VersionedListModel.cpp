@@ -46,6 +46,8 @@ QVariant VersionedListModel::data(const QModelIndex &index, int role) const
         return item->uri;
     case NameRole:
         return item->name;
+    case ControllerClassIdRole:
+        return item->controller_class_id;
     case Md5Role:
         return item->md5;
     case TimestampRole:
@@ -125,6 +127,11 @@ QString VersionedListModel::name(int index)
     return data(VersionedListModel::index(index, 0), NameRole).toString();
 }
 
+QString VersionedListModel::controller_class_id(int index)
+{
+    return data(VersionedListModel::index(index, 0), ControllerClassIdRole).toString();
+}
+
 QString VersionedListModel::timestamp(int index)
 {
     return data(VersionedListModel::index(index, 0), TimestampRole).toString();
@@ -201,6 +208,7 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
     names[UriRole] = "uri";
     names[VersionRole] = "version";
     names[NameRole] = "name";
+    names[ControllerClassIdRole] = "controller_class_id";
     names[TimestampRole] = "timestamp";
     names[Md5Role] = "md5";
     names[InstalledRole] = "installed";
@@ -209,7 +217,7 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
     return names;
 }
 
-int VersionedListModel::getLatestVersion() {
+int VersionedListModel::getLatestVersionIndex() {
     QStringList versions;
     for (VersionedItem *versionItem : data_) {
         versions.append(versionItem->version);
@@ -220,7 +228,28 @@ int VersionedListModel::getLatestVersion() {
     return latestVersionIndex;
 }
 
-int VersionedListModel::getInstalledVersion() {
+int VersionedListModel::getLatestVersionIndex(QString controllerClassId) {
+    if (data_.size() == 0) {
+        return -1;
+    }
+    int latestVersionIndex = -1;
+    bool error = false;
+    for (int i = 0; i < data_.size(); i++) {
+        VersionedItem *versionItem = data_[i];
+        if (versionItem->controller_class_id != controllerClassId) {
+            continue;
+        }
+        if (latestVersionIndex < 0 || SGVersionUtils::greaterThan(versionItem->version, data_[latestVersionIndex]->version, &error)) {
+            latestVersionIndex = i;
+        }
+        if (error) {
+            return -1;
+        }
+    }
+    return latestVersionIndex;
+}
+
+int VersionedListModel::getInstalledVersionIndex() {
     int oldestInstalledIndex = -1;
 
     for (int i = 0; i < data_.count(); i++) {

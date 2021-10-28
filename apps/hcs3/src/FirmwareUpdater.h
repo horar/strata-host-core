@@ -25,19 +25,33 @@ namespace strata {
     class DownloadManager;
 }
 
+namespace strata::device::operation {
+    class SetAssistedPlatformId;
+    enum class Result: int;
+}
+
 class FirmwareUpdater final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(FirmwareUpdater)
 public:
     /**
-     * FirmwareUpdater constructor
-     * @param devPtr device
+     * FirmwareUpdater constructor for updating firmware or programming new firmware to assisted controller (dongle)
+     * @param platform platform
      * @param downloadManager pointer to DownloadManager
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
+     * @param fwClassId firmware class id
      */
-    FirmwareUpdater(const strata::platform::PlatformPtr& platform, strata::DownloadManager *downloadManager, const QUrl& url, const QString& md5);
+    FirmwareUpdater(const strata::platform::PlatformPtr& platform, strata::DownloadManager *downloadManager,
+                    const QUrl& url, const QString& md5, const QString& fwClassId);
+
+    /**
+     * FirmwareUpdater constructor for setting fw_class_id (without flash) to assisted controller (dongle)
+     * @param platform platform
+     * @param fwClassId firmware class id
+     */
+    FirmwareUpdater(const strata::platform::PlatformPtr& platform, const QString& fwClassId);
 
     /**
      * FirmwareUpdater destructor
@@ -46,8 +60,14 @@ public:
 
     /**
      * Update Firmware
+     * @param backupOldFirmware true if backup original firmware, false otherwise
      */
-    void updateFirmware();
+    void updateFirmware(bool backupOldFirmware);
+
+    /**
+     * Set Firmware ClassId
+     */
+    void setFwClassId();
 
 signals:
     void updateProgress(QByteArray deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
@@ -75,9 +95,13 @@ private slots:
     void handleFlashFirmware();
 
 private:
+    void updateFinished(FirmwareUpdateController::UpdateStatus status);
     void downloadFirmware();
 
+    void logAndEmitError(const QString& errorString);
+
     bool running_;
+    bool backupOldFirmware_;
 
     const strata::platform::PlatformPtr platform_;
     const QByteArray deviceId_;
@@ -88,6 +112,8 @@ private:
     const QUrl firmwareUrl_;
     const QString firmwareMD5_;
     QTemporaryFile firmwareFile_;
+
+    const QString fwClassId_;
 
     QPointer<strata::FlasherConnector> flasherConnector_;
 };

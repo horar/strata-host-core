@@ -24,6 +24,22 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
         "platform_notification",
         std::bind(&CoreInterface::processPlatformNotification, this, std::placeholders::_1));
     strataClient_->registerHandler(
+        "updates_available", std::bind(&CoreInterface::processUpdatesAvailableNotification, this,
+                                       std::placeholders::_1));
+    strataClient_->registerHandler(
+        "program_controller_job", std::bind(&CoreInterface::processProgramControllerJobNotification, this,
+                                         std::placeholders::_1));
+    strataClient_->registerHandler(
+        "update_firmware_job", std::bind(&CoreInterface::processUpdateFirmwareJobNotification, this,
+                                         std::placeholders::_1));
+    strataClient_->registerHandler(
+        "control_view_download_progress",
+        std::bind(&CoreInterface::processDownloadControlViewProgressNotification, this,
+                  std::placeholders::_1));
+    strataClient_->registerHandler(
+        "download_view_finished", std::bind(&CoreInterface::processDownloadViewFinishedNotification,
+                                            this, std::placeholders::_1));
+    strataClient_->registerHandler(
         "download_platform_filepath_changed",
         std::bind(&CoreInterface::processDownloadPlatformFilepathChangedNotification, this,
                   std::placeholders::_1));
@@ -80,22 +96,47 @@ void CoreInterface::processConnectedPlatformsNotification(const QJsonObject &pay
     emit connectedPlatformListChanged(connectedPlatformList_);
 }
 
-void CoreInterface::processDownloadPlatformFilepathChangedNotification(const QJsonObject &payload) 
+void CoreInterface::processUpdatesAvailableNotification(const QJsonObject &payload)
+{
+    emit updateInfoReceived(payload);
+}
+
+void CoreInterface::processDownloadViewFinishedNotification(const QJsonObject &payload)
+{
+    emit downloadViewFinished(payload);
+}
+
+void CoreInterface::processDownloadControlViewProgressNotification(const QJsonObject &payload)
+{
+    emit downloadControlViewProgress(payload);
+}
+
+void CoreInterface::processProgramControllerJobNotification(const QJsonObject &payload)
+{
+    emit programControllerJobUpdate(payload);
+}
+
+void CoreInterface::processUpdateFirmwareJobNotification(const QJsonObject &payload)
+{
+    emit updateFirmwareJobUpdate(payload);
+}
+
+void CoreInterface::processDownloadPlatformFilepathChangedNotification(const QJsonObject &payload)
 {
     emit downloadPlatformFilepathChanged(payload);
 }
 
-void CoreInterface::processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload) 
+void CoreInterface::processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload)
 {
     emit downloadPlatformSingleFileProgress(payload);
 }
 
-void CoreInterface::processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload) 
+void CoreInterface::processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload)
 {
     emit downloadPlatformSingleFileFinished(payload);
 }
 
-void CoreInterface::processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload) 
+void CoreInterface::processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload)
 {
     emit downloadPlatformFilesFinished(payload);
 }

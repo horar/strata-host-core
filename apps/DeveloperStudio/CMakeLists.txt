@@ -40,14 +40,17 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DownloadDocumentListModel.cpp
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
+    source/FirmwareUpdater.cpp
     source/SGQrcTreeModel.cpp
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp
     source/SGNewControlView.cpp
     source/ResourcePath.cpp
     source/RunGuard.cpp
+    source/CoreUpdate.cpp
     source/PlatformInterfaceGenerator.cpp
     source/VisualEditorUndoStack.cpp
+    source/PlatformOperation.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp

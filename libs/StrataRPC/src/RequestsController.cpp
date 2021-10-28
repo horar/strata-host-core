@@ -67,7 +67,7 @@ std::pair<bool, Request> RequestsController::popPendingRequest(const int &id)
     qCDebug(lcRequestsController) << "Popping pending request id:" << id;
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qDebug(lcRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return {false, Request("", QJsonObject({{}}), 0, nullptr)};
     }
     Request request(it.value());

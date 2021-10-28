@@ -24,6 +24,7 @@
         <file>widgets1_0/ExSGAlignedLabel.qml</file>
         <file>widgets1_0/ExSGUserSettings.qml</file>
         <file>widgets1_0/ExSGSpinBox.qml</file>
+        <file>widgets1_0/ExSGCircularProgress.qml</file>
         <file>widgets1_0/ExSGAbstractContextMenu.qml</file>
         <file>widgets1_0/ExSGContextMenuEditActions.qml</file>
         <file>widgets1_0/ExSGIcon.qml</file>
