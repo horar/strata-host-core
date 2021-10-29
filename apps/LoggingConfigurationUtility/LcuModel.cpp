@@ -27,27 +27,19 @@ void LcuModel::configFileSelectionChanged(QString fileName)
 {
     qCInfo(logCategoryLoggingConfigurationUtility()) << "Selected INI file changed to: " << fileName;
 }
-void LcuModel::reload()
-{
-    qCInfo(logCategoryLoggingConfigurationUtility()) << "Reload button clicked ";
-}
 QStringList LcuModel::getIniFiles()
 {
     QStringList iniFiles;
     QString path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0) + "/strata-root/strata-host-core-internal/assets/config";
     //QString standardPath = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation).at(0);
-    //this locations doesnt work, it gives me following path: /User/Library/Preferences/onsemi/Logging Configuration Utility
+    //this standardPath doesnt work, it gives me following path: /User/Library/Preferences/onsemi/Logging Configuration Utility . However, this directory seems not to exist
 
     QDirIterator it(path, {"*.ini","*.config"}, QDir::Files, QDirIterator::Subdirectories);
     while (it.hasNext()){
-        iniFiles << it.next().remove(0, path.count());
+        iniFiles << it.next().remove(0, path.count()+1);
     }
     if (iniFiles.empty())
-        qCInfo(logCategoryLoggingConfigurationUtility()) << "No ini files were found";
-    // To do : disable combo box
+        qCWarning(logCategoryLoggingConfigurationUtility()) << "No ini files were found.";
 
-    for(int i=0; i < iniFiles.count(); i++){
-        iniFiles.at(i);
-    }
     return iniFiles;
 }

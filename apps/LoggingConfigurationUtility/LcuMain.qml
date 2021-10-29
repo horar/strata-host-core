@@ -27,15 +27,21 @@ Item {
             SGWidgets.SGComboBox{
                 id: comboBox
                 width: (9./10.)* lcuMain.width
-                model: lcuModel.getIniFiles()
+                Component.onCompleted: reloadButton.clicked()
                 onActivated: lcuModel.configFileSelectionChanged(comboBox.currentText)
             }
             SGWidgets.SGButton{
                 id: reloadButton
-                text: "Reload"
                 width: (1./10.)* lcuMain.width
                 height: comboBox.height
-                onClicked: lcuModel.reload()
+                icon.source: "qrc:/sgimages/redo.svg"
+                onClicked: {
+                    comboBox.model = lcuModel.getIniFiles()
+                    if (comboBox.count == 0)
+                        comboBox.enabled = false
+                    else
+                        comboBox.enabled = true
+                }
             }
         }
     }

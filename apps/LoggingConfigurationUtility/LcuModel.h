@@ -18,7 +18,6 @@ public:
     explicit LcuModel(QObject *parent = nullptr);
     virtual ~LcuModel();
     Q_INVOKABLE void configFileSelectionChanged(QString fileName);
-    Q_INVOKABLE void reload();
     Q_INVOKABLE QStringList getIniFiles();
 
 signals:
