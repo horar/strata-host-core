@@ -275,10 +275,11 @@ function updateState(event, data)
                     }
                     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, openStr)
 
+                    const opened_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     // If matching view exists, bring it back into focus
                     for (let i = 0; i < platform_view_model_.count; i++) {
                         let open_view = platform_view_model_.get(i)
-                        if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
+                        if (open_view.class_id === opened_class_id && open_view.device_id === data.device_id) {
                             updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
                             open_view.view = data.view
                             return
@@ -296,6 +297,7 @@ function updateState(event, data)
                     }
                     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, connectedStr)
 
+                    const connected_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     let view_index = -1
                     let connected_view
 
@@ -303,7 +305,7 @@ function updateState(event, data)
                     // OR if none found, find view matching class_id, bind to it, set connected
                     for (let j = 0; j < platform_view_model_.count; j++) {
                         connected_view = platform_view_model_.get(j)
-                        if (connected_view.class_id === data.class_id) {
+                        if (connected_view.class_id === connected_class_id) {
                             if (connected_view.device_id === data.device_id) {
                                 view_index = j
                                 break
@@ -336,13 +338,12 @@ function updateState(event, data)
                     if (data.is_assisted) {
                         disconnectedStr += ", controller_class_id: " + data.controller_class_id
                     }
+                    const disconnected_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, disconnectedStr)
                     // Disconnect any matching open platform view
                     for (let k = 0; k < platform_view_model_.count; k++) {
                         let disconnected_view = platform_view_model_.get(k)
-                        // even if 'class_id' is not defined, it is contained in 'disconnected_view' as empty string
-                        if ((disconnected_view.class_id === data.class_id || (disconnected_view.class_id.length === 0 && data.class_id === undefined))
-                            && disconnected_view.device_id === data.device_id)
+                        if (disconnected_view.class_id === disconnected_class_id && disconnected_view.device_id === data.device_id)
                         {
                             disconnected_view.connected = false
                             disconnected_view.firmware_version = ""
@@ -354,14 +355,15 @@ function updateState(event, data)
                     break;
 
                 case events.CLOSE_PLATFORM_VIEW_EVENT:
+                    const closed_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     let l
                     for (l = 0; l < platform_view_model_.count; l++) {
                         let closed_view = platform_view_model_.get(l)
-                        if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
+                        if (closed_view.class_id === closed_class_id && closed_view.device_id === data.device_id) {
                             platform_view_model_.remove(l)
 
                             // Unregister all related control views
-                            resource_loader_.unregisterAllRelatedViews(data.class_id, main_qml_object_);
+                            resource_loader_.unregisterAllRelatedViews(closed_class_id, main_qml_object_);
                             break
                         }
                     }

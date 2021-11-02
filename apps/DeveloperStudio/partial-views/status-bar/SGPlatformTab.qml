@@ -83,6 +83,7 @@ Item {
             "class_id": platformTabRoot.class_id,
             "device_id": platformTabRoot.device_id
         }
+
         PlatformSelection.closePlatformView(data)
 
         // must call last - model entry/delegate begins destruction
