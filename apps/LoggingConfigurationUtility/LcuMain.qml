@@ -11,13 +11,17 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.lcu 1.0
+import tech.strata.lcu.ini 1.0
 
-Item {
+ListView {
     id: lcuMain
-    LcuModel { id: lcuModel }
+
+    Component.onCompleted: reloadButton.clicked()
     Column{
         SGWidgets.SGText{
-            text: "Configuration Files"
+            id: title
+            text: "Configuration files"
+            //look if i need to set w&h
             width: lcuMain.width
             height: lcuMain.height / 3
             horizontalAlignment: Text.AlignHCenter
@@ -26,21 +30,22 @@ Item {
         Row{
             SGWidgets.SGComboBox{
                 id: comboBox
-                width: (9./10.)* lcuMain.width
-                Component.onCompleted: reloadButton.clicked()
-                onActivated: lcuModel.configFileSelectionChanged(comboBox.currentText)
+                width: lcuMain.width - reloadButton.width
+                height: 0.08 * lcuMain.height
+                model: LcuModel{
+                    list:  IniFiles
+                }
+
+                onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
+                //enabled: model.rowCount =! 0
             }
             SGWidgets.SGButton{
                 id: reloadButton
-                width: (1./10.)* lcuMain.width
+                width: comboBox.height
                 height: comboBox.height
                 icon.source: "qrc:/sgimages/redo.svg"
                 onClicked: {
-                    comboBox.model = lcuModel.getIniFiles()
-                    if (comboBox.count == 0)
-                        comboBox.enabled = false
-                    else
-                        comboBox.enabled = true
+                    //reload list of ini files
                 }
             }
         }

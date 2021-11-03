@@ -1,45 +1,121 @@
-/*
- * Copyright (c) 2018-2021 onsemi.
- *
- * All rights reserved. This software and/or documentation is licensed by onsemi under
- * limited terms and conditions. The terms and conditions pertaining to the software and/or
- * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
- * Terms and Conditions of Sale, Section 8 Software”).
- */
+/***************************************************************************
+ *                                                                         *
+ *   Copyright (C) 2021 by ONsemiconductor     *
+ *                                                                         *
+ *   http://onsemi.com                                          *
+ *                                                                         *
+ ***************************************************************************/
 #include "LcuModel.h"
+#include "IniFiles.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QCoreApplication>
-#include <QStandardPaths>
 #include <QSettings>
-#include <QDirIterator>
+#include <QFileInfo>
+#include <QDir>
 
 LcuModel::LcuModel(QObject *parent)
-    : QObject(parent)
+    : QAbstractItemModel(parent)
 {
-
-}
-LcuModel::~LcuModel()
-{
-
-}
-void LcuModel::configFileSelectionChanged(QString fileName)
-{
-    qCInfo(logCategoryLoggingConfigurationUtility()) << "Selected INI file changed to: " << fileName;
-}
-QStringList LcuModel::getIniFiles()
-{
-    QStringList iniFiles;
-    QString path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0) + "/strata-root/strata-host-core-internal/assets/config";
-    //QString standardPath = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation).at(0);
-    //this standardPath doesnt work, it gives me following path: /User/Library/Preferences/onsemi/Logging Configuration Utility . However, this directory seems not to exist
-
-    QDirIterator it(path, {"*.ini","*.config"}, QDir::Files, QDirIterator::Subdirectories);
-    while (it.hasNext()){
-        iniFiles << it.next().remove(0, path.count()+1);
+    QSettings settings;
+    QFileInfo fileInfo(settings.fileName());
+    QDir directory(fileInfo.absolutePath());
+    iniFiles_ = directory.entryList({"*.ini"},QDir::Files);
+    if (iniFiles_.empty())
+    {
+        qCWarning(lcLcu()) << "No ini files were found.";
     }
-    if (iniFiles.empty())
-        qCWarning(logCategoryLoggingConfigurationUtility()) << "No ini files were found.";
+}
 
-    return iniFiles;
+QModelIndex LcuModel::index(int row, int column, const QModelIndex &parent) const
+{
+    // FIXME: Implement me!
+}
+
+QModelIndex LcuModel::parent(const QModelIndex &index) const
+{
+    // FIXME: Implement me!
+}
+
+int LcuModel::rowCount(const QModelIndex & parent) const {
+
+    //return list_->items().size();
+    return iniFiles_.count();
+ }
+
+int LcuModel::columnCount(const QModelIndex &parent) const
+{
+    return 1;
+}
+
+QVariant LcuModel::data(const QModelIndex & index, int role) const
+{
+    if (index.isValid() || !list_)
+        return QVariant();
+
+    //QString item = list_->items().at(index.row());
+    QString item = iniFiles_.at( index.row() );
+    QVariant value;
+        switch ( role )
+        {
+            case Qt::DisplayRole:
+            {
+                value = item;
+            }
+            break;
+            case Qt::UserRole:
+            {
+                value = item;
+            }
+            break;
+            default:
+                break;
+        }
+        return value;
+}
+
+/*
+bool LcuModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if(!list_)
+        return false;
+    QString item = list_->items().at(index.row());
+    switch (role) {
+    case DescriptionRole:
+        item = value.toString();
+    }
+
+    if(list_->setItemAt(index.row(),item)){
+        emit dataChanged(index,index,QVector<int>() << role);
+        return true;
+    }
+    return false;
+}*/
+
+IniFiles *LcuModel::list() const
+{
+    return list_;
+}
+
+void LcuModel::setList(IniFiles *list)
+{
+    beginResetModel();
+    if(list_)
+    {
+        list_->disconnect(this);
+    }
+    list_ = list;
+    if(list_)
+    {
+        connect(list_, &IniFiles::preItemAppanded,this,[=]()
+        {
+            const int index = list->items().size();
+            beginInsertRows(QModelIndex(),index,index);
+        });
+        connect(list_, &IniFiles::postItemAppended,this,[=]()
+        {
+            endInsertRows();
+        });
+    }
+    endResetModel();
 }

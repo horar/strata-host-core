@@ -1,27 +1,47 @@
-/*
- * Copyright (c) 2018-2021 onsemi.
- *
- * All rights reserved. This software and/or documentation is licensed by onsemi under
- * limited terms and conditions. The terms and conditions pertaining to the software and/or
- * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
- * Terms and Conditions of Sale, Section 8 Software”).
- */
+/***************************************************************************
+ *                                                                         *
+ *   Copyright (C) 2021 by ONsemiconductor     *
+ *                                                                         *
+ *   http://onsemi.com                                          *
+ *                                                                         *
+ ***************************************************************************/
 #ifndef LCUMODEL_H
 #define LCUMODEL_H
 
-#include <QObject>
+#include <QAbstractItemModel>
 
-class LcuModel : public QObject
+class IniFiles;
+
+class LcuModel : public QAbstractItemModel
 {
     Q_OBJECT
+    Q_PROPERTY(IniFiles *list READ list WRITE setList)
+
 public:
     explicit LcuModel(QObject *parent = nullptr);
-    virtual ~LcuModel();
-    Q_INVOKABLE void configFileSelectionChanged(QString fileName);
-    Q_INVOKABLE QStringList getIniFiles();
 
-signals:
+    enum {
+        UserRole,
+        DisplayRole
+    };
 
+    // Basic functionality:
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+    QModelIndex parent(const QModelIndex &index) const override;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+//    bool setData(const QModelIndex &index, const QVariant &value,int role = Qt::EditRole) override;
+
+    IniFiles *list() const;
+    void setList(IniFiles *list);
+
+private:
+    IniFiles *list_;
+    QStringList iniFiles_;
 };
 
 #endif // LCUMODEL_H

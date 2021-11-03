@@ -7,6 +7,9 @@
    Terms and Conditions of Sale, Section 8 Software”).
    ***************************************************************************/
 #include "LcuModel.h"
+#include "IniFiles.h"
+#include <QtLoggerSetup.h>
+#include "logging/LoggingQtCategories.h"
 
 #include "Version.h"
 
@@ -18,9 +21,6 @@
 #include <QDir>
 #include <QIcon>
 #include <QQmlFileSelector>
-
-#include <QtLoggerSetup.h>
-#include "logging/LoggingQtCategories.h"
 
 static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -54,7 +54,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qCInfo(logCategoryLoggingConfigurationUtility)
+        qCInfo(lcLcu)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
@@ -72,7 +72,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
     bool status = applicationDir.cd("imports");
     if (status == false) {
-        qCCritical(logCategoryLoggingConfigurationUtility) << "failed to find import path.";
+        qCCritical(lcLcu) << "failed to find import path.";
     }
 
     engine->addImportPath(applicationDir.path());
@@ -90,19 +90,19 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/lcu-logo.png"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryLoggingConfigurationUtility) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcLcu) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     loadResources();
+
+    qmlRegisterType<LcuModel>("tech.strata.lcu", 1, 0, "LcuModel");
+    qmlRegisterUncreatableType<IniFiles>("tech.strata.lcu.ini",1,0,"IniFiles","can not instantiate IniFiles in qml");
 
     QQmlApplicationEngine engine;
 
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     QQmlFileSelector selector(&engine);
-
     addImportPaths(&engine);
-
-    qmlRegisterType<LcuModel>("tech.strata.lcu", 1, 0, "LcuModel");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
