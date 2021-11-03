@@ -42,7 +42,7 @@ BaseStateMachine {
         } else if (stateLoopSucceed.active) {
             t = "Controller\n" + controllerOpn.toUpperCase() + "\n\n"
             t += "You can unplug controller now\n\n"
-            t += "To program another controller, simply plug it in and process will start automatically\n\n"
+            t += "To program another controller, simply plug it in and process will start automatically\n"
             t += "or press End to finish current session"
         } else if (stateLoopFailed.active) {
             t = internalSubtext
