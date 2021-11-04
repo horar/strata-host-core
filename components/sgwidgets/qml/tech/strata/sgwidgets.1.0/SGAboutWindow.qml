@@ -32,8 +32,10 @@ SGWidgets.SGWindow {
     property string defaultAttributionText
     property string additionalAttributionText
     property string attributionText
+    property variant versionList: AppInfo.fullVersion.split("-")
+    property int versionListLength: versionList.length
     property string versionNum: "<b>version:</b> %1".arg(AppInfo.version)
-    property string versionNumber: AppInfo.fullVersion.includes("dirty") ? versionNum + "-uncommitted" : versionNum
+    property string versionNumber: versionList[versionListLength - 1] ? versionNum + "-" + versionList[versionListLength - 1]  : versionNum
     property string versionNumberExpanded: createVersionString()
     property color dialogBg: "#eeeeee"
     property color lighterGrayColor: Qt.lighter(Theme.palette.gray, 1.33)
@@ -427,16 +429,19 @@ SGWidgets.SGWindow {
     function createVersionString() {
         var version = versionNum
         if (AppInfo.stageOfDevelopment !== "") {
-            version += "<b> stage of development: </b> %2".arg(AppInfo.stageOfDevelopment)
+            version += "<b> stage of development: </b> %1".arg(AppInfo.stageOfDevelopment)
         }
         if (AppInfo.buildId !== "") {
-            version += "<b> build id: </b> %2".arg(AppInfo.buildId)
+            version += "<b> build id: </b> %1".arg(AppInfo.buildId)
         }
         if (AppInfo.gitRevision !== "") {
-            version += "<b> git hash: </b> %2".arg(AppInfo.gitRevision)
+            version += "<b> git hash: </b> %1".arg(AppInfo.gitRevision)
         }
-        if (AppInfo.fullVersion.includes("dirty")) {
-            version += "<b> uncommitted changes </b>"
+        if (AppInfo.countOfCommits !== "") {
+            version += "<b> count of commits: </b> %1".arg(AppInfo.countOfCommits)
+        }
+        if (versionList[versionListLength - 1] === "uncommited") {
+            version += "<b> " + versionList[versionListLength - 1] + " </b>"
         }
         return version
     }
