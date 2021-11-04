@@ -272,7 +272,7 @@ Item {
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
                    var mouseY = 0
-                } else if (mouse.y > textSelectionMouseArea.height * 0.95) {
+                } else if (mouse.y > textSelectionMouseArea.height) {
                     mouseY = textSelectionMouseArea.height
                 } else {
                     mouseY = mouse.y
