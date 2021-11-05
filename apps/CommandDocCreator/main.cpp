@@ -16,6 +16,21 @@
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
+#include "Version.h"
+
+static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+
+    QJSValue appInfo = scriptEngine->newObject();
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("buildId", AppInfo::buildId.data());
+    appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
+    appInfo.setProperty("countOfCommits", AppInfo::countOfCommits.data());
+    appInfo.setProperty("stageOfDevelopment", AppInfo::stageOfDevelopment.data());
+    appInfo.setProperty("fullVersion", AppInfo::version.data());
+    return appInfo;
+}
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -66,6 +81,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/cdc-logo.svg"));
@@ -74,6 +90,8 @@ int main(int argc, char *argv[])
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCInfo(lcCdc) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+
+    qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     loadResources();
 
