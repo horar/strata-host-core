@@ -624,18 +624,12 @@ function insertUnregisteredListing (platform) {
 }
 
 /*
-    Insert listing for Strata assisted without platform (controller only)
+    Insert listing for unknown Strata assisted without platform (controller only)
 */
 function insertAssistedNoPlatformListing (platform) {
     let listing_data = {
         "verbose_name": "Unknown Strata Assisted Controller",
-        "description": "Please connect platform to controller.",
-        "available": {
-            "control": false,
-            "documents": true,
-            "unlisted": false,
-            "order": true
-        }
+        "description": "Please connect platform to controller."
     }
 
     insertListing(generateErrorListing(platform, listing_data))
