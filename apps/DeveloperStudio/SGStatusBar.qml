@@ -741,4 +741,15 @@ Rectangle {
         PlatformSelection.logout()
         sdsModel.strataClient.sendRequest("unregister", {})
     }
+
+    Timer {
+        id: sessionHeartbeat
+        interval: 60000 // 1 minute
+        running: user_id !== "Guest"
+        repeat: true
+
+        onTriggered: {
+            Authenticator.heartbeat()
+        }
+    }
 }

@@ -166,7 +166,9 @@ function logout_error(error){
 */
 function close_session(callback) {
     if (Rest.session !== '' && Rest.jwt !== ''){
-        var headers = {"app": "strata"}
+        var headers = {
+            "app": "strata"
+        }
         Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
         Rest.session = ""
         callback(true)
@@ -194,12 +196,16 @@ function close_session(callback) {
       *   - unable to close session, session id is missing
       * message: "unauthorized request"
       *   - unable to close session, authorization failed
+      * message: "closing request received"
+      *   - heartbeat acknowledged improperly, session not closed
     */
 }
 
 function close_session_result(response) {
     if (response.message ==="session closed"){
         console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
+    } else if (response.message === "closing request received") {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Heartbeat improperly acknowldeged, session not closed")
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
     }
@@ -581,6 +587,53 @@ function validation_result (response) {
             SignalsModule.Signals.validationResult("Invalid Authentication");
         } else {
             SignalsModule.Signals.validationResult("Error")
+        }
+    }
+}
+
+
+function heartbeat () {
+    if (Rest.session !== '' && Rest.jwt !== ''){
+        var headers = {
+            "app": "strata",
+            "heartbeat": 1
+        }
+        Rest.xhr("get", "session/close?session=" + Rest.session, "", heartbeat_result, heartbeat_result, headers)
+    }
+
+    /*
+      * Possible valid outcomes:
+      *
+      * message: "closing request received"
+      *   - heartbeat acknowledged
+      *
+      * Possible invalid outcomes:
+      *
+      * message: "session closed"
+      *   - heartbeat header not set, session closed instead of heartbeat acknowledged
+      * message: "session id required"
+      *   - session string not sent
+      * message: "No connection"
+      *   - no connection to server, user should check internet connection
+      * message: "Response not valid", status:<status code>, data:<response data>
+      *   - non-json response, server is accesible, but authorization not running/broken, user should retry later
+      * message: "Invalid authentication token", success: false
+      *   - unable to authenticate user
+      * message: "No authentication token provided", success: false
+      *   - unable to authenticate user
+      * message: "unauthorized request"
+      *   - unable to close session, authorization failed
+    */
+}
+
+function heartbeat_result (response) {
+    if (response.hasOwnProperty("message")) {
+        if (response.message === "closing request received") {
+            // console.log(LoggerModule.Logger.devStudioLoginCategory, "Heartbeat acknowledged")
+        } else if (response.message === 'session closed') {
+            console.error(LoggerModule.Logger.devStudioLoginCategory, "Heartbeat closed session improperly")
+        } else {
+            console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
         }
     }
 }
