@@ -1,12 +1,12 @@
 /***************************************************************************
- *                                                                         *
- *   Copyright (C) 2021 by ONsemiconductor     *
- *                                                                         *
- *   http://onsemi.com                                          *
- *                                                                         *
- ***************************************************************************/
+  Copyright (c) 2018-2021 onsemi.
+
+   All rights reserved. This software and/or documentation is licensed by onsemi under
+   limited terms and conditions. The terms and conditions pertaining to the software and/or
+   documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+   Terms and Conditions of Sale, Section 8 Software”).
+   ***************************************************************************/
 #include "LcuModel.h"
-#include "IniFiles.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QCoreApplication>
@@ -15,7 +15,7 @@
 #include <QDir>
 
 LcuModel::LcuModel(QObject *parent)
-    : QAbstractItemModel(parent)
+    : QAbstractListModel(parent)
 {
     QSettings settings;
     QFileInfo fileInfo(settings.fileName());
@@ -23,99 +23,36 @@ LcuModel::LcuModel(QObject *parent)
     iniFiles_ = directory.entryList({"*.ini"},QDir::Files);
     if (iniFiles_.empty())
     {
-        qCWarning(lcLcu()) << "No ini files were found.";
+        qCWarning(lcLcu) << "No ini files were found.";
     }
 }
 
-QModelIndex LcuModel::index(int row, int column, const QModelIndex &parent) const
+void LcuModel::addItem(const QString fileName)
 {
-    // FIXME: Implement me!
-}
-
-QModelIndex LcuModel::parent(const QModelIndex &index) const
-{
-    // FIXME: Implement me!
+     beginInsertRows(QModelIndex(), rowCount(), rowCount());
+     iniFiles_ << fileName;
+     endInsertRows();
 }
 
 int LcuModel::rowCount(const QModelIndex & parent) const {
-
-    //return list_->items().size();
+    Q_UNUSED(parent)
     return iniFiles_.count();
- }
-
-int LcuModel::columnCount(const QModelIndex &parent) const
-{
-    return 1;
 }
 
 QVariant LcuModel::data(const QModelIndex & index, int role) const
 {
-    if (index.isValid() || !list_)
+    Q_UNUSED(role);
+    int row = index.row();
+    qCInfo(lcLcu) << "row:" << QString::number(row) << " ";
+    if (row < 0 || row >= iniFiles_.count()) {
         return QVariant();
+    }
 
-    //QString item = list_->items().at(index.row());
-    QString item = iniFiles_.at( index.row() );
-    QVariant value;
-        switch ( role )
-        {
-            case Qt::DisplayRole:
-            {
-                value = item;
-            }
-            break;
-            case Qt::UserRole:
-            {
-                value = item;
-            }
-            break;
-            default:
-                break;
-        }
-        return value;
+    return QVariant(iniFiles_.at( index.row() ));
 }
-
-/*
-bool LcuModel::setData(const QModelIndex &index, const QVariant &value, int role)
+QHash<int, QByteArray> LcuModel::roleNames() const
 {
-    if(!list_)
-        return false;
-    QString item = list_->items().at(index.row());
-    switch (role) {
-    case DescriptionRole:
-        item = value.toString();
-    }
-
-    if(list_->setItemAt(index.row(),item)){
-        emit dataChanged(index,index,QVector<int>() << role);
-        return true;
-    }
-    return false;
-}*/
-
-IniFiles *LcuModel::list() const
-{
-    return list_;
-}
-
-void LcuModel::setList(IniFiles *list)
-{
-    beginResetModel();
-    if(list_)
-    {
-        list_->disconnect(this);
-    }
-    list_ = list;
-    if(list_)
-    {
-        connect(list_, &IniFiles::preItemAppanded,this,[=]()
-        {
-            const int index = list->items().size();
-            beginInsertRows(QModelIndex(),index,index);
-        });
-        connect(list_, &IniFiles::postItemAppended,this,[=]()
-        {
-            endInsertRows();
-        });
-    }
-    endResetModel();
+    QHash<int, QByteArray> names;
+    names[textRole] = "fileName";
+    return names;
 }

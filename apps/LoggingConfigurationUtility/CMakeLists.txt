@@ -28,7 +28,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     LcuModel.cpp
-    IniFiles.cpp
     qml.qrc
     images/images.qrc
 

@@ -7,7 +7,6 @@
    Terms and Conditions of Sale, Section 8 Software”).
    ***************************************************************************/
 #include "LcuModel.h"
-#include "IniFiles.h"
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -95,7 +94,6 @@ int main(int argc, char *argv[])
     loadResources();
 
     qmlRegisterType<LcuModel>("tech.strata.lcu", 1, 0, "LcuModel");
-    qmlRegisterUncreatableType<IniFiles>("tech.strata.lcu.ini",1,0,"IniFiles","can not instantiate IniFiles in qml");
 
     QQmlApplicationEngine engine;
 
