@@ -40,7 +40,7 @@ Item {
                 height: 0.08 * lcuMain.height
                 model: lcuModel
                 onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
-                //enabled: model.rowCount =! 0
+                enabled: lcuModel.rowCount() !== 0
             }
             SGWidgets.SGButton{
                 id: reloadButton
@@ -48,7 +48,8 @@ Item {
                 height: comboBox.height
                 icon.source: "qrc:/sgimages/redo.svg"
                 onClicked: {
-                    //reload list of ini files
+                    console.info("Reload button triggered")
+                    lcuModel.reload()
                 }    
             }
         }

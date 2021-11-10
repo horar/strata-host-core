@@ -17,6 +17,21 @@
 LcuModel::LcuModel(QObject *parent)
     : QAbstractListModel(parent)
 {
+    iniFiles_ << NULL;
+}
+
+void LcuModel::addItem(const QString fileName)
+{
+     beginInsertRows(QModelIndex(), rowCount(), rowCount());
+     iniFiles_ << fileName;
+     endInsertRows();
+}
+
+void LcuModel::reload()
+{
+    beginResetModel();
+
+    iniFiles_.clear();
     QSettings settings;
     QFileInfo fileInfo(settings.fileName());
     QDir directory(fileInfo.absolutePath());
@@ -25,13 +40,8 @@ LcuModel::LcuModel(QObject *parent)
     {
         qCWarning(lcLcu) << "No ini files were found.";
     }
-}
 
-void LcuModel::addItem(const QString fileName)
-{
-     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-     iniFiles_ << fileName;
-     endInsertRows();
+    endResetModel();
 }
 
 int LcuModel::rowCount(const QModelIndex & parent) const {
