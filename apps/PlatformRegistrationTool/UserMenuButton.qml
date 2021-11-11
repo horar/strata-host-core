@@ -26,12 +26,13 @@ SGWidgets.SGButton {
         }
     }
 
-    Popup {
+    SGWidgets.SGPopup {
         id: popupMenu
         x: -popupMenu.width + parent.width
         y: 0
 
         padding: 2
+        position: Item.Bottom
 
         contentItem: Item {
             implicitHeight: logoutMenuItem.y + logoutMenuItem.height
@@ -151,26 +152,6 @@ SGWidgets.SGButton {
                         prtModel.authenticator.logout();
                     }
                 }
-            }
-        }
-
-        background: Item {
-            RectangularGlow {
-                id: effect
-                anchors {
-                    fill: parent
-                    topMargin: glowRadius - 2
-                    bottomMargin: 0
-                }
-                glowRadius: 8
-                color: userMenuButton.palette.mid
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                color: "white"
-                border.color: userMenuButton.palette.mid
-                border.width: 1
             }
         }
     }
