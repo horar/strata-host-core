@@ -28,17 +28,19 @@ signals:
 private:
     void handleUpdateInfoResponse(const QByteArray &clientId, QJsonArray componentList, const QString &errorString);
 
-    QString acquireUpdateInfo(const QString &updateMetadata, QJsonArray &updateInfo);
+    QString acquireUpdateInfo(const QString &updateMetadata, QJsonArray &updateInfo) const;
 
-    QString parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo);
+    QString parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo) const;
 
-    QString parseUpdateSize(QString updateSize);
+    QString parseUpdateSize(const QString &updateSize) const;
 
-    QString getCurrentVersionOfComponents(QMap<QString, QString>& componentMap);
+    void preprocessOpenSSLVersion(QString& opensslVersion) const;
 
-    QString acquireUpdateMetadata(QString &updateMetadata);
+    QString getCurrentVersionOfComponents(QMap<QString, QString>& componentMap) const;
 
-    QString locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool);
+    QString acquireUpdateMetadata(QString &updateMetadata) const;
 
-    QString launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata);
+    QString locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool) const;
+
+    QString launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata) const;
 };
