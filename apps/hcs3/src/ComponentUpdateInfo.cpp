@@ -15,6 +15,7 @@
 #include <QJsonObject>
 #include <QProcess>
 #include <QCoreApplication>
+#include <QVersionNumber>
 
 void ComponentUpdateInfo::requestUpdateInfo(const QByteArray &clientId) {
     QString updateMetadata;
@@ -40,7 +41,7 @@ void ComponentUpdateInfo::handleUpdateInfoResponse(const QByteArray &clientId, Q
     emit requestUpdateInfoFinished(clientId, componentList, errorString);
 }
 
-QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJsonArray &updateInfo) {
+QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJsonArray &updateInfo) const {
     QMap<QString, QString> componentMap;
     QString error = getCurrentVersionOfComponents(componentMap);
     if (error.isEmpty() == false) {
@@ -57,7 +58,7 @@ QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJ
     return parseUpdateMetadata(xmlDocument, componentMap, updateInfo);
 }
 
-QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString>& componentMap) {
+QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString>& componentMap) const {
     // Retrieve current version info from 'components.xml' file
     const QDir applicationDir(QCoreApplication::applicationDirPath());
     const QString absPathComponentsXmlFile = applicationDir.filePath("components.xml");
@@ -96,17 +97,22 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
                     if (packageInfoElement.isNull() == false) {
                         if ((packageInfoElement.tagName() == "Title") && (packageNameFound == false)) {
                             packageName = packageInfoElement.text();
-                            if (packageName.isEmpty() == false)
+                            if (packageName.isEmpty() == false) {
                                 packageNameFound = true;
+                            }
                         } else if (packageInfoElement.tagName() == "Version" && (packageVersionFound == false)) {
                             packageVersion = packageInfoElement.text();
-                            if (packageVersion.isEmpty() == false)
+                            if (packageVersion.isEmpty() == false) {
                                 packageVersionFound = true;
+                            }
                         }
                     }
                     packageInfoNode = packageInfoNode.nextSibling();
                 }
                 if ((packageNameFound == true) && (packageVersionFound == true)) {
+                    if (packageName == "OpenSSL Libraries") {
+                        preprocessOpenSSLVersion(packageVersion);
+                    }
                     componentMap.insert(packageName, packageVersion);
                     qCInfo(lcHcs) << "Found mandatory elements (Title / Version) in components.xml: " << packageName << ", " << packageVersion;
                 } else {
@@ -123,7 +129,7 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
     }
 }
 
-QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo) {
+QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo) const {
 
     QDomElement updateInfoRoot = xmlDocument.documentElement();
     QDomNode updateInfoNode = updateInfoRoot.firstChild();
@@ -135,6 +141,11 @@ QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument
                     QString updateName = updateInfoElement.attribute("name");
                     QString updateVersion = updateInfoElement.attribute("version");
                     QString updateSize = parseUpdateSize(updateInfoElement.attribute("size"));
+
+                    if (updateName == "OpenSSL Libraries") {
+                        preprocessOpenSSLVersion(updateVersion);
+                    }
+
                     QJsonObject payload;
                     payload.insert("name", updateName);
                     payload.insert("latest_version", updateVersion);
@@ -160,7 +171,7 @@ QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument
     return QString();
 }
 
-QString ComponentUpdateInfo::parseUpdateSize(QString updateSize)
+QString ComponentUpdateInfo::parseUpdateSize(const QString& updateSize) const
 {
     bool succesfullyParsed;
     float num = updateSize.toFloat(&succesfullyParsed);
@@ -185,7 +196,25 @@ QString ComponentUpdateInfo::parseUpdateSize(QString updateSize)
     return QString().setNum(num, 'f', displayFraction ? 2 : 0) + " " + currentUnit;
 }
 
-QString ComponentUpdateInfo::acquireUpdateMetadata(QString &updateMetadata) {
+void ComponentUpdateInfo::preprocessOpenSSLVersion(QString& opensslVersion) const {
+    // for example: 1.1.1.11-1 (which must be changed to 1.1.1k-1)
+    // any other version string (with digits != 4) should remain unchanged
+    int suffixIndex = 0;
+    QVersionNumber parsedVersion = QVersionNumber::fromString(opensslVersion, &suffixIndex);
+    QVector<int> versionNumbers = parsedVersion.segments();
+    if (versionNumbers.size() == 4) {
+        QString suffix;
+        if (suffixIndex >= 0) {
+            suffix = opensslVersion.mid(suffixIndex);
+        }
+        QString optionalVersion(static_cast<char>(versionNumbers[3]));
+        opensslVersion = QString::number(versionNumbers[0]) + QStringLiteral(".") +
+                         QString::number(versionNumbers[1]) + QStringLiteral(".") +
+                         QString::number(versionNumbers[2]) + optionalVersion + suffix;
+    }
+}
+
+QString ComponentUpdateInfo::acquireUpdateMetadata(QString &updateMetadata) const {
     // Search for Strata Maintenance Tool in application directory, if found perform check for updates
     const QDir applicationDir(QCoreApplication::applicationDirPath());  // hcs is not an .app, so no need for special handling in case of MacOS
     QString absPathMaintenanceTool;
@@ -199,7 +228,7 @@ QString ComponentUpdateInfo::acquireUpdateMetadata(QString &updateMetadata) {
 }
 
 // TODO: this function is duplicated in SDS/HCS, should be unified in future
-QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool) {
+QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool) const {
 #if defined(Q_OS_WIN)
     const QString maintenanceToolFilename = "Strata Maintenance Tool.exe";
 #elif defined(Q_OS_MACOS)
@@ -219,7 +248,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
 
 #define MAINTENANCE_TOOL_START_TIMEOUT 2000 // msecs
 #define MAINTENANCE_TOOL_FINISH_TIMEOUT 5000 // msecs
-QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata) {
+QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata) const {
     qCInfo(lcHcs) << "Launching Strata Maintenance Tool";
     QStringList arguments;
     arguments << "--checkupdates" <<  "--verbose";
