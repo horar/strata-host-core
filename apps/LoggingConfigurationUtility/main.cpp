@@ -1,11 +1,11 @@
-/***************************************************************************
-  Copyright (c) 2018-2021 onsemi.
-
-   All rights reserved. This software and/or documentation is licensed by onsemi under
-   limited terms and conditions. The terms and conditions pertaining to the software and/or
-   documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
-   Terms and Conditions of Sale, Section 8 Software”).
-   ***************************************************************************/
+/*
+ * Copyright (c) 2018-2021 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "LcuModel.h"
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/lcu-logo.png"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(lcLcu) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(lcLcu) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()),(QCoreApplication::applicationVersion());
 
     loadResources();
 
