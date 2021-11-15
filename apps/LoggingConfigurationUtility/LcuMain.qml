@@ -15,6 +15,8 @@ import tech.strata.lcu 1.0
 Item {
     id: lcuMain
 
+    property bool hack: false
+
     LcuModel{
         id:lcuModel
     }
@@ -22,37 +24,71 @@ Item {
     Component.onCompleted: {
         reloadButton.clicked()
     }
-
+    Rectangle {
+        color: "orange"
+        anchors.fill: parent
+    }
     Column {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        spacing: 5
+
         SGWidgets.SGText {
             id: title
+            anchors.margins: 5
+
             text: "Configuration files"           
-            width: lcuMain.width
-            height: comboBox.height
-            //TODO fontSizeMultiplier:
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+            Rectangle {
+                color: "red"
+                anchors.fill: parent
+            }
         }
 
         Row {
+            id: fileSelectorRow
+            leftPadding: 10
+            rightPadding: 10
+            spacing: 5
+
             SGWidgets.SGComboBox {
                 id: comboBox
-                width: lcuMain.width - reloadButton.width
+
+                width: lcuMain.width - reloadButton.width - fileSelectorRow.leftPadding - fileSelectorRow.rightPadding - fileSelectorRow.spacing
+                anchors.verticalCenter: reloadButton.verticalCenter
                 model: lcuModel
+                textRole: "fileName"
+                /*delegate: ItemDelegate { //TODO - will need this later...probably
+                    text: modelData
+                    width: parent.width
+                }*/
                 onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
-                enabled: lcuModel.length !== 0
+                enabled: count !== 0
+                placeholderText: "no configuration files found"
+                onCountChanged: {
+                    if (count !==0 && currentIndex == -1) {
+                        currentIndex = 0
+                    }
+                }
+
+               Rectangle {
+                   color: "green"
+                   anchors.fill: parent
+               }
             }
 
             SGWidgets.SGButton {
                 id: reloadButton
-                width: comboBox.height
-                height: comboBox.height
+                width: height
                 icon.source: "qrc:/sgimages/redo.svg"
                 onClicked: {
-                    console.info("Reload button triggered")
                     lcuModel.reload()
-                }    
+                }
+                Rectangle {
+                    color: "blue"
+                    anchors.fill: parent
+                }
             }
         }
     }
+
 }

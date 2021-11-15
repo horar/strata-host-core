@@ -17,7 +17,8 @@ class LcuModel : public QAbstractListModel
 public:
     explicit LcuModel(QObject *parent = nullptr);
     enum {
-        textRole
+        textRole,
+        FilePathRole
     };
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -32,4 +33,5 @@ private slots:
 
 private:
     QStringList iniFiles_;
+    QStringList iniFilesPath_;
 };

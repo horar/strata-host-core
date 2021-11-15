@@ -31,8 +31,12 @@ void LcuModel::reload()
     QSettings settings;
     QFileInfo fileInfo(settings.fileName());
     QDir directory(fileInfo.absolutePath());
+    qCDebug(lcLcu) << "Reading files from: " + fileInfo.absolutePath();
     beginResetModel();
     iniFiles_ = directory.entryList({"*.ini"},QDir::Files);
+    for(int i=0; i<iniFiles_.size(); i++) {
+        iniFilesPath_ << fileInfo.absolutePath() + "/" + iniFiles_.at(i);
+    }
     endResetModel();
 
     if (iniFiles_.empty()) {
@@ -48,18 +52,25 @@ int LcuModel::rowCount(const QModelIndex & parent) const
 
 QVariant LcuModel::data(const QModelIndex & index, int role) const
 {
-    Q_UNUSED(role);
     int row = index.row();
     if (row < 0 || row >= iniFiles_.count()) {
         return QVariant();
     }
 
-    return QVariant(iniFiles_.at( index.row() ));
+    switch (role) {
+    case textRole:
+        return iniFiles_.at( index.row() );
+    case FilePathRole:
+        return iniFilesPath_.at( index.row() );
+    }
+
+    return QVariant();
 }
 
 QHash<int, QByteArray> LcuModel::roleNames() const
 {
     QHash<int, QByteArray> names;
     names[textRole] = "fileName";
+    names[FilePathRole] = "filePath";
     return names;
 }
