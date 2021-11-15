@@ -40,7 +40,9 @@ StackLayout {
     property alias controlViewContainer: controlViewContainer
     property bool controlViewIsOutOfDate: false
     property bool firmwareIsOutOfDate: false
-    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
+    property bool platformMetaDataInitialized: (model.is_assisted && model.class_id.length === 0)
+                                               ? sdsModel.documentManager.getClassDocuments(model.controller_class_id).metaDataInitialized
+                                               : sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
     property string controller_class_id: model.controller_class_id
@@ -57,6 +59,7 @@ StackLayout {
     onPlatformOutOfDateChanged: {
         launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
     }
+
     onFullyInitializedChanged: {
         initialize()
     }
@@ -113,6 +116,8 @@ StackLayout {
 
         ContentView {
             class_id: model.class_id
+            controller_class_id: model.controller_class_id
+            is_assisted: model.is_assisted
         }
 
         Action {
@@ -143,13 +148,14 @@ StackLayout {
                 return
             }
 
+            let description = ""
             if (Object.keys(unseenPdfItems).length == 1 && Object.keys(unseenDownloadItems).length == 0) {
-                var description = "A document has been updated:\n" + unseenPdfItems[0]
+                description = "A document has been updated:\n" + unseenPdfItems[0]
             } else if (Object.keys(unseenPdfItems).length == 0 && Object.keys(unseenDownloadItems).length == 1) {
-                var description = "A document has been updated:\n" + unseenDownloadItems[0]
+                description = "A document has been updated:\n" + unseenDownloadItems[0]
             } else {
                 var numberDocumentsUpdated = Number(Object.keys(unseenPdfItems).length) + Number(Object.keys(unseenDownloadItems).length)
-                var description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
+                description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed

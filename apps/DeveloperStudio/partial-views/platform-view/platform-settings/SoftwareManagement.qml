@@ -27,6 +27,7 @@ ColumnLayout {
     property var latestVersion: ({})
     property bool downloadError: false
     property string activeDownloadUri: ""
+    property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
 
     Component.onCompleted: {
         if (platformMetaDataInitialized) {
@@ -266,7 +267,7 @@ ColumnLayout {
                                 if (!objectIsEmpty(latestVersion)) {
                                     let str = "Update to v";
                                     str += software.latestVersion.version;
-                                    str += ", released " + software.latestVersion.timestamp
+                                    str += ", released " + SGUtilsCpp.formatDateTimeWithOffsetFromUtc(software.latestVersion.timestamp, timestampFormat)
                                     return str;
                                 }
                                 return "";

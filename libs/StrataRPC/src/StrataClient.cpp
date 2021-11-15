@@ -80,7 +80,7 @@ void StrataClient::disconnect()
 
 void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
 {
-    // qCDebug(logCategoryStrataClient).noquote().nospace()
+    // qCDebug(lcStrataClient).noquote().nospace()
     //     << "New message from the server: '" << jsonServerMessage << '\'';
 
     Message serverMessage;
@@ -105,7 +105,7 @@ void StrataClient::messageReceivedHandler(const QByteArray &jsonServerMessage)
         return;
     }
 
-    // qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
+    // qCDebug(lcStrataClient) << "Dispatching registered handler.";
     emit messageParsed(serverMessage);
 }
 
@@ -158,7 +158,7 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
 
 bool StrataClient::sendNotification(const QString &method, const QJsonObject &payload)
 {
-    // qCDebug(logCategoryStrataClient) << "Sending notification to the server";
+    // qCDebug(lcStrataClient) << "Sending notification to the server";
 
     if (false == connector_->isConnected()) {
         QString errorMessage(QStringLiteral("Failed to send notification to the server."));
@@ -192,7 +192,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
 
     if (true == jsonObject.contains("jsonrpc") && true == jsonObject.value("jsonrpc").isString() &&
         jsonObject.value("jsonrpc").toString() == "2.0") {
-        // qCDebug(logCategoryStrataClient) << "API v2.0";
+        // qCDebug(lcStrataClient) << "API v2.0";
     } else {
         QString errorMessage(QStringLiteral("Invalid API."));
         qCCritical(lcStrataClient) << errorMessage;
@@ -308,7 +308,7 @@ void StrataClient::dispatchHandler(const Message &serverMessage)
         return;
     }
 
-    // qCDebug(logCategoryStrataClient) << "Handler executed.";
+    // qCDebug(lcStrataClient) << "Handler executed.";
 }
 
 void StrataClient::connectorErrorHandler(const ClientConnectorError &errorType,

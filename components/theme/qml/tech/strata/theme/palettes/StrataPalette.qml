@@ -29,4 +29,5 @@ QtObject {
     readonly property color highlight:      lightBlue
     readonly property color onsemiOrange:   "#E97D2E"
     readonly property color onsemiHighlight:"#276990"
+    readonly property color onsemiDark:     "#3a4d54"
 }

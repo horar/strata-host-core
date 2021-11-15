@@ -24,6 +24,7 @@ SGLogLevelSelector 1.0 SGLogLevelSelector.qml
 SGMainWindow 1.0 SGMainWindow.qml
 SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer.qml
 SGPage 1.0 SGPage.qml
+SGPopup 1.0 SGPopup.qml
 SGRadioButton 1.0 SGRadioButton.qml
 SGRadioButtonContainer 1.0 SGRadioButtonContainer.qml
 SGResponsiveScrollView 1.0 SGResponsiveScrollView.qml
