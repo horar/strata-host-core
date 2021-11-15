@@ -25,6 +25,11 @@ using strata::PlatformManager;
 using strata::platform::Platform;
 using strata::platform::PlatformPtr;
 using strata::platform::PlatformMessage;
+using strata::device::scanner::DeviceScanner;
+using strata::device::scanner::DeviceScannerPtr;
+#ifdef APPS_FEATURE_BLE
+using strata::device::scanner::BluetoothLowEnergyScanner;
+#endif // APPS_FEATURE_BLE
 
 namespace operation = strata::platform::operation;
 
@@ -34,6 +39,7 @@ PlatformController::PlatformController()
 {
     connect(&platformManager_, &PlatformManager::platformRecognized, this, &PlatformController::newConnection);
     connect(&platformManager_, &PlatformManager::platformAboutToClose, this, &PlatformController::closeConnection);
+    connect(&platformManager_, &PlatformManager::platformRemoved, this, &PlatformController::removeConnection);
 
     connect(&platformOperations_, &operation::PlatformOperations::finished, this, &PlatformController::operationFinished);
 }
@@ -45,6 +51,16 @@ PlatformController::~PlatformController() {
 
 void PlatformController::initialize() {
     platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
+
+#ifdef APPS_FEATURE_BLE
+    platformManager_.addScanner(strata::device::Device::Type::BLEDevice);
+
+    strata::device::scanner::BluetoothLowEnergyScannerPtr bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+    if (bleDeviceScanner != nullptr) {
+        connect(bleDeviceScanner.get(), &BluetoothLowEnergyScanner::discoveryFinished, this, &PlatformController::bleDiscoveryFinishedHandler);
+    }
+#endif // APPS_FEATURE_BLE
 }
 
 void PlatformController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
@@ -98,14 +114,16 @@ void PlatformController::newConnection(const QByteArray& deviceId, bool recogniz
         qCInfo(lcHcsPlatform).noquote() << "Connected new platform" << deviceId;
 
         emit platformConnected(deviceId);
-    } else {
-        qCWarning(lcHcsPlatform).noquote() << "Connected unknown (unrecognized) platform" << deviceId;
-        // Remove platform if it was previously connected.
-        auto it = platforms_.find(deviceId);
-        if (it != platforms_.end()) {
-            platforms_.erase(it);
-            emit platformDisconnected(deviceId);
+
+        if (connectDeviceRequests_.contains(deviceId)) {
+            QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+            connectDeviceRequests_.remove(deviceId);
+            for (const auto &clientId : clients) {
+                emit connectDeviceFinished(deviceId, clientId, QString());
+            }
         }
+    } else {
+        // no need to handle it will be erased by PlatformManager in a few moments (keepDevicesOpen = false)
     }
 }
 
@@ -123,6 +141,25 @@ void PlatformController::closeConnection(const QByteArray& deviceId)
     qCInfo(lcHcsPlatform).noquote() << "Disconnected platform" << deviceId;
 
     emit platformDisconnected(deviceId);
+}
+
+void PlatformController::removeConnection(const QByteArray& deviceId, const QString& errorString)
+{
+    if (connectDeviceRequests_.contains(deviceId)) {
+        QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+        connectDeviceRequests_.remove(deviceId);
+        for (const auto &clientId : clients) {
+            emit connectDeviceFinished(deviceId, clientId, errorString);
+        }
+    }
+
+    if (disconnectDeviceRequests_.contains(deviceId)) {
+        QList<QByteArray> clients = disconnectDeviceRequests_.values(deviceId);
+        disconnectDeviceRequests_.remove(deviceId);
+        for (const auto &clientId : clients) {
+            emit disconnectDeviceFinished(deviceId, clientId, errorString);
+        }
+    }
 }
 
 void PlatformController::messageFromPlatform(PlatformMessage message)
@@ -179,6 +216,139 @@ void PlatformController::messageToPlatform(QByteArray rawMessage, unsigned msgNu
             << rawMessage << "', error: '" << errorString << '\'';
     }
 }
+
+#ifdef APPS_FEATURE_BLE
+void PlatformController::startBluetoothScan()
+{
+    std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+        platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+    if (bleDeviceScanner != nullptr) {
+        bleDeviceScanner->startDiscovery();
+    } else {
+        emit bluetoothScanFinished(createBluetoothScanErrorPayload("BluetoothLowEnergyScanner not initialized."));
+    }
+}
+
+void PlatformController::bleDiscoveryFinishedHandler(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString)
+{
+    QJsonObject payload;
+    switch (status) {
+        case strata::device::scanner::BluetoothLowEnergyScanner::Finished:
+        {
+            std::shared_ptr<BluetoothLowEnergyScanner> bleDeviceScanner = std::static_pointer_cast<BluetoothLowEnergyScanner>(
+                platformManager_.getScanner(strata::device::Device::Type::BLEDevice));
+            if (bleDeviceScanner != nullptr) {
+                payload = createBluetoothScanPayload(bleDeviceScanner);
+            } else {
+                payload = createBluetoothScanErrorPayload("BluetoothLowEnergyScanner not initialized.");
+            }
+            break;
+        }
+        case strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryError:
+            payload = createBluetoothScanErrorPayload(errorString);
+            break;
+        case strata::device::scanner::BluetoothLowEnergyScanner::Cancelled:
+            payload = createBluetoothScanErrorPayload("Discovery cancelled.");
+            break;
+        default:
+            payload = createBluetoothScanErrorPayload("Unknown discovery status.");
+            qCWarning(lcHcsPlatform).noquote() << "BLE discovery ended with unknown status" << status;
+    }
+    emit bluetoothScanFinished(payload);
+}
+#endif // APPS_FEATURE_BLE
+
+void PlatformController::connectDevice(const QByteArray &deviceId, const QByteArray &clientId)
+{
+    if (disconnectDeviceRequests_.contains(deviceId)) {
+        emit connectDeviceFinished(deviceId, clientId, "Disconnect already in progress.");
+        return;
+    }
+    DeviceScannerPtr deviceScanner = platformManager_.getScanner(DeviceScanner::scannerType(deviceId));
+    if (deviceScanner != nullptr) {
+        if (false == connectDeviceRequests_.contains(deviceId)) {
+            QString errorMessage = deviceScanner->connectDevice(deviceId);
+            if (false == errorMessage.isEmpty()) {
+                emit connectDeviceFinished(deviceId, clientId, errorMessage);
+            } else {
+                // subscribe for the result
+                connectDeviceRequests_.insert(deviceId, clientId);
+            }
+        } else {
+            // device already being connected, just subscribe for the result
+            connectDeviceRequests_.insert(deviceId, clientId);
+        }
+    } else {
+        emit connectDeviceFinished(deviceId, clientId, "Scanner not initialized.");
+    }
+}
+
+void PlatformController::disconnectDevice(const QByteArray &deviceId, const QByteArray &clientId)
+{
+    if (connectDeviceRequests_.contains(deviceId)) {
+        QList<QByteArray> clients = connectDeviceRequests_.values(deviceId);
+        connectDeviceRequests_.remove(deviceId);
+        for (const auto &client : clients) {
+            emit connectDeviceFinished(deviceId, client, "Cancelled.");
+        }
+    }
+
+    DeviceScannerPtr deviceScanner = platformManager_.getScanner(DeviceScanner::scannerType(deviceId));
+    if (deviceScanner != nullptr) {
+        if (false == disconnectDeviceRequests_.contains(deviceId)) {
+            QString errorMessage = deviceScanner->disconnectDevice(deviceId);
+            if (false == errorMessage.isEmpty()) {
+                emit disconnectDeviceFinished(deviceId, clientId, errorMessage);
+            } else {
+                // subscribe for the result
+                disconnectDeviceRequests_.insert(deviceId, clientId);
+            }
+        } else {
+            // device already being connected, just subscribe for the result
+            disconnectDeviceRequests_.insert(deviceId, clientId);
+        }
+    } else {
+        emit disconnectDeviceFinished(deviceId, clientId, "Scanner not initialized.");
+    }
+}
+
+#ifdef APPS_FEATURE_BLE
+QJsonObject PlatformController::createBluetoothScanPayload(const std::shared_ptr<const BluetoothLowEnergyScanner> bleDeviceScanner)
+{
+    QJsonArray payloadList;
+    const auto discoveredDevices = bleDeviceScanner->discoveredBleDevices();
+    for (const auto &device : discoveredDevices) {
+        QJsonArray manufacturerIdList;
+        for (const auto id : device.manufacturerIds) {
+            manufacturerIdList.append(id);
+        }
+        QJsonObject item {
+            { JSON_BLE_DEVICE_ID, QLatin1String(device.deviceId) },
+            { JSON_BLE_NAME, device.name },
+            { JSON_BLE_ADDRESS, device.address },
+            { JSON_BLE_RSSI, device.rssi },
+            { JSON_BLE_IS_STRATA, device.isStrata },
+            { JSON_BLE_MANUFACTURER_IDS, manufacturerIdList }
+        };
+        payloadList.append(item);
+    }
+
+    QJsonObject payload {
+        { JSON_LIST, payloadList }
+    };
+
+    return payload;
+}
+
+QJsonObject PlatformController::createBluetoothScanErrorPayload(QString errorString)
+{
+    QJsonObject payload {
+        { JSON_ERROR_STRING, errorString }
+    };
+
+    return payload;
+}
+#endif // APPS_FEATURE_BLE
 
 void PlatformController::operationFinished(QByteArray deviceId,
                        operation::Type type,

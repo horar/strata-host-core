@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   height="500"
+   width="500"
+   id="svg835"
+   version="1.1"
+   viewBox="0 0 500 500"
+   role="img"
+   class="svg-inline--fa fa-bluetooth-b fa-w-10"
+   data-icon="bluetooth-b"
+   data-prefix="fab"
+   focusable="false"
+   aria-hidden="true">
+  <metadata
+     id="metadata841">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs839" />
+  <path
+     style="stroke-width:0.957031"
+     id="path833"
+     d="M 284.9125,253.85014 373.55847,154.95723 233.85009,5 V 202.46426 L 151.43918,120.05334 121.38266,150.10891 224.8004,253.85014 121.38266,357.59137 151.43918,387.64693 233.85009,305.23602 236.44843,495 378.61734,352.74305 Z m 39.10429,-98.57039 -47.82954,47.8305 -0.32348,-95.98545 z m -47.82954,149.30931 47.82954,47.83051 -48.15303,48.15398 z"
+     fill="currentColor" />
+</svg>

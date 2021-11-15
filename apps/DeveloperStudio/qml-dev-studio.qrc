@@ -106,6 +106,7 @@
         <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
         <file>partial-views/help-tour/SGToolTipPopup.qml</file>
+        <file>partial-views/BleScanDialog.qml</file>
         <file>partial-views/general/SGSettingsCheckbox.qml</file>
     </qresource>
 </RCC>

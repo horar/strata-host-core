@@ -80,6 +80,12 @@ signals:
     bool connectedPlatformListChanged(const QString &connectedPlatformList);
 
     /**
+     * Signal emitted when connected_platforms notification is received (regardless if connectedPlatformList_ did changed).
+     * @param [in] payload QJsonObject of connected_platforms notification payload.
+     */
+    void connectedPlatformListMessage(const QJsonObject &payload);
+
+    /**
      * Signal emitted when a platform notification is received
      * @param [in] payload QString of the platform notification that contains the
      * device_id and the notification.
@@ -141,6 +147,26 @@ signals:
      */
     void downloadPlatformFilesFinished(const QJsonObject &payload);
 
+#ifdef APPS_FEATURE_BLE
+    /**
+     * Signal emitted when bluetooth_scan notification is received.
+     * @param [in] payload QJsonObject of bluetooth_scan notification payload.
+     */
+    void bluetoothScan(const QJsonObject &payload);
+#endif // APPS_FEATURE_BLE
+
+    /**
+     * Signal emitted when connect_device notification is received.
+     * @param [in] payload QJsonObject of connect_device notification payload.
+     */
+    void connectDevice(const QJsonObject &payload);
+
+    /**
+     * Signal emitted when disconnect_device notification is received.
+     * @param [in] payload QJsonObject of disconnect_device notification payload.
+     */
+    void disconnectDevice(const QJsonObject &payload);
+
 private:
     void processPlatformNotification(const QJsonObject &payload);
     void processAllPlatformsNotification(const QJsonObject &payload);
@@ -154,6 +180,11 @@ private:
     void processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload);
     void processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload);
     void processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload);
+#ifdef APPS_FEATURE_BLE
+    void processBluetoothScanNotification(const QJsonObject &payload);
+#endif // APPS_FEATURE_BLE
+    void processConnectDeviceNotification(const QJsonObject &payload);
+    void processDisconnectDeviceNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};
     QString platformList_{"{ \"list\":[]}"};

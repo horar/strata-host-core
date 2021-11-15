@@ -134,6 +134,12 @@ private slots:
 
     void platformStateChanged(const QByteArray& deviceId);
 
+#ifdef APPS_FEATURE_BLE
+    void bluetoothScanFinished(const QJsonObject payload);
+#endif // APPS_FEATURE_BLE
+    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+
 private:
     enum class hcsNotificationType {
         downloadPlatformFilepathChanged,
@@ -149,12 +155,18 @@ private:
         updateFirmwareJob,
         programController,
         programControllerJob,
+        bluetoothScan,
+        connectDevice,
+        disconnectDevice,
         platformDocumentsProgress,
         platformDocument,
         platformMessage,
         connectedPlatforms
     };
     constexpr const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
+
+    void sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString);
+    void sendDeviceSuccess(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId);
 
     void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
     void processCmdLoadDocuments(const strata::strataRPC::Message &message);
@@ -165,6 +177,11 @@ private:
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
     void processCmdProgramController(const strata::strataRPC::Message &message);
     void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
+#ifdef APPS_FEATURE_BLE
+    void processCmdBluetoothScan(const strata::strataRPC::Message &message);
+#endif // APPS_FEATURE_BLE
+    void processCmdConnectDevice(const strata::strataRPC::Message &message);
+    void processCmdDisconnectDevice(const strata::strataRPC::Message &message);
     void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);

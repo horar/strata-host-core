@@ -272,6 +272,14 @@ void Platform::resetReceiving() {
     device_->resetReceiving();
 }
 
+void Platform::SetTerminationCause(const QString& terminationCause) {
+    terminationCause_ = terminationCause;
+}
+
+QString Platform::GetTerminationCause() const {
+    return terminationCause_;
+}
+
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {
     // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&propertiesLock_);

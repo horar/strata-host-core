@@ -84,6 +84,18 @@ bool HostControllerService::initialize(const QString &config)
         "platform_start_application", std::bind(&HostControllerService::processCmdPlatformStartApplication, this,
                                         std::placeholders::_1));
 
+#ifdef APPS_FEATURE_BLE
+    strataServer_->registerHandler(
+        "bluetooth_scan", std::bind(&HostControllerService::processCmdBluetoothScan, this,
+                                        std::placeholders::_1));
+#endif // APPS_FEATURE_BLE
+    strataServer_->registerHandler(
+        "connect_device", std::bind(&HostControllerService::processCmdConnectDevice, this,
+                                        std::placeholders::_1));
+    strataServer_->registerHandler(
+        "disconnect_device", std::bind(&HostControllerService::processCmdDisconnectDevice, this,
+                                        std::placeholders::_1));
+
     // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
             &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
@@ -114,6 +126,15 @@ bool HostControllerService::initialize(const QString &config)
             &HostControllerService::sendPlatformMessageToClients);
     connect(&platformController_, &PlatformController::platformApplicationStarted, this,
             &HostControllerService::platformStateChanged);
+
+#ifdef APPS_FEATURE_BLE
+    connect(&platformController_, &PlatformController::bluetoothScanFinished, this,
+            &HostControllerService::bluetoothScanFinished);
+#endif // APPS_FEATURE_BLE
+    connect(&platformController_, &PlatformController::connectDeviceFinished, this,
+            &HostControllerService::connectDeviceFinished);
+    connect(&platformController_, &PlatformController::disconnectDeviceFinished, this,
+            &HostControllerService::disconnectDeviceFinished);
 
     connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this,
             &HostControllerService::handleUpdateProgress);
@@ -418,6 +439,33 @@ void HostControllerService::sendPlatformMessageToClients(const QString &platform
                                 payload, strataRPC::ResponseType::PlatformMessage);
 }
 
+#ifdef APPS_FEATURE_BLE
+void HostControllerService::bluetoothScanFinished(const QJsonObject payload)
+{
+    strataServer_->notifyAllClients(
+        hcsNotificationTypeToString(hcsNotificationType::bluetoothScan),
+        payload);
+}
+#endif // APPS_FEATURE_BLE
+
+void HostControllerService::connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
+{
+    if (errorMessage.isEmpty()) {
+        sendDeviceSuccess(hcsNotificationType::connectDevice, deviceId, clientId);
+    } else {
+        sendDeviceError(hcsNotificationType::connectDevice, deviceId, clientId, errorMessage);
+    }
+}
+
+void HostControllerService::disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage)
+{
+    if (errorMessage.isEmpty()) {
+        sendDeviceSuccess(hcsNotificationType::disconnectDevice, deviceId, clientId);
+    } else {
+        sendDeviceError(hcsNotificationType::disconnectDevice, deviceId, clientId, errorMessage);
+    }
+}
+
 void HostControllerService::processCmdRequestHcsStatus(const strataRPC::Message &message)
 {
     strataServer_->notifyClient(message, QJsonObject{{"status", "hcs_active"}},
@@ -708,6 +756,50 @@ void HostControllerService::processCmdDownlodView(const strataRPC::Message &mess
     storageManager_.requestDownloadControlView(message.clientID, url, md5, classId);
 }
 
+#ifdef APPS_FEATURE_BLE
+void HostControllerService::processCmdBluetoothScan(const strata::strataRPC::Message &message)
+{
+    strataServer_->notifyClient(message, QJsonObject{{"message", "Bluetooth scan initiated"}},
+                                strataRPC::ResponseType::Response);
+
+    platformController_.startBluetoothScan();
+}
+#endif // APPS_FEATURE_BLE
+
+void HostControllerService::processCmdConnectDevice(const strata::strataRPC::Message &message)
+{
+    QByteArray deviceId = message.payload.value("device_id").toVariant().toByteArray();
+    if (deviceId.isEmpty()) {
+        QString errorMessage(QStringLiteral("device_id attribute is empty or has bad format"));
+        qCWarning(lcHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
+        return;
+    }
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "device connection initiated"}},
+                                strataRPC::ResponseType::Response);
+
+    platformController_.connectDevice(deviceId, message.clientID);
+}
+
+void HostControllerService::processCmdDisconnectDevice(const strata::strataRPC::Message &message)
+{
+    QByteArray deviceId = message.payload.value("device_id").toVariant().toByteArray();
+    if (deviceId.isEmpty()) {
+        QString errorMessage(QStringLiteral("device_id attribute is empty or has bad format"));
+        qCWarning(lcHcs) << errorMessage;
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
+        return;
+    }
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "device disconnection initiated"}},
+                                strataRPC::ResponseType::Response);
+
+    platformController_.disconnectDevice(deviceId, message.clientID);
+}
+
 void HostControllerService::processCmdSendPlatformMessage(const strataRPC::Message &message)
 {
     platformController_.sendMessage(message.payload.value("device_id").toString().toUtf8(),
@@ -846,6 +938,15 @@ constexpr const char* HostControllerService::hcsNotificationTypeToString(hcsNoti
     case hcsNotificationType::programControllerJob:
         type = "program_controller_job";
         break;
+    case hcsNotificationType::bluetoothScan:
+        type = "bluetooth_scan";
+        break;
+    case hcsNotificationType::connectDevice:
+        type = "connect_device";
+        break;
+    case hcsNotificationType::disconnectDevice:
+        type = "disconnect_device";
+        break;
     case hcsNotificationType::platformDocumentsProgress:
         type = "document_progress";
         break;
@@ -867,6 +968,23 @@ void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &
 {
     componentUpdateInfo_.requestUpdateInfo(message.clientID);
     strataServer_->notifyClient(message, QJsonObject{{"message", "Update check requested."}}, strataRPC::ResponseType::Response);
+}
+
+void HostControllerService::sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString)
+{
+    QJsonObject payloadBody {
+        { "error_string", errorString },
+        { "device_id", QLatin1String(deviceId) }
+    };
+    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(notificationType), payloadBody, strataRPC::ResponseType::Notification);
+}
+
+void HostControllerService::sendDeviceSuccess(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId)
+{
+    QJsonObject payloadBody {
+        { "device_id", QLatin1String(deviceId) }
+    };
+    strataServer_->notifyClient(clientId, hcsNotificationTypeToString(notificationType), payloadBody, strataRPC::ResponseType::Notification);
 }
 
 void HostControllerService::processCmdPlatformStartApplication(const strataRPC::Message &message)

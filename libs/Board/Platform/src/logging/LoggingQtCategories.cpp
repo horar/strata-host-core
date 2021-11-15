@@ -11,6 +11,7 @@
 Q_LOGGING_CATEGORY(lcDeviceSerial, "strata.device.serial")
 Q_LOGGING_CATEGORY(lcDeviceMock, "strata.device.mock")
 Q_LOGGING_CATEGORY(lcDeviceTcp, "strata.device.tcp")
+Q_LOGGING_CATEGORY(lcDeviceBLE, "strata.device.ble")
 Q_LOGGING_CATEGORY(lcPlatform, "strata.platform")
 Q_LOGGING_CATEGORY(lcPlatformOperation, "strata.platform.operation")
 Q_LOGGING_CATEGORY(lcPlatformCommand, "strata.platform.command")
