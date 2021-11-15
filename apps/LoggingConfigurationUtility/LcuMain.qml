@@ -15,8 +15,6 @@ import tech.strata.lcu 1.0
 Item {
     id: lcuMain
 
-    property bool hack: false
-
     LcuModel{
         id:lcuModel
     }
@@ -24,24 +22,17 @@ Item {
     Component.onCompleted: {
         reloadButton.clicked()
     }
-    Rectangle {
-        color: "orange"
-        anchors.fill: parent
-    }
+
     Column {
+        id: column
         anchors.left: parent.left
         anchors.right: parent.right
         spacing: 5
+        anchors.margins: 5
 
         SGWidgets.SGText {
             id: title
-            anchors.margins: 5
-
             text: "Configuration files"           
-            Rectangle {
-                color: "red"
-                anchors.fill: parent
-            }
         }
 
         Row {
@@ -53,14 +44,10 @@ Item {
             SGWidgets.SGComboBox {
                 id: comboBox
 
-                width: lcuMain.width - reloadButton.width - fileSelectorRow.leftPadding - fileSelectorRow.rightPadding - fileSelectorRow.spacing
+                width: column.width - reloadButton.width - fileSelectorRow.leftPadding - fileSelectorRow.rightPadding - fileSelectorRow.spacing
                 anchors.verticalCenter: reloadButton.verticalCenter
                 model: lcuModel
                 textRole: "fileName"
-                /*delegate: ItemDelegate { //TODO - will need this later...probably
-                    text: modelData
-                    width: parent.width
-                }*/
                 onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
                 enabled: count !== 0
                 placeholderText: "no configuration files found"
@@ -69,11 +56,6 @@ Item {
                         currentIndex = 0
                     }
                 }
-
-               Rectangle {
-                   color: "green"
-                   anchors.fill: parent
-               }
             }
 
             SGWidgets.SGButton {
@@ -83,12 +65,7 @@ Item {
                 onClicked: {
                     lcuModel.reload()
                 }
-                Rectangle {
-                    color: "blue"
-                    anchors.fill: parent
-                }
             }
         }
     }
-
 }

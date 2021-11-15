@@ -13,6 +13,7 @@
 class LcuModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY onCountChanged)
 
 public:
     explicit LcuModel(QObject *parent = nullptr);
@@ -22,11 +23,15 @@ public:
     };
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
+    int count() const;
 
     Q_INVOKABLE void reload();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
+
+signals:
+    void onCountChanged();
 
 private slots:
     void addItem(const QString fileName);

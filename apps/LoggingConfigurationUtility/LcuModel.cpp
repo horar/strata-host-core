@@ -32,6 +32,7 @@ void LcuModel::reload()
     QFileInfo fileInfo(settings.fileName());
     QDir directory(fileInfo.absolutePath());
     qCDebug(lcLcu) << "Reading files from: " + fileInfo.absolutePath();
+
     beginResetModel();
     iniFiles_ = directory.entryList({"*.ini"},QDir::Files);
     for(int i=0; i<iniFiles_.size(); i++) {
@@ -65,6 +66,11 @@ QVariant LcuModel::data(const QModelIndex & index, int role) const
     }
 
     return QVariant();
+}
+
+int LcuModel::count() const
+{
+    return iniFiles_.count();
 }
 
 QHash<int, QByteArray> LcuModel::roleNames() const
