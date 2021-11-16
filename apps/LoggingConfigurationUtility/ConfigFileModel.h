@@ -10,13 +10,13 @@
 
 #include <QAbstractListModel>
 
-class LcuModel : public QAbstractListModel
+class ConfigFileModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY onCountChanged)
 
 public:
-    explicit LcuModel(QObject *parent = nullptr);
+    explicit ConfigFileModel(QObject *parent = nullptr);
     enum {
         textRole,
         FilePathRole

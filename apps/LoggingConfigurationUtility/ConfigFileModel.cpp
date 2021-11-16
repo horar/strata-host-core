@@ -6,7 +6,7 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include "LcuModel.h"
+#include "ConfigFileModel.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QCoreApplication>
@@ -14,19 +14,19 @@
 #include <QFileInfo>
 #include <QDir>
 
-LcuModel::LcuModel(QObject *parent)
+ConfigFileModel::ConfigFileModel(QObject *parent)
     : QAbstractListModel(parent)
 {
 }
 
-void LcuModel::addItem(const QString fileName)
+void ConfigFileModel::addItem(const QString fileName)
 {
      beginInsertRows(QModelIndex(), rowCount(), rowCount());
      iniFiles_ << fileName;
      endInsertRows();
 }
 
-void LcuModel::reload()
+void ConfigFileModel::reload()
 {
     QSettings settings;
     QFileInfo fileInfo(settings.fileName());
@@ -45,13 +45,13 @@ void LcuModel::reload()
     }
 }
 
-int LcuModel::rowCount(const QModelIndex & parent) const
+int ConfigFileModel::rowCount(const QModelIndex & parent) const
 {
     Q_UNUSED(parent)
     return iniFiles_.count();
 }
 
-QVariant LcuModel::data(const QModelIndex & index, int role) const
+QVariant ConfigFileModel::data(const QModelIndex & index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= iniFiles_.count()) {
@@ -68,12 +68,12 @@ QVariant LcuModel::data(const QModelIndex & index, int role) const
     return QVariant();
 }
 
-int LcuModel::count() const
+int ConfigFileModel::count() const
 {
     return iniFiles_.count();
 }
 
-QHash<int, QByteArray> LcuModel::roleNames() const
+QHash<int, QByteArray> ConfigFileModel::roleNames() const
 {
     QHash<int, QByteArray> names;
     names[textRole] = "fileName";

@@ -6,7 +6,7 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include "LcuModel.h"
+#include "ConfigFileModel.h"
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
     loadResources();
 
-    qmlRegisterType<LcuModel>("tech.strata.lcu", 1, 0, "LcuModel");
+    qmlRegisterType<ConfigFileModel>("tech.strata.lcu", 1, 0, "ConfigFileModel");
 
     QQmlApplicationEngine engine;
 

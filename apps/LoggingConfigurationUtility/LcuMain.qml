@@ -15,7 +15,7 @@ import tech.strata.lcu 1.0
 Item {
     id: lcuMain
 
-    LcuModel{
+    ConfigFileModel{
         id:lcuModel
     }
 
@@ -32,7 +32,7 @@ Item {
 
         SGWidgets.SGText {
             id: title
-            text: "Configuration files"           
+            text: "Configuration files"
         }
 
         Row {
