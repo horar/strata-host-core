@@ -8,7 +8,7 @@ Strata Host Core contains all the applications and dependencies necessary for St
 
 * Git Bash >= 2.28.0
 * CMake >= 3.19
-* Qt5 5.12.xx
+* Qt5 5.12.10
 * Visual Studio Build Tools 2017
 * OpenSSL (not needed when secure connection is not used)
 
@@ -16,14 +16,14 @@ Strata Host Core contains all the applications and dependencies necessary for St
 
 * Xcode and Command Line Tools
 * Git >= 2.28.0
-* Qt5 5.12.xx
+* Qt5 5.12.10
 * CMake >= 3.19
 * Homebrew
 * OpenSSL (not needed when secure connection is not used)
 
 ## Qt5 installation
 
-Download and install Qt5 version 5.12.xx
+Download and install Qt5 version 5.12.10
 
 The following Qt5 components are required:
 
@@ -52,11 +52,11 @@ if not, follow the instructions below:
 * From the start menu, search for `edit the system environment variables`
 * Click Environment Variables
 * Add the following to user variables Path
-  * `<QT installation directory>\5.12.xx\msvc2017_64\bin`
+  * `<QT installation directory>\5.12.10\msvc2017_64\bin`
   * `<QT installation directory>\Tools\OpenSSL\Win_x64\bin`
 * Create a new user environment variable
   * variable name: `Qt_DIR`
-  * variable value: `<QT installation directory>\5.12.xx\msvc2017_64\lib\cmake\Qt5`
+  * variable value: `<QT installation directory>\5.12.10\msvc2017_64\lib\cmake\Qt5`
 
 In addition, make sure that other tools in the requirements section are properly installed
 and added to the path if needed.
@@ -69,7 +69,7 @@ make sure Qt directory is added into the path
 if not, open `Terminal` and run the following command:
 
 ```
-export PATH=$PATH:<QT installed directory>/5.12.xx/clang_64/bin
+export PATH=$PATH:<QT installed directory>/5.12.10/clang_64/bin
 ```
 
 In addition, make sure that other tools in the requirements section are properly installed
@@ -78,7 +78,7 @@ and added to the path if needed.
 open `Terminal`, navigate to strata-host-core root directory and run `bootstrap-host.sh`
 
 **Building through Qt Creator:**
-  
+
 * Make sure that you have updated/cloned strata-host-core submodules by running the following commands
 
   ```
@@ -88,7 +88,7 @@ open `Terminal`, navigate to strata-host-core root directory and run `bootstrap-
 
 * Open Qt Creator
 * Projects -> Open -> select `CMakeLists.txt` under root directory of strata-host-core
-* For project configuration make sure to select Qt 5.12.xx
+* For project configuration make sure to select Qt 5.12.10
 * Build/Run the project
 
 ## Contributions
