@@ -9,6 +9,7 @@
 #pragma once
 
 #include <QAbstractListModel>
+#include <QFileInfoList>
 
 class ConfigFileModel : public QAbstractListModel
 {
@@ -17,8 +18,8 @@ class ConfigFileModel : public QAbstractListModel
 
 public:
     explicit ConfigFileModel(QObject *parent = nullptr);
-    enum {
-        textRole,
+    enum ModelRole{
+        FileNameRole = Qt::UserRole,
         FilePathRole
     };
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -37,6 +38,5 @@ private slots:
     void addItem(const QString fileName);
 
 private:
-    QStringList iniFiles_;
-    QStringList iniFilesPath_;
+    QFileInfoList iniFiles_;
 };

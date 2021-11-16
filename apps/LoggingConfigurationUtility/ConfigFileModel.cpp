@@ -34,10 +34,7 @@ void ConfigFileModel::reload()
     qCDebug(lcLcu) << "Reading files from: " + fileInfo.absolutePath();
 
     beginResetModel();
-    iniFiles_ = directory.entryList({"*.ini"},QDir::Files);
-    for(int i=0; i<iniFiles_.size(); i++) {
-        iniFilesPath_ << fileInfo.absolutePath() + "/" + iniFiles_.at(i);
-    }
+    iniFiles_ = directory.entryInfoList({"*.ini"},QDir::Files);
     endResetModel();
 
     if (iniFiles_.empty()) {
@@ -59,10 +56,10 @@ QVariant ConfigFileModel::data(const QModelIndex & index, int role) const
     }
 
     switch (role) {
-    case textRole:
-        return iniFiles_.at( index.row() );
+    case FileNameRole:
+        return iniFiles_.at( index.row() ).fileName();
     case FilePathRole:
-        return iniFilesPath_.at( index.row() );
+        return iniFiles_.at( index.row() ).absoluteFilePath();
     }
 
     return QVariant();
@@ -76,7 +73,7 @@ int ConfigFileModel::count() const
 QHash<int, QByteArray> ConfigFileModel::roleNames() const
 {
     QHash<int, QByteArray> names;
-    names[textRole] = "fileName";
+    names[FileNameRole] = "fileName";
     names[FilePathRole] = "filePath";
     return names;
 }

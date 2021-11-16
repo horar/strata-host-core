@@ -16,11 +16,11 @@ Item {
     id: lcuMain
 
     ConfigFileModel{
-        id:lcuModel
+        id:configFileModel
     }
 
     Component.onCompleted: {
-        reloadButton.clicked()
+        configFileModel.reload()
     }
 
     Column {
@@ -46,7 +46,7 @@ Item {
 
                 width: column.width - reloadButton.width - fileSelectorRow.leftPadding - fileSelectorRow.rightPadding - fileSelectorRow.spacing
                 anchors.verticalCenter: reloadButton.verticalCenter
-                model: lcuModel
+                model: configFileModel
                 textRole: "fileName"
                 onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
                 enabled: count !== 0
@@ -63,7 +63,7 @@ Item {
                 width: height
                 icon.source: "qrc:/sgimages/redo.svg"
                 onClicked: {
-                    lcuModel.reload()
+                    configFileModel.reload()
                 }
             }
         }
