@@ -27,6 +27,7 @@ public:
     int count() const;
 
     Q_INVOKABLE void reload();
+    Q_INVOKABLE QVariantMap get(int index);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

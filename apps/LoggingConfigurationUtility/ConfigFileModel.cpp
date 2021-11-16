@@ -24,6 +24,7 @@ void ConfigFileModel::addItem(const QString fileName)
      beginInsertRows(QModelIndex(), rowCount(), rowCount());
      iniFiles_ << fileName;
      endInsertRows();
+     emit onCountChanged();
 }
 
 void ConfigFileModel::reload()
@@ -36,10 +37,24 @@ void ConfigFileModel::reload()
     beginResetModel();
     iniFiles_ = directory.entryInfoList({"*.ini"},QDir::Files);
     endResetModel();
+    emit onCountChanged();
 
     if (iniFiles_.empty()) {
         qCWarning(lcLcu) << "No ini files were found.";
     }
+}
+
+QVariantMap ConfigFileModel::get(int index)
+{
+    if (index < 0 || index >= iniFiles_.count()) {
+        return QVariantMap();
+    }
+
+    QFileInfo item = iniFiles_.at(index);
+    QVariantMap map;
+    map.insert("fileName", item.fileName());
+    map.insert("filePath", item.absoluteFilePath());
+    return map;
 }
 
 int ConfigFileModel::rowCount(const QModelIndex & parent) const
