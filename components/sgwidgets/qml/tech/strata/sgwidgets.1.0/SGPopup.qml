@@ -35,11 +35,11 @@ Popup {
 
         //adjust position to fit into window
         if (Overlay.overlay) {
-            var globalPos = originItem.mapToItem(Overlay.overlay, deltaX, 0)
-            if (globalPos.x < 0) {
-                deltaX += -globalPos.x
-            } else if (globalPos.x + popup.width > Overlay.overlay.width) {
-                deltaX -= globalPos.x + popup.width - Overlay.overlay.width
+            var overlayPos = originItem.mapToItem(Overlay.overlay, deltaX, 0)
+            if (overlayPos.x < 0) {
+                deltaX += -overlayPos.x
+            } else if (overlayPos.x + popup.width > Overlay.overlay.width) {
+                deltaX -= overlayPos.x + popup.width - Overlay.overlay.width
             }
         }
 
@@ -63,11 +63,11 @@ Popup {
 
         //adjust position to fit into window
         if (Overlay.overlay) {
-            var globalPos = originItem.mapToItem(Overlay.overlay, 0, deltaY)
-            if (globalPos.y < 0) {
-                deltaY += -globalPos.y
-            } else if (globalPos.y + popup.height > Overlay.overlay.height) {
-                deltaY -= globalPos.y + popup.height - Overlay.overlay.height
+            var overlayPos = originItem.mapToItem(Overlay.overlay, 0, deltaY)
+            if (overlayPos.y < 0) {
+                deltaY += -overlayPos.y
+            } else if (overlayPos.y + popup.height > Overlay.overlay.height) {
+                deltaY -= overlayPos.y + popup.height - Overlay.overlay.height
             }
         }
 
