@@ -15,7 +15,7 @@ import tech.strata.lcu 1.0
 Item {
     id: lcuMain
 
-    ConfigFileModel{
+    ConfigFileModel {
         id:configFileModel
     }
 
@@ -48,12 +48,22 @@ Item {
                 anchors.verticalCenter: reloadButton.verticalCenter
                 model: configFileModel
                 textRole: "fileName"
-                onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
                 enabled: count !== 0
                 placeholderText: "no configuration files found"
-                onCountChanged: {
-                    if (count !==0 && currentIndex == -1) {
-                        currentIndex = 0
+                onActivated: {
+                    configFileModel.currentIndex = comboBox.currentIndex
+                    console.info("Selected INI file changed to: " + comboBox.currentText)
+                }
+
+                Connections {
+                    target: configFileModel
+                    onCountChanged: {
+                        if (comboBox.count !== 0 && comboBox.currentIndex == -1) {
+                            comboBox.currentIndex = 0
+                        }
+                        else {
+                        comboBox.currentIndex = configFileModel.currentIndex
+                        }
                     }
                 }
             }

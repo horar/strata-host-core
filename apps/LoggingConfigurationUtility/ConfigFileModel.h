@@ -14,7 +14,8 @@
 class ConfigFileModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(int count READ count NOTIFY onCountChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
 
 public:
     explicit ConfigFileModel(QObject *parent = nullptr);
@@ -24,7 +25,10 @@ public:
     };
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
+
     int count() const;
+    int currentIndex() const;
+    void setCurrentIndex(const int index);
 
     Q_INVOKABLE void reload();
     Q_INVOKABLE QVariantMap get(int index);
@@ -33,11 +37,13 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 signals:
-    void onCountChanged();
+    void countChanged();
+    void currentIndexChanged();
 
 private slots:
-    void addItem(const QString fileName);
+    void addItem(const QFileInfo fileInfo);
 
 private:
     QFileInfoList iniFiles_;
+    int currentIndex_;
 };
