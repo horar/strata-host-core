@@ -5,7 +5,7 @@
    viewBox="0 0 256 256"
    height="256"
    width="256"
-   sodipodi:docname="lcu-logo-ini.svg"
+   sodipodi:docname="lcu-logo.svg"
    inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,13 +26,14 @@
      showgrid="false"
      inkscape:zoom="2.4652628"
      inkscape:cx="224.92531"
-     inkscape:cy="111.95561"
+     inkscape:cy="112.15843"
      inkscape:window-width="1920"
-     inkscape:window-height="1080"
+     inkscape:window-height="1027"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg8" />
+     inkscape:current-layer="svg8"
+     inkscape:snap-text-baseline="true" />
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -300,11 +301,11 @@
   <text
      xml:space="preserve"
      id="text21108"
-     style="font-weight:bold;font-size:24px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:none;white-space:pre;shape-inside:url(#rect21110);fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
-     transform="matrix(2.4479337,0,0,2.5913634,-110.96446,-159.04205)"><tspan
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.4107px;line-height:1.25;font-family:'Arial Black';-inkscape-font-specification:'Arial Black, Normal';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;shape-inside:url(#rect21110);fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     transform="matrix(3.0709711,0,0,3.2909735,-164.17621,-234.97775)"><tspan
        x="74.767578"
-       y="115.26897"
-       id="tspan9306">INI</tspan></text>
+       y="116.15575"
+       id="tspan26402">INI</tspan></text>
   <circle
      id="path5842"
      style="fill:#4ab043;stroke:#000000"
