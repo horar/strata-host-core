@@ -11,8 +11,8 @@ project(LoggingConfigurationUtility
     LANGUAGES CXX
 )
 
-## set(PROJECT_WIN32_ICO resources/icons/app/lcu-logo.ico)
-## set(PROJECT_MACOS_ICNS lcu-logo.icns)
+set(PROJECT_WIN32_ICO resources/icons/app/lcu-logo.ico)
+set(PROJECT_MACOS_ICNS lcu-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.lcu)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 
@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     qml.qrc
+    images/images.qrc
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
@@ -50,13 +51,13 @@ if(APPLE)
         ${FOUNDATION_LIB}
     )
 
-##    target_sources(${PROJECT_NAME} PRIVATE
-##        resources/icons/app/lcu-logo.icns
-##    )
-##    set_source_files_properties(
-##        resources/icons/app/lcu-logo.icns
-##        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
-##    )
+    target_sources(${PROJECT_NAME} PRIVATE
+        resources/icons/app/lcu-logo.icns
+    )
+    set_source_files_properties(
+        resources/icons/app/lcu-logo.icns
+        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+    )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
