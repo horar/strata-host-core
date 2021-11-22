@@ -57,7 +57,9 @@ StackLayout {
     readonly property bool platformOutOfDate: controlViewIsOutOfDate || firmwareIsOutOfDate
 
     onPlatformOutOfDateChanged: {
-        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
+        // Both of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' can be changed right after each other,
+        // so we need to use 'Qt.callLater' for showing proper notification.
+        Qt.callLater(launchOutOfDateNotificationLater)
     }
 
     onFullyInitializedChanged: {
@@ -207,6 +209,12 @@ StackLayout {
         onTriggered: {
             openSettings()
         }
+    }
+
+    // We need this helper function - it takes values of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' at time when it is executed,
+    // 'Qt.callLater' takes values of its parameters at time when it is called (and not when called function is executed).
+    function launchOutOfDateNotificationLater() {
+        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
     }
 
     function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){
