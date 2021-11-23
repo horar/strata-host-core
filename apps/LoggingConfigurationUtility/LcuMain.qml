@@ -50,19 +50,15 @@ Item {
                 textRole: "fileName"
                 enabled: count !== 0
                 placeholderText: "no configuration files found"
-                onActivated: {
-                    configFileModel.currentIndex = comboBox.currentIndex
-                    console.info("Selected INI file changed to: " + comboBox.currentText)
-                }
+                onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
 
                 Connections {
                     target: configFileModel
                     onCountChanged: {
                         if (comboBox.count !== 0 && comboBox.currentIndex == -1) {
                             comboBox.currentIndex = 0
-                        }
-                        else {
-                        comboBox.currentIndex = configFileModel.currentIndex
+                        } else {
+                        comboBox.currentIndex = 0;
                         }
                     }
                 }

@@ -41,13 +41,9 @@ void ConfigFileModel::reload()
 
     if (iniFiles_.empty()) {
         qCWarning(lcLcu) << "No ini files were found.";
-        currentIndex_ = -1;
     }
-    else {
-        currentIndex_ = 0;
-    }
+
     //TODO in different ticket - when list of files is reloaded and its count changes, set current index on the file which was opened before reloading. If the file doesn't exist any more, set index to 0.
-    emit currentIndexChanged();
     emit countChanged();
 }
 
@@ -90,19 +86,6 @@ QVariant ConfigFileModel::data(const QModelIndex & index, int role) const
 int ConfigFileModel::count() const
 {
     return iniFiles_.count();
-}
-
-int ConfigFileModel::currentIndex() const
-{
-    return currentIndex_;
-}
-
-void ConfigFileModel::setCurrentIndex(const int index)
-{
-    if (currentIndex_ != index) {
-        currentIndex_ = index;
-        emit currentIndexChanged();
-    }
 }
 
 QHash<int, QByteArray> ConfigFileModel::roleNames() const
