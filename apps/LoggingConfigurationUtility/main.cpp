@@ -86,10 +86,10 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
     QGuiApplication app(argc, argv);
-//    app.setWindowIcon(QIcon(":/images/prt-logo.svg"));
+    app.setWindowIcon(QIcon(":/images/lcu-logo.png"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryLoggingConfigurationUtility()) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryLoggingConfigurationUtility) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
 
     loadResources();
 
