@@ -437,8 +437,8 @@ SGWidgets.SGWindow {
         if (AppInfo.gitRevision !== "") {
             version += "<b> git hash: </b> %1".arg(AppInfo.gitRevision)
         }
-        if (AppInfo.countOfCommits !== "") {
-            version += "<b> count of commits: </b> %1".arg(AppInfo.countOfCommits)
+        if (AppInfo.numberOfCommits !== "") {
+            version += "<b> number of commits: </b> %1".arg(AppInfo.numberOfCommits)
         }
         if (versionList[versionListLength - 1] === "uncommited") {
             version += "<b> " + versionList[versionListLength - 1] + " </b>"
