@@ -15,6 +15,9 @@ import tech.strata.lcu 1.0
 Item {
     id: lcuMain
 
+    property int outerSpacing: 10
+    property int innerSpacing: 5
+
     ConfigFileModel {
         id:configFileModel
     }
@@ -23,57 +26,53 @@ Item {
         configFileModel.reload()
     }
 
-    Column {
-        id: column
-        anchors.left: parent.left
-        anchors.right: parent.right
-        spacing: 5
-        anchors.margins: 5
-
-        SGWidgets.SGText {
-            id: title
-            text: "Configuration files"
+    SGWidgets.SGText {
+        id: title
+        anchors {
+            left: parent.left
+            leftMargin: outerSpacing
         }
+        text: "Configuration files"
+    }
 
-        Row {
-            id: fileSelectorRow
-            leftPadding: 10
-            rightPadding: 10
-            spacing: 5
+    SGWidgets.SGComboBox {
+        id: comboBox
+        anchors {
+            top: title.bottom
+            topMargin: innerSpacing
+            left: title.left
+            right: reloadButton.left
+            rightMargin: innerSpacing
+        }
+        model: configFileModel
+        textRole: "fileName"
+        enabled: count !== 0
+        placeholderText: "no configuration files found"
+        onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
 
-            SGWidgets.SGComboBox {
-                id: comboBox
-
-                width: column.width - reloadButton.width - fileSelectorRow.leftPadding - fileSelectorRow.rightPadding - fileSelectorRow.spacing
-                anchors.verticalCenter: reloadButton.verticalCenter
-                model: configFileModel
-                textRole: "fileName"
-                enabled: count !== 0
-                placeholderText: "no configuration files found"
-                onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
-
-                Connections {
-                    target: configFileModel
-                    onCountChanged: {
-                        if (comboBox.count == 0) {
-                            comboBox.currentIndex = -1
-                        } else if (comboBox.count !== 0 && comboBox.currentIndex == -1) {
-                            comboBox.currentIndex = 0
-                        } else {
-                            comboBox.currentIndex = 0;
-                        }
-                    }
-                }
-            }
-
-            SGWidgets.SGButton {
-                id: reloadButton
-                width: height
-                icon.source: "qrc:/sgimages/redo.svg"
-                onClicked: {
-                    configFileModel.reload()
+        Connections {
+            target: configFileModel
+            onCountChanged: {
+                if (comboBox.count == 0) {
+                    comboBox.currentIndex = -1
+                } else if (comboBox.count !== 0 && comboBox.currentIndex == -1) {
+                    comboBox.currentIndex = 0
+                } else {
+                    comboBox.currentIndex = 0;
                 }
             }
         }
+    }
+
+    SGWidgets.SGButton {
+        id: reloadButton
+        anchors {
+            right: parent.right
+            rightMargin: outerSpacing
+            verticalCenter: comboBox.verticalCenter
+        }
+        width: height
+        icon.source: "qrc:/sgimages/redo.svg"
+        onClicked: configFileModel.reload()
     }
 }
