@@ -49,6 +49,7 @@ Item {
         enabled: count !== 0
         placeholderText: "no configuration files found"
         onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
+        popupHeight: parent.height - title.height
 
         Connections {
             target: configFileModel
