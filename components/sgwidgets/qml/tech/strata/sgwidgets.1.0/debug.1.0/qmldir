@@ -1,0 +1,7 @@
+module tech.strata.sgwidgets.debug
+
+SGQmlErrorListButton 1.0 SGQmlDebug/SGQmlErrorListButton.qml
+SGQmlErrorListPopUp 1.0 SGQmlDebug/SGQmlErrorListPopUp.qml
+SGQmlErrorListView 1.0 SGQmlDebug/SGQmlErrorListView.qml
+SGQmlErrorListViewDelegate 1.0 SGQmlDebug/SGQmlErrorListViewDelegate.qml
+SGQmlDebug 1.0 SGQmlDebug/SGQmlDebug.qml

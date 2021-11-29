@@ -21,6 +21,7 @@
 #include <QResource>
 #include <QDir>
 #include <QtWebEngine>
+#include <QQmlFileSelector>
 
 #include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
@@ -61,6 +62,7 @@ void loadResources() {
 
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
+
 
         qCInfo(lcSci)
                 << "Loading"
@@ -168,10 +170,39 @@ int main(int argc, char *argv[])
     SciModel sciModel_;
 
     QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
 
+    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    qInfo(lcSci) << "---->  plugins empty:" << supportedPLugins.empty();
+    if (supportedPLugins.empty() == false) {
+        qInfo(lcSci) << "Supportrd plugins:" << supportedPLugins.join(", ");
+        selector.setExtraSelectors(supportedPLugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        QResource::registerResource(applicationDir.filePath("plugins/qmldebug.rcc"));
+    }
+
+    // selector.setExtraSelectors({"qmldebug"});
     addImportPaths(&engine);
 
+
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
+                    [&sciModel_](const QList<QQmlError> &warnings) {
+                        QStringList msg;
+                        foreach (const QQmlError &error, warnings) {
+                            msg << error.toString();
+                        }
+                        qInfo(lcSci) << "----> main.cpp";
+                        emit sciModel_.notifyQmlError(msg.join(QStringLiteral("\n")));
+                    });
 
 #ifdef APPS_FEATURE_BLE
     engine.rootContext()->setContextProperty("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));

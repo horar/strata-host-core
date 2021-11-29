@@ -20,4 +20,3 @@ foreach(SGWIDGET_DIR ${SGWIDGETS_FOLDERS})
         add_subdirectory(${SGWIDGETS_NAME})
     endif()
 endforeach()
-

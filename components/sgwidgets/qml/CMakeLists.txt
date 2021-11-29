@@ -19,6 +19,10 @@ find_package(Qt5 ${VERSION_QT5}
 file(GLOB_RECURSE QRC_SRCS qml.qrc)
 list(APPEND QRC_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.qrc")
 
+add_subdirectory(tech/strata/sgwidgets.1.0/debug.1.0)
+list(APPEND QRC_SRCS "${SGDEBUG_DIR}/qml-plugin-qmldebug-static.qrc")
+add_qml_debug_plugin(PLUGIN_NAME "qmldebug")
+
 add_custom_target(${PROJECT_NAME}_qrcs SOURCES ${QRC_SRCS})
 qt5_add_binary_resources(${PROJECT_NAME}
     ${QRC_SRCS}
@@ -39,4 +43,3 @@ endif()
 generate_component_version(GITTAG_PREFIX sgwidgets_ QRC_NAMESPACE "/tech/strata")
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-add_qml_import_path(PATH ":/")

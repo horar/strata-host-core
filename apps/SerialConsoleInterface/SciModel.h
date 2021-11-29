@@ -40,6 +40,9 @@ public:
     SciBleDeviceModel* bleDeviceModel();
 #endif // APPS_FEATURE_BLE
 
+signals:
+    void notifyQmlError(QString notifyQmlError);
+
 private:
     strata::PlatformManager platformManager_;
     SciPlatformModel platformModel_;

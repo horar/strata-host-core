@@ -28,6 +28,7 @@ import "qrc:/partial-views/debug-bar"
 import "partial-views/notifications"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
@@ -339,5 +340,14 @@ SGWidgets.SGMainWindow {
         anchors {
             fill: parent
         }
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            fill: parent
+        }
+
+        signalTarget: sdsModel
     }
 }

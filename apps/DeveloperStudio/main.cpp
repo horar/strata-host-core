@@ -225,6 +225,15 @@ int main(int argc, char *argv[])
         selector.setExtraSelectors(supportedPLugins);
     }
 
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        QResource::registerResource(applicationDir.filePath("plugins/qmldebug.rcc"));
+
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());

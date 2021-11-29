@@ -60,6 +60,9 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ${BLUETOOTH_SOURCES}
 )
 
+set(${PROJECT_NAME}_ENABLED_PLUGINS "")
+add_qml_debug_plugin_to_version(PROJ_NAME ${PROJECT_NAME} PLUGIN_NAME "qmldebug")
+
 generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)
 generate_app_build_timestamp()
 
