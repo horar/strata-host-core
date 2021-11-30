@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryLoggingConfigurationUtility, "strata.lcu")
+Q_LOGGING_CATEGORY(lcLcu, "strata.lcu")
