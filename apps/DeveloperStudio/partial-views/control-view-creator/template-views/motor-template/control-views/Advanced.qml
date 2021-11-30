@@ -13,7 +13,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.sgwidgets 1.0
 import tech.strata.sglayout 1.0
 import tech.strata.commoncpp 1.0
-import QtTest 1.1
 
 UIBase { // start_uibase
 
