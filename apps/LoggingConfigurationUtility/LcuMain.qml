@@ -76,4 +76,5 @@ Item {
         icon.source: "qrc:/sgimages/redo.svg"
         onClicked: configFileModel.reload()
     }
+//    SGWidgets.SGLogLevelSelector
 }
