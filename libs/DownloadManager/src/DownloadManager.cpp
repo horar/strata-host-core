@@ -272,33 +272,27 @@ void DownloadManager::networkReplyFinishedHandler()
     internalRequest->savedFile.close();
 
     QString errorString;
-    if (reply->error() == QNetworkReply::NoError) {
-        if (isHttpRedirect(reply)) {
+    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if (reply->error() != QNetworkReply::NoError) {
+        errorString = "Network error: " + reply->errorString();
+    } else if (statusCode < 200 || statusCode >= 300) {
+        errorString = "Reply error, status code is " + QString::number(statusCode);
+    } else {
+        QByteArray data = reply->readAll();
+        if (data.size() > 0) {
+            errorString = writeToFile(internalRequest->savedFile, data);
+        }
 
-            qCWarning(lcDownloadManager)
-                    << "Download request redirected"
-                    << reply->url().toString();
-
-            errorString = "request redirected";
+        if (internalRequest->md5.isEmpty()) {
+            qCDebug(lcDownloadManager) << "hash not provided, cannot verify downloaded file";
         } else {
-            QByteArray data = reply->readAll();
-            if (data.size() > 0) {
-                errorString = writeToFile(internalRequest->savedFile, data);
-            }
-
-            if (internalRequest->md5.isEmpty()) {
-                qCDebug(lcDownloadManager) << "hash not provided, cannot verify downloaded file";
+            if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5)) {
+                qCDebug(lcDownloadManager) << "hash verification successful";
             } else {
-                if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5)) {
-                    qCDebug(lcDownloadManager) << "hash verification successful";
-                } else {
-                    errorString = "hash verification failed";
-                    qCWarning(lcDownloadManager) << errorString;
-                }
+                errorString = "hash verification failed";
+                qCWarning(lcDownloadManager) << errorString;
             }
         }
-    } else {
-        errorString = "Network Error: " + reply->errorString();
     }
 
     prepareResponse(internalRequest, errorString);
@@ -307,6 +301,26 @@ void DownloadManager::networkReplyFinishedHandler()
     reply->deleteLater();
 
     startNextDownload();
+}
+
+void DownloadManager::networkReplyRedirectedHandler()
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    if (reply == nullptr) {
+        return;
+    }
+
+    InternalDownloadRequest *internalRequest = qobject_cast<InternalDownloadRequest*>(reply->request().originatingObject());
+    if (internalRequest == nullptr) {
+        qCCritical(lcDownloadManager) << "cannot cast originating object";
+        return;
+    }
+
+    qCInfo(lcDownloadManager)
+            << "request redirected"
+            << internalRequest->url.toString()
+            << "->"
+            << reply->url().toString();
 }
 
 void DownloadManager::startNextDownload()
@@ -430,6 +444,7 @@ QNetworkReply* DownloadManager::postNetworkRequest(const QUrl &url, QObject *ori
 {
     QNetworkRequest request(url);
     request.setOriginatingObject(originatingObject);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
 
     QNetworkReply *reply = networkManager_->get(request);
 
@@ -441,21 +456,13 @@ QNetworkReply* DownloadManager::postNetworkRequest(const QUrl &url, QObject *ori
     reply->setProperty("newProgress", false);
 
     connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::networkReplyReadyReadHandler);
-
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::networkReplyProgressHandler);
-
     connect(reply, &QNetworkReply::finished, this, &DownloadManager::networkReplyFinishedHandler);
+    connect(reply, &QNetworkReply::redirected, this, &DownloadManager::networkReplyRedirectedHandler);
 
     currentDownloads_.append(reply);
 
     return reply;
-}
-
-bool DownloadManager::isHttpRedirect(QNetworkReply *reply)
-{
-    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    return statusCode == 301 || statusCode == 302 || statusCode == 303
-            || statusCode == 305 || statusCode == 307 || statusCode == 308;
 }
 
 QString DownloadManager::writeToFile(QFile &file, const QByteArray &data)
@@ -587,6 +594,5 @@ void DownloadManager::abortReply(QNetworkReply *reply)
 
     reply->abort();
 }
-
 
 } //namespace
