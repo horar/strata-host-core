@@ -10,6 +10,7 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <QFileInfo>
+#include <QFile>
 #include <QSettings>
 
 ConfigFileSettings::ConfigFileSettings(QObject *parent) :
@@ -18,12 +19,59 @@ ConfigFileSettings::ConfigFileSettings(QObject *parent) :
     iniFile_.setFile(this->fileName());
 }
 
-QFileInfo ConfigFileSettings::iniFile() const
+int ConfigFileSettings::logLevel() const
 {
-    return iniFile_;
+    QFile file(iniFile_.filePath());
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return -1;
+    QTextStream in(&file);
+    QString line = in.readLine();
+    while (!line.isNull()) {
+        if(line.contains("level=")){
+            QString level = line.split("=").at(1);
+            if(level == "debug")
+                return 0;
+            else if (level == "info")
+                return 1;
+            else if (level == "warning")
+                return 2;
+            else if (level == "critical")
+                return 3;
+            else if (level == "error")
+                return 4;
+            else
+                return 5;
+        }
+        line = in.readLine();
+    }
+    return -1;
 }
 
-void ConfigFileSettings::updateFile(QFileInfo iniFile)
+void ConfigFileSettings::setLogLevel(int logLevel)
 {
-    emit fileUpdated();
+    QLoggingCategory category("strata.lcu");
+
+    qCInfo(lcLcu) << "Set level: " << logLevel;
+
+    switch (logLevel) {
+    case 0:
+        category.setEnabled(QtDebugMsg, true);
+    case 1:
+        category.setEnabled(QtInfoMsg, true);
+    case 2:
+        category.setEnabled(QtWarningMsg, true);
+    case 3:
+        category.setEnabled(QtCriticalMsg, true);
+    case 4:
+        category.setEnabled(QtFatalMsg, true);
+    case 5: {
+        category.setEnabled(QtDebugMsg, false);
+        category.setEnabled(QtInfoMsg, false);
+        category.setEnabled(QtWarningMsg, false);
+        category.setEnabled(QtCriticalMsg, false);
+        category.setEnabled(QtFatalMsg, false);
+    }
+    }
+
+    //emit logLevelChanged();
 }

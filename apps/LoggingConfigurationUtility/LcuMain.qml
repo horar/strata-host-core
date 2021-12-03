@@ -21,6 +21,9 @@ Item {
     ConfigFileModel {
         id:configFileModel
     }
+    ConfigFileSettings {
+        id: configFileSettings
+    }
 
     Component.onCompleted: {
         configFileModel.reload()
@@ -76,5 +79,34 @@ Item {
         icon.source: "qrc:/sgimages/redo.svg"
         onClicked: configFileModel.reload()
     }
-//    SGWidgets.SGLogLevelSelector
+
+    SGWidgets.SGText {
+        id: logLevelText
+        anchors {
+            topMargin: innerSpacing
+            left: title.left
+            rightMargin: innerSpacing
+            verticalCenter: logLevelComboBox.verticalCenter
+        }
+        text: "Log Level: "
+    }
+
+    SGWidgets.SGComboBox {
+        id: logLevelComboBox
+        anchors {
+            top: reloadButton.bottom
+            topMargin: innerSpacing
+            right: reloadButton.right
+            rightMargin: innerSpacing
+        }
+        model: ["debug", "info", "warning", "critical", "fatal", "off"]
+
+        onActivated: {
+            configFileSettings.logLevel = currentIndex
+        }
+
+        Component.onCompleted: {
+            currentIndex = configFileSettings.logLevel
+        }
+    }
 }

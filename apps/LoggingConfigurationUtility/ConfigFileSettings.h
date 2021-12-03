@@ -14,16 +14,16 @@
 class ConfigFileSettings : public QSettings
 {
     Q_OBJECT
-    Q_PROPERTY(QFileInfo iniFile READ iniFile WRITE updateFile NOTIFY fileUpdated)
+    Q_PROPERTY(int logLevel READ logLevel WRITE setLogLevel NOTIFY logLevelChanged)
 
 public:
     explicit ConfigFileSettings(QObject *parent = 0);
 
-    QFileInfo iniFile() const;
-    void updateFile(QFileInfo iniFile);
+    int logLevel() const;
+    void setLogLevel(int logLevel);
 
 signals:
-    void fileUpdated();
+    void logLevelChanged();
 
 private:
     QFileInfo iniFile_;
