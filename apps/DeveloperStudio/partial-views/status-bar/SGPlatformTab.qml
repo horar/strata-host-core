@@ -43,7 +43,8 @@ Item {
             Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
             Help.registerTarget(repeater.itemAt(0).toolItem, "Use this menu item to open the platform and control a board", 6, "selectorHelp")
             Help.registerTarget(repeater.itemAt(1).toolItem, "Use this menu item to view documentation", 7, "selectorHelp")
-            Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to close the platform", 8, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to view software and firmware settings", 8, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(3).toolItem, "Use this menu item to close the platform", 9, "selectorHelp")
         }
     }
 
