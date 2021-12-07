@@ -60,7 +60,11 @@ FocusScope {
 
     Flickable {
         id: flick
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            topMargin: 3
+            bottomMargin: 3
+        }
 
         clip: true
         interactive: true
