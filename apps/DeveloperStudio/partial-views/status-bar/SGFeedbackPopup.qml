@@ -323,6 +323,9 @@ SGStrataPopup {
                         Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
+                            if (alertToast.visible) {
+                                alertToast.hideInstantly()
+                            }
                             var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentsQuestionsArea.text, type: feedbackTypeListView.currentItem.typeValue }
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
