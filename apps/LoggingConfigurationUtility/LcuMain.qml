@@ -51,7 +51,11 @@ Item {
         textRole: "fileName"
         enabled: count !== 0
         placeholderText: "no configuration files found"
-        onActivated: console.info("Selected INI file changed to: " + comboBox.currentText)
+        onActivated: {
+            configFileSettings.fileName = comboBox.currentText
+            console.info("Selected INI file changed to: " + comboBox.currentText)
+            logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
+        }
         popupHeight: parent.height - title.height - comboBox.height
 
         Connections {
@@ -62,7 +66,7 @@ Item {
                 } else if (comboBox.count !== 0 && comboBox.currentIndex == -1) {
                     comboBox.currentIndex = 0
                 } else {
-                    comboBox.currentIndex = 0;
+                    comboBox.currentIndex = 0
                 }
             }
         }
@@ -77,7 +81,11 @@ Item {
         }
         width: height
         icon.source: "qrc:/sgimages/redo.svg"
-        onClicked: configFileModel.reload()
+        onClicked: {
+            configFileModel.reload()
+            configFileSettings.fileName = comboBox.currentText
+            logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
+        }
     }
 
     SGWidgets.SGText {
@@ -96,17 +104,37 @@ Item {
         anchors {
             top: reloadButton.bottom
             topMargin: innerSpacing
-            right: reloadButton.right
+            right: setLogLevelButton.left
             rightMargin: innerSpacing
         }
-        model: ["debug", "info", "warning", "critical", "fatal", "off"]
-
+        model: ["debug", "info", "warning", "error", "critical", "off"]
+        enabled: currentIndex !== -1 && comboBox.enabled //disable if log level value doesnt exist OR if no ini files were found
+        placeholderText: "no value"
         onActivated: {
-            configFileSettings.logLevel = currentIndex
+            configFileSettings.logLevel = currentText
         }
 
         Component.onCompleted: {
-            currentIndex = configFileSettings.logLevel
+            configFileSettings.fileName = comboBox.currentText
+            currentIndex = find(configFileSettings.logLevel)
+        }
+    }
+    SGWidgets.SGButton {
+        id: setLogLevelButton
+        anchors {
+            right: parent.right
+            rightMargin: outerSpacing
+            verticalCenter: logLevelComboBox.verticalCenter
+        }
+        width: height
+        text: logLevelComboBox.enabled ? "Unset" : "Set"
+        onClicked: {
+            if (text == "Unset") {
+                configFileSettings.logLevel = ""
+                logLevelComboBox.currentIndex = -1
+            } else {
+                logLevelComboBox.currentIndex = 0
+            }
         }
     }
 }

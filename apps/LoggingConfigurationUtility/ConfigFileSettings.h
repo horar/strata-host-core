@@ -14,13 +14,16 @@
 class ConfigFileSettings : public QSettings
 {
     Q_OBJECT
-    Q_PROPERTY(int logLevel READ logLevel WRITE setLogLevel NOTIFY logLevelChanged)
+    Q_PROPERTY(QString logLevel READ logLevel WRITE setLogLevel NOTIFY logLevelChanged)
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
 
 public:
     explicit ConfigFileSettings(QObject *parent = 0);
 
-    int logLevel() const;
-    void setLogLevel(int logLevel);
+    QString logLevel() const;
+    QString fileName() const;
+    void setLogLevel(QString logLevel);
+    void setFileName(QString fileName);
 
 signals:
     void logLevelChanged();

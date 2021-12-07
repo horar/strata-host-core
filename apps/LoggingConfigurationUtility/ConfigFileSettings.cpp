@@ -16,62 +16,42 @@
 ConfigFileSettings::ConfigFileSettings(QObject *parent) :
     QSettings(parent)
 {
-    iniFile_.setFile(this->fileName());
+    QSettings settings;
+    iniFile_.setFile(settings.fileName());
 }
 
-int ConfigFileSettings::logLevel() const
+QString ConfigFileSettings::logLevel() const
 {
-    QFile file(iniFile_.filePath());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return -1;
-    QTextStream in(&file);
-    QString line = in.readLine();
-    while (!line.isNull()) {
-        if(line.contains("level=")){
-            QString level = line.split("=").at(1);
-            if(level == "debug")
-                return 0;
-            else if (level == "info")
-                return 1;
-            else if (level == "warning")
-                return 2;
-            else if (level == "critical")
-                return 3;
-            else if (level == "error")
-                return 4;
-            else
-                return 5;
-        }
-        line = in.readLine();
+    QSettings settings(iniFile_.filePath(), QSettings::IniFormat);
+
+    QStringList keys = settings.allKeys();
+    if (!keys.contains("log/level")) {
+        return "";
     }
-    return -1;
+
+    QString level = settings.value("log/level",QVariant()).toString();
+    qCInfo(lcLcu) << "log level: " << level;
+
+    return level;
 }
 
-void ConfigFileSettings::setLogLevel(int logLevel)
+QString ConfigFileSettings::fileName() const
 {
-    QLoggingCategory category("strata.lcu");
+    return iniFile_.fileName();
+}
 
-    qCInfo(lcLcu) << "Set level: " << logLevel;
+void ConfigFileSettings::setLogLevel(QString logLevel)
+{
+    QSettings settings(iniFile_.filePath(), QSettings::IniFormat);
 
-    switch (logLevel) {
-    case 0:
-        category.setEnabled(QtDebugMsg, true);
-    case 1:
-        category.setEnabled(QtInfoMsg, true);
-    case 2:
-        category.setEnabled(QtWarningMsg, true);
-    case 3:
-        category.setEnabled(QtCriticalMsg, true);
-    case 4:
-        category.setEnabled(QtFatalMsg, true);
-    case 5: {
-        category.setEnabled(QtDebugMsg, false);
-        category.setEnabled(QtInfoMsg, false);
-        category.setEnabled(QtWarningMsg, false);
-        category.setEnabled(QtCriticalMsg, false);
-        category.setEnabled(QtFatalMsg, false);
+    if (logLevel == "") {
+        settings.remove("log/level");
+    } else {
+        settings.setValue("log/level",logLevel);
     }
-    }
+}
 
-    //emit logLevelChanged();
+void ConfigFileSettings::setFileName(QString fileName)
+{
+    iniFile_.setFile(iniFile_.absolutePath() + "/" + fileName);
 }
