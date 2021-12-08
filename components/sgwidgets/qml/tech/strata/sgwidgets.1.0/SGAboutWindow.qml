@@ -35,7 +35,7 @@ SGWidgets.SGWindow {
     property variant versionList: AppInfo.fullVersion.split("-")
     property int versionListLength: versionList.length
     property string versionNum: "<b>version:</b> %1".arg(AppInfo.version)
-    property string versionNumber: versionList[versionListLength - 1] ? versionNum + "-" + versionList[versionListLength - 1]  : versionNum
+    property string versionNumber: versionList[versionListLength - 1] === "uncommited" ? versionNum + "-" + versionList[versionListLength - 1]  : versionNum
     property string versionNumberExpanded: createVersionString()
     property color dialogBg: "#eeeeee"
     property color lighterGrayColor: Qt.lighter(Theme.palette.gray, 1.33)
