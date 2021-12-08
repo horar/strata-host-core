@@ -11,23 +11,25 @@
 #include <QSettings>
 #include <QFileInfo>
 
-class ConfigFileSettings : public QSettings
+class ConfigFileSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString logLevel READ logLevel WRITE setLogLevel NOTIFY logLevelChanged)
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
 
 public:
     explicit ConfigFileSettings(QObject *parent = 0);
 
     QString logLevel() const;
     QString fileName() const;
-    void setLogLevel(QString logLevel);
-    void setFileName(QString fileName);
+    void setLogLevel(const QString& logLevel);
+    void setFileName(const QString& fileName);
 
 signals:
     void logLevelChanged();
+    void fileNameChanged();
 
 private:
     QFileInfo iniFile_;
+    QScopedPointer<QSettings> settings_;
 };

@@ -14,25 +14,28 @@
 #include <QSettings>
 
 ConfigFileSettings::ConfigFileSettings(QObject *parent) :
-    QSettings(parent)
+    QObject(parent),
+    settings_(new QSettings)
 {
-    QSettings settings;
-    iniFile_.setFile(settings.fileName());
+    iniFile_.setFile(settings_->fileName());
 }
 
 QString ConfigFileSettings::logLevel() const
 {
-    QSettings settings(iniFile_.filePath(), QSettings::IniFormat);
-
-    QStringList keys = settings.allKeys();
-    if (!keys.contains("log/level")) {
+    if (settings_->contains("log/level") == false) {
         return "";
     }
 
-    QString level = settings.value("log/level",QVariant()).toString();
-    qCInfo(lcLcu) << "log level: " << level;
+    QStringList logLevels = {"debug", "info", "warning", "error", "critical", "off"};
+    QString level = settings_->value("log/level", QVariant()).toString();
 
-    return level;
+    if (logLevels.contains(level)) {
+        qCInfo(lcLcu) << "Current log level: " << level;
+        return level;
+    } else {
+        qCWarning(lcLcu) << "Unrecognized log level. Setting to default." << level;
+        return "debug"; //TBD if default should be info or debug
+    }
 }
 
 QString ConfigFileSettings::fileName() const
@@ -40,18 +43,29 @@ QString ConfigFileSettings::fileName() const
     return iniFile_.fileName();
 }
 
-void ConfigFileSettings::setLogLevel(QString logLevel)
+void ConfigFileSettings::setLogLevel(const QString& logLevel)
 {
-    QSettings settings(iniFile_.filePath(), QSettings::IniFormat);
-
-    if (logLevel == "") {
-        settings.remove("log/level");
-    } else {
-        settings.setValue("log/level",logLevel);
+    if (logLevel == settings_->value("log/lovel")) {
+        return;
     }
+
+    if (logLevel.isEmpty()) {
+        settings_->remove("log/level");
+    } else {
+        settings_->setValue("log/level",logLevel);
+    }
+
+    emit logLevelChanged();
 }
 
-void ConfigFileSettings::setFileName(QString fileName)
+void ConfigFileSettings::setFileName(const QString& fileName)
 {
+    if (fileName == iniFile_.fileName()) {
+        return;
+    }
+
     iniFile_.setFile(iniFile_.absolutePath() + "/" + fileName);
+    settings_.reset(new QSettings(iniFile_.filePath(), QSettings::IniFormat));
+
+    emit fileNameChanged();
 }
