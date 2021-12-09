@@ -26,14 +26,6 @@ Item {
 
     property bool isCurrentItem: false
 
-    onIsCurrentItemChanged: {
-        if (root.isCurrentItem === false && segmentCategoryList.hideOverflowButtons === false) {
-            // if user selects another component, hide the extra buttons
-            segmentCategoryList.hideOverflowButtons = true
-            visibleButtons.invalidate()
-        }
-    }
-
     Rectangle {
         width: 50
         color: "#29e335"//Theme.palette.onsemiOrange
@@ -254,7 +246,6 @@ Item {
                                (segmentCategoryScrollBar.visible ? segmentCategoryScrollBar.width : 0)
 
                         property real delegateHeight: 25
-                        property bool hideOverflowButtons: true
 
                         Flow {
                             id: flow
@@ -296,7 +287,7 @@ Item {
                             invokeCustomFilter: true
 
                             function filterAcceptsRow (index) {
-                                if (segmentCategoryList.hideOverflowButtons) {
+                                if (model.show_overflow_buttons === false) {
                                     var listing = sourceModel.get(index)
                                     return listing.row < flow.maxRows
                                 } else {
@@ -327,7 +318,7 @@ Item {
                 SGText {
                     id: remainingText
                     visible: remainingButtons.count > 0
-                    text: segmentCategoryList.hideOverflowButtons ? "Show " + remainingButtons.count + " more..." : "Show less..."
+                    text: model.show_overflow_buttons ? "Show less..." : "Show " + remainingButtons.count + " more..."
                     Layout.alignment: Qt.AlignHCenter
                     font.underline: moreFiltersMouse.containsMouse
 
@@ -337,8 +328,8 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:  {
-                            segmentCategoryList.hideOverflowButtons = !segmentCategoryList.hideOverflowButtons
+                        onClicked: {
+                            model.show_overflow_buttons = !model.show_overflow_buttons
                             visibleButtons.invalidate()
                             root.updateIndex()
                         }
