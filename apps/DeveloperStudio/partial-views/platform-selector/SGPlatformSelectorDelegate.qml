@@ -26,6 +26,14 @@ Item {
 
     property bool isCurrentItem: false
 
+    onIsCurrentItemChanged: {
+        if (root.isCurrentItem === false && segmentCategoryList.hideOverflowButtons === false) {
+            // if user selects another component, hide the extra buttons
+            segmentCategoryList.hideOverflowButtons = true
+            visibleButtons.invalidate()
+        }
+    }
+
     Rectangle {
         width: 50
         color: "#29e335"//Theme.palette.onsemiOrange
@@ -35,11 +43,10 @@ Item {
     }
 
     MouseArea {
-        anchors {
-            fill: parent
-        }
+        anchors.fill: parent
+
         onClicked: {
-            PlatformSelection.platformSelectorModel.currentIndex = index
+            root.updateIndex()
         }
     }
 
@@ -221,113 +228,121 @@ Item {
             Layout.minimumWidth: 300
 
             ColumnLayout {
-                id: segmentCategoryList
-                Layout.preferredWidth: 150
-                Layout.minimumWidth: 100
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                property real delegateHeight: 35
-
-                Flow {
-                    id: flow
+                Flickable {
+                    id: segmentCategoryScrollView
+                    clip: true
                     Layout.fillWidth: true
-                    spacing: 2
+                    Layout.fillHeight: true
+                    contentHeight: segmentCategoryList.height
+                    interactive: segmentCategoryScrollBar.visible
+                    flickableDirection: Flickable.VerticalFlick
+                    boundsBehavior: Flickable.StopAtBounds
 
-                    property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
-                    property int maxRows: 2
+                    ScrollBar.vertical: ScrollBar {
+                        id: segmentCategoryScrollBar
+                        minimumSize: 0.1
+                        policy: ScrollBar.AlwaysOn
+                        visible: segmentCategoryScrollView.height < segmentCategoryScrollView.contentHeight
+                    }
 
-                    onRowsChanged: {
-                        if (rows < maxRows) {
-                            reset()
+                    ColumnLayout {
+                        id: segmentCategoryList
+                        width: segmentCategoryScrollView.width -
+                               (segmentCategoryScrollBar.visible ? segmentCategoryScrollBar.width : 0)
+
+                        property real delegateHeight: 25
+                        property bool hideOverflowButtons: true
+
+                        Flow {
+                            id: flow
+                            Layout.fillWidth: true
+                            spacing: 2
+
+                            property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
+                            property int maxRows: 3
+
+                            onRowsChanged: {
+                                if (rows < maxRows) {
+                                    reset()
+                                }
+                            }
+
+                            function reset () {
+                                for (let i = 0; i < filters.count; i++) {
+                                    filters.get(i).row = -1
+                                }
+                            }
+
+                            Repeater {
+                                id: segmentCategoryRepeater
+                                model: visibleButtons
+                                delegate: iconDelegate
+                            }
                         }
-                    }
 
-                    function reset () {
-                        for (let i = 0; i < filters.count; i++) {
-                            filters.get(i).row = -1
+                        SGSortFilterProxyModel {
+                            id: segmentsCategories
+                            sourceModel: filters
+                            sortEnabled: true
+                            sortRole: "type"
                         }
-                    }
 
-                    Repeater {
-                        id: segmentCategoryRepeater
-                        model: visibleButtons
-                        delegate: iconDelegate
-                    }
-                }
+                        SGSortFilterProxyModel {
+                            id: visibleButtons
+                            sourceModel: segmentsCategories
+                            invokeCustomFilter: true
 
-                SGSortFilterProxyModel {
-                    id: segmentsCategories
-                    sourceModel: filters
-                    sortEnabled: true
-                    sortRole: "type"
-                }
+                            function filterAcceptsRow (index) {
+                                if (segmentCategoryList.hideOverflowButtons) {
+                                    var listing = sourceModel.get(index)
+                                    return listing.row < flow.maxRows
+                                } else {
+                                    return true
+                                }
+                            }
+                        }
 
-                SGSortFilterProxyModel {
-                    id: visibleButtons
-                    sourceModel: segmentsCategories
-                    invokeCustomFilter: true
+                        SGSortFilterProxyModel {
+                            id: remainingButtons
+                            sourceModel: segmentsCategories
+                            invokeCustomFilter: true
 
-                    function filterAcceptsRow (index) {
-                        var listing = sourceModel.get(index)
-                        return listing.row < flow.maxRows
-                    }
-                }
+                            function filterAcceptsRow (index) {
+                                var listing = sourceModel.get(index)
+                                return listing.row >= flow.maxRows
+                            }
+                        }
 
-                SGSortFilterProxyModel {
-                    id: remainingButtons
-                    sourceModel: segmentsCategories
-                    invokeCustomFilter: true
+                        Component {
+                            id: iconDelegate
 
-                    function filterAcceptsRow (index) {
-                        var listing = sourceModel.get(index)
-                        return listing.row >= flow.maxRows
+                            PlatformFilterButton { }
+                        }
                     }
                 }
 
                 SGText {
                     id: remainingText
                     visible: remainingButtons.count > 0
-                    text: "And " + remainingButtons.count + " more..."
-                    Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
+                    text: segmentCategoryList.hideOverflowButtons ? "Show " + remainingButtons.count + " more..." : "Show less..."
+                    Layout.alignment: Qt.AlignHCenter
                     font.underline: moreFiltersMouse.containsMouse
 
                     MouseArea {
                         id: moreFiltersMouse
-                        anchors {
-                            fill: parent
-                        }
+                        anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
                         onClicked:  {
-                            filterOverFlow.open()
+                            segmentCategoryList.hideOverflowButtons = !segmentCategoryList.hideOverflowButtons
+                            visibleButtons.invalidate()
+                            root.updateIndex()
                         }
                     }
-
-                    Popup {
-                        id: filterOverFlow
-                        padding: 0
-                        x: -remainingText.Layout.leftMargin
-                        width: segmentCategoryList.width
-                        background: Rectangle {
-                            color: isCurrentItem ? "#eee" : "white"
-                        }
-
-                        ColumnLayout {
-                            width: parent.width
-
-                            Repeater {
-                                id: overflowRepeater
-                                model: remainingButtons
-                                delegate: iconDelegate
-                            }
-                        }
-                    }
-                }
-
-                Component {
-                    id: iconDelegate
-
-                    PlatformFilterButton { }
                 }
             }
 
@@ -401,6 +416,7 @@ Item {
                         Accessible.onPressAction: controlButtonClicked()
 
                         function controlButtonClicked() {
+                            root.updateIndex()
                             buttonColumn.openView("control")
                         }
                     }
@@ -412,6 +428,7 @@ Item {
                         toolTipText: buttonEnabled ? "" : "No documentation found"
 
                         onClicked: {
+                            root.updateIndex()
                             buttonColumn.openView("collateral")
                         }
                     }
@@ -422,6 +439,7 @@ Item {
                         buttonEnabled: model.available.order
 
                         onClicked: {
+                            root.updateIndex()
                             Qt.openUrlExternally(sdsModel.urls.salesPopupUrl)
                         }
                     }
@@ -450,5 +468,9 @@ Item {
             horizontalCenter: root.horizontalCenter
         }
         width: parent.width
+    }
+
+    function updateIndex() {
+        PlatformSelection.platformSelectorModel.currentIndex = index
     }
 }
