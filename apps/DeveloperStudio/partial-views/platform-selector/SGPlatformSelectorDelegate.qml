@@ -382,6 +382,7 @@ Item {
                         id: openControls
                         text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
                         buttonEnabled: model.connected && model.available.control
+
                         toolTipText: {
                             if (model.connected && model.available.control === false) {
                                 return "No control software found"
@@ -392,7 +393,14 @@ Item {
                             return "Hardware not connected"
                         }
 
-                        onClicked: {
+                        onClicked: controlButtonClicked()
+
+                        Accessible.role: Accessible.Button
+                        Accessible.name: buttonEnabled ? "HwControlsEnabled" : "HwControlsDisabled"
+                        Accessible.description: "'Hardware Controls' helper for automated GUI testing."
+                        Accessible.onPressAction: controlButtonClicked()
+
+                        function controlButtonClicked() {
                             buttonColumn.openView("control")
                         }
                     }
