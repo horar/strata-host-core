@@ -120,15 +120,17 @@ ColumnLayout {
             return;
         }
 
-        if (SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
-            upToDate = false
-            controlViewIsOutOfDate = true
-        }
-
         if (installedVersion.version === "") {
             upToDate = false
             // No need to modify controlViewIsOutOfDate when no installed version:
             // View will automatically be downloaded/installed on first platform connection
+            console.log(Logger.devStudioCategory, "No installed software version, will download upon first platform connection")
+            return
+        }
+
+        if (SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
+            upToDate = false
+            controlViewIsOutOfDate = true
         }
     }
 
@@ -194,7 +196,13 @@ ColumnLayout {
             }
 
             Text {
-                text: "Up to date! No newer version available"
+                text: {
+                    if (installedVersion.version === "" && objectIsEmpty(latestVersion)) {
+                        return "No software version available for download"
+                    } else {
+                        return "Up to date! No newer version available"
+                    }
+                }
             }
         }
     }
@@ -237,7 +245,13 @@ ColumnLayout {
                 }
 
                 Text {
-                    text: "Newer software version available!"
+                    text: {
+                        if (installedVersion.version === "") {
+                            return "Latest software version will be downloaded automatically on first platform connection!"
+                        } else {
+                            return "Newer software version available!"
+                        }
+                    }
                 }
             }
 
@@ -265,7 +279,7 @@ ColumnLayout {
 
                             function getLatestVersionText() {
                                 if (!objectIsEmpty(latestVersion)) {
-                                    let str = "Update to v";
+                                    let str = installedVersion.version === "" ? "Download now v" : "Update to v";
                                     str += software.latestVersion.version;
                                     str += ", released " + SGUtilsCpp.formatDateTimeWithOffsetFromUtc(software.latestVersion.timestamp, timestampFormat)
                                     return str;
