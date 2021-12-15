@@ -68,6 +68,12 @@ public:
     static SerialPortPtr establishPort(const QString& portName);
 
     /**
+     * Initialize serial port parameters.
+     * @param serialPort already existing serial port
+     */
+    static void initializePort(const SerialPortPtr& serialPort);
+
+    /**
      * Creates unique hash for serial device, based on port name.
      * Will be used to generate device ID.
      * @param portName system name of serial port.
