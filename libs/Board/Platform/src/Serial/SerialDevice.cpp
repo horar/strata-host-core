@@ -85,9 +85,10 @@ void SerialDevice::open()
     }
 
     if (opened == false) {
-        opened = serialPort_->open(QIODevice::ReadWrite);
-        if (opened) {
+        if (serialPort_->open(QIODevice::ReadWrite)) {
+            // clear() should be called right after open()
             serialPort_->clear(QSerialPort::AllDirections);
+            opened = true;
         }
         // if 'open' fails 'QSerialPort::errorOccurred' signal is emitted
     }
@@ -117,6 +118,7 @@ SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
     initializePort(serialPort);
 
     if (serialPort->open(QIODevice::ReadWrite)) {
+        // clear() should be called right after open()
         serialPort->clear(QSerialPort::AllDirections);
         return serialPort;
     }
