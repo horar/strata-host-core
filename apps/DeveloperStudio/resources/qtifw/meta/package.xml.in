@@ -13,8 +13,7 @@
 personalized and secure environment for engineers to evaluate and design with onsemi technologies</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
-    <Default>true</Default>
     <Script>installscript.js</Script>
+    <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>90</SortingPriority>
-    <Dependencies>com.onsemi.strata.hcs</Dependencies>
 </Package>

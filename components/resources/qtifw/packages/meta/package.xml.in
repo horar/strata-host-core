@@ -13,6 +13,6 @@
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
-    <SortingPriority>80</SortingPriority>
-    <AutoDependOn>com.onsemi.strata.devstudio</AutoDependOn>
+    <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>69</SortingPriority>
 </Package>

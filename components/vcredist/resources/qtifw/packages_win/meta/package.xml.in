@@ -12,7 +12,7 @@
     <Description>The Visual C++ Redistributable Packages install run-time components that are required to run C++ applications built using Visual Studio 2017</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_OPTIONAL@-@BUILD_ID@</Version>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>50</SortingPriority>
+    <SortingPriority>59</SortingPriority>
     <!--we need admin rights to install this component-->
     <RequiresAdminRights>true</RequiresAdminRights>
     <Script>installscript.js</Script>

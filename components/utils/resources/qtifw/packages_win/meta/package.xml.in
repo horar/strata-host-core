@@ -9,10 +9,10 @@
   -->
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
-    <Description>Run-time addons that are required to run Strata applications</Description>
+    <Description>3rd party drivers and utilities needed by Strata applications</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>68</SortingPriority>
+    <SortingPriority>60</SortingPriority>
 </Package>

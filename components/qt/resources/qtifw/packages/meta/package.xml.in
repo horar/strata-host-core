@@ -14,5 +14,5 @@
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>60</SortingPriority>
+    <SortingPriority>66</SortingPriority>
 </Package>

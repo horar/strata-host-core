@@ -7,14 +7,14 @@
 ## Terms and Conditions of Sale, Section 8 Software”).
 ##
 if (CMAKE_BUILD_TYPE STREQUAL "OTA")
-    project(OpenSSL
-        DESCRIPTION "OpenSSL Libraries"
+    project(UtilsWrapper
+        DESCRIPTION "Strata 3rd party utilities"
         LANGUAGES NONE
     )
 
-    set(PROJECT_BUNDLE_ID com.onsemi.strata.libs.openssl)
+    set(PROJECT_BUNDLE_ID com.onsemi.strata.utils)
 
     add_custom_target(${PROJECT_NAME})
-    generate_ifw_version(GITTAG_PREFIX "openssl_")
+    generate_ifw_version(GITTAG_PREFIX "utils_")
 endif()
 

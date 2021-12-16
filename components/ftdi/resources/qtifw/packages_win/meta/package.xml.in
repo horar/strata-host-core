@@ -12,7 +12,7 @@
     <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>40</SortingPriority>
+    <SortingPriority>58</SortingPriority>
     <!--we need admin rights to install this component-->
     <RequiresAdminRights>true</RequiresAdminRights>
     <Script>installscript.js</Script>

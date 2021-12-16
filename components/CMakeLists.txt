@@ -16,15 +16,17 @@ if(APPS_CORECOMPONENTS)
             LANGUAGES NONE
         )
 
-        set(PROJECT_BUNDLE_ID com.onsemi.strata.components)
+        set(PROJECT_BUNDLE_ID com.onsemi.strata.libs.components)
 
         add_custom_target(${PROJECT_NAME})
         generate_ifw_version(GITTAG_PREFIX "components_")
 
-        add_subdirectory(qt)
+        add_subdirectory(libs)
         add_subdirectory(addons)
         add_subdirectory(openssl)
+        add_subdirectory(qt)
         if(WIN32)
+            add_subdirectory(utils)
             add_subdirectory(vcredist)
             add_subdirectory(ftdi)
         endif()
