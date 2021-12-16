@@ -33,6 +33,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
     : Device(deviceId, name, Type::SerialDevice)
 {
     if ((port != nullptr) && (port->portName() == name)) {
+        checkSerialPortProperties(port);
         serialPort_ = std::move(port);
     } else {
         qCWarning(lcDeviceSerial).noquote()
@@ -74,6 +75,25 @@ void SerialDevice::initSerialDevice(int openRetries)
     qCDebug(lcDeviceSerial).nospace().noquote()
         << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
+}
+
+void SerialDevice::checkSerialPortProperties(const SerialPortPtr& port) const
+{
+    if (port->baudRate() != QSerialPort::Baud115200) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port baud rate.";
+    }
+    if (port->dataBits() != QSerialPort::Data8) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port data bits.";
+    }
+    if (port->parity() != QSerialPort::NoParity) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port parity.";
+    }
+    if (port->stopBits() != QSerialPort::OneStop) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port stop bits.";
+    }
+    if (port->flowControl() != QSerialPort::NoFlowControl) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port flow control.";
+    }
 }
 
 void SerialDevice::open()
