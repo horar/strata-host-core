@@ -113,6 +113,7 @@ private slots:
 
 private:
     void initSerialDevice(int openRetries);
+    void checkSerialPortProperties(const SerialPortPtr& port) const;
 
     SerialPortPtr serialPort_;
     std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
