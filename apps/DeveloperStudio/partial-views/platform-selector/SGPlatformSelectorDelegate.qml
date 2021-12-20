@@ -130,6 +130,14 @@ Item {
             Text {
                 id: info
                 text: {
+                    if (model.program_controller_error_string) {
+                        return "Programming of controller failed.\n" + model.program_controller_error_string
+                    }
+
+                    if (model.program_controller) {
+                        return "Programming controller. Do not unplug device."
+                    }
+
                     if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
                         return model.description
                     } else {
@@ -147,33 +155,11 @@ Item {
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 12
                 lineHeight: 1.2
-                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
+                color: model.program_controller_error_string ? Theme.palette.error : Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
-                visible: model.program_controller === false
-            }
-
-            Text {
-                id: statusText
-                text: {
-                    if (model.program_controller_error_string) {
-                        return "Programming of controller failed.\n" + model.program_controller_error_string
-                    }
-
-                    return "Programming controller. Do not unplug device."
-                }
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: model.program_controller || model.program_controller_error_string
-                font {
-                    pixelSize: 14
-                    family: Fonts.franklinGothicBook
-                }
-                wrapMode: Text.WordWrap
-                color: model.program_controller_error_string ? Theme.palette.error : "#333"
-                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
