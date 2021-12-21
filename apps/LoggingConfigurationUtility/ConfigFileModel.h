@@ -14,6 +14,8 @@
 class ConfigFileModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_DISABLE_COPY(ConfigFileModel)
+
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:

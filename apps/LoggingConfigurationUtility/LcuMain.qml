@@ -55,7 +55,7 @@ Item {
         placeholderText: "no configuration files found"
         onActivated: {
             console.info("Selected INI file changed to: " + iniFileComboBox.currentText)
-            configFileSettings.fileName = iniFileComboBox.currentText
+            configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
         }
         popupHeight: parent.height - title.height - iniFileComboBox.height
 
@@ -66,8 +66,10 @@ Item {
                     iniFileComboBox.currentIndex = -1
                 } else if (iniFileComboBox.count !== 0 && iniFileComboBox.currentIndex == -1) {
                     iniFileComboBox.currentIndex = 0
+                    configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
                 } else {
                     iniFileComboBox.currentIndex = 0
+                    configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
                 }
             }
         }
@@ -83,10 +85,7 @@ Item {
         }
         width: height
         icon.source: "qrc:/sgimages/redo.svg"
-        onClicked: {
-            configFileModel.reload()
-            configFileSettings.fileName = iniFileComboBox.currentText
-        }
+        onClicked: configFileModel.reload()
     }
 
     SGWidgets.SGText {
@@ -130,14 +129,12 @@ Item {
             //popupHeight: logParamGrid.height - logParamGrid.topMargin
             //This will make sense when there are more rows in the grid layout for other log param's support
 
-            Component.onCompleted: configFileSettings.fileName = iniFileComboBox.currentText
             Connections {
                 target: configFileSettings
                 onLogLevelChanged: {
-                    console.info("log level changed")
                     logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
                 }
-                onFileNameChanged: {
+                onFilePathChanged: {
                     logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
                 }
             }
@@ -149,7 +146,7 @@ Item {
             text: logLevelComboBox.enabled ? "Unset" : "Set"
             enabled : iniFileComboBox.enabled
             onClicked: {
-                if (text == "Unset") {
+                if (text === "Unset") {
                     configFileSettings.logLevel = ""
                 } else { //set to default value. TBD if default should be info or debug
                     configFileSettings.logLevel = "debug"
