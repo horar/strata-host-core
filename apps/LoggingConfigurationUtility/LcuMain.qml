@@ -52,7 +52,7 @@ Item {
         model: configFileModel
         textRole: "fileName"
         enabled: count !== 0
-        placeholderText: "no configuration files found"
+        placeholderText: count == 0 ? "No configuration files found" : "Please select config file"
         onActivated: {
             console.info("Selected INI file changed to: " + iniFileComboBox.currentText)
             configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
@@ -61,16 +61,10 @@ Item {
 
         Connections {
             target: configFileModel
-            onCountChanged: {
-                if (iniFileComboBox.count == 0) {
-                    iniFileComboBox.currentIndex = -1
-                } else if (iniFileComboBox.count !== 0 && iniFileComboBox.currentIndex == -1) {
-                    iniFileComboBox.currentIndex = 0
-                    configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
-                } else {
-                    iniFileComboBox.currentIndex = 0
-                    configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
-                }
+            onCountChanged: { //is called always when list of INI files is loaded/reloaded
+                iniFileComboBox.currentIndex = -1
+                logLevelComboBox.currentIndex = -1
+                configFileSettings.filePath = ""
             }
         }
     }
@@ -123,7 +117,7 @@ Item {
             Layout.preferredWidth: middleColumn
             Layout.alignment: Qt.AlignRight
             model: ["debug", "info", "warning", "error", "critical", "off"]
-            enabled: currentIndex !== -1 && iniFileComboBox.enabled //disable if log level value doesnt exist OR if no ini files were found
+            enabled: currentIndex !== -1 && iniFileComboBox.currentIndex !== -1 //disable if log level value doesnt exist OR if no ini files were found or selected
             placeholderText: "no value"
             onActivated: configFileSettings.logLevel = currentText
             //popupHeight: logParamGrid.height - logParamGrid.topMargin
@@ -144,7 +138,7 @@ Item {
             id: setLogLevelButton
             Layout.maximumWidth: height
             text: logLevelComboBox.enabled ? "Unset" : "Set"
-            enabled : iniFileComboBox.enabled
+            enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.logLevel = ""
