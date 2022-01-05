@@ -8,7 +8,7 @@
 ##
 if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     project(UtilsWrapper
-        DESCRIPTION "Strata 3rd party utilities"
+        DESCRIPTION "Strata Third-party Utilities"
         LANGUAGES NONE
     )
 

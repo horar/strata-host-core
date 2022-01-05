@@ -9,7 +9,7 @@
   -->
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
-    <Description>3rd party drivers and utilities needed by Strata applications</Description>
+    <Description>Third-party drivers and utilities needed by Strata applications</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
