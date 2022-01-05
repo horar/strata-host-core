@@ -153,17 +153,50 @@ Component.prototype.onInstallationOrUpdateFinished = function()
             try {
                 if (installer.gainAdminRights() == true) {
                     if (installer.fileExists(target_dir) == true) {
-                        console.log("changing acces rights for Strata folder: " + target_dir);
+                        console.log("changing access rights for Strata folder: " + target_dir);
                         installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:(OI)(CI)(F)"]);
                         installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
                     }
                     installer.dropAdminRights();
                 }
             } catch(e) {
-                console.log("unable to change acces rights for Strata");
+                console.log("unable to change access rights for Strata");
                 console.log(e);
             }
         }
+
+        if (installer.isInstaller() == true) {
+            var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData";
+            console.log("default ProgramData path: " + programDataShortcut);
+            try {
+                var programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
+                // the output of command is the first item, and the return code is the second
+                if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
+                    programDataShortcut = programDataFolder[0].trim();
+                    console.log("detected ProgramData path: " + programDataShortcut);
+                } else {
+                    console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
+                }
+            } catch(e) {
+                console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
+                console.log(e);
+            }
+            var onsemiConfigFolder = programDataShortcut + "\\onsemi";
+            try {
+                if (installer.gainAdminRights() == true) {
+                    if (installer.fileExists(onsemiConfigFolder) == true) {
+                        console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
+                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
+                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
+                    }
+                    installer.dropAdminRights();
+                }
+            } catch(e) {
+                console.log("unable to change access rights for Strata config folder");
+                console.log(e);
+            }
+        }
+
         if (installer.status == QInstaller.Success) {
             console.log("fixing permissions for .dat files");
             // always run after installation to fix files which refuse inheritance

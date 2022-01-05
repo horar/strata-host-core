@@ -31,27 +31,10 @@ Component.prototype.createOperations = function()
         }
         var onsemiConfigFolder = programDataShortcut + "\\onsemi";
         var hcsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio\\HCS";
-        component.addOperation("Mkdir", hcsConfigFolder);
+        component.addOperation("Execute", "cmd", ["/c", "mkdir", hcsConfigFolder]);
         // Do not use Move, because it will fail with error if file was deleted
         component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", hcsConfigFolder + "\\hcs.config");
         component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config");
-
-        if (installer.isInstaller() == true) {
-            try {
-                if (installer.gainAdminRights() == true) {
-                    if (installer.fileExists(onsemiConfigFolder) == true) {
-                        console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
-                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
-                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
-                    }
-                    // do not drop admin rights in this function, will break installer
-                    //installer.dropAdminRights();
-                }
-            } catch(e) {
-                console.log("unable to change access rights for Strata config folder");
-                console.log(e);
-            }
-        }
     }
 }
 
