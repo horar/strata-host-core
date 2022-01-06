@@ -18,7 +18,7 @@ Item {
 
     property int outerSpacing: 10
     property int innerSpacing: 5
-    property int middleColumn: 100
+    property int middleColumn: 180
 
     ConfigFileModel {
         id:configFileModel
@@ -144,6 +144,48 @@ Item {
                     configFileSettings.logLevel = ""
                 } else { //set to default value. TBD if default should be info or debug
                     configFileSettings.logLevel = "debug"
+                }
+            }
+        }
+
+        SGWidgets.SGText {
+            id: maxFileSizeText
+            text: "Max file size"
+            Layout.fillWidth: true
+        }
+
+        SGWidgets.SGSpinBox {
+            id: maxFileSizeSpinBox
+            Layout.preferredWidth: middleColumn
+            Layout.alignment: Qt.AlignRight
+            from: 0
+            to: 2147483647
+            stepSize: 1024
+            enabled: value >= 1024 && value <= 2147483647 && iniFileComboBox.currentIndex !== -1
+            //disable if file size is out of min/max value OR if no ini files were found or selected
+            onValueChanged: configFileSettings.maxFileSize = value
+
+            Connections {
+                target: configFileSettings
+                onMaxFileSizeChanged: {
+                    maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                }
+                onFilePathChanged: {
+                    maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                }
+            }
+        }
+
+        SGWidgets.SGButton {
+            id: maxFileSizeButton
+            Layout.maximumWidth: height
+            text: maxFileSizeSpinBox.enabled ? "Unset" : "Set"
+            enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
+            onClicked: {
+                if (text === "Unset") {
+                    maxFileSizeSpinBox.value = 0
+                } else { //set to default value. TBD what is default file size
+                    maxFileSizeSpinBox.value = 1024
                 }
             }
         }

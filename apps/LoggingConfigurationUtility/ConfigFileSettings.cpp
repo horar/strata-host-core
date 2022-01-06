@@ -37,6 +37,23 @@ QString ConfigFileSettings::logLevel() const
     }
 }
 
+int ConfigFileSettings::maxFileSize() const
+{
+    if (settings_->contains(LOG_MAXSIZE_SETTING) == false) {
+        return 0;
+    }
+
+    int logMaxFileSize = settings_->value(LOG_MAXSIZE_SETTING).toInt();
+
+    if (logMaxFileSize >= 1024 && logMaxFileSize <= 2147483647) {
+        qCInfo(lcLcu) << "Current max size of log file : " << logMaxFileSize;
+        return logMaxFileSize;
+    } else {
+        qCWarning(lcLcu) << "Max size of log file is '" << logMaxFileSize << "', which is not a valid value. Setting file size to default.";
+        return 1024; //TBD
+    }
+}
+
 QString ConfigFileSettings::filePath() const
 {
     return settings_->fileName();
@@ -55,6 +72,21 @@ void ConfigFileSettings::setLogLevel(const QString& logLevel)
     }
 
     emit logLevelChanged();
+}
+
+void ConfigFileSettings::setMaxFileSize(const int &maxFileSize)
+{
+    if (maxFileSize == settings_->value(LOG_MAXSIZE_SETTING)) {
+        return;
+    }
+
+    if (maxFileSize == 0) {
+        settings_->remove(LOG_MAXSIZE_SETTING);
+    } else {
+        settings_->setValue(LOG_MAXSIZE_SETTING, maxFileSize);
+    }
+
+    emit maxFileSizeChanged();
 }
 
 void ConfigFileSettings::setFilePath(const QString& filePath)
