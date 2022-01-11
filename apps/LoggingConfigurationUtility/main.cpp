@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "ConfigFileModel.h"
+#include "ConfigFileSettings.h"
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -89,11 +90,12 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/lcu-logo.png"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(lcLcu) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()),(QCoreApplication::applicationVersion());
+    qCInfo(lcLcu) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
 
     loadResources();
 
     qmlRegisterType<ConfigFileModel>("tech.strata.lcu", 1, 0, "ConfigFileModel");
+    qmlRegisterType<ConfigFileSettings>("tech.strata.lcu", 1, 0, "ConfigFileSettings");
 
     QQmlApplicationEngine engine;
 
