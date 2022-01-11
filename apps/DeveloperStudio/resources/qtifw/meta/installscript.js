@@ -45,7 +45,7 @@ Component.prototype.createOperations = function()
         }
         var onsemiConfigFolder = programDataShortcut + "\\onsemi";
         var sdsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio";
-        component.addOperation("Execute", "cmd", ["/c", "mkdir", sdsConfigFolder]);
+        component.addOperation("Mkdir", sdsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted
         component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\sds.config", sdsConfigFolder + "\\sds.config");
         component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\sds.config");

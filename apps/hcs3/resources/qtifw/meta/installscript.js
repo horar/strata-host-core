@@ -30,8 +30,8 @@ Component.prototype.createOperations = function()
             console.log(e);
         }
         var onsemiConfigFolder = programDataShortcut + "\\onsemi";
-        var hcsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio\\HCS";
-        component.addOperation("Execute", "cmd", ["/c", "mkdir", hcsConfigFolder]);
+        var hcsConfigFolder = onsemiConfigFolder + "\\HCS";
+        component.addOperation("Mkdir", hcsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted
         component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", hcsConfigFolder + "\\hcs.config");
         component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config");
