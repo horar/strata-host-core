@@ -8,7 +8,7 @@
 ##
 if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     project(LibsWrapper
-        DESCRIPTION "Strata Libraries and Components"
+        DESCRIPTION "Libraries and Components"
         LANGUAGES NONE
     )
 

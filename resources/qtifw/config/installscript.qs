@@ -65,8 +65,8 @@ Controller.prototype.IntroductionPageCallback = function()
                                         + "This will install the following on your computer: \n"
                                         + "  1) Strata Developer Studio\n"
                                         + "  2) Host Controller Service\n"
-                                        + "  3) Strata Libraries and Components\n"
-                                        + "  4) Strata Third-party Utilities\n\n"
+                                        + "  3) Libraries and Components\n"
+                                        + "  4) Third-party Utilities\n\n"
                                         + "It is recommended that you close all other applications before continuing.\n\n"
                                         + "Click Next to continue, or Quit to exit Setup."
                                         );
@@ -75,7 +75,7 @@ Controller.prototype.IntroductionPageCallback = function()
                                         + "This will install the following on your computer: \n"
                                         + "  1) Strata Developer Studio\n"
                                         + "  2) Host Controller Service\n"
-                                        + "  3) Strata Libraries and Components\n\n"
+                                        + "  3) Libraries and Components\n\n"
                                         + "It is recommended that you close all other applications before continuing.\n\n"
                                         + "Click Next to continue."
                                         );
