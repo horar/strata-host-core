@@ -309,7 +309,7 @@ QVariantMap SciPlatform::queueMessage(const QString &message, bool onlyValidJson
     }
 
     QString compactMsg = SGJsonFormatter::minifyJson(message);
-    SciMessageQueueModel::ErrorCode error = messageQueueModel_->append(compactMsg);
+    SciMessageQueueModel::ErrorCode error = messageQueueModel_->append(compactMsg.toUtf8());
     if (error != SciMessageQueueModel::ErrorCode::NoError) {
         result["error_string"] = messageQueueModel_->errorString(error);
         result["error_code"] = SendMessageErrorType::QueueError;
