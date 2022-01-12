@@ -163,8 +163,8 @@ Item {
             stepSize: 1024
             enabled: value >= 1024 && value <= 2147483647 && iniFileComboBox.currentIndex !== -1
             //disable if file size is out of min/max value OR if no ini files were found or selected
-            onValueChanged: configFileSettings.maxFileSize = value
-
+            onValueModified: configFileSettings.maxFileSize = value
+            //TODO solve problem with values over 2147483647...the SpinBox sets it automatically to 0
             Connections {
                 target: configFileSettings
                 onMaxFileSizeChanged: {
@@ -186,6 +186,48 @@ Item {
                     maxFileSizeSpinBox.value = 0
                 } else { //set to default value. TBD what is default file size
                     maxFileSizeSpinBox.value = 1024
+                }
+            }
+        }
+
+        SGWidgets.SGText {
+            id: maxNoFilesText
+            text: "Max number of files"
+            Layout.fillWidth: true
+        }
+
+        SGWidgets.SGSpinBox {
+            id: maxNoFilesSpinBox
+            Layout.preferredWidth: middleColumn
+            Layout.alignment: Qt.AlignRight
+            from: 0
+            to: 1000
+            stepSize: 1
+            enabled: value > 0 && iniFileComboBox.currentIndex !== -1
+            //disable if no.of files is out of min/max value OR if no ini files were found or selected
+            onValueModified: configFileSettings.maxNoFiles = value
+
+            Connections {
+                target: configFileSettings
+                onMaxNoFilesChanged: {
+                    maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                }
+                onFilePathChanged: {
+                    maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                }
+            }
+        }
+
+        SGWidgets.SGButton {
+            id: maxNoFilesButton
+            Layout.maximumWidth: height
+            text: maxFileSizeSpinBox.enabled ? "Unset" : "Set"
+            enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
+            onClicked: {
+                if (text === "Unset") {
+                    maxNoFilesSpinBox.value = 0
+                } else { //set to default value. TBD what is default no. of files
+                    maxNoFilesSpinBox.value = 1
                 }
             }
         }

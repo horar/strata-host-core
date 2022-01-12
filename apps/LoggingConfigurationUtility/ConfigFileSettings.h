@@ -18,6 +18,7 @@ class ConfigFileSettings : public QObject
 
     Q_PROPERTY(QString logLevel READ logLevel WRITE setLogLevel NOTIFY logLevelChanged)
     Q_PROPERTY(int maxFileSize READ maxFileSize WRITE setMaxFileSize NOTIFY maxFileSizeChanged)
+    Q_PROPERTY(int maxNoFiles READ maxNoFiles WRITE setMaxNoFiles NOTIFY maxNoFilesChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
 
 public:
@@ -25,18 +26,22 @@ public:
 
     QString logLevel() const;
     int maxFileSize() const;
+    int maxNoFiles() const;
     QString filePath() const;
     void setLogLevel(const QString& logLevel);
     void setMaxFileSize(const int& maxFileSize);
+    void setMaxNoFiles(const int& maxNoFiles);
     void setFilePath(const QString& filePath);
 
 signals:
     void logLevelChanged();
     void maxFileSizeChanged();
+    void maxNoFilesChanged();
     void filePathChanged();
 
 private:
     QScopedPointer<QSettings> settings_;
     static constexpr const char* const LOG_LEVEL_SETTING = "log/level";
     static constexpr const char* const LOG_MAXSIZE_SETTING = "log/maxFileSize";
+    static constexpr const char* const LOG_MAXNOFILES_SETTING = "log/maxNoFiles";
 };

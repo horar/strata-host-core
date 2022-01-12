@@ -54,6 +54,24 @@ int ConfigFileSettings::maxFileSize() const
     }
 }
 
+int ConfigFileSettings::maxNoFiles() const
+{
+    if (settings_->contains(LOG_MAXNOFILES_SETTING) == false) {
+        return 0;
+    }
+
+    int logMaxNoFiles = settings_->value(LOG_MAXNOFILES_SETTING).toInt();
+
+    if (logMaxNoFiles > 0) {
+        qCInfo(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
+        return logMaxNoFiles;
+    } else {
+        qCWarning(lcLcu) << "Max size of log file is '" << logMaxNoFiles << "', which is not a valid value. Setting file size to default.";
+        return 1; //TBD
+    }
+
+}
+
 QString ConfigFileSettings::filePath() const
 {
     return settings_->fileName();
@@ -87,6 +105,21 @@ void ConfigFileSettings::setMaxFileSize(const int &maxFileSize)
     }
 
     emit maxFileSizeChanged();
+}
+
+void ConfigFileSettings::setMaxNoFiles(const int &maxNoFiles)
+{
+    if (maxNoFiles == settings_->value(LOG_MAXNOFILES_SETTING)) {
+        return;
+    }
+
+    if (maxNoFiles == 0) {
+        settings_->remove(LOG_MAXNOFILES_SETTING);
+    } else {
+        settings_->setValue(LOG_MAXNOFILES_SETTING, maxNoFiles);
+    }
+
+    emit maxNoFilesChanged();
 }
 
 void ConfigFileSettings::setFilePath(const QString& filePath)
