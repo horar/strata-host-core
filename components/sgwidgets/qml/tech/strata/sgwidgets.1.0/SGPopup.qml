@@ -13,16 +13,30 @@ import QtGraphicalEffects 1.12
 Popup {
     id: popup
 
-    /*one of: Item.Top, Item.Right, Item.Bottom, Item.Left, Item.Center*/
+    /* One of: Item.Top, Item.Right, Item.Bottom, Item.Left, Item.Center
+       To set custom position, simply override x,y properties as needed */
     property int position: Item.Top
 
     property Item originItem: parent
 
     padding: 2
+    x: resolveX()
+    y: resolveY()
 
-    x: {
-        /* this is to trigger calculation when positions changes */
-        var calculatePositionAgain = originItem.x + originItem.width
+    /* internal stuff */
+    property bool isAboutToBeVisible: false
+
+    onAboutToShow: {
+        isAboutToBeVisible = true
+    }
+
+    onAboutToHide: {
+        isAboutToBeVisible = false
+    }
+
+    function resolveX() {
+        /* this is to trigger re-calculation */
+        var calculatePositionAgain = originItem.x + originItem.width + isAboutToBeVisible
 
         var deltaX = 0
         if (position === Item.Top || position === Item.Bottom || position === Item.Center) {
@@ -47,9 +61,9 @@ Popup {
         return  pos.x
     }
 
-    y: {
-        /* this is to trigger calculation when position changes */
-        var calculatePositionAgain = originItem.y + originItem.height
+    function resolveY() {
+        /* this is to trigger re-calculation */
+        var calculatePositionAgain = originItem.y + originItem.height + isAboutToBeVisible
 
         var deltaY = 0
 
