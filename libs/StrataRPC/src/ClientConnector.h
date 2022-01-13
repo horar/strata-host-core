@@ -64,9 +64,9 @@ public slots:
     bool initialize();
 
     /**
-     * disconnect the client from the server by sending "unregister" command, disconnect QSignals,
+     * disconnect the client from the server by sending "unregister_client" command, disconnect QSignals,
      * and close the zmq connector.
-     * @return True if the "unregister" command is sent and the zmq connector is closed
+     * @return True if the "unregister_client" command is sent and the zmq connector is closed
      * successfully.
      * @note On success, disconnected signal will be emitted.
      * @note On failure, errorOccurred signal will be emitted.

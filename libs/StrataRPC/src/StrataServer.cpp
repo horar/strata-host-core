@@ -28,8 +28,9 @@ StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObj
         dispatcher_->registerHandler(
             "register_client",
             std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
-        dispatcher_->registerHandler("unregister", std::bind(&StrataServer::unregisterClientHandler,
-                                                             this, std::placeholders::_1));
+        dispatcher_->registerHandler(
+            "unregister_client",
+            std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
     }
 
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
