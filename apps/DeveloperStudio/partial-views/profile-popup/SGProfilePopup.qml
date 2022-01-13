@@ -696,7 +696,6 @@ SGStrataPopup {
                         PlatformFilters.clearActiveFilters()
                         LoginUtil.logout()
                         PlatformSelection.logout()
-                        sdsModel.strataClient.sendRequest("unregister", {})
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     } else {
                         if (result === "No Connection") {

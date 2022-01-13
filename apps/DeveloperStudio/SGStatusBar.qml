@@ -794,7 +794,8 @@ Rectangle {
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
         Authenticator.logout()
         PlatformSelection.logout()
-        sdsModel.strataClient.sendRequest("unregister", {})
+        // for future use - StrataRPC command to HCS can be sent here if needed:
+        // sdsModel.strataClient.sendRequest("command_name", {})
     }
 
     Timer {
