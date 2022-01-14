@@ -53,7 +53,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
                            });
 
     server.registerHandler(
-        "unregister", [&server, &serverRecievedUnregisterClient](const Message &message) {
+        "unregister_client", [&server, &serverRecievedUnregisterClient](const Message &message) {
             serverRecievedUnregisterClient = true;
             server.notifyClient(message, {}, strata::strataRPC::ResponseType::Response);
         });
@@ -95,7 +95,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
     // Client Handlers
     QSignalSpy ClientConnectedSignalSpy(&client, &StrataClient::connected);
 
-    client.registerHandler("unregister", [&clientRecievedUnregisterClient](const QJsonObject &) {
+    client.registerHandler("unregister_client", [&clientRecievedUnregisterClient](const QJsonObject &) {
         // This should not be called.
         clientRecievedUnregisterClient = true;
         QFAIL_("Client already disconnected.");

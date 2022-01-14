@@ -74,7 +74,7 @@ void StrataClient::connect()
 
 void StrataClient::disconnect()
 {
-    sendRequest("unregister", {});
+    sendRequest("unregister_client", {});
     emit disconnectClient();
 }
 

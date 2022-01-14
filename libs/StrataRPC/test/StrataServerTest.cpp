@@ -168,7 +168,7 @@ void StrataServerTest::testServerFunctionality()
     // add a handler to handler the client message.
     // add a handler to create a response
     server.registerHandler("register_client", [&server](const strata::strataRPC::Message &message) {
-        server.notifyClient(message, {{"status", "client registered."}},
+        server.notifyClient(message, {{"status", "client registered"}},
                             strata::strataRPC::ResponseType::Response);
     });
 
@@ -179,7 +179,7 @@ void StrataServerTest::testServerFunctionality()
         [&clientGotResponse](const QByteArray &message) {
             QCOMPARE_(
                 message,
-                "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"client registered.\"}}");
+                "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"client registered\"}}");
             clientGotResponse = true;
         });
     client.initialize();
@@ -192,7 +192,7 @@ void StrataServerTest::testServerFunctionality()
             [&clientGotResponse_2](const QByteArray &message) {
                 QCOMPARE_(message,
                           "{\"hcs::notification\":{\"status\":\"client "
-                          "registered.\",\"type\":\"register_client\"}}");
+                          "registered\",\"type\":\"register_client\"}}");
                 clientGotResponse_2 = true;
             });
     client_2.initialize();
@@ -748,7 +748,7 @@ void StrataServerTest::testdefaultHandlers()
                 QVERIFY_(jsonObject.contains("result"));
                 QVERIFY_(jsonObject.value("result").isObject());
                 QCOMPARE_(jsonObject.value("result").toObject(),
-                          QJsonObject({{"status", "client registered."}}));
+                          QJsonObject({{"status", "client registered"}}));
                 testExecuted_1 = true;
             });
 

@@ -498,7 +498,7 @@ void HostControllerService::processCmdLoadDocuments(const strataRPC::Message &me
         return;
     }
 
-    strataServer_->notifyClient(message, QJsonObject{{"message", "load documents requested."}},
+    strataServer_->notifyClient(message, QJsonObject{{"message", "load documents requested"}},
                                 strataRPC::ResponseType::Response);
 
     storageManager_.requestPlatformDocuments(message.clientID, classId);

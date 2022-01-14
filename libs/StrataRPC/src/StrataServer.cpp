@@ -28,8 +28,9 @@ StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObj
         dispatcher_->registerHandler(
             "register_client",
             std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
-        dispatcher_->registerHandler("unregister", std::bind(&StrataServer::unregisterClientHandler,
-                                                             this, std::placeholders::_1));
+        dispatcher_->registerHandler(
+            "unregister_client",
+            std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
     }
 
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
@@ -368,7 +369,7 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
     }
 
     if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
-        notifyClient(clientMessage, {{"status", "client registered."}}, ResponseType::Response);
+        notifyClient(clientMessage, {{"status", "client registered"}}, ResponseType::Response);
     } else {
         QString errorMessage(QStringLiteral("Failed to register client."));
         qCCritical(lcStrataServer) << errorMessage;
@@ -381,13 +382,14 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 {
     qCDebug(lcStrataServer).noquote().nospace()
         << "Handle Client Unregistration. ClientID: 0x" << clientMessage.clientID.toHex();
+    if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
+        notifyClient(clientMessage, {{"status", "going to unregister client"}}, ResponseType::Response);
+    }
     if (false == clientsController_->unregisterClient(clientMessage.clientID)) {
-        QString errorMessage(
-            QStringLiteral("Failed to unregister client. Client is not registered."));
+        QString errorMessage(QStringLiteral("Failed to unregister client. Client is not registered."));
         qCCritical(lcStrataServer) << errorMessage;
         emit errorOccurred(ServerError::FailedToUnregisterClient, errorMessage);
-        notifyClient(clientMessage, {{"message", "Failed to unregister client"}},
-                     ResponseType::Error);
+        notifyClient(clientMessage, {{"message", "Failed to unregister client."}}, ResponseType::Error);
     }
 }
 

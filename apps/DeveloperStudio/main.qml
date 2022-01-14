@@ -135,7 +135,7 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.strataClient.sendRequest("unregister", {});
+                                           sdsModel.strataClient.sendRequest("unregister_client", {});
                                            if (SessionUtils.settings.rememberMe === false) {
                                                SessionUtils.settings.clear()
                                            }
