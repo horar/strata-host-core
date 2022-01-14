@@ -86,7 +86,6 @@ FocusScope {
             id: titleText
             anchors {
                 top: parent.top
-                topMargin: contentSpacing
                 left: parent.left
             }
 

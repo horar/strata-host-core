@@ -13,16 +13,30 @@ import QtGraphicalEffects 1.12
 Popup {
     id: popup
 
-    /*one of: Item.Top, Item.Right, Item.Bottom, Item.Left, Item.Center*/
+    /* One of: Item.Top, Item.Right, Item.Bottom, Item.Left, Item.Center
+       To set custom position, simply override x,y properties as needed */
     property int position: Item.Top
 
     property Item originItem: parent
 
     padding: 2
+    x: resolveX()
+    y: resolveY()
 
-    x: {
-        /* this is to trigger calculation when positions changes */
-        var calculatePositionAgain = originItem.x + originItem.width
+    /* internal stuff */
+    property bool isAboutToBeVisible: false
+
+    onAboutToShow: {
+        isAboutToBeVisible = true
+    }
+
+    onAboutToHide: {
+        isAboutToBeVisible = false
+    }
+
+    function resolveX() {
+        /* this is to trigger re-calculation */
+        var calculatePositionAgain = originItem.x + originItem.width + isAboutToBeVisible
 
         var deltaX = 0
         if (position === Item.Top || position === Item.Bottom || position === Item.Center) {
@@ -35,11 +49,11 @@ Popup {
 
         //adjust position to fit into window
         if (Overlay.overlay) {
-            var globalPos = originItem.mapToItem(Overlay.overlay, deltaX, 0)
-            if (globalPos.x < 0) {
-                deltaX += -globalPos.x
-            } else if (globalPos.x + popup.width > Overlay.overlay.width) {
-                deltaX -= globalPos.x + popup.width - Overlay.overlay.width
+            var overlayPos = originItem.mapToItem(Overlay.overlay, deltaX, 0)
+            if (overlayPos.x < 0) {
+                deltaX += -overlayPos.x
+            } else if (overlayPos.x + popup.width > Overlay.overlay.width) {
+                deltaX -= overlayPos.x + popup.width - Overlay.overlay.width
             }
         }
 
@@ -47,9 +61,9 @@ Popup {
         return  pos.x
     }
 
-    y: {
-        /* this is to trigger calculation when position changes */
-        var calculatePositionAgain = originItem.y + originItem.height
+    function resolveY() {
+        /* this is to trigger re-calculation */
+        var calculatePositionAgain = originItem.y + originItem.height + isAboutToBeVisible
 
         var deltaY = 0
 
@@ -63,11 +77,11 @@ Popup {
 
         //adjust position to fit into window
         if (Overlay.overlay) {
-            var globalPos = originItem.mapToItem(Overlay.overlay, 0, deltaY)
-            if (globalPos.y < 0) {
-                deltaY += -globalPos.y
-            } else if (globalPos.y + popup.height > Overlay.overlay.height) {
-                deltaY -= globalPos.y + popup.height - Overlay.overlay.height
+            var overlayPos = originItem.mapToItem(Overlay.overlay, 0, deltaY)
+            if (overlayPos.y < 0) {
+                deltaY += -overlayPos.y
+            } else if (overlayPos.y + popup.height > Overlay.overlay.height) {
+                deltaY -= overlayPos.y + popup.height - Overlay.overlay.height
             }
         }
 

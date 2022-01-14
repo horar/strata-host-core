@@ -30,7 +30,6 @@ SGWidgets.SGPopup {
     property bool closeWithArrowKey: false
     property bool openOnActiveFocus: false
     property int maxHeight: 120
-    property int position: Item.Bottom
     property int verticalLayoutDirection: ListView.TopToBottom
     property string emptyModelText: "No suggestions."
     property string headerText
@@ -49,6 +48,7 @@ SGWidgets.SGPopup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     implicitWidth: textEditor ? textEditor.width : 0
     originItem: textEditor
+    position: Item.Bottom
 
     onAboutToShow: {
         if (position === Item.Bottom) {

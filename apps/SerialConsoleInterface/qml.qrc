@@ -20,5 +20,6 @@
         <file>MockSettingsView.qml</file>
         <file>ConnectBleDeviceDialog.qml</file>
         <file>SaveFirmwareView.qml</file>
+        <file>MessageQueueView.qml</file>
     </qresource>
 </RCC>
