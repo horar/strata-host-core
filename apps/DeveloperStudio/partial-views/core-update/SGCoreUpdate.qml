@@ -130,7 +130,7 @@ SGStrataPopup {
                             text: {
                                 let name_info = "<b>" + model.name + "</b>"
                                 if (updateDelegate.expanded === false)
-                                    name_info += " (<b>" + model.latest_version + "</b>)"
+                                    name_info += " v" + model.latest_version
                                 return name_info
                             }
                             Layout.fillWidth: true
@@ -153,8 +153,7 @@ SGStrataPopup {
                         font.family: Fonts.franklinGothicBook
                         text: {
                             let version_info = "New Version: <b>" + model.latest_version + "</b>"
-                            if (model.current_version !== "N/A")
-                                version_info += " (<b>" + model.current_version + "</b>)"
+                            version_info += " (" + model.update_size + ")"
                             return version_info
                         }
                         visible: updateDelegate.expanded
@@ -163,8 +162,8 @@ SGStrataPopup {
                     SGText {
                         fontSizeMultiplier: 1.4
                         font.family: Fonts.franklinGothicBook
-                        text: "Update Size: <b>" + model.update_size + "</b>"
-                        visible: updateDelegate.expanded
+                        text: "Current Version: <b>" + model.current_version + "</b>"
+                        visible: updateDelegate.expanded && (model.current_version !== "N/A")
                     }
                 }
             }
