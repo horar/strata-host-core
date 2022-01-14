@@ -16,6 +16,7 @@ import '../'
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/core_update.js" as CoreUpdate
 
@@ -54,6 +55,7 @@ SGStrataPopup {
                         return "No updates are available."
                     }
                 }
+                color: error_string !== "" ? Theme.palette.error : Theme.palette.black
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 readOnly: true

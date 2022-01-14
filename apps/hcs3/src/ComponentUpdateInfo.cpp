@@ -53,7 +53,7 @@ QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJ
     QDomDocument xmlDocument("MaintenanceToolOutput");
     if (xmlDocument.setContent(updateMetadata, false, &errorMsg, &errorColumn) == false) {
         qCCritical(lcHcs) << "Could not parse updateMetadata: " << errorMsg << ", errorColumn: " << errorColumn;
-        return "Error parsing update metadata: " + errorMsg;
+        return "Unable to check for updates. Error parsing update metadata: " + errorMsg;
     }
     return parseUpdateMetadata(xmlDocument, componentMap, updateInfo);
 }
@@ -65,12 +65,12 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
 
     if ((QFileInfo::exists(absPathComponentsXmlFile) == false) || (QFileInfo(absPathComponentsXmlFile).isFile() == false)) {
         qCCritical(lcHcs) << "File components.xml not found at " << absPathComponentsXmlFile;
-        return "File components.xml not found at " + absPathComponentsXmlFile;
+        return "Unable to check for updates. File components.xml not found at " + absPathComponentsXmlFile;
     }
     // Load 'components.xml' file
     QFile file(absPathComponentsXmlFile);
     if (file.open(QIODevice::ReadOnly) == false) {
-        return "Unable to open " + absPathComponentsXmlFile;
+        return "Unable to check for updates. Unable to open " + absPathComponentsXmlFile;
     }
 
     QString errorMsg;
@@ -79,7 +79,7 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
     if (xmlDocument.setContent(&file, false, &errorMsg, &errorColumn) == false) {
         file.close();
         qCCritical(lcHcs) << "Could not parse components.xml: " << errorMsg << ", errorColumn: " << errorColumn;
-        return "Error parsing components.xml: " + errorMsg;
+        return "Unable to check for updates. Error parsing components.xml: " + errorMsg;
     }
     file.close();
 
@@ -123,14 +123,13 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
         componentInfoNode = componentInfoNode.nextSibling();
     }
     if (componentMap.isEmpty()) {
-        return "No components loaded from components.xml";
+        return "Unable to check for updates. Error acquiring components from components.xml file.";
     } else {
         return QString();
     }
 }
 
 QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo) const {
-
     QDomElement updateInfoRoot = xmlDocument.documentElement();
     QDomNode updateInfoNode = updateInfoRoot.firstChild();
     while (updateInfoNode.isNull() == false) {
@@ -243,7 +242,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
 
     if (applicationDir.exists(maintenanceToolFilename) == false) {
         qCCritical(lcHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
-        return QString("Strata Maintenance Tool not found.");
+        return QString("Unable to check for updates. Strata Maintenance Tool not found.");
     }
 
     return QString();
@@ -272,7 +271,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
         qCCritical(lcHcs) << "Error code returned when checking for updates (" +
                 QString::number(maintenanceToolProcess.error()) + "): " +
                 maintenanceToolProcess.errorString() + ", error output: " + errorOutput;
-        return "Error code returned when checking for updates (" + QString::number(maintenanceToolProcess.error()) + ")";
+        return "Unable to check for updates. Loading of Strata Maintanance Tool failed with error code " + QString::number(maintenanceToolProcess.error()) + ".";
     }
 
     // Read the output
@@ -280,7 +279,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     if (maintenanceToolOutput.isEmpty()) {
         qCCritical(lcHcs) << "Error acquiring maintenance tool output: no standard output, error output: " +
                                       maintenanceToolProcess.readAllStandardError();
-        return "Error acquiring maintenance tool output";
+        return "Unable to check for updates. Error acquiring Strata Maintanance Tool output.";
     }
 
     QString updateData = maintenanceToolOutput;
@@ -295,7 +294,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
             return QString();
         } else {
             qCCritical(lcHcs) << "Error parsing maintenance tool output:" << updateData;
-            return "Error parsing maintenance tool output";
+            return "Unable to check for updates. Error parsing Strata Maintanance Tool output.";
         }
     }
 
