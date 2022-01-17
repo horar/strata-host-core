@@ -150,6 +150,7 @@ SGWidgets.SGButton {
 
                     onClicked: {
                         prtModel.authenticator.logout();
+                        popupMenu.close()
                     }
                 }
             }
