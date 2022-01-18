@@ -183,9 +183,9 @@ Item {
             enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
             onClicked: {
                 if (text === "Unset") {
-                    maxFileSizeSpinBox.value = 0
+                    configFileSettings.maxFileSize = 0
                 } else { //set to default value. TBD what is default file size
-                    maxFileSizeSpinBox.value = 1024
+                    configFileSettings.maxFileSize = 1024
                 }
             }
         }
@@ -201,7 +201,7 @@ Item {
             Layout.preferredWidth: middleColumn
             Layout.alignment: Qt.AlignRight
             from: 0
-            to: 1000
+            to: 100000
             stepSize: 1
             enabled: value > 0 && iniFileComboBox.currentIndex !== -1
             //disable if no.of files is out of min/max value OR if no ini files were found or selected
@@ -221,13 +221,57 @@ Item {
         SGWidgets.SGButton {
             id: maxNoFilesButton
             Layout.maximumWidth: height
-            text: maxFileSizeSpinBox.enabled ? "Unset" : "Set"
+            text: maxNoFilesSpinBox.enabled ? "Unset" : "Set"
             enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
             onClicked: {
                 if (text === "Unset") {
-                    maxNoFilesSpinBox.value = 0
+                    configFileSettings.maxNoFiles = 0
                 } else { //set to default value. TBD what is default no. of files
-                    maxNoFilesSpinBox.value = 1
+                    configFileSettings.maxNoFiles = 1
+                }
+            }
+        }
+
+        SGWidgets.SGText {
+            id: qtFilterRulesText
+            text: "Qt filter rules"
+            Layout.fillWidth: true
+        }
+
+        SGWidgets.SGTextField {
+            id: qtFilterRulesTextField
+            Layout.preferredWidth: middleColumn
+            Layout.alignment: Qt.AlignRight
+            background: Rectangle {
+                border.color: "#B3B3B3"
+                border.width: 1
+            }
+            placeholderText: "no qt filter rules"
+            enabled: text !== "" && iniFileComboBox.currentIndex !== -1
+            //disable if no.of files is out of min/max value OR if no ini files were found or selected
+            onTextEdited: configFileSettings.qtFilterRules = text
+
+            Connections {
+                target: configFileSettings
+                onQtFilterRulesChanged: {
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                }
+                onFilePathChanged: {
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                }
+            }
+        }
+
+        SGWidgets.SGButton {
+            id: qtFilterRulesButton
+            Layout.maximumWidth: height
+            text: qtFilterRulesTextField.enabled ? "Unset" : "Set"
+            enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
+            onClicked: {
+                if (text === "Unset") {
+                    configFileSettings.qtFilterRules = ""
+                } else { //set to default value. TBD what is default no. of files
+                    configFileSettings.qtFilterRules = "strata.*=true"
                 }
             }
         }

@@ -69,7 +69,23 @@ int ConfigFileSettings::maxNoFiles() const
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxNoFiles << "', which is not a valid value. Setting file size to default.";
         return 1; //TBD
     }
+}
 
+QString ConfigFileSettings::qtFilterRules() const
+{
+    if (settings_->contains(LOG_FILTERRULES_SETTING) == false) {
+        return 0;
+    }
+
+    QString qtFilterRules = settings_->value(LOG_FILTERRULES_SETTING).toString();
+
+    if (qtFilterRules.isEmpty() == false) {
+        qCInfo(lcLcu) << "Current Qt filter rules : " << qtFilterRules;
+        return qtFilterRules;
+    } else {
+        qCWarning(lcLcu) << "Qt filter rules are '" << qtFilterRules << "', which is not a valid value. Setting Qt filter rules to default.";
+        return "strata.*=true"; //TBD
+    }
 }
 
 QString ConfigFileSettings::filePath() const
@@ -120,6 +136,21 @@ void ConfigFileSettings::setMaxNoFiles(const int &maxNoFiles)
     }
 
     emit maxNoFilesChanged();
+}
+
+void ConfigFileSettings::setQtFilterRules(const QString &qtFilterRules)
+{
+    if (qtFilterRules == settings_->value(LOG_FILTERRULES_SETTING)) {
+        return;
+    }
+
+    if (qtFilterRules.isEmpty()) {
+        settings_->remove(LOG_FILTERRULES_SETTING);
+    } else {
+        settings_->setValue(LOG_FILTERRULES_SETTING, qtFilterRules);
+    }
+
+    emit qtFilterRulesChanged();
 }
 
 void ConfigFileSettings::setFilePath(const QString& filePath)
