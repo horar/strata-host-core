@@ -281,12 +281,12 @@ Item {
        SGWidgets.SGTextField {
            id: qtMsgPatternTextField
            Layout.alignment: Qt.AlignRight
-           Layout.fillWidth: true
+           Layout.preferredWidth: middleColumn
            background: Rectangle {
                border.color: "#B3B3B3"
                border.width: 1
            }
-           placeholderText: "no qt message pattern"
+           placeholderText: "no qt msg pattern"
            enabled: text !== "" && iniFileComboBox.currentIndex !== -1
            //disable is message pattern value doesn't exist OR if no ini files were found or selected
            onTextEdited: configFileSettings.qtMsgPattern = text
@@ -316,12 +316,55 @@ Item {
             }
         }
 
-        SGWidgets.SGText {
+        /*SGWidgets.SGText {
             id: qtMsgPatternLink
-            Layout.columnSpan: 3
+            //Layout.columnSpan: 3
             Layout.fillWidth: true
             text: "<a href=\"https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern\">documentation</a><br>"
             onLinkActivated: Qt.openUrlExternally(link)
+        }*/
+
+        SGWidgets.SGText {
+            id: spdlogMsgPatternText
+            text: "Spdlog message pattern"
+            Layout.fillWidth: true
+        }
+
+        SGWidgets.SGTextField {
+            id: spdlogMsgPatternTextField
+            Layout.alignment: Qt.AlignRight
+            Layout.preferredWidth: middleColumn
+            background: Rectangle {
+                border.color: "#B3B3B3"
+                border.width: 1
+            }
+            placeholderText: "no spdlog msg pattern"
+            enabled: text !== "" && iniFileComboBox.currentIndex !== -1
+            //disable is message pattern value doesn't exist OR if no ini files were found or selected
+            onTextEdited: configFileSettings.spdlogMsgPattern = text
+
+             Connections {
+                 target: configFileSettings
+                 onSpdlogMsgPatternChanged: {
+                     spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
+                 }
+                 onFilePathChanged: {
+                     spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
+                 }
+             }
+        }
+        SGWidgets.SGButton {
+            id: spdlogMsgPatternButton
+            Layout.maximumWidth: height
+            text: spdlogMsgPatternTextField.enabled ? "Unset" : "Set"
+            enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
+            onClicked: {
+                if (text === "Unset") {
+                    configFileSettings.spdlogMsgPattern = ""
+                } else { //set to default value. TBD what is default
+                    configFileSettings.spdlogMsgPattern = "%T.%e %^[%=7l]%$ %v"
+                }
+            }
         }
     }
 }

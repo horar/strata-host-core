@@ -21,6 +21,7 @@ class ConfigFileSettings : public QObject
     Q_PROPERTY(int maxNoFiles READ maxNoFiles WRITE setMaxNoFiles NOTIFY maxNoFilesChanged)
     Q_PROPERTY(QString qtFilterRules READ qtFilterRules WRITE setQtFilterRules NOTIFY qtFilterRulesChanged)
     Q_PROPERTY(QString qtMsgPattern READ qtMsgPattern WRITE setQtMsgPattern NOTIFY qtMsgPatternChanged)
+    Q_PROPERTY(QString spdlogMsgPattern READ spdlogMsgPattern WRITE setSpdlogMsgPattern NOTIFY spdlogMsgPatternChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
 
 public:
@@ -31,12 +32,14 @@ public:
     int maxNoFiles() const;
     QString qtFilterRules() const;
     QString qtMsgPattern() const;
+    QString spdlogMsgPattern() const;
     QString filePath() const;
     void setLogLevel(const QString& logLevel);
     void setMaxFileSize(const int& maxFileSize);
     void setMaxNoFiles(const int& maxNoFiles);
     void setQtFilterRules(const QString& qtFilterRules);
     void setQtMsgPattern(const QString& qtMessagePattern);
+    void setSpdlogMsgPattern(const QString& spdlogMessagePattern);
     void setFilePath(const QString& filePath);
 
 signals:
@@ -45,6 +48,7 @@ signals:
     void maxNoFilesChanged();
     void qtFilterRulesChanged();
     void qtMsgPatternChanged();
+    void spdlogMsgPatternChanged();
     void filePathChanged();
 
 private:
@@ -53,5 +57,6 @@ private:
     static constexpr const char* const LOG_MAXSIZE_SETTING = "log/maxFileSize";
     static constexpr const char* const LOG_MAXNOFILES_SETTING = "log/maxNoFiles";
     static constexpr const char* const LOG_FILTERRULES_SETTING = "log/qtFilterRules";
-    static constexpr const char* const LOG_MSGPATTERN_SETTING = "log/qtMessagePattern";
+    static constexpr const char* const LOG_QT_MSGPATTERN_SETTING = "log/qtMessagePattern";
+    static constexpr const char* const LOG_SPD_MSGPATTERN_SETTING = "log/spdlogMessagePattern";
 };

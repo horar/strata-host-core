@@ -90,18 +90,35 @@ QString ConfigFileSettings::qtFilterRules() const
 
 QString ConfigFileSettings::qtMsgPattern() const
 {
-    if (settings_->contains(LOG_MSGPATTERN_SETTING) == false) {
+    if (settings_->contains(LOG_QT_MSGPATTERN_SETTING) == false) {
         return 0;
     }
 
-    QString qtFilterRules = settings_->value(LOG_MSGPATTERN_SETTING).toString();
+    QString qtMsgPattern = settings_->value(LOG_QT_MSGPATTERN_SETTING).toString();
 
-    if (qtFilterRules.isEmpty() == false) {
-        qCInfo(lcLcu) << "Current Qt message pattern : " << qtFilterRules;
-        return qtFilterRules;
+    if (qtMsgPattern.isEmpty() == false) {
+        qCInfo(lcLcu) << "Current Qt message pattern : " << qtMsgPattern;
+        return qtMsgPattern;
     } else {
-        qCWarning(lcLcu) << "Qt message pattern is '" << qtFilterRules << "', which is not a valid value. Setting Qt message pattern to default.";
+        qCWarning(lcLcu) << "Qt message pattern is '" << qtMsgPattern << "', which is not a valid value. Setting Qt message pattern to default.";
         return "%{message}"; //TBD
+    }
+}
+
+QString ConfigFileSettings::spdlogMsgPattern() const
+{
+    if (settings_->contains(LOG_SPD_MSGPATTERN_SETTING) == false) {
+        return 0;
+    }
+
+    QString spdMsgPattern = settings_->value(LOG_SPD_MSGPATTERN_SETTING).toString();
+
+    if (spdMsgPattern.isEmpty() == false) {
+        qCInfo(lcLcu) << "Current spdlog message pattern : " << spdMsgPattern;
+        return spdMsgPattern;
+    } else {
+        qCWarning(lcLcu) << "spdlog message pattern is '" << spdMsgPattern << "', which is not a valid value. Setting spdlog message pattern to default.";
+        return "%T.%e %^[%=7l]%$ %v"; //TBD
     }
 }
 
@@ -172,17 +189,32 @@ void ConfigFileSettings::setQtFilterRules(const QString &qtFilterRules)
 
 void ConfigFileSettings::setQtMsgPattern(const QString &qtMessagePattern)
 {
-    if (qtMessagePattern == settings_->value(LOG_MSGPATTERN_SETTING)) {
+    if (qtMessagePattern == settings_->value(LOG_QT_MSGPATTERN_SETTING)) {
         return;
     }
 
     if (qtMessagePattern.isEmpty()) {
-        settings_->remove(LOG_MSGPATTERN_SETTING);
+        settings_->remove(LOG_QT_MSGPATTERN_SETTING);
     } else {
-        settings_->setValue(LOG_MSGPATTERN_SETTING, qtMessagePattern);
+        settings_->setValue(LOG_QT_MSGPATTERN_SETTING, qtMessagePattern);
     }
 
     emit qtMsgPatternChanged();
+}
+
+void ConfigFileSettings::setSpdlogMsgPattern(const QString &spdlogMessagePattern)
+{
+    if (spdlogMessagePattern == settings_->value(LOG_QT_MSGPATTERN_SETTING)) {
+        return;
+    }
+
+    if (spdlogMessagePattern.isEmpty()) {
+        settings_->remove(LOG_SPD_MSGPATTERN_SETTING);
+    } else {
+        settings_->setValue(LOG_SPD_MSGPATTERN_SETTING, spdlogMessagePattern);
+    }
+
+    emit spdlogMsgPatternChanged();
 }
 
 void ConfigFileSettings::setFilePath(const QString& filePath)
