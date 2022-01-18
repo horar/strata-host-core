@@ -286,7 +286,9 @@ Item {
         height: menu.height
         padding: 0
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
-        focus: true
+
+        /* Cannot take focus, otherwise it steals it from help tour */
+        focus: false
 
         onOpened: {
             if (menu.state === "help_tour") {

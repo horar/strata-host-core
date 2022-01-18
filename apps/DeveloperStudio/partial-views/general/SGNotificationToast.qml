@@ -112,4 +112,9 @@ Rectangle {
     function hide () {
         hideAlertAnimation.start()
     }
+
+    function hideInstantly () {
+        alertToast.text = ""
+        alertToast.Layout.preferredHeight = 0
+    }
 }
