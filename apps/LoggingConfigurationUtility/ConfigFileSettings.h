@@ -20,6 +20,7 @@ class ConfigFileSettings : public QObject
     Q_PROPERTY(int maxFileSize READ maxFileSize WRITE setMaxFileSize NOTIFY maxFileSizeChanged)
     Q_PROPERTY(int maxNoFiles READ maxNoFiles WRITE setMaxNoFiles NOTIFY maxNoFilesChanged)
     Q_PROPERTY(QString qtFilterRules READ qtFilterRules WRITE setQtFilterRules NOTIFY qtFilterRulesChanged)
+    Q_PROPERTY(QString qtMsgPattern READ qtMsgPattern WRITE setQtMsgPattern NOTIFY qtMsgPatternChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
 
 public:
@@ -29,11 +30,13 @@ public:
     int maxFileSize() const;
     int maxNoFiles() const;
     QString qtFilterRules() const;
+    QString qtMsgPattern() const;
     QString filePath() const;
     void setLogLevel(const QString& logLevel);
     void setMaxFileSize(const int& maxFileSize);
     void setMaxNoFiles(const int& maxNoFiles);
     void setQtFilterRules(const QString& qtFilterRules);
+    void setQtMsgPattern(const QString& qtMessagePattern);
     void setFilePath(const QString& filePath);
 
 signals:
@@ -41,6 +44,7 @@ signals:
     void maxFileSizeChanged();
     void maxNoFilesChanged();
     void qtFilterRulesChanged();
+    void qtMsgPatternChanged();
     void filePathChanged();
 
 private:
@@ -49,4 +53,5 @@ private:
     static constexpr const char* const LOG_MAXSIZE_SETTING = "log/maxFileSize";
     static constexpr const char* const LOG_MAXNOFILES_SETTING = "log/maxNoFiles";
     static constexpr const char* const LOG_FILTERRULES_SETTING = "log/qtFilterRules";
+    static constexpr const char* const LOG_MSGPATTERN_SETTING = "log/qtMessagePattern";
 };

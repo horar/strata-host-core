@@ -88,6 +88,23 @@ QString ConfigFileSettings::qtFilterRules() const
     }
 }
 
+QString ConfigFileSettings::qtMsgPattern() const
+{
+    if (settings_->contains(LOG_MSGPATTERN_SETTING) == false) {
+        return 0;
+    }
+
+    QString qtFilterRules = settings_->value(LOG_MSGPATTERN_SETTING).toString();
+
+    if (qtFilterRules.isEmpty() == false) {
+        qCInfo(lcLcu) << "Current Qt message pattern : " << qtFilterRules;
+        return qtFilterRules;
+    } else {
+        qCWarning(lcLcu) << "Qt message pattern is '" << qtFilterRules << "', which is not a valid value. Setting Qt message pattern to default.";
+        return "%{message}"; //TBD
+    }
+}
+
 QString ConfigFileSettings::filePath() const
 {
     return settings_->fileName();
@@ -151,6 +168,21 @@ void ConfigFileSettings::setQtFilterRules(const QString &qtFilterRules)
     }
 
     emit qtFilterRulesChanged();
+}
+
+void ConfigFileSettings::setQtMsgPattern(const QString &qtMessagePattern)
+{
+    if (qtMessagePattern == settings_->value(LOG_MSGPATTERN_SETTING)) {
+        return;
+    }
+
+    if (qtMessagePattern.isEmpty()) {
+        settings_->remove(LOG_MSGPATTERN_SETTING);
+    } else {
+        settings_->setValue(LOG_MSGPATTERN_SETTING, qtMessagePattern);
+    }
+
+    emit qtMsgPatternChanged();
 }
 
 void ConfigFileSettings::setFilePath(const QString& filePath)

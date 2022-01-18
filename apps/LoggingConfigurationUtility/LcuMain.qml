@@ -120,8 +120,6 @@ Item {
             enabled: currentIndex !== -1 && iniFileComboBox.currentIndex !== -1 //disable if log level value doesnt exist OR if no ini files were found or selected
             placeholderText: "no value"
             onActivated: configFileSettings.logLevel = currentText
-            //popupHeight: logParamGrid.height - logParamGrid.topMargin
-            //This will make sense when there are more rows in the grid layout for other log param's support
 
             Connections {
                 target: configFileSettings
@@ -161,10 +159,9 @@ Item {
             from: 0
             to: 2147483647
             stepSize: 1024
-            enabled: value >= 1024 && value <= 2147483647 && iniFileComboBox.currentIndex !== -1
+            enabled: value >= 1024 && iniFileComboBox.currentIndex !== -1
             //disable if file size is out of min/max value OR if no ini files were found or selected
             onValueModified: configFileSettings.maxFileSize = value
-            //TODO solve problem with values over 2147483647...the SpinBox sets it automatically to 0
             Connections {
                 target: configFileSettings
                 onMaxFileSizeChanged: {
@@ -270,10 +267,61 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.qtFilterRules = ""
-                } else { //set to default value. TBD what is default no. of files
+                } else { //set to default value. TBD what is default
                     configFileSettings.qtFilterRules = "strata.*=true"
                 }
             }
+        }
+
+       SGWidgets.SGText {
+           id: qtMsgPatternText
+           text: "Qt message pattern"
+       }
+
+       SGWidgets.SGTextField {
+           id: qtMsgPatternTextField
+           Layout.alignment: Qt.AlignRight
+           Layout.fillWidth: true
+           background: Rectangle {
+               border.color: "#B3B3B3"
+               border.width: 1
+           }
+           placeholderText: "no qt message pattern"
+           enabled: text !== "" && iniFileComboBox.currentIndex !== -1
+           //disable is message pattern value doesn't exist OR if no ini files were found or selected
+           onTextEdited: configFileSettings.qtMsgPattern = text
+
+            Connections {
+                target: configFileSettings
+                onQtMsgPatternChanged: {
+                    qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
+                }
+                onFilePathChanged: {
+                    qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
+                }
+            }
+        }
+
+        SGWidgets.SGButton {
+            id: qtMsgPatternButton
+            Layout.maximumWidth: height
+            text: qtMsgPatternTextField.enabled ? "Unset" : "Set"
+            enabled : iniFileComboBox.currentIndex !== -1 //disable if no ini files were found or selected
+            onClicked: {
+                if (text === "Unset") {
+                    configFileSettings.qtMsgPattern = ""
+                } else { //set to default value. TBD what is default
+                    configFileSettings.qtMsgPattern = "%{message}"
+                }
+            }
+        }
+
+        SGWidgets.SGText {
+            id: qtMsgPatternLink
+            Layout.columnSpan: 3
+            Layout.fillWidth: true
+            text: "<a href=\"https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern\">documentation</a><br>"
+            onLinkActivated: Qt.openUrlExternally(link)
         }
     }
 }
