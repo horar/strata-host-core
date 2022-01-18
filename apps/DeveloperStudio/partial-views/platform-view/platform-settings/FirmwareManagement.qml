@@ -70,7 +70,7 @@ ColumnLayout {
             }
 
             if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
-                firmwareIsOutOfDate = true
+                platformStack.firmwareIsOutOfDate = true
             }
         }
     }

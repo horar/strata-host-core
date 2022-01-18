@@ -26,7 +26,7 @@ ColumnLayout {
 
     ColumnLayout{
         id: firmwareVersions
-        visible: firmwareListView.model.count > 0
+        visible: firmwareListView.model.count > 0 && (platformStack.firmwareIsOutOfDate || sdsModel.debugFeaturesEnabled)
 
         SGText {
             text: "Latest firmware available:"
@@ -348,23 +348,37 @@ ColumnLayout {
         }
     }
 
-    RowLayout {
-        id: noFirmwareFound
-        spacing: 10
+    Rectangle {
+        id: firmwareUpToDate
+        Layout.preferredHeight: 50
+        Layout.fillWidth: true
+        Layout.topMargin: 5
+        color: "#eee"
         visible: firmwareVersions.visible === false && platformStack.connected
-        Layout.maximumHeight: visible ? implicitHeight : 0
 
-        SGIcon {
-            source: "qrc:/sgimages/exclamation-circle.svg"
-            Layout.preferredHeight: 30
-            Layout.preferredWidth: 30
-            iconColor: "#aaa"
-        }
+        RowLayout {
+            anchors.verticalCenter: firmwareUpToDate.verticalCenter
+            spacing: 15
 
-        SGText {
-            fontSizeMultiplier: 1.38
-            color: "#666"
-            text: "No firmware files are available for flashing to this platform"
+            SGIcon {
+                iconColor: "#999"
+                source: "qrc:/sgimages/check-circle.svg"
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: 30
+                Layout.leftMargin: 10
+            }
+
+            SGText {
+                fontSizeMultiplier: 1.38
+                color: "#666"
+                text: {
+                    if (firmwareListView.model.count === 0) {
+                        return "No firmware files are available for flashing to this platform"
+                    } else {
+                        return "Up to date! No newer version available"
+                    }
+                }
+            }
         }
     }
 
