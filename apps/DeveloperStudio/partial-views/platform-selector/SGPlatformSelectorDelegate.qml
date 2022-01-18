@@ -35,11 +35,10 @@ Item {
     }
 
     MouseArea {
-        anchors {
-            fill: parent
-        }
+        anchors.fill: parent
+
         onClicked: {
-            PlatformSelection.platformSelectorModel.currentIndex = index
+            root.updateIndex()
         }
     }
 
@@ -131,6 +130,14 @@ Item {
             Text {
                 id: info
                 text: {
+                    if (model.program_controller_error_string) {
+                        return "Programming of controller failed.\n" + model.program_controller_error_string
+                    }
+
+                    if (model.program_controller) {
+                        return "Programming controller. Do not unplug device."
+                    }
+
                     if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
                         return model.description
                     } else {
@@ -148,33 +155,11 @@ Item {
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 12
                 lineHeight: 1.2
-                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
+                color: model.program_controller_error_string ? Theme.palette.error : Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
-                visible: model.program_controller === false
-            }
-
-            Text {
-                id: statusText
-                text: {
-                    if (model.program_controller_error_string) {
-                        return "Programming of controller failed.\n" + model.program_controller_error_string
-                    }
-
-                    return "Programming controller. Do not unplug device."
-                }
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: model.program_controller || model.program_controller_error_string
-                font {
-                    pixelSize: 14
-                    family: Fonts.franklinGothicBook
-                }
-                wrapMode: Text.WordWrap
-                color: model.program_controller_error_string ? Theme.palette.error : "#333"
-                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
@@ -221,113 +206,120 @@ Item {
             Layout.minimumWidth: 300
 
             ColumnLayout {
-                id: segmentCategoryList
-                Layout.preferredWidth: 150
-                Layout.minimumWidth: 100
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                property real delegateHeight: 35
-
-                Flow {
-                    id: flow
+                Flickable {
+                    id: segmentCategoryScrollView
+                    clip: true
                     Layout.fillWidth: true
-                    spacing: 2
+                    Layout.fillHeight: true
+                    contentHeight: segmentCategoryList.height
+                    interactive: segmentCategoryScrollBar.visible
+                    flickableDirection: Flickable.VerticalFlick
+                    boundsBehavior: Flickable.StopAtBounds
 
-                    property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
-                    property int maxRows: 2
+                    ScrollBar.vertical: ScrollBar {
+                        id: segmentCategoryScrollBar
+                        minimumSize: 0.1
+                        policy: ScrollBar.AlwaysOn
+                        visible: segmentCategoryScrollView.height < segmentCategoryScrollView.contentHeight
+                    }
 
-                    onRowsChanged: {
-                        if (rows < maxRows) {
-                            reset()
+                    ColumnLayout {
+                        id: segmentCategoryList
+                        width: segmentCategoryScrollView.width -
+                               (segmentCategoryScrollBar.visible ? segmentCategoryScrollBar.width : 0)
+
+                        property real delegateHeight: 25
+
+                        Flow {
+                            id: flow
+                            Layout.fillWidth: true
+                            spacing: 2
+
+                            property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
+                            property int maxRows: 3
+
+                            onRowsChanged: {
+                                if (rows < maxRows) {
+                                    reset()
+                                }
+                            }
+
+                            function reset () {
+                                for (let i = 0; i < filters.count; i++) {
+                                    filters.get(i).row = -1
+                                }
+                            }
+
+                            Repeater {
+                                id: segmentCategoryRepeater
+                                model: visibleButtons
+                                delegate: iconDelegate
+                            }
                         }
-                    }
 
-                    function reset () {
-                        for (let i = 0; i < filters.count; i++) {
-                            filters.get(i).row = -1
+                        SGSortFilterProxyModel {
+                            id: segmentsCategories
+                            sourceModel: filters
+                            sortEnabled: true
+                            sortRole: "type"
                         }
-                    }
 
-                    Repeater {
-                        id: segmentCategoryRepeater
-                        model: visibleButtons
-                        delegate: iconDelegate
-                    }
-                }
+                        SGSortFilterProxyModel {
+                            id: visibleButtons
+                            sourceModel: segmentsCategories
+                            invokeCustomFilter: true
 
-                SGSortFilterProxyModel {
-                    id: segmentsCategories
-                    sourceModel: filters
-                    sortEnabled: true
-                    sortRole: "type"
-                }
+                            function filterAcceptsRow (index) {
+                                if (model.show_overflow_buttons === false) {
+                                    var listing = sourceModel.get(index)
+                                    return listing.row < flow.maxRows
+                                } else {
+                                    return true
+                                }
+                            }
+                        }
 
-                SGSortFilterProxyModel {
-                    id: visibleButtons
-                    sourceModel: segmentsCategories
-                    invokeCustomFilter: true
+                        SGSortFilterProxyModel {
+                            id: remainingButtons
+                            sourceModel: segmentsCategories
+                            invokeCustomFilter: true
 
-                    function filterAcceptsRow (index) {
-                        var listing = sourceModel.get(index)
-                        return listing.row < flow.maxRows
-                    }
-                }
+                            function filterAcceptsRow (index) {
+                                var listing = sourceModel.get(index)
+                                return listing.row >= flow.maxRows
+                            }
+                        }
 
-                SGSortFilterProxyModel {
-                    id: remainingButtons
-                    sourceModel: segmentsCategories
-                    invokeCustomFilter: true
+                        Component {
+                            id: iconDelegate
 
-                    function filterAcceptsRow (index) {
-                        var listing = sourceModel.get(index)
-                        return listing.row >= flow.maxRows
+                            PlatformFilterButton { }
+                        }
                     }
                 }
 
                 SGText {
                     id: remainingText
                     visible: remainingButtons.count > 0
-                    text: "And " + remainingButtons.count + " more..."
-                    Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
+                    text: model.show_overflow_buttons ? "Show less..." : "Show " + remainingButtons.count + " more..."
+                    Layout.alignment: Qt.AlignHCenter
                     font.underline: moreFiltersMouse.containsMouse
 
                     MouseArea {
                         id: moreFiltersMouse
-                        anchors {
-                            fill: parent
-                        }
+                        anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:  {
-                            filterOverFlow.open()
+                        onClicked: {
+                            model.show_overflow_buttons = !model.show_overflow_buttons
+                            visibleButtons.invalidate()
+                            root.updateIndex()
                         }
                     }
-
-                    Popup {
-                        id: filterOverFlow
-                        padding: 0
-                        x: -remainingText.Layout.leftMargin
-                        width: segmentCategoryList.width
-                        background: Rectangle {
-                            color: isCurrentItem ? "#eee" : "white"
-                        }
-
-                        ColumnLayout {
-                            width: parent.width
-
-                            Repeater {
-                                id: overflowRepeater
-                                model: remainingButtons
-                                delegate: iconDelegate
-                            }
-                        }
-                    }
-                }
-
-                Component {
-                    id: iconDelegate
-
-                    PlatformFilterButton { }
                 }
             }
 
@@ -401,6 +393,7 @@ Item {
                         Accessible.onPressAction: controlButtonClicked()
 
                         function controlButtonClicked() {
+                            root.updateIndex()
                             buttonColumn.openView("control")
                         }
                     }
@@ -412,6 +405,7 @@ Item {
                         toolTipText: buttonEnabled ? "" : "No documentation found"
 
                         onClicked: {
+                            root.updateIndex()
                             buttonColumn.openView("collateral")
                         }
                     }
@@ -422,6 +416,7 @@ Item {
                         buttonEnabled: model.available.order
 
                         onClicked: {
+                            root.updateIndex()
                             Qt.openUrlExternally(sdsModel.urls.salesPopupUrl)
                         }
                     }
@@ -450,5 +445,9 @@ Item {
             horizontalCenter: root.horizontalCenter
         }
         width: parent.width
+    }
+
+    function updateIndex() {
+        PlatformSelection.platformSelectorModel.currentIndex = index
     }
 }

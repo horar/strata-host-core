@@ -182,6 +182,7 @@ function generatePlatform (platform) {
     platform.program_controller_error_string = ""
     platform.controller_class_id = ""
     platform.is_assisted = false
+    platform.show_overflow_buttons  = false
     platform.coming_soon = !platform.available.documents && !platform.available.order
 
     // Create entry in classMap
