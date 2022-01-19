@@ -452,7 +452,7 @@ function connectListing(platform) {
     }
     selector_listing.available = available
     selector_listing.controller_class_id = platform.controller_class_id
-    selector_listing.is_assisted = (platform.controller_class_id !== null)
+    selector_listing.is_assisted = platform.is_assisted
     // controller_class_id is automatically converted from null to "" here. So we need another flag is_assisted to remember whether there was controller_class_id.
 
     if (NavigationControl.userSettings.autoOpenView){
