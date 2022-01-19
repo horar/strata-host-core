@@ -215,7 +215,7 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
 
 function createHelpObject(tourTarget) {
     destroyHelpObject()
-    help_object = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
+    help_object = Utility.createObject("qrc:/partial-views/help-tour/HelpTourPeekThroughOverlay.qml", window)
     help_object.index = tourTarget.index
     help_object.description = tourTarget.description
     help_object.setTarget(tourTarget.target)

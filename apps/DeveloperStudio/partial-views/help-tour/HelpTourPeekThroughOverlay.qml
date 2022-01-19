@@ -253,7 +253,7 @@ Item {
              }
          }
 
-         SGToolTipPopup {
+         HelpTourPopup {
              id: toolTipPopup
              color: "white"
              visible: root.visible
@@ -264,7 +264,7 @@ Item {
              property string description
              property real fontSizeMultiplier: 1
 
-             SGTourControl {
+             HelpTourControl {
                  id: tourControl
                  index: toolTipPopup.index
                  description: toolTipPopup.description
