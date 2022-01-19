@@ -19,6 +19,7 @@ Item {
     property int outerSpacing: 10
     property int innerSpacing: 5
     property int middleColumn: 180
+    property int infoButtonSize: 15
 
     ConfigFileModel {
         id:configFileModel
@@ -102,13 +103,14 @@ Item {
             left: configOptionsText.left
             right: reloadButton.right
         }
-        columns: 3
+        columns: 4
         columnSpacing: innerSpacing
         rowSpacing: innerSpacing
 
         SGWidgets.SGText {
             id: logLevelText
             text: "Log level"
+            Layout.columnSpan: 2
             Layout.fillWidth: true
         }
 
@@ -149,6 +151,7 @@ Item {
         SGWidgets.SGText {
             id: maxFileSizeText
             text: "Max file size"
+            Layout.columnSpan: 2
             Layout.fillWidth: true
         }
 
@@ -190,6 +193,7 @@ Item {
         SGWidgets.SGText {
             id: maxNoFilesText
             text: "Max number of files"
+            Layout.columnSpan: 2
             Layout.fillWidth: true
         }
 
@@ -232,6 +236,7 @@ Item {
         SGWidgets.SGText {
             id: qtFilterRulesText
             text: "Qt filter rules"
+            Layout.columnSpan: 2
             Layout.fillWidth: true
         }
 
@@ -276,6 +281,18 @@ Item {
        SGWidgets.SGText {
            id: qtMsgPatternText
            text: "Qt message pattern"
+           Layout.fillWidth: true
+       }
+
+       SGWidgets.SGButton {
+           Layout.alignment: Qt.AlignRight
+           Layout.maximumHeight: infoButtonSize
+           Layout.maximumWidth: infoButtonSize
+           icon.source: "qrc:/sgimages/info-circle.svg"
+           icon.width: infoButtonSize
+           icon.height: infoButtonSize
+           background.opacity: 0
+           onClicked: Qt.openUrlExternally("https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern")
        }
 
        SGWidgets.SGTextField {
@@ -316,18 +333,21 @@ Item {
             }
         }
 
-        /*SGWidgets.SGText {
-            id: qtMsgPatternLink
-            //Layout.columnSpan: 3
-            Layout.fillWidth: true
-            text: "<a href=\"https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern\">documentation</a><br>"
-            onLinkActivated: Qt.openUrlExternally(link)
-        }*/
-
         SGWidgets.SGText {
             id: spdlogMsgPatternText
             text: "Spdlog message pattern"
             Layout.fillWidth: true
+        }
+
+        SGWidgets.SGButton {
+            Layout.alignment: Qt.AlignRight
+            Layout.maximumHeight: infoButtonSize
+            Layout.maximumWidth: infoButtonSize
+            icon.source: "qrc:/sgimages/info-circle.svg"
+            icon.width: infoButtonSize
+            icon.height: infoButtonSize
+            background.opacity: 0
+            onClicked: Qt.openUrlExternally("https://github.com/gabime/spdlog/wiki/3.-Custom-formatting")
         }
 
         SGWidgets.SGTextField {
