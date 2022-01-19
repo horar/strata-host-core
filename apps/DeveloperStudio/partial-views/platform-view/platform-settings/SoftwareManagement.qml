@@ -195,7 +195,9 @@ ColumnLayout {
                 Layout.leftMargin: 10
             }
 
-            Text {
+            SGText {
+                fontSizeMultiplier: 1.38
+                color: "#666"
                 text: {
                     if (installedVersion.version === "" && objectIsEmpty(latestVersion)) {
                         return "No software version available for download"
