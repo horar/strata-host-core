@@ -18,7 +18,7 @@ if(APPS_FEATURE_BLE)
         "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
     )
 endif()
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

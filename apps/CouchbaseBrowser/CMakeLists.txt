@@ -14,7 +14,7 @@ project(CouchbaseBrowser
 set(PROJECT_WIN32_ICO resources/icons/app/app.ico)
 set(PROJECT_MACOS_ICNS app.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.cbb)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2022 ${PROJECT_COMPANY}")
 
 
 find_package(Qt5 ${VERSION_QT5}

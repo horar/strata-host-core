@@ -14,7 +14,7 @@ project(CommandDocCreator
 set(PROJECT_WIN32_ICO resources/icons/app/cdc-logo.ico)
 set(PROJECT_MACOS_ICNS cdc-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.cdc)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2022 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
