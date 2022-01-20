@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -14,7 +14,7 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
