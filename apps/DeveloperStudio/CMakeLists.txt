@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -23,7 +23,7 @@ if(APPS_FEATURE_BLE)
         source/BleDeviceModel.cpp
     )
 endif()
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 set(QT5_MINIMUM_VERSION 5.12.4)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
