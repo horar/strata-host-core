@@ -11,8 +11,9 @@
         <file>js/restclient.js</file>
         <file>main.qml</file>
         <file>SplashScreen.qml</file>
-        <file>partial-views/help-tour/SGPeekThroughOverlay.qml</file>
-        <file>partial-views/help-tour/SGTourControl.qml</file>
+        <file>partial-views/help-tour/HelpTourPeekThroughOverlay.qml</file>
+        <file>partial-views/help-tour/HelpTourControl.qml</file>
+        <file>partial-views/help-tour/HelpTourPopup.qml</file>
         <file>partial-views/help-tour/images/corner-fade.png</file>
         <file>partial-views/help-tour/images/side-fade.png</file>
         <file>partial-views/help-tour/images/top-fade.png</file>
@@ -105,7 +106,6 @@
         <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
         <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
-        <file>partial-views/help-tour/SGToolTipPopup.qml</file>
         <file>partial-views/BleScanDialog.qml</file>
         <file>partial-views/general/SGSettingsCheckbox.qml</file>
     </qresource>
