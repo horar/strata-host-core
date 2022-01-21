@@ -231,6 +231,7 @@ Item {
         }
 
         Rectangle {
+            id: platfomTabMenu
             Layout.fillHeight: true
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
@@ -238,7 +239,7 @@ Item {
             Accessible.name: "Open Platform Tab"
             Accessible.role: Accessible.Button
             Accessible.onPressAction: {
-                mouseMenu.clicked(mouse)
+                mouseMenuClicked(Qt.LeftButton)
             }
 
             MouseArea {
@@ -247,13 +248,7 @@ Item {
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                 onClicked: {
-                    if (mouse.button == Qt.LeftButton) {
-                        showMenu()
-                    } else if (mouse.button == Qt.RightButton) {
-                        showMenu()
-                    } else if (mouse.button == Qt.MiddleButton) {
-                        closeTab()
-                    }
+                    platfomTabMenu.mouseMenuClicked(mouse.button)
                 }
                 cursorShape: Qt.PointingHandCursor
             }
@@ -273,6 +268,16 @@ Item {
                     } else {
                         return selectedButtonIcon
                     }
+                }
+            }
+
+            function mouseMenuClicked(mouseButton) {
+                if (mouseButton === Qt.LeftButton) {
+                    showMenu()
+                } else if (mouseButton === Qt.RightButton) {
+                    showMenu()
+                } else if (mouseButton === Qt.MiddleButton) {
+                    closeTab()
                 }
             }
         }
