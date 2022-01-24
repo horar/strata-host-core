@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>LcuAboutWindow.qml</file>
         <file>LcuMain.qml</file>
+        <file>CorruptedFileDialog.qml</file>
     </qresource>
 </RCC>

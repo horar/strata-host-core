@@ -465,4 +465,88 @@ Item {
             }
         }
     }
+
+    Connections {
+        target: configFileSettings
+        onCorruptedFile: {
+            showCorruptedFileDialog(errorString)
+        }
+    }
+
+    function showCorruptedFileDialog(errorMessage) {
+        var dialog = SGDialogJS.createDialog(
+                    lcuMain,
+                    "qrc:/CorruptedFileDialog.qml",
+                    {"errorMessage": errorMessage})
+
+        dialog.accepted.connect(function() {
+            //set to default
+            console.log("SET TO DEFAULT")
+//                configFileSettings.logLevel = "debug"
+            dialog.destroy()
+        })
+
+        dialog.rejected.connect(function() {
+            //remove parameter
+            console.log("REMOVE")
+//                configFileSettings.logLevel = ""
+            dialog.destroy()
+        })
+        dialog.open()
+    }
+
+
+    SGWidgets.SGPopup {
+        id: infoPopup
+
+        padding: 2
+        anchors.centerIn: parent
+        closePolicy: Popup.NoAutoClose
+        modal: true
+
+        contentItem: GridLayout {
+            columns: 2
+            SGWidgets.SGText {
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignCenter
+                text: "Sorry, but selected INI file is corrupted."
+            }
+            SGWidgets.SGText {
+                id: errorText
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignHCenter
+                text: "..."
+            }
+            SGWidgets.SGText {
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignCenter
+                text: "Do you want to set the parameter to default value or remove it?"
+            }
+            SGWidgets.SGButton {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignCenter
+                text: "Set to default"
+                onClicked: {
+                    configFileSettings.logLevel = "debug"
+                    infoPopup.close()
+                }
+            }
+            SGWidgets.SGButton {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignCenter
+                text: "Remove parameter"
+                onClicked: {
+                    configFileSettings.logLevel = ""
+                    infoPopup.close()
+                }
+            }
+        }
+//        Connections {
+//            target: configFileSettings
+//            onCorruptedFile: {
+//                infoPopup.open()
+//                errorText.text = errorString
+//            }
+//        }
+    }
 }

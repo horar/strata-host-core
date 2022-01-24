@@ -22,6 +22,7 @@ ConfigFileSettings::ConfigFileSettings(QObject *parent) :
 
 QString ConfigFileSettings::logLevel() const
 {
+
     if (settings_->contains(LOG_LEVEL_SETTING) == false) {
         return "";
     }
@@ -33,9 +34,9 @@ QString ConfigFileSettings::logLevel() const
         qCDebug(lcLcu) << "Current log level: " << level;
         return level;
     } else {
-        qCWarning(lcLcu) << "Log level is '" << level << "', which is not a valid value. Setting log level to default.";
-        return "debug"; //TBD if default should be info or debug
+        emit corruptedFile("Log level is currently set to: '" + level + "'\n which is an unrecognized value");
     }
+    return "";
 }
 
 int ConfigFileSettings::maxFileSize() const
