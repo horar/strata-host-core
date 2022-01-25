@@ -20,6 +20,8 @@ struct PlatformFileItem {
     QString md5;
     QString timestamp;
     qint64 filesize;
+
+    friend QDebug operator<<(QDebug dbg, const PlatformFileItem &item);
 };
 
 struct FirmwareFileItem {
@@ -46,14 +48,14 @@ struct PlatformDatasheetItem {
     QString subcategory;
 };
 
-QDebug operator<<(QDebug dbg, const PlatformFileItem &item);
-
 class PlatformDocument
 {
 public:
+    friend QDebug operator<<(QDebug dbg, const PlatformDocument* platfDoc);
+
     PlatformDocument(const QString &classId);
 
-    bool parseDocument(const QString &document);
+    bool parseDocument(const QByteArray &document);
     QString classId();
     const QList<PlatformFileItem>& getViewList();
     const QList<PlatformDatasheetItem>& getDatasheetList();
