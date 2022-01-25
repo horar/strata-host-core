@@ -7,7 +7,6 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 
-
 /*
  * The original code is here: https://os.mbed.com/users/EmLa/code/CRC16/
  * According to https://crccalc.com/ , the impelmentation computes CRC-16/BUYPASS
