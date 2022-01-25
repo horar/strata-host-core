@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #ifndef PLATFORM_DOCUMENT_H
 #define PLATFORM_DOCUMENT_H
 
