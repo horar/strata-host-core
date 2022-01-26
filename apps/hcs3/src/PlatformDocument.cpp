@@ -68,45 +68,33 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
 
     const QJsonObject jsonDocument = jsonIter->toObject();
 
+    getArrayResult result;
+    QJsonArray jsonArray;
+
     //datasheets
-    jsonIter = jsonDocument.constFind("datasheets");
-    if (jsonIter == jsonDocument.constEnd()) {
-        qCWarning(lcHcsPlatformDocument) << this << "'datasheets' key is missing";
-        // skip - some older platforms rely on datasheets.csv file instead
+    result = getArrayFromDocument(jsonDocument, "datasheets", jsonArray);
+    if (result == getArrayResult::Ok) {
+        populateDatasheetList(jsonArray, datasheetsList_);
     } else {
-        if (jsonIter->isArray()) {
-            populateDatasheetList(jsonIter->toArray(), datasheetsList_);
-        } else {
-            qCCritical(lcHcsPlatformDocument) << this << "value of 'datasheets' key is not an array";
+        // some older platforms do not have 'datasheets' key and rely on datasheets.csv file instead
+        if (result != getArrayResult::MissingKey) {
             return false;
         }
     }
 
     //downloads
-    jsonIter = jsonDocument.constFind("downloads");
-    if (jsonIter == jsonDocument.constEnd()) {
-        qCCritical(lcHcsPlatformDocument) << this << "'downloads' key is missing";
-        return false;
-    }
-
-    if (jsonIter->isArray()) {
-        populateFileList(jsonIter->toArray(), downloadList_);
+    result = getArrayFromDocument(jsonDocument, "downloads", jsonArray);
+    if (result == getArrayResult::Ok) {
+        populateFileList(jsonArray, downloadList_);
     } else {
-        qCCritical(lcHcsPlatformDocument) << this << "value of 'downloads' key is not an array";
         return false;
     }
 
     //views
-    jsonIter = jsonDocument.constFind("views");
-    if (jsonIter == jsonDocument.constEnd()) {
-        qCCritical(lcHcsPlatformDocument) << this << "'views' key is missing";
-        return false;
-    }
-
-    if (jsonIter->isArray()) {
-        populateFileList(jsonIter->toArray(), viewList_);
+    result = getArrayFromDocument(jsonDocument, "views", jsonArray);
+    if (result == getArrayResult::Ok) {
+        populateFileList(jsonArray, viewList_);
     } else {
-        qCCritical(lcHcsPlatformDocument) << "value of 'views' key is not an array";
         return false;
     }
 
@@ -131,36 +119,26 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     name_ = rootObject.value("name").toString();
 
     //firmware
-    jsonIter = rootObject.constFind("firmware");
-    if (jsonIter == rootObject.constEnd()) {
-        qCWarning(lcHcsPlatformDocument) << this << "'firmware' key is missing";
-        // TODO: Nowadays, server does not support firmware object. Return false when it will be supported.
-        //return false;
-    }
-    else {  // TODO: Remove this else line when server will support firmware object. Do not remove content of else block.
-        if (jsonIter->isArray()) {
-            populateFirmwareList(jsonIter->toArray(), firmwareList_);
-        } else {
-            qCCritical(lcHcsPlatformDocument) << this << "value of 'firmware' key is not an array";
+    result = getArrayFromDocument(rootObject, "firmware", jsonArray);
+    if (result == getArrayResult::Ok) {
+        populateFirmwareList(jsonArray, firmwareList_);
+    } else {
+        // Nowadays, server does not support firmware object. Return false when it will be supported.
+        if (result != getArrayResult::MissingKey) {
             return false;
         }
-    }  // TODO: remove this else line
+    }
 
     //control view
-    jsonIter = rootObject.constFind("control_view");
-     if (jsonIter == rootObject.constEnd()) {
-        qCWarning(lcHcsPlatformDocument) << this << "'control_view' key is missing";
-        // TODO: Nowadays, server does not support control_view object. Return false when it will be supported.
-        //return false;
-    }
-    else {  // TODO: Remove this else line when server will support control_view object. Do not remove content of else block.
-        if (jsonIter->isArray()) {
-            populateControlViewList(jsonIter->toArray(), controlViewList_);
-        } else {
-            qCCritical(lcHcsPlatformDocument) << this << "value of 'control_view' key is not an array";
+    result = getArrayFromDocument(rootObject, "control_view", jsonArray);
+    if (result == getArrayResult::Ok) {
+        populateControlViewList(jsonArray, controlViewList_);
+    } else {
+        // Nowadays, server does not support control_view object. Return false when it will be supported.
+        if (result != getArrayResult::MissingKey) {
             return false;
         }
-    }  // TODO: remove this else line
+    }
 
     return true;
 }
@@ -198,6 +176,25 @@ const QList<ControlViewFileItem>& PlatformDocument::getControlViewList()
 const PlatformFileItem &PlatformDocument::platformSelector()
 {
     return platformSelector_;
+}
+
+PlatformDocument::getArrayResult PlatformDocument::getArrayFromDocument
+    (const QJsonObject &document, const QString &key, QJsonArray &array) const
+{
+    QJsonObject::const_iterator jsonIter = document.constFind(key);
+
+    if (jsonIter == document.constEnd()) {
+        qCWarning(lcHcsPlatformDocument) << this << '\'' << key << "' key is missing";
+        return getArrayResult::MissingKey;
+    }
+
+    if (jsonIter->isArray()) {
+        array = jsonIter->toArray();
+        return getArrayResult::Ok;
+    }
+
+    qCCritical(lcHcsPlatformDocument) << this << "value of '" << key << "' key is not an array";
+    return getArrayResult::NotAnArray;
 }
 
 bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, PlatformFileItem &file)

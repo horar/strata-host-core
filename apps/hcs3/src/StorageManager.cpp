@@ -330,7 +330,7 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 
         if (platDoc->parseDocument(document) == false) {
             qCCritical(lcHcsStorage).noquote().nospace()
-                << "Parse platform document failed (class ID " << classId << ")!";
+                << "Parsing of platform document " << classId << " failed!";
             qCDebug(lcHcsStorage).noquote().nospace()
                 << "Faulty document: '" << document << '\'';
 
