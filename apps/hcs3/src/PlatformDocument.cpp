@@ -8,6 +8,7 @@
  */
 
 #include "PlatformDocument.h"
+#include "JsonStrings.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
@@ -55,14 +56,14 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     QJsonObject::const_iterator jsonIter;
 
     //documents
-    jsonIter = rootObject.constFind("documents");
+    jsonIter = rootObject.constFind(JSON_DOCUMENTS);
     if (jsonIter == rootObject.constEnd()) {
-        qCCritical(lcHcsPlatformDocument) << this << "'documents' key is missing";
+        qCCritical(lcHcsPlatformDocument) << this << '\'' << JSON_DOCUMENTS << "' key is missing";
         return false;
     }
 
     if (jsonIter->isObject() == false) {
-        qCCritical(lcHcsPlatformDocument) << this << "value of 'documents' key is not an object";
+        qCCritical(lcHcsPlatformDocument) << this << "value of '" << JSON_DOCUMENTS << "' key is not an object";
         return false;
     }
 
@@ -72,7 +73,7 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     QJsonArray jsonArray;
 
     //datasheets
-    result = getArrayFromDocument(jsonDocument, "datasheets", jsonArray);
+    result = getArrayFromDocument(jsonDocument, JSON_DATASHEETS, jsonArray);
     if (result == getArrayResult::Ok) {
         populateDatasheetList(jsonArray, datasheetsList_);
     } else {
@@ -83,7 +84,7 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     }
 
     //downloads
-    result = getArrayFromDocument(jsonDocument, "downloads", jsonArray);
+    result = getArrayFromDocument(jsonDocument, JSON_DOWNLOADS, jsonArray);
     if (result == getArrayResult::Ok) {
         populateFileList(jsonArray, downloadList_);
     } else {
@@ -91,7 +92,7 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     }
 
     //views
-    result = getArrayFromDocument(jsonDocument, "views", jsonArray);
+    result = getArrayFromDocument(jsonDocument, JSON_VIEWS, jsonArray);
     if (result == getArrayResult::Ok) {
         populateFileList(jsonArray, viewList_);
     } else {
@@ -99,27 +100,27 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     }
 
     //platform selector
-    jsonIter = rootObject.constFind("platform_selector");
+    jsonIter = rootObject.constFind(JSON_PLATFORM_SELECTOR);
     if (jsonIter == rootObject.constEnd()) {
-        qCCritical(lcHcsPlatformDocument) << this << "'platform_selector' key is missing";
+        qCCritical(lcHcsPlatformDocument) << this << '\'' << JSON_PLATFORM_SELECTOR << "' key is missing";
         return false;
     }
 
     if (jsonIter->isObject() == false) {
-        qCCritical(lcHcsPlatformDocument) << this << "value of 'platform_selector' key is not an object";
+        qCCritical(lcHcsPlatformDocument) << this << "value of '" << JSON_PLATFORM_SELECTOR << "' key is not an object";
         return false;
     }
 
     if (populateFileObject(jsonIter->toObject(), platformSelector_) == false) {
-        qCCritical(lcHcsPlatformDocument) << this << "value of 'platform_selector' key is not valid";
+        qCCritical(lcHcsPlatformDocument) << this << "value of '" << JSON_PLATFORM_SELECTOR << "' key is not valid";
         return false;
     }
 
     //name
-    name_ = rootObject.value("name").toString();
+    name_ = rootObject.value(JSON_NAME).toString();
 
     //firmware
-    result = getArrayFromDocument(rootObject, "firmware", jsonArray);
+    result = getArrayFromDocument(rootObject, JSON_FIRMWARE, jsonArray);
     if (result == getArrayResult::Ok) {
         populateFirmwareList(jsonArray, firmwareList_);
     } else {
@@ -130,7 +131,7 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     }
 
     //control view
-    result = getArrayFromDocument(rootObject, "control_view", jsonArray);
+    result = getArrayFromDocument(rootObject, JSON_CONTROL_VIEW, jsonArray);
     if (result == getArrayResult::Ok) {
         populateControlViewList(jsonArray, controlViewList_);
     } else {
@@ -199,22 +200,22 @@ PlatformDocument::getArrayResult PlatformDocument::getArrayFromDocument
 
 bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, PlatformFileItem &file)
 {
-    if (jsonObject.contains("file") == false
-            || jsonObject.contains("md5") == false
-            || jsonObject.contains("name") == false
-            || jsonObject.contains("timestamp") == false
-            || jsonObject.contains("filesize") == false
-            || jsonObject.contains("prettyName") == false)
+    if (jsonObject.contains(JSON_FILE) == false
+            || jsonObject.contains(JSON_MD5) == false
+            || jsonObject.contains(JSON_NAME) == false
+            || jsonObject.contains(JSON_TIMESTAMP) == false
+            || jsonObject.contains(JSON_FILESIZE) == false
+            || jsonObject.contains(JSON_PRETTYNAME) == false)
     {
         return false;
     }
 
-    file.partialUri = jsonObject.value("file").toString();
-    file.md5 = jsonObject.value("md5").toString();
-    file.name = jsonObject.value("name").toString();
-    file.timestamp = jsonObject.value("timestamp").toString();
-    file.filesize = jsonObject.value("filesize").toVariant().toLongLong();
-    file.prettyName = jsonObject.value("prettyName").toString();
+    file.partialUri = jsonObject.value(JSON_FILE).toString();
+    file.md5 = jsonObject.value(JSON_MD5).toString();
+    file.name = jsonObject.value(JSON_NAME).toString();
+    file.timestamp = jsonObject.value(JSON_TIMESTAMP).toString();
+    file.filesize = jsonObject.value(JSON_FILESIZE).toVariant().toLongLong();
+    file.prettyName = jsonObject.value(JSON_PRETTYNAME).toString();
 
     return true;
 }
@@ -225,22 +226,22 @@ bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, Fir
     bool success = false;
 
     // clang-format off
-    if (jsonObject.contains("file"))                  { flags |= 0x01; }  // 00001
-    if (jsonObject.contains("controller_class_id"))   { flags |= 0x02; }  // 00010
-    if (jsonObject.contains("md5"))                   { flags |= 0x04; }  // 00100
-    if (jsonObject.contains("timestamp"))             { flags |= 0x08; }  // 01000
-    if (jsonObject.contains("version"))               { flags |= 0x10; }  // 10000
+    if (jsonObject.contains(JSON_FILE))                 { flags |= 0x01; }  // 00001
+    if (jsonObject.contains(JSON_CONTROLLER_CLASS_ID))  { flags |= 0x02; }  // 00010
+    if (jsonObject.contains(JSON_MD5))                  { flags |= 0x04; }  // 00100
+    if (jsonObject.contains(JSON_TIMESTAMP))            { flags |= 0x08; }  // 01000
+    if (jsonObject.contains(JSON_VERSION))              { flags |= 0x10; }  // 10000
     // clang-format on
 
     switch (flags) {
     case 0x1F :
-        firmwareFile.controllerClassId = jsonObject.value("controller_class_id").toString();
+        firmwareFile.controllerClassId = jsonObject.value(JSON_CONTROLLER_CLASS_ID).toString();
         //fallthrough
     case 0x1D :
-        firmwareFile.partialUri = jsonObject.value("file").toString();
-        firmwareFile.md5 = jsonObject.value("md5").toString();
-        firmwareFile.timestamp = jsonObject.value("timestamp").toString();
-        firmwareFile.version = jsonObject.value("version").toString();
+        firmwareFile.partialUri = jsonObject.value(JSON_FILE).toString();
+        firmwareFile.md5 = jsonObject.value(JSON_MD5).toString();
+        firmwareFile.timestamp = jsonObject.value(JSON_TIMESTAMP).toString();
+        firmwareFile.version = jsonObject.value(JSON_VERSION).toString();
         success = true;
         break;
     default :
@@ -253,20 +254,20 @@ bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, Fir
 
 bool PlatformDocument::populateControlViewObject(const QJsonObject &jsonObject, ControlViewFileItem &controlViewFile)
 {
-    if (jsonObject.contains("file") == false
-            || jsonObject.contains("md5") == false
-            || jsonObject.contains("name") == false
-            || jsonObject.contains("timestamp") == false
-            || jsonObject.contains("version") == false)
+    if (jsonObject.contains(JSON_FILE) == false
+            || jsonObject.contains(JSON_MD5) == false
+            || jsonObject.contains(JSON_NAME) == false
+            || jsonObject.contains(JSON_TIMESTAMP) == false
+            || jsonObject.contains(JSON_VERSION) == false)
     {
         return false;
     }
 
-    controlViewFile.partialUri = jsonObject.value("file").toString();
-    controlViewFile.md5 = jsonObject.value("md5").toString();
-    controlViewFile.name = jsonObject.value("name").toString();
-    controlViewFile.timestamp = jsonObject.value("timestamp").toString();
-    controlViewFile.version = jsonObject.value("version").toString();
+    controlViewFile.partialUri = jsonObject.value(JSON_FILE).toString();
+    controlViewFile.md5 = jsonObject.value(JSON_MD5).toString();
+    controlViewFile.name = jsonObject.value(JSON_NAME).toString();
+    controlViewFile.timestamp = jsonObject.value(JSON_TIMESTAMP).toString();
+    controlViewFile.version = jsonObject.value(JSON_VERSION).toString();
 
     return true;
 }
@@ -311,20 +312,20 @@ void PlatformDocument::populateControlViewList(const QJsonArray &jsonList, QList
 }
 
 bool PlatformDocument::populateDatasheetObject(const QJsonObject &jsonObject, PlatformDatasheetItem &datasheet) {
-    if (jsonObject.contains("category") == false
-            || jsonObject.contains("datasheet") == false
-            || jsonObject.contains("name") == false
-            || jsonObject.contains("opn") == false
-            || jsonObject.contains("subcategory") == false)
+    if (jsonObject.contains(JSON_CATEGORY) == false
+            || jsonObject.contains(JSON_DATASHEET) == false
+            || jsonObject.contains(JSON_NAME) == false
+            || jsonObject.contains(JSON_OPN) == false
+            || jsonObject.contains(JSON_SUBCATEGORY) == false)
     {
         return false;
     }
 
-    datasheet.category = jsonObject.value("category").toString();
-    datasheet.datasheet = jsonObject.value("datasheet").toString();
-    datasheet.name = jsonObject.value("name").toString();
-    datasheet.opn = jsonObject.value("opn").toString();
-    datasheet.subcategory = jsonObject.value("subcategory").toString();
+    datasheet.category = jsonObject.value(JSON_CATEGORY).toString();
+    datasheet.datasheet = jsonObject.value(JSON_DATASHEET).toString();
+    datasheet.name = jsonObject.value(JSON_NAME).toString();
+    datasheet.opn = jsonObject.value(JSON_OPN).toString();
+    datasheet.subcategory = jsonObject.value(JSON_SUBCATEGORY).toString();
 
     return true;
 }
