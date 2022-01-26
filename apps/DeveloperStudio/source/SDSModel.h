@@ -20,6 +20,7 @@ class DocumentManager;
 class CoreInterface;
 class HcsNode;
 class ResourceLoader;
+class FileDownloader;
 class SGNewControlView;
 class FirmwareUpdater;
 class PlatformInterfaceGenerator;
@@ -43,6 +44,7 @@ class SDSModel: public QObject
     Q_PROPERTY(CoreInterface* coreInterface READ coreInterface CONSTANT)
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
+    Q_PROPERTY(FileDownloader* fileDownloader READ fileDownloader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
     Q_PROPERTY(FirmwareUpdater* firmwareUpdater READ firmwareUpdater CONSTANT)
     Q_PROPERTY(PlatformInterfaceGenerator* platformInterfaceGenerator READ platformInterfaceGenerator CONSTANT)
@@ -67,6 +69,7 @@ public:
     DocumentManager* documentManager() const;
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
+    FileDownloader* fileDownloader() const;
     SGNewControlView* newControlView() const;
     FirmwareUpdater* firmwareUpdater() const;
     PlatformInterfaceGenerator* platformInterfaceGenerator() const;
@@ -104,6 +107,7 @@ private:
     CoreInterface *coreInterface_{nullptr};
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};
+    FileDownloader *fileDownloader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
     FirmwareUpdater *firmwareUpdater_{nullptr};
     PlatformInterfaceGenerator *platformInterfaceGenerator_{nullptr};

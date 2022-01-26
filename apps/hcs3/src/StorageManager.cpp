@@ -40,6 +40,13 @@ StorageManager::~StorageManager()
     qDeleteAll(documents_);
     documents_.clear();
     qDeleteAll(downloadRequests_);
+
+    QString prefix = "documents/data_sheets";
+    QDir dataSheetDir = QDir(baseFolder_).filePath(prefix);
+    if (dataSheetDir.exists()) {
+        // erase temporary data_sheets directory if present
+        dataSheetDir.removeRecursively();
+    }
 }
 
 void StorageManager::setDatabase(Database* db)
@@ -161,7 +168,7 @@ void StorageManager::filePathChangedHandler(QString groupId, QString originalFil
     }
 
     if (request->type == RequestType::FileDownload) {
-        emit downloadPlatformFilePathChanged(request->clientId, originalFilePath, effectiveFilePath);
+        emit downloadPlatformFilePathChanged(request->clientId, downloadUrls_[groupId], originalFilePath, effectiveFilePath);
     }
 }
 
@@ -173,7 +180,7 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
     }
 
     if (request->type == RequestType::FileDownload) {
-        emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+        emit downloadPlatformSingleFileProgress(request->clientId, downloadUrls_[groupId], filePath, bytesReceived, bytesTotal);
     } else if (request->type == RequestType::ControlViewDownload) {
         emit downloadControlViewProgress(request->clientId, downloadControlViewUris_[groupId], filePath, bytesReceived, bytesTotal);
     }
@@ -187,7 +194,7 @@ void StorageManager::singleDownloadFinishedHandler(const QString &groupId, const
     }
 
     if (request->type == RequestType::FileDownload) {
-        emit downloadPlatformSingleFileFinished(request->clientId, filePath, error);
+        emit downloadPlatformSingleFileFinished(request->clientId, downloadUrls_[groupId], filePath, error);
     }
 }
 
@@ -216,6 +223,7 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
         handlePlatformDocumentsResponse(request, errorString);
     } else if (request->type == RequestType::FileDownload) {
         emit downloadPlatformFilesFinished(request->clientId, errorString);
+        downloadUrls_.remove(groupId);
     } else if (request->type == RequestType::ControlViewDownload) {
         QList<DownloadManager::DownloadResponseItem> responseList = downloadManager_->getResponseList(groupId);
         if (responseList.isEmpty() == false) {
@@ -576,6 +584,44 @@ void StorageManager::requestDownloadPlatformFiles(
     request->groupId = downloadManager_->download(downloadList, settings);
 
     downloadRequests_.insert(request->groupId, request);
+}
+
+void StorageManager::requestDownloadDatasheetFile(
+        const QByteArray &clientId,
+        const QString &fileUrl,
+        const QString &classId)
+{
+    if (fileUrl.isEmpty()) {
+        qCInfo(lcHcsStorage()) << "nothing to download";
+        emit downloadPlatformFilesFinished(clientId, QString());
+        return;
+    }
+
+    DownloadRequest *request = new DownloadRequest();
+    request->clientId = clientId;
+    request->classId = classId;
+    request->type = RequestType::FileDownload;
+
+    QString prefix = "documents/data_sheets";
+    if (classId.isEmpty() == false) {
+        prefix += "/" + classId;
+    }
+
+    DownloadManager::DownloadRequestItem downloadItem;
+    downloadItem.url = fileUrl;
+    downloadItem.filePath = createFilePathFromItem(downloadItem.url.fileName(), prefix);
+
+    DownloadManager::Settings settings;
+    settings.keepOriginalName = false;
+    settings.oneFailsAllFail = false;
+    settings.notifySingleDownloadProgress = true;
+    settings.notifySingleDownloadFinished = true;
+
+    request->groupId = downloadManager_->download({downloadItem}, settings);
+
+    downloadRequests_.insert(request->groupId, request);
+
+    downloadUrls_[request->groupId] = fileUrl;
 }
 
 void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5, const QString &class_id)

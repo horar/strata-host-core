@@ -198,7 +198,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
         {"destination_dir", saveUrl.path()}
     };
 
-    strataClient_->sendRequest("download_files", payload);
+    strataClient_->sendRequest("download_platform_files", payload);
 
     emit downloadInProgressChanged();
 }
