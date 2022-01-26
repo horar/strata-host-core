@@ -522,7 +522,10 @@ SGStrataPopup {
                     }
 
                     function openPopup() {
-                        if ((passReqsPopup.opened === false) && (passReqs.passwordValid === false)) {
+                        if (passReqsPopup.opened === false
+                                && passReqs.passwordValid === false
+                                && newPasswordRow.editable)
+                        {
                             passReqsPopup.open()
                         }
                     }
