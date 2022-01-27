@@ -318,16 +318,21 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 {
     PlatformDocument* platDoc = documents_.value(classId, nullptr);
     if (platDoc == nullptr) {
-        std::string document;
-        if (db_->getDocument(classId.toStdString(), document) == false) {
-            qCCritical(lcHcsStorage) << "Platform document not found.";
+        std::string dbDoc;
+        if (db_->getDocument(classId.toStdString(), dbDoc) == false) {
+            qCCritical(lcHcsStorage).noquote().nospace()
+                << "Platform document not found (class ID " << classId << ").";
             return nullptr;
         }
+        QByteArray document(QByteArray::fromStdString(dbDoc));
 
         platDoc = new PlatformDocument(classId);
 
-        if (platDoc->parseDocument(QString::fromStdString(document)) == false) {
-            qCCritical(lcHcsStorage) << "Parse platform document failed!";
+        if (platDoc->parseDocument(document) == false) {
+            qCCritical(lcHcsStorage).noquote().nospace()
+                << "Parsing of platform document " << classId << " failed!";
+            qCDebug(lcHcsStorage).noquote().nospace()
+                << "Faulty document: '" << document << '\'';
 
             delete platDoc;
             return nullptr;
@@ -400,7 +405,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonArray parts_list;
 
-        for (PlatformDatasheetItem i : platDoc->getDatasheetList()) {
+        for (const PlatformDatasheetItem &i : platDoc->getDatasheetList()) {
             parts_list.append(i.opn);
         }
 
