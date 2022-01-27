@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 
 SGWidgets.SGMainWindow {
@@ -63,5 +64,17 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/PrtAboutWindow.qml")
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            bottomMargin: 60
+            leftMargin: 20
+        }
+
+        signalTarget: prtModel
     }
 }

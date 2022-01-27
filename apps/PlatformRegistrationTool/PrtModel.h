@@ -102,6 +102,7 @@ signals:
     void setAssistedPlatformIdFinished(QString statusString);
     void startBootloaderFinished(QString errorString);
     void startApplicationFinished(QString errorString);
+    void notifyQmlError(QString notifyQmlError);
 
 private slots:
     void deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized, bool inBootloader);
