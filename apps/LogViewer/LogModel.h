@@ -75,6 +75,7 @@ signals:
     void countChanged();
     void oldestTimestampChanged();
     void newestTimestampChanged();
+    void notifyQmlError(QString notifyQmlError);
 
 private:
     bool followingInitialized_ = false;

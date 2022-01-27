@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
 import QtQuick.Controls 2.12
 import QtQml 2.12
@@ -151,5 +152,17 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/LogViewerAboutWindow.qml")
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            bottomMargin: 60
+            rightMargin: 170
+            right: parent.right
+            bottom: parent.bottom
+        }
+
+        signalTarget: logModel
     }
 }

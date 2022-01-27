@@ -22,6 +22,7 @@
 #include <QVariant>
 #include <QQuickView>
 #include <QQmlContext>
+#include <QQmlFileSelector>
 #ifdef Q_OS_WIN
 #include <QVersionNumber>
 #endif
@@ -134,14 +135,54 @@ int main(int argc, char *argv[]) {
     qCInfo(lcLogViewer) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(lcLogViewer) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
+    loadResources();
+
+    LogModel logModel_;
+
     QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
 
     qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
     qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
-    loadResources();
+    const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcLogViewer) << "Supportrd plugins:" << supportedPlugins.join(", ");
+        selector.setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCDebug(lcLogViewer) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcLogViewer) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
+
     addImportPaths(&engine);
+
+    engine.rootContext()->setContextProperty("logModel", &logModel_);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
+                    [&logModel_](const QList<QQmlError> &warnings) {
+                        QStringList msg;
+                        foreach (const QQmlError &error, warnings) {
+                            msg << error.toString();
+                        }
+                        emit logModel_.notifyQmlError(msg.join(QStringLiteral("\n")));
+                    });
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty()) {

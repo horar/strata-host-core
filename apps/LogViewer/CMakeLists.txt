@@ -36,6 +36,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     qml.qrc
 )
 
+set(${PROJECT_NAME}_ENABLED_PLUGINS "")
+add_qml_debug_plugin_to_version(PROJ_NAME ${PROJECT_NAME} PLUGIN_NAME "qmldebug")
+
 generate_app_version(GITTAG_PREFIX "lv_" MACBUNDLE ON)
 generate_app_build_timestamp()
 
