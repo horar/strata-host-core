@@ -345,7 +345,10 @@ SGWidgets.SGMainWindow {
     SGDebugWidgets.SGQmlDebug {
         id: qmlDebug
         anchors {
-            fill: parent
+            bottomMargin: 60
+            leftMargin: 20
+            bottom: parent.bottom
+            left: parent.left
         }
 
         signalTarget: sdsModel
