@@ -169,7 +169,10 @@ SGWidgets.SGMainWindow {
     SGDebugWidgets.SGQmlDebug {
         id: qmlDebug
         anchors {
-            fill: parent
+            topMargin: 10
+            rightMargin: 170
+            right: parent.right
+            top: parent.top
         }
 
             signalTarget: sciModel

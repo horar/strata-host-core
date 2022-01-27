@@ -172,11 +172,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
-    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    qInfo(lcSci) << "---->  plugins empty:" << supportedPLugins.empty();
-    if (supportedPLugins.empty() == false) {
-        qInfo(lcSci) << "Supportrd plugins:" << supportedPLugins.join(", ");
-        selector.setExtraSelectors(supportedPLugins);
+    const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcSci) << "Supportrd plugins:" << supportedPlugins.join(", ");
+        selector.setExtraSelectors(supportedPlugins);
 
         QDir applicationDir(QCoreApplication::applicationDirPath());
         #ifdef Q_OS_MACOS
@@ -185,12 +184,19 @@ int main(int argc, char *argv[])
             applicationDir.cdUp();
         #endif
 
-        QResource::registerResource(applicationDir.filePath("plugins/qmldebug.rcc"));
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCDebug(lcSci) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcSci) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
     }
 
-    // selector.setExtraSelectors({"qmldebug"});
     addImportPaths(&engine);
-
 
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
 
@@ -200,7 +206,6 @@ int main(int argc, char *argv[])
                         foreach (const QQmlError &error, warnings) {
                             msg << error.toString();
                         }
-                        qInfo(lcSci) << "----> main.cpp";
                         emit sciModel_.notifyQmlError(msg.join(QStringLiteral("\n")));
                     });
 
