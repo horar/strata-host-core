@@ -73,13 +73,8 @@ private:
     QList<ControlViewFileItem> controlViewList_;
     PlatformFileItem platformSelector_;
 
-    enum class getArrayResult {
-        Ok,
-        MissingKey,
-        NotAnArray
-    };
-
-    getArrayResult getArrayFromDocument(const QJsonObject &document, const QString &key, QJsonArray &array) const;
+    bool getObjectFromJson(const QJsonObject &json, const QString &key, QJsonObject &destObject) const;
+    bool getArrayFromJson(const QJsonObject &json, const QString &key, bool mandatory, QJsonArray &destArray) const;
 
     bool populateFileObject(const QJsonObject& jsonObject, PlatformFileItem &file);
     void populateFileList(const QJsonArray &jsonList, QList<PlatformFileItem> &fileList);

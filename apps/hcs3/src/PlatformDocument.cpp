@@ -15,6 +15,10 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+constexpr int CONTROLLER_TYPE_EMBEDDED(1);
+constexpr int CONTROLLER_TYPE_ASSISTED(2);
+constexpr int CONTROLLER_TYPE_CONTROLLER(3);
+
 QDebug operator<<(QDebug dbg, const PlatformFileItem &item) {
 
     dbg.nospace() << "PlatformFileItem("
@@ -52,93 +56,86 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
 
     const QJsonObject rootObject = jsonRoot.object();
 
-    QJsonObject::const_iterator jsonIter;
-
-    //documents
-    jsonIter = rootObject.constFind(JSON_DOCUMENTS);
-    if (jsonIter == rootObject.constEnd()) {
-        qCCritical(lcHcsPlatformDocument) << this << '\'' << JSON_DOCUMENTS << "' key is missing";
-        return false;
-    }
-
-    if (jsonIter->isObject() == false) {
-        qCCritical(lcHcsPlatformDocument) << this << "value of '" << JSON_DOCUMENTS << "' key is not an object";
-        return false;
-    }
-
-    const QJsonObject jsonDocument = jsonIter->toObject();
-
-    getArrayResult result;
-    QJsonArray jsonArray;
-
-    //datasheets
-    result = getArrayFromDocument(jsonDocument, JSON_DATASHEETS, jsonArray);
-    if (result == getArrayResult::Ok) {
-        populateDatasheetList(jsonArray, datasheetsList_);
-    } else {
-        // some older platforms do not have 'datasheets' key and rely on datasheets.csv file instead
-        if (result != getArrayResult::MissingKey) {
+    int controllerType;
+    // For fields which should be contained in JSON for each controller type see:
+    // https://confluence.onsemi.com/pages/viewpage.action?pageId=52887821
+    // https://confluence.onsemi.com/display/SPYG/Proposals+for+class_id+documents+modification
+    {
+        const QJsonValue controllerValue = rootObject.value(JSON_CONTROLLER_TYPE);
+        if (controllerValue.isDouble() == false) {
+            qCCritical(lcHcsPlatformDocument) << this << "invalid / missing '" << JSON_CONTROLLER_TYPE << "' key";
+            return false;
+        }
+        controllerType = controllerValue.toInt(0);
+        if (controllerType != CONTROLLER_TYPE_EMBEDDED
+                && controllerType != CONTROLLER_TYPE_ASSISTED
+                && controllerType != CONTROLLER_TYPE_CONTROLLER) {
+            qCCritical(lcHcsPlatformDocument) << this << "unsupported value of '" << JSON_CONTROLLER_TYPE << "' key";
             return false;
         }
     }
 
-    //downloads
-    result = getArrayFromDocument(jsonDocument, JSON_DOWNLOADS, jsonArray);
-    if (result == getArrayResult::Ok) {
-        populateFileList(jsonArray, downloadList_);
-    } else {
-        return false;
-    }
+    QJsonArray jsonArray;
 
-    //views
-    result = getArrayFromDocument(jsonDocument, JSON_VIEWS, jsonArray);
-    if (result == getArrayResult::Ok) {
+    // documents
+    QJsonObject documentsObject;
+    if (getObjectFromJson(rootObject, JSON_DOCUMENTS, documentsObject) == true) {
+        // datasheets
+        // some older platforms do not have 'datasheets' key and rely on datasheets.csv file instead - set 'mandatory' flag to 'false'
+        if (getArrayFromJson(documentsObject, JSON_DATASHEETS, false, jsonArray) == false) {
+            return false;
+        }
+        populateDatasheetList(jsonArray, datasheetsList_);
+
+        // downloads
+        if (getArrayFromJson(documentsObject, JSON_DOWNLOADS, true, jsonArray) == false) {
+            return false;
+        }
+        populateFileList(jsonArray, downloadList_);
+
+        // views
+        if (getArrayFromJson(documentsObject, JSON_VIEWS, true, jsonArray) == false) {
+            return false;
+        }
         populateFileList(jsonArray, viewList_);
     } else {
+        // 'documents' object is not mandatory for controller type 'controller'
+        if (controllerType != CONTROLLER_TYPE_CONTROLLER) {
+            return false;
+        }
+    }
+
+    // platform selector
+    QJsonObject platformSelectorObject;
+    if (getObjectFromJson(rootObject, JSON_PLATFORM_SELECTOR, platformSelectorObject) == false) {
         return false;
     }
 
-    //platform selector
-    jsonIter = rootObject.constFind(JSON_PLATFORM_SELECTOR);
-    if (jsonIter == rootObject.constEnd()) {
-        qCCritical(lcHcsPlatformDocument) << this << '\'' << JSON_PLATFORM_SELECTOR << "' key is missing";
-        return false;
-    }
-
-    if (jsonIter->isObject() == false) {
-        qCCritical(lcHcsPlatformDocument) << this << "value of '" << JSON_PLATFORM_SELECTOR << "' key is not an object";
-        return false;
-    }
-
-    if (populateFileObject(jsonIter->toObject(), platformSelector_) == false) {
+    if (populateFileObject(platformSelectorObject, platformSelector_) == false) {
         qCCritical(lcHcsPlatformDocument) << this << "value of '" << JSON_PLATFORM_SELECTOR << "' key is not valid";
         return false;
     }
 
-    //name
+    // name
     name_ = rootObject.value(JSON_NAME).toString();
 
-    //firmware
-    result = getArrayFromDocument(rootObject, JSON_FIRMWARE, jsonArray);
-    if (result == getArrayResult::Ok) {
-        populateFirmwareList(jsonArray, firmwareList_);
-    } else {
-        // Nowadays, server does not support firmware object. Return false when it will be supported.
-        if (result != getArrayResult::MissingKey) {
+    // firmware
+    if (controllerType != CONTROLLER_TYPE_CONTROLLER) {
+        // controller type 'controller' does not have 'firmware' array
+        // Nowadays, server does not support firmware object. Make it mandatory when it will be supported.
+        if (getArrayFromJson(rootObject, JSON_FIRMWARE, false, jsonArray) == false) {
             return false;
         }
+        populateFirmwareList(jsonArray, firmwareList_);
     }
 
-    //control view
-    result = getArrayFromDocument(rootObject, JSON_CONTROL_VIEW, jsonArray);
-    if (result == getArrayResult::Ok) {
-        populateControlViewList(jsonArray, controlViewList_);
-    } else {
-        // Nowadays, server does not support control_view object. Return false when it will be supported.
-        if (result != getArrayResult::MissingKey) {
-            return false;
-        }
+    // control view
+    // Nowadays, server does not support control_view object. Make it mandatory when it will be supported.
+    // This probably will be mandatory only for 'embedded' and 'assisted' controller type.
+    if (getArrayFromJson(rootObject, JSON_CONTROL_VIEW, false, jsonArray) == false) {
+        return false;
     }
+    populateControlViewList(jsonArray, controlViewList_);
 
     return true;
 }
@@ -178,23 +175,45 @@ const PlatformFileItem &PlatformDocument::platformSelector()
     return platformSelector_;
 }
 
-PlatformDocument::getArrayResult PlatformDocument::getArrayFromDocument
-    (const QJsonObject &document, const QString &key, QJsonArray &array) const
+bool PlatformDocument::getObjectFromJson(const QJsonObject &json, const QString &key, QJsonObject &destObject) const
 {
-    QJsonObject::const_iterator jsonIter = document.constFind(key);
+    QJsonObject::const_iterator jsonIter = json.constFind(key);
 
-    if (jsonIter == document.constEnd()) {
-        qCWarning(lcHcsPlatformDocument) << this << '\'' << key << "' key is missing";
-        return getArrayResult::MissingKey;
+    if (jsonIter == json.constEnd()) {
+        qCCritical(lcHcsPlatformDocument) << this << '\'' << key << "' key is missing";
+        return false;
+    }
+
+    if (jsonIter->isObject() == false) {
+        qCCritical(lcHcsPlatformDocument) << this << "value of '" << key << "' key is not an object";
+        return false;
+    }
+
+    destObject = jsonIter->toObject();
+    return true;
+}
+
+bool PlatformDocument::getArrayFromJson(const QJsonObject &json, const QString &key, bool mandatory, QJsonArray &destArray) const
+{
+    QJsonObject::const_iterator jsonIter = json.constFind(key);
+
+    if (jsonIter == json.constEnd()) {
+        if (mandatory) {
+            qCCritical(lcHcsPlatformDocument) << this << '\'' << key << "' key is missing";
+            return false;
+        }
+        qCDebug(lcHcsPlatformDocument) << this << '\'' << key << "' key is not present";
+        destArray = QJsonArray();
+        return true;
     }
 
     if (jsonIter->isArray()) {
-        array = jsonIter->toArray();
-        return getArrayResult::Ok;
+        destArray = jsonIter->toArray();
+        return true;
     }
 
     qCCritical(lcHcsPlatformDocument) << this << "value of '" << key << "' key is not an array";
-    return getArrayResult::NotAnArray;
+    return false;
 }
 
 bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, PlatformFileItem &file)
