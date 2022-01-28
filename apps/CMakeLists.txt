@@ -25,7 +25,6 @@ if(NOT MINGW)
     # DevStudio plugins
     include(AddDevStudioPLugin)
     include(AddQmlDebugPlugin)
-    include(AddQmlDebugPluginVersion)
     cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_DEBUGBAR "Build DevStudio 'debugbar' plugin" ON
         "APPS_CORESW_SDS" OFF)
     add_feature_info(APPS_CORESW_SDS_PLUGIN_DEBUGBAR APPS_CORESW_SDS_PLUGIN_DEBUGBAR "DevStudio 'debugbar' plugin")
