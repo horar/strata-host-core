@@ -36,7 +36,7 @@ Item {
     property bool pdfAccordionState: false
     property bool datasheetAccordionState: false
     property bool downloadAccordionState: false
-    property var currentDocumentCategory : false
+    property bool currentDocumentCategory : false
     property string categoryOpened: "platform documents"
     signal finished()
 
@@ -45,14 +45,18 @@ Item {
     onTotalDocumentsChanged: {
         if(helpIcon.class_id === "help_docs_demo" ) {
             pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
+            pdfViewer.remoteUrl = ""
         }
         else {
             if (classDocuments.pdfListModel.count > 0) {
                 pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
+                pdfViewer.remoteUrl = ""
             } else if (classDocuments.datasheetListModel.count > 0) {
-                pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
+                pdfViewer.url = ""
+                pdfViewer.remoteUrl = classDocuments.datasheetListModel.getFirstUri()
             } else {
                 pdfViewer.url = ""
+                pdfViewer.remoteUrl = ""
             }
         }
 
@@ -128,6 +132,7 @@ Item {
         onErrorStringChanged: {
             if (classDocuments.errorString.length > 0) {
                 pdfViewer.url = ""
+                pdfViewer.remoteUrl = ""
                 loadingImage.currentFrame = 0
             }
         }
@@ -281,7 +286,7 @@ Item {
 
             EmptyDocuments {
                 id: empty
-                visible: pdfViewer.url === "" && loading.visible === false
+                visible: pdfViewer.url === "" && pdfViewer.remoteUrl === "" && loading.visible === false
                 anchors {
                     fill: parent
                 }

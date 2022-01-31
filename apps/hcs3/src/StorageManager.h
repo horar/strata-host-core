@@ -101,6 +101,11 @@ public slots:
             const QStringList &partialUriList,
             const QString &destinationDir);
 
+    void requestDownloadDatasheetFile(
+            const QByteArray &clientId,
+            const QString &fileUrl,
+            const QString &classId);
+
     void requestDownloadControlView(
             const QByteArray &clientId,
             const QString &partialUri,
@@ -116,10 +121,10 @@ public slots:
     void updatePlatformDoc(const QString &classId);
 
 signals:
-    void downloadPlatformFilePathChanged(QByteArray clientId, const QString& originalFilePath, const QString& effectiveFilePath);
+    void downloadPlatformFilePathChanged(QByteArray clientId, const QString& fileURL, const QString& originalFilePath, const QString& effectiveFilePath);
 
-    void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
-    void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
+    void downloadPlatformSingleFileProgress(QByteArray clientId, const QString& fileURL, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
+    void downloadPlatformSingleFileFinished(QByteArray clientId, const QString& fileURL, QString filePath, QString errorString);
     void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
     void downloadControlViewProgress(QByteArray clientId, QString partialUri, QString classId, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
@@ -195,5 +200,6 @@ private:
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
     QHash<QString /*groupId*/, QString /*partialUri*/ > downloadControlViewUris_;
+    QHash<QString /*groupId*/, QString /*URL*/ > downloadUrls_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
 };

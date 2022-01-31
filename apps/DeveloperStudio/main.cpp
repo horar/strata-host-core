@@ -35,6 +35,7 @@
 
 #include "SDSModel.h"
 #include "DocumentManager.h"
+#include "FileDownloader.h"
 #include "ResourceLoader.h"
 #include "CoreUpdate.h"
 #include "SGQrcTreeModel.h"
@@ -168,6 +169,7 @@ int main(int argc, char *argv[])
     }
 
     qmlRegisterUncreatableType<ResourceLoader>("tech.strata.ResourceLoader", 1, 0, "ResourceLoader", "You can't instantiate ResourceLoader in QML");
+    qmlRegisterUncreatableType<FileDownloader>("tech.strata.FileDownloader", 1, 0, "FileDownloader", QStringLiteral("You can't instantiate FileDownloader in QML"));
     qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.strata.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");

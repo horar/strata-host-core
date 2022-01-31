@@ -10,17 +10,33 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtWebEngine 1.6
 import QtGraphicalEffects 1.12
+import tech.strata.commoncpp 1.0 as CommonCpp
 
 Rectangle {
     id: root
     color: "#191919" // color of PDF.js background
 
     property string url: "datasheet-unavailable"
+    property string remoteUrl: ""
+    property string errorString: ""
+    property string downloadStatus: ""
 
-    signal error()
+    onUrlChanged: {
+        root.errorString = ""
+        root.downloadStatus = ""
+    }
+
+    onRemoteUrlChanged: {
+        root.errorString = ""
+        root.downloadStatus = ""
+        if (root.remoteUrl != "") {
+            const class_id = (view.is_assisted && view.class_id.length === 0) ? view.controller_class_id : view.class_id
+            sdsModel.fileDownloader.downloadDatasheetFile(root.remoteUrl, class_id)
+        }
+    }
 
     Text {
-        id: progress
+        id: loadProgress
         color: "#3f3f3f"
         anchors {
             centerIn: parent
@@ -123,52 +139,65 @@ Rectangle {
         onJavaScriptConsoleMessage: {
             //        console.log("onJavaScriptConsoleMessage: " + " L:"+ level + " line: " + lineNumber + JSON.stringify(message))
             if (JSON.stringify(message) === "\"Uncaught (in promise) Error: An error occurred while loading the PDF.\"") {
-                root.error()
+                root.errorString = "Javascript Error: An error occurred while loading the PDF"
             }
         }
     }
 
     Rectangle {
-        id: disabledCoverUp
+        id: coverUp
         color: "black"
         opacity: 0.6
         anchors {
             fill: parent
         }
-        visible: !webEngine.enabled && !progress.visible && !notAvailableCoverUp.visible
+        visible: (root.url === "datasheet-unavailable") ||
+                 (root.downloadStatus.length > 0) ||
+                 (root.errorString.length > 0) ||
+                 (!webEngine.enabled && !loadProgress.visible)
     }
 
     Text {
-        text: "No Document Loaded"
+        text: {
+            if (root.url === "datasheet-unavailable") {
+                return "Datasheet Unavailable<br><br>Please contact your local sales representative"
+            } else if (root.errorString.length > 0) {
+                return root.errorString
+            } else if (root.downloadStatus.length > 0) {
+                return "Downloading PDF...<br>" + root.downloadStatus
+            } else {
+                return "No Document Loaded"
+            }
+        }
         color: "white"
-        anchors {
-            centerIn: disabledCoverUp
-        }
-        visible: disabledCoverUp.visible
-    }
-
-    Rectangle {
-        id: notAvailableCoverUp
-        color: "black"
-        opacity: 0.6
-        anchors {
-            fill: parent
-        }
-        visible: root.url === "datasheet-unavailable"
-    }
-
-    Text {
-        text: "Datasheet Unavailable<br><br>Please contact your local sales representative"
-        color: "white"
-        font {
-            pixelSize: 20
-        }
+        font.pixelSize: 20
         wrapMode: Text.Wrap
-        width: notAvailableCoverUp.width
+        width: coverUp.width
         anchors {
-            centerIn: notAvailableCoverUp
+            centerIn: coverUp
         }
         horizontalAlignment: Text.AlignHCenter
-        visible: notAvailableCoverUp.visible
+        visible: coverUp.visible
+    }
+
+    Connections {
+        target: sdsModel.fileDownloader
+
+        onDownloadStatus: {
+            if (root.url === "" && root.remoteUrl === fileUrl) {
+                root.downloadStatus = downloadStatus
+            }
+        }
+
+        onDownloadFinished: {
+            if (root.url === "" && root.remoteUrl === fileUrl) {
+                if (errorString) {
+                    root.errorString = errorString
+                } else {
+                    root.url = "file://localhost/" + filePath
+                    // keep the remoteUrl set so it can be used as index
+                }
+            }
+        }
     }
 }

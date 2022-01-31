@@ -60,8 +60,11 @@ bool HostControllerService::initialize(const QString &config)
         "load_documents",
         std::bind(&HostControllerService::processCmdLoadDocuments, this, std::placeholders::_1));
     strataServer_->registerHandler(
-        "download_files",
-        std::bind(&HostControllerService::processCmdDownloadFiles, this, std::placeholders::_1));
+        "download_datasheet_file",
+        std::bind(&HostControllerService::processCmdDownloadDatasheetFile, this, std::placeholders::_1));
+    strataServer_->registerHandler(
+        "download_platform_files",
+        std::bind(&HostControllerService::processCmdDownloadPlatformFiles, this, std::placeholders::_1));
     strataServer_->registerHandler("dynamic_platform_list",
                                    std::bind(&HostControllerService::processCmdDynamicPlatformList,
                                              this, std::placeholders::_1));
@@ -221,9 +224,10 @@ void HostControllerService::onAboutToQuit()
 }
 
 void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
-    const QByteArray &clientId, const QString &originalFilePath, const QString &effectiveFilePath)
+    const QByteArray &clientId, const QString &fileUrl, const QString &originalFilePath, const QString &effectiveFilePath)
 {
     QJsonObject payload {
+        { "file_url", fileUrl },
         { "original_filepath", originalFilePath },
         { "effective_filepath", effectiveFilePath }
     };
@@ -234,9 +238,10 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
-    const QByteArray &clientId, const QString &filePath, qint64 bytesReceived, qint64 bytesTotal)
+    const QByteArray &clientId, const QString &fileUrl, const QString &filePath, qint64 bytesReceived, qint64 bytesTotal)
 {
     QJsonObject payload {
+        { "file_url", fileUrl },
         { "filepath", filePath },
         { "bytes_received", bytesReceived },
         { "bytes_total", bytesTotal }
@@ -249,9 +254,10 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
-    const QByteArray &clientId, const QString &filePath, const QString &errorString)
+    const QByteArray &clientId, const QString &fileUrl, const QString &filePath, const QString &errorString)
 {
     QJsonObject payload {
+        { "file_url", fileUrl },
         { "filepath", filePath },
         { "error_string", errorString }
     };
@@ -504,7 +510,33 @@ void HostControllerService::processCmdLoadDocuments(const strataRPC::Message &me
     storageManager_.requestPlatformDocuments(message.clientID, classId);
 }
 
-void HostControllerService::processCmdDownloadFiles(const strataRPC::Message &message)
+void HostControllerService::processCmdDownloadDatasheetFile(const strataRPC::Message &message)
+{
+    QString url = message.payload.value("url").toString();
+    if (url.isEmpty()) {
+        QString errorMessage(QStringLiteral("url attribute is empty or has bad format"));
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
+        qCWarning(lcHcs) << errorMessage;
+        return;
+    }
+
+    if (QUrl(url).fileName().isEmpty()) {
+        QString errorMessage(QStringLiteral("url attribute bad format - missing filename"));
+        strataServer_->notifyClient(message, QJsonObject{{"message", errorMessage}},
+                                    strataRPC::ResponseType::Error);
+        qCWarning(lcHcs) << errorMessage;
+        return;
+    }
+
+    QString classId = message.payload.value("class_id").toString();
+    storageManager_.requestDownloadDatasheetFile(message.clientID, url, classId);
+
+    strataServer_->notifyClient(message, QJsonObject{{"message", "Datasheet file download requested."}},
+                                strataRPC::ResponseType::Response);
+}
+
+void HostControllerService::processCmdDownloadPlatformFiles(const strataRPC::Message &message)
 {
     QStringList partialUriList;
     QString destinationDir = message.payload.value("destination_dir").toString();
@@ -534,7 +566,7 @@ void HostControllerService::processCmdDownloadFiles(const strataRPC::Message &me
 
     storageManager_.requestDownloadPlatformFiles(message.clientID, partialUriList, destinationDir);
 
-    strataServer_->notifyClient(message, QJsonObject{{"message", "file download requested"}},
+    strataServer_->notifyClient(message, QJsonObject{{"message", "platform files download requested"}},
                                 strataRPC::ResponseType::Response);
 }
 
