@@ -331,7 +331,7 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
         if (platDoc->parseDocument(document) == false) {
             qCCritical(lcHcsStorage).noquote().nospace()
                 << "Parsing of platform document " << classId << " failed!";
-            qCDebug(lcHcsStorage).noquote().nospace()
+            qCWarning(lcHcsStorage).noquote().nospace()
                 << "Faulty document: '" << document << '\'';
 
             delete platDoc;

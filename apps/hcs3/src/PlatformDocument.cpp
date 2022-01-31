@@ -57,20 +57,18 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
     const QJsonObject rootObject = jsonRoot.object();
 
     int controllerType;
-    // For fields which should be contained in JSON for each controller type see:
-    // https://confluence.onsemi.com/pages/viewpage.action?pageId=52887821
-    // https://confluence.onsemi.com/display/SPYG/Proposals+for+class_id+documents+modification
     {
         const QJsonValue controllerValue = rootObject.value(JSON_CONTROLLER_TYPE);
         if (controllerValue.isDouble() == false) {
-            qCCritical(lcHcsPlatformDocument) << this << "invalid / missing '" << JSON_CONTROLLER_TYPE << "' key";
+            qCCritical(lcHcsPlatformDocument) << this << "key '" << JSON_CONTROLLER_TYPE << "' is not a number / is missing";
             return false;
         }
         controllerType = controllerValue.toInt(0);
         if (controllerType != CONTROLLER_TYPE_EMBEDDED
                 && controllerType != CONTROLLER_TYPE_ASSISTED
                 && controllerType != CONTROLLER_TYPE_CONTROLLER) {
-            qCCritical(lcHcsPlatformDocument) << this << "unsupported value of '" << JSON_CONTROLLER_TYPE << "' key";
+            qCCritical(lcHcsPlatformDocument) << this << "unsupported value ("
+                << controllerValue.toDouble() << ") of '" << JSON_CONTROLLER_TYPE << "' key";
             return false;
         }
     }
