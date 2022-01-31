@@ -114,7 +114,20 @@ int main(int argc, char *argv[]) {
     qCInfo(lcLogViewer) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcLogViewer) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(lcLogViewer) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+
+#if defined(Q_OS_WIN)
+    QVersionNumber kernelVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
+    if ((kernelVersion.majorVersion() == 10) &&
+        (kernelVersion.minorVersion() == 0) &&
+        (kernelVersion.microVersion() >= 21996)) {
+        qCInfo(lcLogViewer).nospace() << "Running on Windows 11 (" << kernelVersion.majorVersion() << "." << kernelVersion.minorVersion() << ")";
+    } else {
+        qCInfo(lcLogViewer) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    }
+#else
     qCInfo(lcLogViewer) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+#endif
+
     qCInfo(lcLogViewer) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(lcLogViewer) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 

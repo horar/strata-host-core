@@ -141,7 +141,20 @@ int main(int argc, char *argv[])
     qCInfo(lcDevStudio) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcDevStudio) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(lcDevStudio) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+
+#if defined(Q_OS_WIN)
+    QVersionNumber kernelVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
+    if ((kernelVersion.majorVersion() == 10) &&
+        (kernelVersion.minorVersion() == 0) &&
+        (kernelVersion.microVersion() >= 21996)) {
+        qCInfo(lcDevStudio).nospace() << "Running on Windows 11 (" << kernelVersion.majorVersion() << "." << kernelVersion.minorVersion() << ")";
+    } else {
+        qCInfo(lcDevStudio) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    }
+#else
     qCInfo(lcDevStudio) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+#endif
+
     if (QSslSocket::supportsSsl()) {
         qCInfo(lcDevStudio) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {
