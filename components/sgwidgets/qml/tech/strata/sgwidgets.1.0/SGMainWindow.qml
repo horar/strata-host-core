@@ -43,14 +43,6 @@ ApplicationWindow {
             desktopAvailableHeight = Screen.desktopAvailableHeight
         }
     }
-    Rectangle {
-        color: "lightgrey"
-        opacity: 1
-        anchors {
-            top: parent.top
-            left: parent.left
-        }
-    }
 
     Component.onCompleted: {
         // bug present in following few lines reported here: https://jira.onsemi.com/browse/CS-1914
