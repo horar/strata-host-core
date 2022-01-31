@@ -67,17 +67,20 @@ public slots:
 
     void sendDownloadPlatformFilePathChangedMessage(
             const QByteArray &clientId,
+            const QString &fileUrl,
             const QString &originalFilePath,
             const QString &effectiveFilePath);
 
     void sendDownloadPlatformSingleFileProgressMessage(
             const QByteArray &clientId,
+            const QString &fileUrl,
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);
 
     void sendDownloadPlatformSingleFileFinishedMessage(
             const QByteArray &clientId,
+            const QString &fileUrl,
             const QString &filePath,
             const QString &errorString);
 
@@ -170,7 +173,8 @@ private:
 
     void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
     void processCmdLoadDocuments(const strata::strataRPC::Message &message);
-    void processCmdDownloadFiles(const strata::strataRPC::Message &message);
+    void processCmdDownloadDatasheetFile(const strata::strataRPC::Message &message);
+    void processCmdDownloadPlatformFiles(const strata::strataRPC::Message &message);
     void processCmdDynamicPlatformList(const strata::strataRPC::Message &message);
     void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
     void processCmdDownlodView(const strata::strataRPC::Message &message);

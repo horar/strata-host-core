@@ -12,6 +12,7 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "ResourceLoader.h"
+#include "FileDownloader.h"
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
@@ -42,6 +43,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
+      fileDownloader_(new FileDownloader(strataClient_, coreInterface_, this)),
       newControlView_(new SGNewControlView(this)),
       firmwareUpdater_(new FirmwareUpdater(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
@@ -199,6 +201,11 @@ CoreInterface *SDSModel::coreInterface() const
 ResourceLoader *SDSModel::resourceLoader() const
 {
     return resourceLoader_;
+}
+
+FileDownloader *SDSModel::fileDownloader() const
+{
+    return fileDownloader_;
 }
 
 SGNewControlView *SDSModel::newControlView() const

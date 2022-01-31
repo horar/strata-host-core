@@ -18,7 +18,7 @@ Item {
     height: wrapper.height + 20
 
     property alias model: repeater.model
-    property var documentCurrentIndex: 0
+    property int documentCurrentIndex: 0
     property bool historySeen: false
 
     Column {
@@ -49,13 +49,12 @@ Item {
                 property string effectiveUri: {
                     if(helpIcon.class_id === "help_docs_demo") {
                         return "qrc:/tech/strata/common/ContentView/images/" + model.uri
-                    }
-                    else {
+                    } else {
                         return "file://localhost/" + model.uri
                     }
                 }
 
-                property var currentDocumentCategory: view.currentDocumentCategory
+                property bool currentDocumentCategory: view.currentDocumentCategory
                 onCurrentDocumentCategoryChanged: {
                     if(categoryOpened === "platform documents") {
                         if(currentDocumentCategory) {
@@ -82,6 +81,7 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         pdfViewer.url = effectiveUri
+                        pdfViewer.remoteUrl = ""
                     }
                 }
 
