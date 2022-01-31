@@ -78,8 +78,32 @@ R"(
     )
 );
 
+const rapidjson::SchemaDocument Platform::bootloaderActiveSchema_(
+    CommandValidator::parseSchema(
+R"(
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "notification": {
+      "type": "object",
+      "properties": {
+        "value": {"type": "string", "pattern": "^bootloader_active$"}
+      },
+      "required": ["value"]
+    }
+  },
+  "required": ["notification"]
+}
+)"
+    )
+);
+
 void Platform::messageReceivedHandler(QByteArray rawMsg) {
-    // re-emit the message first, then validate for platform_id_changed
+    // ignore empty messages
+    if (rawMsg.isEmpty() || rawMsg == "\n") {
+        return;
+    }
 
     PlatformMessage message(rawMsg);
 
@@ -88,13 +112,16 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
             << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
+    // re-emit the message first, then validate for 'platform_id_changed' or 'bootloader_active'
     emit messageReceived(message);
 
     if (message.isJsonValidObject()) {
         if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema_, message.json(), true)) {
             qCInfo(lcPlatform) << this << "Received 'platform_id_changed' notification";
-
             emit platformIdChanged();
+        } else if (CommandValidator::validateJsonWithSchema(bootloaderActiveSchema_, message.json(), true)) {
+            qCInfo(lcPlatform) << this << "Received 'bootloader_active' notification";
+            emit bootloaderActive();
         }
     }
 }

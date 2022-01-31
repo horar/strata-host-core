@@ -60,6 +60,9 @@ CommandResult CmdWait::onTimeout()
 void CmdWait::setWaitTime(std::chrono::milliseconds waitTime)
 {
     waitTime_ = waitTime;
+    qCInfo(lcPlatformCommand) << platform_ << description_
+        << ": Setting new timeout to " << waitTime_.count() << " milliseconds.";
+    responseTimer_.setInterval(waitTime_);
 }
 
 void CmdWait::deviceErrorOccured(device::Device::ErrorCode errCode, QString errStr)
