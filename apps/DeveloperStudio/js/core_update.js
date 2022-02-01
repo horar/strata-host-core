@@ -16,12 +16,13 @@ var coreInterface
 var updateLoader
 var strataClient
 
-var update_info_string = ""
+var checking_for_updates = false
 var compact_update_info_string = ""
 var last_known_update_info_string = ""
 var last_notification_timestamp = 0
 var error_string = ""
 
+var update_model
 var settings_object
 var notification_mode
 
@@ -35,6 +36,7 @@ function initialize (newSdsModel, newUpdateLoader) {
     coreInterface = newSdsModel.coreInterface
     updateLoader = newUpdateLoader
     strataClient = newSdsModel.strataClient
+    update_model = Qt.createQmlObject("import QtQuick 2.0; ListModel {}", Qt.application)
     settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
     getUserNotificationModeFromINIFile()
     getLastKnownNotificationTimestampFromINIFile()
@@ -43,28 +45,40 @@ function initialize (newSdsModel, newUpdateLoader) {
 }
 
 function getUpdateInformation () {
-    strataClient.sendRequest("check_for_updates",{});
+    error_string = ""
+    compact_update_info_string = ""
+    checking_for_updates = true
+
+    clearModelData()
+    refreshUpdatePopupData()
+    enableMenuItemAndAlertIcon(false)
+
+    strataClient.sendRequest("check_for_updates",{})
 }
 
 function parseUpdateInfo (payload) {
+    checking_for_updates = false
+    // other data is already cleared in getUpdateInformation()
+
     if (payload.hasOwnProperty("component_list")) {
         var current_timestamp = new Date().getTime()
         if (payload.component_list.length === 0) {
             console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received no updates available notification")
-            update_info_string = ""
-            compact_update_info_string = ""
             setLastKnownUpdateInfo()
-            return;
+            refreshUpdatePopupData()
+            return
         }
 
         console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received updates available notification")
         processUpdateInfo(payload.component_list)
 
         if (compact_update_info_string.length > 0) {
-            enableMenuItemAndAlertIcon()
+            enableMenuItemAndAlertIcon(true)
         } else {
-            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received invalid updates notification")
-            return;
+            error_string = "Received invalid updates notification"
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, error_string)
+            refreshUpdatePopupData()
+            return
         }
 
         // Check if latest_version is newer than last known version in the INI (offer update even if currently on "Don't Ask Again" mode)
@@ -77,65 +91,76 @@ function parseUpdateInfo (payload) {
             setLastKnownUpdateInfo()
             setLastKnownNotificationTimestamp(current_timestamp)
             setUserNotificationMode("AskAgainLater")
-            enableMenuItemAndAlertIcon()
+            enableMenuItemAndAlertIcon(true)
             createUpdatePopup()
+            return
         } else {
             console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "User already requested to not update to these versions")
         }
     } else if (payload.hasOwnProperty("error_string") && payload.error_string.length > 0) {
-        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, payload.error_string);
+        error_string = payload.error_string
+        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, error_string)
     } else {
-        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core update notification error. Notification is malformed:", JSON.stringify(payload))
+        error_string = "Core update notification error. Notification is malformed: " + JSON.stringify(payload)
+        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, error_string)
     }
+    refreshUpdatePopupData()
 }
 
 function processUpdateInfo (component_list) {
-    update_info_string = ""
-    compact_update_info_string = ""
-    var componentLength = component_list.length;
+    var componentLength = component_list.length
     for (var i = 0; i < componentLength; i++) {
         if ((component_list[i].hasOwnProperty("name") === false) || (component_list[i].name.length === 0)) {
-            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'name' property");
-            continue;
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'name' property")
+            continue
         }
 
         if ((component_list[i].hasOwnProperty("latest_version") === false) || (component_list[i].latest_version.length === 0)) {
-            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'latest_version' property");
-            continue;
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'latest_version' property")
+            continue
         }
 
         if ((component_list[i].hasOwnProperty("update_size") === false) || (component_list[i].update_size.length === 0)) {
-            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'update_size' property");
-            continue;
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'update_size' property")
+            continue
         }
 
         if ((component_list[i].hasOwnProperty("current_version") === false) || (component_list[i].current_version.length === 0)) {
-            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'current_version' property");
-            continue;
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'current_version' property")
+            continue
         }
 
-        update_info_string += "<p><b>" + component_list[i].name + "</b><br>"
-        update_info_string += "New Version: <b>" + component_list[i].latest_version + "</b>";
-        if (component_list[i].current_version !== "N/A")
-            update_info_string += " (<b>" + component_list[i].current_version + "</b>)";
-        update_info_string += "<br>Update Size: <b>" + component_list[i].update_size + "</b>";
-        update_info_string += "</p>"
+        update_model.append(component_list[i])
         compact_update_info_string += "/" + component_list[i].name + "/" + component_list[i].latest_version
     }
     console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Update Info: ", compact_update_info_string)
 }
 
+function clearModelData() {
+    update_model.clear()
+}
+
+function refreshUpdatePopupData() {
+    if (updateLoader.active) {
+        updateLoader.item.error_string = error_string
+        updateLoader.item.checking_for_updates = checking_for_updates
+        updateLoader.item.dontaskagain_checked = dontaskagain_checked
+    }
+}
+
 function createUpdatePopup () {
-    NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateLoader)
+    if (updateLoader.active === false) {
+        NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateLoader)
+    }
 
     updateLoader.item.width = updateLoader.width
     updateLoader.item.height = updateLoader.height
 
-    updateLoader.item.update_info_string = update_info_string
-    updateLoader.item.error_string = error_string
-    updateLoader.item.dontaskagain_checked = dontaskagain_checked
+    refreshUpdatePopupData()
 
-    updateLoader.item.open()
+    if (updateLoader.item.opened === false) {
+        updateLoader.item.open()
+    }
 }
 
 function removeUpdatePopup () {
@@ -199,7 +224,7 @@ function registerAlertIcon (icon) {
     update_alerticon = icon
 }
 
-function enableMenuItemAndAlertIcon () {
-    update_menuitem.enabled = true
-    update_alerticon.visible = true
+function enableMenuItemAndAlertIcon (enable) {
+    update_menuitem.hasUpdate = enable
+    update_alerticon.visible = enable
 }

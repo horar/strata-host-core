@@ -16,99 +16,174 @@ import '../'
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/core_update.js" as CoreUpdate
 
 SGStrataPopup {
     id: root
-    headerText: "Update Detected"
+    headerText: "Update Strata Developer Studio"
     modal: true
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
     implicitWidth: width
 
-    property string update_info_string: ""
     property string error_string: ""
     property bool dontaskagain_checked: false
+    property bool checking_for_updates: false
 
     contentItem: ColumnLayout {
         id: mainColumn
         spacing: 10
 
-        Rectangle {
-            id: updateContainer
-            color: "transparent"
-            Layout.preferredWidth: mainColumn.width
-            Layout.preferredHeight: updateTextColumn.height + updateTextColumn.anchors.topMargin * 2
-            Layout.topMargin: 5
-            Layout.leftMargin: 5
-
+        ScrollView {
+            id: statusInfoScrollView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: CoreUpdate.update_model.count === 0
             clip: true
 
-            Row {
-                id: updateTextColumn
-                spacing: 5
-
-                anchors {
-                    top: updateContainer.top
-                    topMargin: 5
-                }
-
-                SGIcon {
-                    height: 70
-                    width: height
-                    source: "qrc:/sgimages/update-arrow.svg"
-                    iconColor: "#3aba44"
-                }
-
-                Column {
-                    spacing: 10
-
-                    Text {
-                        id: updatesText
-                        text: "Updates are available!"
-                        font {
-                            pixelSize: 20
-                            family: Fonts.franklinGothicBook
-                            bold: true
-                        }
+            TextArea {
+                id: statusInfoTextArea
+                wrapMode: TextArea.Wrap
+                text: {
+                    if (error_string !== "") {
+                        return error_string
+                    } else if (checking_for_updates) {
+                        return "Checking for updates..."
+                    } else {
+                        return "No updates are available."
                     }
-
-                    ScrollView {
-                        id: scrollView
-                        height: 100
-                        width: 350
-                        TextArea {
-                            id: updateInfoTextArea
-                            text: update_info_string
-                            textFormat: TextEdit.RichText
-                            readOnly: true
-                            font {
-                                pixelSize: 18
-                                family: Fonts.franklinGothicBook
-                            }
-                        }
-                    }
+                }
+                color: error_string !== "" ? Theme.palette.error : Theme.palette.black
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                readOnly: true
+                font {
+                    pixelSize: 18
+                    family: Fonts.franklinGothicBook
                 }
             }
         }
 
-        SGCheckBox {
-            id: backupCheckbox
-            Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 74
-            text: "Don't ask me again for these versions"
-            checked: dontaskagain_checked
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: CoreUpdate.update_model.count > 0
+            spacing: 10
+
+            RowLayout {
+                id: updateTextColumn
+                spacing: 5
+
+                SGIcon {
+                    id: updateIcon
+                    height: 30
+                    width: height - 5
+                    source: "qrc:/sgimages/update-arrow.svg"
+                    iconColor: "#3aba44"
+                }
+
+                SGText {
+                    id: updatesText
+                    text: "Updates are available!"
+                    fontSizeMultiplier: 1.75
+                    font {
+                        family: Fonts.franklinGothicBook
+                        bold: true
+                    }
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignBottom
+                }
+            }
+
+            ListView {
+                id: updateListView
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.topMargin: 5
+                Layout.leftMargin: 10
+                Layout.rightMargin: 5
+                clip: true
+                model: CoreUpdate.update_model
+                boundsBehavior: Flickable.StopAtBounds
+                spacing: 20
+
+                ScrollBar.vertical: ScrollBar {
+                    id: verticalScrollback
+                    width: 12
+                    policy: ScrollBar.AlwaysOn
+                    visible: updateListView.height < updateListView.contentHeight
+                }
+
+                delegate: ColumnLayout {
+                    id: updateDelegate
+                    spacing: 5
+                    width: updateListView.width - verticalScrollback.width
+                    property bool expanded: false
+
+                    RowLayout {
+                        SGText {
+                            fontSizeMultiplier: 1.5
+                            font.bold: true
+                            font.family: Fonts.franklinGothicBook
+                            text: {
+                                let name_info = "<b>" + model.name + "</b>"
+                                if (updateDelegate.expanded === false)
+                                    name_info += " v" + model.latest_version
+                                return name_info
+                            }
+                            Layout.fillWidth: true
+                        }
+
+                        SGIconButton {
+                            id: expandIconButton
+                            icon.source: updateDelegate.expanded ? "qrc:/sgimages/chevron-up.svg" : "qrc:/sgimages/chevron-down.svg"
+                            iconSize: 20
+                            hintText: updateDelegate.expanded ? "Show less information" : "Show additional information"
+                            iconColor: "grey"
+                            onClicked: {
+                                updateDelegate.expanded = !updateDelegate.expanded
+                            }
+                        }
+                    }
+
+                    SGText {
+                        fontSizeMultiplier: 1.4
+                        font.family: Fonts.franklinGothicBook
+                        text: {
+                            let version_info = "New Version: <b>" + model.latest_version + "</b>"
+                            version_info += " (" + model.update_size + ")"
+                            return version_info
+                        }
+                        visible: updateDelegate.expanded
+                    }
+
+                    SGText {
+                        fontSizeMultiplier: 1.4
+                        font.family: Fonts.franklinGothicBook
+                        text: "Current Version: <b>" + model.current_version + "</b>"
+                        visible: updateDelegate.expanded && (model.current_version !== "N/A")
+                    }
+                }
+            }
+
+            SGCheckBox {
+                id: backupCheckbox
+                Layout.alignment: Qt.AlignLeft
+                text: "Don't ask me again for these versions"
+                checked: dontaskagain_checked
+            }
         }
 
-        Row {
+        RowLayout {
             id: buttonsRow
             spacing: 20
             Layout.alignment: Qt.AlignHCenter
 
             Button {
                 id: updateButton
-                text: "Update all (will close Strata)"
+                text: CoreUpdate.update_model.count > 0 ? "Update all (will close Strata)" : "Check for Updates"
 
                 background: Rectangle {
                     color: !updateButton.enabled ? "#dbdbdb" : updateButton.down ? "#666" : "#888"
@@ -128,13 +203,18 @@ SGStrataPopup {
                 }
 
                 onClicked: {
-                    var reply = coreUpdate.requestUpdateApplication()
-                    if (reply !== "") {
-                        console.error(Logger.devStudioCategory, "Received error message:", reply)
-                        errorPopup.popupText = reply
-                        errorPopup.open()
+                    if (CoreUpdate.update_model.count > 0) {
+                        var reply = coreUpdate.requestUpdateApplication()
+                        if (reply !== "") {
+                            console.error(Logger.devStudioCategory, "Received error message:", reply)
+                            errorPopup.popupText = reply
+                            errorPopup.open()
+                        } else {
+                            root.close()
+                        }
+                    } else {
+                        CoreUpdate.getUpdateInformation()
                     }
-                    root.close()
                 }
             }
 

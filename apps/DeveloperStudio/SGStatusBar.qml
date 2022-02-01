@@ -603,14 +603,18 @@ Rectangle {
                 }
 
                 SGMenuItem {
-                    text: qsTr("Update")
+                    text: hasUpdate ? qsTr("Update") : qsTr("Check for Updates")
                     width: profileMenu.width
-                    enabled: false
-                    iconSource: enabled ? "qrc:/sgimages/exclamation-circle.svg" : ""
+                    iconSource: hasUpdate ? "qrc:/sgimages/exclamation-circle.svg" : ""
+
+                    property bool hasUpdate: false
 
                     onClicked: {
                         profileMenu.close()
-                        CoreUpdate.createUpdatePopup();
+                        if (hasUpdate === false) {
+                            CoreUpdate.getUpdateInformation()
+                        }
+                        CoreUpdate.createUpdatePopup()
                     }
 
                     Component.onCompleted: {

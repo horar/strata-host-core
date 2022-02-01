@@ -238,8 +238,8 @@ SGWidgets.SGMainWindow {
         anchors {
             centerIn: parent
         }
-        width: 500
-        height: 300
+        width: 450
+        height: 400
         visible: active
     }
 
