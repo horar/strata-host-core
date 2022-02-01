@@ -25,6 +25,9 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QDir>
+#ifdef Q_OS_WIN
+#include <QVersionNumber>
+#endif
 
 #if !defined(Q_OS_WIN)
 #include "unix/SignalHandlers.h"

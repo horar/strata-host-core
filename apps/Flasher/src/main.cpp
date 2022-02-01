@@ -11,6 +11,9 @@
 #include <QObject>
 #include <QSettings>
 #include <QTimer>
+#ifdef Q_OS_WIN
+#include <QVersionNumber>
+#endif
 
 #include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
