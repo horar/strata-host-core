@@ -63,7 +63,7 @@ signals:
     void qtMsgPatternChanged();
     void spdlogMsgPatternChanged();
     void filePathChanged();
-    void corruptedFile(QString errorString) const;
+    void corruptedFile(QString param, QString errorString) const;
 
 private:
     QScopedPointer<QSettings> settings_;

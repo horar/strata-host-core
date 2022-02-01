@@ -469,11 +469,11 @@ Item {
     Connections {
         target: configFileSettings
         onCorruptedFile: {
-            showCorruptedFileDialog(errorString)
+            showCorruptedFileDialog(param, errorString)
         }
     }
 
-    function showCorruptedFileDialog(errorMessage) {
+    function showCorruptedFileDialog(parameter, errorMessage) {
         var dialog = SGDialogJS.createDialog(
                     lcuMain,
                     "qrc:/CorruptedFileDialog.qml",
@@ -481,72 +481,45 @@ Item {
 
         dialog.accepted.connect(function() {
             //set to default
-            console.log("SET TO DEFAULT")
-//                configFileSettings.logLevel = "debug"
+            console.log("Set " + parameter + " to default")
+            if(parameter === "log/level") {
+                configFileSettings.logLevel = "debug"
+            } else if (parameter === "log/maxFileSize") {
+                configFileSettings.maxFileSize = configFileSettings.maxSizeDefault
+                maxFileSizeEnabled = true
+            } else if (parameter === "log/maxNoFiles") {
+                configFileSettings.maxNoFiles = configFileSettings.maxCountDefault
+                maxNoFilesEnabled = true
+            } else if (parameter === "log/qtFilterRules") {
+                configFileSettings.qtFilterRules = configFileSettings.filterRulesDefault
+            } else if (parameter === "log/qtMessagePattern") {
+                configFileSettings.qtMsgPattern = configFileSettings.qtMsgDefault
+            } else {
+                configFileSettings.spdlogMsgPattern = configFileSettings.spdMsgDefault
+            }
             dialog.destroy()
         })
 
         dialog.rejected.connect(function() {
             //remove parameter
-            console.log("REMOVE")
-//                configFileSettings.logLevel = ""
+            console.log("Remove " + parameter)
+            if(parameter === "log/level") {
+                configFileSettings.logLevel = ""
+            } else if (parameter === "log/maxFileSize") {
+                configFileSettings.maxFileSize = 0
+                maxFileSizeEnabled = false
+            } else if (parameter === "log/maxNoFiles") {
+                configFileSettings.maxNoFiles = 0
+                maxNoFilesEnabled = false
+            } else if (parameter === "log/qtFilterRules") {
+                configFileSettings.qtFilterRules = ""
+            } else if (parameter === "log/qtMessagePattern") {
+                configFileSettings.qtMsgPattern = ""
+            } else {
+                configFileSettings.spdlogMsgPattern = ""
+            }
             dialog.destroy()
         })
         dialog.open()
-    }
-
-
-    SGWidgets.SGPopup {
-        id: infoPopup
-
-        padding: 2
-        anchors.centerIn: parent
-        closePolicy: Popup.NoAutoClose
-        modal: true
-
-        contentItem: GridLayout {
-            columns: 2
-            SGWidgets.SGText {
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignCenter
-                text: "Sorry, but selected INI file is corrupted."
-            }
-            SGWidgets.SGText {
-                id: errorText
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignHCenter
-                text: "..."
-            }
-            SGWidgets.SGText {
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignCenter
-                text: "Do you want to set the parameter to default value or remove it?"
-            }
-            SGWidgets.SGButton {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignCenter
-                text: "Set to default"
-                onClicked: {
-                    configFileSettings.logLevel = "debug"
-                    infoPopup.close()
-                }
-            }
-            SGWidgets.SGButton {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignCenter
-                text: "Remove parameter"
-                onClicked: {
-                    configFileSettings.logLevel = ""
-                    infoPopup.close()
-                }
-            }
-        }
-//        Connections {
-//            target: configFileSettings
-//            onCorruptedFile: {
-//                infoPopup.open()
-//                errorText.text = errorString
-//            }
-//        }
     }
 }
