@@ -1,6 +1,6 @@
 <?xml version="2.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2018-2022 onsemi.
+   Copyright (c) 2018-2021 onsemi.
 
    All rights reserved. This software and/or documentation is licensed by onsemi under
    limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -9,10 +9,10 @@
   -->
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
-    <Description>Run-time addons that are required to run Strata applications</Description>
+    <Description>Libraries and components needed by Strata applications</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>68</SortingPriority>
+    <SortingPriority>70</SortingPriority>
 </Package>

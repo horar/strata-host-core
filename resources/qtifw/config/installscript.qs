@@ -65,8 +65,8 @@ Controller.prototype.IntroductionPageCallback = function()
                                         + "This will install the following on your computer: \n"
                                         + "  1) Strata Developer Studio\n"
                                         + "  2) Host Controller Service\n"
-                                        + "  3) Microsoft VS 2017 Tools, Add-ONs and Extensions\n"
-                                        + "  4) FTDI Driver\n\n"
+                                        + "  3) Libraries and Components\n"
+                                        + "  4) Third-party Utilities\n\n"
                                         + "It is recommended that you close all other applications before continuing.\n\n"
                                         + "Click Next to continue, or Quit to exit Setup."
                                         );
@@ -74,7 +74,8 @@ Controller.prototype.IntroductionPageCallback = function()
                 widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
                                         + "This will install the following on your computer: \n"
                                         + "  1) Strata Developer Studio\n"
-                                        + "  2) Host Controller Service\n\n"
+                                        + "  2) Host Controller Service\n"
+                                        + "  3) Libraries and Components\n\n"
                                         + "It is recommended that you close all other applications before continuing.\n\n"
                                         + "Click Next to continue."
                                         );

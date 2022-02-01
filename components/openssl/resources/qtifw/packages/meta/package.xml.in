@@ -14,7 +14,7 @@
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>61</SortingPriority>
+    <SortingPriority>67</SortingPriority>
     <Licenses>
         <License name="OpenSSL and SSLeay License Agreement" file="license-openssl-ssleay.txt" />
     </Licenses>

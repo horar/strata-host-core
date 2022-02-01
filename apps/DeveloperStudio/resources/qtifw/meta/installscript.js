@@ -50,23 +50,6 @@ Component.prototype.createOperations = function()
         component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\sds.config", sdsConfigFolder + "\\sds.config");
         component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\sds.config");
 
-        if (installer.isInstaller() == true) {
-            try {
-                if (installer.gainAdminRights() == true) {
-                    if (installer.fileExists(onsemiConfigFolder) == true) {
-                        console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
-                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
-                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
-                    }
-                    // do not drop admin rights in this function, will break installer
-                    //installer.dropAdminRights();
-                }
-            } catch(e) {
-                console.log("unable to change access rights for Strata config folder");
-                console.log(e);
-            }
-        }
-
         var target_dir = installer.value("TargetDir").split("/").join("\\");
         if (installer.value("add_start_menu_shortcut", "true") == "true") {
             var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
@@ -100,5 +83,5 @@ Component.prototype.createOperations = function()
                 console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
             }
         }
-     }
+    }
 }
