@@ -998,8 +998,8 @@ constexpr const char* HostControllerService::hcsNotificationTypeToString(hcsNoti
 
 void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &message)
 {
-    componentUpdateInfo_.requestUpdateInfo(message.clientID);
     strataServer_->notifyClient(message, QJsonObject{{"message", "update check requested"}}, strataRPC::ResponseType::Response);
+    componentUpdateInfo_.requestUpdateInfo(message.clientID);
 }
 
 void HostControllerService::sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString)

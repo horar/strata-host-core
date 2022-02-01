@@ -207,10 +207,13 @@ void ComponentUpdateInfo::preprocessOpenSSLVersion(QString& opensslVersion) cons
         if (suffixIndex >= 0) {
             suffix = opensslVersion.mid(suffixIndex);
         }
-        QString optionalVersion(static_cast<char>(versionNumbers[3]));
-        opensslVersion = QString::number(versionNumbers[0]) + QStringLiteral(".") +
-                         QString::number(versionNumbers[1]) + QStringLiteral(".") +
-                         QString::number(versionNumbers[2]) + optionalVersion + suffix;
+
+        if ((versionNumbers[3] >= 'a' && versionNumbers[3] <= 'z')) {
+            QString optionalVersion(static_cast<char>(versionNumbers[3]));
+            opensslVersion = QString::number(versionNumbers[0]) + QStringLiteral(".") +
+                             QString::number(versionNumbers[1]) + QStringLiteral(".") +
+                             QString::number(versionNumbers[2]) + optionalVersion + suffix;
+        }
     }
 }
 
@@ -266,15 +269,10 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
         (maintenanceToolProcess.exitCode() != EXIT_SUCCESS)) {
         // Note that when no updates are available, the exit code will be 1
         QString errorOutput = maintenanceToolProcess.readAllStandardError();
-        if ((maintenanceToolProcess.exitCode() == EXIT_FAILURE) && errorOutput.startsWith("There are currently no updates available.")) {
-            qCInfo(lcHcs) << "No updates available";
-            return QString();
-        } else {
-            qCCritical(lcHcs) << "Error code returned when checking for updates (" +
-                    QString::number(maintenanceToolProcess.error()) + "): " +
-                    maintenanceToolProcess.errorString() + ", error output: " + errorOutput;
-            return "Error code returned when checking for updates";
-        }
+        qCCritical(lcHcs) << "Error code returned when checking for updates (" +
+                QString::number(maintenanceToolProcess.error()) + "): " +
+                maintenanceToolProcess.errorString() + ", error output: " + errorOutput;
+        return "Error code returned when checking for updates (" + QString::number(maintenanceToolProcess.error()) + ")";
     }
 
     // Read the output
@@ -292,8 +290,13 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     int endIdx = updateData.indexOf(updatesEndStr);
 
     if ((beginIdx == -1) || (endIdx == -1) || (endIdx < beginIdx)) {
-        qCCritical(lcHcs) << "Error parsing maintenance tool output:" << updateData;
-        return "Error parsing maintenance tool output";
+        if (updateData.contains("There are currently no updates available.")) {
+            qCInfo(lcHcs) << "No updates available";
+            return QString();
+        } else {
+            qCCritical(lcHcs) << "Error parsing maintenance tool output:" << updateData;
+            return "Error parsing maintenance tool output";
+        }
     }
 
     // extract only desired part in case we acquire more information
