@@ -23,6 +23,9 @@
 #include <QDir>
 #include <QIcon>
 #include <QQmlFileSelector>
+#ifdef Q_OS_WIN
+#include <QVersionNumber>
+#endif
 
 #include "logging/LoggingQtCategories.h"
 
