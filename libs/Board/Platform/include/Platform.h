@@ -22,6 +22,8 @@
 #include <QDateTime>
 #include <QTimer>
 
+#include <rapidjson/schema.h>
+
 namespace strata::platform {
 
     namespace command {
@@ -407,6 +409,8 @@ namespace strata::platform {
         QString controllerClassId_;
         QString firmwareClassId_;
         QString terminationCause_;
+
+        static const rapidjson::SchemaDocument platformIdChangedSchema_;
     };
 
 }  // namespace
