@@ -15,9 +15,6 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-#include <rapidjson/document.h>
-#include <rapidjson/schema.h>
-
 #include <stdexcept>
 
 namespace strata::platform {
@@ -60,7 +57,7 @@ Platform::~Platform() {
     // no need to close device here (if close was not called before), will be done in device
 }
 
-const rapidjson::SchemaDocument platformIdChangedSchema(
+const rapidjson::SchemaDocument Platform::platformIdChangedSchema_(
     CommandValidator::parseSchema(
 R"(
 {
@@ -94,7 +91,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
     emit messageReceived(message);
 
     if (message.isJsonValidObject()) {
-        if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
+        if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema_, message.json(), true)) {
             qCInfo(lcPlatform) << this << "Received 'platform_id_changed' notification";
 
             emit platformIdChanged();
