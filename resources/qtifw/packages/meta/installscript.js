@@ -47,7 +47,7 @@ Component.prototype.createOperations = function()
         uninstallPreviousStrataInstallation();
     }
 
-    if (installer.isInstaller() == true) {
+    if ((systemInfo.productType == "windows") && (installer.isInstaller() == true)) {
         var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData";
         console.log("default ProgramData path: " + programDataShortcut);
         try {
