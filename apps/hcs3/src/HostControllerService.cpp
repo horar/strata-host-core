@@ -481,7 +481,7 @@ void HostControllerService::processCmdRequestHcsStatus(const strataRPC::Message 
 void HostControllerService::processCmdDynamicPlatformList(const strataRPC::Message &message)
 {
     strataServer_->notifyClient(message,
-                                QJsonObject{{"message", "Dynamic platform list requested."}},
+                                QJsonObject{{"message", "dynamic platform list requested"}},
                                 strataRPC::ResponseType::Response);
 
     storageManager_.requestPlatformList(message.clientID);
@@ -566,7 +566,7 @@ void HostControllerService::processCmdDownloadPlatformFiles(const strataRPC::Mes
 
     storageManager_.requestDownloadPlatformFiles(message.clientID, partialUriList, destinationDir);
 
-    strataServer_->notifyClient(message, QJsonObject{{"message", "Platform files download requested."}},
+    strataServer_->notifyClient(message, QJsonObject{{"message", "platform files download requested"}},
                                 strataRPC::ResponseType::Response);
 }
 
@@ -999,7 +999,7 @@ constexpr const char* HostControllerService::hcsNotificationTypeToString(hcsNoti
 void HostControllerService::processCmdCheckForUpdates(const strataRPC::Message &message)
 {
     componentUpdateInfo_.requestUpdateInfo(message.clientID);
-    strataServer_->notifyClient(message, QJsonObject{{"message", "Update check requested."}}, strataRPC::ResponseType::Response);
+    strataServer_->notifyClient(message, QJsonObject{{"message", "update check requested"}}, strataRPC::ResponseType::Response);
 }
 
 void HostControllerService::sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString)
