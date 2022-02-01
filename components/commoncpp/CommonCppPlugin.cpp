@@ -15,8 +15,6 @@
 #include "SGUserSettings.h"
 #include "SGVersionUtils.h"
 #include "SGCSVUtils.h"
-#include "mqtt/SGMqttClient.h"
-#include "mqtt/SGSslConfiguration.h"
 #include "SGJsonSyntaxHighlighter.h"
 #include "SGJsonFormatter.h"
 #include "SGTranslator.h"
@@ -49,9 +47,6 @@ void CommonCppPlugin::registerTypes(const char *uri)
     qmlRegisterType<SGQwtPlot>(uri, 1, 0, "SGQwtPlot");
     qmlRegisterType<SGQwtPlotCurve>(uri, 1, 0, "SGQwtPlotCurve");
     qmlRegisterType<SGUserSettings>(uri, 1, 0, "SGUserSettings");
-    qmlRegisterType<QmlMqttClient>(uri, 1, 0, "SGMqttClient");
-    qmlRegisterUncreatableType<QmlMqttSubscription>(uri, 1, 0, "SGMqttSubscription", QLatin1String("Subscriptions are read-only"));
-    qmlRegisterType<QmlSslConfiguration>(uri, 1, 0, "SGSslConfiguration");
     qmlRegisterSingletonType<SGVersionUtils>(uri, 1, 0, "SGVersionUtils", SGVersionUtils::SingletonTypeProvider);
     qmlRegisterType<SGJsonSyntaxHighlighter>(uri, 1, 0, "SGJsonSyntaxHighlighter");
     qmlRegisterType<SGTranslator>(uri, 1, 0, "SGTranslator");
