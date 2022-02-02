@@ -27,13 +27,12 @@ namespace strata::loggers
 void QtLoggerSetup::reload()
 {
     QSettings settings;
+    settings.beginGroup(QStringLiteral("log"));
 
-    settings.beginGroup("log");
-    QStringList logKeys = settings.allKeys();
-
-    for (int i = 0; i < logKeys.size(); i++) {
-        QString key = logKeys.at(i);
-        if(logParams_.contains(key) && logParams_.value(key) != settings.value(key).toString()) {
+    QMapIterator<QString, QString> iter(logParams_);
+    while (iter.hasNext()) {
+        iter.next();
+        if(iter.value() != settings.value(iter.key()).toString()) {
             qCDebug(lcQtLogger, "...reconfiguring loggers...");
 
             setupSpdLog(*QCoreApplication::instance());
