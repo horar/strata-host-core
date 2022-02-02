@@ -50,7 +50,7 @@ int ConfigFileSettings::maxFileSize() const
         return logMaxFileSize;
     } else {
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxFileSize << "', which is not a valid value. Setting file size to default.";
-        return 1024; //TBD
+        return 1024 * 1024 * 5;
     }
 }
 
@@ -67,7 +67,7 @@ int ConfigFileSettings::maxNoFiles() const
         return logMaxNoFiles;
     } else {
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxNoFiles << "', which is not a valid value. Setting file size to default.";
-        return 1; //TBD
+        return 5;
     }
 }
 
@@ -101,7 +101,7 @@ QString ConfigFileSettings::qtMsgPattern() const
         return qtMsgPattern;
     } else {
         qCWarning(lcLcu) << "Qt message pattern is '" << qtMsgPattern << "', which is not a valid value. Setting Qt message pattern to default.";
-        return "%{message}"; //TBD
+        return "%{if-category}%{category}: %{endif}%{if-debug}%{function}%{endif}%{if-info}%{function}%{endif}%{if-warning}%{function}%{endif}%{if-critical}%{function}%{endif}%{if-fatal}%{function}%{endif} - %{message}";
     }
 }
 
@@ -118,7 +118,7 @@ QString ConfigFileSettings::spdlogMsgPattern() const
         return spdMsgPattern;
     } else {
         qCWarning(lcLcu) << "spdlog message pattern is '" << spdMsgPattern << "', which is not a valid value. Setting spdlog message pattern to default.";
-        return "%T.%e %^[%=7l]%$ %v"; //TBD
+        return "%T.%e %^[%=7l]%$ %v";
     }
 }
 

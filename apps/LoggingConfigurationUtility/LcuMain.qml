@@ -184,8 +184,8 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.maxFileSize = 0
-                } else { //set to default value. TBD what is default file size
-                    configFileSettings.maxFileSize = 1024
+                } else { //set to default value
+                    configFileSettings.maxFileSize = 1024 * 1024 * 5
                 }
             }
         }
@@ -227,8 +227,8 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.maxNoFiles = 0
-                } else { //set to default value. TBD what is default no. of files
-                    configFileSettings.maxNoFiles = 1
+                } else { //set to default value
+                    configFileSettings.maxNoFiles = 5
                 }
             }
         }
@@ -272,7 +272,7 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.qtFilterRules = ""
-                } else { //set to default value. TBD what is default
+                } else { //set to default value
                     configFileSettings.qtFilterRules = "strata.*=true"
                 }
             }
@@ -327,8 +327,8 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.qtMsgPattern = ""
-                } else { //set to default value. TBD what is default
-                    configFileSettings.qtMsgPattern = "%{message}"
+                } else { //set to default value
+                    configFileSettings.qtMsgPattern = "%{if-category}%{category}: %{endif}%{if-debug}%{function}%{endif}%{if-info}%{function}%{endif}%{if-warning}%{function}%{endif}%{if-critical}%{function}%{endif}%{if-fatal}%{function}%{endif} - %{message}"
                 }
             }
         }
@@ -381,7 +381,7 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.spdlogMsgPattern = ""
-                } else { //set to default value. TBD what is default
+                } else { //set to default value
                     configFileSettings.spdlogMsgPattern = "%T.%e %^[%=7l]%$ %v"
                 }
             }
