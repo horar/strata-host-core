@@ -219,10 +219,8 @@ void ConfigFileSettings::setSpdlogMsgPattern(const QString &spdlogMessagePattern
 
 void ConfigFileSettings::setFilePath(const QString& filePath)
 {
-    if (settings_ != nullptr) {
-        if (filePath == settings_->fileName()) {
-            return;
-        }
+    if (settings_ != nullptr && filePath == settings_->fileName()) {
+        return;
     }
     settings_.reset(new QSettings(filePath, QSettings::IniFormat));
 
