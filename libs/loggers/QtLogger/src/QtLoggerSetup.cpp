@@ -27,13 +27,20 @@ namespace strata::loggers
 void QtLoggerSetup::reload()
 {
     QSettings settings;
-    const auto logLevel{settings.value(QStringLiteral("log/level")).toString()};
-    if (logLevel_ != logLevel) {
-        qCDebug(lcQtLogger, "...reconfiguring loggers...");
 
-        setupSpdLog(*QCoreApplication::instance());
-        setupQtLog();
+    settings.beginGroup("log");
+    QStringList logKeys = settings.allKeys();
+
+    for (int i = 0; i < logKeys.size(); i++) {
+        QString key = logKeys.at(i);
+        if(logParams_.contains(key) && logParams_.value(key) != settings.value(key).toString()) {
+            qCDebug(lcQtLogger, "...reconfiguring loggers...");
+
+            setupSpdLog(*QCoreApplication::instance());
+            setupQtLog();
+        }
     }
+    settings.endGroup();
 }
 
 QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
@@ -104,10 +111,13 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
 {
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
+    logParams_.insert("level", {settings.value(QStringLiteral("level")).toString()});
     const auto maxFileSize{settings.value(QStringLiteral("maxFileSize")).toUInt()};
+    logParams_.insert("maxFileSize", {settings.value(QStringLiteral("maxFileSize")).toString()});
     const auto maxNoFiles{settings.value(QStringLiteral("maxNoFiles")).toUInt()};
-    logLevel_ = {settings.value(QStringLiteral("level")).toString()};
+    logParams_.insert("maxNoFiles", {settings.value(QStringLiteral("maxNoFiles")).toString()});
     const auto messagePattern{settings.value(QStringLiteral("spdlogMessagePattern")).toString()};
+    logParams_.insert("spdlogMessagePattern", messagePattern);
     const auto messagePattern4file{settings
                                        .value(QStringLiteral("spdlogFileMessagePattern"),
                                               defaults::SPDLOG_MESSAGE_PATTERN_4FILE)
@@ -123,7 +133,7 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
 
     logger_.setup(QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
                   messagePattern.toStdString(), messagePattern4file.toStdString(),
-                  logLevel_.toStdString(), maxFileSize, maxNoFiles);
+                  logParams_.value("level").toStdString(), maxFileSize, maxNoFiles);
 }
 
 void QtLoggerSetup::setupQtLog()
@@ -131,7 +141,9 @@ void QtLoggerSetup::setupQtLog()
     QSettings settings;
     settings.beginGroup(QStringLiteral("log"));
     const auto filterRules{settings.value(QStringLiteral("qtFilterRules")).toString()};
+    logParams_.insert("qtFilterRules", filterRules);
     const auto messagePattern{settings.value(QStringLiteral("qtMessagePattern")).toString()};
+    logParams_.insert("qtMessagePattern", messagePattern);
     settings.endGroup();
 
     qSetMessagePattern(messagePattern);
@@ -145,7 +157,7 @@ void QtLoggerSetup::setupQtLog()
     qCDebug(lcQtLogger) << "\tini:" << settings.fileName();
     qCDebug(lcQtLogger) << "\tformat:" << settings.format();
     qCDebug(lcQtLogger) << "\taccess" << settings.status();
-    qCDebug(lcQtLogger) << "\tlogging category filte rules:" << filterRules;
+    qCDebug(lcQtLogger) << "\tlogging category filter rules:" << filterRules;
     qCDebug(lcQtLogger) << "\tlogger message pattern:" << messagePattern;
 }
 
