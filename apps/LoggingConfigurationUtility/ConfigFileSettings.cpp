@@ -29,7 +29,7 @@ QString ConfigFileSettings::logLevel() const
     QString level = settings_->value(LOG_LEVEL_SETTING).toString();
 
     if (logLevels.contains(level)) {
-        qCInfo(lcLcu) << "Current log level: " << level;
+        qCDebug(lcLcu) << "Current log level: " << level;
         return level;
     } else {
         qCWarning(lcLcu) << "Log level is '" << level << "', which is not a valid value. Setting log level to default.";
@@ -46,7 +46,7 @@ int ConfigFileSettings::maxFileSize() const
     int logMaxFileSize = settings_->value(LOG_MAXSIZE_SETTING).toInt();
 
     if (logMaxFileSize >= 1024 && logMaxFileSize <= 2147483647) {
-        qCInfo(lcLcu) << "Current max size of log file : " << logMaxFileSize;
+        qCDebug(lcLcu) << "Current max size of log file : " << logMaxFileSize;
         return logMaxFileSize;
     } else {
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxFileSize << "', which is not a valid value. Setting file size to default.";
@@ -63,7 +63,7 @@ int ConfigFileSettings::maxNoFiles() const
     int logMaxNoFiles = settings_->value(LOG_MAXNOFILES_SETTING).toInt();
 
     if (logMaxNoFiles > 0) {
-        qCInfo(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
+        qCDebug(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
         return logMaxNoFiles;
     } else {
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxNoFiles << "', which is not a valid value. Setting file size to default.";
@@ -80,7 +80,7 @@ QString ConfigFileSettings::qtFilterRules() const
     QString qtFilterRules = settings_->value(LOG_FILTERRULES_SETTING).toString();
 
     if (qtFilterRules.isEmpty() == false) {
-        qCInfo(lcLcu) << "Current Qt filter rules : " << qtFilterRules;
+        qCDebug(lcLcu) << "Current Qt filter rules : " << qtFilterRules;
         return qtFilterRules;
     } else {
         qCWarning(lcLcu) << "Qt filter rules are '" << qtFilterRules << "', which is not a valid value. Setting Qt filter rules to default.";
@@ -97,7 +97,7 @@ QString ConfigFileSettings::qtMsgPattern() const
     QString qtMsgPattern = settings_->value(LOG_QT_MSGPATTERN_SETTING).toString();
 
     if (qtMsgPattern.isEmpty() == false) {
-        qCInfo(lcLcu) << "Current Qt message pattern : " << qtMsgPattern;
+        qCDebug(lcLcu) << "Current Qt message pattern : " << qtMsgPattern;
         return qtMsgPattern;
     } else {
         qCWarning(lcLcu) << "Qt message pattern is '" << qtMsgPattern << "', which is not a valid value. Setting Qt message pattern to default.";
@@ -114,7 +114,7 @@ QString ConfigFileSettings::spdlogMsgPattern() const
     QString spdMsgPattern = settings_->value(LOG_SPD_MSGPATTERN_SETTING).toString();
 
     if (spdMsgPattern.isEmpty() == false) {
-        qCInfo(lcLcu) << "Current spdlog message pattern : " << spdMsgPattern;
+        qCDebug(lcLcu) << "Current spdlog message pattern : " << spdMsgPattern;
         return spdMsgPattern;
     } else {
         qCWarning(lcLcu) << "spdlog message pattern is '" << spdMsgPattern << "', which is not a valid value. Setting spdlog message pattern to default.";

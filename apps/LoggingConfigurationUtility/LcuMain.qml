@@ -55,7 +55,7 @@ Item {
         enabled: count !== 0
         placeholderText: count == 0 ? "No configuration files found" : "Please select config file"
         onActivated: {
-            console.info("Selected INI file changed to: " + iniFileComboBox.currentText)
+            console.debug("Selected INI file changed to: " + iniFileComboBox.currentText)
             configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
         }
         popupHeight: parent.height - title.height - iniFileComboBox.height
