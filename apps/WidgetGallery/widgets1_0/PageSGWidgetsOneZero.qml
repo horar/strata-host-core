@@ -78,11 +78,6 @@ FocusScope {
         }
 
         ListElement {
-            name: "SGMqttClient"
-            page: "ExSGMqttClient.qml"
-        }
-
-        ListElement {
             name: "SGRadioButton"
             page: "ExSGRadioButton.qml"
         }
