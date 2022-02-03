@@ -92,10 +92,6 @@ target_compile_definitions(${CLIENT} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
-if(BUILD_EXAMPLES)
-    add_subdirectory(samples)
-endif()
-
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
