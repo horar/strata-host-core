@@ -45,12 +45,12 @@ int ConfigFileSettings::maxFileSize() const
 
     int logMaxFileSize = settings_->value(LOG_MAXSIZE_SETTING).toInt();
 
-    if (logMaxFileSize >= 1024 && logMaxFileSize <= 2147483647) {
+    if (logMaxFileSize >= MIN_LOGFILE_SIZE && logMaxFileSize <= MAX_LOGFILE_SIZE) {
         qCDebug(lcLcu) << "Current max size of log file : " << logMaxFileSize;
         return logMaxFileSize;
     } else {
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxFileSize << "', which is not a valid value. Setting file size to default.";
-        return 1024 * 1024 * 5;
+        return MIN_LOGFILE_SIZE * MIN_LOGFILE_SIZE * 5;
     }
 }
 
