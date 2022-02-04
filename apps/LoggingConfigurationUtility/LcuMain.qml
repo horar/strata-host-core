@@ -18,7 +18,8 @@ Item {
 
     property int outerSpacing: 10
     property int innerSpacing: 5
-    property int middleColumn: 180
+    property int shortEdit: 180
+    property int longEdit: 300
     property int infoButtonSize: 15
 
     ConfigFileModel {
@@ -116,7 +117,7 @@ Item {
 
         SGWidgets.SGComboBox {
             id: logLevelComboBox
-            Layout.preferredWidth: middleColumn
+            Layout.preferredWidth: shortEdit
             Layout.alignment: Qt.AlignRight
             model: ["debug", "info", "warning", "error", "critical", "off"]
             enabled: currentIndex !== -1 && iniFileComboBox.currentIndex !== -1 //disable if log level value doesnt exist OR if no ini files were found or selected
@@ -157,7 +158,7 @@ Item {
 
         SGWidgets.SGSpinBox {
             id: maxFileSizeSpinBox
-            Layout.preferredWidth: middleColumn
+            Layout.preferredWidth: shortEdit
             Layout.alignment: Qt.AlignRight
             from: 0
             to: 2147483647
@@ -185,7 +186,7 @@ Item {
                 if (text === "Unset") {
                     configFileSettings.maxFileSize = 0
                 } else { //set to default value
-                    configFileSettings.maxFileSize = 1024 * 1024 * 5
+                    configFileSettings.maxFileSize = configFileSettings.maxSizeDefault
                 }
             }
         }
@@ -199,7 +200,7 @@ Item {
 
         SGWidgets.SGSpinBox {
             id: maxNoFilesSpinBox
-            Layout.preferredWidth: middleColumn
+            Layout.preferredWidth: shortEdit
             Layout.alignment: Qt.AlignRight
             from: 0
             to: 100000
@@ -228,7 +229,7 @@ Item {
                 if (text === "Unset") {
                     configFileSettings.maxNoFiles = 0
                 } else { //set to default value
-                    configFileSettings.maxNoFiles = 5
+                    configFileSettings.maxNoFiles = configFileSettings.maxCountDefault
                 }
             }
         }
@@ -242,7 +243,7 @@ Item {
 
         SGWidgets.SGTextField {
             id: qtFilterRulesTextField
-            Layout.preferredWidth: middleColumn
+            Layout.preferredWidth: longEdit
             Layout.alignment: Qt.AlignRight
             background: Rectangle {
                 border.color: "#B3B3B3"
@@ -273,7 +274,7 @@ Item {
                 if (text === "Unset") {
                     configFileSettings.qtFilterRules = ""
                 } else { //set to default value
-                    configFileSettings.qtFilterRules = "strata.*=true"
+                    configFileSettings.qtFilterRules = configFileSettings.filterRulesDefault
                 }
             }
         }
@@ -298,7 +299,7 @@ Item {
        SGWidgets.SGTextField {
            id: qtMsgPatternTextField
            Layout.alignment: Qt.AlignRight
-           Layout.preferredWidth: middleColumn
+           Layout.preferredWidth: longEdit
            background: Rectangle {
                border.color: "#B3B3B3"
                border.width: 1
@@ -328,7 +329,7 @@ Item {
                 if (text === "Unset") {
                     configFileSettings.qtMsgPattern = ""
                 } else { //set to default value
-                    configFileSettings.qtMsgPattern = "%{if-category}%{category}: %{endif}%{if-debug}%{function}%{endif}%{if-info}%{function}%{endif}%{if-warning}%{function}%{endif}%{if-critical}%{function}%{endif}%{if-fatal}%{function}%{endif} - %{message}"
+                    configFileSettings.qtMsgPattern = configFileSettings.qtMsgDefault
                 }
             }
         }
@@ -353,7 +354,7 @@ Item {
         SGWidgets.SGTextField {
             id: spdlogMsgPatternTextField
             Layout.alignment: Qt.AlignRight
-            Layout.preferredWidth: middleColumn
+            Layout.preferredWidth: longEdit
             background: Rectangle {
                 border.color: "#B3B3B3"
                 border.width: 1
@@ -382,7 +383,7 @@ Item {
                 if (text === "Unset") {
                     configFileSettings.spdlogMsgPattern = ""
                 } else { //set to default value
-                    configFileSettings.spdlogMsgPattern = "%T.%e %^[%=7l]%$ %v"
+                    configFileSettings.spdlogMsgPattern = configFileSettings.spdMsgDefault
                 }
             }
         }

@@ -8,6 +8,7 @@
  */
 #include "ConfigFileSettings.h"
 #include "logging/LoggingQtCategories.h"
+#include <QtLoggerDefaults.h>
 
 #include <QFileInfo>
 #include <QFile>
@@ -50,7 +51,7 @@ int ConfigFileSettings::maxFileSize() const
         return logMaxFileSize;
     } else {
         qCWarning(lcLcu) << "Max size of log file is '" << logMaxFileSize << "', which is not a valid value. Setting file size to default.";
-        return MIN_LOGFILE_SIZE * MIN_LOGFILE_SIZE * 5;
+        return maxSizeDefault();
     }
 }
 
@@ -66,8 +67,8 @@ int ConfigFileSettings::maxNoFiles() const
         qCDebug(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
         return logMaxNoFiles;
     } else {
-        qCWarning(lcLcu) << "Max size of log file is '" << logMaxNoFiles << "', which is not a valid value. Setting file size to default.";
-        return 5;
+        qCWarning(lcLcu) << "Max number of log files is '" << logMaxNoFiles << "', which is not a valid value. Setting number of files to default.";
+        return maxCountDefault();
     }
 }
 
@@ -84,7 +85,7 @@ QString ConfigFileSettings::qtFilterRules() const
         return qtFilterRules;
     } else {
         qCWarning(lcLcu) << "Qt filter rules are '" << qtFilterRules << "', which is not a valid value. Setting Qt filter rules to default.";
-        return "strata.*=true"; //TBD
+        return filterRulesDefault(); //TBD
     }
 }
 
@@ -101,7 +102,7 @@ QString ConfigFileSettings::qtMsgPattern() const
         return qtMsgPattern;
     } else {
         qCWarning(lcLcu) << "Qt message pattern is '" << qtMsgPattern << "', which is not a valid value. Setting Qt message pattern to default.";
-        return "%{if-category}%{category}: %{endif}%{if-debug}%{function}%{endif}%{if-info}%{function}%{endif}%{if-warning}%{function}%{endif}%{if-critical}%{function}%{endif}%{if-fatal}%{function}%{endif} - %{message}";
+        return qtMsgDefault();
     }
 }
 
@@ -118,13 +119,38 @@ QString ConfigFileSettings::spdlogMsgPattern() const
         return spdMsgPattern;
     } else {
         qCWarning(lcLcu) << "spdlog message pattern is '" << spdMsgPattern << "', which is not a valid value. Setting spdlog message pattern to default.";
-        return "%T.%e %^[%=7l]%$ %v";
+        return spdMsgDefault();
     }
 }
 
 QString ConfigFileSettings::filePath() const
 {
     return settings_->fileName();
+}
+
+int ConfigFileSettings::maxSizeDefault() const
+{
+    return strata::loggers::defaults::LOGFILE_MAX_SIZE;
+}
+
+int ConfigFileSettings::maxCountDefault() const
+{
+    return strata::loggers::defaults::LOGFILE_MAX_COUNT;
+}
+
+QString ConfigFileSettings::filterRulesDefault() const
+{
+    return strata::loggers::defaults::QT_FILTER_RULES;
+}
+
+QString ConfigFileSettings::qtMsgDefault() const
+{
+    return strata::loggers::defaults::QT_MESSAGE_PATTERN;
+}
+
+QString ConfigFileSettings::spdMsgDefault() const
+{
+    return strata::loggers::defaults::SPDLOG_MESSAGE_PATTERN_4CONSOLE;
 }
 
 void ConfigFileSettings::setLogLevel(const QString& logLevel)

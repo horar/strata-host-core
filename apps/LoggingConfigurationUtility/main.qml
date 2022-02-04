@@ -12,9 +12,9 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 
 SGWidgets.SGMainWindow {
     id: root
-    width: 430
+    width: 550
     height: 400
-    minimumWidth: 430
+    minimumWidth: 550
     minimumHeight: 400
 
     visible: true
