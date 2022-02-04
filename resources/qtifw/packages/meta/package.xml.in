@@ -10,7 +10,7 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>The Strata package installs components required to access Strata platforms documentation and platforms control</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Checkable>false</Checkable>
     <Script>installscript.js</Script>
