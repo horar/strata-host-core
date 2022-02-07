@@ -14,7 +14,7 @@ using namespace strata::strataRPC;
 RequestsController::RequestsController() : findTimedoutRequestsTimer_(this)
 {
     currentRequestId_ = 0;
-    findTimedoutRequestsTimer_.setInterval(FIND_TIMEDOUT_REQUESTS_INTERVAL);
+    findTimedoutRequestsTimer_.setInterval(check_timeout_interval_);
     connect(&findTimedoutRequestsTimer_, &QTimer::timeout, this,
             &RequestsController::findTimedoutRequests);
 
@@ -90,7 +90,8 @@ void RequestsController::findTimedoutRequests()
 {
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
     for (const auto &request : qAsConst(requests_)) {
-        if ((currentTime - request.timestamp_) < REQUEST_TIMEOUT) {
+        qint64 duration = currentTime - request.timestamp_;
+        if (duration < request_timeout_.count()) {
             return;
         }
         emit requestTimedout(request.messageId_);
