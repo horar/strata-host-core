@@ -51,7 +51,7 @@
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
 
-#include "AppUi.h"
+// #include "AppUi.h"
 #include "config/AppConfig.h"
 
 using strata::loggers::QtLoggerSetup;
@@ -250,9 +250,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty ("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
 #endif // APPS_FEATURE_BLE
 
-    AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    strata::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(
-        &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        &ui, &strata::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
         Qt::QueuedConnection);
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, sdsModel.get(), &SDSModel::handleQmlWarning);
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
     // Starting services this build?
 #ifdef START_SERVICES
     QObject::connect(
-        &ui, &AppUi::uiLoaded, &app,
+        &ui, &strata::AppUi::uiLoaded, &app,
         [&sdsModel]() {
             bool started = sdsModel->startHcs();
             qCDebug(lcDevStudioHcs) << "hcs started =" << started;
