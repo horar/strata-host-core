@@ -17,7 +17,10 @@
 
 using namespace strata::strataRPC;
 
-StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObject *parent)
+StrataServer::StrataServer(
+        const QString &address,
+        bool useDefaultHandlers,
+        QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const Message &>()),
       clientsController_(new ClientsController(this)),
@@ -36,16 +39,43 @@ StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObj
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
     connector_->moveToThread(connectorThread_.get());
 
-    QObject::connect(this, &StrataServer::initializeConnector, connector_.get(),
-                     &ServerConnector::initialize, Qt::QueuedConnection);
-    QObject::connect(this, &StrataServer::sendMessage, connector_.get(),
-                     &ServerConnector::sendMessage, Qt::QueuedConnection);
-    QObject::connect(this, &StrataServer::MessageParsed, this, &StrataServer::dispatchHandler);
-    QObject::connect(connector_.get(), &ServerConnector::messageReceived, this,
-                     &StrataServer::messageReceived);
-    QObject::connect(connector_.get(), &ServerConnector::errorOccurred, this,
-                     &StrataServer::connectorErrorHandler);
-    QObject::connect(connector_.get(), &ServerConnector::initialized, this, [this]() {
+    QObject::connect(
+                this,
+                &StrataServer::initializeConnector,
+                connector_.get(),
+                &ServerConnector::initialize,
+                Qt::QueuedConnection);
+
+    QObject::connect(
+                this,
+                &StrataServer::sendMessage,
+                connector_.get(),
+                &ServerConnector::sendMessage,
+                Qt::QueuedConnection);
+
+    QObject::connect(
+                this,
+                &StrataServer::MessageParsed,
+                this,
+                &StrataServer::dispatchHandler);
+
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::messageReceived,
+                this,
+                &StrataServer::messageReceived);
+
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::errorOccurred,
+                this,
+                &StrataServer::connectorErrorHandler);
+
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::initialized,
+                this,
+                [this]() {
         qCInfo(lcStrataServer) << "Strata Server initialized successfully.";
         emit initialized();
     });

@@ -25,7 +25,9 @@
 namespace strataRPC = strata::strataRPC;
 
 HostControllerService::HostControllerService(QObject *parent)
-    : QObject(parent), downloadManager_(&networkManager_), storageManager_(&downloadManager_)
+    : QObject(parent),
+      downloadManager_(&networkManager_),
+      storageManager_(&downloadManager_)
 {
 }
 
@@ -50,54 +52,68 @@ bool HostControllerService::initialize(const QString &config)
     }
 
     strataServer_ = std::make_shared<strataRPC::StrataServer>(
-        serverConfig.value("subscriber_address").toString(), true, this);
+                serverConfig.value("subscriber_address").toString(),
+                true,
+                this);
 
     // Register handlers in strataServer_
     strataServer_->registerHandler(
-        "request_hcs_status",
-        std::bind(&HostControllerService::processCmdRequestHcsStatus, this, std::placeholders::_1));
+                "request_hcs_status",
+                std::bind(&HostControllerService::processCmdRequestHcsStatus, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "load_documents",
-        std::bind(&HostControllerService::processCmdLoadDocuments, this, std::placeholders::_1));
+                "load_documents",
+                std::bind(&HostControllerService::processCmdLoadDocuments, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "download_datasheet_file",
-        std::bind(&HostControllerService::processCmdDownloadDatasheetFile, this, std::placeholders::_1));
+                "download_datasheet_file",
+                std::bind(&HostControllerService::processCmdDownloadDatasheetFile, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "download_platform_files",
-        std::bind(&HostControllerService::processCmdDownloadPlatformFiles, this, std::placeholders::_1));
-    strataServer_->registerHandler("dynamic_platform_list",
-                                   std::bind(&HostControllerService::processCmdDynamicPlatformList,
-                                             this, std::placeholders::_1));
+                "download_platform_files",
+                std::bind(&HostControllerService::processCmdDownloadPlatformFiles, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "update_firmware",
-        std::bind(&HostControllerService::processCmdUpdateFirmware, this, std::placeholders::_1));
+                "dynamic_platform_list",
+                std::bind(&HostControllerService::processCmdDynamicPlatformList, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "download_view",
-        std::bind(&HostControllerService::processCmdDownlodView, this, std::placeholders::_1));
+                "update_firmware",
+                std::bind(&HostControllerService::processCmdUpdateFirmware, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "platform_message", std::bind(&HostControllerService::processCmdSendPlatformMessage, this,
-                                      std::placeholders::_1));
+                "download_view",
+                std::bind(&HostControllerService::processCmdDownlodView, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "check_for_updates",
-        std::bind(&HostControllerService::processCmdCheckForUpdates, this, std::placeholders::_1));
+                "platform_message",
+                std::bind(&HostControllerService::processCmdSendPlatformMessage, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "program_controller", std::bind(&HostControllerService::processCmdProgramController, this,
-                                        std::placeholders::_1));
+                "check_for_updates",
+                std::bind(&HostControllerService::processCmdCheckForUpdates, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "platform_start_application", std::bind(&HostControllerService::processCmdPlatformStartApplication, this,
-                                        std::placeholders::_1));
+                "program_controller",
+                std::bind(&HostControllerService::processCmdProgramController, this, std::placeholders::_1));
+
+    strataServer_->registerHandler(
+                "platform_start_application",
+                std::bind(&HostControllerService::processCmdPlatformStartApplication, this, std::placeholders::_1));
 
 #ifdef APPS_FEATURE_BLE
     strataServer_->registerHandler(
-        "bluetooth_scan", std::bind(&HostControllerService::processCmdBluetoothScan, this,
-                                        std::placeholders::_1));
+                "bluetooth_scan",
+                std::bind(&HostControllerService::processCmdBluetoothScan, this, std::placeholders::_1));
 #endif // APPS_FEATURE_BLE
+
     strataServer_->registerHandler(
-        "connect_device", std::bind(&HostControllerService::processCmdConnectDevice, this,
-                                        std::placeholders::_1));
+                "connect_device",
+                std::bind(&HostControllerService::processCmdConnectDevice, this, std::placeholders::_1));
+
     strataServer_->registerHandler(
-        "disconnect_device", std::bind(&HostControllerService::processCmdDisconnectDevice, this,
-                                        std::placeholders::_1));
+                "disconnect_device",
+                std::bind(&HostControllerService::processCmdDisconnectDevice, this, std::placeholders::_1));
 
     // connect signals
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
@@ -120,7 +136,6 @@ bool HostControllerService::initialize(const QString &config)
             &HostControllerService::sendControlViewDownloadProgressMessage);
     connect(&storageManager_, &StorageManager::platformMetaData, this,
             &HostControllerService::sendPlatformMetaData);
-
     connect(&platformController_, &PlatformController::platformConnected, this,
             &HostControllerService::platformStateChanged);
     connect(&platformController_, &PlatformController::platformDisconnected, this,
