@@ -50,7 +50,7 @@ bool ZmqRouterConnector::read(std::string& message)
         return false;
     }
 
-    if (true == hasReadEvent()) {
+    if (hasReadEvent()) {
         std::string identity;
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);

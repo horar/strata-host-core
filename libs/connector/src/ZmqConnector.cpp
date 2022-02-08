@@ -113,7 +113,7 @@ bool ZmqConnector::read(std::string& message)
         return false;
     }
 
-    if (true == hasReadEvent()) {
+    if (hasReadEvent()) {
         if (socketRecv(message)) {
             qCDebug(lcZmqConnector).nospace().noquote()
                     << "Rx'ed message: '" << QString::fromStdString(message) << "'";

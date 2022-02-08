@@ -166,7 +166,7 @@ bool HostControllerService::initialize(const QString &config)
 
     // create base folder
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
-    if (true == config_.contains("stage") && true == config_.value("stage").isString()) {
+    if (config_.contains("stage") && config_.value("stage").isString()) {
         QString stage = config_.value("stage").toString().toUpper();
         qCInfo(lcHcs) << "Running in" << stage << "setup";
         baseFolder += QString("/%1").arg(stage);

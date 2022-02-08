@@ -27,7 +27,7 @@ StrataServer::StrataServer(
       connector_(new ServerConnector(address)),
       connectorThread_(new QThread())
 {
-    if (true == useDefaultHandlers) {
+    if (useDefaultHandlers) {
         dispatcher_->registerHandler(
             "register_client",
             std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
@@ -148,12 +148,12 @@ void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray 
     Client client = clientsController_->getClient(clientMessage.clientID);
 
     // Check if registered client
-    if (true == client.getClientID().isEmpty()) {
+    if (client.getClientID().isEmpty()) {
         qCDebug(lcStrataServer) << "Client not registered";
 
         // Find out the client api version.
-        if ((true == jsonObject.contains("jsonrpc"))) {
-            if ((true == jsonObject.value("jsonrpc").isString()) &&
+        if ((jsonObject.contains("jsonrpc"))) {
+            if ((jsonObject.value("jsonrpc").isString()) &&
                 (jsonObject.value("jsonrpc") == "2.0")) {
                 apiVersion = ApiVersion::v2;
                 qCDebug(lcStrataServer) << "API v2";
@@ -207,7 +207,7 @@ bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Messag
     }
 
     // populate the handlerName -> method
-    if ((true == jsonObject.contains("method")) && (jsonObject.value("method").isString())) {
+    if ((jsonObject.contains("method")) && (jsonObject.value("method").isString())) {
         clientMessage->handlerName = jsonObject.value("method").toString();
     } else {
         QString errorMessage(QStringLiteral("Failed to process handler name."));
@@ -217,8 +217,8 @@ bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Messag
     }
 
     // populate the payload --> param
-    if ((true == jsonObject.contains("params")) &&
-        (true == jsonObject.value("params").isObject())) {
+    if ((jsonObject.contains("params")) &&
+        (jsonObject.value("params").isObject())) {
         clientMessage->payload = jsonObject.value("params").toObject();
     } else {
         QString errorMessage(QStringLiteral("Failed to process message payload."));
@@ -228,7 +228,7 @@ bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Messag
     }
 
     // populate messageID --> id
-    if ((true == jsonObject.contains("id") && (true == jsonObject.value("id").isDouble()))) {
+    if ((jsonObject.contains("id") && (jsonObject.value("id").isDouble()))) {
         clientMessage->messageID = jsonObject.value("id").toDouble();
     } else {
         QString errorMessage(QStringLiteral("Failed to process message id."));
@@ -246,17 +246,17 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 {
     bool isPlatformMessage = false;
 
-    if ((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
+    if ((jsonObject.contains("cmd")) && (jsonObject.value("cmd").isString())) {
         // Check if this command is meant to be sent to a platform
-        if (true == jsonObject.contains("device_id") &&
-            true == jsonObject.value("device_id").isString()) {
+        if (jsonObject.contains("device_id") &&
+            jsonObject.value("device_id").isString()) {
             clientMessage->handlerName = "platform_message";
             isPlatformMessage = true;
         } else {
             clientMessage->handlerName = jsonObject.value("cmd").toString();
         }
-    } else if ((true == jsonObject.contains("hcs::cmd")) &&
-               (true == jsonObject.value("hcs::cmd").isString())) {
+    } else if ((jsonObject.contains("hcs::cmd")) &&
+               (jsonObject.value("hcs::cmd").isString())) {
         clientMessage->handlerName = jsonObject.value("hcs::cmd").toString();
     } else {
         QString errorMessage(QStringLiteral("Failed to process handler name."));
@@ -267,14 +267,14 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 
     // documentation show messages with no payload are valid.
     bool hasPayload =
-        (true == jsonObject.contains("payload")) && (jsonObject.value("payload").isObject());
+        (jsonObject.contains("payload")) && (jsonObject.value("payload").isObject());
     QJsonObject payloadJsonObject{};
 
-    if (true == isPlatformMessage) {
+    if (isPlatformMessage) {
         payloadJsonObject.insert("device_id", jsonObject.value("device_id").toString());
         QJsonObject messageJsonObject;
         messageJsonObject.insert("cmd", jsonObject.value("cmd"));
-        if (true == hasPayload) {
+        if (hasPayload) {
             messageJsonObject.insert("payload", jsonObject.value("payload").toObject());
         } else {
             messageJsonObject.insert("payload", QJsonObject{});
@@ -283,7 +283,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
             "message",
             QString(QJsonDocument(messageJsonObject).toJson(QJsonDocument::JsonFormat::Compact)));
     } else {
-        if (true == hasPayload) {
+        if (hasPayload) {
             payloadJsonObject = jsonObject.value("payload").toObject();
         }
     }
@@ -376,8 +376,8 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
     if (ApiVersion currentApiVersion =
             clientsController_->getClientApiVersion(clientMessage.clientID);
         ApiVersion::v1 != currentApiVersion) {
-        if (true == clientMessage.payload.contains("api_version") &&
-            true == clientMessage.payload.value("api_version").isString()) {
+        if (clientMessage.payload.contains("api_version") &&
+            clientMessage.payload.value("api_version").isString()) {
             QString apiVersionPayload = clientMessage.payload.value("api_version").toString();
 
             // list of available api versions.
@@ -398,7 +398,7 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
         }
     }
 
-    if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
+    if (clientsController_->isRegisteredClient(clientMessage.clientID)) {
         notifyClient(clientMessage, {{"status", "client registered"}}, ResponseType::Response);
     } else {
         QString errorMessage(QStringLiteral("Failed to register client."));
@@ -412,7 +412,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 {
     qCDebug(lcStrataServer).noquote().nospace()
         << "Handle Client Unregistration. ClientID: 0x" << clientMessage.clientID.toHex();
-    if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
+    if (clientsController_->isRegisteredClient(clientMessage.clientID)) {
         notifyClient(clientMessage, {{"status", "going to unregister client"}}, ResponseType::Response);
     }
     if (false == clientsController_->unregisterClient(clientMessage.clientID)) {
