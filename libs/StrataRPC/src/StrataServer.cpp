@@ -124,6 +124,17 @@ bool StrataServer::unregisterHandler(const QString &handlerName)
     return true;
 }
 
+QByteArray StrataServer::firstClientId() const
+{
+    QList<Client> clientList = clientsController_->getAllClients();
+
+    if (clientList.isEmpty() == false) {
+        return clientList.first().getClientID();
+    }
+
+    return QByteArray();
+}
+
 void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray &message)
 {
     qCDebug(lcStrataServer).noquote().nospace()

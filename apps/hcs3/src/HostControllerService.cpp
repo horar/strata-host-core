@@ -454,10 +454,15 @@ void HostControllerService::sendPlatformMessageToClients(const QString &platform
 {
     Q_UNUSED(platformId)
 
-    // TODO: map each device to a client and update this functionality
-    strataServer_->notifyClient(currentClient_,
-                                hcsNotificationTypeToString(hcsNotificationType::platformMessage),
-                                payload, strataRPC::ResponseType::PlatformMessage);
+    QByteArray firstClientId = strataServer_->firstClientId();
+    if (firstClientId.isEmpty()) {
+        return;
+    }
+
+    strataServer_->notifyClient(
+                firstClientId,
+                hcsNotificationTypeToString(hcsNotificationType::platformMessage),
+                payload, strataRPC::ResponseType::PlatformMessage);
 }
 
 #ifdef APPS_FEATURE_BLE
@@ -505,7 +510,6 @@ void HostControllerService::processCmdDynamicPlatformList(const strataRPC::Messa
         message.clientID, hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
         platformController_.createPlatformsList(), strataRPC::ResponseType::Notification);
 
-    currentClient_ = message.clientID;  // Remove this when platforms are mapped to their clients.
 }
 
 void HostControllerService::processCmdLoadDocuments(const strataRPC::Message &message)

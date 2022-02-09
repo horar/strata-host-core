@@ -80,6 +80,8 @@ public:
      */
     bool unregisterHandler(const QString &handlerName);
 
+    QByteArray firstClientId() const;
+
 public slots:
     /**
      * Slot to send a message to a client. This overload is used when responding to a prevues client
