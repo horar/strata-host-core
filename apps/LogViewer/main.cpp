@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
-    qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
+    qmlRegisterUncreatableType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel", "You can't instantiate LogModel in QML");
     qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
