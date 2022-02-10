@@ -27,7 +27,7 @@ ColumnLayout {
     property var latestVersion: ({})
     property bool downloadError: false
     property string activeDownloadUri: ""
-    property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
+    property string timestampFormat: "MMM dd yyyy, hh:mm:ss"
 
     Component.onCompleted: {
         if (platformMetaDataInitialized) {
