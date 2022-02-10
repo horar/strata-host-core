@@ -63,14 +63,12 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-
         qCInfo(lcSci)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
     }
 }
-
 
 void addImportPaths(QQmlApplicationEngine *engine) {
     QDir applicationDir(QCoreApplication::applicationDirPath());
