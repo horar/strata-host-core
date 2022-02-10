@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 
     addImportPaths(&engine);
 
-    qmlRegisterType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel");
+    qmlRegisterUncreatableType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel", "can not instantiate PrtModel in qml");
     qmlRegisterUncreatableType<strata::PlatformManager>("tech.strata.sci", 1, 0, "PlatformManager", "can not instantiate PlatformManager in qml");
     qmlRegisterUncreatableType<Authenticator>("tech.strata.prt.authenticator", 1, 0, "Authenticator", "can not instantiate Authenticator in qml");
     qmlRegisterUncreatableType<RestClient>("tech.strata.prt.restclient", 1, 0, "RestClient", "can not instantiate RestClient in qml");
