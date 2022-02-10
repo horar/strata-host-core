@@ -13,6 +13,7 @@
 #include <QMap>
 #include <QObject>
 #include <QTimer>
+#include <chrono>
 
 namespace strata::strataRPC
 {
@@ -93,8 +94,8 @@ private:
     int currentRequestId_;
 
     QTimer findTimedoutRequestsTimer_;
-    static constexpr int FIND_TIMEDOUT_REQUESTS_INTERVAL{10};
-    static constexpr int REQUEST_TIMEOUT{500};
+    static constexpr std::chrono::milliseconds check_timeout_interval_ = std::chrono::seconds(1);
+    static constexpr std::chrono::milliseconds request_timeout_ = std::chrono::seconds(2);
 };
 
 }  // namespace strata::strataRPC

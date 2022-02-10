@@ -22,7 +22,7 @@ ColumnLayout {
     Layout.topMargin: 10
 
     property alias firmwareModel: firmwareListView.model
-    property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
+    property string timestampFormat: "MMM dd yyyy, hh:mm:ss"
 
     ColumnLayout{
         id: firmwareVersions

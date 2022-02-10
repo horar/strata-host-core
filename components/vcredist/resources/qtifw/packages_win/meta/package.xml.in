@@ -10,7 +10,7 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>The Visual C++ Redistributable Packages install run-time components that are required to run C++ applications built using Visual Studio 2017</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_OPTIONAL@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>59</SortingPriority>
     <!--we need admin rights to install this component-->

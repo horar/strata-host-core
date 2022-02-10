@@ -212,8 +212,10 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
     switch (replicatorType) {
         case ReplicatorType::kPull:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
+            break;
         case ReplicatorType::kPush:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
+            break;
         default:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     }
@@ -284,8 +286,10 @@ bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std
     switch (replicatorType) {
         case ReplicatorType::kPull:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
+            break;
         case ReplicatorType::kPush:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
+            break;
         default:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     }
