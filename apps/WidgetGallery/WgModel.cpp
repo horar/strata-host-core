@@ -16,3 +16,12 @@ WgModel::WgModel(QObject *parent) : QObject(parent)
 WgModel::~WgModel()
 {
 }
+
+void WgModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
+}

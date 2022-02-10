@@ -18,6 +18,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QNetworkAccessManager>
+#include <QQmlError>
 
 
 class PrtModel : public QObject
@@ -81,6 +82,9 @@ public:
 
     Q_INVOKABLE void startDeviceScan();
     Q_INVOKABLE void stopDeviceScan();
+
+public slots:
+    void handleQmlWarning(const QList<QQmlError> &warnings);
 
 signals:
     void deviceInfoChanged(QByteArray deviceId);

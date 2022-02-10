@@ -178,14 +178,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("prtModel", &prtModel_);
 
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-                    [&prtModel_](const QList<QQmlError> &warnings) {
-                        QStringList msg;
-                        foreach (const QQmlError &error, warnings) {
-                            msg << error.toString();
-                        }
-                        emit prtModel_.notifyQmlError(msg.join(QStringLiteral("\n")));
-                    });
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &prtModel_, &PrtModel::handleQmlWarning);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

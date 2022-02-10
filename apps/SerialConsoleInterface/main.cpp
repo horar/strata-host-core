@@ -198,14 +198,8 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
 
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-                    [&sciModel_](const QList<QQmlError> &warnings) {
-                        QStringList msg;
-                        foreach (const QQmlError &error, warnings) {
-                            msg << error.toString();
-                        }
-                        emit sciModel_.notifyQmlError(msg.join(QStringLiteral("\n")));
-                    });
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &sciModel_, &SciModel::handleQmlWarning);
+
 
 #ifdef APPS_FEATURE_BLE
     engine.rootContext()->setContextProperty("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));

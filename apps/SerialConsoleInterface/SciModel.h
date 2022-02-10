@@ -16,6 +16,7 @@
 #endif // APPS_FEATURE_BLE
 
 #include <QObject>
+#include <QQmlError>
 
 class SciModel : public QObject
 {
@@ -39,6 +40,9 @@ public:
 #ifdef APPS_FEATURE_BLE
     SciBleDeviceModel* bleDeviceModel();
 #endif // APPS_FEATURE_BLE
+
+public slots:
+    void handleQmlWarning(const QList<QQmlError> &warnings);
 
 signals:
     void notifyQmlError(QString notifyQmlError);

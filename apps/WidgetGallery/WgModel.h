@@ -9,6 +9,7 @@
 #pragma once
 
 #include <QObject>
+#include <QQmlError>
 
 class WgModel : public QObject
 {
@@ -17,6 +18,9 @@ class WgModel : public QObject
 public:
     explicit WgModel(QObject *parent = nullptr);
     virtual ~WgModel();
+
+public slots:
+    void handleQmlWarning(const QList<QQmlError> &warnings);
 
 signals:
     void notifyQmlError(QString notifyQmlError);

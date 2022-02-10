@@ -50,6 +50,15 @@ SciMockDeviceModel *SciModel::mockDeviceModel()
     return &mockDeviceModel_;
 }
 
+void SciModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
+}
+
 #ifdef APPS_FEATURE_BLE
 SciBleDeviceModel *SciModel::bleDeviceModel()
 {

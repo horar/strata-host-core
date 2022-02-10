@@ -12,6 +12,7 @@
 #include <QAbstractListModel>
 #include <QDateTime>
 #include <FileModel.h>
+#include <QQmlError>
 
 
 struct LogItem;
@@ -67,6 +68,7 @@ public:
 
 public slots:
     void checkFile();
+    void handleQmlWarning(const QList<QQmlError> &warnings);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

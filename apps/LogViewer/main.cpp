@@ -174,14 +174,7 @@ int main(int argc, char *argv[]) {
 
     engine.rootContext()->setContextProperty("logModel", &logModel_);
 
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-                    [&logModel_](const QList<QQmlError> &warnings) {
-                        QStringList msg;
-                        foreach (const QQmlError &error, warnings) {
-                            msg << error.toString();
-                        }
-                        emit logModel_.notifyQmlError(msg.join(QStringLiteral("\n")));
-                    });
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &logModel_, &LogModel::handleQmlWarning);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

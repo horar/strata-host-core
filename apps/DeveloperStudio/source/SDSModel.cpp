@@ -357,3 +357,12 @@ QString SDSModel::openLogViewer()
 
     return "";
 }
+
+void SDSModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
+}

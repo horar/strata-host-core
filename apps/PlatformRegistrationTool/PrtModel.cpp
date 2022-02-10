@@ -644,3 +644,12 @@ bool PrtModel::debugBuild() const
     return true;
 #endif
 }
+
+void PrtModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
+}
