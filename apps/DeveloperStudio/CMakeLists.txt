@@ -85,7 +85,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 set(${PROJECT_NAME}_ENABLED_PLUGINS "")
 add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "DEBUGBAR" PLUGIN_NAME "debugbar")
 add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "CVC" PLUGIN_NAME "cvc")
-# add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "QMLDEBUG" PLUGIN_NAME "qmldebug")
 add_qml_debug_plugin_to_version(PROJ_NAME ${PROJECT_NAME} PLUGIN_NAME "qmldebug")
 
 generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)

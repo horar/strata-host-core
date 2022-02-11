@@ -14,8 +14,6 @@ import Qt.labs.platform 1.0 as QtLabsPlatform
 SGWidgets.SGMainWindow {
     id: root
 
-    signal messageReceived(string person, string notice)
-
     height: 600
     width: 800
     minimumHeight: 600

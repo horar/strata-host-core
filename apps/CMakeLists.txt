@@ -29,10 +29,6 @@ if(NOT MINGW)
         "APPS_CORESW_SDS" OFF)
     add_feature_info(APPS_CORESW_SDS_PLUGIN_DEBUGBAR APPS_CORESW_SDS_PLUGIN_DEBUGBAR "DevStudio 'debugbar' plugin")
 
-    # cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_QMLDEBUG "Build DevStudio 'qmldebug' plugin" ON
-    #     "APPS_CORESW_SDS" OFF)
-    # add_feature_info(APPS_CORESW_SDS_PLUGIN_QMLDEBUG APPS_CORESW_SDS_PLUGIN_QMLDEBUG "DevStudio 'qmldebug' plugin")
-
     cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_CVC "Build DevStudio 'CVC' plugin" ON
         "APPS_CORESW_SDS" OFF)
     add_feature_info(APPS_CORESW_SDS_PLUGIN_CVC APPS_CORESW_SDS_PLUGIN_CVC "DevStudio 'Control View Creator' plugin")
