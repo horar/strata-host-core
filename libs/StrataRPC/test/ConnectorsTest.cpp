@@ -13,6 +13,12 @@
 
 QTEST_MAIN(ConnectorsTest)
 
+using strata::strataRPC::ServerConnector;
+using strata::strataRPC::ClientConnector;
+
+constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
+constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
+
 void ConnectorsTest::waitForZmqMessages(int delay)
 {
     QTimer timer;
@@ -27,27 +33,23 @@ void ConnectorsTest::waitForZmqMessages(int delay)
 
 void ConnectorsTest::testOpenServerConnectorFaild()
 {
-    strata::strataRPC::ServerConnector connector(address_);
-    QSignalSpy serverConnected_1(&connector,
-                                 &strata::strataRPC::ServerConnector::initialized);
-    QSignalSpy errorOccured_1(&connector, &strata::strataRPC::ServerConnector::errorOccurred);
+    ServerConnector connector(address_);
+    QSignalSpy serverConnected_1(&connector, &ServerConnector::initialized);
+    QSignalSpy errorOccured_1(&connector, &ServerConnector::errorOccurred);
     QVERIFY(serverConnected_1.isValid());
     QVERIFY(errorOccured_1.isValid());
     QCOMPARE(connector.initialize(), true);
-    QCOMPARE(serverConnected_1.isEmpty(), false);
-    QCOMPARE(errorOccured_1.isEmpty(), true);
+    QVERIFY((serverConnected_1.count() == 1) || (serverConnected_1.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((errorOccured_1.count() == 0) && (errorOccured_1.wait(zmqWaitTime) == false));
 
-    strata::strataRPC::ServerConnector connectorDublicate(address_);
-    QSignalSpy serverConnected_2(&connectorDublicate,
-                                 &strata::strataRPC::ServerConnector::initialized);
-    QSignalSpy errorOccured_2(&connectorDublicate,
-                              &strata::strataRPC::ServerConnector::errorOccurred);
+    ServerConnector connectorDublicate(address_);
+    QSignalSpy serverConnected_2(&connectorDublicate, &ServerConnector::initialized);
+    QSignalSpy errorOccured_2(&connectorDublicate, &ServerConnector::errorOccurred);
     QVERIFY(serverConnected_2.isValid());
     QVERIFY(errorOccured_2.isValid());
     QCOMPARE(connectorDublicate.initialize(), false);
-    QCOMPARE(serverConnected_2.isEmpty(), true);
-    QCOMPARE(errorOccured_2.isEmpty(), false);
-    QCOMPARE(errorOccured_2.count(), 1);
+    QVERIFY((serverConnected_2.count() == 0) && (serverConnected_2.wait(zmqWaitTime) == false));
+    QVERIFY((errorOccured_2.count() == 1) || (errorOccured_2.wait(zmqWaitTimeSuccess) == true));
     auto errorType =
         qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured_2.takeFirst().at(0));
     QCOMPARE(errorType, strata::strataRPC::ServerConnectorError::FailedToInitialize);
@@ -57,24 +59,27 @@ void ConnectorsTest::testServerAndClient()
 {
     QTimer timer;
     bool testPassed = false;
-    strata::strataRPC::ServerConnector server(address_);
+    ServerConnector server(address_);
+    QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
+    QVERIFY(serverInitialized.isValid());
     QCOMPARE(server.initialize(), true);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     QByteArray client_id = "client_1";
-    strata::strataRPC::ClientConnector client(address_, client_id);
+    ClientConnector client(address_, client_id);
 
-    QSignalSpy initialized(&client, &strata::strataRPC::ClientConnector::initialized);
-    QSignalSpy connected(&client, &strata::strataRPC::ClientConnector::connected);
-    QVERIFY(initialized.isValid());
-    QVERIFY(connected.isValid());
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QSignalSpy clientInitialized(&client, &ClientConnector::initialized);
+    QVERIFY(clientConnected.isValid());
+    QVERIFY(clientInitialized.isValid());
 
     QCOMPARE(client.initialize(), true);
 
-    QCOMPARE(initialized.count(), 1);
-    QCOMPARE(connected.count(), 1);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((clientInitialized.count() == 1) || (clientInitialized.wait(zmqWaitTimeSuccess) == true));
     QCOMPARE(client.isConnected(), true);
 
-    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
+    connect(&server, &ServerConnector::messageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
                 QCOMPARE(clientId, "client_1");
                 if (message == "Start Test") {
@@ -82,7 +87,7 @@ void ConnectorsTest::testServerAndClient()
                 }
             });
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&client, &timer, &testPassed]() {
                 client.sendMessage("Hello from ClientConnector!");
                 testPassed = true;
@@ -93,7 +98,7 @@ void ConnectorsTest::testServerAndClient()
 
     // wait for the messages
     timer.setSingleShot(true);
-    timer.start(100);
+    timer.start(zmqWaitTimeSuccess);
     do {
         QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
     } while (timer.isActive());
@@ -103,21 +108,36 @@ void ConnectorsTest::testServerAndClient()
 
 void ConnectorsTest::testMultipleClients()
 {
-    strata::strataRPC::ServerConnector server(address_);
+    int count = 15;
+    int clientMessages = 0;
+    int serverMessages = 0;
+    ServerConnector server(address_);
+    QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
+    QVERIFY(serverInitialized.isValid());
     QCOMPARE(server.initialize(), true);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
-            [&server](const QByteArray &clientId, const QString &) {
+    connect(&server, &ServerConnector::messageReceived, this,
+            [&serverMessages, &server](const QByteArray &clientId, const QString &) {
+                ++serverMessages;
                 server.sendMessage(clientId, clientId);
             });
 
-    std::vector<strata::strataRPC::ClientConnector *> clientsList;
-    for (int i = 0; i < 15; i++) {
-        clientsList.push_back(
-            new strata::strataRPC::ClientConnector(address_, QByteArray::number(i)));
-        clientsList.back()->initialize();
-        connect(clientsList.back(), &strata::strataRPC::ClientConnector::messageReceived, this,
-                [i](const QByteArray &message) { QCOMPARE(message, QByteArray::number(i)); });
+    std::vector<ClientConnector *> clientsList;
+    for (int i = 0; i < count; i++) {
+        ClientConnector* client = new ClientConnector(address_, QByteArray::number(i));
+        clientsList.push_back(client);
+
+        QSignalSpy clientConnected(client, &ClientConnector::connected);
+        QVERIFY(clientConnected.isValid());
+        QCOMPARE(client->initialize(), true);
+        QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+
+        connect(client, &ClientConnector::messageReceived, this,
+                [&clientMessages, i](const QByteArray &message) {
+                    ++clientMessages;
+                    QCOMPARE(message, QByteArray::number(i));
+                });
     }
 
     // send Messages
@@ -125,7 +145,8 @@ void ConnectorsTest::testMultipleClients()
         client->sendMessage("testClient");
     }
 
-    waitForZmqMessages();
+    QTRY_VERIFY_WITH_TIMEOUT(clientMessages == count, zmqWaitTimeSuccess);
+    QTRY_VERIFY_WITH_TIMEOUT(serverMessages == count, zmqWaitTimeSuccess);
 
     // clean-up
     for (auto client : clientsList) {
@@ -135,20 +156,26 @@ void ConnectorsTest::testMultipleClients()
 
 void ConnectorsTest::testFloodTheServer()
 {
-    strata::strataRPC::ServerConnector server(address_);
+    ServerConnector server(address_);
+    QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
+    QVERIFY(serverInitialized.isValid());
     QCOMPARE(server.initialize(), true);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
+    connect(&server, &ServerConnector::messageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
                 if (message == "Start Test") {
                     server.sendMessage(clientId, "Hello from ServerConnector!");
                 }
             });
 
-    strata::strataRPC::ClientConnector client(address_);
+    ClientConnector client(address_);
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
     QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&client](const QByteArray &) {
                 for (int i = 0; i < 1000; i++) {
                     client.sendMessage(QByteArray::number(i));
@@ -157,37 +184,42 @@ void ConnectorsTest::testFloodTheServer()
 
     client.sendMessage("Start Test");
 
-    waitForZmqMessages();
+    waitForZmqMessages(zmqWaitTime);
 }
 
 void ConnectorsTest::testFloodTheClient()
 {
     QTimer timer;
-
-    strata::strataRPC::ServerConnector server(address_);
+    ServerConnector server(address_);
+    QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
+    QVERIFY(serverInitialized.isValid());
     QCOMPARE(server.initialize(), true);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
+    connect(&server, &ServerConnector::messageReceived, this,
             [&server, &timer](const QByteArray &clientId, const QByteArray &message) {
                 if (message == "Start Test") {
                     for (int i = 0; i < 1000; i++) {
                         server.sendMessage(clientId, QByteArray::number(i));
                     }
                 }
-                timer.start(100);  // increase the timer to process the client messages
+                timer.start(zmqWaitTimeSuccess);    // increase the timer to process the client messages
             });
 
-    strata::strataRPC::ClientConnector client(address_);
+    ClientConnector client(address_);
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
     QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [](const QByteArray &) {});
 
     client.sendMessage("Start Test");
 
     // wait for the messages
     timer.setSingleShot(true);
-    timer.start(100);
+    timer.start(zmqWaitTimeSuccess);
     do {
         QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
     } while (timer.isActive());
@@ -195,96 +227,111 @@ void ConnectorsTest::testFloodTheClient()
 
 void ConnectorsTest::testDisconnectClient()
 {
-    bool serverReceivedMessage = false;
-    strata::strataRPC::ServerConnector server(address_);
+    ServerConnector server(address_);
+    QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
+    QVERIFY(serverInitialized.isValid());
     QCOMPARE(server.initialize(), true);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&server, &strata::strataRPC::ServerConnector::messageReceived, this,
-            [&serverReceivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
-                serverReceivedMessage = true;
+    QSignalSpy serverMessageReceived(&server, &ServerConnector::messageReceived);
+    QVERIFY(serverMessageReceived.isValid());
+    connect(&server, &ServerConnector::messageReceived, this,
+            [&server](const QByteArray &clientId, const QByteArray &) {
                 server.sendMessage(clientId, "test from the server");
             });
 
-    bool clientReceivedMessage = false;
-    strata::strataRPC::ClientConnector client(address_, "AA");
+    ClientConnector client(address_, "AA");
 
-    QSignalSpy clientDisconnected(&client, &strata::strataRPC::ClientConnector::disconnected);
+    QSignalSpy clientDisconnected(&client, &ClientConnector::disconnected);
     QVERIFY(clientDisconnected.isValid());
 
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
     QCOMPARE(client.initialize(), true);
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
-            [&clientReceivedMessage](const QByteArray &) { clientReceivedMessage = true; });
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+    clientConnected.clear();
 
-    serverReceivedMessage = false;
-    clientReceivedMessage = false;
+    QSignalSpy clientMessageReceived(&client, &ClientConnector::messageReceived);
+    QVERIFY(clientMessageReceived.isValid());
+
+    serverMessageReceived.clear();
+    clientMessageReceived.clear();
     client.sendMessage("test from the client");
-    waitForZmqMessages();
-    QVERIFY(true == serverReceivedMessage);
-    QVERIFY(true == clientReceivedMessage);
+    QVERIFY((serverMessageReceived.count() == 1) || (serverMessageReceived.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((clientMessageReceived.count() == 1) || (clientMessageReceived.wait(zmqWaitTimeSuccess) == true));
 
     QCOMPARE(client.disconnect(), true);
-    QCOMPARE(clientDisconnected.count(), 1);
+    QVERIFY((clientDisconnected.count() == 1) || (clientDisconnected.wait(zmqWaitTimeSuccess) == true));
     clientDisconnected.clear();
 
-    waitForZmqMessages();
-
     QCOMPARE(client.connect(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+    clientConnected.clear();
 
-    serverReceivedMessage = false;
-    clientReceivedMessage = false;
+    serverMessageReceived.clear();
+    clientMessageReceived.clear();
     client.sendMessage("test from the client");
-    waitForZmqMessages();
-    QVERIFY(true == serverReceivedMessage);
-    QVERIFY(true == clientReceivedMessage);
+    QVERIFY((serverMessageReceived.count() == 1) || (serverMessageReceived.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((clientMessageReceived.count() == 1) || (clientMessageReceived.wait(zmqWaitTimeSuccess) == true));
 
-    serverReceivedMessage = false;
-    clientReceivedMessage = false;
+    serverMessageReceived.clear();
+    clientMessageReceived.clear();
     QCOMPARE(client.disconnect(), true);
-    QCOMPARE(clientDisconnected.count(), 1);
+    QVERIFY((clientDisconnected.count() == 1) || (clientDisconnected.wait(zmqWaitTimeSuccess) == true));
     clientDisconnected.clear();
 
     server.sendMessage("AA", "test from the server");
-    waitForZmqMessages();
-    QVERIFY(false == serverReceivedMessage);
-    QVERIFY(false == clientReceivedMessage);
+    QVERIFY((serverMessageReceived.count() == 0) && (serverMessageReceived.wait(zmqWaitTime) == false));
+    QVERIFY((clientMessageReceived.count() == 0) && (clientMessageReceived.wait(zmqWaitTime) == false));
 
     QCOMPARE(client.disconnect(), false);
-    QCOMPARE(clientDisconnected.count(), 0);
+    QVERIFY((clientDisconnected.count() == 0) && (clientDisconnected.wait(zmqWaitTime) == false));
     clientDisconnected.clear();
 
     QCOMPARE(client.connect(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+    clientConnected.clear();
     QCOMPARE(client.connect(), false);
+    QVERIFY((clientConnected.count() == 0) && (clientConnected.wait(zmqWaitTime) == false));
     QCOMPARE(client.disconnect(), true);
-    QCOMPARE(clientDisconnected.count(), 1);
-    clientDisconnected.clear();
+    QVERIFY((clientDisconnected.count() == 1) || (clientDisconnected.wait(zmqWaitTimeSuccess) == true));
 }
 
 void ConnectorsTest::testFailedToSendMessageFromClientConnector()
 {
-    strata::strataRPC::ClientConnector client(address_);
+    ClientConnector client(address_);
 
     QVERIFY(false == client.sendMessage("This should fail!"));
 
-    QVERIFY(client.initialize());
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QSignalSpy clientDisonnected(&client, &ClientConnector::disconnected);
+    QVERIFY(clientConnected.isValid());
+    QVERIFY(clientDisonnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
     QVERIFY(client.sendMessage("This should pass!"));
 
     QVERIFY(client.disconnect());
+    QVERIFY((clientDisonnected.count() == 1) || (clientDisonnected.wait(zmqWaitTimeSuccess) == true));
     QVERIFY(false == client.sendMessage("This should fail!"));
 }
 
 void ConnectorsTest::testFailedToSendMessageFromServerConnector()
 {
     qRegisterMetaType<strata::strataRPC::ServerConnectorError>("ServerConnectorError");
-    strata::strataRPC::ServerConnector server(address_);
-    QSignalSpy errorOccured(&server, &strata::strataRPC::ServerConnector::errorOccurred);
+    ServerConnector server(address_);
+    QSignalSpy errorOccured(&server, &ServerConnector::errorOccurred);
     QVERIFY(errorOccured.isValid());
     QVERIFY(false == server.sendMessage("RANDOMID", "This should fail."));
-    QCOMPARE(errorOccured.isEmpty(), false);
+    QVERIFY((errorOccured.count() == 1) || (errorOccured.wait(zmqWaitTimeSuccess) == true));
     auto errorType =
         qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured.takeFirst().at(0));
     QCOMPARE(errorType, strata::strataRPC::ServerConnectorError::FailedToSend);
 
-    QVERIFY(server.initialize());
+    QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
+    QVERIFY(serverInitialized.isValid());
+    QCOMPARE(server.initialize(), true);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
     QVERIFY(server.sendMessage("RANDOMID", "This should pass."));
 }
 
@@ -292,16 +339,18 @@ void ConnectorsTest::testClientConnectorErrorSignals()
 {
     qRegisterMetaType<strata::strataRPC::ClientConnectorError>("ClientConnectorError");
 
-    strata::strataRPC::ClientConnector client(address_);
+    ClientConnector client(address_);
     QCOMPARE(client.isConnected(), false);
-    client.initialize();
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    QSignalSpy errorOccurred(&client, &strata::strataRPC::ClientConnector::errorOccurred);
+    QSignalSpy errorOccurred(&client, &ClientConnector::errorOccurred);
     QVERIFY(errorOccurred.isValid());
-
     {
         QCOMPARE(client.initialize(), false);
-        QCOMPARE(errorOccurred.count(), 1);
+        QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
         auto errorType =
             qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
         QCOMPARE(errorType, strata::strataRPC::ClientConnectorError::FailedToConnect);

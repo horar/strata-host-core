@@ -14,6 +14,9 @@
 
 QTEST_MAIN(StrataServerTest)
 
+using strata::strataRPC::StrataServer;
+using strata::strataRPC::ClientConnector;
+
 constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
 constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
 
@@ -165,8 +168,10 @@ void StrataServerTest::testFloodTheServer()
 void StrataServerTest::testServerFunctionality()
 {
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     // add a handler to handler the client message.
     // add a handler to create a response
@@ -176,31 +181,39 @@ void StrataServerTest::testServerFunctionality()
     });
 
     bool clientGotResponse = false;
-    strata::strataRPC::ClientConnector client(address_, "AA");
+    ClientConnector client(address_, "AA");
     connect(
-        &client, &strata::strataRPC::ClientConnector::messageReceived, this,
+        &client, &ClientConnector::messageReceived, this,
         [&clientGotResponse](const QByteArray &message) {
             QCOMPARE(
                 message,
                 "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"client registered\"}}");
             clientGotResponse = true;
         });
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
     bool clientGotResponse_2 = false;
-    strata::strataRPC::ClientConnector client_2(address_, "BB");
-    connect(&client_2, &strata::strataRPC::ClientConnector::messageReceived, this,
+    ClientConnector client_2(address_, "BB");
+    connect(&client_2, &ClientConnector::messageReceived, this,
             [&clientGotResponse_2](const QByteArray &message) {
                 QCOMPARE(message,
                           "{\"hcs::notification\":{\"status\":\"client "
                           "registered\",\"type\":\"register_client\"}}");
                 clientGotResponse_2 = true;
             });
+
+    QSignalSpy clientConnected_2(&client_2, &ClientConnector::connected);
+    QVERIFY(clientConnected_2.isValid());
     client_2.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((clientConnected_2.count() == 1) || (clientConnected_2.wait(zmqWaitTimeSuccess) == true));
+
     client_2.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
     QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse, zmqWaitTimeSuccess);
@@ -211,15 +224,19 @@ void StrataServerTest::testBuildNotificationApiV2()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
     connect(
-        &client, &strata::strataRPC::ClientConnector::messageReceived, this,
+        &client, &ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
             // ignore the response to the unregistered handler
             if (message == R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
@@ -259,15 +276,19 @@ void StrataServerTest::testBuildResponseApiV2()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
     connect(
-        &client, &strata::strataRPC::ClientConnector::messageReceived, this,
+        &client, &ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
             // ignore the response to the unregistered handler
             if (message == R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
@@ -299,21 +320,25 @@ void StrataServerTest::testBuildResponseApiV2()
     });
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_response","params":{},"id":1})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTime);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testBuildErrorApiV2()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -340,22 +365,26 @@ void StrataServerTest::testBuildErrorApiV2()
     });
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_error","params":{},"id":3})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 1000);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testBuildPlatformMessageApiV2()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
     connect(
-        &client, &strata::strataRPC::ClientConnector::messageReceived, this,
+        &client, &ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
             // ignore the response to the unregistered handler
             if (message == R"({"error":{"message":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
@@ -396,14 +425,18 @@ void StrataServerTest::testBuildNotificationApiV1()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -433,14 +466,18 @@ void StrataServerTest::testBuildResponseApiV1()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -478,8 +515,10 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
         handlerCalled = true;
     });
 
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     handlerCalled = false;
     currentCommandName = "test_1";
@@ -513,14 +552,18 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -553,19 +596,29 @@ void StrataServerTest::testNotifyAllClients()
 {
     QTimer timer;
     StrataServer server(address_, false);
-    std::vector<strata::strataRPC::ClientConnector *> clientsList;
+    std::vector<ClientConnector *> clientsList;
     int counter = 0;
     int clientsCount = 10;
 
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     // half the clients use API v2
     for (int i = 0; i < clientsCount / 2; i++) {
-        clientsList.push_back(
-            new strata::strataRPC::ClientConnector(address_, QByteArray::number(i)));
-        clientsList.back()->initialize();
-        connect(clientsList.back(), &strata::strataRPC::ClientConnector::messageReceived, this,
+        ClientConnector* client_v2 =
+                new ClientConnector(address_, QByteArray::number(i));
+        clientsList.push_back(client_v2);
+
+        QSignalSpy clientConnected(client_v2, &ClientConnector::connected);
+        QSignalSpy messageReceived(client_v2, &ClientConnector::messageReceived);
+        QVERIFY(clientConnected.isValid());
+        QVERIFY(messageReceived.isValid());
+        QCOMPARE(client_v2->initialize(), true);
+        QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+
+        connect(client_v2, &ClientConnector::messageReceived, this,
                 [&counter](const QByteArray &message) {
                     // ignore the response to the unregistered handler
                     if (message ==
@@ -598,16 +651,25 @@ void StrataServerTest::testNotifyAllClients()
                     QCOMPARE(jsonObject.value("params").toObject(), tempExpectedPayload);
                     counter++;
                 });
-        clientsList[i]->sendMessage(
+        client_v2->sendMessage(
             R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+        QVERIFY((messageReceived.count() == 1) || (messageReceived.wait(zmqWaitTimeSuccess) == true));
     }
 
     // other half uses API v1
     for (int i = clientsCount / 2; i < clientsCount; i++) {
-        clientsList.push_back(
-            new strata::strataRPC::ClientConnector(address_, QByteArray::number(i)));
-        clientsList.back()->initialize();
-        connect(clientsList.back(), &strata::strataRPC::ClientConnector::messageReceived, this,
+        ClientConnector* client_v1 =
+                new ClientConnector(address_, QByteArray::number(i));
+        clientsList.push_back(client_v1);
+
+        QSignalSpy clientConnected(client_v1, &ClientConnector::connected);
+        QSignalSpy messageReceived(client_v1, &ClientConnector::messageReceived);
+        QVERIFY(clientConnected.isValid());
+        QVERIFY(messageReceived.isValid());
+        QCOMPARE(client_v1->initialize(), true);
+        QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+
+        connect(client_v1, &ClientConnector::messageReceived, this,
                 [&counter](const QByteArray &message) {
                     // validate for API v1
                     // expected response format:
@@ -640,16 +702,15 @@ void StrataServerTest::testNotifyAllClients()
 
                     counter++;
                 });
-        clientsList[i]->sendMessage(R"({"cmd":"register_client", "payload":{}})");
+        client_v1->sendMessage(R"({"cmd":"register_client", "payload":{}})");
+        QVERIFY((messageReceived.count() == 1) || (messageReceived.wait(zmqWaitTimeSuccess) == true));
     }
-
-    waitForZmqMessages(zmqWaitTime);
 
     server.notifyAllClients("test_broadcast", {{"test", "test"}});
 
-    // wait for the messages
+    // wait for the broadcast messages
     timer.setSingleShot(true);
-    timer.start(200);
+    timer.start(zmqWaitTimeSuccess);
     do {
         QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
         if (counter == clientsCount) {
@@ -666,18 +727,25 @@ void StrataServerTest::testNotifyClientByClientId()
 {
     bool testExecuted = false;
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
+    QSignalSpy messageReceived(&client, &ClientConnector::messageReceived);
+    QVERIFY(messageReceived.isValid());
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((messageReceived.count() == 1) || (messageReceived.wait(zmqWaitTimeSuccess) == true));
+    messageReceived.clear();
 
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -695,18 +763,21 @@ void StrataServerTest::testNotifyClientByClientId()
     server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
                         strata::strataRPC::ResponseType::Notification);
 
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
+    QVERIFY((messageReceived.count() == 1) || (messageReceived.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY(testExecuted);
 }
 
 void StrataServerTest::testNotifyClientToNonExistingClient()
 {
     StrataServer server(address_, false);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
+    ClientConnector client(address_, "AA");
     connect(
-        &client, &strata::strataRPC::ClientConnector::messageReceived, this,
+        &client, &ClientConnector::messageReceived, this,
         [](const QByteArray &) { QFAIL("Messages should not be sent to unregistered Clients."); });
 
     server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
@@ -719,8 +790,10 @@ void StrataServerTest::testInitializeServerFail()
     StrataServer server(address_, false);
     StrataServer duplicateServer(address_);
 
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     QSignalSpy errorOccurred(&duplicateServer, &StrataServer::errorOccurred);
     QVERIFY(errorOccurred.isValid());
@@ -733,21 +806,27 @@ void StrataServerTest::testInitializeServerFail()
 void StrataServerTest::testdefaultHandlers()
 {
     StrataServer server(address_, true);
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     bool testExecuted_1 = false;
     bool testExecuted_2 = false;
 
-    strata::strataRPC::ClientConnector client(address_, "AA");
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
-    client.connect();
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client(address_, "AA");
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QSignalSpy clientInitialized(&client, &ClientConnector::initialized);
+    QVERIFY(clientConnected.isValid());
+    QVERIFY(clientInitialized.isValid());
+
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((clientInitialized.count() == 1) || (clientInitialized.wait(zmqWaitTimeSuccess) == true));
+
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "2.0"},"id":1})");
-    connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client, &ClientConnector::messageReceived, this,
             [&testExecuted_1](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -763,16 +842,19 @@ void StrataServerTest::testdefaultHandlers()
                 testExecuted_1 = true;
             });
 
-    waitForZmqMessages(zmqWaitTime);
+    ClientConnector client_2(address_, "BB");
+    QSignalSpy clientConnected_2(&client_2, &ClientConnector::connected);
+    QSignalSpy clientInitialized_2(&client_2, &ClientConnector::initialized);
+    QVERIFY(clientConnected_2.isValid());
+    QVERIFY(clientInitialized_2.isValid());
 
-    strata::strataRPC::ClientConnector client_2(address_, "BB");
-    client_2.initialize();
-    waitForZmqMessages(zmqWaitTime);
-    client_2.connect();
-    waitForZmqMessages(zmqWaitTime);
+    QCOMPARE(client_2.initialize(), true);
+    QVERIFY((clientConnected_2.count() == 1) || (clientConnected_2.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((clientInitialized_2.count() == 1) || (clientInitialized_2.wait(zmqWaitTimeSuccess) == true));
+
     client_2.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
-    connect(&client_2, &strata::strataRPC::ClientConnector::messageReceived, this,
+    connect(&client_2, &ClientConnector::messageReceived, this,
             [&testExecuted_2](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -798,7 +880,7 @@ void StrataServerTest::testErrorOccourredSignal()
     qRegisterMetaType<StrataServer::ServerError>("StrataServer::ServerError");
 
     StrataServer server(address_, true, this);
-    strata::strataRPC::ClientConnector client(address_, "AA");
+    ClientConnector client(address_, "AA");
     StrataServer::ServerError errorType;
     QSignalSpy errorOccurred(&server, &StrataServer::errorOccurred);
     QVERIFY(errorOccurred.isValid());
@@ -818,8 +900,10 @@ void StrataServerTest::testErrorOccourredSignal()
 
     {
         StrataServer tempServer(address_, false);
+        QSignalSpy tempServerInitialized(&tempServer, &StrataServer::initialized);
+        QVERIFY(tempServerInitialized.isValid());
         tempServer.initialize();
-        waitForZmqMessages(zmqWaitTime);
+        QVERIFY((tempServerInitialized.count() == 1) || (tempServerInitialized.wait(zmqWaitTimeSuccess) == true));
 
         server.initialize();
         QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
@@ -828,8 +912,11 @@ void StrataServerTest::testErrorOccourredSignal()
         errorOccurred.clear();
     }
 
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
+
     server.initialize();
 
     QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
@@ -837,8 +924,11 @@ void StrataServerTest::testErrorOccourredSignal()
     QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
     errorOccurred.clear();
 
-    client.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QSignalSpy clientConnected(&client, &ClientConnector::connected);
+    QVERIFY(clientConnected.isValid());
+    QCOMPARE(client.initialize(), true);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
+
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "10.0"},"id":1})");
     QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));

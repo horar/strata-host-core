@@ -13,7 +13,7 @@ using strata::strataRPC::Message;
 QTEST_MAIN(StrataClientServerIntegrationTest)
 
 constexpr std::chrono::milliseconds check_timeout_interval = std::chrono::milliseconds(10);
-constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(250);
+constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(100);
 constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
 constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
 
@@ -132,10 +132,15 @@ void StrataClientServerIntegrationTest::testSingleClient()
                                clientReceivedServerNotification = true;
                            });
 
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
+
+    QSignalSpy clientConnected(&client, &StrataClient::connected);
+    QVERIFY(clientConnected.isValid());
     client.connect();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
     {
         auto deferredRequest =
@@ -199,7 +204,8 @@ void StrataClientServerIntegrationTest::testSingleClient()
     client.disconnect();
 
     QTRY_VERIFY_WITH_TIMEOUT(serverRecievedUnregisterClient, zmqWaitTimeSuccess);
-    QTRY_VERIFY_WITH_TIMEOUT(false == clientRecievedUnregisterClient, zmqWaitTime);
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY(false == clientRecievedUnregisterClient);
 }
 
 void StrataClientServerIntegrationTest::testMultipleClients()
@@ -262,16 +268,17 @@ void StrataClientServerIntegrationTest::testMultipleClients()
                                  client2ReceivedServerBroadcast = true;
                              });
 
+    QSignalSpy serverInitialized(&server, &StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
 
     client_1.connect();
-    waitForZmqMessages(zmqWaitTime);
-    client_2.connect();
-
     QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient1Register, zmqWaitTimeSuccess);
-    QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient2Register, zmqWaitTimeSuccess);
     QVERIFY((clientConnectedSignalSpy_1.count() == 1) || (clientConnectedSignalSpy_1.wait(zmqWaitTimeSuccess) == true));
+
+    client_2.connect();
+    QTRY_VERIFY_WITH_TIMEOUT(serverRecievedClient2Register, zmqWaitTimeSuccess);
     QVERIFY((clientConnectedSignalSpy_2.count() == 1) || (clientConnectedSignalSpy_2.wait(zmqWaitTimeSuccess) == true));
 
     server.notifyAllClients("broadcasted_message", {{"message", "message to all clients."}});
@@ -293,10 +300,15 @@ void StrataClientServerIntegrationTest::testCallbacks()
         server.notifyClient(message, QJsonObject{}, strata::strataRPC::ResponseType::Response);
     });
 
+    QSignalSpy serverInitialized(&server, &strata::strataRPC::StrataServer::initialized);
+    QVERIFY(serverInitialized.isValid());
     server.initialize();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((serverInitialized.count() == 1) || (serverInitialized.wait(zmqWaitTimeSuccess) == true));
+
+    QSignalSpy clientConnected(&client, &StrataClient::connected);
+    QVERIFY(clientConnected.isValid());
     client.connect();
-    waitForZmqMessages(zmqWaitTime);
+    QVERIFY((clientConnected.count() == 1) || (clientConnected.wait(zmqWaitTimeSuccess) == true));
 
     {
         auto deferredRequest = client.sendRequest("test_error_callback", QJsonObject{});

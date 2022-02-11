@@ -15,8 +15,8 @@ using namespace strata::strataRPC;
 QTEST_MAIN(RequestsControllerTest)
 
 constexpr std::chrono::milliseconds check_timeout_interval = std::chrono::milliseconds(10);
-constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(250);
-constexpr int zmqWaitTime = 150;
+constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(100);
+constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
 
 void RequestsControllerTest::testAddRequest()
 {
@@ -146,5 +146,5 @@ void RequestsControllerTest::testRequestTimeout()
             rc.addNewRequest("test", QJsonObject({{}}));
     }
 
-    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, request_timeout.count() + zmqWaitTime);
+    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, request_timeout.count() + zmqWaitTimeSuccess);
 }
