@@ -30,7 +30,7 @@ void StrataServerTest::testValidApiVer2Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-    QVERIFY_(validMessage);
+    QVERIFY(validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(
@@ -38,7 +38,7 @@ void StrataServerTest::testValidApiVer2Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-    QVERIFY_(validMessage);
+    QVERIFY(validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(
@@ -46,7 +46,7 @@ void StrataServerTest::testValidApiVer2Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-    QVERIFY_(validMessage);
+    QVERIFY(validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(
@@ -54,28 +54,28 @@ void StrataServerTest::testValidApiVer2Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-    QVERIFY_(validMessage);
+    QVERIFY(validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"),
                               Q_ARG(QByteArray, R"({"cmd":"load_documents","payload":{}})"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"()"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(0000)"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(invalid message)"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(
@@ -83,7 +83,7 @@ void StrataServerTest::testValidApiVer2Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": 2.0,"method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 }
 
 void StrataServerTest::testValidApiVer1Message()
@@ -98,25 +98,25 @@ void StrataServerTest::testValidApiVer1Message()
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"),
                               Q_ARG(QByteArray, R"({"cmd":"register_client", "payload":{}})"));
-    QVERIFY_(validMessage);
+    QVERIFY(validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"),
                               Q_ARG(QByteArray, R"({"cmd":"load_documents","payload":{}})"));
-    QVERIFY_(validMessage);
+    QVERIFY(validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"),
                               Q_ARG(QByteArray, R"({"sscmd":"load_documents","payload":{}})"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"),
                               Q_ARG(QByteArray, R"({"cmd":0,"payload":{}})"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(
@@ -124,22 +124,22 @@ void StrataServerTest::testValidApiVer1Message()
         Q_ARG(
             QByteArray,
             R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"()"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(0000)"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 
     validMessage = false;
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AAA"), Q_ARG(QByteArray, R"(invalid message)"));
-    QVERIFY_(false == validMessage);
+    QVERIFY(false == validMessage);
 }
 
 void StrataServerTest::testFloodTheServer()
@@ -156,7 +156,7 @@ void StrataServerTest::testFloodTheServer()
                                   Q_ARG(QByteArray, R"({"cmd":"register_client", "payload":{}})"));
     }
 
-    QCOMPARE_(counter, testSize);
+    QCOMPARE(counter, testSize);
 }
 
 void StrataServerTest::testServerFunctionality()
@@ -177,7 +177,7 @@ void StrataServerTest::testServerFunctionality()
     connect(
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
         [&clientGotResponse](const QByteArray &message) {
-            QCOMPARE_(
+            QCOMPARE(
                 message,
                 "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"client registered\"}}");
             clientGotResponse = true;
@@ -190,7 +190,7 @@ void StrataServerTest::testServerFunctionality()
     strata::strataRPC::ClientConnector client_2(address_, "BB");
     connect(&client_2, &strata::strataRPC::ClientConnector::messageReceived, this,
             [&clientGotResponse_2](const QByteArray &message) {
-                QCOMPARE_(message,
+                QCOMPARE(message,
                           "{\"hcs::notification\":{\"status\":\"client "
                           "registered\",\"type\":\"register_client\"}}");
                 clientGotResponse_2 = true;
@@ -222,17 +222,17 @@ void StrataServerTest::testBuildNotificationApiV2()
 
             QJsonParseError jsonParseError;
             QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-            QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+            QVERIFY(jsonParseError.error == QJsonParseError::NoError);
             QJsonObject jsonObject = jsonDocument.object();
 
-            QVERIFY_(jsonObject.contains("jsonrpc"));
-            QVERIFY_(jsonObject.value("jsonrpc").isString());
+            QVERIFY(jsonObject.contains("jsonrpc"));
+            QVERIFY(jsonObject.value("jsonrpc").isString());
 
-            QVERIFY_(jsonObject.contains("method"));
-            QVERIFY_(jsonObject.value("method").isString());
+            QVERIFY(jsonObject.contains("method"));
+            QVERIFY(jsonObject.value("method").isString());
 
-            QVERIFY_(jsonObject.contains("params"));
-            QVERIFY_(jsonObject.value("params").isObject());
+            QVERIFY(jsonObject.contains("params"));
+            QVERIFY(jsonObject.value("params").isObject());
             testExecuted = true;
         });
 
@@ -270,17 +270,17 @@ void StrataServerTest::testBuildResponseApiV2()
 
             QJsonParseError jsonParseError;
             QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-            QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+            QVERIFY(jsonParseError.error == QJsonParseError::NoError);
             QJsonObject jsonObject = jsonDocument.object();
 
-            QVERIFY_(jsonObject.contains("jsonrpc"));
-            QVERIFY_(jsonObject.value("jsonrpc").isString());
+            QVERIFY(jsonObject.contains("jsonrpc"));
+            QVERIFY(jsonObject.value("jsonrpc").isString());
 
-            QVERIFY_(jsonObject.contains("id"));
-            QVERIFY_(jsonObject.value("id").isDouble());
+            QVERIFY(jsonObject.contains("id"));
+            QVERIFY(jsonObject.value("id").isDouble());
 
-            QVERIFY_(jsonObject.contains("result"));
-            QVERIFY_(jsonObject.value("result").isObject());
+            QVERIFY(jsonObject.contains("result"));
+            QVERIFY(jsonObject.value("result").isObject());
             testExecuted = true;
         });
 
@@ -311,17 +311,17 @@ void StrataServerTest::testBuildErrorApiV2()
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
                 QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("jsonrpc"));
-                QVERIFY_(jsonObject.value("jsonrpc").isString());
+                QVERIFY(jsonObject.contains("jsonrpc"));
+                QVERIFY(jsonObject.value("jsonrpc").isString());
 
-                QVERIFY_(jsonObject.contains("id"));
-                QVERIFY_(jsonObject.value("id").isDouble());
+                QVERIFY(jsonObject.contains("id"));
+                QVERIFY(jsonObject.value("id").isDouble());
 
-                QVERIFY_(jsonObject.contains("error"));
-                QVERIFY_(jsonObject.value("error").isObject());
+                QVERIFY(jsonObject.contains("error"));
+                QVERIFY(jsonObject.value("error").isObject());
                 testExecuted = true;
             });
 
@@ -358,18 +358,18 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
 
             QJsonParseError jsonParseError;
             QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-            QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+            QVERIFY(jsonParseError.error == QJsonParseError::NoError);
             QJsonObject jsonObject = jsonDocument.object();
 
-            QVERIFY_(jsonObject.contains("jsonrpc"));
-            QVERIFY_(jsonObject.value("jsonrpc").isString());
+            QVERIFY(jsonObject.contains("jsonrpc"));
+            QVERIFY(jsonObject.value("jsonrpc").isString());
 
-            QVERIFY_(jsonObject.contains("method"));
-            QVERIFY_(jsonObject.value("method").isString());
-            QVERIFY_(jsonObject.value("method") == "platform_notification");
+            QVERIFY(jsonObject.contains("method"));
+            QVERIFY(jsonObject.value("method").isString());
+            QVERIFY(jsonObject.value("method") == "platform_notification");
 
-            QVERIFY_(jsonObject.contains("params"));
-            QVERIFY_(jsonObject.value("params").isObject());
+            QVERIFY(jsonObject.contains("params"));
+            QVERIFY(jsonObject.value("params").isObject());
             testExecuted = true;
         });
 
@@ -401,12 +401,12 @@ void StrataServerTest::testBuildNotificationApiV1()
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
                 QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("hcs::notification"));
-                QVERIFY_(jsonObject.value("hcs::notification").isObject());
-                QVERIFY_(jsonObject.value("hcs::notification").toObject().contains("type"));
+                QVERIFY(jsonObject.contains("hcs::notification"));
+                QVERIFY(jsonObject.value("hcs::notification").isObject());
+                QVERIFY(jsonObject.value("hcs::notification").toObject().contains("type"));
                 testExecuted = true;
             });
 
@@ -436,12 +436,12 @@ void StrataServerTest::testBuildResponseApiV1()
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
                 QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("hcs::notification"));
-                QVERIFY_(jsonObject.value("hcs::notification").isObject());
-                QVERIFY_(jsonObject.value("hcs::notification").toObject().contains("type"));
+                QVERIFY(jsonObject.contains("hcs::notification"));
+                QVERIFY(jsonObject.value("hcs::notification").isObject());
+                QVERIFY(jsonObject.value("hcs::notification").toObject().contains("type"));
                 testExecuted = true;
             });
 
@@ -466,7 +466,7 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
                                                    const strata::strataRPC::Message &message) {
         QJsonObject platformCommand =
             QJsonDocument::fromJson(message.payload.value("message").toString().toUtf8()).object();
-        QCOMPARE_(platformCommand.value("cmd").toString(), currentCommandName);
+        QCOMPARE(platformCommand.value("cmd").toString(), currentCommandName);
         handlerCalled = true;
     });
 
@@ -478,27 +478,27 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
     QMetaObject::invokeMethod(
         &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "AA"),
         Q_ARG(QByteArray, R"({"cmd":"test_1","payload":{"enable":"off"},"device_id":"949921126"})"));
-    QVERIFY_(handlerCalled);
+    QVERIFY(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_2";
     QMetaObject::invokeMethod(
         &server, "messageReceived", Qt::DirectConnection, Q_ARG(QByteArray, "AA"),
         Q_ARG(QByteArray, R"({"cmd":"test_2","payload":"enable","device_id":"949921126"})"));
-    QVERIFY_(handlerCalled);
+    QVERIFY(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_3";
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AA"),
                               Q_ARG(QByteArray, R"({"cmd":"test_3","device_id":"949921126"})"));
-    QVERIFY_(handlerCalled);
+    QVERIFY(handlerCalled);
 
     handlerCalled = false;
     currentCommandName = "test_4";
     QMetaObject::invokeMethod(&server, "messageReceived", Qt::DirectConnection,
                               Q_ARG(QByteArray, "AA"), Q_ARG(QByteArray, R"({"cmd":"test_4"})"));
-    QVERIFY_(false == handlerCalled);
+    QVERIFY(false == handlerCalled);
 }
 
 void StrataServerTest::testBuildPlatformMessageApiV1()
@@ -516,7 +516,7 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
                 QJsonObject jsonObject = jsonDocument.object();
 
                 if (jsonObject.contains("error")) {
@@ -524,8 +524,8 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
                     return;
                 }
 
-                QVERIFY_(jsonObject.contains("notification"));
-                QVERIFY_(jsonObject.value("notification").isObject());
+                QVERIFY(jsonObject.contains("notification"));
+                QVERIFY(jsonObject.value("notification").isObject());
                 testExecuted = true;
             });
 
@@ -578,16 +578,16 @@ void StrataServerTest::testNotifyAllClients()
                     QJsonDocument jsonDocument = QJsonDocument::fromJson(message);
                     QJsonObject jsonObject = jsonDocument.object();
 
-                    QVERIFY_(jsonObject.contains("jsonrpc"));
-                    QVERIFY_(jsonObject.contains("method"));
-                    QVERIFY_(jsonObject.contains("params"));
-                    QVERIFY_(jsonObject.value("params").isObject());
+                    QVERIFY(jsonObject.contains("jsonrpc"));
+                    QVERIFY(jsonObject.contains("method"));
+                    QVERIFY(jsonObject.contains("params"));
+                    QVERIFY(jsonObject.value("params").isObject());
 
-                    QCOMPARE_(jsonObject.value("jsonrpc").toString(), "2.0");
-                    QCOMPARE_(jsonObject.value("method").toString(), "test_broadcast");
+                    QCOMPARE(jsonObject.value("jsonrpc").toString(), "2.0");
+                    QCOMPARE(jsonObject.value("method").toString(), "test_broadcast");
 
                     QJsonObject tempExpectedPayload{{"test", "test"}};
-                    QCOMPARE_(jsonObject.value("params").toObject(), tempExpectedPayload);
+                    QCOMPARE(jsonObject.value("params").toObject(), tempExpectedPayload);
                     counter++;
                 });
         clientsList[i]->sendMessage(
@@ -618,17 +618,17 @@ void StrataServerTest::testNotifyAllClients()
                         return;
                     }
 
-                    QVERIFY_(jsonObject.contains("hcs::notification"));
-                    QVERIFY_(jsonObject.value("hcs::notification").isObject());
+                    QVERIFY(jsonObject.contains("hcs::notification"));
+                    QVERIFY(jsonObject.value("hcs::notification").isObject());
 
                     QJsonObject payloadJsonObject =
                         jsonObject.value("hcs::notification").toObject();
 
-                    QVERIFY_(payloadJsonObject.contains("type"));
-                    QVERIFY_(payloadJsonObject.contains("test"));
+                    QVERIFY(payloadJsonObject.contains("type"));
+                    QVERIFY(payloadJsonObject.contains("test"));
 
-                    QCOMPARE_(payloadJsonObject.value("type").toString(), "test_broadcast");
-                    QCOMPARE_(payloadJsonObject.value("test").toString(), "test");
+                    QCOMPARE(payloadJsonObject.value("type").toString(), "test_broadcast");
+                    QCOMPARE(payloadJsonObject.value("test").toString(), "test");
 
                     counter++;
                 });
@@ -674,13 +674,13 @@ void StrataServerTest::testNotifyClientByClientId()
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
 
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
 
                 QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("method"));
-                QVERIFY_(jsonObject.value("method").isString());
-                QCOMPARE_(jsonObject.value("method").toString(), "test_handler");
+                QVERIFY(jsonObject.contains("method"));
+                QVERIFY(jsonObject.value("method").isString());
+                QCOMPARE(jsonObject.value("method").toString(), "test_handler");
                 testExecuted = true;
             });
 
@@ -715,10 +715,11 @@ void StrataServerTest::testInitializeServerFail()
     waitForZmqMessages(50);
 
     QSignalSpy errorOccurred(&duplicateServer, &StrataServer::errorOccurred);
+    QVERIFY(errorOccurred.isValid());
     duplicateServer.initialize();
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     auto errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
+    QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
 }
 
 void StrataServerTest::testdefaultHandlers()
@@ -741,13 +742,13 @@ void StrataServerTest::testdefaultHandlers()
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
 
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
 
                 QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("result"));
-                QVERIFY_(jsonObject.value("result").isObject());
-                QCOMPARE_(jsonObject.value("result").toObject(),
+                QVERIFY(jsonObject.contains("result"));
+                QVERIFY(jsonObject.value("result").isObject());
+                QCOMPARE(jsonObject.value("result").toObject(),
                           QJsonObject({{"status", "client registered"}}));
                 testExecuted_1 = true;
             });
@@ -764,13 +765,13 @@ void StrataServerTest::testdefaultHandlers()
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
 
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+                QVERIFY(jsonParseError.error == QJsonParseError::NoError);
 
                 QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("error"));
-                QVERIFY_(jsonObject.value("error").isObject());
-                QCOMPARE_(
+                QVERIFY(jsonObject.contains("error"));
+                QVERIFY(jsonObject.value("error").isObject());
+                QCOMPARE(
                     jsonObject.value("error").toObject(),
                     QJsonObject({{"message", "Failed to register client, Unknown API Version."}}));
                 testExecuted_2 = true;
@@ -788,18 +789,19 @@ void StrataServerTest::testErrorOccourredSignal()
     strata::strataRPC::ClientConnector client(address_, "AA");
     StrataServer::ServerError errorType;
     QSignalSpy errorOccurred(&server, &StrataServer::errorOccurred);
+    QVERIFY(errorOccurred.isValid());
 
     server.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
     server.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
-    QCOMPARE_(errorOccurred.count(), 1);
+    QCOMPARE(errorOccurred.count(), 1);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataServer::ServerError::FailedToRegisterHandler);
+    QCOMPARE(errorType, StrataServer::ServerError::FailedToRegisterHandler);
     errorOccurred.clear();
 
     server.unregisterHandler("handler_2");
-    QCOMPARE_(errorOccurred.count(), 1);
+    QCOMPARE(errorOccurred.count(), 1);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataServer::ServerError::FailedToUnregisterHandler);
+    QCOMPARE(errorType, StrataServer::ServerError::FailedToUnregisterHandler);
     errorOccurred.clear();
 
     {
@@ -810,7 +812,7 @@ void StrataServerTest::testErrorOccourredSignal()
         server.initialize();
         QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
         errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-        QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
+        QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
         errorOccurred.clear();
     }
 
@@ -820,7 +822,7 @@ void StrataServerTest::testErrorOccourredSignal()
 
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
+    QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
     errorOccurred.clear();
 
     client.initialize();
@@ -828,7 +830,7 @@ void StrataServerTest::testErrorOccourredSignal()
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "10.0"},"id":1})");
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataServer::ServerError::FailedToRegisterClient);
+    QCOMPARE(errorType, StrataServer::ServerError::FailedToRegisterClient);
     errorOccurred.clear();
 
     client.sendMessage(R"(not a Json Message)");
@@ -837,7 +839,7 @@ void StrataServerTest::testErrorOccourredSignal()
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 3, 100);
     for (const auto &error : errorOccurred) {
         errorType = qvariant_cast<StrataServer::ServerError>(error.at(0));
-        QCOMPARE_(errorType, StrataServer::ServerError::FailedToBuildClientMessage);
+        QCOMPARE(errorType, StrataServer::ServerError::FailedToBuildClientMessage);
     }
     errorOccurred.clear();
 
@@ -845,7 +847,7 @@ void StrataServerTest::testErrorOccourredSignal()
     waitForZmqMessages();
     QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataServer::ServerError::HandlerNotFound);
+    QCOMPARE(errorType, StrataServer::ServerError::HandlerNotFound);
     errorOccurred.clear();
 }
 

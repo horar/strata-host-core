@@ -15,6 +15,8 @@ using strata::device::Device;
 using strata::device::MockDevice;
 using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::Identify;
+using strata::platform::Platform;
+using strata::PlatformManager;
 using strata::device::MockVersion;
 
 namespace test_commands = strata::device::test_commands;
@@ -83,8 +85,10 @@ void PlatformErrorsTest::addMockDevice()
 
 void PlatformErrorsTest::removeMockDevice(bool alreadyDisconnected)
 {
-    QSignalSpy platformTerminatedSignal(platform_.get(), SIGNAL(terminated()));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
+    QSignalSpy platformTerminatedSignal(platform_.get(), &Platform::terminated);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformTerminatedSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
 
     QVERIFY(mockDeviceScanner_->disconnectDevice(deviceId_).isEmpty());
 
@@ -133,8 +137,10 @@ void PlatformErrorsTest::deviceLostWithDisconnectTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformErrorSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
     mockDevice_->mockEmitError(Device::ErrorCode::DeviceDisconnected, "Device Disconnected");
     QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(100) == true));
     QVERIFY(platformErrorSignal.count() == 1);
@@ -151,7 +157,8 @@ void PlatformErrorsTest::deviceLostWithoutDisconnectTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QVERIFY(platformErrorSignal.isValid());
 
     removeMockDevice(false);
 
@@ -165,8 +172,10 @@ void PlatformErrorsTest::singleErrorTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformErrorSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
 
     mockDevice_->mockEmitError(Device::ErrorCode::DeviceError, "Device Error");
 
@@ -186,8 +195,10 @@ void PlatformErrorsTest::errorBeforeOperationTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformErrorSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
 
@@ -219,7 +230,8 @@ void PlatformErrorsTest::errorDuringOperationTest()
 
     mockDevice_->mockSetWriteErrorOnNthMessage(2);
 
-    QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
+    QSignalSpy platformSentSignal(platform_.get(), &Platform::messageSent);
+    QVERIFY(platformSentSignal.isValid());
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -243,8 +255,10 @@ void PlatformErrorsTest::errorAfterOperationTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformErrorSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
 
     OperationSharedPtr platformOperation = platformOperations_.Identify(platform_, true);
     platformOperation->run();
@@ -270,8 +284,10 @@ void PlatformErrorsTest::unableToOpenTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformClosedSignal(platformManager_.get(), SIGNAL(platformClosed(QByteArray)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QSignalSpy platformClosedSignal(platformManager_.get(), &PlatformManager::platformClosed);
+    QVERIFY(platformErrorSignal.isValid());
+    QVERIFY(platformClosedSignal.isValid());
 
     mockDevice_->mockSetOpenEnabled(false);
 
@@ -295,7 +311,8 @@ void PlatformErrorsTest::unableToCloseTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QVERIFY(platformErrorSignal.isValid());
 
     mockDevice_->mockSetErrorOnClose(true);
 
@@ -313,9 +330,12 @@ void PlatformErrorsTest::multipleOperationsTest()
         return;
     }
 
-    QSignalSpy platformErrorSignal(platform_.get(), SIGNAL(deviceError(device::Device::ErrorCode, QString)));
-    QSignalSpy platformSentSignal(platform_.get(), SIGNAL(messageSent(QByteArray, unsigned, QString)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray, QString)));
+    QSignalSpy platformErrorSignal(platform_.get(), &Platform::deviceError);
+    QSignalSpy platformSentSignal(platform_.get(), &Platform::messageSent);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformErrorSignal.isValid());
+    QVERIFY(platformSentSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
 
     std::unique_ptr<Identify> identifyOperation1 = std::make_unique<Identify>(platform_, true, 1, std::chrono::milliseconds(100));
     std::unique_ptr<Identify> identifyOperation2 = std::make_unique<Identify>(platform_, true);

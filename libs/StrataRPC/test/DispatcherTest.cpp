@@ -30,22 +30,22 @@ void DispatcherTest::testRegisteringHandlers()
 {
     Dispatcher<const Message &> dispatcher;
 
-    QCOMPARE_(dispatcher.registerHandler(
+    QCOMPARE(dispatcher.registerHandler(
                   "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)),
               true);
-    QCOMPARE_(dispatcher.registerHandler(
+    QCOMPARE(dispatcher.registerHandler(
                   "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)),
               false);
-    QCOMPARE_(dispatcher.registerHandler(
+    QCOMPARE(dispatcher.registerHandler(
                   "handler_2", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)),
               true);
-    QCOMPARE_(dispatcher.registerHandler(
+    QCOMPARE(dispatcher.registerHandler(
                   "handler_1", std::bind(&TestHandlers::handler_2, th_, std::placeholders::_1)),
               false);
-    QCOMPARE_(dispatcher.registerHandler(
+    QCOMPARE(dispatcher.registerHandler(
                   "handler_2", std::bind(&TestHandlers::handler_2, th_, std::placeholders::_1)),
               false);
-    QCOMPARE_(dispatcher.registerHandler(
+    QCOMPARE(dispatcher.registerHandler(
                   "handler_3", std::bind(&TestHandlers::handler_3, th_, std::placeholders::_1)),
               true);
 }
@@ -54,35 +54,35 @@ void DispatcherTest::testUregisterHandlers()
 {
     Dispatcher<const Message &> dispatcher;
 
-    QVERIFY_(false == dispatcher.unregisterHandler("not_registered_handler"));
+    QVERIFY(false == dispatcher.unregisterHandler("not_registered_handler"));
 
-    QVERIFY_(dispatcher.registerHandler("example_handler", [](const Message &) {}));
-    QVERIFY_(dispatcher.unregisterHandler("example_handler"));
-    QVERIFY_(false == dispatcher.unregisterHandler("example_handler"));
+    QVERIFY(dispatcher.registerHandler("example_handler", [](const Message &) {}));
+    QVERIFY(dispatcher.unregisterHandler("example_handler"));
+    QVERIFY(false == dispatcher.unregisterHandler("example_handler"));
 }
 
 void DispatcherTest::testDispatchHandlers()
 {
     Dispatcher<const Message &> dispatcher;
 
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY(dispatcher.registerHandler(
         "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)));
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY(dispatcher.registerHandler(
         "handler_2", std::bind(&TestHandlers::handler_2, th_, std::placeholders::_1)));
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY(dispatcher.registerHandler(
         "handler_3", std::bind(&TestHandlers::handler_3, th_, std::placeholders::_1)));
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY(dispatcher.registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
-    QCOMPARE_(dispatcher.dispatch(messageList_[0].handlerName, messageList_[0]), true);
-    QCOMPARE_(dispatcher.dispatch(messageList_[1].handlerName, messageList_[1]), true);
-    QCOMPARE_(dispatcher.dispatch(messageList_[2].handlerName, messageList_[2]), true);
-    QCOMPARE_(dispatcher.dispatch(messageList_[3].handlerName, messageList_[3]), true);
-    QCOMPARE_(dispatcher.dispatch(messageList_[4].handlerName, messageList_[4]), false);
-    QCOMPARE_(dispatcher.dispatch(messageList_[2].handlerName, messageList_[2]), true);
-    QCOMPARE_(dispatcher.dispatch(messageList_[4].handlerName, messageList_[4]), false);
-    QCOMPARE_(dispatcher.dispatch(messageList_[3].handlerName, messageList_[3]), true);
-    QCOMPARE_(dispatcher.dispatch(messageList_[0].handlerName, messageList_[0]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[0].handlerName, messageList_[0]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[1].handlerName, messageList_[1]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[2].handlerName, messageList_[2]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[3].handlerName, messageList_[3]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[4].handlerName, messageList_[4]), false);
+    QCOMPARE(dispatcher.dispatch(messageList_[2].handlerName, messageList_[2]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[4].handlerName, messageList_[4]), false);
+    QCOMPARE(dispatcher.dispatch(messageList_[3].handlerName, messageList_[3]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[0].handlerName, messageList_[0]), true);
 }
 
 void DispatcherTest::testLargeNumberOfHandlers()
@@ -91,7 +91,7 @@ void DispatcherTest::testLargeNumberOfHandlers()
 
     for (int i = 0; i < 1000; i++) {
         dispatcher.registerHandler(QString::number(i), [i](const Message &message) {
-            QCOMPARE_(message.handlerName, QString::number(i));
+            QCOMPARE(message.handlerName, QString::number(i));
         });
     }
 
@@ -106,7 +106,7 @@ void DispatcherTest::testDifferentArgumentType()
 {
     Dispatcher<const QJsonObject &> dispatcher;
 
-    QVERIFY_(dispatcher.registerHandler("test_handler_1", [](const QJsonObject &jsonPayload) {
+    QVERIFY(dispatcher.registerHandler("test_handler_1", [](const QJsonObject &jsonPayload) {
         QCOMPARE(jsonPayload.value("value").toString(), "test");
     }));
 
@@ -118,15 +118,15 @@ void DispatcherTest::testDispatchUsingSignals()
     Dispatcher<const Message &> *dispatcher = new Dispatcher<const Message &>;
 
     connect(this, &DispatcherTest::disp, this, [dispatcher](const Message &message) {
-        QVERIFY_(dispatcher->dispatch(message.handlerName, message));
+        QVERIFY(dispatcher->dispatch(message.handlerName, message));
     });
 
     dispatcher->registerHandler("test_handler_1", [](const Message &message) {
-        QCOMPARE_(message.handlerName, "test_handler_1");
+        QCOMPARE(message.handlerName, "test_handler_1");
     });
 
     dispatcher->registerHandler("test_handler_2", [](const Message &message) {
-        QCOMPARE_(message.handlerName, "test_handler_2");
+        QCOMPARE(message.handlerName, "test_handler_2");
     });
 
     emit disp({"test_handler_1", {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});

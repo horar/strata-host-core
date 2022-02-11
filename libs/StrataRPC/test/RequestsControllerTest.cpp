@@ -22,19 +22,19 @@ void RequestsControllerTest::testAddRequest()
         std::pair<DeferredRequest *, QByteArray> requestInfo =
             rc.addNewRequest("method_1", {{"api", "v1"}});
 
-        QVERIFY_(requestInfo.first->getId() != 0);
-        QVERIFY_(false == requestInfo.second.isEmpty());
+        QVERIFY(requestInfo.first->getId() != 0);
+        QVERIFY(false == requestInfo.second.isEmpty());
     }
 
-    QVERIFY_(rc.isPendingRequest(1));
-    QVERIFY_(false == rc.isPendingRequest(100));
+    QVERIFY(rc.isPendingRequest(1));
+    QVERIFY(false == rc.isPendingRequest(100));
 
     for (int i = 1; i < 30; i++) {
-        QVERIFY_(rc.removePendingRequest(i));
+        QVERIFY(rc.removePendingRequest(i));
     }
 
-    QVERIFY_(false == rc.removePendingRequest(1));
-    QVERIFY_(false == rc.removePendingRequest(1000));
+    QVERIFY(false == rc.removePendingRequest(1));
+    QVERIFY(false == rc.removePendingRequest(1000));
 }
 
 void RequestsControllerTest::testLargeNumberOfPendingRequests()
@@ -44,8 +44,8 @@ void RequestsControllerTest::testLargeNumberOfPendingRequests()
     for (int i = 0; i < 300; i++) {
         std::pair<DeferredRequest *, QByteArray> requestInfo =
             rc.addNewRequest(QString::number(i), {{"message_id", i}});
-        QVERIFY_(requestInfo.first->getId() != 0);
-        QVERIFY_(false == requestInfo.second.isEmpty());
+        QVERIFY(requestInfo.first->getId() != 0);
+        QVERIFY(false == requestInfo.second.isEmpty());
     }
 }
 
@@ -53,13 +53,13 @@ void RequestsControllerTest::testNonExistanteRequestId()
 {
     RequestsController rc;
 
-    QVERIFY_(false == rc.isPendingRequest(0));
-    QVERIFY_(false == rc.isPendingRequest(-1));
-    QVERIFY_(false == rc.isPendingRequest(2));
+    QVERIFY(false == rc.isPendingRequest(0));
+    QVERIFY(false == rc.isPendingRequest(-1));
+    QVERIFY(false == rc.isPendingRequest(2));
 
-    QVERIFY_(false == rc.removePendingRequest(0));
-    QVERIFY_(false == rc.removePendingRequest(-1));
-    QVERIFY_(false == rc.removePendingRequest(2));
+    QVERIFY(false == rc.removePendingRequest(0));
+    QVERIFY(false == rc.removePendingRequest(-1));
+    QVERIFY(false == rc.removePendingRequest(2));
 }
 
 void RequestsControllerTest::testGetMethodName()
@@ -67,26 +67,26 @@ void RequestsControllerTest::testGetMethodName()
     RequestsController rc;
     std::pair<DeferredRequest *, QByteArray> requestInfo_1 =
         rc.addNewRequest("method_handler_1", {});
-    QVERIFY_(requestInfo_1.first->getId() != 0);
-    QVERIFY_(false == requestInfo_1.second.isEmpty());
+    QVERIFY(requestInfo_1.first->getId() != 0);
+    QVERIFY(false == requestInfo_1.second.isEmpty());
 
     std::pair<DeferredRequest *, QByteArray> requestInfo_2 =
         rc.addNewRequest("method_handler_2", {});
-    QVERIFY_(requestInfo_2.first->getId() != 0);
-    QVERIFY_(false == requestInfo_2.second.isEmpty());
+    QVERIFY(requestInfo_2.first->getId() != 0);
+    QVERIFY(false == requestInfo_2.second.isEmpty());
 
-    QVERIFY_(rc.isPendingRequest(1));
-    QCOMPARE_(rc.getMethodName(1), "method_handler_1");
+    QVERIFY(rc.isPendingRequest(1));
+    QCOMPARE(rc.getMethodName(1), "method_handler_1");
 
-    QVERIFY_(rc.isPendingRequest(2));
-    QCOMPARE_(rc.getMethodName(2), "method_handler_2");
+    QVERIFY(rc.isPendingRequest(2));
+    QCOMPARE(rc.getMethodName(2), "method_handler_2");
 
-    QVERIFY_(false == rc.isPendingRequest(3));
-    QCOMPARE_(rc.getMethodName(3), "");
+    QVERIFY(false == rc.isPendingRequest(3));
+    QCOMPARE(rc.getMethodName(3), "");
 
-    QVERIFY_(rc.removePendingRequest(1));
-    QVERIFY_(false == rc.isPendingRequest(1));
-    QCOMPARE_(rc.getMethodName(1), "");
+    QVERIFY(rc.removePendingRequest(1));
+    QVERIFY(false == rc.isPendingRequest(1));
+    QCOMPARE(rc.getMethodName(1), "");
 }
 
 void RequestsControllerTest::testPopRequest()
@@ -142,5 +142,5 @@ void RequestsControllerTest::testRequestTimeout()
             rc.addNewRequest("test", QJsonObject({{}}));
     }
 
-    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 550);
+    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 3000);
 }

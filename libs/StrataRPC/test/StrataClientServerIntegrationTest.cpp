@@ -94,6 +94,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
 
     // Client Handlers
     QSignalSpy ClientConnectedSignalSpy(&client, &StrataClient::connected);
+    QVERIFY(ClientConnectedSignalSpy.isValid());
 
     client.registerHandler("unregister_client", [&clientRecievedUnregisterClient](const QJsonObject &) {
         // This should not be called.
@@ -104,7 +105,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
     client.registerHandler(
         "example_command_sends_response_and_notification",
         [&clientReceivedExampleCommand2Notification](const QJsonObject &payload) {
-            QVERIFY_(payload.value("message_type") == "notification");
+            QVERIFY(payload.value("message_type") == "notification");
             if (payload.value("message_type") == "notification") {
                 clientReceivedExampleCommand2Notification = true;
             }
@@ -134,23 +135,23 @@ void StrataClientServerIntegrationTest::testSingleClient()
     {
         auto deferredRequest =
             client.sendRequest("example_command_sends_response", {{"key", "value"}});
-        QVERIFY_(deferredRequest != nullptr);
+        QVERIFY(deferredRequest != nullptr);
         connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this,
                 [&clientReceivedExampleCommand1](const QJsonObject &payload) {
                     clientReceivedExampleCommand1 = true;
-                    QVERIFY_(true == payload.contains("handler_name"));
-                    QVERIFY_(true == payload.value("handler_name").isString());
-                    QCOMPARE_(payload.value("handler_name").toString(),
+                    QVERIFY(true == payload.contains("handler_name"));
+                    QVERIFY(true == payload.value("handler_name").isString());
+                    QCOMPARE(payload.value("handler_name").toString(),
                               "example_command_sends_response");
                 });
     }
     {
         auto deferredRequest = client.sendRequest("example_command_sends_response_and_notification",
                                                   {{"key", "value"}});
-        QVERIFY_(deferredRequest != nullptr);
+        QVERIFY(deferredRequest != nullptr);
         connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this,
                 [&clientReceivedExampleCommand2Response](const QJsonObject &payload) {
-                    QVERIFY_(payload.value("message_type") == "response");
+                    QVERIFY(payload.value("message_type") == "response");
                     if (payload.value("message_type") == "response") {
                         clientReceivedExampleCommand2Response = true;
                     }
@@ -159,19 +160,19 @@ void StrataClientServerIntegrationTest::testSingleClient()
     {
         auto deferredRequest =
             client.sendRequest("example_command_sends_error", {{"key", "value"}});
-        QVERIFY_(deferredRequest != nullptr);
+        QVERIFY(deferredRequest != nullptr);
         connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this,
                 [&clientReceivedErrorCommand](const QJsonObject &payload) {
                     clientReceivedErrorCommand = true;
-                    QVERIFY_(true == payload.contains("message_type"));
-                    QVERIFY_(true == payload.value("message_type").isString());
-                    QCOMPARE_(payload.value("message_type").toString(), "error");
+                    QVERIFY(true == payload.contains("message_type"));
+                    QVERIFY(true == payload.value("message_type").isString());
+                    QCOMPARE(payload.value("message_type").toString(), "error");
                 });
     }
     {
         auto deferredRequest = client.sendRequest(
             "platform_message", {{"device_id", 2020}, {"message", "json string!"}});
-        QVERIFY_(deferredRequest != nullptr);
+        QVERIFY(deferredRequest != nullptr);
     }
 
     server.notifyAllClients("server_notification", {{"list", "of platforms"}});
@@ -212,6 +213,8 @@ void StrataClientServerIntegrationTest::testMultipleClients()
 
     QSignalSpy clientConnectedSignalSpy_1(&client_1, &StrataClient::connected);
     QSignalSpy clientConnectedSignalSpy_2(&client_2, &StrataClient::connected);
+    QVERIFY(clientConnectedSignalSpy_1.isValid());
+    QVERIFY(clientConnectedSignalSpy_2.isValid());
 
     server.registerHandler("register_client",
                            [&server, &serverRecievedClient1Register,
