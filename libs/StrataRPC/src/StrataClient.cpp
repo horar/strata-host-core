@@ -19,11 +19,13 @@
 using namespace strata::strataRPC;
 
 StrataClient::StrataClient(const QString &serverAddress, const QByteArray &dealerId,
+                           std::chrono::milliseconds check_timeout_interval,
+                           std::chrono::milliseconds request_timeout,
                            QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const QJsonObject &>()),
       connector_(new ClientConnector(serverAddress, dealerId)),
-      requestController_(new RequestsController()),
+      requestController_(new RequestsController(check_timeout_interval, request_timeout)),
       connectorThread_(new QThread())
 {
     qRegisterMetaType<strataRPC::ClientConnectorError>("ClientConnectorError");

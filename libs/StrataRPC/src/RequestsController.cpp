@@ -11,10 +11,13 @@
 
 using namespace strata::strataRPC;
 
-RequestsController::RequestsController() : findTimedoutRequestsTimer_(this)
+RequestsController::RequestsController(std::chrono::milliseconds check_timeout_interval,
+                                       std::chrono::milliseconds request_timeout) :
+    findTimedoutRequestsTimer_(this),
+    request_timeout_(request_timeout)
 {
     currentRequestId_ = 0;
-    findTimedoutRequestsTimer_.setInterval(check_timeout_interval_);
+    findTimedoutRequestsTimer_.setInterval(check_timeout_interval);
     connect(&findTimedoutRequestsTimer_, &QTimer::timeout, this,
             &RequestsController::findTimedoutRequests);
 

@@ -14,9 +14,13 @@ using namespace strata::strataRPC;
 
 QTEST_MAIN(RequestsControllerTest)
 
+constexpr std::chrono::milliseconds check_timeout_interval = std::chrono::milliseconds(10);
+constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(250);
+constexpr int zmqWaitTime = 150;
+
 void RequestsControllerTest::testAddRequest()
 {
-    RequestsController rc;
+    RequestsController rc(check_timeout_interval, request_timeout);
 
     for (int i = 1; i < 30; i++) {
         std::pair<DeferredRequest *, QByteArray> requestInfo =
@@ -39,7 +43,7 @@ void RequestsControllerTest::testAddRequest()
 
 void RequestsControllerTest::testLargeNumberOfPendingRequests()
 {
-    RequestsController rc;
+    RequestsController rc(check_timeout_interval, request_timeout);
 
     for (int i = 0; i < 300; i++) {
         std::pair<DeferredRequest *, QByteArray> requestInfo =
@@ -51,7 +55,7 @@ void RequestsControllerTest::testLargeNumberOfPendingRequests()
 
 void RequestsControllerTest::testNonExistanteRequestId()
 {
-    RequestsController rc;
+    RequestsController rc(check_timeout_interval, request_timeout);
 
     QVERIFY(false == rc.isPendingRequest(0));
     QVERIFY(false == rc.isPendingRequest(-1));
@@ -64,7 +68,7 @@ void RequestsControllerTest::testNonExistanteRequestId()
 
 void RequestsControllerTest::testGetMethodName()
 {
-    RequestsController rc;
+    RequestsController rc(check_timeout_interval, request_timeout);
     std::pair<DeferredRequest *, QByteArray> requestInfo_1 =
         rc.addNewRequest("method_handler_1", {});
     QVERIFY(requestInfo_1.first->getId() != 0);
@@ -91,7 +95,7 @@ void RequestsControllerTest::testGetMethodName()
 
 void RequestsControllerTest::testPopRequest()
 {
-    RequestsController rc;
+    RequestsController rc(check_timeout_interval, request_timeout);
     int numOfTestCases = 1000;
 
     for (int i = 0; i < numOfTestCases; i++) {
@@ -122,7 +126,7 @@ void RequestsControllerTest::testRequestTimeout()
     int totalTimedoutRequests = 0;
     int totalNumOfRequests = 1000;
 
-    RequestsController rc;
+    RequestsController rc(check_timeout_interval, request_timeout);
 
     connect(
         &rc, &RequestsController::requestTimedout, this,
@@ -142,5 +146,5 @@ void RequestsControllerTest::testRequestTimeout()
             rc.addNewRequest("test", QJsonObject({{}}));
     }
 
-    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, 3000);
+    QTRY_COMPARE_WITH_TIMEOUT(totalTimedoutRequests, totalNumOfRequests, request_timeout.count() + zmqWaitTime);
 }

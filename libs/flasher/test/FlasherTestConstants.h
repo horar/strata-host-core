@@ -14,6 +14,6 @@
 namespace strata::FlasherTestConstants {
 
 // default timeout for QTRY_COMPARE_WITH_TIMEOUT
-constexpr int TEST_TIMEOUT = 1000;
+constexpr int TEST_TIMEOUT = 1500;
 
 } // namespace strata::FlasherTestConstants

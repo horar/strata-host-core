@@ -14,6 +14,9 @@
 
 QTEST_MAIN(StrataServerTest)
 
+constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
+constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
+
 void StrataServerTest::testValidApiVer2Message()
 {
     StrataServer server(address_, false);
@@ -163,7 +166,7 @@ void StrataServerTest::testServerFunctionality()
 {
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     // add a handler to handler the client message.
     // add a handler to create a response
@@ -183,6 +186,7 @@ void StrataServerTest::testServerFunctionality()
             clientGotResponse = true;
         });
     client.initialize();
+    waitForZmqMessages(zmqWaitTime);
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
@@ -196,11 +200,11 @@ void StrataServerTest::testServerFunctionality()
                 clientGotResponse_2 = true;
             });
     client_2.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
     client_2.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
-    QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse, 100);
-    QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse_2, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse, zmqWaitTimeSuccess);
+    QTRY_VERIFY_WITH_TIMEOUT(clientGotResponse_2, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testBuildNotificationApiV2()
@@ -208,10 +212,12 @@ void StrataServerTest::testBuildNotificationApiV2()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
+    waitForZmqMessages(zmqWaitTime);
+
     connect(
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
         [&testExecuted](const QByteArray &message) {
@@ -246,7 +252,7 @@ void StrataServerTest::testBuildNotificationApiV2()
                            });
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_notification","params":{},"id":2})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testBuildResponseApiV2()
@@ -254,11 +260,11 @@ void StrataServerTest::testBuildResponseApiV2()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     connect(
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
@@ -293,7 +299,7 @@ void StrataServerTest::testBuildResponseApiV2()
     });
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_response","params":{},"id":1})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTime);
 }
 
 void StrataServerTest::testBuildErrorApiV2()
@@ -301,11 +307,11 @@ void StrataServerTest::testBuildErrorApiV2()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
@@ -342,11 +348,11 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     connect(
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
@@ -383,7 +389,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
         });
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"platform_notification","params":{},"id":4})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testBuildNotificationApiV1()
@@ -391,11 +397,11 @@ void StrataServerTest::testBuildNotificationApiV1()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
@@ -420,7 +426,7 @@ void StrataServerTest::testBuildNotificationApiV1()
 
     client.sendMessage(R"({"hcs::cmd":"test_notification","payload":{}})");
 
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testBuildResponseApiV1()
@@ -428,10 +434,12 @@ void StrataServerTest::testBuildResponseApiV1()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
+    waitForZmqMessages(zmqWaitTime);
+
     connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -453,7 +461,7 @@ void StrataServerTest::testBuildResponseApiV1()
     });
 
     client.sendMessage(R"({"hcs::cmd":"test_response","payload":{}})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testParsePlatformMessageAPIv1()
@@ -471,7 +479,7 @@ void StrataServerTest::testParsePlatformMessageAPIv1()
     });
 
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     handlerCalled = false;
     currentCommandName = "test_1";
@@ -506,11 +514,11 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
@@ -538,7 +546,7 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
         });
 
     client.sendMessage(R"({"hcs::cmd":"platform_notification","payload":{}})");
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testNotifyAllClients()
@@ -550,7 +558,7 @@ void StrataServerTest::testNotifyAllClients()
     int clientsCount = 10;
 
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     // half the clients use API v2
     for (int i = 0; i < clientsCount / 2; i++) {
@@ -635,7 +643,7 @@ void StrataServerTest::testNotifyAllClients()
         clientsList[i]->sendMessage(R"({"cmd":"register_client", "payload":{}})");
     }
 
-    waitForZmqMessages();
+    waitForZmqMessages(zmqWaitTime);
 
     server.notifyAllClients("test_broadcast", {{"test", "test"}});
 
@@ -659,15 +667,15 @@ void StrataServerTest::testNotifyClientByClientId()
     bool testExecuted = false;
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
             [&testExecuted](const QByteArray &message) {
@@ -687,23 +695,23 @@ void StrataServerTest::testNotifyClientByClientId()
     server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
                         strata::strataRPC::ResponseType::Notification);
 
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testNotifyClientToNonExistingClient()
 {
     StrataServer server(address_, false);
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     connect(
         &client, &strata::strataRPC::ClientConnector::messageReceived, this,
-        [](const QByteArray &) { QFAIL_("Messages should not be sent to unregistered Clients."); });
+        [](const QByteArray &) { QFAIL("Messages should not be sent to unregistered Clients."); });
 
     server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
                         strata::strataRPC::ResponseType::Notification);
-    waitForZmqMessages();
+    waitForZmqMessages(zmqWaitTime);
 }
 
 void StrataServerTest::testInitializeServerFail()
@@ -712,12 +720,12 @@ void StrataServerTest::testInitializeServerFail()
     StrataServer duplicateServer(address_);
 
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     QSignalSpy errorOccurred(&duplicateServer, &StrataServer::errorOccurred);
     QVERIFY(errorOccurred.isValid());
     duplicateServer.initialize();
-    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
+    QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     auto errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
 }
@@ -727,14 +735,16 @@ void StrataServerTest::testdefaultHandlers()
     StrataServer server(address_, true);
     server.initialize();
 
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
 
     bool testExecuted_1 = false;
     bool testExecuted_2 = false;
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initialize();
+    waitForZmqMessages(zmqWaitTime);
     client.connect();
+    waitForZmqMessages(zmqWaitTime);
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "2.0"},"id":1})");
     connect(&client, &strata::strataRPC::ClientConnector::messageReceived, this,
@@ -753,11 +763,13 @@ void StrataServerTest::testdefaultHandlers()
                 testExecuted_1 = true;
             });
 
-    waitForZmqMessages();
+    waitForZmqMessages(zmqWaitTime);
 
     strata::strataRPC::ClientConnector client_2(address_, "BB");
     client_2.initialize();
+    waitForZmqMessages(zmqWaitTime);
     client_2.connect();
+    waitForZmqMessages(zmqWaitTime);
     client_2.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
     connect(&client_2, &strata::strataRPC::ClientConnector::messageReceived, this,
@@ -777,8 +789,8 @@ void StrataServerTest::testdefaultHandlers()
                 testExecuted_2 = true;
             });
 
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted_1, 100);
-    QTRY_VERIFY_WITH_TIMEOUT(testExecuted_2, 100);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted_1, zmqWaitTimeSuccess);
+    QTRY_VERIFY_WITH_TIMEOUT(testExecuted_2, zmqWaitTimeSuccess);
 }
 
 void StrataServerTest::testErrorOccourredSignal()
@@ -793,13 +805,13 @@ void StrataServerTest::testErrorOccourredSignal()
 
     server.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
     server.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
-    QCOMPARE(errorOccurred.count(), 1);
+    QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE(errorType, StrataServer::ServerError::FailedToRegisterHandler);
     errorOccurred.clear();
 
     server.unregisterHandler("handler_2");
-    QCOMPARE(errorOccurred.count(), 1);
+    QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE(errorType, StrataServer::ServerError::FailedToUnregisterHandler);
     errorOccurred.clear();
@@ -807,28 +819,29 @@ void StrataServerTest::testErrorOccourredSignal()
     {
         StrataServer tempServer(address_, false);
         tempServer.initialize();
-        waitForZmqMessages(50);
+        waitForZmqMessages(zmqWaitTime);
 
         server.initialize();
-        QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
+        QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
         errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
         QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
         errorOccurred.clear();
     }
 
     server.initialize();
-    waitForZmqMessages(50);
+    waitForZmqMessages(zmqWaitTime);
     server.initialize();
 
-    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
+    QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE(errorType, StrataServer::ServerError::FailedToInitializeServer);
     errorOccurred.clear();
 
     client.initialize();
+    waitForZmqMessages(zmqWaitTime);
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "10.0"},"id":1})");
-    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
+    QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE(errorType, StrataServer::ServerError::FailedToRegisterClient);
     errorOccurred.clear();
@@ -836,7 +849,9 @@ void StrataServerTest::testErrorOccourredSignal()
     client.sendMessage(R"(not a Json Message)");
     client.sendMessage(R"({"cmd":"this-is-invalid-api})");
     client.sendMessage(R"({"jsonrpc": "5.0","method":"test_method","params": {},"id":1})");
-    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 3, 100);
+    QVERIFY((errorOccurred.count() >= 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((errorOccurred.count() >= 2) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
+    QVERIFY((errorOccurred.count() == 3) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     for (const auto &error : errorOccurred) {
         errorType = qvariant_cast<StrataServer::ServerError>(error.at(0));
         QCOMPARE(errorType, StrataServer::ServerError::FailedToBuildClientMessage);
@@ -844,8 +859,7 @@ void StrataServerTest::testErrorOccourredSignal()
     errorOccurred.clear();
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"non_existing_handler","params": {},"id":1})");
-    waitForZmqMessages();
-    QTRY_COMPARE_WITH_TIMEOUT(errorOccurred.count(), 1, 100);
+    QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
     errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
     QCOMPARE(errorType, StrataServer::ServerError::HandlerNotFound);
     errorOccurred.clear();

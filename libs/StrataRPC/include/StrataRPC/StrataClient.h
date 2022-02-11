@@ -24,6 +24,9 @@ class RequestsController;
 struct Message;
 enum class ClientConnectorError : short;
 
+static constexpr std::chrono::milliseconds default_check_timeout_interval = std::chrono::seconds(1);
+static constexpr std::chrono::milliseconds default_request_timeout = std::chrono::seconds(2);
+
 class StrataClient : public QObject
 {
     Q_OBJECT
@@ -56,6 +59,8 @@ public:
      * @param [in] dealerId Sets the client id.
      */
     StrataClient(const QString &serverAddress, const QByteArray &dealerId = "StrataClient",
+                 std::chrono::milliseconds check_timeout_interval = default_check_timeout_interval,
+                 std::chrono::milliseconds request_timeout = default_request_timeout,
                  QObject *parent = nullptr);
 
     /**

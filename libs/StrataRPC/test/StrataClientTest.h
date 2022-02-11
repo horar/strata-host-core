@@ -34,6 +34,6 @@ private slots:
     void testSendNotification();
 
 private:
-    void waitForZmqMessages(int delay = 100);
+    void waitForZmqMessages(int delay);
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
 };

@@ -28,5 +28,5 @@ private slots:
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
-    void waitForZmqMessages(int delay = 100);
+    void waitForZmqMessages(int delay);
 };
