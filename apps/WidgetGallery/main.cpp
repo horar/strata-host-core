@@ -61,7 +61,6 @@ void loadResources() {
     }
 }
 
-
 void addImportPaths(QQmlApplicationEngine *engine) {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
@@ -79,6 +78,33 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     engine->addImportPath(applicationDir.path());
 
     engine->addImportPath("qrc:///");
+}
+
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcWg) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCDebug(lcWg) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcWg) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
 }
 
 int main(int argc, char *argv[])
@@ -101,33 +127,9 @@ int main(int argc, char *argv[])
     WgModel wgModel_;
 
     QQmlApplicationEngine engine;
-
     QQmlFileSelector selector(&engine);
 
-    const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPlugins.empty() == false) {
-        qInfo(lcWg) << "Supported plugins:" << supportedPlugins.join(", ");
-        selector.setExtraSelectors(supportedPlugins);
-
-        QDir applicationDir(QCoreApplication::applicationDirPath());
-        #ifdef Q_OS_MACOS
-            applicationDir.cdUp();
-            applicationDir.cdUp();
-            applicationDir.cdUp();
-        #endif
-
-        for (const auto& pluginName : qAsConst(supportedPlugins)) {
-            const QString resourceFile(
-                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
-
-            if (QFile::exists(resourceFile) == false) {
-                qCDebug(lcWg) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
-                continue;
-            }
-            qCDebug(lcWg) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
-        }
-    }
-
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty("wgModel", &wgModel_);

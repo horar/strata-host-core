@@ -92,6 +92,15 @@ void addImportPaths(QQmlApplicationEngine *engine)
     engine->addImportPath("qrc:///");
 }
 
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPLugins.empty() == false) {
+        qCDebug(lcDevStudio) << "Supported plugins:" << supportedPLugins.join(", ");
+        selector->setExtraSelectors(supportedPLugins);
+    }
+}
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
@@ -219,13 +228,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
-    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPLugins.empty() == false) {
-        qCDebug(lcDevStudio) << "Supported plugins:" << supportedPLugins.join(", ");
-        selector.setExtraSelectors(supportedPLugins);
-    }
-
-
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());

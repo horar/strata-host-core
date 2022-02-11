@@ -92,6 +92,33 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     engine->addImportPath("qrc:///");
 }
 
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcLogViewer) << "Supportrd plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCDebug(lcLogViewer) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcLogViewer) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -146,30 +173,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
-    const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPlugins.empty() == false) {
-        qInfo(lcLogViewer) << "Supportrd plugins:" << supportedPlugins.join(", ");
-        selector.setExtraSelectors(supportedPlugins);
-
-        QDir applicationDir(QCoreApplication::applicationDirPath());
-        #ifdef Q_OS_MACOS
-            applicationDir.cdUp();
-            applicationDir.cdUp();
-            applicationDir.cdUp();
-        #endif
-
-        for (const auto& pluginName : qAsConst(supportedPlugins)) {
-            const QString resourceFile(
-                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
-
-            if (QFile::exists(resourceFile) == false) {
-                qCDebug(lcLogViewer) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
-                continue;
-            }
-            qCDebug(lcLogViewer) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
-        }
-    }
-
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty("logModel", &logModel_);
