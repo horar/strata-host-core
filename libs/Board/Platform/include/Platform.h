@@ -290,9 +290,14 @@ namespace strata::platform {
         void recognized(bool isRecognized, bool inBootloader);
 
         /**
-         * Emitted when device receives platform Id changed message.
+         * Emitted when device receives 'platform Id changed' notification.
          */
         void platformIdChanged();
+
+        /**
+         * Emitted when device receives 'bootloader active' notification.
+         */
+        void bootloaderActive();
 
     private slots:
         void openedHandler();
@@ -411,6 +416,7 @@ namespace strata::platform {
         QString terminationCause_;
 
         static const rapidjson::SchemaDocument platformIdChangedSchema_;
+        static const rapidjson::SchemaDocument bootloaderActiveSchema_;
     };
 
 }  // namespace
