@@ -285,14 +285,11 @@ Item {
            Layout.fillWidth: true
        }
 
-       SGWidgets.SGButton {
-           Layout.alignment: Qt.AlignRight
-           Layout.maximumHeight: infoButtonSize
-           Layout.maximumWidth: infoButtonSize
+       SGWidgets.SGIconButton {
            icon.source: "qrc:/sgimages/info-circle.svg"
            icon.width: infoButtonSize
            icon.height: infoButtonSize
-           background.opacity: 0
+           hintText: "Opens web browser with documentation"
            onClicked: Qt.openUrlExternally("https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern")
        }
 
@@ -340,14 +337,11 @@ Item {
             Layout.fillWidth: true
         }
 
-        SGWidgets.SGButton {
-            Layout.alignment: Qt.AlignRight
-            Layout.maximumHeight: infoButtonSize
-            Layout.maximumWidth: infoButtonSize
+        SGWidgets.SGIconButton {
             icon.source: "qrc:/sgimages/info-circle.svg"
             icon.width: infoButtonSize
             icon.height: infoButtonSize
-            background.opacity: 0
+            hintText: "Opens web browser with documentation"
             onClicked: Qt.openUrlExternally("https://github.com/gabime/spdlog/wiki/3.-Custom-formatting")
         }
 
