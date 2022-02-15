@@ -245,10 +245,6 @@ Item {
             id: qtFilterRulesTextField
             Layout.preferredWidth: longEdit
             Layout.alignment: Qt.AlignRight
-            background: Rectangle {
-                border.color: "#B3B3B3"
-                border.width: 1
-            }
             placeholderText: "no qt filter rules"
             enabled: text !== "" && iniFileComboBox.currentIndex !== -1
             //disable if no.of files is out of min/max value OR if no ini files were found or selected
@@ -282,7 +278,6 @@ Item {
        SGWidgets.SGText {
            id: qtMsgPatternText
            text: "Qt message pattern"
-           Layout.fillWidth: true
        }
 
        SGWidgets.SGIconButton {
@@ -296,11 +291,7 @@ Item {
        SGWidgets.SGTextField {
            id: qtMsgPatternTextField
            Layout.alignment: Qt.AlignRight
-           Layout.preferredWidth: longEdit
-           background: Rectangle {
-               border.color: "#B3B3B3"
-               border.width: 1
-           }
+           Layout.fillWidth: true
            placeholderText: "no qt msg pattern"
            enabled: text !== "" && iniFileComboBox.currentIndex !== -1
            //disable is message pattern value doesn't exist OR if no ini files were found or selected
@@ -334,7 +325,6 @@ Item {
         SGWidgets.SGText {
             id: spdlogMsgPatternText
             text: "Spdlog message pattern"
-            Layout.fillWidth: true
         }
 
         SGWidgets.SGIconButton {
@@ -348,11 +338,7 @@ Item {
         SGWidgets.SGTextField {
             id: spdlogMsgPatternTextField
             Layout.alignment: Qt.AlignRight
-            Layout.preferredWidth: longEdit
-            background: Rectangle {
-                border.color: "#B3B3B3"
-                border.width: 1
-            }
+            Layout.fillWidth: true
             placeholderText: "no spdlog msg pattern"
             enabled: text !== "" && iniFileComboBox.currentIndex !== -1
             //disable is message pattern value doesn't exist OR if no ini files were found or selected
