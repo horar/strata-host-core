@@ -116,13 +116,14 @@ SGStrataPopup {
                     visible: updateListView.height < updateListView.contentHeight
                 }
 
-                delegate: ColumnLayout {
+                delegate: RowLayout {
                     id: updateDelegate
-                    spacing: 5
                     width: updateListView.width - verticalScrollback.width
                     property bool expanded: false
 
-                    RowLayout {
+                    ColumnLayout {
+                        spacing: 5
+                        Layout.alignment: Qt.AlignTop
                         SGText {
                             fontSizeMultiplier: 1.5
                             font.bold: true
@@ -134,36 +135,66 @@ SGStrataPopup {
                                 return name_info
                             }
                             Layout.fillWidth: true
+                            elide: Text.ElideRight
+                            Layout.topMargin: 5
                         }
 
-                        SGIconButton {
-                            id: expandIconButton
-                            icon.source: updateDelegate.expanded ? "qrc:/sgimages/chevron-up.svg" : "qrc:/sgimages/chevron-down.svg"
-                            iconSize: 20
-                            hintText: updateDelegate.expanded ? "Show less information" : "Show additional information"
-                            iconColor: "grey"
-                            onClicked: {
-                                updateDelegate.expanded = !updateDelegate.expanded
+                        GridLayout {
+                            columns: 2
+                            rowSpacing: 5
+
+                            SGText {
+                                fontSizeMultiplier: 1.4
+                                font.family: Fonts.franklinGothicBook
+                                text: "New Version: "
+                                visible: updateDelegate.expanded
+                                Layout.alignment: Qt.AlignTop
+                            }
+
+                            SGText {
+                                fontSizeMultiplier: 1.4
+                                font.family: Fonts.franklinGothicBook
+                                text: {
+                                    let version_info = "<b>" + model.latest_version + "</b>"
+                                    version_info += " (" + model.update_size + ")"
+                                    return version_info
+                                }
+                                visible: updateDelegate.expanded
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignTop
+                                wrapMode: Text.Wrap
+                            }
+
+                            SGText {
+                                fontSizeMultiplier: 1.4
+                                font.family: Fonts.franklinGothicBook
+                                text: "Current Version: "
+                                visible: updateDelegate.expanded && (model.current_version !== "N/A")
+                                Layout.alignment: Qt.AlignTop
+                            }
+
+                            SGText {
+                                fontSizeMultiplier: 1.4
+                                font.family: Fonts.franklinGothicBook
+                                text: "<b>" + model.current_version + "</b>"
+                                visible: updateDelegate.expanded && (model.current_version !== "N/A")
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignTop
+                                wrapMode: Text.Wrap
                             }
                         }
                     }
 
-                    SGText {
-                        fontSizeMultiplier: 1.4
-                        font.family: Fonts.franklinGothicBook
-                        text: {
-                            let version_info = "New Version: <b>" + model.latest_version + "</b>"
-                            version_info += " (" + model.update_size + ")"
-                            return version_info
+                    SGIconButton {
+                        id: expandIconButton
+                        icon.source: updateDelegate.expanded ? "qrc:/sgimages/chevron-up.svg" : "qrc:/sgimages/chevron-down.svg"
+                        iconSize: 20
+                        hintText: updateDelegate.expanded ? "Show less information" : "Show additional information"
+                        iconColor: "grey"
+                        onClicked: {
+                            updateDelegate.expanded = !updateDelegate.expanded
                         }
-                        visible: updateDelegate.expanded
-                    }
-
-                    SGText {
-                        fontSizeMultiplier: 1.4
-                        font.family: Fonts.franklinGothicBook
-                        text: "Current Version: <b>" + model.current_version + "</b>"
-                        visible: updateDelegate.expanded && (model.current_version !== "N/A")
+                        Layout.alignment: Qt.AlignTop
                     }
                 }
             }
