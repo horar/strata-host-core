@@ -174,7 +174,7 @@ void ConfigFileSettings::setMaxFileSize(const int &maxFileSize)
         return;
     }
 
-    if (maxFileSize == 0) {
+    if (maxFileSize < MIN_LOGFILE_SIZE) {
         settings_->remove(LOG_MAXSIZE_SETTING);
     } else {
         settings_->setValue(LOG_MAXSIZE_SETTING, maxFileSize);

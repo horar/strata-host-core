@@ -162,8 +162,8 @@ Item {
             Layout.alignment: Qt.AlignRight
             from: 0
             to: 2147483647
-            stepSize: 1024
-            enabled: value >= 1024 && iniFileComboBox.currentIndex !== -1
+            stepSize: 1000
+            enabled: value >= 1000 && iniFileComboBox.currentIndex !== -1
             //disable if file size is out of min/max value OR if no ini files were found or selected
             onValueModified: configFileSettings.maxFileSize = value
             Connections {
