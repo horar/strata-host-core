@@ -12,6 +12,7 @@ using strata::strataRPC::Message;
 
 QTEST_MAIN(StrataClientServerIntegrationTest)
 
+#ifdef false
 constexpr std::chrono::milliseconds check_timeout_interval = std::chrono::milliseconds(10);
 constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(100);
 constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
@@ -326,3 +327,4 @@ void StrataClientServerIntegrationTest::testCallbacks()
         QVERIFY((finishedSuccessfully.count() == 1) || (finishedSuccessfully.wait(zmqWaitTimeSuccess) == true));
     }
 }
+#endif
