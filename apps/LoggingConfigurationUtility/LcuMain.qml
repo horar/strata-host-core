@@ -21,6 +21,8 @@ Item {
     property int shortEdit: 180
     property int longEdit: 300
     property int infoButtonSize: 15
+    property bool maxNoFilesEnabled: false
+    property bool maxFileSizeEnabled: false
 
     ConfigFileModel {
         id:configFileModel
@@ -160,19 +162,32 @@ Item {
             id: maxFileSizeSpinBox
             Layout.preferredWidth: shortEdit
             Layout.alignment: Qt.AlignRight
-            from: 0
+            from: 1000
             to: 2147483647
             stepSize: 1000
-            enabled: value >= 1000 && iniFileComboBox.currentIndex !== -1
+            enabled: maxFileSizeEnabled && iniFileComboBox.currentIndex !== -1
             //disable if file size is out of min/max value OR if no ini files were found or selected
+            contentItem: TextInput {
+                    text: maxFileSizeSpinBox.enabled ? maxFileSizeSpinBox.value : "no value"
+                    font: maxFileSizeSpinBox.font
+                    color: maxFileSizeSpinBox.enabled ? "black" : "grey"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+            }
             onValueModified: configFileSettings.maxFileSize = value
+
             Connections {
                 target: configFileSettings
                 onMaxFileSizeChanged: {
                     maxFileSizeSpinBox.value = configFileSettings.maxFileSize
                 }
                 onFilePathChanged: {
-                    maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                    if (configFileSettings.maxFileSize < 1000) {
+                        maxFileSizeEnabled = false
+                    } else {
+                        maxFileSizeEnabled = true
+                        maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                    }
                 }
             }
         }
@@ -185,8 +200,10 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.maxFileSize = 0
+                    maxFileSizeEnabled = false
                 } else { //set to default value
                     configFileSettings.maxFileSize = configFileSettings.maxSizeDefault
+                    maxFileSizeEnabled = true
                 }
             }
         }
@@ -202,11 +219,18 @@ Item {
             id: maxNoFilesSpinBox
             Layout.preferredWidth: shortEdit
             Layout.alignment: Qt.AlignRight
-            from: 0
+            from: 1
             to: 100000
             stepSize: 1
-            enabled: value > 0 && iniFileComboBox.currentIndex !== -1
+            enabled: maxNoFilesEnabled && iniFileComboBox.currentIndex !== -1
             //disable if no.of files is out of min/max value OR if no ini files were found or selected
+            contentItem: Text {
+                    text: maxNoFilesSpinBox.enabled ? maxNoFilesSpinBox.value : "no value"
+                    font: maxNoFilesSpinBox.font
+                    color: maxNoFilesSpinBox.enabled ? "black" : "grey"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+            }
             onValueModified: configFileSettings.maxNoFiles = value
 
             Connections {
@@ -215,7 +239,12 @@ Item {
                     maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
                 }
                 onFilePathChanged: {
-                    maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                    if (configFileSettings.maxNoFiles < 1) {
+                        maxNoFilesEnabled = false
+                    } else {
+                        maxNoFilesEnabled = true
+                        maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                    }
                 }
             }
         }
@@ -228,8 +257,10 @@ Item {
             onClicked: {
                 if (text === "Unset") {
                     configFileSettings.maxNoFiles = 0
+                    maxNoFilesEnabled = false
                 } else { //set to default value
                     configFileSettings.maxNoFiles = configFileSettings.maxCountDefault
+                    maxNoFilesEnabled = true
                 }
             }
         }
@@ -253,10 +284,10 @@ Item {
             Connections {
                 target: configFileSettings
                 onQtFilterRulesChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                    qtFilterRulesTextField.text = configFileSettings.qtFilterRules
                 }
                 onFilePathChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                    qtFilterRulesTextField.text = configFileSettings.qtFilterRules
                 }
             }
         }
