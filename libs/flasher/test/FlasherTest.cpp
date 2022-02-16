@@ -66,7 +66,8 @@ void FlasherTest::init()
     expectedChunksCount_ = 0;
     QVERIFY(platform_->deviceConnected() == false);
 
-    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
+    QSignalSpy platformOpened(platform_.get(), &strata::platform::Platform::opened);
+    QVERIFY(platformOpened.isValid());
     platform_->open();
     QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
     QVERIFY(platform_->deviceConnected());

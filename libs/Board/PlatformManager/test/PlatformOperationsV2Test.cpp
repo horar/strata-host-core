@@ -57,7 +57,8 @@ void PlatformOperationsV2Test::init()
     QVERIFY(mockDevice_->mockGetVersion() == MockVersion::Version_2);
     QVERIFY(platform_->deviceConnected() == false);
 
-    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
+    QSignalSpy platformOpened(platform_.get(), &strata::platform::Platform::opened);
+    QVERIFY(platformOpened.isValid());
     platform_->open();
     QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
     QVERIFY(platform_->deviceConnected());

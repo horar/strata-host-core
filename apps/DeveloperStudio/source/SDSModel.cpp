@@ -39,7 +39,7 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), strata::strataRPC::default_check_timeout_interval, strata::strataRPC::default_request_timeout, this)),
       coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
