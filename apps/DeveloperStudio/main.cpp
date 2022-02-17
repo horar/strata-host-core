@@ -94,10 +94,12 @@ void addImportPaths(QQmlApplicationEngine *engine)
 
 void addSupportedPlugins(QQmlFileSelector *selector)
 {
-    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPLugins.empty() == false) {
-        qCDebug(lcDevStudio) << "Supported plugins:" << supportedPLugins.join(", ");
-        selector->setExtraSelectors(supportedPLugins);
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qCDebug(lcDevStudio) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
     }
 }
 

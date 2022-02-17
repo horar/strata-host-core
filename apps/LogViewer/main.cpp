@@ -94,9 +94,11 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
 void addSupportedPlugins(QQmlFileSelector *selector)
 {
-const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
     if (supportedPlugins.empty() == false) {
-        qInfo(lcLogViewer) << "Supportrd plugins:" << supportedPlugins.join(", ");
+        qInfo(lcLogViewer) << "Supported plugins:" << supportedPlugins.join(", ");
         selector->setExtraSelectors(supportedPlugins);
 
         QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -111,10 +113,10 @@ const QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins
                 QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
 
             if (QFile::exists(resourceFile) == false) {
-                qCDebug(lcLogViewer) << QStringLiteral("Skipping '%1' plugin resource file...").arg(pluginName);
+                qCWarning(lcLogViewer) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName);
                 continue;
             }
-            qCDebug(lcLogViewer) << QStringLiteral("Loading '%1: %2': ").arg(resourceFile, QResource::registerResource(resourceFile));
+            qCDebug(lcLogViewer) << QStringLiteral("Loading '%1: %2'").arg(resourceFile, QResource::registerResource(resourceFile));
         }
     }
 }

@@ -230,13 +230,14 @@ void ResourceLoader::loadCoreResources()
 
 void ResourceLoader::loadPluginResources()
 {
-    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPLugins.empty()) {
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+    if (supportedPlugins.empty()) {
         qCDebug(lcDevStudio) << "No supported plugins";
         return;
     }
 
-    for (const auto& pluginName : qAsConst(supportedPLugins)) {
+    for (const auto& pluginName : qAsConst(supportedPlugins)) {
         QString resourceFile(
             QStringLiteral("%1/plugins/sds-%2.rcc").arg(ResourcePath::coreResourcePath(), pluginName));
 
