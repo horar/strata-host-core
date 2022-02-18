@@ -42,6 +42,9 @@ generate_app_version(GITTAG_PREFIX "prt_" MACBUNDLE ON)
 generate_app_build_timestamp()
 
 if(APPLE)
+    set(OPENSSL_ROOT_DIR ${SSL_LIB_PATH_MACOS})
+    find_package(OpenSSL 1.1 REQUIRED)
+
     find_library(IOKIT_LIB IOKit REQUIRED)
     if (NOT IOKIT_LIB)
         message(FATAL_ERROR "IOKit framework not found")
@@ -54,6 +57,8 @@ if(APPLE)
     target_link_libraries(${PROJECT_NAME}
         ${IOKIT_LIB}
         ${FOUNDATION_LIB}
+        OpenSSL::SSL
+        OpenSSL::Crypto
     )
 
     target_sources(${PROJECT_NAME} PRIVATE
@@ -89,6 +94,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     #AUTORCC_OPTIONS "--compress;9"
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 if(WIN32)
