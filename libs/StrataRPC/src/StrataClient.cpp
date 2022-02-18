@@ -29,6 +29,7 @@ StrataClient::StrataClient(const QString &serverAddress, const QByteArray &deale
       connectorThread_(new QThread())
 {
     qRegisterMetaType<strataRPC::ClientConnectorError>("ClientConnectorError");
+
     connector_->moveToThread(connectorThread_.get());
 
     QObject::connect(this, &StrataClient::initializeConnector, connector_.get(),

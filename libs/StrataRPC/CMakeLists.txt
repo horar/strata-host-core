@@ -29,8 +29,13 @@ add_library(${SERVER}
     src/ClientsController.cpp
     src/ServerConnector.cpp
     src/logging/LoggingQtCategories.cpp
+    src/Dispatcher.h
+    src/RpcError.cpp
+    src/RpcRequest.cpp
 
     include/StrataRPC/StrataServer.h
+    include/StrataRPC/RpcRequest.h
+    include/StrataRPC/RpcError.h
 )
 
 add_library(strata::${SERVER} ALIAS ${SERVER})
@@ -62,12 +67,14 @@ target_compile_definitions(${SERVER} PRIVATE
 add_library(${CLIENT}
     src/StrataClient.cpp
     src/ClientConnector.cpp
+    src/Request.h
     src/RequestsController.cpp
     src/DeferredRequest.cpp
     src/logging/LoggingQtCategories.cpp
 
     include/StrataRPC/StrataClient.h
     include/StrataRPC/DeferredRequest.h
+    include/StrataRPC/Message.h
 )
 
 add_library(strata::${CLIENT} ALIAS ${CLIENT})
