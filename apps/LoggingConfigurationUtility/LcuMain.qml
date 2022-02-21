@@ -269,13 +269,14 @@ Item {
             id: qtFilterRulesText
             text: "Qt filter rules"
             Layout.columnSpan: 2
-            Layout.fillWidth: true
+
         }
 
         SGWidgets.SGTextField {
             id: qtFilterRulesTextField
-            Layout.preferredWidth: longEdit
+            //Layout.preferredWidth: longEdit
             Layout.alignment: Qt.AlignRight
+            Layout.fillWidth: true
             placeholderText: "no qt filter rules"
             enabled: text !== "" && iniFileComboBox.currentIndex !== -1
             //disable if no.of files is out of min/max value OR if no ini files were found or selected
