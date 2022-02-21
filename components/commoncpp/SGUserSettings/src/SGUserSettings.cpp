@@ -32,6 +32,7 @@ bool SGUserSettings::writeFile(const QString &fileName, const QJsonObject &data,
     filePath = SGUtilsCpp::joinFilePath(filePath, fileName);
     qCDebug(lcUserSettings) << "Writing to" << filePath;
     QJsonDocument doc(data);
+    qCDebug(lcUserSettings) << "writting data:" << doc.toJson(QJsonDocument::Compact);
 
     return SGUtilsCpp::atomicWrite(filePath, doc.toJson());
 }
@@ -56,6 +57,7 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
 
         if (!doc.isNull() && doc.isObject()) {
             returnedObj = doc.object();
+            qCDebug(lcUserSettings) << "reading data:" << doc.toJson(QJsonDocument::Compact);
         } else {
             qCCritical(lcUserSettings) << "Unable to convert document to object";
         }
@@ -161,6 +163,7 @@ void SGUserSettings::setBaseOutputPath()
         const uint hashedUser = qHash(user_);
         hashedString = QString::number(hashedUser);
     }
+    qCDebug(lcUserSettings, "output path user: %s/%s", qUtf8Printable(user_), qUtf8Printable(hashedString));
 
     base_output_path_ = SGUtilsCpp::joinFilePath(appDataPath, "settings");
 
@@ -170,5 +173,5 @@ void SGUserSettings::setBaseOutputPath()
         base_output_path_ = SGUtilsCpp::joinFilePath(base_output_path_, classId_);
     }
 
-    qCDebug(lcUserSettings) << "Setting base output path for user settings to" << base_output_path_;
+    qCDebug(lcUserSettings) << "base output path:" << base_output_path_;
 }
