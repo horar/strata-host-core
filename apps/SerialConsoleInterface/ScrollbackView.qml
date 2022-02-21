@@ -6,6 +6,7 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
+import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -40,6 +41,7 @@ Item {
     signal condenseMessageRequested(int index, bool isCondensed)
     signal delegateClicked(int index)
     signal delegateEnterPressed(int index)
+    signal updateSelection()
 
     // internal stuff
     property int delegateBaseSpacing: 1
@@ -105,6 +107,7 @@ Item {
 
             selectionStartIndex = newSelectionStartIndex;
             selectionEndIndex = newSelectionEndIndex
+            updateSelection()
         }
     }
 
@@ -157,7 +160,8 @@ Item {
         Action {
             id: copyAction
             text: qsTr("Copy")
-            enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
+            enabled: (selectionStartPosition !== selectionEndPosition) ||
+                     (selectionStartIndex !== selectionEndIndex)
             onTriggered: {
                 copyToClipboard()
             }
@@ -265,6 +269,7 @@ Item {
 
             property int startIndex
             property int startPosition
+            property int endPosition
 
             onPressed: {
                 listView.forceActiveFocus()
@@ -282,13 +287,34 @@ Item {
                     return
                 }
 
-                startIndex = position.delegate_index
-                startPosition = position.cursor_pos
+                if (tripleClickTimer.running &&
+                     (Math.abs(mouse.x - tripleClickTimer.lastMouseX) <= 1) &&
+                     (Math.abs(mouse.y - tripleClickTimer.lastMouseY) <= 1)) {
 
-                selectionStartIndex = startIndex
-                selectionEndIndex = startIndex
-                selectionStartPosition = startPosition
-                selectionEndPosition = startPosition
+                    let resolved_pos = CommonCpp.SGUtilsCpp.getLineStartEndPositions(position.delegate_item.cmdMessage, position.cursor_pos);
+
+                    startIndex = position.delegate_index
+                    startPosition = resolved_pos.x
+                    endPosition = resolved_pos.y
+
+                    selectionStartPosition = resolved_pos.x
+                    selectionEndPosition = resolved_pos.y
+                    selectionStartIndex = position.delegate_index
+                    selectionEndIndex = position.delegate_index
+                    updateSelection()
+
+                    tripleClickTimer.stop()
+                } else {
+                    startIndex = position.delegate_index
+                    startPosition = position.cursor_pos
+                    endPosition = position.cursor_pos
+
+                    selectionStartIndex = startIndex
+                    selectionEndIndex = startIndex
+                    selectionStartPosition = startPosition
+                    selectionEndPosition = endPosition
+                    updateSelection()
+                }
             }
 
             onPositionChanged: {
@@ -319,13 +345,17 @@ Item {
                     selectionEndIndex = startIndex
                 }
 
-                if (startPosition <= position.cursor_pos) {
+                if (endPosition <= position.cursor_pos) {
                     selectionStartPosition = startPosition
                     selectionEndPosition = position.cursor_pos
-                } else {
+                } else if (startPosition >= position.cursor_pos) {
                     selectionStartPosition = position.cursor_pos
-                    selectionEndPosition = startPosition
+                    selectionEndPosition = endPosition
+                } else {
+                    selectionStartPosition = startPosition
+                    selectionEndPosition = endPosition
                 }
+                updateSelection()
 
                 //flick view while dragging
                 if (mouse.y > textSelectionMouseArea.height * 0.95) {
@@ -333,6 +363,42 @@ Item {
                 } else if (mouse.y < textSelectionMouseArea.height * 0.05) {
                     listView.flick(0, 300)
                 }
+            }
+
+            onDoubleClicked: {
+                if (allowMouseSelection === false) {
+                    return
+                }
+
+                let position = resolvePosition(mouse.x, mouse.y)
+                if (position === undefined) {
+                    return
+                }
+
+                let resolved_pos = CommonCpp.SGUtilsCpp.getWordStartEndPositions(position.delegate_item.cmdMessage, position.cursor_pos);
+
+                startIndex = position.delegate_index
+                startPosition = resolved_pos.x
+                endPosition = resolved_pos.y
+
+                selectionStartPosition = resolved_pos.x
+                selectionEndPosition = resolved_pos.y
+                selectionStartIndex = position.delegate_index
+                selectionEndIndex = position.delegate_index
+                updateSelection()
+
+                tripleClickTimer.lastMouseX = mouse.x
+                tripleClickTimer.lastMouseY = mouse.y
+                tripleClickTimer.start()
+            }
+
+            Timer {
+                id: tripleClickTimer
+                interval: 500
+                repeat: false
+
+                property int lastMouseX: -1
+                property int lastMouseY: -1
             }
         }
 
@@ -356,6 +422,7 @@ Item {
             width: ListView.view.width - verticalScrollbar.width
             height: cmdText.height + 3
 
+            property alias cmdMessage: cmdText.text
             property color helperTextColor: "#333333"
 
             property int delegateIndex: index
@@ -489,10 +556,7 @@ Item {
 
                 Connections {
                     target: scrollbackView
-                    onSelectionStartIndexChanged: selectTimer.restart()
-                    onSelectionEndIndexChanged: selectTimer.restart()
-                    onSelectionStartPositionChanged: selectTimer.restart()
-                    onSelectionEndPositionChanged: selectTimer.restart()
+                    onUpdateSelection: selectTimer.restart()
                 }
 
                 Timer {
@@ -603,6 +667,7 @@ Item {
         selectionEndIndex = -1
         selectionStartPosition = -1
         selectionEndPosition = -1
+        updateSelection()
     }
 
     function resolvePosition(x,y) {
@@ -619,6 +684,7 @@ Item {
         var cursorPos = item.positionAtTextEdit(posInDelegate.x, posInDelegate.y)
 
         return {
+            "delegate_item": item,
             "delegate_index": delegateIndex,
             "cursor_pos": cursorPos
         }
@@ -673,6 +739,7 @@ Item {
         selectionEndIndex = delegateIndexEnd
         selectionStartPosition = 0
         selectionEndPosition = delegatePositionEnd
+        updateSelection()
     }
 
     function positionViewAtEnd() {

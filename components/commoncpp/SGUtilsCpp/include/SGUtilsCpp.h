@@ -10,6 +10,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QPoint>
 #include <QDirIterator>
 
 class SGUtilsCpp : public QObject
@@ -58,6 +59,8 @@ public:
     Q_INVOKABLE static QList<QString> getQrcPaths(QString path);
     Q_INVOKABLE static QString joinForbiddenCharacters(QString separator = " ");
     Q_INVOKABLE static QStringList getForbiddenCharacters();
+    Q_INVOKABLE static QPoint getWordStartEndPositions(const QString &text, int pos);
+    Q_INVOKABLE static QPoint getLineStartEndPositions(const QString &text, int pos);
 
 private:
     static const QStringList fileSizePrefixList_;
