@@ -29,6 +29,7 @@ public:
 
 private slots:
     void replyHandler(QJsonObject payload);
+    void errorHandler(QJsonObject payload);
 
 private:
     strata::strataRPC::StrataClient *strataClient_;

@@ -99,7 +99,7 @@ bool FirmwareUpdater::sendCommand(const QString& deviceId, const QString& comman
     }
 
     connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &FirmwareUpdater::replyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &FirmwareUpdater::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &FirmwareUpdater::errorHandler);
 
     return true;
 }
@@ -140,14 +140,6 @@ void FirmwareUpdater::replyHandler(QJsonObject payload)
         return;
     }
 
-    if (payload.contains(QStringLiteral("error_string"))) {
-        const QString errorString = acquireErrorString(payload);
-        emit jobError(deviceId, errorString);
-        emit jobFinished(deviceId, errorString);
-        requestedDevices_.erase(requestedDevice);
-        return;
-    }
-
     if (requestedDevice.value().firmwareUri.isEmpty()) {
         requestedDevice.value().firmwareUri = payload.value(QStringLiteral("path")).toString();
     }
@@ -166,6 +158,31 @@ void FirmwareUpdater::replyHandler(QJsonObject payload)
     jobIdHash_.insert(jobId, deviceId);
 
     emit jobStarted(deviceId, requestedDevice.value().firmwareUri, requestedDevice.value().firmwareMd5);
+}
+
+void FirmwareUpdater::errorHandler(QJsonObject payload)
+{
+    const QString deviceId = payload.value("data").toObject().value("device_id").toString();
+    if (deviceId.isEmpty()) {
+        qCCritical(lcDevStudio) << "Bad reply, device ID is missing.";
+        return;
+    }
+
+    auto requestedDevice = requestedDevices_.find(deviceId);
+    if (requestedDevice == requestedDevices_.end()) {
+        // not our request
+        return;
+    }
+
+    int errorCode = payload.value("code").toInt();
+    QString errorString = payload.value("message").toString();
+
+    qCCritical(lcDevStudio) << errorCode << errorString << ", device_id=" << deviceId;
+
+    emit jobError(deviceId, errorString);
+    emit jobFinished(deviceId, errorString);
+
+    requestedDevices_.erase(requestedDevice);
 }
 
 void FirmwareUpdater::jobUpdateHandler(QJsonObject payload)

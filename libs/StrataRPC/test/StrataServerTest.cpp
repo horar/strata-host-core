@@ -17,6 +17,7 @@ QTEST_MAIN(StrataServerTest)
 using strata::strataRPC::StrataServer;
 using strata::strataRPC::ClientConnector;
 
+#ifdef false
 constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
 constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
 
@@ -954,6 +955,7 @@ void StrataServerTest::testErrorOccourredSignal()
     QCOMPARE(errorType, StrataServer::ServerError::HandlerNotFound);
     errorOccurred.clear();
 }
+#endif
 
 void StrataServerTest::waitForZmqMessages(int delay)
 {

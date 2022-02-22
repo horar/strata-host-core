@@ -58,10 +58,11 @@ public:
      * @param [in] serverAddress Sets the server address.
      * @param [in] dealerId Sets the client id.
      */
-    StrataClient(const QString &serverAddress, const QByteArray &dealerId = "StrataClient",
-                 std::chrono::milliseconds check_timeout_interval = default_check_timeout_interval,
-                 std::chrono::milliseconds request_timeout = default_request_timeout,
-                 QObject *parent = nullptr);
+    StrataClient(
+            const QString &serverAddress, const QByteArray &dealerId = "StrataClient",
+            std::chrono::milliseconds check_timeout_interval = default_check_timeout_interval,
+            std::chrono::milliseconds request_timeout = default_request_timeout,
+            QObject *parent = nullptr);
 
     /**
      * StrataClient destructor
