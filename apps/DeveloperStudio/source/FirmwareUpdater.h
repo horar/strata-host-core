@@ -46,6 +46,8 @@ signals:
 
 private slots:
     void replyHandler(QJsonObject payload);
+    void errorHandler(QJsonObject payload);
+
     void jobUpdateHandler(QJsonObject payload);
 
 private:

@@ -32,7 +32,7 @@ Item {
                 model: ["One","Two","Three","Four"]
 
                 onClicked: {
-                    console.info(Logger.wgCategory, "buttonStrip1", index)
+                    console.info(Logger.wgCategory, "selected button has index:", index)
                 }
             }
 

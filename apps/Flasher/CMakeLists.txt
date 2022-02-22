@@ -12,6 +12,7 @@ project(flasher-cli
 )
 
 set(PROJECT_WIN32_ICO resources/icons/app/flasher-logo.ico)
+set(PROJECT_BUNDLE_ID com.onsemi.strata.flasher)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -55,6 +56,7 @@ target_include_directories(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

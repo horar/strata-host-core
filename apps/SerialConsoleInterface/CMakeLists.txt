@@ -95,6 +95,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     #AUTORCC_OPTIONS "--compress;9"
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

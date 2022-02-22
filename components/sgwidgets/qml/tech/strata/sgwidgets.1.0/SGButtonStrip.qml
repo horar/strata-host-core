@@ -70,14 +70,14 @@ Item {
                 property int powIndex: 1 << index
 
                 onClicked: {
-                    control.clicked(index)
-
                     if (control.exclusive) {
                         checkedIndices = 0
                         checkedIndices = powIndex
                     } else {
                         checkedIndices ^= powIndex
                     }
+
+                    control.clicked(index)
                 }
             }
         }

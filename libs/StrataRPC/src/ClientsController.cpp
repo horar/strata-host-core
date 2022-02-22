@@ -40,7 +40,7 @@ bool ClientsController::registerClient(const Client &client)
         << "Registering ClientID: 0x" << client.getClientID().toHex()
         << ", API:" << static_cast<int>(client.getApiVersion());
 
-    if (true == isRegisteredClient(client.getClientID())) {
+    if (isRegisteredClient(client.getClientID())) {
         qCCritical(lcStrataClientsController).noquote().nospace()
             << "Client ID is already registered. ClientID: 0x" << client.getClientID().toHex();
         return false;

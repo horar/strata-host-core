@@ -27,6 +27,5 @@ struct Message {
     MessageType messageType;
 };
 
-typedef std::function<void(const Message &)> StrataHandler;
 
 }  // namespace strata::strataRPC

@@ -26,7 +26,8 @@ public:
     /**
      * RequestController constructor
      */
-    RequestsController();
+    RequestsController(std::chrono::milliseconds check_timeout_interval,
+                       std::chrono::milliseconds request_timeout);
 
     /**
      * RequestController destructor
@@ -94,8 +95,7 @@ private:
     int currentRequestId_;
 
     QTimer findTimedoutRequestsTimer_;
-    static constexpr std::chrono::milliseconds check_timeout_interval_ = std::chrono::seconds(1);
-    static constexpr std::chrono::milliseconds request_timeout_ = std::chrono::seconds(2);
+    std::chrono::milliseconds request_timeout_;
 };
 
 }  // namespace strata::strataRPC

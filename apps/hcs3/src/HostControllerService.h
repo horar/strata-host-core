@@ -131,17 +131,30 @@ public slots:
             const QString &errorString);
 
 private slots:
-    void sendPlatformMessageToClients(const QString &platformId, const QJsonObject& payload);
+    void sendPlatformMessageToClients(
+            const QString &platformId,
+            const QJsonObject& payload);
 
-    void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
+    void handleUpdateProgress(
+            const QByteArray& deviceId,
+            const QByteArray& clientId,
+            FirmwareUpdateController::UpdateProgress progress);
 
     void platformStateChanged(const QByteArray& deviceId);
 
 #ifdef APPS_FEATURE_BLE
     void bluetoothScanFinished(const QJsonObject payload);
 #endif // APPS_FEATURE_BLE
-    void connectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
-    void disconnectDeviceFinished(const QByteArray &deviceId, const QByteArray &clientId, const QString &errorMessage);
+
+    void connectDeviceFinished(
+            const QByteArray &deviceId,
+            const QByteArray &clientId,
+            const QString &errorMessage);
+
+    void disconnectDeviceFinished(
+            const QByteArray &deviceId,
+            const QByteArray &clientId,
+            const QString &errorMessage);
 
 private:
     enum class hcsNotificationType {
@@ -164,29 +177,38 @@ private:
         platformDocumentsProgress,
         platformDocument,
         platformMessage,
+        platformNotification,
         connectedPlatforms
     };
     constexpr const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
 
-    void sendDeviceError(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId, const QString &errorString);
-    void sendDeviceSuccess(hcsNotificationType notificationType, const QByteArray& deviceId, const QByteArray& clientId);
+    void sendDeviceError(
+            hcsNotificationType notificationType,
+            const QByteArray& deviceId,
+            const QByteArray& clientId,
+            const QString &errorString);
 
-    void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
-    void processCmdLoadDocuments(const strata::strataRPC::Message &message);
-    void processCmdDownloadDatasheetFile(const strata::strataRPC::Message &message);
-    void processCmdDownloadPlatformFiles(const strata::strataRPC::Message &message);
-    void processCmdDynamicPlatformList(const strata::strataRPC::Message &message);
-    void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
-    void processCmdDownlodView(const strata::strataRPC::Message &message);
-    void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
-    void processCmdProgramController(const strata::strataRPC::Message &message);
-    void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
+    void sendDeviceSuccess(
+            hcsNotificationType notificationType,
+            const QByteArray& deviceId,
+            const QByteArray& clientId);
+
+    void processCmdRequestHcsStatus(const strata::strataRPC::RpcRequest &request);
+    void processCmdLoadDocuments(const strata::strataRPC::RpcRequest &request);
+    void processCmdDownloadDatasheetFile(const strata::strataRPC::RpcRequest &request);
+    void processCmdDownloadPlatformFiles(const strata::strataRPC::RpcRequest &request);
+    void processCmdDynamicPlatformList(const strata::strataRPC::RpcRequest &request);
+    void processCmdUpdateFirmware(const strata::strataRPC::RpcRequest &request);
+    void processCmdDownlodView(const strata::strataRPC::RpcRequest &request);
+    void processCmdSendPlatformMessage(const strata::strataRPC::RpcRequest &request);
+    void processCmdProgramController(const strata::strataRPC::RpcRequest &request);
+    void processCmdCheckForUpdates(const strata::strataRPC::RpcRequest &request);
 #ifdef APPS_FEATURE_BLE
-    void processCmdBluetoothScan(const strata::strataRPC::Message &message);
+    void processCmdBluetoothScan(const strata::strataRPC::RpcRequest &request);
 #endif // APPS_FEATURE_BLE
-    void processCmdConnectDevice(const strata::strataRPC::Message &message);
-    void processCmdDisconnectDevice(const strata::strataRPC::Message &message);
-    void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
+    void processCmdConnectDevice(const strata::strataRPC::RpcRequest &request);
+    void processCmdDisconnectDevice(const strata::strataRPC::RpcRequest &request);
+    void processCmdPlatformStartApplication(const strata::strataRPC::RpcRequest &request);
 
     bool parseConfig(const QString& config);
 
@@ -197,8 +219,6 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
     ComponentUpdateInfo componentUpdateInfo_;
-
-    QByteArray currentClient_ = "";   // remove this when platforms are mapped to connected clients.
 
     QJsonObject config_;
     std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;
