@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -11,8 +11,28 @@ project(PlatformManager
     LANGUAGES CXX
 )
 
+if(APPS_FEATURE_BLE)
+    set(BLUETOOTH_PACKAGES
+        Bluetooth
+    )
+    set(BLUETOOTH_SOURCES
+        src/BluetoothLowEnergy/BluetoothLowEnergyScanner.cpp
+        include/BluetoothLowEnergy/BluetoothLowEnergyScanner.h
+    )
+    set(BLUETOOTH_LIBRARIES
+        PUBLIC Qt5::Bluetooth
+    )
+    if(WIN32)
+        set(BLUETOOTH_LIBRARIES
+            ${BLUETOOTH_LIBRARIES}
+            PRIVATE Bthprops
+            PRIVATE ws2_32
+        )
+    endif()
+endif()
+
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core SerialPort Network
+    COMPONENTS Core SerialPort Network ${BLUETOOTH_PACKAGES}
     REQUIRED
 )
 
@@ -30,6 +50,8 @@ add_library(${PROJECT_NAME}
     include/Serial/SerialDeviceScanner.h
     include/Mock/MockDeviceScanner.h
     include/Tcp/TcpDeviceScanner.h
+
+    ${BLUETOOTH_SOURCES}
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -48,6 +70,8 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC strata::QtLogger
     PUBLIC strata::Platform
     PRIVATE strata::CommandValidator
+
+    ${BLUETOOTH_LIBRARIES}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

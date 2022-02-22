@@ -1,3 +1,12 @@
+#
+# Copyright (c) 2018-2022 onsemi.
+#
+# All rights reserved. This software and/or documentation is licensed by onsemi under
+# limited terms and conditions. The terms and conditions pertaining to the software and/or
+# documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+# Terms and Conditions of Sale, Section 8 Software”).
+#
+
 module tech.strata.sgwidgets
 
 SGUtilsJS 1.0 utils/SGUtils.js
@@ -24,6 +33,7 @@ SGLogLevelSelector 1.0 SGLogLevelSelector.qml
 SGMainWindow 1.0 SGMainWindow.qml
 SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer.qml
 SGPage 1.0 SGPage.qml
+SGPopup 1.0 SGPopup.qml
 SGRadioButton 1.0 SGRadioButton.qml
 SGRadioButtonContainer 1.0 SGRadioButtonContainer.qml
 SGResponsiveScrollView 1.0 SGResponsiveScrollView.qml

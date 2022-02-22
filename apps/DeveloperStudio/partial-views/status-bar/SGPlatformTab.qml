@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -43,7 +43,8 @@ Item {
             Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
             Help.registerTarget(repeater.itemAt(0).toolItem, "Use this menu item to open the platform and control a board", 6, "selectorHelp")
             Help.registerTarget(repeater.itemAt(1).toolItem, "Use this menu item to view documentation", 7, "selectorHelp")
-            Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to close the platform", 8, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to view software and firmware settings", 8, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(3).toolItem, "Use this menu item to close the platform", 9, "selectorHelp")
         }
     }
 
@@ -83,6 +84,7 @@ Item {
             "class_id": platformTabRoot.class_id,
             "device_id": platformTabRoot.device_id
         }
+
         PlatformSelection.closePlatformView(data)
 
         // must call last - model entry/delegate begins destruction
@@ -229,6 +231,7 @@ Item {
         }
 
         Rectangle {
+            id: platfomTabMenu
             Layout.fillHeight: true
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
@@ -236,7 +239,7 @@ Item {
             Accessible.name: "Open Platform Tab"
             Accessible.role: Accessible.Button
             Accessible.onPressAction: {
-                mouseMenu.clicked(mouse)
+                mouseMenuClicked(Qt.LeftButton)
             }
 
             MouseArea {
@@ -245,13 +248,7 @@ Item {
                 hoverEnabled: true
                 acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                 onClicked: {
-                    if (mouse.button == Qt.LeftButton) {
-                        showMenu()
-                    } else if (mouse.button == Qt.RightButton) {
-                        showMenu()
-                    } else if (mouse.button == Qt.MiddleButton) {
-                        closeTab()
-                    }
+                    platfomTabMenu.mouseMenuClicked(mouse.button)
                 }
                 cursorShape: Qt.PointingHandCursor
             }
@@ -273,6 +270,16 @@ Item {
                     }
                 }
             }
+
+            function mouseMenuClicked(mouseButton) {
+                if (mouseButton === Qt.LeftButton) {
+                    showMenu()
+                } else if (mouseButton === Qt.RightButton) {
+                    showMenu()
+                } else if (mouseButton === Qt.MiddleButton) {
+                    closeTab()
+                }
+            }
         }
     }
 
@@ -284,7 +291,9 @@ Item {
         height: menu.height
         padding: 0
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
-        focus: true
+
+        /* Cannot take focus, otherwise it steals it from help tour */
+        focus: false
 
         onOpened: {
             if (menu.state === "help_tour") {

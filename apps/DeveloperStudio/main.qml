@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -135,7 +135,7 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.strataClient.sendRequest("unregister", {});
+                                           sdsModel.strataClient.sendRequest("unregister_client", {});
                                            if (SessionUtils.settings.rememberMe === false) {
                                                SessionUtils.settings.clear()
                                            }
@@ -205,14 +205,41 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    Connections {
+        target: (sdsModel.bleDeviceModel === undefined)?(null):(sdsModel.bleDeviceModel)
+        onTryConnectFinished: {
+            if (errorString.length > 0) {
+                showBleNotification("BLE device connection atempt failed", errorString);
+            }
+        }
+
+        onTryDisconnectFinished: {
+            if (errorString.length > 0) {
+                showBleNotification("BLE device disconnection atempt failed", errorString);
+            }
+        }
+
+        function showBleNotification(title, description) {
+            Notifications.createNotification(
+                        title,
+                        Notifications.Warning,
+                        "current",
+                        {
+                            "description": description,
+                            "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                        }
+                        )
+        }
+    }
+
     Loader {
         id: updateLoader
         active: false
         anchors {
             centerIn: parent
         }
-        width: 500
-        height: 300
+        width: 450
+        height: 400
         visible: active
     }
 

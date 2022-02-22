@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -22,7 +22,9 @@ Item {
 
     property string activeDownloadUri: ""
     property var otaVersionsToRemove: []
-    property var controlViewList: sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
+    property var controlViewList: (platformStack.is_assisted && platformStack.class_id.length === 0)
+                                  ? sdsModel.documentManager.getClassDocuments(platformStack.controller_class_id).controlViewListModel
+                                  : sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
     property bool controlLoaded: false
     property real loadTime

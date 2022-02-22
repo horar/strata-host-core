@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -68,6 +68,12 @@ public:
     static SerialPortPtr establishPort(const QString& portName);
 
     /**
+     * Initialize serial port parameters.
+     * @param serialPort already existing serial port
+     */
+    static void initializePort(const SerialPortPtr& serialPort);
+
+    /**
      * Creates unique hash for serial device, based on port name.
      * Will be used to generate device ID.
      * @param portName system name of serial port.
@@ -107,6 +113,7 @@ private slots:
 
 private:
     void initSerialDevice(int openRetries);
+    void checkSerialPortProperties(const SerialPortPtr& port) const;
 
     SerialPortPtr serialPort_;
     std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string

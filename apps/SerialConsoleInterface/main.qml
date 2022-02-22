@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -25,6 +25,7 @@ SGWidgets.SGMainWindow {
 
     property variant settingsDialog: null
     property variant connectMockDeviceDialog: null
+    property variant connectBleDeviceDialog: null
     property int defaultWindowHeight: 768
     property int defaultWindowWidth: 1024
 
@@ -50,6 +51,18 @@ SGWidgets.SGMainWindow {
                 text: qsTr("&Exit")
                 onTriggered:  {
                     root.close()
+                }
+            }
+        }
+
+        QtLabsPlatform.Menu {
+            title: qsTr("&Bluetooth")
+            visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Connect Device...")
+                onTriggered:  {
+                    showConnectBleDeviceDialog()
                 }
             }
         }
@@ -141,5 +154,14 @@ SGWidgets.SGMainWindow {
 
         connectMockDeviceDialog = SGWidgets.SGDialogJS.createDialog(root,"qrc:/SciConnectMockDeviceDialog.qml")
         connectMockDeviceDialog.open()
+    }
+
+    function showConnectBleDeviceDialog() {
+        if (connectBleDeviceDialog !== null) {
+            return
+        }
+
+        connectBleDeviceDialog = SGWidgets.SGDialogJS.createDialog(root,"qrc:/ConnectBleDeviceDialog.qml")
+        connectBleDeviceDialog.open()
     }
 }

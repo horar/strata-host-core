@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -19,14 +19,17 @@
 using namespace strata::strataRPC;
 
 StrataClient::StrataClient(const QString &serverAddress, const QByteArray &dealerId,
+                           std::chrono::milliseconds check_timeout_interval,
+                           std::chrono::milliseconds request_timeout,
                            QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const QJsonObject &>()),
       connector_(new ClientConnector(serverAddress, dealerId)),
-      requestController_(new RequestsController()),
+      requestController_(new RequestsController(check_timeout_interval, request_timeout)),
       connectorThread_(new QThread())
 {
     qRegisterMetaType<strataRPC::ClientConnectorError>("ClientConnectorError");
+
     connector_->moveToThread(connectorThread_.get());
 
     QObject::connect(this, &StrataClient::initializeConnector, connector_.get(),
@@ -74,7 +77,7 @@ void StrataClient::connect()
 
 void StrataClient::disconnect()
 {
-    sendRequest("unregister", {});
+    sendRequest("unregister_client", {});
     emit disconnectClient();
 }
 
@@ -144,7 +147,7 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
 
     const auto [deferredRequest, message] = requestController_->addNewRequest(method, payload);
 
-    if (true == message.isEmpty()) {
+    if (message.isEmpty()) {
         QString errorMessage(QStringLiteral("Failed to add request."));
         qCCritical(lcStrataClient) << errorMessage;
         emit errorOccurred(ClientError::FailedToAddReequest, errorMessage);
@@ -190,7 +193,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     }
     QJsonObject jsonObject = jsonDocument.object();
 
-    if (true == jsonObject.contains("jsonrpc") && true == jsonObject.value("jsonrpc").isString() &&
+    if (jsonObject.contains("jsonrpc") && jsonObject.value("jsonrpc").isString() &&
         jsonObject.value("jsonrpc").toString() == "2.0") {
         // qCDebug(lcStrataClient) << "API v2.0";
     } else {
@@ -230,7 +233,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     //     "params": {}
     // }
 
-    if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
+    if (jsonObject.contains("id") && jsonObject.value("id").isDouble()) {
         serverMessage->messageID = jsonObject.value("id").toDouble();
         auto [requestFound, request] =
             requestController_->popPendingRequest(jsonObject.value("id").toDouble());
@@ -245,12 +248,12 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         serverMessage->handlerName = request.method_;
         *deferredRequest = request.deferredRequest_;
 
-        if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
+        if (jsonObject.contains("error") && jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();
             serverMessage->messageType = Message::MessageType::Error;
         } else {
-            if (true == jsonObject.contains("result") &&
-                true == jsonObject.value("result").isObject()) {
+            if (jsonObject.contains("result") &&
+                jsonObject.value("result").isObject()) {
                 serverMessage->payload = jsonObject.value("result").toObject();
             } else {
                 qCDebug(lcStrataClient) << "No payload.";
@@ -259,13 +262,13 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
             serverMessage->messageType = Message::MessageType::Response;
         }
 
-    } else if (true == jsonObject.contains("method") &&
-               true == jsonObject.value("method").isString()) {
+    } else if (jsonObject.contains("method") &&
+               jsonObject.value("method").isString()) {
         serverMessage->handlerName = jsonObject.value("method").toString();
         serverMessage->messageType = Message::MessageType::Notification;
 
-        if (true == jsonObject.contains("params") &&
-            true == jsonObject.value("params").isObject()) {
+        if (jsonObject.contains("params") &&
+            jsonObject.value("params").isObject()) {
             serverMessage->payload = jsonObject.value("params").toObject();
         }
 

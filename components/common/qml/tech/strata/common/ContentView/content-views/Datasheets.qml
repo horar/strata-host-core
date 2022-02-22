@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -17,7 +17,7 @@ Item {
     width: parent.width
 
     property alias model: sortModel.sourceModel
-    property var datasheetCurrentIndex: 0
+    property int datasheetCurrentIndex: 0
 
     Column {
         id: wrapper
@@ -64,7 +64,7 @@ Item {
                     }
                 }
 
-                property var currentDocumentCategory: view.currentDocumentCategory
+                property bool currentDocumentCategory: view.currentDocumentCategory
                 onCurrentDocumentCategoryChanged: {
                     if(categoryOpened === "platform datasheets") {
                         if(currentDocumentCategory) {
@@ -83,12 +83,13 @@ Item {
                 Binding {
                     target: delegate
                     property: "checked"
-                    value: pdfViewer.url.toString() === model.uri
+                    value: pdfViewer.remoteUrl.toString() === model.uri
                 }
 
                 onCheckedChanged: {
                     if (checked) {
-                        pdfViewer.url = model.uri
+                        pdfViewer.url = ""
+                        pdfViewer.remoteUrl = model.uri
                     }
                 }
 

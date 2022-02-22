@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -66,7 +66,9 @@ void SciMockDeviceModel::handleDeviceDetected(PlatformPtr platform) {
     emit countChanged();
 }
 
-void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
+void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId, QString errorString) {
+    Q_UNUSED(errorString)
+
     for (int index = 0; index < platforms_.count(); ++index) {
         if (platforms_[index].deviceId_ == deviceId) {
             beginRemoveRows(QModelIndex(), index, index);

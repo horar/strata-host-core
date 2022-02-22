@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -182,6 +182,7 @@ function generatePlatform (platform) {
     platform.program_controller_error_string = ""
     platform.controller_class_id = ""
     platform.is_assisted = false
+    platform.show_overflow_buttons  = false
     platform.coming_soon = !platform.available.documents && !platform.available.order
 
     // Create entry in classMap
@@ -215,6 +216,9 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             // remove bad platform from list
             currentlyConnected.splice(i, 1)
             continue
+        }
+        if (platform.class_id !== undefined) {
+            platform.class_id = String(platform.class_id)
         }
 
         let previousIndex = previousDeviceIndex(platform.device_id)
@@ -272,12 +276,11 @@ function previousDeviceIndex(device_id) {
     Determine if connected platform exists in model or if unrecognized
 */
 function addConnectedPlatform(platform) {
-    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
     const is_assisted = (platform.controller_class_id !== undefined)
 
     // common data for embedded and assisted platforms
     let data = {
-        "class_id": class_id_string,
+        "class_id": platform.class_id,
         "device_id": platform.device_id,
         "firmware_version": platform.firmware_version,
         "is_assisted": is_assisted
@@ -292,27 +295,32 @@ function addConnectedPlatform(platform) {
         if (platform.controller_class_id === "") {
             //unregistered assisted controller
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted controller connected.");
-            insertUnregisteredListing(platform, class_id_string)
+            insertUnregisteredListing(platform)
         } else if (platform.class_id === undefined) {
             //controller without platform
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted controller without platform connected:", platform.controller_class_id);
-            insertAssistedNoPlatformListing(platform, class_id_string)
+            if (classMap.hasOwnProperty(platform.controller_class_id)) {
+                connectListing(platform)
+            } else {
+                insertAssistedNoPlatformListing(platform)
+            }
+
         } else if (platform.class_id === "") {
             //unregistered assisted platform
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted platform connected.");
-            insertUnregisteredListing(platform, class_id_string)
+            insertUnregisteredListing(platform)
         } else {
             if (platform.class_id === platform.fw_class_id) {
-                if (classMap.hasOwnProperty(class_id_string)) {
+                if (classMap.hasOwnProperty(platform.class_id)) {
                     if (platform.firmware_version.length === 0) {
                         //controller with invalid firmware
 
                         // if there is already listing for this platform, reuse it
-                        let listing = getDeviceListing(class_id_string, platform.device_id)
+                        let listing = getDeviceListing(platform.class_id, platform.device_id)
                         if (listing) {
-                            connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                            connectListing(platform)
                         } else {
-                            insertProgramFirmwareListing(platform, class_id_string)
+                            insertProgramFirmwareListing(platform)
                         }
 
                         sdsModel.firmwareUpdater.programAssistedController(platform.device_id)
@@ -320,24 +328,24 @@ function addConnectedPlatform(platform) {
                         if (platform.active === "bootloader") {
                             if (sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platform.device_id)) {
                                 // firmware backup is running (platform.firmware_version is not empty)
-                                insertProgramFirmwareListing(platform, class_id_string)
+                                insertProgramFirmwareListing(platform)
                             } else {
                                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform in bootloader mode connected.");
-                                insertBootloaderListing(platform, class_id_string)
+                                insertBootloaderListing(platform)
                                 sdsModel.platformOperation.platformStartApplication(platform.device_id)
                             }
                         } else {
-                            connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                            connectListing(platform)
                         }
                     }
                 } else {
                     // connected platform class_id not listed in DP platform list
                     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
-                    insertUnknownListing(platform, class_id_string)
+                    insertUnknownListing(platform)
                 }
             } else {
                 //uncompatible firmware installed
-                insertProgramFirmwareListing(platform, class_id_string)
+                insertProgramFirmwareListing(platform)
                 sdsModel.firmwareUpdater.programAssistedController(platform.device_id)
             }
         }
@@ -346,18 +354,18 @@ function addConnectedPlatform(platform) {
 
         if (platform.class_id === "") {
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
-            insertUnregisteredListing(platform, class_id_string)
+            insertUnregisteredListing(platform)
         } else {
-            if (classMap.hasOwnProperty(class_id_string)) {
+            if (classMap.hasOwnProperty(platform.class_id)) {
                 if (platform.firmware_version.length === 0) {
                     //device without firmware
 
                     // if there is already listing for this platform, reuse it
-                    let listing = getDeviceListing(class_id_string, platform.device_id)
+                    let listing = getDeviceListing(platform.class_id, platform.device_id)
                     if (listing) {
-                        connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
+                        connectListing(platform)
                     } else {
-                        insertProgramFirmwareListing(platform, class_id_string)
+                        insertProgramFirmwareListing(platform)
                     }
 
                     sdsModel.firmwareUpdater.programEmbeddedWithoutFw(platform.device_id)
@@ -365,25 +373,30 @@ function addConnectedPlatform(platform) {
                     if (platform.active === "bootloader") {
                         if (sdsModel.firmwareUpdater.isFirmwareUpdateInProgress(platform.device_id)) {
                             // firmware backup is running (platform.firmware_version is not empty)
-                            insertProgramFirmwareListing(platform, class_id_string)
+                            insertProgramFirmwareListing(platform)
                         } else {
                             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform in bootloader mode connected.");
-                            insertBootloaderListing(platform, class_id_string)
+                            insertBootloaderListing(platform)
                             sdsModel.platformOperation.platformStartApplication(platform.device_id)
                         }
                     } else {
-                        connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
+                        connectListing(platform)
                     }
                 }
             } else {
                 // connected platform class_id not listed in DP platform list
                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
-                insertUnknownListing(platform, class_id_string)
+                insertUnknownListing(platform)
             }
         }
     }
 
-    notifyConnectedState(true,classMap[class_id_string].original_listing.verbose_name)
+    let platform_name = platform.verbose_name
+    const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
+    if (classMap.hasOwnProperty(class_id)) {
+        platform_name = classMap[class_id].original_listing.verbose_name
+    }
+    notifyConnectedState(true, platform_name)
 
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
@@ -392,7 +405,8 @@ function addConnectedPlatform(platform) {
     Update existing listing's 'connected' state
     OR add duplicate listing when 2 boards with same class_id connected
 */
-function connectListing(class_id_string, device_id, firmware_version, controller_class_id) {
+function connectListing(platform) {
+    const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
     let found_visible = false
     let selector_listing
     let selector_index = -1
@@ -402,13 +416,13 @@ function connectListing(class_id_string, device_id, firmware_version, controller
     //    2) find any visible unbound listing for re-use
     //    3) find any unbound listing for re-use
     //    4) generate new listing
-    for (let index of classMap[class_id_string].selector_listings) {
+    for (let index of classMap[class_id].selector_listings) {
         selector_listing = platformSelectorModel.get(index)
         if (selector_listing.error) {
             continue // skip error listings created by assisted strata boards
         }
 
-        if (selector_listing.device_id === device_id) {
+        if (selector_listing.device_id === platform.device_id) {
             selector_index = index
             break
         } else if (selector_listing.device_id === Constants.NULL_DEVICE_ID && found_visible === false) {
@@ -421,21 +435,24 @@ function connectListing(class_id_string, device_id, firmware_version, controller
 
     if (selector_index === -1) {
         selector_index = platformSelectorModel.count
-        classMap[class_id_string].selector_listings.push(selector_index)
-        let selectorCopy = copyObject(classMap[class_id_string].original_listing)
+        classMap[class_id].selector_listings.push(selector_index)
+        let selectorCopy = copyObject(classMap[class_id].original_listing)
         platformSelectorModel.append(selectorCopy)
     }
 
     selector_listing = platformSelectorModel.get(selector_index)
     selector_listing.connected = true
-    selector_listing.firmware_version = firmware_version
-    selector_listing.device_id = device_id
+    selector_listing.firmware_version = platform.firmware_version
+    selector_listing.device_id = platform.device_id
     selector_listing.visible = true
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
+    if (platform.class_id === undefined) {  // controller without platform
+        available.control = false
+    }
     selector_listing.available = available
-    selector_listing.controller_class_id = controller_class_id
-    selector_listing.is_assisted = (controller_class_id !== null)
+    selector_listing.controller_class_id = platform.controller_class_id
+    selector_listing.is_assisted = platform.is_assisted
     // controller_class_id is automatically converted from null to "" here. So we need another flag is_assisted to remember whether there was controller_class_id.
 
     if (NavigationControl.userSettings.autoOpenView){
@@ -479,15 +496,19 @@ function openPlatformView(platform) {
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
 }
 
-
 /*
     Disconnect listing, reset completely if no related PlatformView is open
 */
 function disconnectPlatform(platform) {
-    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
-    let selector_listing = getDeviceListing(class_id_string, platform.device_id)
+    const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
+    const is_assisted = (platform.controller_class_id !== undefined)
+    let selector_listing = getDeviceListing(class_id, platform.device_id)
     if (selector_listing === null) {
-        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unable to disconnect platform, class_id:", platform.class_id, "device_id:", platform.device_id)
+        let errStr = "Unable to disconnect platform, device_id: " + platform.device_id + ", class_id: " + platform.class_id
+        if (is_assisted) {
+            errStr += ", controller_class_id: " + platform.controller_class_id
+        }
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, errStr)
         return;
     }
 
@@ -495,11 +516,17 @@ function disconnectPlatform(platform) {
 
     resetListing(selector_listing)
 
-    notifyConnectedState(false,classMap[class_id_string].original_listing.verbose_name)
+    let platform_name = platform.verbose_name
+    if (classMap.hasOwnProperty(class_id)) {
+        platform_name = classMap[class_id].original_listing.verbose_name
+    }
+    notifyConnectedState(false, platform_name)
 
     let data = {
         "device_id": platform.device_id,
-        "class_id": class_id_string
+        "class_id": platform.class_id,
+        "controller_class_id": platform.controller_class_id,
+        "is_assisted": is_assisted
     }
     NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, data)
 
@@ -514,8 +541,13 @@ function disconnectPlatform(platform) {
     Remove duplicate listings, leaving last listing visible
 */
 function resetListing(selector_listing) {
+    // even if 'class_id' was not defined, it can be contained in 'selector_listing' as empty string
+    const class_id = (selector_listing.class_id === undefined || selector_listing.class_id.length === 0)
+                     ? selector_listing.controller_class_id
+                     : selector_listing.class_id
+
     selector_listing.device_id = Constants.NULL_DEVICE_ID
-    selector_listing.available = copyObject(classMap[selector_listing.class_id].original_listing.available)
+    selector_listing.available = copyObject(classMap[class_id].original_listing.available)
 
     selector_listing.program_controller = false
     selector_listing.program_controller_progress = 0.0
@@ -526,7 +558,7 @@ function resetListing(selector_listing) {
         selector_listing.visible = false
     } else {
         // last listing out needs to stay visible in list
-        for (let index of classMap[selector_listing.class_id].selector_listings) {
+        for (let index of classMap[class_id].selector_listings) {
             let other_listing = platformSelectorModel.get(index)
             if (other_listing !== selector_listing && other_listing.visible) {
                 // if at least one other listing is still visible, this one can be made invisible
@@ -569,108 +601,102 @@ function closePlatformView (platform) {
 /*
     Insert listing for platform that is not in DB platform_list and does not have a UI
 */
-function insertUnknownListing (platform, class_id_string) {
+function insertUnknownListing (platform) {
+    const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
     let listing_data = {
         "verbose_name": (platform.verbose_name) ? platform.verbose_name : "Unknown Platform",
-        "class_id": class_id_string,
-        "opn" : "Class id: " + class_id_string,
+        "opn" : "Class id: " + class_id,
         "description": "Strata does not recognize this class_id. Updating Strata may fix this problem."
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for unregistered platform
 */
-function insertUnregisteredListing (platform, class_id_string) {
+function insertUnregisteredListing (platform) {
     let listing_data = {
         "verbose_name": "Unregistered platform",
-        "class_id": class_id_string,
         "description": "Unregistered platform. Contact local support."
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
-    Insert listing for Strata assisted without platform (controller only)
+    Insert listing for unknown Strata assisted without platform (controller only)
 */
-function insertAssistedNoPlatformListing (platform, class_id_string) {
+function insertAssistedNoPlatformListing (platform) {
     let listing_data = {
-        "verbose_name": "Strata Assisted Controller",
-        "class_id": class_id_string,
+        "verbose_name": "Unknown Strata Assisted Controller",
         "description": "Please connect platform to controller."
     }
-    const class_id = platform.controller_class_id
-    if (classMap.hasOwnProperty(class_id)) {
-        listing_data.verbose_name = classMap[class_id].original_listing.verbose_name
-        listing_data.opn = classMap[class_id].original_listing.opn
-        listing_data.description = classMap[class_id].original_listing.description
-        listing_data.image = classMap[class_id].original_listing.image
-    }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for Strata assisted with platform incompatible with controller
 */
-function insertAssistedIncompatibleListing (platform, class_id_string) {
+function insertAssistedIncompatibleListing (platform) {
+    const class_id = platform.class_id
     let fw_class_id = String(platform.fw_class_id)
     if (fw_class_id.length === 0) {
         fw_class_id = "no_firmware"
     }
     let listing_data = {
         "verbose_name": "Strata Assisted (incompatible firmware)",
-        "class_id": class_id_string,
-        "opn": "Class id: " + class_id_string,
-        "description": "Strata Assisted: Firmware (" + fw_class_id + ") not compatible with platform (" + class_id_string + ")."
+        "class_id": class_id,
+        "opn": "Class id: " + class_id,
+        "description": "Strata Assisted: Firmware (" + fw_class_id + ") not compatible with platform (" + class_id + ")."
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for platform which is being flashed
 */
-function insertProgramFirmwareListing(platform, class_id_string) {
+function insertProgramFirmwareListing(platform) {
     let listing_data = {
         "verbose_name": (platform.controller_class_id !== undefined)
                         ? "Strata Assisted Platform"
                         : "Strata Embedded Platform",
-        "class_id": class_id_string,
         "program_controller": true
     }
-    if (classMap.hasOwnProperty(class_id_string)) {
-        listing_data.opn = classMap[class_id_string].original_listing.opn
-        listing_data.verbose_name = classMap[class_id_string].original_listing.verbose_name
+    const class_id = platform.class_id
+    if (classMap.hasOwnProperty(class_id)) {
+        const original_listing = classMap[class_id].original_listing
+        listing_data.opn = original_listing.opn
+        listing_data.verbose_name = original_listing.verbose_name
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 /*
     Insert listing for platform which is booted into bootloader
 */
-function insertBootloaderListing(platform, class_id_string) {
+function insertBootloaderListing(platform) {
     let listing_data = {
         "verbose_name": "Bootloader",
-        "class_id": class_id_string,
         "description": "Platform in bootloader mode."
     }
-    if (classMap.hasOwnProperty(class_id_string)) {
-        listing_data.opn = classMap[class_id_string].original_listing.opn
+    const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
+    if (classMap.hasOwnProperty(class_id)) {
+        listing_data.opn = classMap[class_id].original_listing.opn
     }
 
-    insertErrorListing(generateErrorListing(platform, listing_data))
+    insertListing(generateErrorListing(platform, listing_data))
 }
 
 function generateErrorListing (platform, listing_data) {
+    const is_assisted = (platform.controller_class_id !== undefined)
     let error = {
-        "verbose_name" : "",
-        "connected" : true,
-        "class_id" : "",
+        "verbose_name": "",
+        "connected": true,
+        "class_id": platform.class_id,
         "device_id": platform.device_id,
         "opn": "N/A",
         "description": "",
@@ -690,8 +716,8 @@ function generateErrorListing (platform, listing_data) {
         "program_controller": false,
         "program_controller_progress": 0.0,
         "program_controller_error_string": "",
-        "controller_class_id": "",
-        "is_assisted": (platform.controller_class_id !== undefined)
+        "controller_class_id": (is_assisted) ? platform.controller_class_id : "",
+        "is_assisted": is_assisted
     }
 
     for (var attribute in listing_data) {
@@ -701,23 +727,21 @@ function generateErrorListing (platform, listing_data) {
     return error
 }
 
-function insertErrorListing (platform) {
+function insertListing (platform) {
     platformSelectorModel.append(platform)
 
     let index = platformSelectorModel.count - 1
-    const class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
+    const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
 
-    if (classMap.hasOwnProperty(class_id_string)) {
-        classMap[class_id_string].selector_listings.push(index)
+    if (classMap.hasOwnProperty(class_id)) {
+        classMap[class_id].selector_listings.push(index)
     } else {
         // create entry in classMap
-        classMap[class_id_string] = {
+        classMap[class_id] = {
             "original_listing": platform,
             "selector_listings": [index]
         }
     }
-
-    return index
 }
 
 /*

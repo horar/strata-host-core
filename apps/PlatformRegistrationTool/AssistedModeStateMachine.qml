@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -57,10 +57,10 @@ BaseStateMachine {
             t += "\n\n"
             t += "Do not unplug controller, assisted device or JLink Base"
         } else if (stateLoopSucceed.active) {
-            t = "Controller\n" + controllerOpn.toUpperCase() + "\n\n"
+            t = "Controller\n" + controllerOpn.toUpperCase() + "\n"
             t += "Assisted device\n" + assistedDeviceOpn.toUpperCase() + "\n\n"
             t += "You can unplug controller now\n\n"
-            t += "To program another device, simply plug it in and process will start automatically\n\n"
+            t += "To program another device, simply plug it in and process will start automatically\n"
             t += "or press End to finish current session"
         } else if (stateLoopFailed.active) {
             t = internalSubtext

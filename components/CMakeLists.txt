@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -16,15 +16,17 @@ if(APPS_CORECOMPONENTS)
             LANGUAGES NONE
         )
 
-        set(PROJECT_BUNDLE_ID com.onsemi.strata.components)
+        set(PROJECT_BUNDLE_ID com.onsemi.strata.libs.components)
 
         add_custom_target(${PROJECT_NAME})
         generate_ifw_version(GITTAG_PREFIX "components_")
 
-        add_subdirectory(qt)
+        add_subdirectory(libs)
         add_subdirectory(addons)
         add_subdirectory(openssl)
+        add_subdirectory(qt)
         if(WIN32)
+            add_subdirectory(utils)
             add_subdirectory(vcredist)
             add_subdirectory(ftdi)
         endif()

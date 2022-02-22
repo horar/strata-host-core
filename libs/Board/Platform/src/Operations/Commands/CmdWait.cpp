@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -60,6 +60,9 @@ CommandResult CmdWait::onTimeout()
 void CmdWait::setWaitTime(std::chrono::milliseconds waitTime)
 {
     waitTime_ = waitTime;
+    qCInfo(lcPlatformCommand) << platform_ << description_
+        << ": Setting new timeout to " << waitTime_.count() << " milliseconds.";
+    responseTimer_.setInterval(waitTime_);
 }
 
 void CmdWait::deviceErrorOccured(device::Device::ErrorCode errCode, QString errStr)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -253,7 +253,7 @@ Item {
              }
          }
 
-         SGToolTipPopup {
+         HelpTourPopup {
              id: toolTipPopup
              color: "white"
              visible: root.visible
@@ -264,7 +264,7 @@ Item {
              property string description
              property real fontSizeMultiplier: 1
 
-             SGTourControl {
+             HelpTourControl {
                  id: tourControl
                  index: toolTipPopup.index
                  description: toolTipPopup.description

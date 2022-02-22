@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -40,7 +40,9 @@ StackLayout {
     property alias controlViewContainer: controlViewContainer
     property bool controlViewIsOutOfDate: false
     property bool firmwareIsOutOfDate: false
-    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
+    property bool platformMetaDataInitialized: (model.is_assisted && model.class_id.length === 0)
+                                               ? sdsModel.documentManager.getClassDocuments(model.controller_class_id).metaDataInitialized
+                                               : sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
     property string controller_class_id: model.controller_class_id
@@ -55,7 +57,9 @@ StackLayout {
     readonly property bool platformOutOfDate: controlViewIsOutOfDate || firmwareIsOutOfDate
 
     onPlatformOutOfDateChanged: {
-        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
+        // Both of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' can be changed right after each other,
+        // so we need to use 'Qt.callLater' for showing proper notification.
+        Qt.callLater(launchOutOfDateNotificationLater)
     }
 
     onFullyInitializedChanged: {
@@ -114,6 +118,8 @@ StackLayout {
 
         ContentView {
             class_id: model.class_id
+            controller_class_id: model.controller_class_id
+            is_assisted: model.is_assisted
         }
 
         Action {
@@ -144,13 +150,14 @@ StackLayout {
                 return
             }
 
+            let description = ""
             if (Object.keys(unseenPdfItems).length == 1 && Object.keys(unseenDownloadItems).length == 0) {
-                var description = "A document has been updated:\n" + unseenPdfItems[0]
+                description = "A document has been updated:\n" + unseenPdfItems[0]
             } else if (Object.keys(unseenPdfItems).length == 0 && Object.keys(unseenDownloadItems).length == 1) {
-                var description = "A document has been updated:\n" + unseenDownloadItems[0]
+                description = "A document has been updated:\n" + unseenDownloadItems[0]
             } else {
                 var numberDocumentsUpdated = Number(Object.keys(unseenPdfItems).length) + Number(Object.keys(unseenDownloadItems).length)
-                var description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
+                description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
@@ -202,6 +209,12 @@ StackLayout {
         onTriggered: {
             openSettings()
         }
+    }
+
+    // We need this helper function - it takes values of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' at time when it is executed,
+    // 'Qt.callLater' takes values of its parameters at time when it is called (and not when called function is executed).
+    function launchOutOfDateNotificationLater() {
+        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
     }
 
     function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -54,7 +54,7 @@ bool ClientConnector::disconnect()
 {
     qCDebug(lcStrataClientConnector) << "Disconnecting client.";
 
-    if (connector_ && true == connector_->close()) {
+    if (connector_ && connector_->close()) {
         if (readSocketNotifier_) {
             QObject::disconnect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
                                 &ClientConnector::readNewMessages);
@@ -79,7 +79,7 @@ bool ClientConnector::connect()
         return false;
     }
 
-    if (true == connector_->isConnected()) {
+    if (connector_->isConnected()) {
         QString errorMessage(QStringLiteral("Client already connected."));
         qCCritical(lcStrataClientConnector) << errorMessage;
         emit errorOccurred(ClientConnectorError::FailedToConnect, errorMessage);
@@ -114,7 +114,7 @@ void ClientConnector::readNewMessages(/*int socket*/)
 void ClientConnector::readMessages()
 {
     std::string message;
-    while (true == connector_->read(message)) {
+    while (connector_->read(message)) {
         emit messageReceived(QByteArray::fromStdString(message));
     }
 }
@@ -143,7 +143,7 @@ bool ClientConnector::sendMessage(const QByteArray &message)
         return false;
     }
 
-    if (true == connector_->hasReadEvent()) {
+    if (connector_->hasReadEvent()) {
         emit messagesQueued(QPrivateSignal());
     }
 

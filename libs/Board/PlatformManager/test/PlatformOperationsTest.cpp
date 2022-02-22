@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -54,7 +54,8 @@ void PlatformOperationsTest::init()
     QVERIFY(mockDevice_->mockGetVersion() == MockVersion::Version_1);
     QVERIFY(platform_->deviceConnected() == false);
 
-    QSignalSpy platformOpened(platform_.get(), SIGNAL(opened()));
+    QSignalSpy platformOpened(platform_.get(), &strata::platform::Platform::opened);
+    QVERIFY(platformOpened.isValid());
     platform_->open();
     QVERIFY((platformOpened.count() == 1) || (platformOpened.wait(250) == true));
     QVERIFY(platform_->deviceConnected());

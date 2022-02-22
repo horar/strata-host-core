@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -11,10 +11,13 @@
 
 using namespace strata::strataRPC;
 
-RequestsController::RequestsController() : findTimedoutRequestsTimer_(this)
+RequestsController::RequestsController(std::chrono::milliseconds check_timeout_interval,
+                                       std::chrono::milliseconds request_timeout) :
+    findTimedoutRequestsTimer_(this),
+    request_timeout_(request_timeout)
 {
     currentRequestId_ = 0;
-    findTimedoutRequestsTimer_.setInterval(FIND_TIMEDOUT_REQUESTS_INTERVAL);
+    findTimedoutRequestsTimer_.setInterval(check_timeout_interval);
     connect(&findTimedoutRequestsTimer_, &QTimer::timeout, this,
             &RequestsController::findTimedoutRequests);
 
@@ -90,7 +93,8 @@ void RequestsController::findTimedoutRequests()
 {
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
     for (const auto &request : qAsConst(requests_)) {
-        if ((currentTime - request.timestamp_) < REQUEST_TIMEOUT) {
+        qint64 duration = currentTime - request.timestamp_;
+        if (duration < request_timeout_.count()) {
             return;
         }
         emit requestTimedout(request.messageId_);

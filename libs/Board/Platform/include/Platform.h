@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -21,6 +21,8 @@
 #include <QReadWriteLock>
 #include <QDateTime>
 #include <QTimer>
+
+#include <rapidjson/schema.h>
 
 namespace strata::platform {
 
@@ -223,6 +225,18 @@ namespace strata::platform {
          */
         void resetReceiving();
 
+        /**
+         * Set termination cause
+         * @param terminationCause error string describing cause of termination, empty (null) when termination was expected
+         */
+        void SetTerminationCause(const QString& terminationCause);
+
+        /**
+         * Return termination cause
+         * @return termination cause if any was set, otherwise empty string
+         */
+        QString GetTerminationCause() const;
+
         friend QDebug operator<<(QDebug dbg, const Platform* d);
         friend QDebug operator<<(QDebug dbg, const PlatformPtr& d);
 
@@ -276,9 +290,14 @@ namespace strata::platform {
         void recognized(bool isRecognized, bool inBootloader);
 
         /**
-         * Emitted when device receives platform Id changed message.
+         * Emitted when device receives 'platform Id changed' notification.
          */
         void platformIdChanged();
+
+        /**
+         * Emitted when device receives 'bootloader active' notification.
+         */
+        void bootloaderActive();
 
     private slots:
         void openedHandler();
@@ -394,6 +413,10 @@ namespace strata::platform {
         QString controllerPlatformId_;
         QString controllerClassId_;
         QString firmwareClassId_;
+        QString terminationCause_;
+
+        static const rapidjson::SchemaDocument platformIdChangedSchema_;
+        static const rapidjson::SchemaDocument bootloaderActiveSchema_;
     };
 
 }  // namespace

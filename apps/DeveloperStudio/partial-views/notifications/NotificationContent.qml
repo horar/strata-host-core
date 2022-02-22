@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -152,7 +152,12 @@ RowLayout {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            model.action.trigger()
+                            if (model.action) {
+                                model.action.trigger()
+                            } else {
+                                console.warn("Unable to trigger button action, object no longer exists")
+                            }
+
                             row.actionClicked()
                         }
                     }

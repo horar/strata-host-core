@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -26,12 +26,13 @@ SGWidgets.SGButton {
         }
     }
 
-    Popup {
+    SGWidgets.SGPopup {
         id: popupMenu
         x: -popupMenu.width + parent.width
         y: 0
 
         padding: 2
+        position: Item.Bottom
 
         contentItem: Item {
             implicitHeight: logoutMenuItem.y + logoutMenuItem.height
@@ -149,28 +150,9 @@ SGWidgets.SGButton {
 
                     onClicked: {
                         prtModel.authenticator.logout();
+                        popupMenu.close()
                     }
                 }
-            }
-        }
-
-        background: Item {
-            RectangularGlow {
-                id: effect
-                anchors {
-                    fill: parent
-                    topMargin: glowRadius - 2
-                    bottomMargin: 0
-                }
-                glowRadius: 8
-                color: userMenuButton.palette.mid
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                color: "white"
-                border.color: userMenuButton.palette.mid
-                border.width: 1
             }
         }
     }

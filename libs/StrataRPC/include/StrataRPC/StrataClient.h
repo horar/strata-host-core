@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -23,6 +23,9 @@ class ClientConnector;
 class RequestsController;
 struct Message;
 enum class ClientConnectorError : short;
+
+static constexpr std::chrono::milliseconds default_check_timeout_interval = std::chrono::seconds(1);
+static constexpr std::chrono::milliseconds default_request_timeout = std::chrono::seconds(2);
 
 class StrataClient : public QObject
 {
@@ -55,8 +58,11 @@ public:
      * @param [in] serverAddress Sets the server address.
      * @param [in] dealerId Sets the client id.
      */
-    StrataClient(const QString &serverAddress, const QByteArray &dealerId = "StrataClient",
-                 QObject *parent = nullptr);
+    StrataClient(
+            const QString &serverAddress, const QByteArray &dealerId = "StrataClient",
+            std::chrono::milliseconds check_timeout_interval = default_check_timeout_interval,
+            std::chrono::milliseconds request_timeout = default_request_timeout,
+            QObject *parent = nullptr);
 
     /**
      * StrataClient destructor

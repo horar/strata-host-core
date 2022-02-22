@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -25,6 +25,9 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QDir>
+#ifdef Q_OS_WIN
+#include <QVersionNumber>
+#endif
 
 #if !defined(Q_OS_WIN)
 #include "unix/SignalHandlers.h"
@@ -118,7 +121,20 @@ int main(int argc, char *argv[])
     qCInfo(lcHcs) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(lcHcs) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+
+#if defined(Q_OS_WIN)
+    QVersionNumber kernelVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
+    if ((kernelVersion.majorVersion() == 10) &&
+        (kernelVersion.minorVersion() == 0) &&
+        (kernelVersion.microVersion() >= 21996)) {
+        qCInfo(lcHcs).nospace() << "Running on Windows 11 (" << kernelVersion.majorVersion() << "." << kernelVersion.minorVersion() << ")";
+    } else {
+        qCInfo(lcHcs) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    }
+#else
     qCInfo(lcHcs) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+#endif
+
     if (QSslSocket::supportsSsl()) {
         qCInfo(lcHcs) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {

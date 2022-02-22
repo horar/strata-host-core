@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -381,6 +381,18 @@ FocusScope {
 
                     VerticalDivider {
                         anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Queue"
+                        hintText: qsTr("Manage message queue")
+                        icon.source: "qrc:/sgimages/queue.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showMessageQueueView()
+                    }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
                         visible: mockSettingsButton.visible
                     }
 
@@ -650,7 +662,7 @@ FocusScope {
                     }
 
                     enabled: messageEditor.enabled
-                    text: "ADD TO QUEUE"
+                    text: "TO QUEUE"
                     hintText: "Add message to queue"
 
                     onClicked: {
@@ -947,6 +959,14 @@ FocusScope {
         }
     }
 
+    Component {
+        id: messageQueueComponent
+
+        MessageQueueView {
+            messageQueueModel: model.platform.messageQueueModel
+        }
+    }
+
     function showProgramView() {
         stackView.push(programDeviceComponent)
     }
@@ -965,6 +985,10 @@ FocusScope {
 
     function showFilterView() {
         stackView.push(filterComponent)
+    }
+
+    function showMessageQueueView() {
+        stackView.push(messageQueueComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {

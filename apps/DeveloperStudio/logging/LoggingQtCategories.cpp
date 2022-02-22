@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -14,6 +14,7 @@ Q_LOGGING_CATEGORY(lcCoreUpdate, "strata.devstudio.coreUpdate")
 Q_LOGGING_CATEGORY(lcDevStudioNode, "strata.devstudio.node")
 Q_LOGGING_CATEGORY(lcDevStudioConfig, "strata.devstudio.config")
 Q_LOGGING_CATEGORY(lcResourceLoader, "strata.devstudio.resourceloader")
+Q_LOGGING_CATEGORY(lcFileDownloader, "strata.devstudio.fileDownloader")
 Q_LOGGING_CATEGORY(lcControlViewCreator, "strata.devstudio.controlViewCreator")
 
 Q_LOGGING_CATEGORY(lcDevStudioHcs, "strata.devstudio.hcs")

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -35,6 +35,7 @@
 
 #include "SDSModel.h"
 #include "DocumentManager.h"
+#include "FileDownloader.h"
 #include "ResourceLoader.h"
 #include "CoreUpdate.h"
 #include "SGQrcTreeModel.h"
@@ -45,6 +46,9 @@
 #include "RunGuard.h"
 #include "FirmwareUpdater.h"
 #include "PlatformInterfaceGenerator.h"
+#ifdef APPS_FEATURE_BLE
+#include "BleDeviceModel.h"
+#endif // APPS_FEATURE_BLE
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
 
@@ -54,6 +58,19 @@
 using strata::loggers::QtLoggerSetup;
 
 namespace logConsts = strata::loggers::constants;
+static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+
+    QJSValue appInfo = scriptEngine->newObject();
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("buildId", AppInfo::buildId.data());
+    appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
+    appInfo.setProperty("numberOfCommits", AppInfo::numberOfCommits.data());
+    appInfo.setProperty("stageOfDevelopment", AppInfo::stageOfDevelopment.data());
+    appInfo.setProperty("fullVersion", AppInfo::version.data());
+    return appInfo;
+}
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -124,7 +141,20 @@ int main(int argc, char *argv[])
     qCInfo(lcDevStudio) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcDevStudio) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(lcDevStudio) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+
+#if defined(Q_OS_WIN)
+    QVersionNumber kernelVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
+    if ((kernelVersion.majorVersion() == 10) &&
+        (kernelVersion.minorVersion() == 0) &&
+        (kernelVersion.microVersion() >= 21996)) {
+        qCInfo(lcDevStudio).nospace() << "Running on Windows 11 (" << kernelVersion.majorVersion() << "." << kernelVersion.minorVersion() << ")";
+    } else {
+        qCInfo(lcDevStudio) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    }
+#else
     qCInfo(lcDevStudio) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+#endif
+
     if (QSslSocket::supportsSsl()) {
         qCInfo(lcDevStudio) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {
@@ -152,6 +182,7 @@ int main(int argc, char *argv[])
     }
 
     qmlRegisterUncreatableType<ResourceLoader>("tech.strata.ResourceLoader", 1, 0, "ResourceLoader", "You can't instantiate ResourceLoader in QML");
+    qmlRegisterUncreatableType<FileDownloader>("tech.strata.FileDownloader", 1, 0, "FileDownloader", QStringLiteral("You can't instantiate FileDownloader in QML"));
     qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.strata.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");
@@ -167,10 +198,14 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
+#ifdef APPS_FEATURE_BLE
+    qmlRegisterUncreatableType<BleDeviceModel>("tech.strata.BleDeviceModel", 1, 0, "BleDeviceModel", "You can't instantiate BleDeviceModel in QML");
+#endif // APPS_FEATURE_BLE
     qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterUncreatableType<PlatformOperation>("tech.strata.PlatformOperation", 1, 0, "PlatformOperation", "You can't instantiate PlatformOperation in QML");
     qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
+    qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
@@ -198,6 +233,10 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
 
     engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
+
+#ifdef APPS_FEATURE_BLE
+    engine.rootContext()->setContextProperty ("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
+#endif // APPS_FEATURE_BLE
 
     AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(

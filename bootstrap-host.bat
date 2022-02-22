@@ -1,5 +1,5 @@
 ::=============================================================================
-:: Copyright (c) 2018-2021 onsemi.
+:: Copyright (c) 2018-2022 onsemi.
 ::
 :: All rights reserved. This software and/or documentation is licensed by onsemi under
 :: limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -19,16 +19,16 @@ echo "======================================================================="
 echo " Preparing environment.."
 echo "======================================================================="
 echo Setting up environment for Qt usage..
-set PATH=C:\dev\Qt\5.12.11\msvc2017_64\bin;%PATH%
+set PATH=C:\Qt\5.12.12\msvc2017_64\bin;%PATH%
 
 echo Setting up environment for OpenSSL usage..
-set PATH=C:\dev\Qt\Tools\OpenSSL\Win_x64\bin;%PATH%
+set PATH=C:\Qt\Tools\OpenSSL\Win_x64\bin;%PATH%
 
 echo Setting up environment for Qt IFW usage..
-set PATH=C:\dev\Qt\Tools\QtInstallerFramework\3.2\bin;%PATH%
+set PATH=C:\Qt\Tools\QtInstallerFramework\4.2\bin;%PATH%
 
 echo Setting up environment for 'JOM' usage..
-set PATH="C:\dev\Qt\Tools\QtCreator\jom\bin";%PATH%
+set PATH="C:\Qt\Tools\QtCreator\bin\jom";%PATH%
 
 echo Setting up environment for CMake usage..
 set PATH="C:\Program Files\CMake\bin";%PATH%

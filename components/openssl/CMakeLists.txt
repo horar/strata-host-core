@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -12,7 +12,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "OTA")
         LANGUAGES NONE
     )
 
-    set(PROJECT_BUNDLE_ID com.onsemi.strata.openssl)
+    set(PROJECT_BUNDLE_ID com.onsemi.strata.libs.openssl)
 
     add_custom_target(${PROJECT_NAME})
     generate_ifw_version(GITTAG_PREFIX "openssl_")

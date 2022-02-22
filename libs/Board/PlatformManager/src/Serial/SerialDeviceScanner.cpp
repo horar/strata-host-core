@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -77,14 +77,14 @@ QString SerialDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
         return "Device not found";
     }
 
-    emit deviceLost(deviceId);
+    emit deviceLost(deviceId, QString());
     return "";
 }
 
 void SerialDeviceScanner::disconnectAllDevices() {
     // we will keep the devices in lists here in scanner
     for (const auto& deviceId: qAsConst(deviceIds_)) {
-        emit deviceLost(deviceId);
+        emit deviceLost(deviceId, QString());
     }
 }
 
@@ -167,7 +167,7 @@ void SerialDeviceScanner::checkNewSerialDevices() {
     portNames_ = std::move(detectedPortNames); // must be called before connectDevice
 
     for (const auto& deviceId: qAsConst(removedDeviceIds)) {
-        emit deviceLost(deviceId);
+        emit deviceLost(deviceId, "Device port no longer connected");
     }
 
     for (const auto& deviceId: qAsConst(addedDeviceIds)) {

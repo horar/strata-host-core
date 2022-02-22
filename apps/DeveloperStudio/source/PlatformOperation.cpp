@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #include "PlatformOperation.h"
 
 #include <QString>
@@ -38,15 +37,21 @@ bool PlatformOperation::platformStartApplication(QString deviceId)
     }
 
     connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &PlatformOperation::replyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &PlatformOperation::replyHandler);
+    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &PlatformOperation::errorHandler);
 
     return true;
 }
 
 void PlatformOperation::replyHandler(QJsonObject payload)
 {
-    const QString errorString = payload.value(QStringLiteral("error_string")).toString();
-    if (errorString.isEmpty() == false) {
-        qCWarning(lcDevStudio).noquote() << "Platform operation has failed:" << errorString;
-    }
+    Q_UNUSED(payload);
+    qCDebug(lcDevStudio) << "Platform operation finished successfully";
+}
+
+void PlatformOperation::errorHandler(QJsonObject payload)
+{
+    qCWarning(lcDevStudio).noquote()
+            << "Platform operation has failed."
+            << payload.value("code").toInt()
+            << payload.value("message").toString();
 }

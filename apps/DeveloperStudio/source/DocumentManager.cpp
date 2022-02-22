@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -46,7 +46,7 @@ ClassDocuments *DocumentManager::getClassDocuments(const QString &classId)
         ClassDocuments *classDocs = new ClassDocuments(classId, strataClient_, coreInterface_, this);
         classes_[classId] = classDocs;
     }
-    else if (classes_[classId]->errorString() != ""){
+    else if (classes_[classId]->errorString().isEmpty() == false) {
         classes_[classId]->loadPlatformDocuments();
     }
     return classes_[classId];

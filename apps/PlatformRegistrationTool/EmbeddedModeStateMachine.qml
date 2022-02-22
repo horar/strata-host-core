@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -43,7 +43,7 @@ BaseStateMachine {
         } else if (stateLoopSucceedActive) {
             t = "Device registered as platform " + opn.toUpperCase() + "\n\n"
             t += "You can unplug device now\n\n"
-            t += "To program another device, simply plug it in and process will start automatically\n\n"
+            t += "To program another device, simply plug it in and process will start automatically\n"
             t += "or press End to finish current session"
         } else if (stateLoopFailedActive) {
             t = internalSubtext

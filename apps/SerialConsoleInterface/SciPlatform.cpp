@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -309,7 +309,7 @@ QVariantMap SciPlatform::queueMessage(const QString &message, bool onlyValidJson
     }
 
     QString compactMsg = SGJsonFormatter::minifyJson(message);
-    SciMessageQueueModel::ErrorCode error = messageQueueModel_->append(compactMsg);
+    SciMessageQueueModel::ErrorCode error = messageQueueModel_->append(compactMsg.toUtf8());
     if (error != SciMessageQueueModel::ErrorCode::NoError) {
         result["error_string"] = messageQueueModel_->errorString(error);
         result["error_code"] = SendMessageErrorType::QueueError;
@@ -346,8 +346,8 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
 
-    flasherConnector_->flash(doBackup);
     setProgramInProgress(true);
+    flasherConnector_->flash(doBackup);
 
     return true;
 }
@@ -391,8 +391,8 @@ QString SciPlatform::saveDeviceFirmware(QString filePath) {
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
 
-    flasherConnector_->backup(strata::Flasher::FinalAction::PreservePlatformState);
     setProgramInProgress(true);
+    flasherConnector_->backup(strata::Flasher::FinalAction::PreservePlatformState);
 
     return QString();
 }

@@ -1,6 +1,6 @@
 <?xml version="2.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2018-2021 onsemi.
+   Copyright (c) 2018-2022 onsemi.
 
    All rights reserved. This software and/or documentation is licensed by onsemi under
    limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -10,11 +10,11 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>OpenSSL libraries required to run applications using SSL communication</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@VERSION_OPTIONAL@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>61</SortingPriority>
+    <SortingPriority>67</SortingPriority>
     <Licenses>
         <License name="OpenSSL and SSLeay License Agreement" file="license-openssl-ssleay.txt" />
     </Licenses>

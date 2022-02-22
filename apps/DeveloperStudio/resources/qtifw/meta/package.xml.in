@@ -1,6 +1,6 @@
 <?xml version="2.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2018-2021 onsemi.
+   Copyright (c) 2018-2022 onsemi.
 
    All rights reserved. This software and/or documentation is licensed by onsemi under
    limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -11,10 +11,9 @@
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>The Strata Developer Studio is a cloud-connected development platform that provides a seamless,
 personalized and secure environment for engineers to evaluate and design with onsemi technologies</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
-    <Default>true</Default>
     <Script>installscript.js</Script>
+    <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>90</SortingPriority>
-    <Dependencies>com.onsemi.strata.hcs</Dependencies>
 </Package>

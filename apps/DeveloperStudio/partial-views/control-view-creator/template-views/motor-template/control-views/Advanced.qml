@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -13,7 +13,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.sgwidgets 1.0
 import tech.strata.sglayout 1.0
 import tech.strata.commoncpp 1.0
-import QtTest 1.1
 
 UIBase { // start_uibase
 

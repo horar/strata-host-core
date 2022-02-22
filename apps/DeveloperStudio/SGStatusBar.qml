@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -91,7 +91,7 @@ Rectangle {
         id: tabRow
         anchors {
             left: container.left
-            right: profileIconContainer.left
+            right: bleIconContainer.left
         }
         spacing: 1
 
@@ -396,6 +396,56 @@ Rectangle {
         }
     }
 
+    Item {
+        id: bleIconContainer
+        width: height
+        anchors {
+            right: profileIconContainer.left
+            rightMargin: 2
+            top: profileIconContainer.top
+            bottom: profileIconContainer.bottom
+        }
+
+        Rectangle {
+            visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
+            height: bleIconHover.containsMouse ? bleIconContainer.height : bleIconContainer.height - 6
+            width: height
+            anchors.centerIn: bleIconContainer
+
+            radius: height / 2
+            color: Theme.palette.onsemiOrange
+
+            SGIcon {
+                height: bleIconHover.containsMouse ? 26 : 22
+                width: height
+                anchors {
+                    centerIn: parent
+                }
+
+                source: "qrc:/sgimages/bluetooth-b.svg"
+                iconColor: "white"
+            }
+        }
+
+        MouseArea {
+            id: bleIconHover
+            visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
+            anchors.fill: bleIconContainer
+
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: pressAction()
+            onPressed: pressAction()
+
+            function pressAction() {
+                showConnectBleDeviceDialog()
+            }
+        }
+    }
+
     Rectangle {
         id: profileIconContainer
         width: height
@@ -553,14 +603,18 @@ Rectangle {
                 }
 
                 SGMenuItem {
-                    text: qsTr("Update")
+                    text: hasUpdate ? qsTr("Update") : qsTr("Check for Updates")
                     width: profileMenu.width
-                    enabled: false
-                    iconSource: enabled ? "qrc:/sgimages/exclamation-circle.svg" : ""
+                    iconSource: hasUpdate ? "qrc:/sgimages/exclamation-circle.svg" : ""
+
+                    property bool hasUpdate: false
 
                     onClicked: {
                         profileMenu.close()
-                        CoreUpdate.createUpdatePopup();
+                        if (hasUpdate === false) {
+                            CoreUpdate.getUpdateInformation()
+                        }
+                        CoreUpdate.createUpdatePopup()
                     }
 
                     Component.onCompleted: {
@@ -732,6 +786,11 @@ Rectangle {
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
+    function showConnectBleDeviceDialog() {
+        var dialog = SGDialogJS.createDialog(ApplicationWindow.window, "qrc:/partial-views/BleScanDialog.qml")
+        dialog.open()
+    }
+
     function logout() {
         controlViewCreatorLoader.active = false
         Signals.logout()
@@ -739,6 +798,16 @@ Rectangle {
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
         Authenticator.logout()
         PlatformSelection.logout()
-        sdsModel.strataClient.sendRequest("unregister", {})
+    }
+
+    Timer {
+        id: sessionHeartbeat
+        interval: 60000 // 1 minute
+        running: user_id !== "Guest"
+        repeat: true
+
+        onTriggered: {
+            Authenticator.heartbeat()
+        }
     }
 }

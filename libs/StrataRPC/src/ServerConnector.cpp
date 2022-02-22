@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -54,7 +54,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
 {
     readSocketNotifier_->setEnabled(false);
     std::string message;
-    while (true == connector_->read(message)) {
+    while (connector_->read(message)) {
         qCDebug(lcStrataServerConnector).nospace().noquote()
             << "message received. ClientID: 0x"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
@@ -100,7 +100,7 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
         return false;
     }
 
-    if (true == connector_->hasReadEvent()) {
+    if (connector_->hasReadEvent()) {
         emit messagesQueued(QPrivateSignal());
     }
 

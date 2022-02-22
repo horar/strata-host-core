@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -106,6 +106,7 @@ private slots:
     void networkReplyReadyReadHandler();
     void networkReplyProgressHandler(qint64 bytesReceived, qint64 bytesTotal);
     void networkReplyFinishedHandler();
+    void networkReplyRedirectedHandler();
 
 private:
     struct DownloadGroup {
@@ -132,7 +133,6 @@ private:
     InternalDownloadRequest* findNextPendingDownload();
     void createFolderForFile(const QString &filePath);
     QNetworkReply* postNetworkRequest(const QUrl &url, QObject *originatingObject);
-    bool isHttpRedirect(QNetworkReply *reply);
     QString writeToFile(QFile &file, const QByteArray &data);
     void prepareResponse(InternalDownloadRequest *internalRequest, const QString &errorString=QString());
     void resolveGroupProgress(
@@ -144,7 +144,5 @@ private:
     void clearData(const QString groupId);
     void abortReply(QNetworkReply *reply);
 };
-
-
 
 }

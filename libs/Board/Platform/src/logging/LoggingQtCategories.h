@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -13,6 +13,7 @@
 Q_DECLARE_LOGGING_CATEGORY(lcDeviceSerial)
 Q_DECLARE_LOGGING_CATEGORY(lcDeviceMock)
 Q_DECLARE_LOGGING_CATEGORY(lcDeviceTcp)
+Q_DECLARE_LOGGING_CATEGORY(lcDeviceBLE)
 Q_DECLARE_LOGGING_CATEGORY(lcPlatform)
 Q_DECLARE_LOGGING_CATEGORY(lcPlatformOperation)
 Q_DECLARE_LOGGING_CATEGORY(lcPlatformCommand)

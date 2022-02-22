@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -30,6 +30,19 @@
 using strata::loggers::QtLoggerSetup;
 
 namespace logConsts = strata::loggers::constants;
+static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+
+    QJSValue appInfo = scriptEngine->newObject();
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("buildId", AppInfo::buildId.data());
+    appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
+    appInfo.setProperty("numberOfCommits", AppInfo::numberOfCommits.data());
+    appInfo.setProperty("stageOfDevelopment", AppInfo::stageOfDevelopment.data());
+    appInfo.setProperty("fullVersion", AppInfo::version.data());
+    return appInfo;
+}
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -94,7 +107,20 @@ int main(int argc, char *argv[])
     qCInfo(lcSci) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(lcSci) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+
+#if defined(Q_OS_WIN)
+    QVersionNumber kernelVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
+    if ((kernelVersion.majorVersion() == 10) &&
+        (kernelVersion.minorVersion() == 0) &&
+        (kernelVersion.microVersion() >= 21996)) {
+        qCInfo(lcSci).nospace() << "Running on Windows 11 (" << kernelVersion.majorVersion() << "." << kernelVersion.minorVersion() << ")";
+    } else {
+        qCInfo(lcSci) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    }
+#else
     qCInfo(lcSci) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+#endif
+
     if (QSslSocket::supportsSsl()) {
         qCInfo(lcSci) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {
@@ -117,6 +143,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciMockCommandModel>("tech.strata.sci", 1, 0, "SciMockCommandModel", "cannot instantiate SciMockCommandModel in qml");
     qmlRegisterUncreatableType<SciMockResponseModel>("tech.strata.sci", 1, 0, "SciMockResponseModel", "cannot instantiate SciMockResponseModel in qml");
     qmlRegisterUncreatableType<SciMockVersionModel>("tech.strata.sci", 1, 0, "SciMockVersionModel", "cannot instantiate SciMockVersionModel in qml");
+#ifdef APPS_FEATURE_BLE
+    qmlRegisterUncreatableType<SciBleDeviceModel>("tech.strata.sci", 1, 0, "SciBleDeviceModel", "cannot instantiate SciBleDeviceModel in qml");
+#endif // APPS_FEATURE_BLE
 
     qmlRegisterUncreatableType<strata::device::MockDevice>("tech.strata.sci", 1, 0, "MockDevice", "cannot instantiate MockDevice in qml");
     qRegisterMetaType<strata::device::MockCommand>("MockCommand");
@@ -131,6 +160,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<strata::FlasherConnector::Result>();
 
     qmlRegisterType<HexModel>("tech.strata.sci", 1, 0, "HexModel");
+    qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     loadResources();
 
@@ -142,6 +172,10 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
+
+#ifdef APPS_FEATURE_BLE
+    engine.rootContext()->setContextProperty("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
+#endif // APPS_FEATURE_BLE
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

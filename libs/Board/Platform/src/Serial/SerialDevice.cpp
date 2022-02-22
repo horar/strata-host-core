@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -25,6 +25,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, int 
     : Device(deviceId, name, Type::SerialDevice)
 {
     serialPort_ = std::make_unique<QSerialPort>(name);
+    initializePort(serialPort_);
 
     initSerialDevice(openRetries);
 }
@@ -33,11 +34,13 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
     : Device(deviceId, name, Type::SerialDevice)
 {
     if ((port != nullptr) && (port->portName() == name)) {
+        checkSerialPortProperties(port);
         serialPort_ = std::move(port);
     } else {
         qCWarning(lcDeviceSerial).noquote()
             << "Provided port will not be used, is not compatible with device " << deviceId_;
         serialPort_ = std::make_unique<QSerialPort>(name);
+        initializePort(serialPort_);
     }
 
     initSerialDevice(openRetries);
@@ -58,12 +61,6 @@ void SerialDevice::initSerialDevice(int openRetries)
     connected_ = false;
     openRetries_ = openRetries;
 
-    serialPort_->setBaudRate(QSerialPort::Baud115200);
-    serialPort_->setDataBits(QSerialPort::Data8);
-    serialPort_->setParity(QSerialPort::NoParity);
-    serialPort_->setStopBits(QSerialPort::OneStop);
-    serialPort_->setFlowControl(QSerialPort::NoFlowControl);
-
     connect(serialPort_.get(), &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
     connect(serialPort_.get(), &QSerialPort::readyRead, this, &SerialDevice::readMessage);
 
@@ -74,6 +71,25 @@ void SerialDevice::initSerialDevice(int openRetries)
     qCDebug(lcDeviceSerial).nospace().noquote()
         << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
+}
+
+void SerialDevice::checkSerialPortProperties(const SerialPortPtr& port) const
+{
+    if (port->baudRate() != QSerialPort::Baud115200) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port baud rate: " << port->baudRate();
+    }
+    if (port->dataBits() != QSerialPort::Data8) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port data bits: " << port->dataBits();
+    }
+    if (port->parity() != QSerialPort::NoParity) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port parity: " << port->parity();
+    }
+    if (port->stopBits() != QSerialPort::OneStop) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port stop bits: " << port->stopBits();
+    }
+    if (port->flowControl() != QSerialPort::NoFlowControl) {
+        qCWarning(lcDeviceSerial) << this << "Unexpected serial port flow control: " << port->flowControl();
+    }
 }
 
 void SerialDevice::open()
@@ -89,13 +105,16 @@ void SerialDevice::open()
     }
 
     if (opened == false) {
-        opened = serialPort_->open(QIODevice::ReadWrite);
+        if (serialPort_->open(QIODevice::ReadWrite)) {
+            // clear() should be called right after open()
+            serialPort_->clear(QSerialPort::AllDirections);
+            opened = true;
+        }
         // if 'open' fails 'QSerialPort::errorOccurred' signal is emitted
     }
     connected_ = opened;
 
     if (opened) {
-        serialPort_->clear(QSerialPort::AllDirections);
         emit Device::opened();
     }
     // There is no need to emit 'deviceError(ErrorCode::DeviceFailedToOpen)' when 'opened'
@@ -116,17 +135,23 @@ void SerialDevice::close()
 SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
 {
     SerialPortPtr serialPort = std::make_unique<QSerialPort>(portName);
+    initializePort(serialPort);
+
+    if (serialPort->open(QIODevice::ReadWrite)) {
+        // clear() should be called right after open()
+        serialPort->clear(QSerialPort::AllDirections);
+        return serialPort;
+    }
+
+    return nullptr;
+}
+
+void SerialDevice::initializePort(const SerialPortPtr& serialPort) {
     serialPort->setBaudRate(QSerialPort::Baud115200);
     serialPort->setDataBits(QSerialPort::Data8);
     serialPort->setParity(QSerialPort::NoParity);
     serialPort->setStopBits(QSerialPort::OneStop);
     serialPort->setFlowControl(QSerialPort::NoFlowControl);
-
-    if (serialPort->open(QIODevice::ReadWrite)) {
-        return serialPort;
-    }
-
-    return nullptr;
 }
 
 QByteArray SerialDevice::createUniqueHash(const QString& portName)

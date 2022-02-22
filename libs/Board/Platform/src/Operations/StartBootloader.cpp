@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -34,6 +34,7 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     // Platform and bootloader uses the same setting for clock source.
     // Clock source for bootloader and application must match. Otherwise when application
     // jumps to bootloader, it will have a hardware fault which requires board to be reset.
+    // Newer boards have 'bootloader_active' notification, this notification ends waiting.
     std::unique_ptr<CmdWait> cmdWait = std::make_unique<CmdWait>(
                 platform_,
                 bootingDelay,
@@ -56,11 +57,20 @@ StartBootloader::StartBootloader(const PlatformPtr& platform) :
     firstReqPlatfIdIter_ = commandList_.begin() + 1;
     waitCmdIter_ = commandList_.begin() + 3;
     postCommandHandler_ = std::bind(&StartBootloader::postCommandActions, this, std::placeholders::_1, std::placeholders::_2);
+
+    connect(platform_.get(), &Platform::bootloaderActive, this, &StartBootloader::endWaiting);
 }
 
 void StartBootloader::setWaitTime(const std::chrono::milliseconds& waitTime)
 {
     cmdWait_->setWaitTime(waitTime);
+}
+
+void StartBootloader::endWaiting() {
+    if ((this->hasStarted() == true) && (this->isFinished() == false)) {
+        // End waiting for bootloader to start - set wait time to 0.
+        cmdWait_->setWaitTime(std::chrono::milliseconds::zero());  // modifies also timeout for running timer
+    }
 }
 
 void StartBootloader::postCommandActions(CommandResult& result, int& status)

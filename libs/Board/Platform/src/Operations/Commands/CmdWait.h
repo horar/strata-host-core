@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -36,7 +36,7 @@ private slots:
 
 private:
     std::chrono::milliseconds waitTime_;
-    QString description_;
+    const QString description_;
 };
 
 }  // namespace

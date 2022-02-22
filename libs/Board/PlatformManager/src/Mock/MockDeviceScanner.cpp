@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -51,14 +51,14 @@ QString MockDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
     qCInfo(lcDeviceScanner).nospace().noquote()
         << "Erased mock device: ID: " << deviceId;
 
-    emit deviceLost(deviceId);
+    emit deviceLost(deviceId, QString());
 
     return "";
 }
 
 void MockDeviceScanner::disconnectAllDevices() {
     for (auto devIdIter = devices_.keyBegin(); devIdIter != devices_.keyEnd(); ++devIdIter) {
-        emit deviceLost(*devIdIter);
+        emit deviceLost(*devIdIter, QString());
     }
 
     devices_.clear();

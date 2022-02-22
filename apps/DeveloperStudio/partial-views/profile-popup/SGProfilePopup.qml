@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -522,7 +522,10 @@ SGStrataPopup {
                     }
 
                     function openPopup() {
-                        if ((passReqsPopup.opened === false) && (passReqs.passwordValid === false)) {
+                        if (passReqsPopup.opened === false
+                                && passReqs.passwordValid === false
+                                && newPasswordRow.editable)
+                        {
                             passReqsPopup.open()
                         }
                     }
@@ -696,7 +699,6 @@ SGStrataPopup {
                         PlatformFilters.clearActiveFilters()
                         LoginUtil.logout()
                         PlatformSelection.logout()
-                        sdsModel.strataClient.sendRequest("unregister", {})
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     } else {
                         if (result === "No Connection") {

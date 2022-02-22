@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -40,7 +40,7 @@ bool ClientsController::registerClient(const Client &client)
         << "Registering ClientID: 0x" << client.getClientID().toHex()
         << ", API:" << static_cast<int>(client.getApiVersion());
 
-    if (true == isRegisteredClient(client.getClientID())) {
+    if (isRegisteredClient(client.getClientID())) {
         qCCritical(lcStrataClientsController).noquote().nospace()
             << "Client ID is already registered. ClientID: 0x" << client.getClientID().toHex();
         return false;

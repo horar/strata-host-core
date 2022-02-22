@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -11,7 +11,8 @@ project(rcc-util
     LANGUAGES CXX
 )
 
-set(PROJECT_COPYRIGHT "Copyright (C) 2019-2021 ${PROJECT_COMPANY}")
+set(PROJECT_BUNDLE_ID com.onsemi.strata.rccutil)
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2022 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -31,6 +32,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
 
     OUTPUT_NAME ${PROJECT_NAME}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 target_link_libraries(${PROJECT_NAME}

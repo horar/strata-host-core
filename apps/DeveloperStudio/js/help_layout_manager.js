@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -215,7 +215,7 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
 
 function createHelpObject(tourTarget) {
     destroyHelpObject()
-    help_object = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
+    help_object = Utility.createObject("qrc:/partial-views/help-tour/HelpTourPeekThroughOverlay.qml", window)
     help_object.index = tourTarget.index
     help_object.description = tourTarget.description
     help_object.setTarget(tourTarget.target)

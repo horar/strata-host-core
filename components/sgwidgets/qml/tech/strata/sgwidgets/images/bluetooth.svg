@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   aria-hidden="true"
+   focusable="false"
+   data-prefix="fab"
+   data-icon="bluetooth"
+   class="svg-inline--fa fa-bluetooth fa-w-14"
+   role="img"
+   viewBox="0 0 500 500"
+   version="1.1"
+   id="svg835"
+   width="500"
+   height="500">
+  <metadata
+     id="metadata841">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs839" />
+  <path
+     fill="currentColor"
+     d="M 315.65234,168.74805 274.5957,209.80469 274.30859,127.5 315.65234,168.74805 M 274.30859,379.10352 315.55664,337.85547 274.5,296.79883 Z M 433.75,253.25391 C 433.75,450.01953 364.93945,495 256.60352,495 148.26758,495 66.25,450.01953 66.25,253.25391 66.25,56.488281 146.06641,5 254.40234,5 362.73828,5 433.75,56.583984 433.75,253.25391 Z m -151.68945,0 75.98828,-84.79297 L 238.32422,39.931641 V 209.23047 l -70.62891,-70.62891 -25.83984,25.74414 88.7168,89.00391 -88.7168,89.00391 25.74414,25.74414 70.62891,-70.62891 2.20117,162.69531 121.92578,-122.02148 z"
+     id="path833"
+     style="stroke-width:0.957031" />
+</svg>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -49,7 +49,7 @@ signals:
 
 private slots:
     void handleDeviceDetected(strata::platform::PlatformPtr platform);
-    void handleDeviceLost(QByteArray deviceId);
+    void handleDeviceLost(QByteArray deviceId, QString errorString);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

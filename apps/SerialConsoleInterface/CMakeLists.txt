@@ -1,5 +1,5 @@
 ##
-## Copyright (c) 2018-2021 onsemi.
+## Copyright (c) 2018-2022 onsemi.
 ##
 ## All rights reserved. This software and/or documentation is licensed by onsemi under
 ## limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -14,7 +14,16 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
+if(APPS_FEATURE_BLE)
+    string(CONCAT PROJECT_BUNDLE_ADDON
+        "<key>NSBluetoothAlwaysUsageDescription</key>"
+        "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
+    )
+    set(BLUETOOTH_SOURCES
+        SciBleDeviceModel.cpp
+    )
+endif()
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -47,6 +56,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
+
+    ${BLUETOOTH_SOURCES}
 )
 
 generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)
@@ -81,6 +92,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     #AUTORCC_OPTIONS "--compress;9"
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

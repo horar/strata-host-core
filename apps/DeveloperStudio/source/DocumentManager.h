@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -38,8 +38,6 @@ public:
 
     Q_INVOKABLE ClassDocuments* getClassDocuments(const QString &classId);
 
-    QMap<QString, ClassDocuments*> classes_;
-
 signals:
     void updateProgressRequested(QJsonObject data);
     void populateModelsRequested(QJsonObject data);
@@ -56,6 +54,8 @@ private slots:
 private:
     strata::strataRPC::StrataClient *strataClient_;
     CoreInterface *coreInterface_;
+
+    QMap<QString, ClassDocuments*> classes_;
 
     void init();
 };

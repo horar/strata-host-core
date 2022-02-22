@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -635,7 +635,10 @@ void Flasher::manageBackup(int chunkNumber)
             qCInfo(lcFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
             emit backupFirmwareProgress(chunkNumber, chunkCount_);
 
-            if (actualBackupSize_ != expectedBackupSize_) {
+            // This condition should be "actualBackupSize_ != expectedBackupSize_" instead of <.
+            // It is a workaround for the RSL10 bootloader (CS-2581)
+            // TODO after the end of 2021, verify how many buggy RSL10 bootloaders are "in the wild" and decide whether to keep this workaround.
+            if (actualBackupSize_ < expectedBackupSize_) {
                 QString errStr(QStringLiteral("Received firmware size is different than expected."));
                 qCCritical(lcFlasher) << platform_ << errStr;
                 finish(Result::Error, errStr);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -212,8 +212,10 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
     switch (replicatorType) {
         case ReplicatorType::kPull:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
+            break;
         case ReplicatorType::kPush:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
+            break;
         default:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     }
@@ -284,8 +286,10 @@ bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std
     switch (replicatorType) {
         case ReplicatorType::kPull:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
+            break;
         case ReplicatorType::kPush:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
+            break;
         default:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     }

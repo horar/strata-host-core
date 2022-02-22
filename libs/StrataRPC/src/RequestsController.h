@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -13,6 +13,7 @@
 #include <QMap>
 #include <QObject>
 #include <QTimer>
+#include <chrono>
 
 namespace strata::strataRPC
 {
@@ -25,7 +26,8 @@ public:
     /**
      * RequestController constructor
      */
-    RequestsController();
+    RequestsController(std::chrono::milliseconds check_timeout_interval,
+                       std::chrono::milliseconds request_timeout);
 
     /**
      * RequestController destructor
@@ -93,8 +95,7 @@ private:
     int currentRequestId_;
 
     QTimer findTimedoutRequestsTimer_;
-    static constexpr int FIND_TIMEDOUT_REQUESTS_INTERVAL{10};
-    static constexpr int REQUEST_TIMEOUT{500};
+    std::chrono::milliseconds request_timeout_;
 };
 
 }  // namespace strata::strataRPC

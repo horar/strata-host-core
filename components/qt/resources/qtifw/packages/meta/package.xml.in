@@ -1,6 +1,6 @@
 <?xml version="2.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2018-2021 onsemi.
+   Copyright (c) 2018-2022 onsemi.
 
    All rights reserved. This software and/or documentation is licensed by onsemi under
    limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -10,9 +10,9 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>Plugins that are required to run applications built using Qt5 framework</Description>
-    <Version>@QT5_VERSION@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>60</SortingPriority>
+    <SortingPriority>66</SortingPriority>
 </Package>

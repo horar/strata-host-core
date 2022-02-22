@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -12,6 +12,8 @@
 
 struct QueueItem {
     QString rawMessage;
+    QString expandedMessage;
+    bool isJsonValid;
 };
 
 class SciMessageQueueModel: public QAbstractListModel
@@ -24,6 +26,8 @@ class SciMessageQueueModel: public QAbstractListModel
 public:
     enum ModelRole {
         RawMessageRole = Qt::UserRole,
+        ExpandedMessageRole,
+        IsJsonValidRole,
     };
 
     enum ErrorCode {
@@ -38,10 +42,14 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
     QString errorString(ErrorCode code) const;
-    ErrorCode append(const QString &message);
+    ErrorCode append(const QByteArray &message);
     QString first();
     void removeFirst();
     bool isEmpty();
+
+    Q_INVOKABLE void remove(int index);
+    Q_INVOKABLE void incrementPosition(int index);
+    Q_INVOKABLE void decrementPosition(int index);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

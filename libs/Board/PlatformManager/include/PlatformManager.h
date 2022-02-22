@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -105,10 +105,16 @@ namespace strata {
 
     signals:
         /**
-         * Emitted when new platform is connected and succesfully opened.
+         * Emitted when new platform is added to PlatformManager maps.
          * @param deviceId device ID
          */
         void platformAdded(QByteArray deviceId);
+
+        /**
+         * Emitted when platform is connected and succesfully opened.
+         * @param deviceId device ID
+         */
+        void platformOpened(QByteArray deviceId);
 
         /**
          * Emitted when platform is about to be closed.
@@ -117,16 +123,17 @@ namespace strata {
         void platformAboutToClose(QByteArray deviceId);
 
         /**
-         * Emitted when platform is closed.
+         * Emitted when platform is disconnected and closed.
          * @param deviceId device ID
          */
         void platformClosed(QByteArray deviceId);
 
         /**
-         * Emitted when platform is disconnected and removed.
+         * Emitted when platform is removed from PlatformManager maps.
          * @param deviceId device ID
+         * @param errorString error string (if any) that caused the closure of the connection
          */
-        void platformRemoved(QByteArray deviceId);
+        void platformRemoved(QByteArray deviceId, QString errorString);
 
         /**
          * Emitted when platform was recognized through Identify operation (and is ready for communication).
@@ -139,7 +146,7 @@ namespace strata {
     private slots:
         // from DeviceScanner
         void handleDeviceDetected(platform::PlatformPtr platform);
-        void handleDeviceLost(QByteArray deviceId);
+        void handleDeviceLost(QByteArray deviceId, QString errorString);
 
         // from Platform
         void handlePlatformOpened();

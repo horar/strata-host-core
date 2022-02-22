@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -8,7 +8,6 @@
  */
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import Qt.labs.platform 1.1
 
 import Qt.labs.settings 1.0 as QtLabsSettings
 import Qt.labs.platform 1.1 as QtLabsPlatform
@@ -270,11 +269,11 @@ Item {
                                 if (model.status === DownloadDocumentListModel.Waiting) {
                                     return "Preparing to download"
                                 } else if (model.status === DownloadDocumentListModel.InProgress) {
-                                    var received = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesReceived)
-                                    var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
+                                    let received = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesReceived)
+                                    let total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
                                     return received + " of " + total
                                 } else if (model.status === DownloadDocumentListModel.Finished) {
-                                    var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
+                                    let total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
                                     return "Done " + total
                                 } else if (model.status === DownloadDocumentListModel.FinishedWithError) {
                                     return model.errorString
@@ -452,7 +451,7 @@ Item {
         }
     }
 
-    FolderDialog {
+    QtLabsPlatform.FolderDialog {
         id: fileDialog
         title: qsTr("Please choose a file")
         onAccepted: {

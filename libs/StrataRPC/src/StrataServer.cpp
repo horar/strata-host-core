@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -10,41 +10,60 @@
 #include "Dispatcher.h"
 #include "ServerConnector.h"
 #include "logging/LoggingQtCategories.h"
-
 #include <StrataRPC/StrataServer.h>
+#include <StrataRPC/RpcRequest.h>
 #include <QJsonDocument>
 #include <QThread>
 
 using namespace strata::strataRPC;
 
-StrataServer::StrataServer(const QString &address, bool useDefaultHandlers, QObject *parent)
+StrataServer::StrataServer(
+        const QString &address,
+        bool useDefaultHandlers,
+        QObject *parent)
     : QObject(parent),
-      dispatcher_(new Dispatcher<const Message &>()),
+      dispatcher_(new Dispatcher<const RpcRequest &>()),
       clientsController_(new ClientsController(this)),
       connector_(new ServerConnector(address)),
       connectorThread_(new QThread())
 {
-    if (true == useDefaultHandlers) {
+    if (useDefaultHandlers) {
         dispatcher_->registerHandler(
             "register_client",
             std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
-        dispatcher_->registerHandler("unregister", std::bind(&StrataServer::unregisterClientHandler,
-                                                             this, std::placeholders::_1));
+        dispatcher_->registerHandler(
+            "unregister_client",
+            std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
     }
 
     qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
     connector_->moveToThread(connectorThread_.get());
 
-    QObject::connect(this, &StrataServer::initializeConnector, connector_.get(),
-                     &ServerConnector::initialize, Qt::QueuedConnection);
-    QObject::connect(this, &StrataServer::sendMessage, connector_.get(),
-                     &ServerConnector::sendMessage, Qt::QueuedConnection);
-    QObject::connect(this, &StrataServer::MessageParsed, this, &StrataServer::dispatchHandler);
-    QObject::connect(connector_.get(), &ServerConnector::messageReceived, this,
-                     &StrataServer::messageReceived);
-    QObject::connect(connector_.get(), &ServerConnector::errorOccurred, this,
-                     &StrataServer::connectorErrorHandler);
-    QObject::connect(connector_.get(), &ServerConnector::initialized, this, [this]() {
+    QObject::connect(
+                this,
+                &StrataServer::initializeConnector,
+                connector_.get(),
+                &ServerConnector::initialize,
+                Qt::QueuedConnection);
+
+    QObject::connect(
+                this,
+                &StrataServer::sendMessage,
+                connector_.get(),
+                &ServerConnector::sendMessage,
+                Qt::QueuedConnection);
+
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::messageReceived,
+                this,
+                &StrataServer::processRequest);
+
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::initialized,
+                this,
+                [this]() {
         qCInfo(lcStrataServer) << "Strata Server initialized successfully.";
         emit initialized();
     });
@@ -58,7 +77,7 @@ StrataServer::~StrataServer()
     connector_.release();
 
     connectorThread_->exit(0);
-    if (false == connectorThread_->wait(500)) {
+    if (connectorThread_->wait(500) == false) {
         qCCritical(lcStrataServer) << "Terminating connector thread.";
         connectorThread_->terminate();
     }
@@ -71,12 +90,11 @@ void StrataServer::initialize()
     emit initializeConnector();
 }
 
-bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)
+bool StrataServer::registerHandler(const QString &handlerName, ServerHandler handler)
 {
-    if (false == dispatcher_->registerHandler(handlerName, handler)) {
-        QString errorMessage(QStringLiteral("Failed to register handler"));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToRegisterHandler, errorMessage);
+    bool registered = dispatcher_->registerHandler(handlerName, handler);
+    if (registered == false) {
+        qCCritical(lcStrataServer) << "Failed to register handler";
         return false;
     }
     return true;
@@ -84,282 +102,172 @@ bool StrataServer::registerHandler(const QString &handlerName, StrataHandler han
 
 bool StrataServer::unregisterHandler(const QString &handlerName)
 {
-    if (false == dispatcher_->unregisterHandler(handlerName)) {
-        QString errorMessage(QStringLiteral("Failed to unregister handler"));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToUnregisterHandler, errorMessage);
+    bool unregistered = dispatcher_->unregisterHandler(handlerName);
+    if (unregistered == false) {
+        qCCritical(lcStrataServer) << "Failed to unregister handler";
         return false;
     }
     return true;
 }
 
-void StrataServer::messageReceived(const QByteArray &clientId, const QByteArray &message)
+QByteArray StrataServer::firstClientId() const
+{
+    QList<Client> clientList = clientsController_->getAllClients();
+
+    if (clientList.isEmpty() == false) {
+        return clientList.first().getClientID();
+    }
+
+    return QByteArray();
+}
+
+void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &message)
 {
     qCDebug(lcStrataServer).noquote().nospace()
-        << "StrataServer messageReceived, ClientID: 0x" << clientId.toHex()
-        << ", Message: '" << message << '\'';
+        << "clientID: 0x" << clientId.toHex()
+        << ", message: '" << message << "'";
 
-    QJsonParseError jsonParseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-
-    if (jsonParseError.error != QJsonParseError::NoError) {
-        QString errorMessage(QStringLiteral("invalid JSON message."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
+    RpcRequest request;
+    RpcError::ErrorCode code = parseRpcRequest(message, request);
+    if (code != RpcError::ErrorCode::NoError) {
+        RpcError error(code);
+        qCWarning(lcStrataServer) << error;
+        sendError(clientId, request.id(), error);
         return;
     }
-    QJsonObject jsonObject = jsonDocument.object();
-
-    Message clientMessage;
-    clientMessage.clientID = clientId;
-    ApiVersion apiVersion = ApiVersion::none;
-
-    Client client = clientsController_->getClient(clientMessage.clientID);
 
     // Check if registered client
-    if (true == client.getClientID().isEmpty()) {
+    Client client = clientsController_->getClient(clientId);
+    if (client.getClientID().isEmpty()) {
         qCDebug(lcStrataServer) << "Client not registered";
-
-        // Find out the client api version.
-        if ((true == jsonObject.contains("jsonrpc"))) {
-            if ((true == jsonObject.value("jsonrpc").isString()) &&
-                (jsonObject.value("jsonrpc") == "2.0")) {
-                apiVersion = ApiVersion::v2;
-                qCDebug(lcStrataServer) << "API v2";
-            } else {
-                QString errorMessage(QStringLiteral("Unknown API."));
-                qCCritical(lcStrataServer) << errorMessage;
-                emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-                return;
-            }
-        } else {
-            qCDebug(lcStrataServer) << "API v1";
-            apiVersion = ApiVersion::v1;
-        }
-
-        // Register the client.
-        if (false == clientsController_->registerClient(Client(clientId, apiVersion))) {
-            QString errorMessage(QStringLiteral("Failed to register client"));
-            qCCritical(lcStrataServer) << errorMessage;
-            emit errorOccurred(ServerError::FailedToRegisterClient, errorMessage);
+        // Register the client, only v2 is supported now
+        bool registered = clientsController_->registerClient(Client(clientId, ApiVersion::v2));
+        if (registered == false) {
+            RpcError error(RpcError::ClientRegistrationError);
+            qCWarning(lcStrataServer) << error;
+            sendError(clientId, request.id(), error);
             return;
         }
 
         qCInfo(lcStrataServer) << "Client registered successfully";
-
-    } else {
-        // Client already registered
-        apiVersion = client.getApiVersion();
     }
 
-    if (apiVersion == ApiVersion::v2) {
-        if (false == buildClientMessageAPIv2(jsonObject, &clientMessage)) {
-            return;
-        }
-    } else {
-        if (false == buildClientMessageAPIv1(jsonObject, &clientMessage)) {
-            return;
-        }
+    request.setClientId(clientId);
+    bool dispatched = dispatcher_->dispatch(request.method(), request);
+    if (dispatched == false) {
+        RpcError error(RpcError::MethodNotFoundError);
+        qCWarning(lcStrataServer) << error;
+        sendError(clientId, request.id(), error);
+        return;
     }
-
-    emit MessageParsed(clientMessage);
 }
 
-bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage)
+RpcError::ErrorCode StrataServer::parseRpcRequest(const QByteArray &message, RpcRequest &request)
 {
-    if (false == jsonObject.contains("jsonrpc") ||
-        false == jsonObject.value("jsonrpc").isString() || jsonObject.value("jsonrpc") != "2.0") {
-        QString errorMessage(QStringLiteral("Invalid or missing API identifier."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-        return false;
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError) {
+        return RpcError::ParseError;
     }
 
-    // populate the handlerName -> method
-    if ((true == jsonObject.contains("method")) && (jsonObject.value("method").isString())) {
-        clientMessage->handlerName = jsonObject.value("method").toString();
+    QJsonObject messageObject = jsonDocument.object();
+
+    //jsonrpc
+    QString jsonVersion = messageObject.value("jsonrpc").toString();
+    if (jsonVersion.isEmpty() || jsonVersion != "2.0") {
+        return RpcError::InvalidRequestError;
+    }
+
+    //method
+    QString method = messageObject.value("method").toString();
+    if (method.isEmpty()) {
+        return RpcError::InvalidRequestError;
     } else {
-        QString errorMessage(QStringLiteral("Failed to process handler name."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-        return false;
+        request.setMethod(method);
     }
 
-    // populate the payload --> param
-    if ((true == jsonObject.contains("params")) &&
-        (true == jsonObject.value("params").isObject())) {
-        clientMessage->payload = jsonObject.value("params").toObject();
-    } else {
-        QString errorMessage(QStringLiteral("Failed to process message payload."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-        return false;
-    }
-
-    // populate messageID --> id
-    if ((true == jsonObject.contains("id") && (true == jsonObject.value("id").isDouble()))) {
-        clientMessage->messageID = jsonObject.value("id").toDouble();
-    } else {
-        QString errorMessage(QStringLiteral("Failed to process message id."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-        return false;
-    }
-
-    // populate message type --> request.
-    clientMessage->messageType = Message::MessageType::Command;
-    return true;
-}
-
-bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Message *clientMessage)
-{
-    bool isPlatformMessage = false;
-
-    if ((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
-        // Check if this command is meant to be sent to a platform
-        if (true == jsonObject.contains("device_id") &&
-            true == jsonObject.value("device_id").isString()) {
-            clientMessage->handlerName = "platform_message";
-            isPlatformMessage = true;
+    //params (optional)
+    if (messageObject.contains("params")) {
+        QJsonValue paramsValue = messageObject.value("params");
+        if (paramsValue.isObject()) {
+            request.setParams(paramsValue.toObject());
         } else {
-            clientMessage->handlerName = jsonObject.value("cmd").toString();
-        }
-    } else if ((true == jsonObject.contains("hcs::cmd")) &&
-               (true == jsonObject.value("hcs::cmd").isString())) {
-        clientMessage->handlerName = jsonObject.value("hcs::cmd").toString();
-    } else {
-        QString errorMessage(QStringLiteral("Failed to process handler name."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-        return false;
-    }
-
-    // documentation show messages with no payload are valid.
-    bool hasPayload =
-        (true == jsonObject.contains("payload")) && (jsonObject.value("payload").isObject());
-    QJsonObject payloadJsonObject{};
-
-    if (true == isPlatformMessage) {
-        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toString());
-        QJsonObject messageJsonObject;
-        messageJsonObject.insert("cmd", jsonObject.value("cmd"));
-        if (true == hasPayload) {
-            messageJsonObject.insert("payload", jsonObject.value("payload").toObject());
-        } else {
-            messageJsonObject.insert("payload", QJsonObject{});
-        }
-        payloadJsonObject.insert(
-            "message",
-            QString(QJsonDocument(messageJsonObject).toJson(QJsonDocument::JsonFormat::Compact)));
-    } else {
-        if (true == hasPayload) {
-            payloadJsonObject = jsonObject.value("payload").toObject();
+            return RpcError::InvalidRequestError;
         }
     }
 
-    clientMessage->payload = payloadJsonObject;
-    clientMessage->messageID = 0;
-    clientMessage->messageType = Message::MessageType::Command;
-
-    return true;
-}
-
-void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                                const ResponseType responseType)
-{
-    switch (clientsController_->getClientApiVersion(clientMessage.clientID)) {
-        case ApiVersion::v1:
-            qCDebug(lcStrataServer) << "Building message for API v1";
-            emit sendMessage(clientMessage.clientID,
-                             buildServerMessageAPIv1(clientMessage, jsonObject, responseType));
-            break;
-
-        case ApiVersion::v2:
-            qCDebug(lcStrataServer) << "Building message for API v2";
-            emit sendMessage(clientMessage.clientID,
-                             buildServerMessageAPIv2(clientMessage, jsonObject, responseType));
-            break;
-
-        case ApiVersion::none:
-            QString errorMessage(
-                QStringLiteral("Unsupported API version or client is not registered."));
-            qCCritical(lcStrataServer).noquote() << errorMessage;
-            emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-            break;
+    //id (optional)
+    if (messageObject.contains("id")) {
+         QJsonValue idValue = messageObject.value("id");
+         if (idValue.isDouble() == false && idValue.isString() == false) {
+             return RpcError::InvalidRequestError;
+         }
+         request.setId(idValue);
     }
+
+    return RpcError::NoError;
 }
 
-void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
-                                const QJsonObject &jsonObject, const ResponseType responseType)
+void StrataServer::sendReply(
+        const QByteArray &clientId,
+        const QJsonValue &id,
+        const QJsonObject &result)
 {
-    Message message;
-    message.clientID = clientId;
-    message.handlerName = handlerName;
-    message.messageID = 0;
-    message.messageType = Message::MessageType::Command;
-    message.payload = QJsonObject({});
-    notifyClient(message, jsonObject, responseType);
+    QByteArray message =  buildReplyMessage(id, result);
+    emit sendMessage(clientId, message);
 }
 
-void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject)
+void StrataServer::sendNotification(
+        const QByteArray &clientId,
+        const QString &method,
+        const QJsonObject &params)
 {
-    Message tempClientMessage;
-    tempClientMessage.handlerName = handlerName;
+    QByteArray message = buildNotificationMessage(method, params);
+    emit sendMessage(clientId, message);
+}
 
-    // get all clients.
+void StrataServer::broadcastNotification(
+        const QString &method,
+        const QJsonObject &params)
+{
+    QByteArray message = buildNotificationMessage(method, params);
     auto allClients = clientsController_->getAllClients();
-
     for (const auto &client : allClients) {
-        switch (client.getApiVersion()) {
-            case ApiVersion::v1:
-                emit sendMessage(
-                        client.getClientID(),
-                        buildServerMessageAPIv1(tempClientMessage, jsonObject, ResponseType::Notification)
-                     );
-                break;
-
-            case ApiVersion::v2:
-                emit sendMessage(
-                        client.getClientID(),
-                        buildServerMessageAPIv2(tempClientMessage, jsonObject, ResponseType::Notification)
-                     );
-                break;
-
-            case ApiVersion::none:
-                {
-                    QString errorMessage(QStringLiteral("Unsupported client API version"));
-                    qCCritical(lcStrataServer) << errorMessage;
-                    emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-                }
-                break;
-        }
+        emit sendMessage(client.getClientID(), message);
     }
 }
 
-void StrataServer::registerNewClientHandler(const Message &clientMessage)
+void StrataServer::sendError(
+        const QByteArray &clientId,
+        const QJsonValue &id,
+        const RpcError &error)
+{
+    QByteArray message = buildErrorMessage(id, error);
+    emit sendMessage(clientId, message);
+}
+
+void StrataServer::registerNewClientHandler(const RpcRequest &request)
 {
     qCDebug(lcStrataServer).noquote().nospace()
-        << "Handle New Client Registration. ClientID 0x:" << clientMessage.clientID.toHex();
+        << "Handle New Client Registration. ClientID 0x:" << request.clientId().toHex();
 
     // Find the client API version, if it was v1, ignore the parsing.
     if (ApiVersion currentApiVersion =
-            clientsController_->getClientApiVersion(clientMessage.clientID);
+            clientsController_->getClientApiVersion(request.clientId());
         ApiVersion::v1 != currentApiVersion) {
-        if (true == clientMessage.payload.contains("api_version") &&
-            true == clientMessage.payload.value("api_version").isString()) {
-            QString apiVersionPayload = clientMessage.payload.value("api_version").toString();
+        if (request.params().contains("api_version") &&
+            request.params().value("api_version").isString()) {
+            QString apiVersionPayload = request.params().value("api_version").toString();
 
             // list of available api versions.
             if (apiVersionPayload == "2.0") {
-                clientsController_->updateClientApiVersion(clientMessage.clientID, ApiVersion::v2);
+                clientsController_->updateClientApiVersion(request.clientId(), ApiVersion::v2);
             } else {
-                QString errorMessage(QStringLiteral("Unknown API version."));
-                qCCritical(lcStrataServer) << errorMessage;
-                emit errorOccurred(ServerError::FailedToRegisterClient, errorMessage);
-                notifyClient(clientMessage,
-                             {{"message", "Failed to register client, Unknown API Version."}},
-                             ResponseType::Error);
-                clientsController_->unregisterClient(clientMessage.clientID);
+                RpcError error(RpcError::UnknownApiVersionError);
+                qCWarning(lcStrataServer) << error;
+                sendError(request.clientId(), request.id(), error);
+
+                clientsController_->unregisterClient(request.clientId());
                 return;
             }
         } else {
@@ -367,122 +275,68 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
         }
     }
 
-    if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
-        notifyClient(clientMessage, {{"status", "client registered."}}, ResponseType::Response);
+    if (clientsController_->isRegisteredClient(request.clientId())) {
+        sendReply(request.clientId(), request.id(), {{"status", "client registered"}});
     } else {
-        QString errorMessage(QStringLiteral("Failed to register client."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToRegisterClient, errorMessage);
-        notifyClient(clientMessage, {{"message", errorMessage}}, ResponseType::Error);
+        RpcError error(RpcError::ClientRegistrationError);
+        qCWarning(lcStrataServer) << error;
+        sendError(request.clientId(), request.id(), error);
     }
 }
 
-void StrataServer::unregisterClientHandler(const Message &clientMessage)
+void StrataServer::unregisterClientHandler(const RpcRequest &request)
 {
     qCDebug(lcStrataServer).noquote().nospace()
-        << "Handle Client Unregistration. ClientID: 0x" << clientMessage.clientID.toHex();
-    if (false == clientsController_->unregisterClient(clientMessage.clientID)) {
-        QString errorMessage(
-            QStringLiteral("Failed to unregister client. Client is not registered."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::FailedToUnregisterClient, errorMessage);
-        notifyClient(clientMessage, {{"message", "Failed to unregister client"}},
-                     ResponseType::Error);
+        << "Handle Client Unregistration. ClientID: 0x" << request.clientId().toHex();
+    if (clientsController_->isRegisteredClient(request.clientId())) {
+        sendReply(request.clientId(), request.id(), {{"status", "going to unregister client"}});
+    }
+    if (false == clientsController_->unregisterClient(request.clientId())) {
+        RpcError error(RpcError::ClientUnregistrationError);
+        qCWarning(lcStrataServer) << error;
+        sendError(request.clientId(), request.id(), error);
     }
 }
 
-QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,
-                                                 const QJsonObject &payload,
-                                                 const ResponseType responseType)
-{
-    QJsonObject jsonObject{{"jsonrpc", "2.0"}};
-
-    switch (responseType) {
-        case ResponseType::Notification:
-            jsonObject.insert("method", clientMessage.handlerName);
-            jsonObject.insert("params", payload);
-            break;
-
-        case ResponseType::Response:
-            jsonObject.insert("result", payload);
-            jsonObject.insert("id", clientMessage.messageID);
-            break;
-
-        case ResponseType::Error:
-            jsonObject.insert("error", payload);
-            jsonObject.insert("id", clientMessage.messageID);
-            break;
-
-        case ResponseType::PlatformMessage:
-            jsonObject.insert("method", "platform_notification");
-            jsonObject.insert("params", payload);
-            break;
-    }
-
-    return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
-}
-
-QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
-                                                 const QJsonObject &payload,
-                                                 const ResponseType responseType)
+QByteArray StrataServer::buildReplyMessage(
+        const QJsonValue &id,
+        const QJsonObject &result)
 {
     QJsonObject jsonObject;
-    QString notificationType = "";
-    QJsonObject tempPayload(payload);
-
-    switch (responseType) {
-        case ResponseType::Error:
-            qCDebug(lcStrataServer) << "Error messages are not supported in API v1.";
-            jsonObject.insert("error", true);
-            // send error as notification
-            [[fallthrough]];
-        case ResponseType::Notification:
-        case ResponseType::Response:
-            // determine the notification type
-            // "document" --> "cloud::notification"
-            // "document_progress" --> "cloud::notification"
-            // "platform" message --> "notification"
-            // all others       --> "hcs::notification"
-            if (clientMessage.handlerName == "document" ||
-                clientMessage.handlerName == "document_progress") {
-                notificationType = "cloud::notification";
-            } else {
-                notificationType = "hcs::notification";
-            }
-            tempPayload.insert("type", clientMessage.handlerName);
-            jsonObject.insert(notificationType, tempPayload);
-            break;
-
-        case ResponseType::PlatformMessage:
-            jsonObject.insert("notification", payload);
-            break;
-    }
+    jsonObject.insert("jsonrpc", "2.0");
+    jsonObject.insert("result", result);
+    jsonObject.insert("id", id);
 
     return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
 }
 
-void StrataServer::dispatchHandler(const Message &clientMessage)
+QByteArray StrataServer::buildNotificationMessage(
+        const QString &method,
+        const QJsonObject &params)
 {
-    if (false == dispatcher_->dispatch(clientMessage.handlerName, clientMessage)) {
-        QString errorMessage(QStringLiteral("Handler not found."));
-        qCCritical(lcStrataServer) << errorMessage;
-        emit errorOccurred(ServerError::HandlerNotFound, errorMessage);
-        notifyClient(clientMessage, {{"message", errorMessage}}, ResponseType::Error);
-        return;
-    }
+    QJsonObject jsonObject;
+    jsonObject.insert("jsonrpc", "2.0");
+    jsonObject.insert("method", method);
+    jsonObject.insert("params", params);
 
-    // qCDebug(logCategoryStrataServer) << "Handler executed.";
+    return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
 }
 
-void StrataServer::connectorErrorHandler(const ServerConnectorError &errorType,
-                                         const QString &errorMessage)
+QByteArray StrataServer::buildErrorMessage(
+        const QJsonValue &id,
+        const RpcError &error)
 {
-    switch (errorType) {
-        case ServerConnectorError::FailedToInitialize:
-            emit errorOccurred(ServerError::FailedToInitializeServer, errorMessage);
-            break;
-        case ServerConnectorError::FailedToSend:
-            emit errorOccurred(ServerError::FailedToBuildClientMessage, errorMessage);
-            break;
+    QJsonObject errorObject;
+    errorObject.insert("code", error.code());
+    errorObject.insert("message", error.message());
+    if (error.data().isEmpty() == false) {
+        errorObject.insert("data", error.data());
     }
+
+    QJsonObject jsonObject;
+    jsonObject.insert("jsonrpc", "2.0");
+    jsonObject.insert("error", errorObject);
+    jsonObject.insert("id", id);
+
+    return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
 }

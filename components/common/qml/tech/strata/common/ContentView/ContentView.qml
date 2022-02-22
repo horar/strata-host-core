@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -28,13 +28,15 @@ Item {
     }
 
     property string class_id: ""
+    property string controller_class_id: ""
+    property bool is_assisted: false
     property string help_tour_id: ""
     property var classDocuments: null
     property var fakeHelpDocuments: null
     property bool pdfAccordionState: false
     property bool datasheetAccordionState: false
     property bool downloadAccordionState: false
-    property var currentDocumentCategory : false
+    property bool currentDocumentCategory : false
     property string categoryOpened: "platform documents"
     signal finished()
 
@@ -43,14 +45,18 @@ Item {
     onTotalDocumentsChanged: {
         if(helpIcon.class_id === "help_docs_demo" ) {
             pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
+            pdfViewer.remoteUrl = ""
         }
         else {
             if (classDocuments.pdfListModel.count > 0) {
                 pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
+                pdfViewer.remoteUrl = ""
             } else if (classDocuments.datasheetListModel.count > 0) {
-                pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
+                pdfViewer.url = ""
+                pdfViewer.remoteUrl = classDocuments.datasheetListModel.getFirstUri()
             } else {
                 pdfViewer.url = ""
+                pdfViewer.remoteUrl = ""
             }
         }
 
@@ -97,14 +103,16 @@ Item {
                 accordion.contentItem.children[1].open = datasheetAccordionState
                 accordion.contentItem.children[2].open = downloadAccordionState
                 currentDocumentCategory = true
-                classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+                const class_id = (view.is_assisted && view.class_id.length === 0) ? view.controller_class_id : view.class_id
+                classDocuments = sdsModel.documentManager.getClassDocuments(class_id)
             }
         }
     }
 
     Component.onCompleted: {
-        classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
-        helpIcon.class_id = view.class_id
+        const class_id = (view.is_assisted && view.class_id.length === 0) ? view.controller_class_id : view.class_id
+        classDocuments = sdsModel.documentManager.getClassDocuments(class_id)
+        helpIcon.class_id = class_id
         let previousDeviceId = Help.current_device_id
         // generate a uuidv4
         help_tour_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -124,6 +132,7 @@ Item {
         onErrorStringChanged: {
             if (classDocuments.errorString.length > 0) {
                 pdfViewer.url = ""
+                pdfViewer.remoteUrl = ""
                 loadingImage.currentFrame = 0
             }
         }
@@ -277,7 +286,7 @@ Item {
 
             EmptyDocuments {
                 id: empty
-                visible: pdfViewer.url === "" && loading.visible === false
+                visible: pdfViewer.url === "" && pdfViewer.remoteUrl === "" && loading.visible === false
                 anchors {
                     fill: parent
                 }

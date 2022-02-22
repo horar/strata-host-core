@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 onsemi.
+ * Copyright (c) 2018-2022 onsemi.
  *
  * All rights reserved. This software and/or documentation is licensed by onsemi under
  * limited terms and conditions. The terms and conditions pertaining to the software and/or
@@ -13,6 +13,10 @@
 #include <Serial/SerialDeviceScanner.h>
 #include <Mock/MockDeviceScanner.h>
 #include <Tcp/TcpDeviceScanner.h>
+#ifdef APPS_FEATURE_BLE
+#include <BluetoothLowEnergy/BluetoothLowEnergyScanner.h>
+#endif // APPS_FEATURE_BLE
+
 
 namespace strata {
 
@@ -24,6 +28,9 @@ using device::scanner::DeviceScannerPtr;
 using device::scanner::MockDeviceScanner;
 using device::scanner::SerialDeviceScanner;
 using device::scanner::TcpDeviceScanner;
+#ifdef APPS_FEATURE_BLE
+using device::scanner::BluetoothLowEnergyScanner;
+#endif // APPS_FEATURE_BLE
 
 namespace operation = platform::operation;
 
@@ -49,16 +56,17 @@ PlatformManager::~PlatformManager() {
     for(const PlatformPtr& platform: qAsConst(platforms_)) {
         disconnect(platform.get(), nullptr, this, nullptr);
         const QByteArray deviceId = platform->deviceId();
+        platform->SetTerminationCause("Platform terminated by force");
         if (platform->isOpen()) {
             emit platformAboutToClose(deviceId);
             platform->close();
             emit platformClosed(deviceId);
             platform->terminate();
-            emit platformRemoved(deviceId);
+            emit platformRemoved(deviceId, platform->GetTerminationCause());
             qCDebug(lcPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
         } else {
             platform->terminate();
-            emit platformRemoved(deviceId);
+            emit platformRemoved(deviceId, platform->GetTerminationCause());
         }
     }
     platforms_.clear();
@@ -81,6 +89,11 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
     case Device::Type::TcpDevice: {
         scanner = std::make_shared<TcpDeviceScanner>();
     } break;
+#ifdef APPS_FEATURE_BLE
+    case Device::Type::BLEDevice: {
+        scanner = std::make_shared<BluetoothLowEnergyScanner>();
+    } break;
+#endif // APPS_FEATURE_BLE
     default: {
         qCCritical(lcPlatformManager) << "Invalid DeviceScanner type:" << scannerType;
         return;
@@ -100,8 +113,9 @@ void PlatformManager::addScanner(Device::Type scannerType, quint32 flags) {
 
     qCDebug(lcPlatformManager) << "Created DeviceScanner with type:" << scannerType;
 
-    connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected);
-    connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost);
+    // Handlers can take few seconds to to be processed. QueuedConnection makes processing async.
+    connect(scanner.get(), &DeviceScanner::deviceDetected, this, &PlatformManager::handleDeviceDetected, Qt::QueuedConnection);
+    connect(scanner.get(), &DeviceScanner::deviceLost, this, &PlatformManager::handleDeviceLost, Qt::QueuedConnection);
 
     scanner->init(flags);
 }
@@ -225,18 +239,23 @@ void PlatformManager::handleDeviceDetected(PlatformPtr platform) {
         connect(platform.get(), &Platform::platformIdChanged, this, &PlatformManager::handlePlatformIdChanged);
         connect(platform.get(), &Platform::deviceError, this, &PlatformManager::handleDeviceError);
 
+        emit platformAdded(deviceId);
+
         platform->open();
     } else {
         qCCritical(lcPlatformManager) << "Unable to add platform to maps, device Id already exists";
     }
 }
 
-void PlatformManager::handleDeviceLost(QByteArray deviceId) {
+void PlatformManager::handleDeviceLost(QByteArray deviceId, QString errorString) {
     qCInfo(lcPlatformManager).noquote() << "Platform lost: deviceId:" << deviceId;
 
     auto iter = platforms_.constFind(deviceId);
     if (iter != platforms_.constEnd()) {
         qCDebug(lcPlatformManager).noquote().nospace() << "Going to terminate platform, deviceId: " << deviceId;
+        if (errorString.isEmpty() == false) {
+            iter.value()->SetTerminationCause(errorString);
+        }
         iter.value()->terminate();
     }
 }
@@ -255,7 +274,7 @@ void PlatformManager::handlePlatformOpened() {
         PlatformPtr platformPtr = iter.value();
         qCInfo(lcPlatformManager).noquote() << "Platform open, deviceId:" << deviceId;
 
-        emit platformAdded(deviceId);
+        emit platformOpened(deviceId);
 
         startPlatformOperations(platformPtr);
     } else {
@@ -303,9 +322,10 @@ void PlatformManager::handlePlatformTerminated() {
     auto iter = platforms_.find(deviceId);
     if (iter != platforms_.end()) {
         qCDebug(lcPlatformManager).noquote() << "Terminating device:" << deviceId;
+        QString terminationCause = iter.value()->GetTerminationCause();
         disconnect(iter.value().get(), nullptr, this, nullptr);
         platforms_.erase(iter);     // platform gets deleted after this point, do not reuse
-        emit platformRemoved(deviceId);
+        emit platformRemoved(deviceId, terminationCause);
         return;
     } else {
         qCWarning(lcPlatformManager).noquote() << "Unable to terminate, device Id does not exist:" << deviceId;
@@ -328,6 +348,7 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized, bool inBootloa
     if (isRecognized == false && keepDevicesOpen_ == false) {
         qCInfo(lcPlatformManager).noquote()
             << "Platform was not recognized and should be ignored, going to release communication channel, deviceId:" << deviceId;
+        platform->SetTerminationCause("Device not recognized");
         disconnectPlatform(deviceId);
     }
 }
@@ -373,14 +394,17 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     } break;
     case Device::ErrorCode::DeviceFailedToOpen: {
         qCWarning(lcPlatformManager).nospace() << "Platform failed to open: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        platform->SetTerminationCause(errStr);
         disconnectPlatform(deviceId);
     }
     case Device::ErrorCode::DeviceDisconnected: {
         qCWarning(lcPlatformManager).nospace() << "Platform was disconnected: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        platform->SetTerminationCause(errStr);
         disconnectPlatform(deviceId);
     } break;
     case Device::ErrorCode::DeviceError: {
         qCCritical(lcPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
+        platform->SetTerminationCause(errStr);
         disconnectPlatform(deviceId);
     } break;
     }
