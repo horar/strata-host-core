@@ -239,18 +239,18 @@ void ResourceLoader::loadPluginResources()
 
     for (const auto& pluginName : qAsConst(supportedPlugins)) {
         QString resourceFile(
-            QStringLiteral("%1/plugins/sds-%2.rcc").arg(ResourcePath::coreResourcePath(), pluginName));
+            QStringLiteral("%1/plugins/%2.rcc").arg(ResourcePath::coreResourcePath(), pluginName));
 
-        if (QFile::exists(resourceFile) == false) {
-            resourceFile = QStringLiteral("%1/plugins/%2.rcc").arg(ResourcePath::coreResourcePath(), pluginName);
             if (QFile::exists(resourceFile) == false) {
                 qCDebug(lcDevStudio(), "Skipping '%s' plugin resource file...",
                         qUtf8Printable(pluginName));
                 continue;
             }
-        }
-        qCDebug(lcDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
-                QResource::registerResource(resourceFile));
+
+        qCInfo(lcDevStudio)
+            << "Loading"
+            << pluginName << ":"
+            << QResource::registerResource(resourceFile);
     }
 }
 
