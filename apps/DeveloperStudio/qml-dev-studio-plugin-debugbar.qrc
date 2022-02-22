@@ -1,6 +1,6 @@
 <RCC>
-    <qresource prefix="/partial-views/debug-bar/+debugbar">
-        <file alias="SGDebugBar.qml">partial-views/debug-bar/+debugbar/SGDebugBar.qml</file>
+    <qresource prefix="/partial-views/debug-bar/+sds-debugbar">
+        <file alias="SGDebugBar.qml">partial-views/debug-bar/+sds-debugbar/SGDebugBar.qml</file>
     </qresource>
     <qresource prefix="/partial-views/debug-bar">
         <file alias="SGLocalPlatformListPopup.qml">partial-views/debug-bar/SGLocalPlatformListPopup.qml</file>

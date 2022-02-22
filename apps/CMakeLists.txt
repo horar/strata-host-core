@@ -23,7 +23,7 @@ if(NOT MINGW)
     add_feature_info(APPS_CORESW_SDS APPS_CORESW_SDS "Strata Developer Studio")
 
     # DevStudio plugins
-    include(AddDevStudioPLugin)
+    include(AddDevStudioPlugin)
     include(AddQmlDebugPlugin)
     cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_DEBUGBAR "Build DevStudio 'debugbar' plugin" ON
         "APPS_CORESW_SDS" OFF)

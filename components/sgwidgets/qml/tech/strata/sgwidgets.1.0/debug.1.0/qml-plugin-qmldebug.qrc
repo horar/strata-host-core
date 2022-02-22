@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/tech/strata/sgwidgets/debug.1.0/SGQmlDebug/+qmldebug">
-        <file alias="SGQmlDebug.qml">SGQmlDebug/+qmldebug/SGQmlDebug.qml</file>
+    <qresource prefix="/tech/strata/sgwidgets/debug.1.0/SGQmlDebug/+sgw-qmldebug">
+        <file alias="SGQmlDebug.qml">SGQmlDebug/+sgw-qmldebug/SGQmlDebug.qml</file>
     </qresource>
 </RCC>
