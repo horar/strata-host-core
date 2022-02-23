@@ -294,11 +294,11 @@ Item {
                     let resolved_pos = CommonCpp.SGUtilsCpp.getLineStartEndPositions(position.delegate_item.cmdMessage, position.cursor_pos);
 
                     startIndex = position.delegate_index
-                    startPosition = resolved_pos.x
-                    endPosition = resolved_pos.y
+                    startPosition = resolved_pos.line_start
+                    endPosition = resolved_pos.line_end
 
-                    selectionStartPosition = resolved_pos.x
-                    selectionEndPosition = resolved_pos.y
+                    selectionStartPosition = resolved_pos.line_start
+                    selectionEndPosition = resolved_pos.line_end
                     selectionStartIndex = position.delegate_index
                     selectionEndIndex = position.delegate_index
                     updateSelection()
@@ -378,11 +378,11 @@ Item {
                 let resolved_pos = CommonCpp.SGUtilsCpp.getWordStartEndPositions(position.delegate_item.cmdMessage, position.cursor_pos);
 
                 startIndex = position.delegate_index
-                startPosition = resolved_pos.x
-                endPosition = resolved_pos.y
+                startPosition = resolved_pos.word_start
+                endPosition = resolved_pos.word_end
 
-                selectionStartPosition = resolved_pos.x
-                selectionEndPosition = resolved_pos.y
+                selectionStartPosition = resolved_pos.word_start
+                selectionEndPosition = resolved_pos.word_end
                 selectionStartIndex = position.delegate_index
                 selectionEndIndex = position.delegate_index
                 updateSelection()

@@ -352,12 +352,15 @@ QStringList SGUtilsCpp::getForbiddenCharacters()
     return list;
 }
 
-QPoint SGUtilsCpp::getWordStartEndPositions(const QString &text, int pos)
+QVariantMap SGUtilsCpp::getWordStartEndPositions(const QString &text, int pos)
 {
+    QVariantMap result;
     int startPos = -1;
     int endPos = -1;
     if (text.isEmpty() || (pos == -1)) {
-        return QPoint(startPos, endPos);
+        result.insert("word_start", startPos);
+        result.insert("word_end", endPos);
+        return result;
     }
 
     // we will be selecting block to the right, except for \n
@@ -386,7 +389,9 @@ QPoint SGUtilsCpp::getWordStartEndPositions(const QString &text, int pos)
     getCharacterType(text.at(pos), lookingForEndlines, lookingForLetters, lookingForSymbols, lookingForSpaces);
 
     if (lookingForEndlines) {
-        return QPoint(startPos, endPos);
+        result.insert("word_start", startPos);
+        result.insert("word_end", endPos);
+        return result;
     }
 
     bool isEndline, isLetter, isSymbol, isSpace;
@@ -411,15 +416,20 @@ QPoint SGUtilsCpp::getWordStartEndPositions(const QString &text, int pos)
         }
     }
 
-    return QPoint(startPos, endPos);
+    result.insert("word_start", startPos);
+    result.insert("word_end", endPos);
+    return result;
 }
 
-QPoint SGUtilsCpp::getLineStartEndPositions(const QString &text, int pos)
+QVariantMap SGUtilsCpp::getLineStartEndPositions(const QString &text, int pos)
 {
+    QVariantMap result;
     int startPos = -1;
     int endPos = -1;
     if (text.isEmpty() || (pos == -1)) {
-        return QPoint(startPos, endPos);
+        result.insert("line_start", startPos);
+        result.insert("line_end", endPos);
+        return result;
     }
 
     startPos = text.lastIndexOf("\n", pos);
@@ -440,5 +450,7 @@ QPoint SGUtilsCpp::getLineStartEndPositions(const QString &text, int pos)
         startPos++; // we do not want to copy endline
     }
 
-    return QPoint(startPos, endPos);
+    result.insert("line_start", startPos);
+    result.insert("line_end", endPos);
+    return result;
 }
