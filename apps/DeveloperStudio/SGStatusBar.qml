@@ -668,6 +668,7 @@ Rectangle {
                             qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
                             Notifications.Info,
                             "current",
+                            null,
                             {
                                 "singleton": true,
                                 "timeout": 4000

@@ -85,6 +85,7 @@ SGWidgets.SGMainWindow {
                             qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
                             Notifications.Info,
                             "current",
+                            null,
                             {
                                 "singleton": true,
                                 "timeout": 4000
@@ -160,6 +161,7 @@ SGWidgets.SGMainWindow {
                     Notifications.createNotification(`Host Controller Service reconnected`,
                                                      Notifications.Info,
                                                      "all",
+                                                     null,
                                                      {
                                                          "singleton": true,
                                                          "timeout": 0
@@ -170,6 +172,7 @@ SGWidgets.SGMainWindow {
                 Notifications.createNotification(`Host Controller Service disconnected`,
                                                  Notifications.Critical,
                                                  "all",
+                                                 null,
                                                  {
                                                      "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
                                                      "singleton": true
@@ -224,6 +227,7 @@ SGWidgets.SGMainWindow {
                         title,
                         Notifications.Warning,
                         "current",
+                        null,
                         {
                             "description": description,
                             "iconSource": "qrc:/sgimages/exclamation-circle.svg",

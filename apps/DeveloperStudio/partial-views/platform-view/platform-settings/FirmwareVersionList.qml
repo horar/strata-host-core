@@ -387,6 +387,7 @@ ColumnLayout {
                     "Flash firmware failed",
                     Notifications.Critical,
                     "current",
+                    platformStack,
                     {
                         "description": text,
                         "iconSource": "qrc:/sgimages/exclamation-circle.svg",
