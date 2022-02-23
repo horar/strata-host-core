@@ -807,6 +807,18 @@ Module {
         }
         Method { name: "joinForbiddenCharacters"; type: "string" }
         Method { name: "getForbiddenCharacters"; type: "QStringList" }
+        Method {
+            name: "getWordStartEndPositions"
+            type: "QVariantMap"
+            Parameter { name: "text"; type: "string" }
+            Parameter { name: "pos"; type: "int" }
+        }
+        Method {
+            name: "getLineStartEndPositions"
+            type: "QVariantMap"
+            Parameter { name: "text"; type: "string" }
+            Parameter { name: "pos"; type: "int" }
+        }
     }
     Component {
         name: "SGVersionUtils"
