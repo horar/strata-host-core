@@ -17,7 +17,6 @@ import tech.strata.notifications 1.0
 
 Item {
     width: 350
-    visible: !Notifications.inboxIsOpen
 
     SGSortFilterProxyModel {
         id: visibleNotifications
