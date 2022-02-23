@@ -376,7 +376,7 @@ QVariantMap SGUtilsCpp::getWordStartEndPositions(const QString &text, int pos)
         endLine = letter = symbol = space = false;
         if (character == "\n") {
             endLine = true;
-        } else if (character.isLetterOrNumber() || character == "_") {
+        } else if (character.isLetterOrNumber() || character == "_" || character == "-") {
             letter = true;
         } else if (character.isSpace()) {
             space = true;
