@@ -164,29 +164,63 @@ Item {
             Layout.alignment: Qt.AlignRight
             from: 1000
             to: 2147483647
-            stepSize: 1000
+            stepSize: (value > (to - from) && value != to) ?  to - value : from
             enabled: maxFileSizeEnabled && iniFileComboBox.currentIndex !== -1
             //disable if file size is out of min/max value OR if no ini files were found or selected
-            contentItem: TextInput {
-                    text: maxFileSizeSpinBox.enabled ? maxFileSizeSpinBox.value : "no value"
-                    font: maxFileSizeSpinBox.font
-                    color: maxFileSizeSpinBox.enabled ? "black" : "grey"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-            }
             onValueModified: configFileSettings.maxFileSize = value
+
+            contentItem: TextInput {
+                id:textInputFileSize
+                anchors {
+                    left: parent.down.indicator.right
+                    right: parent.up.indicator.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font: parent.font
+                opacity: parent.enabled ? 1 : 0.5
+                validator: parent.validator
+                inputMethodHints: Qt.ImhDigitsOnly
+                onEnabledChanged: parent.enabled ? text = parent.value : text = "no value"
+            }
+            background: Rectangle {
+                anchors.fill: parent.contentItem
+                border.width: 2
+                border.color: parent.focus && parent.enabled ? palette.highlight : color
+                opacity: parent.enabled ? 1 : 0.5
+            }
+
+            valueFromText: function(text, locale) {
+                if (Number.fromLocaleString(locale, text) > maxFileSizeSpinBox.to) {
+                    configFileSettings.maxFileSize = maxFileSizeSpinBox.to
+                    return maxFileSizeSpinBox.to
+                } else if (Number.fromLocaleString(locale, text) < maxFileSizeSpinBox.from) {
+                    configFileSettings.maxFileSize = maxFileSizeSpinBox.from
+                    return maxFileSizeSpinBox.from
+                } else {
+                    return Number.fromLocaleString(locale, text)
+                }
+            }
+            textFromValue: function(value, locale) {
+                return Number(value).toLocaleString(locale,'d',0)
+            }
+
 
             Connections {
                 target: configFileSettings
                 onMaxFileSizeChanged: {
                     maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                    textInputFileSize.text = maxFileSizeSpinBox.value
                 }
                 onFilePathChanged: {
-                    if (configFileSettings.maxFileSize < 1000) {
+                    if (configFileSettings.maxFileSize == 0) {
                         maxFileSizeEnabled = false
                     } else {
-                        maxFileSizeEnabled = true
                         maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                        maxFileSizeEnabled = true
+                        textInputFileSize.text = maxFileSizeSpinBox.value
                     }
                 }
             }
@@ -224,26 +258,59 @@ Item {
             stepSize: 1
             enabled: maxNoFilesEnabled && iniFileComboBox.currentIndex !== -1
             //disable if no.of files is out of min/max value OR if no ini files were found or selected
-            contentItem: Text {
-                    text: maxNoFilesSpinBox.enabled ? maxNoFilesSpinBox.value : "no value"
-                    font: maxNoFilesSpinBox.font
-                    color: maxNoFilesSpinBox.enabled ? "black" : "grey"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-            }
             onValueModified: configFileSettings.maxNoFiles = value
+
+            contentItem: TextInput {
+                id:textInputNoFiles
+                anchors {
+                    left: parent.down.indicator.right
+                    right: parent.up.indicator.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font: parent.font
+                opacity: parent.enabled ? 1 : 0.5
+                validator: parent.validator
+                inputMethodHints: Qt.ImhDigitsOnly
+                onEnabledChanged: parent.enabled ? text = parent.value : text = "no value"
+            }
+            background: Rectangle {
+                anchors.fill: parent.contentItem
+                border.width: 2
+                border.color: parent.focus && parent.enabled ? palette.highlight : color
+                opacity: parent.enabled ? 1 : 0.5
+            }
+
+            valueFromText: function(text, locale) {
+                if (Number.fromLocaleString(locale, text) > maxNoFilesSpinBox.to) {
+                    configFileSettings.maxNoFiles = maxNoFilesSpinBox.to
+                    return maxNoFilesSpinBox.to
+                } else if (Number.fromLocaleString(locale, text) < maxNoFilesSpinBox.from) {
+                    configFileSettings.maxNoFiles = maxNoFilesSpinBox.from
+                    return maxNoFilesSpinBox.from
+                } else {
+                    return Number.fromLocaleString(locale, text)
+                }
+            }
+            textFromValue: function(value, locale) {
+                return Number(value).toLocaleString(locale,'d',0)
+            }
 
             Connections {
                 target: configFileSettings
                 onMaxNoFilesChanged: {
                     maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                    textInputNoFiles.text = maxNoFilesSpinBox.value
                 }
                 onFilePathChanged: {
-                    if (configFileSettings.maxNoFiles < 1) {
+                    if (configFileSettings.maxNoFiles == 0) {
                         maxNoFilesEnabled = false
                     } else {
-                        maxNoFilesEnabled = true
                         maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                        maxNoFilesEnabled = true
+                        textInputNoFiles.text = maxNoFilesSpinBox.value
                     }
                 }
             }
@@ -269,12 +336,10 @@ Item {
             id: qtFilterRulesText
             text: "Qt filter rules"
             Layout.columnSpan: 2
-
         }
 
         SGWidgets.SGTextField {
             id: qtFilterRulesTextField
-            //Layout.preferredWidth: longEdit
             Layout.alignment: Qt.AlignRight
             Layout.fillWidth: true
             placeholderText: "no qt filter rules"

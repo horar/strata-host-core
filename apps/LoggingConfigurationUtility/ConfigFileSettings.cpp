@@ -63,7 +63,7 @@ int ConfigFileSettings::maxNoFiles() const
 
     int logMaxNoFiles = settings_->value(LOG_MAXNOFILES_SETTING).toInt();
 
-    if (logMaxNoFiles > 0) {
+    if (logMaxNoFiles >= MIN_NOFILES && logMaxNoFiles <= MAX_NOFILES) {
         qCDebug(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
         return logMaxNoFiles;
     } else {
@@ -171,10 +171,13 @@ void ConfigFileSettings::setLogLevel(const QString& logLevel)
 void ConfigFileSettings::setMaxFileSize(const int &maxFileSize)
 {
     if (maxFileSize == settings_->value(LOG_MAXSIZE_SETTING)) {
+        if (maxFileSize == MAX_LOGFILE_SIZE || maxFileSize == MIN_LOGFILE_SIZE) {
+            emit maxFileSizeChanged();
+        }
         return;
     }
 
-    if (maxFileSize < MIN_LOGFILE_SIZE) {
+    if (maxFileSize == 0) {
         settings_->remove(LOG_MAXSIZE_SETTING);
     } else {
         settings_->setValue(LOG_MAXSIZE_SETTING, maxFileSize);
@@ -186,6 +189,9 @@ void ConfigFileSettings::setMaxFileSize(const int &maxFileSize)
 void ConfigFileSettings::setMaxNoFiles(const int &maxNoFiles)
 {
     if (maxNoFiles == settings_->value(LOG_MAXNOFILES_SETTING)) {
+        if (maxNoFiles == MAX_NOFILES || maxNoFiles == MIN_NOFILES) {
+            emit maxNoFilesChanged();
+        }
         return;
     }
 

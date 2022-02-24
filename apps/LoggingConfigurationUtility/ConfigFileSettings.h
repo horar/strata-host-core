@@ -74,4 +74,6 @@ private:
     static constexpr const char* const LOG_SPD_MSGPATTERN_SETTING = "log/spdlogMessagePattern";
     static constexpr int MIN_LOGFILE_SIZE = 1000; //1KB
     static constexpr int MAX_LOGFILE_SIZE = 2147483647; //over 2GB
+    static constexpr int MIN_NOFILES = 1;
+    static constexpr int MAX_NOFILES = 100000;
 };
