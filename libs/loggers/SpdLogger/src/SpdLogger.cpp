@@ -26,10 +26,6 @@ SpdLogger::~SpdLogger()
 void SpdLogger::setup(const std::string& fileName, const std::string& logPattern, const std::string& logFilePattern,
                       const std::string& logLevel, const size_t maxFileSize, const size_t maxNoFiles)
 {
-    if (logger_ && spdlog::level::to_string_view(logger_->level()) == logLevel) {
-        return;
-    }
-
     file_sink_ = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, maxFileSize, maxNoFiles);
     logger_ = std::make_shared<spdlog::logger>(std::string{"appLogger"},
                                                std::initializer_list<spdlog::sink_ptr>{file_sink_, console_sink_});

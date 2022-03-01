@@ -12,6 +12,7 @@
 
 #include <QCoreApplication>
 #include <QFileSystemWatcher>
+#include <QMap>
 
 namespace strata::loggers
 {
@@ -58,7 +59,7 @@ private:
 
     SpdLogger logger_;
     QFileSystemWatcher watchdog_;
-    QString logLevel_;
+    QMap<QString, QString> logParams_;
 };
 
 }  // namespace strata::loggers
