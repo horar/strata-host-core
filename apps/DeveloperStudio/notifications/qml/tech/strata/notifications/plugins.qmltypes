@@ -40,6 +40,7 @@ Module {
             Parameter { name: "title"; type: "QVariant" }
             Parameter { name: "level"; type: "QVariant" }
             Parameter { name: "to"; type: "QVariant" }
+            Parameter { name: "source"; type: "QVariant" }
             Parameter { name: "additionalParameters"; type: "QVariant" }
         }
         Method { name: "saveNotifications"; type: "QVariant" }

@@ -814,6 +814,7 @@ function notifyConnectedState(connected, platformName){
             PlatformNotifications.Notifications.createNotification(`${platformName} is connected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
+                                                                   Qt.application,
                                                                    {
                                                                        "timeout": 4000,
                                                                        "actions": [notificationActions[0],notificationActions[1]]
@@ -822,6 +823,7 @@ function notifyConnectedState(connected, platformName){
             PlatformNotifications.Notifications.createNotification(`${platformName} is disconnected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
+                                                                   Qt.application,
                                                                    {
                                                                        "timeout": 4000,
                                                                        "actions": [notificationActions[0],notificationActions[1]]
