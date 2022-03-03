@@ -350,8 +350,12 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform, class_id_string)
         } else {
             if (classMap.hasOwnProperty(class_id_string)) {
-                if (platform.firmware_version.length === 0) {
-                    //device without firmware
+                // Old legacy boards have no bootloader and provides no information about firmware version,
+                // so both 'firmware_version' and 'bootloader_version' are empty. In this case
+                // 'platform.active' is set to "application".
+
+                if (platform.firmware_version.length === 0 && platform.bootloader_version.length !== 0) {
+                    // device without firmware
 
                     // if there is already listing for this platform, reuse it
                     let listing = getDeviceListing(class_id_string, platform.device_id)
