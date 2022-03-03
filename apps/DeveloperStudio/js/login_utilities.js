@@ -31,15 +31,13 @@ function login(login_info) {
 
     userSettings.user = login_info.user
     const anonymousSettings = userSettings.readFile("general-settings.json")
-    let anonymous = 0
-    if (anonymousSettings.hasOwnProperty("hasOptedOut")) {
-        anonymous = anonymousSettings.hasOptedOut ? 1 : 0
-    }
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
-        "anonymous": anonymous
+    }
+    if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
+        headers.anonymous = 1
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -533,16 +531,15 @@ function validate_token()
     if (Rest.jwt !== "" && settings.user !== ""){
         userSettings.user = settings.user
         const anonymousSettings = userSettings.readFile("general-settings.json")
-        let anonymous = 0
-        if (anonymousSettings.hasOwnProperty("hasOptedOut")) {
-            anonymous = anonymousSettings.hasOptedOut ? 1 : 0
-        }
 
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
-            "anonymous": anonymous
         }
+        if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
+            headers.anonymous = 1
+        }
+
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate, or no username saved")
