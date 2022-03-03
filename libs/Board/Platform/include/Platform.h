@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <PlatformMessage.h>
@@ -50,6 +58,14 @@ namespace strata::platform {
         };
         Q_ENUM(ControllerType)
 
+        enum class PlatformState {
+            Opened,
+            AboutToClose,
+            Closed,
+            Terminated
+        };
+        Q_ENUM(PlatformState)
+
         /**
          * Platform constructor
          * @param device pointer
@@ -76,10 +92,9 @@ namespace strata::platform {
         void close(const std::chrono::milliseconds waitInterval = std::chrono::milliseconds::zero());
 
         /**
-         * Terminate all operations
-         * @param close true if device communication channel should be closed, false otherwise
+         * Terminate all operations, will result in erasure of the platform from PlatformManager
          */
-        void terminate(bool close);
+        void terminate();
 
         /**
          * Send message to device (public).
@@ -198,6 +213,12 @@ namespace strata::platform {
         bool deviceConnected() const;
 
         /**
+         * Check if platform is in open state.
+         * @return true if platform is in open state, false otherwise
+         */
+        bool isOpen() const;
+
+        /**
          * Reset receiving messages from device (clear internel buffers, etc.).
          */
         void resetReceiving();
@@ -250,8 +271,9 @@ namespace strata::platform {
         /**
          * Emitted when device was identified using Identify operation.
          * @param isRecognized true if successfully recognized, otherwise false
+         * @param inBootloader true if platform is in bootloader mode, otherwise false
          */
-        void recognized(bool isRecognized);
+        void recognized(bool isRecognized, bool inBootloader);
 
         /**
          * Emitted when device receives platform Id changed message.
@@ -340,17 +362,6 @@ namespace strata::platform {
       // *** functions used by friend classes (end)
 
         /**
-         * Open device communication channel (internal).
-         */
-        void openDevice();
-
-        /**
-         * Close device communication channel (internal).
-         * @param waitInterval how long to remain in closed state before re-attempting to open the device (0 - stay closed)
-         */
-        void closeDevice(const std::chrono::milliseconds waitInterval);
-
-        /**
          * Stop reconnection timer if active.
          */
         void abortReconnect();
@@ -372,6 +383,7 @@ namespace strata::platform {
 
         bool bootloaderMode_;
         bool isRecognized_;
+        PlatformState platformState_;
         ApiVersion apiVersion_;
         ControllerType controllerType_;
         QString bootloaderVer_;

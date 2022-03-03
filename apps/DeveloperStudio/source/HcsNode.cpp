@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "HcsNode.h"
 
 #include "logging/LoggingQtCategories.h"
@@ -20,9 +28,9 @@ bool HcsNode::hcsConnected() const
 
 void HcsNode::initConnections()
 {
-    qCDebug(logCategoryStrataDevStudioNode) << "connecting for source node";
+    qCDebug(lcDevStudioNode) << "connecting for source node";
     if (replicaNode_.connectToNode(QUrl(QStringLiteral("local:hcs3"))) == false) {
-        qCCritical(logCategoryStrataDevStudioNode)
+        qCCritical(lcDevStudioNode)
             << QStringLiteral("connection to source node failed: %1").arg(replicaNode_.lastError());
         return;
     }
@@ -37,7 +45,7 @@ void HcsNode::initConnections()
 
 void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 {
-    qCInfo(logCategoryStrataDevStudioNode) << QStringLiteral("Connected to: %1 %2")
+    qCInfo(lcDevStudioNode) << QStringLiteral("Connected to: %1 %2")
                                                   .arg(appInfoPod.appName())
                                                   .arg(appInfoPod.appVersion());
 }
@@ -45,7 +53,7 @@ void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
                                 QRemoteObjectReplica::State oldState)
 {
-    qCDebug(logCategoryStrataDevStudioNode) << oldState << "->" << state;
+    qCDebug(lcDevStudioNode) << oldState << "->" << state;
 
     setHcsConnected(state == QRemoteObjectReplica::Valid);
 }
@@ -53,11 +61,11 @@ void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
 void HcsNode::shutdownService(unsigned hcsIdentifier)
 {
     if ((replica_->isReplicaValid() == false) && ((replica_->isInitialized() == true) || (replica_.data()->waitForSource(500) == false))) {
-        qCWarning(logCategoryStrataDevStudioNode) << "can't shutdown, not connected to HCS";
+        qCWarning(lcDevStudioNode) << "can't shutdown, not connected to HCS";
         return;
     }
 
-    qCDebug(logCategoryStrataDevStudioNode) << "requesting HCS to shut down";
+    qCDebug(lcDevStudioNode) << "requesting HCS to shut down";
     replica_->shutdown_cb(hcsIdentifier);
 }
 

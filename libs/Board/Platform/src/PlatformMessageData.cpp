@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <PlatformMessageData.h>
 
 #include <rapidjson/error/en.h>
@@ -21,7 +29,7 @@ PlatformMessageData::PlatformMessageData(const QByteArray& rawMessage)
         jsonErrorString_ = rapidjson::GetParseError_En(result.Code());
         jsonErrorOffset_ = static_cast<ulong>(result.Offset());
 
-        qCWarning(logCategoryPlatformMessage).nospace().noquote()
+        qCWarning(lcPlatformMessage).nospace().noquote()
             << QStringLiteral("JSON parse error at offset ") << jsonErrorOffset_
             << QStringLiteral(": ") << jsonErrorString_
             << QStringLiteral(" Invalid JSON: '") << raw_ << '\'';

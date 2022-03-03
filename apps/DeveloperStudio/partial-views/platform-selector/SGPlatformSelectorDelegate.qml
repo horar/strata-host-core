@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
@@ -27,11 +35,10 @@ Item {
     }
 
     MouseArea {
-        anchors {
-            fill: parent
-        }
+        anchors.fill: parent
+
         onClicked: {
-            PlatformSelection.platformSelectorModel.currentIndex = index
+            root.updateIndex()
         }
     }
 
@@ -48,7 +55,7 @@ Item {
             implicitWidth: imageContainer.implicitWidth
 
             Rectangle {
-                color: model.connected ? Theme.palette.darkGray : Theme.palette.gray
+                color: model.connected ? Theme.palette.onsemiDark : Theme.palette.gray
                 anchors {
                     centerIn: imageContainer
                 }
@@ -58,6 +65,8 @@ Item {
 
             PlatformImage {
                 id: imageContainer
+                text: model.program_controller ? "PROGRAMMING" : defaultText
+                textBgColor: model.program_controller ? Theme.palette.orange : defaultTextBg
             }
         }
 
@@ -77,10 +86,10 @@ Item {
                     } else {
                         let txt = model.verbose_name
                         let idx = model.name_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
-
+                color: Theme.palette.onsemiDark
                 font {
                     pixelSize: 16
                     family: Fonts.franklinGothicBold
@@ -101,7 +110,7 @@ Item {
                     } else {
                         let txt = model.opn
                         let idx = model.opn_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
 
@@ -110,7 +119,7 @@ Item {
                     pixelSize: 13
                     family: Fonts.franklinGothicBook
                 }
-                color: "#333"
+                color: Theme.palette.onsemiDark
                 font.italic: true
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
@@ -121,12 +130,20 @@ Item {
             Text {
                 id: info
                 text: {
+                    if (model.program_controller_error_string) {
+                        return "Programming of controller failed.\n" + model.program_controller_error_string
+                    }
+
+                    if (model.program_controller) {
+                        return "Programming controller. Do not unplug device."
+                    }
+
                     if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
                         return model.description
                     } else {
                         let txt = model.description
                         let idx = model.desc_matching_index
-                        return txt.substring(0, idx) + "<font color=\"orange\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                     }
                 }
                 Layout.fillWidth: true
@@ -138,7 +155,7 @@ Item {
                 fontSizeMode: Text.Fit
                 minimumPixelSize: 12
                 lineHeight: 1.2
-                color: "#666"
+                color: model.program_controller_error_string ? Theme.palette.error : Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
@@ -158,7 +175,7 @@ Item {
                                     if (str !== "Matching Part OPNs: ") {
                                         str += ", "
                                     }
-                                    str += part.substring(0, idx) + "<font color=\"orange\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                    str += part.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
                                 } else {
                                     continue
                                 }
@@ -175,7 +192,7 @@ Item {
                     pixelSize: 12
                     family: Fonts.franklinGothicBook
                 }
-                color: "#666"
+                color: Qt.lighter(Theme.palette.onsemiDark, 1.1)
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
@@ -189,113 +206,120 @@ Item {
             Layout.minimumWidth: 300
 
             ColumnLayout {
-                id: segmentCategoryList
-                Layout.preferredWidth: 150
-                Layout.minimumWidth: 100
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                property real delegateHeight: 35
-
-                Flow {
-                    id: flow
+                Flickable {
+                    id: segmentCategoryScrollView
+                    clip: true
                     Layout.fillWidth: true
-                    spacing: 2
+                    Layout.fillHeight: true
+                    contentHeight: segmentCategoryList.height
+                    interactive: segmentCategoryScrollBar.visible
+                    flickableDirection: Flickable.VerticalFlick
+                    boundsBehavior: Flickable.StopAtBounds
 
-                    property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
-                    property int maxRows: 2
+                    ScrollBar.vertical: ScrollBar {
+                        id: segmentCategoryScrollBar
+                        minimumSize: 0.1
+                        policy: ScrollBar.AlwaysOn
+                        visible: segmentCategoryScrollView.height < segmentCategoryScrollView.contentHeight
+                    }
 
-                    onRowsChanged: {
-                        if (rows < maxRows) {
-                            reset()
+                    ColumnLayout {
+                        id: segmentCategoryList
+                        width: segmentCategoryScrollView.width -
+                               (segmentCategoryScrollBar.visible ? segmentCategoryScrollBar.width : 0)
+
+                        property real delegateHeight: 25
+
+                        Flow {
+                            id: flow
+                            Layout.fillWidth: true
+                            spacing: 2
+
+                            property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
+                            property int maxRows: 3
+
+                            onRowsChanged: {
+                                if (rows < maxRows) {
+                                    reset()
+                                }
+                            }
+
+                            function reset () {
+                                for (let i = 0; i < filters.count; i++) {
+                                    filters.get(i).row = -1
+                                }
+                            }
+
+                            Repeater {
+                                id: segmentCategoryRepeater
+                                model: visibleButtons
+                                delegate: iconDelegate
+                            }
                         }
-                    }
 
-                    function reset () {
-                        for (let i = 0; i < filters.count; i++) {
-                            filters.get(i).row = -1
+                        SGSortFilterProxyModel {
+                            id: segmentsCategories
+                            sourceModel: filters
+                            sortEnabled: true
+                            sortRole: "type"
                         }
-                    }
 
-                    Repeater {
-                        id: segmentCategoryRepeater
-                        model: visibleButtons
-                        delegate: iconDelegate
-                    }
-                }
+                        SGSortFilterProxyModel {
+                            id: visibleButtons
+                            sourceModel: segmentsCategories
+                            invokeCustomFilter: true
 
-                SGSortFilterProxyModel {
-                    id: segmentsCategories
-                    sourceModel: filters
-                    sortEnabled: true
-                    sortRole: "type"
-                }
+                            function filterAcceptsRow (index) {
+                                if (model.show_overflow_buttons === false) {
+                                    var listing = sourceModel.get(index)
+                                    return listing.row < flow.maxRows
+                                } else {
+                                    return true
+                                }
+                            }
+                        }
 
-                SGSortFilterProxyModel {
-                    id: visibleButtons
-                    sourceModel: segmentsCategories
-                    invokeCustomFilter: true
+                        SGSortFilterProxyModel {
+                            id: remainingButtons
+                            sourceModel: segmentsCategories
+                            invokeCustomFilter: true
 
-                    function filterAcceptsRow (index) {
-                        var listing = sourceModel.get(index)
-                        return listing.row < flow.maxRows
-                    }
-                }
+                            function filterAcceptsRow (index) {
+                                var listing = sourceModel.get(index)
+                                return listing.row >= flow.maxRows
+                            }
+                        }
 
-                SGSortFilterProxyModel {
-                    id: remainingButtons
-                    sourceModel: segmentsCategories
-                    invokeCustomFilter: true
+                        Component {
+                            id: iconDelegate
 
-                    function filterAcceptsRow (index) {
-                        var listing = sourceModel.get(index)
-                        return listing.row >= flow.maxRows
+                            PlatformFilterButton { }
+                        }
                     }
                 }
 
                 SGText {
                     id: remainingText
                     visible: remainingButtons.count > 0
-                    text: "And " + remainingButtons.count + " more..."
-                    Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
+                    text: model.show_overflow_buttons ? "Show less..." : "Show " + remainingButtons.count + " more..."
+                    Layout.alignment: Qt.AlignHCenter
                     font.underline: moreFiltersMouse.containsMouse
 
                     MouseArea {
                         id: moreFiltersMouse
-                        anchors {
-                            fill: parent
-                        }
+                        anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:  {
-                            filterOverFlow.open()
+                        onClicked: {
+                            model.show_overflow_buttons = !model.show_overflow_buttons
+                            visibleButtons.invalidate()
+                            root.updateIndex()
                         }
                     }
-
-                    Popup {
-                        id: filterOverFlow
-                        padding: 0
-                        x: -remainingText.Layout.leftMargin
-                        width: segmentCategoryList.width
-                        background: Rectangle {
-                            color: isCurrentItem ? "#eee" : "white"
-                        }
-
-                        ColumnLayout {
-                            width: parent.width
-
-                            Repeater {
-                                id: overflowRepeater
-                                model: remainingButtons
-                                delegate: iconDelegate
-                            }
-                        }
-                    }
-                }
-
-                Component {
-                    id: iconDelegate
-
-                    PlatformFilterButton { }
                 }
             }
 
@@ -322,7 +346,7 @@ Item {
                 ColumnLayout {
                     id: buttonColumn
                     Layout.fillHeight: false
-                    visible: platformControlsColumn.comingSoon === false
+                    visible: model.program_controller === false && platformControlsColumn.comingSoon === false
 
                     function openView(view) {
                         var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
@@ -332,6 +356,8 @@ Item {
                         }
                         let data = {
                             "device_id": model.device_id,
+                            "controller_class_id": model.controller_class_id,
+                            "is_assisted": model.is_assisted,
                             "class_id": model.class_id,
                             "name": model.verbose_name,
                             "index": sourceIndex,
@@ -348,6 +374,7 @@ Item {
                         id: openControls
                         text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
                         buttonEnabled: model.connected && model.available.control
+
                         toolTipText: {
                             if (model.connected && model.available.control === false) {
                                 return "No control software found"
@@ -358,7 +385,15 @@ Item {
                             return "Hardware not connected"
                         }
 
-                        onClicked: {
+                        onClicked: controlButtonClicked()
+
+                        Accessible.role: Accessible.Button
+                        Accessible.name: buttonEnabled ? "HwControlsEnabled" : "HwControlsDisabled"
+                        Accessible.description: "'Hardware Controls' helper for automated GUI testing."
+                        Accessible.onPressAction: controlButtonClicked()
+
+                        function controlButtonClicked() {
+                            root.updateIndex()
                             buttonColumn.openView("control")
                         }
                     }
@@ -370,6 +405,7 @@ Item {
                         toolTipText: buttonEnabled ? "" : "No documentation found"
 
                         onClicked: {
+                            root.updateIndex()
                             buttonColumn.openView("collateral")
                         }
                     }
@@ -380,10 +416,22 @@ Item {
                         buttonEnabled: model.available.order
 
                         onClicked: {
+                            root.updateIndex()
                             Qt.openUrlExternally(sdsModel.urls.salesPopupUrl)
                         }
                     }
                 }
+            }
+
+            SGCircularProgress {
+                id: circularProgress
+                Layout.preferredWidth: 100
+                Layout.preferredHeight: 100
+                Layout.alignment: Qt.AlignCenter
+
+                visible: model.program_controller
+                value: model.program_controller_progress
+                highlightColor: Theme.palette.orange
             }
         }
     }
@@ -397,5 +445,9 @@ Item {
             horizontalCenter: root.horizontalCenter
         }
         width: parent.width
+    }
+
+    function updateIndex() {
+        PlatformSelection.platformSelectorModel.currentIndex = index
     }
 }

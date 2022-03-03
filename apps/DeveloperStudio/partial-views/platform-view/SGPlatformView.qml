@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
@@ -11,14 +19,15 @@ import QtQuick.Controls 2.12
 
 StackLayout {
     id: platformStack
+
     currentIndex: {
         switch (model.view) {
-        case "collateral":
-            return 1
-        case "settings":
-            return 2
-        default: // case "control":
-            return 0
+            case "collateral":
+                return 1
+            case "settings":
+                return 2
+            default: // case "control":
+                return 0
         }
     }
 
@@ -27,18 +36,29 @@ StackLayout {
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
     property string name: model.name
-    property alias controlViewContainer: controlViewContainer
     property string view: model.view
-
+    property alias controlViewContainer: controlViewContainer
+    property bool controlViewIsOutOfDate: false
+    property bool firmwareIsOutOfDate: false
     property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
+    property string controller_class_id: model.controller_class_id
+    property bool is_assisted: model.is_assisted
     property bool fullyInitialized: platformStackInitialized &&
                                     userSettingsInitialized &&
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
-    property string notificationUUID: ""
+    property string documentNotificationUUID: ""
+    property string updateNotificationUUID: ""
+    readonly property bool platformOutOfDate: controlViewIsOutOfDate || firmwareIsOutOfDate
+
+    onPlatformOutOfDateChanged: {
+        // Both of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' can be changed right after each other,
+        // so we need to use 'Qt.callLater' for showing proper notification.
+        Qt.callLater(launchOutOfDateNotificationLater)
+    }
 
     onFullyInitializedChanged: {
         initialize()
@@ -60,8 +80,11 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
-        if(notificationUUID !== ""){
-            Notifications.destroyNotification(notificationUUID)
+        if(documentNotificationUUID !== ""){
+            Notifications.destroyNotification(documentNotificationUUID)
+        }
+        if(updateNotificationUUID !== ""){
+            Notifications.destroyNotification(updateNotificationUUID)
         }
     }
 
@@ -74,6 +97,10 @@ StackLayout {
                 controlViewContainer.removeControl()
             }
         }
+    }
+
+    function openSettings() {
+        model.view = "settings"
     }
 
     ControlViewContainer {
@@ -129,7 +156,7 @@ StackLayout {
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
-              notificationUUID = Notifications.createNotification(
+              documentNotificationUUID = Notifications.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",
@@ -150,6 +177,63 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
+
+        PlatformSettings {
+            id: platformSettings
+        }
+    }
+
+    Action {
+        id: close
+        text: "Ok"
+        onTriggered: {}
+    }
+
+    Action {
+        id: disableNotifyOnFirmwareUpdate
+        text: "Disable notifications for platform updates"
+        onTriggered: {
+            NavigationControl.userSettings.notifyOnFirmwareUpdate = false
+            NavigationControl.userSettings.saveSettings()
+        }
+    }
+
+    Action {
+        id: goToSettings
+        text: "Go to settings"
+        onTriggered: {
+            openSettings()
+        }
+    }
+
+    // We need this helper function - it takes values of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' at time when it is executed,
+    // 'Qt.callLater' takes values of its parameters at time when it is called (and not when called function is executed).
+    function launchOutOfDateNotificationLater() {
+        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
+    }
+
+    function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){
+        if((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && model.view !== "settings" && platformStack.visible){
+            var description = ""
+            if(firmwareOutOfDate && controlViewOutOfDate){
+                description = "Newer versions of firmware and software are available."
+            } else if(firmwareOutOfDate){
+                description = "A newer version of firmware is available."
+            } else{
+                description = "A newer version of software is available."
+            }
+
+           updateNotificationUUID = Notifications.createNotification("Update available",
+                                                Notifications.Info,
+                                                "current",
+                                                {
+                                                    "description": description,
+                                                    "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                                                    "actions": [close,goToSettings,disableNotifyOnFirmwareUpdate],
+                                                    "timeout": 0
+                                                }
+                                             )
+        }
     }
 
     SGUserSettings {

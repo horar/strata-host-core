@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "CmdStartApplication.h"
 #include "PlatformCommandConstants.h"
 
@@ -30,7 +38,7 @@ bool CmdStartApplication::processNotification(const rapidjson::Document& doc, Co
             setDeviceBootloaderMode(false);
         } else {
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Nothing to start, board has no valid firmware.";
+                qCWarning(lcPlatformCommand) << platform_ << "Nothing to start, board has no valid firmware.";
                 result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             }

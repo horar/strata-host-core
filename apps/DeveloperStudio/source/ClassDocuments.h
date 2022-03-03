@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #ifndef CLASSDOCUMENTS_H
 #define CLASSDOCUMENTS_H
 
@@ -6,10 +14,14 @@
 #include <QString>
 #include <QDebug>
 #include <QJsonObject>
-#include <PlatformInterface/core/CoreInterface.h>
 #include "DownloadDocumentListModel.h"
 #include <DocumentListModel.h>
 #include <VersionedListModel.h>
+
+namespace strata::strataRPC
+{
+class StrataClient;
+}
 
 class ClassDocuments : public QObject
 {
@@ -29,7 +41,8 @@ class ClassDocuments : public QObject
 
 
 public:
-    explicit ClassDocuments(QString classId, CoreInterface *coreInterface, QObject *parent = nullptr);
+    explicit ClassDocuments(QString classId, strata::strataRPC::StrataClient* strataClient,
+                            CoreInterface* coreInterface, QObject* parent = nullptr);
 
     DownloadDocumentListModel* downloadDocumentListModel();
     DocumentListModel* datasheetListModel();
@@ -62,7 +75,7 @@ private slots:
 
 private:
     QString classId_;
-    CoreInterface *coreInterface_;
+    strata::strataRPC::StrataClient *strataClient_;
     DownloadDocumentListModel downloadDocumentModel_;
     DocumentListModel datasheetModel_;
     DocumentListModel pdfModel_;

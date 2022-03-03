@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
@@ -15,7 +23,7 @@ Item {
     id: openProjectContainer
 
     property url url
-    property string configFileName: "previousProjects.json"
+    readonly property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     property alias projectContainer: openProjectContainer
 
@@ -36,7 +44,7 @@ Item {
     }
 
     function openProject(filepath, inRecentProjects) {
-        const path = filepath.trim();
+        const path = filepath.trim()
 
         if (projectFileMissing(path, inRecentProjects)) {
             return
@@ -46,13 +54,10 @@ Item {
         }
 
         openProjectContainer.url = path
-        if (inRecentProjects === false) {
-            addToTheProjectList(path)
-        }
         viewStack.currentIndex = 1 // switch to edit view
         controlViewCreatorRoot.projectInitialization = true
-        controlViewCreatorRoot.recompileControlViewQrc();
-
+        addToTheProjectList(controlViewCreatorRoot.projectName, path)
+        controlViewCreatorRoot.recompileControlViewQrc()
         fileOutput.text = ""
     }
 
@@ -65,24 +70,24 @@ Item {
         }
 
         if (!SGUtilsCpp.exists(localFile)) {
-            console.warn("Tried to open non-existent Qrc file/project")
+            console.warn("Tried to open non-existent QRC file/project")
             if (alertMessage.visible) {
                 alertMessage.Layout.preferredHeight = 0
             }
             if (inRecentProjects) {
-                alertMessage.text = "Qrc file does not exist anymore. Removed from your recent projects."
+                alertMessage.text = "QRC file does not exist anymore. Removed from your recent projects."
                 removeFromProjectList(filepath)
             } else {
-                alertMessage.text = "Cannot open project. Qrc file does not exist."
+                alertMessage.text = "Cannot open project. QRC file does not exist."
             }
             alertMessage.show()
-            return true;
+            return true
         }
 
         return false
     }
 
-    function unsavedFilesExist(path, inRecentProjects){
+    function unsavedFilesExist(path, inRecentProjects) {
         let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
         if (unsavedFileCount > 0 && openProjectContainer.url.toString() !== path) {
             if (!controlViewCreatorRoot.isConfirmCloseOpen) {
@@ -99,24 +104,32 @@ Item {
     }
 
     function saveSettings() {
-        sgUserSettings.writeFile(configFileName, previousFileURL);
+        sgUserSettings.writeFile(configFileName, previousFileURL)
     }
 
     function loadSettings() {
         let config = sgUserSettings.readFile(configFileName)
         var projectsList  = JSON.parse(JSON.stringify(config))
-        if(projectsList.projects) {
+
+        if (projectsList.projects) {
             for (var i = 0; i < projectsList.projects.length; ++i) {
-                previousFileURL.projects.push(projectsList.projects[i])
-                listModelForUrl.append({ url: previousFileURL.projects[i] })
+                if (projectsList.projects[i].hasOwnProperty("name") && projectsList.projects[i].hasOwnProperty("url")) {
+                    previousFileURL.projects.push({ name: projectsList.projects[i].name, url: projectsList.projects[i].url })
+                    listModelForUrl.append({ name: previousFileURL.projects[i].name, url: previousFileURL.projects[i].url })
+                } else {
+                    previousFileURL.projects.push({ name: "", url: projectsList.projects[i] })
+                    listModelForUrl.append({ name: "", url: projectsList.projects[i] })
+                }
             }
         }
     }
 
-    function addToTheProjectList (fileUrl) {
+    function addToTheProjectList(projectName, fileUrl) {
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
-            if (previousFileURL.projects[i] === fileUrl) {
-                return
+            if (previousFileURL.projects[i].url === fileUrl) {
+                listModelForUrl.remove(i)
+                previousFileURL.projects.splice(i, 1)
+                break
             }
         }
 
@@ -124,20 +137,41 @@ Item {
             previousFileURL.projects.pop()
             listModelForUrl.remove(listModelForUrl.count - 1)
         }
-        previousFileURL.projects.unshift(fileUrl)
-        listModelForUrl.insert(0,{ url: fileUrl })
+
+        previousFileURL.projects.unshift({ name: projectName, url: fileUrl })
+        listModelForUrl.insert(0, { name: projectName, url: fileUrl })
         saveSettings()
     }
 
     function removeFromProjectList(fileUrl) {
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
-            if (previousFileURL.projects[i] === fileUrl) {
+            if (previousFileURL.projects[i].url === fileUrl) {
                 listModelForUrl.remove(i)
-                previousFileURL.projects.splice(i,1)
+                previousFileURL.projects.splice(i, 1)
                 saveSettings()
                 return
             }
         }
+    }
+
+    // Grabs the most recent project from the fileUrl array
+    // goes up two directories in order to be in the directory the project was created in
+    // if there are no recent projects, the home folder is used
+    function fileDialogFolder() {
+        const project = previousFileURL.projects[0]
+        if (project === undefined || project.url === undefined) {
+            return fileDialog.shortcuts.home
+        }
+
+        let projectDir = project.url
+        if (SGUtilsCpp.isValidFile(projectDir)) {
+            projectDir = SGUtilsCpp.urlToLocalFile(projectDir)
+            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+            projectDir = SGUtilsCpp.parentDirectoryPath(projectDir)
+            projectDir = SGUtilsCpp.pathToUrl(projectDir) // convert back to url for fileDialog.folder
+            return projectDir
+        }
+        return fileDialog.shortcuts.home
     }
 
     ColumnLayout {
@@ -159,7 +193,7 @@ Item {
             color: "#666"
             fontSizeMultiplier: 1.25
             text: "Recent Projects:"
-            visible: (listModelForUrl.count > 0) ? true : false
+            visible: listModelForUrl.count > 0
         }
 
         ListView {
@@ -180,7 +214,7 @@ Item {
                 id: projectUrlContainer
                 implicitHeight: 40
                 width: listView.width
-                color: removeProjectMenu.opened  ? "#aaa" : urlMouseArea.containsMouse ? "#eee" : "#ddd"
+                color: removeProjectMenu.opened ? "#aaa" : urlMouseArea.containsMouse ? "#eee" : "#ddd"
 
                 RowLayout {
                     id: row
@@ -190,14 +224,14 @@ Item {
                     }
 
                     SGIcon {
-                        Layout.preferredHeight: projectUrlContainer.height*.5
+                        Layout.preferredHeight: projectUrlContainer.height * .5
                         Layout.preferredWidth: Layout.preferredHeight
                         source: "qrc:/sgimages/file-blank.svg"
                     }
 
                     SGText {
                         Layout.fillWidth: true
-                        text: SGUtilsCpp.urlToLocalFile(model.url)
+                        text: (model.name ? ("<b>" + model.name + "</b> - ") : "") + SGUtilsCpp.urlToLocalFile(model.url)
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
@@ -213,15 +247,15 @@ Item {
                         var result = 0;
                         var padding = 0;
                         for (var i = 0; i < count; ++i) {
-                            var item = itemAt(i);
-                            result = Math.max(item.contentItem.implicitWidth, result);
-                            padding = Math.max(item.padding, padding);
+                            var item = itemAt(i)
+                            result = Math.max(item.contentItem.implicitWidth, result)
+                            padding = Math.max(item.padding, padding)
                         }
-                        return result + padding * 2;
+                        return result + padding * 2
                     }
 
                     MenuItem {
-                        text: "Remove Projects From Recent Project"
+                        text: "Remove Project From Recent Projects"
                         onTriggered: {
                             removeFromProjectList(model.url)
                         }
@@ -269,6 +303,7 @@ Item {
                 text: "Browse"
 
                 onClicked: {
+                    fileDialog.folder = fileDialogFolder()
                     fileDialog.open()
                 }
             }

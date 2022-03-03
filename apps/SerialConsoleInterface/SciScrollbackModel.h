@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <QAbstractListModel>
@@ -28,8 +36,9 @@ public:
     virtual ~SciScrollbackModel() override;
 
     enum ModelRole {
-        MessageRole = Qt::UserRole,
-        RawMessageRole,
+        RawMessageRole = Qt::UserRole,
+        CondensedMessageRole,
+        ExpandedMessageRole,
         TypeRole,
         TimestampRole,
         IsCondensedRole,
@@ -37,7 +46,7 @@ public:
         ValueRole,
     };
 
-    enum class MessageType {
+    enum MessageType {
         Request,
         UnknownReply,
         NotificationReply,
@@ -105,8 +114,9 @@ private:
 };
 
 struct ScrollbackModelItem {
-    QString message;
     QString rawMessage;
+    QString condensedMessage;
+    QString expandedMessage;
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
     bool isCondensed;

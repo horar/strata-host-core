@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQml 2.12
 import QtQml.StateMachine 1.12 as DSM
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -35,12 +43,16 @@ BaseStateMachine {
         } else if (stateLoopSucceedActive) {
             t = "Device registered as platform " + opn.toUpperCase() + "\n\n"
             t += "You can unplug device now\n\n"
-            t += "To program another device, simply plug it in and process will start automatically\n\n"
+            t += "To program another device, simply plug it in and process will start automatically\n"
             t += "or press End to finish current session"
         } else if (stateLoopFailedActive) {
             t = internalSubtext
             t += "\n\n"
-            t += "Unplug device and press Continue"
+            if (prtModel.deviceCount === 0) {
+                t += "Press Continue"
+            } else {
+                t += "Unplug device and press Continue"
+            }
         } else if (stateErrorActive) {
             t = internalSubtext
         }
@@ -50,9 +62,9 @@ BaseStateMachine {
 
     property QtObject prtModel
     property QtObject jLinkConnector
-
     property QtObject breakButton
     property QtObject continueButton
+    property QtObject taskbarButton
 
     property string jlinkExePath: ""
 
@@ -84,6 +96,9 @@ BaseStateMachine {
 
         onEntered: {
             prtModel.clearBinaries();
+            taskbarButton.progress.resume()
+            taskbarButton.progress.show()
+            continueButton.visible = false
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
@@ -184,6 +199,9 @@ BaseStateMachine {
             id: stateCheckDeviceCount
             onEntered: {
                 stateMachine.statusText = "Waiting for device to connect"
+                taskbarButton.progress.resume()
+                taskbarButton.progress.pause()
+                taskbarButton.progress.show()
 
                 console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
@@ -293,6 +311,7 @@ BaseStateMachine {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
                 stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
+                taskbarButton.progress.resume()
 
                 console.debug(Logger.prtCategory, "bootloader about to be programmed")
 
@@ -316,7 +335,7 @@ BaseStateMachine {
             }
 
             DSM.SignalTransition {
-                targetState: stateProgramFirmware
+                targetState: stateValidateBootloader
                 signal: jLinkConnector.programBoardProcessFinished
                 guard: exitedNormally
             }
@@ -328,6 +347,31 @@ BaseStateMachine {
                 onTriggered: {
                     stateMachine.internalSubtext = "JLink process failed"
                     console.error(Logger.prtCategory, "jlink process failed")
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateValidateBootloader
+
+            onEntered: {
+                console.debug(Logger.prtCategory, "programmed bootloader about to be validated")
+                prtModel.identifyBootloader()
+            }
+
+            DSM.SignalTransition {
+                targetState: stateProgramFirmware
+                signal: prtModel.identifyBootloaderFinished
+                guard: errorString.length === 0
+            }
+
+            DSM.SignalTransition {
+                targetState: stateLoopFailed
+                signal: prtModel.identifyBootloaderFinished
+                guard: errorString.length > 0
+                onTriggered: {
+                    stateMachine.internalSubtext = "Programmed bootloader not valid"
+                    console.error(Logger.prtCategory, "programmed bootloader not valid.")
                 }
             }
         }
@@ -509,6 +553,7 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Platform Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
@@ -521,12 +566,31 @@ BaseStateMachine {
         id: stateLoopFailed
 
         onEntered: {
-            stateMachine.statusText = "Registration Failed"
+            stateMachine.statusText = "Platform Registration Failed"
+            taskbarButton.progress.stop()
+            continueButton.visible = true
+        }
+
+        onExited: {
+            continueButton.visible = false
+        }
+
+        Binding {
+            target: continueButton
+            property: "enabled"
+            value: prtModel.deviceCount === 0
+            when: stateLoopFailed.active
         }
 
         DSM.SignalTransition {
-            targetState: stateWaitForDevice
+            targetState: stateCheckDevice
             signal: continueButton.clicked
+            guard: prtModel.deviceCount === 0
+        }
+
+        DSM.SignalTransition {
+            targetState: exitState
+            signal: breakButton.clicked
         }
     }
 
@@ -534,8 +598,10 @@ BaseStateMachine {
         id: stateLoopSucceed
 
         onEntered: {
-            stateMachine.statusText = "Registration Successful"
+            stateMachine.statusText = "Platform Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
+            taskbarButton.progress.hide()
+            taskbarButton.progress.reset()
         }
 
         DSM.SignalTransition {
@@ -552,6 +618,8 @@ BaseStateMachine {
     DSM.FinalState {
         id: exitState
         onEntered: {
+            taskbarButton.progress.hide()
+            taskbarButton.progress.resume()
             stateMachine.exitWizardRequested()
         }
     }

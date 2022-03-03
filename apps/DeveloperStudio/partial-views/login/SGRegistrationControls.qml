@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
@@ -139,7 +147,9 @@ Item {
                     if (valid) {
                         passReqsPopup.close()
                     } else {
-                        passReqsPopup.openPopup()
+                        if (passReqsPopup.acquiredFocus) {
+                            passReqsPopup.openPopup()
+                        }
                     }
                 }
             }
@@ -277,7 +287,6 @@ Item {
 
                 function pressRegisterButton() {
                     registerButton.clicked()
-
                 }
 
                 onClicked: {
@@ -294,13 +303,6 @@ Item {
                     }
                     registrationStatus.currentId = Registration.getNextId()
                     Registration.register(register_info)
-                }
-
-                MouseArea {
-                    id: registerButtonMouse
-                    anchors.fill: registerButton
-                    onPressed:  mouse.accepted = false
-                    cursorShape: Qt.PointingHandCursor
                 }
 
                 ToolTip {
@@ -332,15 +334,19 @@ Item {
                         }
                         return result
                     }
-                    visible: registerToolTipShow.containsMouse && !registerButton.enabled
+                    visible: registerButtonMouse.containsMouse &&
+                             registerButton.enabled === false &&
+                             alertRect.running === false
                 }
             }
 
             MouseArea {
-                id: registerToolTipShow
+                id: registerButtonMouse
                 anchors.fill: registerButton
+                onPressed:  mouse.accepted = false
+                cursorShape: registerButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 hoverEnabled: true
-                visible: !registerButton.enabled
+                visible: alertRect.running === false
             }
         }
     }

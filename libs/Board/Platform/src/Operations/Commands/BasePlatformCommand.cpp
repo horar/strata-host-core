@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "BasePlatformCommand.h"
 
 #include "PlatformCommandConstants.h"
@@ -45,9 +53,9 @@ void BasePlatformCommand::sendCommand(quintptr lockId)
 
     QString logMsg(QStringLiteral("Sending '") + cmdName_ + QStringLiteral("' command."));
     if (this->logSendMessage()) {
-        qCInfo(logCategoryPlatformCommand) << platform_ << logMsg;
+        qCInfo(lcPlatformCommand) << platform_ << logMsg;
     } else {
-        qCDebug(logCategoryPlatformCommand) << platform_ << logMsg;
+        qCDebug(lcPlatformCommand) << platform_ << logMsg;
     }
 
     ackOk_ = false;  // "ok" ACK for this command
@@ -111,7 +119,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
     if (json.HasMember(JSON_ACK)) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, json)) {
             const QString ackStr = json[JSON_ACK].GetString();
-            qCDebug(logCategoryPlatformCommand) << platform_ << "Received '" << ackStr << "' ACK.";
+            qCDebug(lcPlatformCommand) << platform_ << "Received '" << ackStr << "' ACK.";
             const rapidjson::Value& payload = json[JSON_PAYLOAD];
 
             ackOk_ = payload[JSON_RETURN_VALUE].GetBool();
@@ -122,15 +130,15 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                     responseTimer_.setInterval(notificationTimeout_);
                     responseTimer_.start();
                 } else {
-                    qCWarning(logCategoryPlatformCommand) << platform_ << "ACK for '" << cmdName_ << "' command is not OK: '"
+                    qCWarning(lcPlatformCommand) << platform_ << "ACK for '" << cmdName_ << "' command is not OK: '"
                                                           << payload[JSON_RETURN_STRING].GetString() << "'.";
                     // ACK is not 'ok' - command is rejected by device
                     finishCommand(this->onReject());
                 }
             } else {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Received wrong ACK. Expected '" << cmdName_ << "', got '" << ackStr << "'.";
+                qCWarning(lcPlatformCommand) << platform_ << "Received wrong ACK. Expected '" << cmdName_ << "', got '" << ackStr << "'.";
                 if (ackOk_ == false) {
-                    qCWarning(logCategoryPlatformCommand) << platform_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                    qCWarning(lcPlatformCommand) << platform_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
                 }
             }
         } else {
@@ -145,22 +153,22 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
         if (this->processNotification(json, result)) {
             responseTimer_.stop();
 
-            qCDebug(logCategoryPlatformCommand) << platform_ << "Processed '" << cmdName_ << "' notification.";
+            qCDebug(lcPlatformCommand) << platform_ << "Processed '" << cmdName_ << "' notification.";
 
             if (ackOk_) {
                 if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
                     if (result == CommandResult::Failure) {
-                        qCWarning(logCategoryPlatformCommand) << platform_ << "Received faulty notification: '" << message.raw() << "'.";
+                        qCWarning(lcPlatformCommand) << platform_ << "Received faulty notification: '" << message.raw() << "'.";
                     }
 
                     const QByteArray status = CommandValidator::notificationStatus(json);
                     if (status.isEmpty() == false) {
-                        qCInfo(logCategoryPlatformCommand) << platform_ << "Command '" << cmdName_ << "' returned '" << status << "'.";
+                        qCInfo(lcPlatformCommand) << platform_ << "Command '" << cmdName_ << "' returned '" << status << "'.";
                     }
                 }
                 finishCommand(result);
             } else {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Received notification without previous ACK.";
+                qCWarning(lcPlatformCommand) << platform_ << "Received notification without previous ACK.";
                 finishCommand(CommandResult::MissingAck);
             }
         } else {
@@ -176,7 +184,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
 void BasePlatformCommand::handleResponseTimeout()
 {
     if (cmdType_ != CommandType::Wait) {
-        qCWarning(logCategoryPlatformCommand) << platform_ << "Command '" << cmdName_ << "' timed out.";
+        qCWarning(lcPlatformCommand) << platform_ << "Command '" << cmdName_ << "' timed out.";
     }
     finishCommand(this->onTimeout());
 }
@@ -186,7 +194,7 @@ void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, unsigned msgN
     Q_UNUSED(rawMessage)
     if ((errStr.isEmpty() == false) && (msgNumber == lastMsgNumber_)) {
         responseTimer_.stop();
-        qCCritical(logCategoryPlatformCommand) << platform_ << QStringLiteral("Cannot send '")
+        qCCritical(lcPlatformCommand) << platform_ << QStringLiteral("Cannot send '")
             << cmdName_ << QStringLiteral("' command. Error: '") << errStr << '\'';
         finishCommand(CommandResult::Unsent);
     }
@@ -199,7 +207,7 @@ void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, Q
     }
 
     responseTimer_.stop();
-    qCCritical(logCategoryPlatformCommand) << platform_ << "Error: " << errStr;
+    qCCritical(lcPlatformCommand) << platform_ << "Error: " << errStr;
 
     if (errCode == device::Device::ErrorCode::DeviceDisconnected) {
         finishCommand(CommandResult::DeviceDisconnected);
@@ -224,7 +232,7 @@ void BasePlatformCommand::finishCommand(CommandResult result)
 
 void BasePlatformCommand::logWrongResponse(const PlatformMessage& message)
 {
-    qCWarning(logCategoryPlatformCommand) << platform_ << "Received wrong, unexpected or malformed response: '" << message.raw() << "'.";
+    qCWarning(lcPlatformCommand) << platform_ << "Received wrong, unexpected or malformed response: '" << message.raw() << "'.";
 }
 
 void BasePlatformCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {

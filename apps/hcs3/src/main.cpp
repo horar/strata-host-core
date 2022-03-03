@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "HostControllerService.h"
 
 #include "Version.h"
@@ -8,8 +16,8 @@
 
 #include "logging/LoggingQtCategories.h"
 
+#include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
-
 #include <CbLoggerSetup.h>
 
 #include <QCoreApplication>
@@ -22,12 +30,17 @@
 #include "unix/SignalHandlers.h"
 #endif
 
+using strata::loggers::QtLoggerSetup;
+using strata::loggers::cbLoggerSetup;
+
+namespace logConsts = strata::loggers::constants;
+
 int main(int argc, char *argv[])
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setApplicationName(QStringLiteral("Host Controller Service"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
 
     QCoreApplication app(argc, argv);
 
@@ -72,7 +85,7 @@ int main(int argc, char *argv[])
                 qInfo() << i;
             }
             return EXIT_FAILURE;
-        } 
+        }
         else if (stageArgs.count() > 1) {
             qWarning() << "Too many arguments were entered";
             return EXIT_FAILURE;
@@ -97,20 +110,25 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
+    const QtLoggerSetup loggerInitialization(app);
+    cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
-    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
-    qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
-    qCInfo(logCategoryHcs) << QStringLiteral("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
-    qCInfo(logCategoryHcs) << QStringLiteral("--------------------------------------------------------------------------------");
-    qCInfo(logCategoryHcs) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
-    qCInfo(logCategoryHcs) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
-    qCInfo(logCategoryHcs) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
-    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
+    qCInfo(lcHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcHcs) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcHcs) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(lcHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
+    qCInfo(lcHcs) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(lcHcs) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    if (QSslSocket::supportsSsl()) {
+        qCInfo(lcHcs) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
+    } else {
+        qCCritical(lcHcs) << QString("No SSL support!!");
+    }
+    qCInfo(lcHcs) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(lcHcs) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     if (appGuard.tryToRun() == false) {
-        qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
+        qCCritical(lcHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
         return EXIT_FAILURE + 1; // LC: todo..
     }
 
@@ -120,7 +138,7 @@ int main(int argc, char *argv[])
         bool ok = true;
         hcsIdentifier = hcsStringIdentifier.toUInt(&ok);
         if (ok == false) {
-            qCCritical(logCategoryHcs) << QStringLiteral("Non-numerical identifier provided:") << hcsStringIdentifier;
+            qCCritical(lcHcs) << QStringLiteral("Non-numerical identifier provided:") << hcsStringIdentifier;
             return EXIT_FAILURE;
         }
     }

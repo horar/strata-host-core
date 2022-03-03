@@ -1,8 +1,18 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <PlatformManager.h>
 #include <Mock/MockDevice.h>
 #include "SciModel.h"
-#include "Version.h"
 #include "HexModel.h"
+
+#include "Version.h"
+#include "Timestamp.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -12,8 +22,27 @@
 #include <QDir>
 #include <QtWebEngine>
 
+#include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
+
 #include "logging/LoggingQtCategories.h"
+
+using strata::loggers::QtLoggerSetup;
+
+namespace logConsts = strata::loggers::constants;
+static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+
+    QJSValue appInfo = scriptEngine->newObject();
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("buildId", AppInfo::buildId.data());
+    appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
+    appInfo.setProperty("countOfCommits", AppInfo::countOfCommits.data());
+    appInfo.setProperty("stageOfDevelopment", AppInfo::stageOfDevelopment.data());
+    appInfo.setProperty("fullVersion", AppInfo::version.data());
+    return appInfo;
+}
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -33,7 +62,7 @@ void loadResources() {
     for (const auto& resourceName : resources) {
         QString resourcePath = applicationDir.filePath(resourceName);
 
-        qCInfo(logCategorySci)
+        qCInfo(lcSci)
                 << "Loading"
                 << resourceName << ":"
                 << QResource::registerResource(resourcePath);
@@ -52,7 +81,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
     bool status = applicationDir.cd("imports");
     if (status == false) {
-        qCCritical(logCategorySci) << "failed to find import path.";
+        qCCritical(lcSci) << "failed to find import path.";
     }
 
     engine->addImportPath(applicationDir.path());
@@ -64,7 +93,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setOrganizationName(QStringLiteral("onsemi"));
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
@@ -72,8 +101,20 @@ int main(int argc, char *argv[])
 
     QtWebEngine::initialize();
 
-    const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategorySci) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    const QtLoggerSetup loggerInitialization(app);
+    qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
+    qCInfo(lcSci) << QString("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
+    qCInfo(lcSci) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
+    qCInfo(lcSci) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(lcSci) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    if (QSslSocket::supportsSsl()) {
+        qCInfo(lcSci) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
+    } else {
+        qCCritical(lcSci) << QString("No SSL support!!");
+    }
+    qCInfo(lcSci) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
     qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "cannot instantiate SciModel in qml");
     qmlRegisterUncreatableType<SciPlatformModel>("tech.strata.sci", 1, 0, "SciPlatformModel", "cannot instantiate SciPlatformModel in qml");
@@ -81,6 +122,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciScrollbackModel>("tech.strata.sci", 1, 0, "SciScrollbackModel", "cannot instantiate SciScrollbackModel in qml");
     qmlRegisterUncreatableType<SciCommandHistoryModel>("tech.strata.sci", 1, 0, "SciCommandHistoryModel", "cannot instantiate SciCommandHistoryModel in qml");
     qmlRegisterUncreatableType<SciFilterSuggestionModel>("tech.strata.sci", 1, 0, "SciFilterSuggestionModel", "cannot instantiate SciFilterSuggestionModel in qml");
+    qmlRegisterUncreatableType<SciFilterScrollbackModel>("tech.strata.sci", 1, 0, "SciFilterScrollbackModel", "cannot instantiate SciFilterScrollbackModel in qml");
+    qmlRegisterUncreatableType<SciSearchScrollbackModel>("tech.strata.sci", 1, 0, "SciSearchScrollbackModel", "cannot instantiate SciSearchScrollbackModel in qml");
+    qmlRegisterUncreatableType<SciMessageQueueModel>("tech.strata.sci", 1, 0, "SciMessageQueueModel", "cannot instantiate SciMessageQueueModel in qml");
     qmlRegisterUncreatableType<strata::PlatformManager>("tech.strata.sci", 1, 0, "PlatformManager", "can not instantiate PlatformManager in qml");
     qmlRegisterUncreatableType<SciMockDeviceModel>("tech.strata.sci", 1, 0, "SciMockDeviceModel", "cannot instantiate SciMockDeviceModel in qml");
     qmlRegisterUncreatableType<SciMockCommandModel>("tech.strata.sci", 1, 0, "SciMockCommandModel", "cannot instantiate SciMockCommandModel in qml");
@@ -100,6 +144,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<strata::FlasherConnector::Result>();
 
     qmlRegisterType<HexModel>("tech.strata.sci", 1, 0, "HexModel");
+    qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     loadResources();
 
@@ -114,7 +159,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategorySci) << "engine failed to load 'main' qml file; quitting...";
+        qCCritical(lcSci) << "engine failed to load 'main' qml file; quitting...";
         return -1;
     }
 

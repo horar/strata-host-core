@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 .pragma library
 
 .import "restclient.js" as Rest
@@ -12,17 +20,24 @@ var initialized = false
 /*
   Settings: Store/retrieve login information
 */
-var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+const settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+const userSettings = Qt.createQmlObject(`import tech.strata.commoncpp 1.0; SGUserSettings {classId: "general-settings";}`, Qt.application, "SGUserSettings")
 
 /*
   Login: Send information to server
 */
-function login(login_info){
+function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
+
+    userSettings.user = login_info.user
+    const anonymousSettings = userSettings.readFile("general-settings.json")
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
+    }
+    if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
+        headers.anonymous = 1
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -201,6 +216,7 @@ function register(registration_info){
         "title": registration_info.title,
         "company": registration_info.company
     };
+
     Rest.xhr("post", "signup", data, register_result, register_error, null)
 
     /*
@@ -506,14 +522,21 @@ function change_password_result(response) {
 */
 function validate_token()
 {
-    if (Rest.jwt !== ""){
+    if (Rest.jwt !== "" && settings.user !== ""){
+        userSettings.user = settings.user
+        const anonymousSettings = userSettings.readFile("general-settings.json")
+
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
         }
+        if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
+            headers.anonymous = 1
+        }
+
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate, or no username saved")
     }
 
     /*
@@ -563,7 +586,7 @@ function set_token (token) {
     Rest.jwt = token
 }
 
-function getNextId(){
+function getNextId() {
    return Rest.getNextRequestId();
 }
 

@@ -1,3 +1,11 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
 project(SerialConsoleInterface
     DESCRIPTION "Serial Console Interface"
     LANGUAGES CXX
@@ -6,7 +14,7 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -31,6 +39,9 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciMockResponseModel.cpp
     SciMockVersionModel.cpp
     HexModel.cpp
+    SciFilterScrollbackModel.cpp
+    SciSearchScrollbackModel.cpp
+    SciMessageQueueModel.cpp
     qml.qrc
     images/images.qrc
 
@@ -39,6 +50,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 )
 
 generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)
+generate_app_build_timestamp()
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
@@ -60,6 +72,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGUtilsCpp
     strata::SGJsonSyntaxHighlighter
     strata::SGTextHighlighter
+    strata::SGSortFilterProxyModel
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

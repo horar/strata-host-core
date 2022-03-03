@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Operations/BasePlatformOperation.h>
 #include <PlatformOperationsStatus.h>
 
@@ -21,35 +29,35 @@ BasePlatformOperation::BasePlatformOperation(const PlatformPtr& platform, Type t
 {
     connect(this, &BasePlatformOperation::sendCommand, this, &BasePlatformOperation::handleSendCommand, Qt::QueuedConnection);
 
-    //qCDebug(logCategoryPlatformOperation) << platform_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(lcPlatformOperation) << platform_ << "Created new platform operation (" << static_cast<int>(type_) << ").";
 }
 
 BasePlatformOperation::~BasePlatformOperation()
 {
     platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
-    //qCDebug(logCategoryPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(lcPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
 }
 
 void BasePlatformOperation::run()
 {
     if (platform_->deviceConnected() == false) {
         QString errStr(QStringLiteral("Cannot run operation, device is not connected."));
-        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
+        qCWarning(lcPlatformOperation) << platform_ << errStr;
         finishOperation(Result::Disconnect, errStr);
         return;
     }
 
     if (started_) {
         QString errStr(QStringLiteral("The operation has already run."));
-        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
+        qCWarning(lcPlatformOperation) << platform_ << errStr;
         finishOperation(Result::Error, errStr);
         return;
     }
 
     if (platform_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
         QString errStr(QStringLiteral("Cannot get access to device (another operation is running)."));
-        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
+        qCWarning(lcPlatformOperation) << platform_ << errStr;
         finishOperation(Result::Error, errStr);
         return;
     }
@@ -77,7 +85,7 @@ bool BasePlatformOperation::isFinished() const
 
 void BasePlatformOperation::cancelOperation()
 {
-    qCDebug(logCategoryPlatformOperation) << platform_ << "Cancelling currently running operation.";
+    qCDebug(lcPlatformOperation) << platform_ << "Cancelling currently running operation.";
 
     if (currentCommand_ != commandList_.end()) {
         (*currentCommand_)->cancel();
@@ -219,7 +227,7 @@ void BasePlatformOperation::resume()
         }
     } else {
         QString errStr(QStringLiteral("Cannot continue operation, device is not connected."));
-        qCWarning(logCategoryPlatformOperation) << platform_ << errStr;
+        qCWarning(lcPlatformOperation) << platform_ << errStr;
         finishOperation(Result::Disconnect, errStr);
     }
 }

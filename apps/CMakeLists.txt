@@ -1,3 +1,12 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
+
 #
 # Strata applications
 #
@@ -54,6 +63,9 @@ add_feature_info(APPS_TOOLBOX_LV APPS_TOOLBOX_LV "LogViewer")
 cmake_dependent_option(APPS_TOOLBOX_WG "Build 'Widget Gallery'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Widget Gallery")
+cmake_dependent_option(APPS_TOOLBOX_LCU "Build 'LoggingConfigurationUtility'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_LCU APPS_TOOLBOX_LCU "Logging Configuration Utility")
 
 if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)
@@ -96,4 +108,8 @@ endif()
 
 if (APPS_TOOLBOX_WG)
     add_subdirectory(WidgetGallery)
+endif()
+
+if (APPS_TOOLBOX_LCU)
+    add_subdirectory(LoggingConfigurationUtility)
 endif()

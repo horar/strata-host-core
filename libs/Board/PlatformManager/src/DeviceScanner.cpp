@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <DeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -32,14 +40,14 @@ QByteArray DeviceScanner::createDeviceId(const QByteArray &uniqueHash) const
     return QByteArray(scannerPrefix() + uniqueHash);
 }
 
-Device::Type DeviceScanner::scannerType(const QByteArray deviceId)
+Device::Type DeviceScanner::scannerType(const QByteArray& deviceId)
 {
     for (auto it = allScannerTypes_.keyValueBegin(); it != allScannerTypes_.keyValueEnd(); it++) {
         if (deviceId.startsWith((*it).second)) {
             return (*it).first;
         }
     }
-    qCCritical(logCategoryDeviceScanner) << "Unknown device scanner type for deviceId:" << deviceId;
+    qCCritical(lcDeviceScanner) << "Unknown device scanner type for deviceId:" << deviceId;
     return Device::Type::MockDevice;
 }
 
@@ -47,7 +55,7 @@ const QByteArray DeviceScanner::scannerPrefix(const Device::Type type)
 {
     QByteArray retVal = allScannerTypes_.value(type);
     if (retVal.isEmpty()) {
-        qCCritical(logCategoryDeviceScanner) << "Unknown device scanner type:" << type;
+        qCCritical(lcDeviceScanner) << "Unknown device scanner type:" << type;
     }
     return retVal;
 }

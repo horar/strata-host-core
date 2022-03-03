@@ -1,9 +1,19 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "StorageManager.h"
 #include "StorageInfo.h"
 #include <DownloadManager.h>
 
 #include "PlatformDocument.h"
 #include "Database.h"
+
+#include "SGVersionUtils.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -50,12 +60,12 @@ void StorageManager::setBaseFolder(const QString& baseFolder)
 void StorageManager::setBaseUrl(const QUrl &url)
 {
     if (baseUrl_.isEmpty() == false) {
-        qCCritical(logCategoryHcsStorage) << "Base url is already set";
+        qCCritical(lcHcsStorage) << "Base url is already set";
         return;
     }
 
     if (url.scheme().isEmpty()) {
-        qCCritical(logCategoryHcsStorage) << "Base url does not have scheme";
+        qCCritical(lcHcsStorage) << "Base url does not have scheme";
     }
 
     baseUrl_ = url;
@@ -71,6 +81,70 @@ void StorageManager::setBaseUrl(const QUrl &url)
 QUrl StorageManager::getBaseUrl() const
 {
     return baseUrl_;
+}
+
+const FirmwareFileItem *StorageManager::findFirmware(const QString &classId, const QString &controllerClassId, const QString &version)
+{
+    qCDebug(lcHcsStorage) << "Searching firmware " << version << " for" << classId << "and" << controllerClassId;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc == nullptr) {
+        return nullptr;
+    }
+
+    const FirmwareFileItem* firmware = nullptr;
+    QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+    for (int i = 0; i < firmwareList.length(); ++i) {
+        if (firmwareList.at(i).controllerClassId == controllerClassId && firmwareList.at(i).version == version) {
+            firmware = &firmwareList.at(i);
+            break;
+        }
+    }
+
+    return firmware;
+}
+
+const FirmwareFileItem* StorageManager::findHighestFirmware(const QString &classId, const QString &controllerClassId)
+{
+    qCDebug(lcHcsStorage) << "Searching for highest firmware for " << classId << "and" << controllerClassId;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc == nullptr) {
+        return nullptr;
+    }
+
+    const FirmwareFileItem* firmware = nullptr;
+    QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+    for (int i = 0; i < firmwareList.length(); ++i) {
+        if (firmwareList.at(i).controllerClassId == controllerClassId) {
+            if (firmware == nullptr || SGVersionUtils::lessThan(firmware->version, firmwareList.at(i).version)) {
+                firmware = &firmwareList.at(i);
+            }
+        }
+    }
+
+    return firmware;
+}
+
+const FirmwareFileItem* StorageManager::findHighestFirmware(const QString &classId)
+{
+    qCDebug(lcHcsStorage) << "Searching for highest firmware for" << classId;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc == nullptr) {
+        return nullptr;
+    }
+
+    const FirmwareFileItem* firmware = nullptr;
+    QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+
+    for (int i = 0; i < firmwareList.length(); ++i) {
+        if (firmware == nullptr || SGVersionUtils::lessThan(firmware->version, firmwareList.at(i).version)) {
+            firmware = &firmwareList.at(i);
+        }
+    }
+
+    return firmware;
 }
 
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
@@ -153,7 +227,7 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
         }
         downloadControlViewUris_.remove(groupId);
     } else {
-        qCCritical(logCategoryHcsStorage) << "unknown request type";
+        qCCritical(lcHcsStorage) << "unknown request type";
     }
 
     downloadRequests_.remove(groupId);
@@ -246,14 +320,14 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
     if (platDoc == nullptr) {
         std::string document;
         if (db_->getDocument(classId.toStdString(), document) == false) {
-            qCCritical(logCategoryHcsStorage) << "Platform document not found.";
+            qCCritical(lcHcsStorage) << "Platform document not found.";
             return nullptr;
         }
 
         platDoc = new PlatformDocument(classId);
 
         if (platDoc->parseDocument(QString::fromStdString(document)) == false) {
-            qCCritical(logCategoryHcsStorage) << "Parse platform document failed!";
+            qCCritical(lcHcsStorage) << "Parse platform document failed!";
 
             delete platDoc;
             return nullptr;
@@ -270,7 +344,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 {
     std::string platform_list_body;
     if (db_->getDocument("platform_list", platform_list_body) == false) {
-        qCCritical(logCategoryHcsStorage) << "platform_list document not found";
+        qCCritical(lcHcsStorage) << "platform_list document not found";
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
@@ -278,14 +352,14 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     QJsonParseError parseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(QByteArray::fromStdString(platform_list_body), &parseError);
     if (parseError.error != QJsonParseError::NoError ) {
-        qCCritical(logCategoryHcsStorage) << "Parse error" << parseError.errorString();
+        qCCritical(lcHcsStorage) << "Parse error" << parseError.errorString();
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
 
     QJsonArray jsonPlatformList = jsonDoc.object().value("platform_list").toArray();
     if (jsonPlatformList.isEmpty()) {
-        qCCritical(logCategoryHcsStorage) << "platform_list key is missing";
+        qCCritical(lcHcsStorage) << "platform_list key is missing";
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
@@ -298,13 +372,13 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     for (const QJsonValueRef value : jsonPlatformList) {
         QString classId = value.toObject().value("class_id").toString();
         if (classId.isEmpty()) {
-            qCCritical(logCategoryHcsStorage) << "class_id key is missing";
+            qCCritical(lcHcsStorage) << "class_id key is missing";
             continue;
         }
 
         PlatformDocument *platDoc = fetchPlatformDoc(classId);
         if (platDoc == nullptr) {
-            qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+            qCCritical(lcHcsStorage) << "Failed to fetch platform data with classId" << classId;
             continue;
         }
 
@@ -353,7 +427,7 @@ void StorageManager::requestPlatformDocuments(
         emit platformMetaData(clientId, classId,  QJsonArray(), QJsonArray(), "Failed to fetch platform metadata");
         emit platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), "Failed to fetch platform data");
 
-        qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
+        qCCritical(lcHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
 
@@ -361,21 +435,23 @@ void StorageManager::requestPlatformDocuments(
     QJsonArray controlViewList, firmwareList;
 
     //firmwares
-    QList<VersionedFileItem> firmwareItems = platDoc->getFirmwareList();
+    QList<FirmwareFileItem> firmwareItems = platDoc->getFirmwareList();
     for (const auto &item : firmwareItems) {
         QJsonObject object {
             {"uri", item.partialUri},
             {"md5", item.md5},
-            {"name", item.name},
             {"timestamp", item.timestamp},
             {"version", item.version}
         };
+        if (item.controllerClassId.isNull() == false) {
+            object["controller_class_id"] = item.controllerClassId;
+        }
 
         firmwareList.append(object);
     }
 
     //control views
-    QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
+    QList<ControlViewFileItem> controlViewItems = platDoc->getControlViewList();
     for (const auto &item : controlViewItems) {
         QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (classId.isEmpty() ? "" : "/" + classId));
         if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {
@@ -422,7 +498,7 @@ void StorageManager::requestPlatformDocuments(
     settings.notifyGroupDownloadProgress = true;
 
     if (downloadList.isEmpty()) {
-        qCInfo(logCategoryHcsStorage()) << "No documents to be downloaded";
+        qCInfo(lcHcsStorage()) << "No documents to be downloaded";
         handlePlatformDocumentsResponse(request, QString());
         return;
     }
@@ -438,7 +514,7 @@ void StorageManager::requestDownloadPlatformFiles(
         const QString &destinationDir)
 {
     if (partialUriList.isEmpty()) {
-        qCInfo(logCategoryHcsStorage()) << "nothing to download";
+        qCInfo(lcHcsStorage()) << "nothing to download";
         emit downloadPlatformFilesFinished(clientId, QString());
         return;
     }
@@ -446,7 +522,7 @@ void StorageManager::requestDownloadPlatformFiles(
     //suplement info from db
     QStringList splitPath = partialUriList.first().split("/");
     if (splitPath.isEmpty()) {
-        qCCritical(logCategoryHcsStorage) << "Failed to resolve classId from request";
+        qCCritical(lcHcsStorage) << "Failed to resolve classId from request";
         emit downloadPlatformFilesFinished(clientId, "Failed to resolve classId from request");
         return;
     }
@@ -454,7 +530,7 @@ void StorageManager::requestDownloadPlatformFiles(
     QString classId = splitPath.first();
     PlatformDocument *platDoc = fetchPlatformDoc(classId);
     if (platDoc == nullptr) {
-        qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+        qCCritical(lcHcsStorage) << "Failed to fetch platform data with classId" << classId;
         emit downloadPlatformFilesFinished(clientId, "Failed to fetch platform data");
         return;
     }
@@ -477,7 +553,7 @@ void StorageManager::requestDownloadPlatformFiles(
     }
 
     if (downloadList.isEmpty()) {
-        qCWarning(logCategoryHcsStorage()) << "requested files not valid";
+        qCWarning(lcHcsStorage()) << "requested files not valid";
         emit downloadPlatformFilesFinished(clientId, "requested files not valid");
         return;
     }
@@ -527,14 +603,14 @@ void StorageManager::requestDownloadControlView(const QByteArray &clientId, cons
 
 void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 {
-    qCInfo(logCategoryHcsStorage).nospace().noquote() << "clientId: 0x" << clientId.toHex();
+    qCInfo(lcHcsStorage).nospace().noquote() << "clientId: 0x" << clientId.toHex();
 
     QMutableHashIterator<QString, DownloadRequest*> iter(downloadRequests_);
     while (iter.hasNext()) {
         DownloadRequest *request = iter.next().value();
         if (clientId == request->clientId) {
             QString groupId = request->groupId;
-            qCInfo(logCategoryHcsStorage) << "aborting all downloads for groupId" << groupId;
+            qCInfo(lcHcsStorage) << "aborting all downloads for groupId" << groupId;
             downloadRequests_.remove(groupId);
             downloadManager_->abortAll(groupId);
             delete request;
@@ -544,5 +620,5 @@ void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 
 void StorageManager::updatePlatformDoc(const QString& classId)
 {
-    qCInfo(logCategoryHcsStorage()) << classId << "not implemented yet";
+    qCInfo(lcHcsStorage()) << classId << "not implemented yet";
 }

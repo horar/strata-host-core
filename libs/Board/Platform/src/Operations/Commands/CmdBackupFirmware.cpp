@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "CmdBackupFirmware.h"
 #include "PlatformCommandConstants.h"
 
@@ -37,7 +45,7 @@ bool CmdBackupFirmware::processNotification(const rapidjson::Document& doc, Comm
 {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::backupFirmwareNotif, doc)) {
         if (totalChunks_ <= 0) {
-            qCWarning(logCategoryPlatformCommand) << platform_ << "Count of firmware chunks is not known.";
+            qCWarning(lcPlatformCommand) << platform_ << "Count of firmware chunks is not known.";
             result = CommandResult::Failure;
         } else {
             const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
@@ -59,14 +67,14 @@ bool CmdBackupFirmware::processNotification(const rapidjson::Document& doc, Comm
 
                 bool ok = false;
                 if (size.GetUint() == realDecodedSize) {
-                    qCDebug(logCategoryPlatformCommand) << platform_ << "Received chunk with size " << realDecodedSize << " bytes.";
+                    qCDebug(lcPlatformCommand) << platform_ << "Received chunk with size " << realDecodedSize << " bytes.";
                     if (crc.GetUint() == crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size()))) {
                         ok = true;
                     } else {
-                        qCCritical(logCategoryPlatformCommand) << platform_ << "Wrong CRC of firmware chunk.";
+                        qCCritical(lcPlatformCommand) << platform_ << "Wrong CRC of firmware chunk.";
                     }
                 } else {
-                    qCCritical(logCategoryPlatformCommand) << platform_ << "Wrong SIZE of firmware chunk.";
+                    qCCritical(lcPlatformCommand) << platform_ << "Wrong SIZE of firmware chunk.";
                 }
 
                 if (ok) {
@@ -75,15 +83,15 @@ bool CmdBackupFirmware::processNotification(const rapidjson::Document& doc, Comm
                 } else {
                     if (retriesCount_ < maxRetries_) {
                         ++retriesCount_;
-                        qCInfo(logCategoryPlatformCommand) << platform_ << "Going to retry to backup firmware chunk.";
+                        qCInfo(lcPlatformCommand) << platform_ << "Going to retry to backup firmware chunk.";
                         result = CommandResult::Retry;
                     } else {
-                        qCWarning(logCategoryPlatformCommand) << platform_ << "Reached maximum retries for backup firmware chunk.";
+                        qCWarning(lcPlatformCommand) << platform_ << "Reached maximum retries for backup firmware chunk.";
                         result = CommandResult::Failure;
                     }
                 }
             } else {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Wrong format of notification.";
+                qCWarning(lcPlatformCommand) << platform_ << "Wrong format of notification.";
                 result = CommandResult::Failure;
             }
         }

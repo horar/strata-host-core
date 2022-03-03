@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include "SciScrollbackModel.h"
@@ -5,12 +13,16 @@
 #include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
 #include "SciMockDevice.h"
+#include "SciFilterScrollbackModel.h"
+#include "SciSearchScrollbackModel.h"
+#include "SciMessageQueueModel.h"
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
 #include <Mock/MockDevice.h>
 #include <QObject>
 #include <QPointer>
+#include <chrono>
 
 
 class SciPlatform: public QObject {
@@ -26,10 +38,15 @@ class SciPlatform: public QObject {
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
     Q_PROPERTY(SciMockDevice* mockDevice READ mockDevice CONSTANT)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
+    Q_PROPERTY(SciFilterScrollbackModel* filterScrollbackModel READ filterScrollbackModel CONSTANT)
+    Q_PROPERTY(SciSearchScrollbackModel* searchScrollbackModel READ searchScrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
+    Q_PROPERTY(SciMessageQueueModel* messageQueueModel READ messageQueueModel CONSTANT)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
+    Q_PROPERTY(bool sendMessageInProgress READ sendMessageInProgress NOTIFY sendMessageInProgressChanged)
+    Q_PROPERTY(bool sendQueueInProgress READ sendQueueInProgress NOTIFY sendQueueInProgressChanged)
 
 public:
     SciPlatform(SciPlatformSettings *settings, strata::PlatformManager *platformManager, QObject *parent = nullptr);
@@ -49,6 +66,7 @@ public:
         NotConnectedError,
         JsonError,
         PlatformError,
+        QueueError,
     };
     Q_ENUM(SendMessageErrorType)
 
@@ -56,30 +74,38 @@ public:
     // because Q_ENUM macro is constrained to the class it is used in and doesn't work well between classes
     Q_ENUM(strata::device::Device::Type)
 
-    QByteArray deviceId();
-    strata::device::Device::Type deviceType();
+    QByteArray deviceId() const;
+    strata::device::Device::Type deviceType() const;
     void setDeviceType(const strata::device::Device::Type &type);
     void setPlatform(const strata::platform::PlatformPtr& platform);
-    QString verboseName();
+    QString verboseName() const;
     void setVerboseName(const QString &verboseName);
-    QString appVersion();
+    QString appVersion() const;
     void setAppVersion(const QString &appVersion);
-    QString bootloaderVersion();
+    QString bootloaderVersion() const;
     void setBootloaderVersion(const QString &bootloaderVersion);
-    SciPlatform::PlatformStatus status();
+    SciPlatform::PlatformStatus status() const;
     void setStatus(SciPlatform::PlatformStatus status);
-    SciMockDevice* mockDevice();
-    SciScrollbackModel* scrollbackModel();
-    SciCommandHistoryModel* commandHistoryModel();
-    SciFilterSuggestionModel* filterSuggestionModel();
-    QString errorString();
+    SciMockDevice* mockDevice() const;
+    SciScrollbackModel* scrollbackModel() const;
+    SciCommandHistoryModel* commandHistoryModel() const;
+    SciFilterSuggestionModel* filterSuggestionModel() const;
+    SciFilterScrollbackModel* filterScrollbackModel() const;
+    SciSearchScrollbackModel* searchScrollbackModel() const;
+    SciMessageQueueModel* messageQueueModel() const;
+    QString errorString() const;
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
     QString deviceName() const;
     void setDeviceName(const QString &deviceName);
+    bool sendMessageInProgress();
+    bool sendQueueInProgress();
 
     void resetPropertiesFromDevice();
     Q_INVOKABLE void sendMessage(const QString &message, bool onlyValidJson);
+    Q_INVOKABLE QVariantMap queueMessage(const QString &message, bool onlyValidJson);
+    Q_INVOKABLE void sendQueue();
+
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
     Q_INVOKABLE QString saveDeviceFirmware(QString filePath);
 
@@ -107,7 +133,11 @@ signals:
             QString errorString);
 
     void flasherFinished(strata::FlasherConnector::Result result);
-    void sendMessageResultReceived(SendMessageErrorType type, QVariantMap data);
+    void sendMessageResultReceived(QVariantMap error);
+    void sendQueueFinished(QVariantMap error);
+    void messageReceived();
+    void sendMessageInProgressChanged();
+    void sendQueueInProgressChanged();
 
 private slots:
     void messageFromDeviceHandler(strata::platform::PlatformMessage message);
@@ -125,6 +155,12 @@ private slots:
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
 
 private:
+    void setProgramInProgress(bool programInProgress);
+    void setSendMessageInProgress(bool sendMessageInProgress);
+    void setSendQueueInProgress(bool sendQueueInProgress);
+    bool sendNextInQueue();
+    QVariantMap extractJsonError(const QJsonParseError &error);
+
     strata::platform::PlatformPtr platform_;
     QByteArray deviceId_;
     strata::device::Device::Type deviceType_;
@@ -140,10 +176,13 @@ private:
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;
     SciFilterSuggestionModel *filterSuggestionModel_;
+    SciFilterScrollbackModel *filterScrollbackModel_;
+    SciSearchScrollbackModel *searchScrollbackModel_;
+    SciMessageQueueModel *messageQueueModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     strata::PlatformManager *platformManager_;
     uint currentMessageId_ = 0;
-
-    void setProgramInProgress(bool programInProgress);
-    void setMessageSendInProgress(bool messageSendInProgress);
+    bool sendMessageInProgress_ = false;
+    bool sendQueueInProgress_ = false;
+    std::chrono::milliseconds sendQueueDelay_ = std::chrono::milliseconds(50);
 };

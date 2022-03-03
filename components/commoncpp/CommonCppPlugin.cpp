@@ -1,13 +1,20 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "CommonCppPlugin.h"
 
 #include "SGUtilsCpp.h"
 #include "SGJLinkConnector.h"
 #include "SGSortFilterProxyModel.h"
-#include "SGQWTPlot.h"
+#include "SGQwtPlot.h"
 #include "SGUserSettings.h"
 #include "SGVersionUtils.h"
-#include "mqtt/SGMqttClient.h"
-#include "mqtt/SGSslConfiguration.h"
+#include "SGCSVUtils.h"
 #include "SGJsonSyntaxHighlighter.h"
 #include "SGJsonFormatter.h"
 #include "SGTranslator.h"
@@ -34,14 +41,12 @@ void CommonCppPlugin::registerTypes(const char *uri)
         return formatter;
     });
 
+    qmlRegisterType<SGCSVUtils>(uri, 1, 0,"SGCSVUtils");
     qmlRegisterType<SGJLinkConnector>(uri, 1, 0, "SGJLinkConnector");
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
-    qmlRegisterType<SGQWTPlot>(uri, 1, 0, "SGQWTPlot");
-    qmlRegisterType<SGQWTPlotCurve>(uri, 1, 0, "SGQWTPlotCurve");
+    qmlRegisterType<SGQwtPlot>(uri, 1, 0, "SGQwtPlot");
+    qmlRegisterType<SGQwtPlotCurve>(uri, 1, 0, "SGQwtPlotCurve");
     qmlRegisterType<SGUserSettings>(uri, 1, 0, "SGUserSettings");
-    qmlRegisterType<QmlMqttClient>(uri, 1, 0, "SGMqttClient");
-    qmlRegisterUncreatableType<QmlMqttSubscription>(uri, 1, 0, "SGMqttSubscription", QLatin1String("Subscriptions are read-only"));
-    qmlRegisterType<QmlSslConfiguration>(uri, 1, 0, "SGSslConfiguration");
     qmlRegisterSingletonType<SGVersionUtils>(uri, 1, 0, "SGVersionUtils", SGVersionUtils::SingletonTypeProvider);
     qmlRegisterType<SGJsonSyntaxHighlighter>(uri, 1, 0, "SGJsonSyntaxHighlighter");
     qmlRegisterType<SGTranslator>(uri, 1, 0, "SGTranslator");

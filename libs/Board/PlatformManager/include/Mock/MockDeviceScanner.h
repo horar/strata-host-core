@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <QObject>
@@ -39,6 +47,31 @@ public:
     virtual void deinit() override;
 
     /**
+     * Return list of deviceIds of all discovered devices
+     * @return list of discovered devices
+     */
+    virtual QList<QByteArray> discoveredDevices() const override;
+
+    /**
+     * Initiates connection to discovered device.
+     * @param deviceId device ID, returned by discoveredDevices()
+     * @return empty string if connecting started, error message if there was an error
+     */
+    virtual QString connectDevice(const QByteArray& deviceId) override;
+
+    /**
+     * Drops connection to discovered device.
+     * @param deviceId device ID
+     * @return empty string if disconnected, error message if there was an error.
+     */
+    virtual QString disconnectDevice(const QByteArray& deviceId) override;
+
+    /**
+     * Drops connection to all discovered devices.
+     */
+    virtual void disconnectAllDevices() override;
+
+    /**
      * Create ID for mock device - for external callers.
      * @param mockName name of the mock device
      * @return ID for mock device
@@ -60,18 +93,6 @@ public:
      * @return an empty (null) string if the device was assigned to platform, otherwise a string containing an error
      */
     QString mockDeviceDetected(DevicePtr mockDevice);
-
-    /**
-     * Will emit lost signal for previously detected device
-     * @param deviceId device ID
-     * @return true if device existed and was removed, otherwise false
-     */
-    bool mockDeviceLost(const QByteArray& deviceId);
-
-    /**
-     * Will emit lost signal for all previously detected devices
-     */
-    void mockAllDevicesLost();
 
     /**
      * Get existing mock device.

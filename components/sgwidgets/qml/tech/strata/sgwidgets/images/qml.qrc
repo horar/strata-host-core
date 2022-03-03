@@ -11,6 +11,7 @@
         <file>chevron-right.svg</file>
         <file>chevron-down.svg</file>
         <file>chip-flash.svg</file>
+        <file>circle.svg</file>
         <file>clock.svg</file>
         <file>cog.svg</file>
         <file>drop-file.svg</file>
@@ -54,6 +55,7 @@
         <file>sliders-h.svg</file>
         <file>sliders-v.svg</file>
         <file>list.svg</file>
+        <file>update-arrow.svg</file>
         <file>folder-plus.svg</file>
         <file>redo.svg</file>
         <file>undo.svg</file>

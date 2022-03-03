@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "RestClient.h"
 #include "Authenticator.h"
 #include "logging/LoggingQtCategories.h"
@@ -46,7 +54,7 @@ Deferred* RestClient::post(
     QNetworkRequest request = resolveRequest(endpoint, rawHeaderData);
     Deferred *deferred = resolveDeferred(request);
 
-    qCDebug(logCategoryPrtRestClient) << "call" << endpoint;
+    qCDebug(lcPrtRestClient) << "call" << endpoint;
     QNetworkReply *reply = networkManager_->post(request, data);
 
     connect(reply, &QNetworkReply::finished, this, &RestClient::replyFinished);
@@ -62,7 +70,7 @@ Deferred* RestClient::get(
     QNetworkRequest request = resolveRequest(endpoint, rawHeaderData);
     Deferred *deferred = resolveDeferred(request);
 
-    qCDebug(logCategoryPrtRestClient) << "call" << endpoint;
+    qCDebug(lcPrtRestClient) << "call" << endpoint;
     QNetworkReply *reply = networkManager_->get(request);
 
     connect(reply, &QNetworkReply::finished, this, &RestClient::replyFinished);
@@ -75,13 +83,13 @@ void RestClient::replyFinished()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
     if (reply == nullptr) {
-        qCCritical(logCategoryPrtRestClient) << "cannot cast reply";
+        qCCritical(lcPrtRestClient) << "cannot cast reply";
         return;
     }
 
     Deferred *deferred = qobject_cast<Deferred*>(reply->request().originatingObject());
     if (deferred == nullptr) {
-        qCCritical(logCategoryPrtRestClient) << "cannot cast originating object";
+        qCCritical(lcPrtRestClient) << "cannot cast originating object";
         return;
     }
 
@@ -89,8 +97,8 @@ void RestClient::replyFinished()
      * for example there is no error for code 406 - in that case UnknownContentError is returned. */
     int statusCode =  reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
-    qCDebug(logCategoryPrtRestClient) << "http status code" << statusCode;
-    qCDebug(logCategoryPrtRestClient) << "error" << reply->error() << reply->errorString();
+    qCDebug(lcPrtRestClient) << "http status code" << statusCode;
+    qCDebug(lcPrtRestClient) << "error" << reply->error() << reply->errorString();
 
     QByteArray data = reply->readAll();
 

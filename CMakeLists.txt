@@ -1,3 +1,11 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 message(STATUS "CMake version: ${CMAKE_VERSION}")
@@ -16,7 +24,7 @@ set(VERSION_QT5 5.12)
 set(VERSION_QT5_DEPRECATE_BEFORE 0x050C00)
 
 # defaults; override in sub-projects if necessary
-set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_COMPANY "onsemi")
 set(PROJECT_WIN32_ICO ${PROJECT_SOURCE_DIR}/resources/icons/app/on.ico)
 set(PROJECT_BUNDLE_ID com.onsemi.strata)
 

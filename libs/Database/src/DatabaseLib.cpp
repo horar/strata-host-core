@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "logging/LoggingQtCategories.h"
 #include "Database/DatabaseLib.h"
 #include "CouchbaseDatabase.h"
@@ -75,7 +83,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
     } else if (replicatorType == "pushandpull") {
         _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
     } else {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, invalid replicator type provided.";
+        qCCritical(lcCouchbaseDatabase) << "Error: Failed to start replicator, invalid replicator type provided.";
     }
 
     if (changeListener) {
@@ -116,7 +124,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
         if (change_listener_callback_) {
             change_listener_callback_(rep, activityLevel);
         } else {
-            qCInfo(logCategoryCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
+            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
         }
     };
 
@@ -132,7 +140,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
 
             document_listener_callback_(rep, isPush, SGDocuments);
         } else {
-            qCInfo(logCategoryCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
+            qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
         }
     };
 

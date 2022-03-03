@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "Flasher.h"
 #include "FlasherConstants.h"
 
@@ -39,7 +47,7 @@ Flasher::Flasher(const PlatformPtr& platform, const QString& fileName, const QSt
     connect(this, &Flasher::flashNextChunk, this, &Flasher::handleFlashNextChunk, Qt::QueuedConnection);
     currentOperation_ = operationList_.end();
 
-    qCDebug(logCategoryFlasher) << platform_ << "Flasher created (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
+    qCDebug(lcFlasher) << platform_ << "Flasher created (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
 Flasher::~Flasher()
@@ -48,7 +56,7 @@ Flasher::~Flasher()
         currentOperation_->operation->disconnect(this);
         currentOperation_->operation->cancelOperation();
     }
-    qCDebug(logCategoryFlasher) << platform_ << "Flasher deleted (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
+    qCDebug(lcFlasher) << platform_ << "Flasher deleted (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
 void Flasher::flashFirmware(FinalAction finalAction)
@@ -67,31 +75,27 @@ void Flasher::flashFirmware(FinalAction finalAction)
 
     operationList_.reserve(5);
 
-    addSwitchToBootloaderOperation();      // switch to bootloader
+    addSwitchToBootloaderOperation();     // switch to bootloader
 
     if (fwClassId_.isNull() == false) {
-        addSetFwClassIdOperation(true);    // clear fw_class_id
+        addSetFwClassIdOperation(true);   // clear fw_class_id
     }
 
-    addFlashOperation(flashingFw);         // flash firmware
+    addFlashOperation(flashingFw);        // flash firmware
 
     if (fwClassId_.isNull() == false) {
-        addSetFwClassIdOperation(false);   // set fw_class_id
+        addSetFwClassIdOperation(false);  // set fw_class_id
     }
 
-    switch (finalAction_) {
-    case FinalAction::StartApplication :
-        addStartApplicationOperation();    // start application
-        break;
-    case FinalAction::StayInBootloader :
-        addIdentifyOperation(flashingFw);  // identify board
-        break;
-    case FinalAction::PreservePlatformState :
-        // Do nothing here, right operation will be added to 'operationList_' later
-        // in 'startBootloaderFinished()' operation when platform will be identified.
-        // It can be added later because it is added to the end of the 'operationList_'.
-        break;
+    // Flash firmware process is not completed until application is not started!
+    // Application writes data like its version into board memory (into FIB).
+
+    if (finalAction_ == FinalAction::StartApplication) {
+        addStartApplicationOperation();   // start application
     }
+    // If 'finalAction_' is 'PreservePlatformState', operation for start application
+    // can be added later in 'startBootloaderFinished()' when platform will be identified.
+    // It can be added later because it is added to the end of the 'operationList_'.
 
     currentOperation_ = operationList_.begin();
 
@@ -168,7 +172,7 @@ void Flasher::setFwClassId(FinalAction finalAction)
 
     if (fwClassId_.isNull()) {
         QString errStr(QStringLiteral("Cannot set firmware class ID, no fwClassId was provided."));
-        qCCritical(logCategoryFlasher) << platform_ << errStr;
+        qCCritical(lcFlasher) << platform_ << errStr;
         finish(Result::Error, errStr);
         return;
     }
@@ -202,7 +206,7 @@ bool Flasher::startActionCheck(const QString& errorString)
 {
     if (operationList_.size() != 0) {
         QString errorMessage = errorString + QStringLiteral(", flasher is already running.");
-        qCCritical(logCategoryFlasher) << platform_ << errorMessage;
+        qCCritical(lcFlasher) << platform_ << errorMessage;
         finish(Result::Error, errorMessage);
         return false;
     }
@@ -230,7 +234,7 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
                 } else {
                     if (fileMD5_ != md5) {
                         QString errStr(QStringLiteral("Wrong MD5 checksum of file to be flashed."));
-                        qCCritical(logCategoryFlasher) << platform_ << errStr;
+                        qCCritical(lcFlasher) << platform_ << errStr;
                         finish(Result::Error, errStr);
                         return false;
                     }
@@ -240,16 +244,16 @@ bool Flasher::prepareForFlash(bool flashingFirmware)
             chunkCount_ = static_cast<int>((sourceFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
             const char* binaryType = (flashingFirmware) ? "firmware" : "bootloader";
-            qCInfo(logCategoryFlasher) << platform_ << "Preparing for flashing " << chunkCount_ << " chunks ("
+            qCInfo(lcFlasher) << platform_ << "Preparing for flashing " << chunkCount_ << " chunks ("
                 << CHUNK_SIZE << " bytes) of " << binaryType << " with size " << sourceFile_.size() << " bytes.";
         } else {
             QString errStr = QStringLiteral("File '") + sourceFile_.fileName() + QStringLiteral("' is empty.");
-            qCCritical(logCategoryFlasher) << platform_ << errStr;
+            qCCritical(lcFlasher) << platform_ << errStr;
             finish(Result::Error, errStr);
             return false;
         }
     } else {
-        qCCritical(logCategoryFlasher) << platform_ << "Cannot open file '" << fileName_ << "'. " << sourceFile_.errorString();
+        qCCritical(lcFlasher) << platform_ << "Cannot open file '" << fileName_ << "'. " << sourceFile_.errorString();
         finish(Result::Error, sourceFile_.errorString());
         return false;
     }
@@ -263,7 +267,7 @@ bool Flasher::prepareForBackup()
     QDir fileDir;
     if (fileDir.mkpath(fileInfo.absolutePath()) == false) {
         QString errStr(QStringLiteral("Cannot create path for backup file."));
-        qCCritical(logCategoryFlasher) << platform_ << errStr;
+        qCCritical(lcFlasher) << platform_ << errStr;
         finish(Result::Error, errStr);
         return false;
     }
@@ -275,10 +279,10 @@ bool Flasher::prepareForBackup()
         expectedBackupChunkNumber_ = 1;
         actualBackupSize_ = 0;
         expectedBackupSize_ = 0;
-        qCInfo(logCategoryFlasher) << platform_ << "Preparing to back up the firmware to the '" << fileName_ << "' file.";
+        qCInfo(lcFlasher) << platform_ << "Preparing to back up the firmware to the '" << fileName_ << "' file.";
         return true;
     } else {
-        qCCritical(logCategoryFlasher) << platform_ << "Cannot open file '" << fileName_ << "'. " << destinationFile_.errorString();
+        qCCritical(lcFlasher) << platform_ << "Cannot open file '" << fileName_ << "'. " << destinationFile_.errorString();
         finish(Result::Error, destinationFile_.errorString());
         return false;
     }
@@ -310,6 +314,11 @@ void Flasher::runFlasherOperation()
 
 void Flasher::finish(Result result, QString errorString)
 {
+    if (currentOperation_ != operationList_.end() && currentOperation_->operation->isFinished() == false) {
+        // If any operation is currently runing, it must be cancelled.
+        currentOperation_->operation->disconnect(this);  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
+        currentOperation_->operation->cancelOperation();
+    }
     operationList_.clear();
     currentOperation_ = operationList_.end();
     if (sourceFile_.isOpen()) {
@@ -335,30 +344,30 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
         }
         break;
     case operation::Result::Timeout :
-        qCCritical(logCategoryFlasher) << platform_ << "Timeout during firmware operation.";
+        qCCritical(lcFlasher) << platform_ << "Timeout during firmware operation.";
         finish(Result::Timeout);
         break;
     case operation::Result::Cancel :
-        qCWarning(logCategoryFlasher) << platform_ << "Firmware operation was cancelled.";
+        qCWarning(lcFlasher) << platform_ << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
         break;
     case operation::Result::Reject :
     case operation::Result::Failure :
         {
             QString errMsg(QStringLiteral("Firmware operation has failed (faulty response from device)."));
-            qCCritical(logCategoryFlasher) << platform_ << errMsg;
+            qCCritical(lcFlasher) << platform_ << errMsg;
             finish(Result::Error, errMsg);
         }
         break;
     case operation::Result::Disconnect:
         {
             QString errMsg(QStringLiteral("Device disconnected during firmware operation."));
-            qCCritical(logCategoryFlasher) << platform_ << errMsg;
+            qCCritical(lcFlasher) << platform_ << errMsg;
             finish(Result::Disconnect, errMsg);
         }
     break;
     case operation::Result::Error:
-        qCCritical(logCategoryFlasher) << platform_ << "Error during flashing: " << errStr;
+        qCCritical(lcFlasher) << platform_ << "Error during flashing: " << errStr;
         finish(Result::Error, errStr);
         break;
     }
@@ -399,12 +408,12 @@ void Flasher::operationDeleter(operation::BasePlatformOperation* operation)
 
 void Flasher::startBootloaderFinished(int status)
 {
-    qCInfo(logCategoryFlasher) << platform_ << "Switched to bootloader (version '"
+    qCInfo(lcFlasher) << platform_ << "Switched to bootloader (version '"
                                << platform_->bootloaderVer() << "').";
 
     // Operation 'SwitchToBootloader' has status set to 'ALREADY_IN_BOOTLOADER' (1) if platform was
     // already in bootloader mode, otherwise status has default value 'DEFAULT_STATUS' (INT_MIN).
-    if (status == operation::DEFAULT_STATUS) {
+    if (status != operation::ALREADY_IN_BOOTLOADER) {
         if (finalAction_ == FinalAction::PreservePlatformState) {
             // Platform had been booted into application before and 'finalAction_' is
             // 'PreservePlatformState' so add operation for start application.
@@ -420,20 +429,7 @@ void Flasher::startBootloaderFinished(int status)
             }
         }
         emit devicePropertiesChanged();
-    } else if (status == operation::ALREADY_IN_BOOTLOADER) {
-        if (finalAction_ == FinalAction::PreservePlatformState) {
-            switch (activity_) {
-            case FlasherActivity::FlashFirmware :
-                addIdentifyOperation(true);
-                break;
-            case FlasherActivity::FlashBootloader :
-            case FlasherActivity::BackupFirmware :
-            case FlasherActivity::SetFwClassId :
-                // Do nothing - firmware won't be changed (and 'FlashBootloader' already contains 'Identify' operation).
-                break;
-            }
-        }
-    }    
+    }
 
     runNextOperation();
 }
@@ -474,18 +470,18 @@ void Flasher::backupFinished(int status)
 void Flasher::startApplicationFinished(int status)
 {
     if (status == operation::NO_FIRMWARE) {
-        qCCritical(logCategoryFlasher) << platform_ << "Platform has no firmware.";
+        qCCritical(lcFlasher) << platform_ << "Platform has no firmware.";
         finish(Result::NoFirmware);
         return;
     }
 
     if (status == operation::FIRMWARE_UNABLE_TO_START) {
-        qCCritical(logCategoryFlasher) << platform_ << "Platform firmware is unable to start, platform remains in bootloader mode.";
+        qCCritical(lcFlasher) << platform_ << "Platform firmware is unable to start, platform remains in bootloader mode.";
         finish(Result::BadFirmware);
         return;
     }
 
-    qCInfo(logCategoryFlasher) << platform_ << "Launching platform firmware. Name: '" << platform_->name()
+    qCInfo(lcFlasher) << platform_ << "Launching platform firmware. Name: '" << platform_->name()
                                << "', version: '" << platform_->applicationVer() << "'.";
     emit devicePropertiesChanged();
 
@@ -497,10 +493,10 @@ void Flasher::identifyFinished(bool flashingFirmware, int status)
     Q_UNUSED(status)
 
     if (flashingFirmware) {
-        qCInfo(logCategoryFlasher) << platform_ << "Firmware version: '"
+        qCInfo(lcFlasher) << platform_ << "Firmware version: '"
                                    << platform_->applicationVer() << "', platform still in bootloader mode.";
     } else {
-        qCInfo(logCategoryFlasher) << platform_ << "Bootloader version: '" << platform_->bootloaderVer() << "'.";
+        qCInfo(lcFlasher) << platform_ << "Bootloader version: '" << platform_->bootloaderVer() << "'.";
     }
 
     emit devicePropertiesChanged();
@@ -515,7 +511,7 @@ void Flasher::manageFlash(bool flashingFirmware, int lastFlashedChunk)
 
     if (chunkNumber_ != lastFlashedChunk) {
         QString errStr(QStringLiteral("Received confirmation of flash unexpected chunk."));
-        qCCritical(logCategoryFlasher) << platform_ << errStr << ' ' <<  sourceFile_.fileName();
+        qCCritical(lcFlasher) << platform_ << errStr << ' ' <<  sourceFile_.fileName();
         finish(Result::Error, errStr);
         return;
     }
@@ -523,12 +519,12 @@ void Flasher::manageFlash(bool flashingFirmware, int lastFlashedChunk)
     if (flashedChunk == chunkCount_) {  // the last chunk
         sourceFile_.close();
 
-        qCInfo(logCategoryFlasher) << platform_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
+        qCInfo(lcFlasher) << platform_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
         if (flashingFirmware) {
-            qCInfo(logCategoryFlasher) << platform_ << "Firmware is fully flashed.";
+            qCInfo(lcFlasher) << platform_ << "Firmware is fully flashed.";
             emit flashFirmwareProgress(flashedChunk, chunkCount_);
         } else {
-            qCInfo(logCategoryFlasher) << platform_ << "Bootloader is fully flashed.";
+            qCInfo(lcFlasher) << platform_ << "Bootloader is fully flashed.";
             emit flashBootloaderProgress(flashedChunk, chunkCount_);
         }
 
@@ -540,12 +536,12 @@ void Flasher::manageFlash(bool flashingFirmware, int lastFlashedChunk)
     if (lastFlashedChunk >= 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
         if (flashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
-            qCInfo(logCategoryFlasher) << platform_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
+            qCInfo(lcFlasher) << platform_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
             (flashingFirmware)
                 ? emit flashFirmwareProgress(flashedChunk, chunkCount_)
                 : emit flashBootloaderProgress(flashedChunk, chunkCount_);
         } else {
-            qCDebug(logCategoryFlasher) << platform_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
+            qCDebug(lcFlasher) << platform_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
         }
     }
 
@@ -561,7 +557,7 @@ void Flasher::handleFlashNextChunk()
 
     if (sourceFile_.atEnd()) {
         QString errStr(QStringLiteral("Unexpected end of file."));
-        qCCritical(logCategoryFlasher) << platform_ << errStr << ' ' <<  sourceFile_.fileName();
+        qCCritical(lcFlasher) << platform_ << errStr << ' ' <<  sourceFile_.fileName();
         finish(Result::Error, errStr);
         return;
     }
@@ -583,7 +579,7 @@ void Flasher::handleFlashNextChunk()
             operationCastError();
         }
     } else {
-        qCCritical(logCategoryFlasher) << platform_ << "Cannot read from file '" << sourceFile_.fileName() << "'. " << sourceFile_.errorString();
+        qCCritical(lcFlasher) << platform_ << "Cannot read from file '" << sourceFile_.fileName() << "'. " << sourceFile_.errorString();
         finish(Result::Error, QStringLiteral("File read error. ") + sourceFile_.errorString());
     }
 }
@@ -600,10 +596,7 @@ void Flasher::manageBackup(int chunkNumber)
         chunkCount_ = backupOp->totalChunks();
         expectedBackupSize_ = backupOp->backupSize();
         if ((chunkCount_ <= 0) || (expectedBackupSize_ <= 0)) {
-            qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks or size 0.";
-            // Operation 'Backup' is currently runing, it must be cancelled.
-            currentOperation_->operation->disconnect(this);  // disconnect slots, we do not want to invoke 'handleOperationFinished()'
-            currentOperation_->operation->cancelOperation();
+            qCWarning(lcFlasher) << "Cannot backup firmware which has 0 chunks or size 0.";
             finish(Result::NoFirmware);
             return;
         }
@@ -615,7 +608,7 @@ void Flasher::manageBackup(int chunkNumber)
             ++expectedBackupChunkNumber_;
         } else {
             QString errStr(QStringLiteral("Received other chunk than expected."));
-            qCCritical(logCategoryFlasher) << platform_ << errStr
+            qCCritical(lcFlasher) << platform_ << errStr
                 << " Expected chunk number: " << expectedBackupChunkNumber_ << ", received: " << chunkNumber << '.';
             finish(Result::Error, errStr);
             return;
@@ -624,7 +617,7 @@ void Flasher::manageBackup(int chunkNumber)
         const QVector<quint8> chunk = backupOp->recentBackupChunk();
         const qint64 bytesWritten = destinationFile_.write(reinterpret_cast<const char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
-            qCCritical(logCategoryFlasher) << platform_ << "Cannot write to file '" << destinationFile_.fileName() << "'. " << destinationFile_.errorString();
+            qCCritical(lcFlasher) << platform_ << "Cannot write to file '" << destinationFile_.fileName() << "'. " << destinationFile_.errorString();
             finish(Result::Error, QStringLiteral("File write error. ") + destinationFile_.errorString());
             return;
         }
@@ -633,28 +626,31 @@ void Flasher::manageBackup(int chunkNumber)
         if (chunkNumber < chunkCount_) {
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
-                qCInfo(logCategoryFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
+                qCInfo(lcFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
                 emit backupFirmwareProgress(chunkNumber, chunkCount_);
             } else {
-                qCDebug(logCategoryFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
+                qCDebug(lcFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
             }
         } else {  // the last chunk
-            qCInfo(logCategoryFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
+            qCInfo(lcFlasher) << platform_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
             emit backupFirmwareProgress(chunkNumber, chunkCount_);
 
-            if (actualBackupSize_ != expectedBackupSize_) {
+            // This condition should be "actualBackupSize_ != expectedBackupSize_" instead of <.
+            // It is a workaround for the RSL10 bootloader (CS-2581)
+            // TODO after the end of 2021, verify how many buggy RSL10 bootloaders are "in the wild" and decide whether to keep this workaround.
+            if (actualBackupSize_ < expectedBackupSize_) {
                 QString errStr(QStringLiteral("Received firmware size is different than expected."));
-                qCCritical(logCategoryFlasher) << platform_ << errStr;
+                qCCritical(lcFlasher) << platform_ << errStr;
                 finish(Result::Error, errStr);
                 return;
             }
             if (destinationFile_.commit() == false) {
-                qCCritical(logCategoryFlasher) << platform_ << "Cannot save file '" << destinationFile_.fileName() << "'. " << destinationFile_.errorString();
+                qCCritical(lcFlasher) << platform_ << "Cannot save file '" << destinationFile_.fileName() << "'. " << destinationFile_.errorString();
                 finish(Result::Error, QStringLiteral("File save error. ") + destinationFile_.errorString());
                 return;
             }
 
-            qCInfo(logCategoryFlasher) << platform_ << "Firmware is backed up.";
+            qCInfo(lcFlasher) << platform_ << "Firmware is backed up.";
 
             runNextOperation();
             return;
@@ -667,7 +663,7 @@ void Flasher::manageBackup(int chunkNumber)
 void Flasher::operationCastError()
 {
     QString errStr(QStringLiteral("Unexpected flasher operation error."));
-    qCCritical(logCategoryFlasher) << platform_ << errStr;
+    qCCritical(lcFlasher) << platform_ << errStr;
     finish(Result::Error, errStr);
 }
 

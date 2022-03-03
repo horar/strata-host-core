@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (c) 2018-2022 onsemi.
+
+   All rights reserved. This software and/or documentation is licensed by onsemi under
+   limited terms and conditions. The terms and conditions pertaining to the software and/or
+   documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+   Terms and Conditions of Sale, Section 8 Software”).
+  -->
 <Installer>
     <Name>Strata</Name>
     <Version>1.0.0-1</Version>
-    <Title>ON Semiconductor: Strata</Title>
-    <Publisher>ON Semiconductor Slovakia, a.s.</Publisher>
+    <Title>onsemi: Strata</Title>
+    <Publisher>onsemi</Publisher>
     <ProductUrl>https://www.onsemi.com/strata</ProductUrl>
     <InstallerApplicationIcon>ON_button_blk_vector</InstallerApplicationIcon>
     <InstallerWindowIcon>ON_button_blk_vector.png</InstallerWindowIcon>
@@ -12,8 +20,8 @@
     <WizardStyle>Modern</WizardStyle>
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
-    <StartMenuDir>ON Semiconductor</StartMenuDir>
-    <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
+    <StartMenuDir>onsemi</StartMenuDir>
+    <TargetDir>@ApplicationsDirX64@/onsemi/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>

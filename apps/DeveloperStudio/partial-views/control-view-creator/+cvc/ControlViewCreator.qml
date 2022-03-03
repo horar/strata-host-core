@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
@@ -12,12 +20,13 @@ import "navigation"
 import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
-import "Console"
-import "PlatformInterfaceGenerator"
+import "console"
+import "platform-interface-generator"
 
 Rectangle {
     id: controlViewCreatorRoot
 
+    property string projectName
     property bool isConfirmCloseOpen: false
     property bool isConsoleLogOpen: false
     property bool isDebugMenuOpen: false
@@ -176,7 +185,7 @@ Rectangle {
     Loader {
         id: newWindowLoader
         active: popupWindow
-        source: "Console/NewWindowConsoleLog.qml"
+        source: "console/NewWindowConsoleLog.qml"
     }
 
     Loader {
@@ -202,6 +211,10 @@ Rectangle {
 
             if (closeReason === acceptCloseReason) {
                 editor.openFilesModel.saveAll(false)
+            }
+
+            if (cvcUserSettings.openViewOnBuild) {
+                viewStack.currentIndex = 2
             }
 
             requestRecompile()
@@ -275,7 +288,7 @@ Rectangle {
         padding: 0
         closePolicy: Popup.NoAutoClose
 
-        acceptButtonColor: Theme.palette.onsemiOrange
+        acceptButtonColor: Theme.palette.green
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Clean"
         cancelButtonText: "Cancel"
@@ -330,7 +343,7 @@ Rectangle {
     function recompileControlViewQrc() {
         if (editor.fileTreeModel.url.toString() !== '') {
             if (editor.openFilesModel.getUnsavedCount() > 0) {
-                confirmBuildClean.open();
+                confirmBuildClean.open()
             } else {
                 requestRecompile()
             }
@@ -344,7 +357,7 @@ Rectangle {
         sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
-    function registerAndSetRecompiledRccFile (compiledRccFile) {
+    function registerAndSetRecompiledRccFile(compiledRccFile) {
         // Unregister previous (cached) resource
         if (controlViewCreatorRoot.previousCompiledRccFilePath !== "" && controlViewCreatorRoot.previousCompiledRccFileUniquePrefix !== "") {
             sdsModel.resourceLoader.unregisterResource(controlViewCreatorRoot.previousCompiledRccFilePath, controlViewCreatorRoot.previousCompiledRccFileUniquePrefix, controlViewLoader, false)
@@ -387,6 +400,10 @@ Rectangle {
         return false
     }
 
+    function getProjectNameFromCmake() {
+        controlViewCreatorRoot.projectName = sdsModel.resourceLoader.getProjectNameFromCmake(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
+    }
+
     Connections {
         target: sdsModel.resourceLoader
 
@@ -425,7 +442,7 @@ Rectangle {
                 openViewOnBuild = settings.openViewOnBuild
             }
             if (settings.hasOwnProperty("reloadViewExternalChanges")) {
-                openViewOnBuild = settings.reloadViewExternalChanges
+                reloadViewExternalChanges = settings.reloadViewExternalChanges
             }
         }
 

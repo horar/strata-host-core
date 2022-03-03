@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Tcp/TcpDevice.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -17,16 +25,19 @@ TcpDevice::TcpDevice(const QByteArray& deviceId, QHostAddress deviceAddress, qui
 TcpDevice::~TcpDevice()
 {
     TcpDevice::close();
+    qCDebug(lcDeviceTcp).nospace().noquote()
+        << "Deleted TCP device, ID: " <<  deviceId_
+        << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 void TcpDevice::open()
 {
-    qDebug(logCategoryDeviceTcp).nospace()
-        << this << "Connecting TCP device:" << deviceId_ << ", IP:" << deviceAddress_.toString()
-        << " Port:" << tcpPort_;
+    qCDebug(lcDeviceTcp)
+        << this << "Connecting TCP - IP: " << deviceAddress_.toString()
+        << ", port: " << tcpPort_;
 
     if (tcpSocket_->isOpen()) {
-        qCDebug(logCategoryDeviceTcp) << this << "TCP socket already open.";
+        qCDebug(lcDeviceTcp) << this << "TCP socket already open.";
         return;
     }
 
@@ -42,11 +53,10 @@ void TcpDevice::open()
 
 void TcpDevice::close()
 {
-    qCDebug(logCategoryDeviceTcp) << this << "Disconnecting from tcp device:" << deviceId_
-                                  << ", IP:" << deviceAddress_.toString() << " Port:" << tcpPort_;
-
     disconnect(tcpSocket_.get(), nullptr, this, nullptr);
     if (true == tcpSocket_->isOpen()) {
+        qCDebug(lcDeviceTcp) << this << "Disconnecting from TCP - IP: "
+                                      << deviceAddress_.toString() << ", port: " << tcpPort_;
         tcpSocket_->close();
     }
 }
@@ -57,7 +67,7 @@ unsigned TcpDevice::sendMessage(const QByteArray &message)
 
     if (tcpSocket_->write(message) != message.size() || false == tcpSocket_->flush()) {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategoryDeviceTcp) << this << errMsg;
+        qCCritical(lcDeviceTcp) << this << errMsg;
         emit messageSent(message, msgNum, errMsg);
     } else {
         emit messageSent(message, msgNum, QString());
@@ -75,7 +85,7 @@ void TcpDevice::resetReceiving()
 {
     if (readBuffer_.empty() == false) {
         readBuffer_.clear();
-        qCDebug(logCategoryDeviceSerial)
+        qCDebug(lcDeviceSerial)
             << this << "Cleared internal buffer for reading of received messages.";
     }
 }
@@ -105,20 +115,28 @@ void TcpDevice::readMessages()
 
 void TcpDevice::handleError(QAbstractSocket::SocketError socketError)
 {
-    Q_UNUSED(socketError);
-    emit deviceError(ErrorCode::DeviceError, tcpSocket_->errorString());
+    QString errString = "(";
+    errString.append(QString::number(socketError));
+    errString.append(") ");
+    errString.append(tcpSocket_->errorString());
+
+    if (socketError == QAbstractSocket::RemoteHostClosedError) {
+        emit deviceError(ErrorCode::DeviceDisconnected, errString);
+    } else {
+        emit deviceError(ErrorCode::DeviceError, errString);
+    }
 }
 
 void TcpDevice::deviceDiconnectedHandler()
 {
-    qCDebug(logCategoryDeviceTcp) << "Disconnected from tcp device address"
+    qCDebug(lcDeviceTcp) << this << "Disconnected from TCP address"
                                   << deviceAddress_.toString();
-    emit deviceDisconnected();
+    emit deviceError(ErrorCode::DeviceDisconnected, "");
 }
 
 void TcpDevice::deviceOpenedHandler()
 {
-    qCDebug(logCategoryDeviceTcp) << "Connected to tcp device address" << deviceAddress_.toString();
+    qCDebug(lcDeviceTcp) << this << "Connected to TCP address" << deviceAddress_.toString();
     emit Device::opened();
 }
 

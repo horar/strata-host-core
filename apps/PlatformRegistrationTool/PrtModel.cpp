@@ -1,7 +1,16 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "PrtModel.h"
 #include "logging/LoggingQtCategories.h"
 #include <SGUtilsCpp.h>
 
+#include <Operations/Identify.h>
 #include <Operations/StartBootloader.h>
 #include <Operations/StartApplication.h>
 #include <Operations/SetPlatformId.h>
@@ -128,6 +137,34 @@ bool PrtModel::isAssistedDeviceConnected() const
     return platformList_.first()->isControllerConnectedToPlatform();
 }
 
+void PrtModel::identifyBootloader()
+{
+    using strata::platform::operation::Identify;
+    using strata::platform::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(lcPrt) << errorString;
+        emit identifyBootloaderFinished(errorString);
+        return;
+    }
+
+    Identify *operation = new Identify(platformList_.first(), false);
+    connect(operation, &Identify::finished, [this, operation](Result result, int status, QString errorString) {
+        Q_UNUSED(status)
+
+        if (result == Result::Success) {
+            emit identifyBootloaderFinished("");
+        } else {
+            emit identifyBootloaderFinished(errorString);
+        }
+
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
 void PrtModel::programDevice()
 {
     QString errorString;
@@ -143,7 +180,7 @@ void PrtModel::programDevice()
     }
 
     if (errorString.isEmpty() == false) {
-        qCCritical(logCategoryPrt) << errorString;
+        qCCritical(lcPrt) << errorString;
         emit flasherOperationStateChanged(
                     strata::FlasherConnector::Operation::Preparation,
                     strata::FlasherConnector::State::Failed,
@@ -159,7 +196,7 @@ void PrtModel::programDevice()
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &PrtModel::flasherProgress);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &PrtModel::flasherFinishedHandler);
 
-    flasherConnector_->flash(false, strata::Flasher::FinalAction::StartApplication);
+    flasherConnector_->flash(false);
 }
 
 void PrtModel::downloadBinaries(
@@ -192,7 +229,7 @@ void PrtModel::downloadBinaries(
         bootloaderItem.filePath = bootloaderFile_->fileName();
         downloadRequestList << bootloaderItem;
 
-        qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
+        qCDebug(lcPrt) << "download bootloader" << bootloaderItem.url.toString()
                                 << "into" << bootloaderItem.filePath;
     }
 
@@ -203,12 +240,12 @@ void PrtModel::downloadBinaries(
         firmwareItem.filePath = firmwareFile_->fileName();
         downloadRequestList << firmwareItem;
 
-        qCDebug(logCategoryPrt) << "download firmware" << firmwareItem.url.toString()
+        qCDebug(lcPrt) << "download firmware" << firmwareItem.url.toString()
                                 << "into" << firmwareItem.filePath;
     }
 
     if (downloadRequestList.isEmpty()) {
-        qCWarning(logCategoryPrt) << "nothing to download";
+        qCWarning(lcPrt) << "nothing to download";
         return;
     }
 
@@ -219,15 +256,15 @@ void PrtModel::downloadBinaries(
 
     downloadJobId_ = downloadManager_.download(downloadRequestList, settings);
 
-    qCDebug(logCategoryPrt) << "downloadJobId" << downloadJobId_;
+    qCDebug(lcPrt) << "downloadJobId" << downloadJobId_;
 }
 
 void PrtModel::notifyServiceAboutRegistration(
         const QString &classId,
         const QString &platformId)
 {
-    qCDebug(logCategoryPrtAuth) << "classId" << classId;
-    qCDebug(logCategoryPrtAuth) << "platformId" << platformId;
+    qCDebug(lcPrtAuth) << "classId" << classId;
+    qCDebug(lcPrtAuth) << "platformId" << platformId;
 
     QJsonDocument doc;
     QJsonObject data;
@@ -246,14 +283,14 @@ void PrtModel::notifyServiceAboutRegistration(
     connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
         Q_UNUSED(status)
 
-        qCDebug(logCategoryPrtAuth) << "reply data" << data;
+        qCDebug(lcPrtAuth) << "reply data" << data;
 
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
 
         if (parseError.error != QJsonParseError::NoError) {
-            qCCritical(logCategoryPrtAuth) << "failed, cannot parse reply" << parseError.errorString();
-            qCCritical(logCategoryPrtAuth) << "data:"<< data;
+            qCCritical(lcPrtAuth) << "failed, cannot parse reply" << parseError.errorString();
+            qCCritical(lcPrtAuth) << "data:"<< data;
 
             emit notifyServiceFinished(-1, "invalid reply");
             return;
@@ -261,7 +298,7 @@ void PrtModel::notifyServiceAboutRegistration(
 
         int boardCount = doc.object().value("count").toInt(-1);
         if (boardCount <= 0) {
-            qCCritical(logCategoryPrtAuth) << "process failed";
+            qCCritical(lcPrtAuth) << "process failed";
             emit notifyServiceFinished(-1, "invalid reply");
             return;
         }
@@ -270,7 +307,7 @@ void PrtModel::notifyServiceAboutRegistration(
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
-        qCCritical(logCategoryPrtAuth)
+        qCCritical(lcPrtAuth)
                 << "failed, "
                 << "status=" << status
                 << "errorString=" << errorString;
@@ -322,7 +359,7 @@ void PrtModel::setPlatformId(
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
-        qCCritical(logCategoryPrt) << errorString;
+        qCCritical(lcPrt) << errorString;
         emit setPlatformIdFinished(errorString);
         return;
     }
@@ -361,7 +398,7 @@ void PrtModel::setAssistedPlatformId(const QVariantMap &data)
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
-        qCCritical(logCategoryPrt) << errorString;
+        qCCritical(lcPrt) << errorString;
         emit setAssistedPlatformIdFinished(errorString);
         return;
     }
@@ -414,7 +451,7 @@ void PrtModel::startBootloader()
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
-        qCCritical(logCategoryPrt) << errorString;
+        qCCritical(lcPrt) << errorString;
         emit startBootloaderFinished(errorString);
         return;
     }
@@ -423,7 +460,7 @@ void PrtModel::startBootloader()
 
     connect(operation, &StartBootloader::finished, [this, operation](Result result, int status, QString errorString) {
         if (errorString.isEmpty() == false ) {
-            qCCritical(logCategoryPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
+            qCCritical(lcPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
         }
 
         emit startBootloaderFinished(errorString);
@@ -441,7 +478,7 @@ void PrtModel::startApplication()
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
-        qCCritical(logCategoryPrt) << errorString;
+        qCCritical(lcPrt) << errorString;
         emit startApplicationFinished(errorString);
         return;
     }
@@ -450,7 +487,7 @@ void PrtModel::startApplication()
 
     connect(operation, &StartApplication::finished, [this, operation](Result result, int status, QString errorString) {
         if (errorString.isEmpty() == false ) {
-            qCCritical(logCategoryPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
+            qCCritical(lcPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
         }
 
         emit startApplicationFinished(errorString);
@@ -461,13 +498,14 @@ void PrtModel::startApplication()
     operation->run();
 }
 
-void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized)
+void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized, bool inBootloader)
 {
     Q_UNUSED(recognized)
+    Q_UNUSED(inBootloader)
 
     strata::platform::PlatformPtr platform = platformManager_.getPlatform(deviceId);
     if (platform == nullptr) {
-        qCWarning(logCategoryPrt).noquote() << "Platform not found by its id" << deviceId;
+        qCWarning(lcPrt).noquote() << "Platform not found by its id" << deviceId;
         return;
     }
 
@@ -511,7 +549,7 @@ void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
         return;
     }
 
-    qCDebug(logCategoryPrt) << groupId << errorString;
+    qCDebug(lcPrt) << groupId << errorString;
 
     emit downloadFirmwareFinished(errorString);
 
@@ -525,7 +563,7 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
     if (bootloaderUrl.isEmpty() == false) {
         QFile bootloaderFile(bootloaderUrl);
         if (bootloaderFile.open(QIODevice::ReadOnly) == false) {
-            qCCritical(logCategoryPrt()) << "cannot open bootloader file";
+            qCCritical(lcPrt()) << "cannot open bootloader file";
             return false;
         }
         QByteArray data = bootloaderFile.readAll();
@@ -543,7 +581,7 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
     if (firmwareUrl.isEmpty() == false) {
         QFile firmwareFile(firmwareUrl);
         if (firmwareFile.open(QIODevice::ReadOnly) == false) {
-            qCCritical(logCategoryPrt()) << "cannot open firmware file";
+            qCCritical(lcPrt()) << "cannot open firmware file";
             return false;
         }
         QByteArray data = firmwareFile.readAll();
@@ -568,7 +606,7 @@ void PrtModel::readConfigFile()
 {
     QString configFilePath = resolveConfigFilePath();
 
-    qCDebug(logCategoryPrt) << "config file:" << configFilePath;
+    qCDebug(lcPrt) << "config file:" << configFilePath;
 
     QSettings settings(configFilePath, QSettings::IniFormat);
 
@@ -577,19 +615,19 @@ void PrtModel::readConfigFile()
     fileServiceUrl_ = settings.value("file-service/url").toUrl();
 
     if (cloudServiceUrl_.isValid() == false) {
-        qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
+        qCCritical(lcPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
     }
 
     if (cloudServiceUrl_.scheme().isEmpty()) {
-        qCCritical(logCategoryPrt) << "cloud service url does not have scheme:" << cloudServiceUrl_.toString();
+        qCCritical(lcPrt) << "cloud service url does not have scheme:" << cloudServiceUrl_.toString();
     }
 
     if (fileServiceUrl_.isValid() == false) {
-        qCCritical(logCategoryPrt) << "file service url is not valid:" << fileServiceUrl_.toString();
+        qCCritical(lcPrt) << "file service url is not valid:" << fileServiceUrl_.toString();
     }
 
     if (fileServiceUrl_.scheme().isEmpty()) {
-        qCCritical(logCategoryPrt) << "file service url does not have scheme:" << fileServiceUrl_.toString();
+        qCCritical(lcPrt) << "file service url does not have scheme:" << fileServiceUrl_.toString();
     }
 }
 

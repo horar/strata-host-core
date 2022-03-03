@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SGVersionUtils.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -52,6 +60,13 @@ int SGVersionUtils::compare(const QString &version1, const QString &version2, bo
 }
 
 int SGVersionUtils::getGreatestVersion(const QStringList &versions, bool *error) {
+    if (versions.count() == 0) {
+        if (error != nullptr) {
+            *error = true;
+        }
+        return -1;
+    }
+
     int greatestVersion = 0;
     bool err = false;
 

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "RequestsController.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -24,11 +32,11 @@ std::pair<DeferredRequest *, QByteArray> RequestsController::addNewRequest(
 
     const auto it = requests_.find(currentRequestId_);
     if (it != requests_.end()) {
-        qCCritical(logCategoryRequestsController) << "Duplicate request id.";
-        return {0, ""};
+        qCCritical(lcRequestsController) << "Duplicate request id.";
+        return {nullptr, QByteArray()};
     }
 
-    qCDebug(logCategoryRequestsController)
+    qCDebug(lcRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
     DeferredRequest *deferredRequest = new DeferredRequest(currentRequestId_, this);
@@ -45,10 +53,10 @@ bool RequestsController::isPendingRequest(const int &id)
 
 bool RequestsController::removePendingRequest(const int &id)
 {
-    qCDebug(logCategoryRequestsController) << "Removing pending request id:" << id;
+    qCDebug(lcRequestsController) << "Removing pending request id:" << id;
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qCDebug(logCategoryRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return false;
     }
     return requests_.remove(id) > 0;
@@ -56,10 +64,10 @@ bool RequestsController::removePendingRequest(const int &id)
 
 std::pair<bool, Request> RequestsController::popPendingRequest(const int &id)
 {
-    qCDebug(logCategoryRequestsController) << "Popping pending request id:" << id;
+    qCDebug(lcRequestsController) << "Popping pending request id:" << id;
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qDebug(logCategoryRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return {false, Request("", QJsonObject({{}}), 0, nullptr)};
     }
     Request request(it.value());
@@ -70,10 +78,10 @@ QString RequestsController::getMethodName(const int &id)
 {
     auto it = requests_.find(id);
     if (it == requests_.end()) {
-        qCDebug(logCategoryRequestsController) << "Request id not found.";
+        qCDebug(lcRequestsController) << "Request id not found.";
         return "";
     }
-    qCDebug(logCategoryRequestsController)
+    qCDebug(lcRequestsController)
         << "request id" << it->messageId_ << "method" << it->method_;
     return it->method_;
 }
@@ -81,7 +89,7 @@ QString RequestsController::getMethodName(const int &id)
 void RequestsController::findTimedoutRequests()
 {
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
-    for (const auto &request : requests_) {
+    for (const auto &request : qAsConst(requests_)) {
         if ((currentTime - request.timestamp_) < REQUEST_TIMEOUT) {
             return;
         }

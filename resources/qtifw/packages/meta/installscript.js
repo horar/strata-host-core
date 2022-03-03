@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 var restart_is_required = false;
 var is_command_line_instance = false;
 
@@ -279,7 +287,7 @@ Component.prototype.startMenuShortcutChanged = function (checked)
     console.log("startMenuShortcutChanged to : " + checked);
     if (checked == true) {
         installer.setValue("add_start_menu_shortcut", "true");
-        installer.setValue("StartMenuDir", "ON Semiconductor");
+        installer.setValue("StartMenuDir", "onsemi");
         if (systemInfo.productType == "windows") {
             installer.setDefaultPageVisible(QInstaller.StartMenuSelection, true);
         }

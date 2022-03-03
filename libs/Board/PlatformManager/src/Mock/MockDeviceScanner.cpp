@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Mock/MockDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -20,7 +28,40 @@ void MockDeviceScanner::init(quint32 flags) {
 void MockDeviceScanner::deinit() {
     running_ = false;
 
-    mockAllDevicesLost();
+    MockDeviceScanner::disconnectAllDevices();
+}
+
+QList<QByteArray> MockDeviceScanner::discoveredDevices() const {
+    return devices_.keys();
+}
+
+QString MockDeviceScanner::connectDevice(const QByteArray& deviceId) {
+    Q_UNUSED(deviceId)
+
+    return "Method not supported";
+}
+
+QString MockDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
+    if (devices_.remove(deviceId) == 0) {
+        qCWarning(lcDeviceScanner).nospace().noquote()
+            << "Unable to erase mock device: ID: " << deviceId << ", device does not exists";
+        return "Device not found";
+    }
+
+    qCInfo(lcDeviceScanner).nospace().noquote()
+        << "Erased mock device: ID: " << deviceId;
+
+    emit deviceLost(deviceId);
+
+    return "";
+}
+
+void MockDeviceScanner::disconnectAllDevices() {
+    for (auto devIdIter = devices_.keyBegin(); devIdIter != devices_.keyEnd(); ++devIdIter) {
+        emit deviceLost(*devIdIter);
+    }
+
+    devices_.clear();
 }
 
 QByteArray MockDeviceScanner::mockCreateDeviceId(const QString& mockName) {
@@ -28,9 +69,9 @@ QByteArray MockDeviceScanner::mockCreateDeviceId(const QString& mockName) {
 }
 
 QString MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages) {
-    if (devices_.find(deviceId) != devices_.cend()) {
+    if (devices_.constFind(deviceId) != devices_.cend()) {
         QString errorString = "Unable to create new mock device: ID: " + deviceId + ", name: '" + name + "', device already exists.";
-        qCWarning(logCategoryDeviceScanner).noquote() << errorString;
+        qCWarning(lcDeviceScanner).noquote() << errorString;
         return errorString;
     }
 
@@ -39,7 +80,7 @@ QString MockDeviceScanner::mockDeviceDetected(const QByteArray& deviceId, const 
 
     devices_.insert(deviceId, device);
 
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
+    qCInfo(lcDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << deviceId << ", name: '" << name << "'";
 
     emit deviceDetected(platform);
@@ -54,14 +95,14 @@ QString MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
             errorString.append(" Device ID: ");
             errorString.append(mockDevice->deviceId());
         }
-        qCWarning(logCategoryDeviceScanner).noquote() << errorString;
+        qCWarning(lcDeviceScanner).noquote() << errorString;
         return errorString;
     }
 
     if (devices_.find(mockDevice->deviceId()) != devices_.end()) {
         QString errorString = "Unable to create new mock device: ID: " + mockDevice->deviceId()
                               + ", name: '" + mockDevice->deviceName() + "', device already exists.";
-        qCWarning(logCategoryDeviceScanner).noquote() << errorString;
+        qCWarning(lcDeviceScanner).noquote() << errorString;
         return errorString;
     }
 
@@ -69,36 +110,13 @@ QString MockDeviceScanner::mockDeviceDetected(DevicePtr mockDevice) {
 
     devices_.insert(mockDevice->deviceId(), mockDevice);
 
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
+    qCInfo(lcDeviceScanner).nospace().noquote()
         << "Created new mock device: ID: " << mockDevice->deviceId()
         << ", name: '" << mockDevice->deviceName() << "'";
 
     emit deviceDetected(platform);
 
     return QString();
-}
-
-bool MockDeviceScanner::mockDeviceLost(const QByteArray& deviceId) {
-    if (devices_.remove(deviceId) == 0) {
-        qCWarning(logCategoryDeviceScanner).nospace().noquote()
-            << "Unable to erase mock device: ID: " << deviceId << ", device does not exists";
-        return false;
-    }
-
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
-        << "Erased mock device: ID: " << deviceId;
-
-    emit deviceLost(deviceId);
-
-    return true;
-}
-
-void MockDeviceScanner::mockAllDevicesLost() {
-    for (auto devIdIter = devices_.keyBegin(); devIdIter != devices_.keyEnd(); ++devIdIter) {
-        emit deviceLost(*devIdIter);
-    }
-
-    devices_.clear();
 }
 
 DevicePtr MockDeviceScanner::getMockDevice(const QByteArray& deviceId) const {

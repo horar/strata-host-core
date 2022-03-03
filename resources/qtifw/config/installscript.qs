@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 var isSilent = false;
 
 function isValueSet(val)
@@ -80,15 +88,7 @@ Controller.prototype.IntroductionPageCallback = function()
     }
 
     if (isSilent == true) {
-        gui.clickButton(buttons.NextButton);
-    }
-}
-
-Controller.prototype.WelcomePageCallback = function ()
-{
-    console.log("[GUI] WelcomePageCallback entered");
-    if (isSilent == true) {
-        gui.clickButton(buttons.NextButton, 3000);
+        gui.clickButton(buttons.NextButton, 1000);
     }
 }
 
@@ -191,8 +191,8 @@ Controller.prototype.FinishedPageCallback = function ()
     console.log("[GUI] FinishedPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
-        widget.MessageLabel.setText("ON Semiconductor\n\n"
-                                    + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
+        widget.MessageLabel.setText("onsemi\n\n"
+                                    + "Thank you for using onsemi. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
         var runItCheckBox = widget.findChild("RunItCheckBox");

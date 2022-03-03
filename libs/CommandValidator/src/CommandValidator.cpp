@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "CommandValidator.h"
 
 #include "logging/LoggingQtCategories.h"
@@ -371,7 +379,7 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema
     rapidjson::Document sd;
     rapidjson::ParseResult result = sd.Parse(schema.data(), schema.size());
     if (result.IsError()) {
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+        qCCritical(lcCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
             << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON schema: '" << schema << "'";
         ok = false;
     }
@@ -398,7 +406,7 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
 
             validator.GetError().Accept(writer);
 
-            qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
+            qCCritical(lcCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
         }
 
         return false;
@@ -432,7 +440,7 @@ bool CommandValidator::validate(const QByteArray &command, const QByteArray& sch
 bool CommandValidator::validate(const JsonType type, const rapidjson::Document &doc) {
   const auto it = schemas_.find(type);
   if (it == schemas_.end()) {
-      qCCritical(logCategoryCommandValidator).nospace() << "Unknown schema (" << static_cast<int>(type) << ").";
+      qCCritical(lcCommandValidator).nospace() << "Unknown schema (" << static_cast<int>(type) << ").";
       return false;
   }
 
@@ -443,7 +451,7 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
     const auto notifIt = notifications_.find(type);
     const auto schemaIt = schemas_.find(type);
     if (notifIt == notifications_.end() || schemaIt == schemas_.end()) {
-        qCCritical(logCategoryCommandValidator).nospace() << "Unknown notification (" << static_cast<int>(type) << ").";
+        qCCritical(lcCommandValidator).nospace() << "Unknown notification (" << static_cast<int>(type) << ").";
         return false;
     }
 
@@ -469,7 +477,7 @@ bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Do
     rapidjson::ParseResult result = doc.Parse(command.data(), command.size());
     if (result.IsError()) {
         if (quiet == false) {
-            qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+            qCCritical(lcCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
                 << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
         }
         return false;
@@ -478,7 +486,7 @@ bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Do
         // JSON can contain only a value (e.g. "abc").
         // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
         if (quiet == false) {
-            qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
+            qCCritical(lcCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
         }
         return false;
     }

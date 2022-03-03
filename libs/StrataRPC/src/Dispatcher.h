@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include "logging/LoggingQtCategories.h"
@@ -65,11 +73,11 @@ Dispatcher<HandlerArgument>::~Dispatcher()
 template <class HandlerArgument>
 bool Dispatcher<HandlerArgument>::registerHandler(const QString &handlerName, Handler handler)
 {
-    qCDebug(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
+    qCDebug(lcStrataDispatcher) << "registering" << handlerName << "handler.";
 
     const auto [it, inserted] = handlersList_.insert(std::make_pair(handlerName, handler));
     if (false == inserted) {
-        qCDebug(logCategoryStrataDispatcher()) << handlerName << " is already registered.";
+        qCDebug(lcStrataDispatcher) << handlerName << "is already registered.";
     }
 
     return inserted;
@@ -78,11 +86,11 @@ bool Dispatcher<HandlerArgument>::registerHandler(const QString &handlerName, Ha
 template <class HandlerArgument>
 bool Dispatcher<HandlerArgument>::unregisterHandler(const QString &handlerName)
 {
-    qCDebug(logCategoryStrataDispatcher) << "unregistering " << handlerName << " handler.";
+    qCDebug(lcStrataDispatcher) << "unregistering " << handlerName << " handler.";
 
     size_t removedCount = handlersList_.erase(handlerName);
     if (removedCount == 0) {
-        qCCritical(logCategoryStrataDispatcher()) << "Handler not found" << handlerName;
+        qCCritical(lcStrataDispatcher) << "Handler not found:" << handlerName;
     }
 
     return removedCount != 0;
@@ -92,12 +100,12 @@ template <class HandlerArgument>
 bool Dispatcher<HandlerArgument>::dispatch(const QString &handlerName,
                                            const HandlerArgument &argument)
 {
-    qCDebug(logCategoryStrataDispatcher) << "Dispatching " << handlerName;
+    // qCDebug(lcStrataDispatcher) << "Dispatching " << handlerName;
 
     auto it = handlersList_.find(handlerName);
 
     if (it == handlersList_.end()) {
-        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << handlerName;
+        qCCritical(lcStrataDispatcher) << "Handler not found:" << handlerName;
         return false;
     }
 

@@ -7,10 +7,6 @@
 [submodule "extern/googletest"]
 	path = extern/googletest
 	url = https://github.com/google/googletest.git
-[submodule "extern/qtmqtt"]
-	path = extern/qtmqtt
-	url = https://github.com/qt/qtmqtt.git
-	ignore = all
 [submodule "extern/couchbase-lite-C"]
 	path = extern/couchbase-lite-C
 	url = https://github.com/stratadeveloperstudio/couchbase-lite-C.git
@@ -25,4 +21,4 @@
 	ignore = dirty
 [submodule "strata-cmake-modules"]
 	path = strata-cmake-modules
-	url = https://code.onsemi.com/scm/secswst/strata-cmake-modules.git
+	url = ../strata-cmake-modules.git

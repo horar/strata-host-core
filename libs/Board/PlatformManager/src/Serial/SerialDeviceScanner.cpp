@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Serial/SerialDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -27,12 +35,57 @@ void SerialDeviceScanner::init(quint32 flags) {
 void SerialDeviceScanner::deinit() {
     stopAutomaticScan();
 
-    for (const auto& deviceId : deviceIds_) {
-        emit deviceLost(deviceId);
-    }
+    SerialDeviceScanner::disconnectAllDevices();
 
     deviceIds_.clear();
     portNames_.clear();
+}
+
+QList<QByteArray> SerialDeviceScanner::discoveredDevices() const {
+    return deviceIds_.values();
+}
+
+QString SerialDeviceScanner::connectDevice(const QByteArray& deviceId) {
+    // 1. construct the serial device
+    // 2. emit signal
+
+    const QString name = portNames_.value(deviceId);
+
+    SerialDevice::SerialPortPtr serialPort = SerialDevice::establishPort(name);
+
+    if (serialPort == nullptr) {
+        qCInfo(lcDeviceScanner).nospace().noquote()
+            << "Port for device: ID: " << deviceId << ", name: '" << name
+            << "' cannot be open, it is probably held by another application.";
+        return "Unable to open Serial Port";
+    }
+
+    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort), -1);
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    qCInfo(lcDeviceScanner).nospace().noquote()
+        << "Created new serial device: ID: " << deviceId << ", name: '" << name << "'";
+
+    emit deviceDetected(platform);
+
+    return "";
+}
+
+QString SerialDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
+    // we will keep the device in lists here in scanner
+    if (deviceIds_.contains(deviceId) == false) {
+        return "Device not found";
+    }
+
+    emit deviceLost(deviceId);
+    return "";
+}
+
+void SerialDeviceScanner::disconnectAllDevices() {
+    // we will keep the devices in lists here in scanner
+    for (const auto& deviceId: qAsConst(deviceIds_)) {
+        emit deviceLost(deviceId);
+    }
 }
 
 void SerialDeviceScanner::setProperties(quint32 flags) {
@@ -49,19 +102,19 @@ void SerialDeviceScanner::unsetProperties(quint32 flags) {
 
 void SerialDeviceScanner::startAutomaticScan() {
     if (timer_.isActive()) {
-        qCWarning(logCategoryDeviceScanner) << "Device scan is already running.";
+        qCDebug(lcDeviceScanner) << "Device scan is already running.";
     } else {
-        qCDebug(logCategoryDeviceScanner) << "Starting device scan.";
+        qCDebug(lcDeviceScanner) << "Starting device scan.";
         timer_.start(SERIAL_DEVICE_SCAN_INTERVAL);
     }
 }
 
 void SerialDeviceScanner::stopAutomaticScan() {
     if (timer_.isActive()) {
-        qCDebug(logCategoryDeviceScanner) << "Stopping device scan.";
+        qCDebug(lcDeviceScanner) << "Stopping device scan.";
         timer_.stop();
     } else {
-        qCWarning(logCategoryDeviceScanner) << "Device scan is already stopped.";
+        qCDebug(lcDeviceScanner) << "Device scan is already stopped.";
     }
 }
 
@@ -77,7 +130,7 @@ void SerialDeviceScanner::checkNewSerialDevices() {
 #endif
 
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
-    std::set<QByteArray> detectedDeviceIds;
+    QSet<QByteArray> detectedDeviceIds;
     QHash<QByteArray, QString> detectedPortNames;
 
     for (const QSerialPortInfo& serialPortInfo : serialPortInfos) {
@@ -96,77 +149,48 @@ void SerialDeviceScanner::checkNewSerialDevices() {
 #endif
         // device ID must be int because of integration with QML
         const QByteArray deviceId = createDeviceId(SerialDevice::createUniqueHash(portName));
-        auto [iter, success] = detectedDeviceIds.emplace(deviceId);
-        if (success == false) {
+        if (detectedDeviceIds.contains(deviceId)) {
             // Error: hash already exists!
-            qCCritical(logCategoryDeviceScanner).nospace().noquote()
+            qCCritical(lcDeviceScanner).nospace().noquote()
                 << "Cannot add device (hash conflict: " << deviceId << "): '" << portName << "'";
             continue;
         }
+        detectedDeviceIds.insert(deviceId);
         detectedPortNames.insert(deviceId, portName);
 
-        // qCDebug(logCategoryDeviceScanner).nospace().noquote() << "Found serial device, ID: " << deviceId << ", name: '" << name << "'";
+        // qCDebug(lcDeviceScanner).nospace().noquote() << "Found serial device, ID: " << deviceId << ", name: '" << name << "'";
     }
 
-    std::set<QByteArray> addedDeviceIds, removedDeviceIds;
+    QSet<QByteArray> addedDeviceIds, removedDeviceIds;
     computeListDiff(deviceIds_, detectedDeviceIds, addedDeviceIds, removedDeviceIds);
 
-    portNames_ = std::move(detectedPortNames); // must be called before addSerialDevice
+    portNames_ = std::move(detectedPortNames); // must be called before connectDevice
 
-    for (const auto& deviceId : removedDeviceIds) {
+    for (const auto& deviceId: qAsConst(removedDeviceIds)) {
         emit deviceLost(deviceId);
     }
 
-    for (const auto& deviceId : addedDeviceIds) {
-        if (addSerialDevice(deviceId) == false) {
+    for (const auto& deviceId: qAsConst(addedDeviceIds)) {
+        if (connectDevice(deviceId).isEmpty() == false) {
             // If serial port cannot be opened (for example it is hold by another application),
             // remove it from list of known ports. There will be another attempt to open it in next round.
-            detectedDeviceIds.erase(deviceId);
+            detectedDeviceIds.remove(deviceId);
             auto iter = portNames_.find(deviceId);
             if (iter != portNames_.end())
                 portNames_.erase(iter);
         }
     }
 
-    deviceIds_ = std::move(detectedDeviceIds); // must be called after addSerialDevice
+    deviceIds_ = std::move(detectedDeviceIds); // must be called after connectDevice
 }
 
-void SerialDeviceScanner::computeListDiff(const std::set<QByteArray>& originalList, const std::set<QByteArray>& newList,
-                                          std::set<QByteArray>& addedList, std::set<QByteArray>& removedList) const {
+void SerialDeviceScanner::computeListDiff(const QSet<QByteArray>& originalList, const QSet<QByteArray>& newList,
+                                          QSet<QByteArray>& addedList, QSet<QByteArray>& removedList) const {
     // create differences of the lists.. what is added / removed
-    std::set_difference(newList.begin(), newList.end(),
-                        originalList.begin(), originalList.end(),
-                        std::inserter(addedList, addedList.begin()));
-
-    std::set_difference(originalList.begin(), originalList.end(),
-                        newList.begin(), newList.end(),
-                        std::inserter(removedList, removedList.begin()));
-}
-
-bool SerialDeviceScanner::addSerialDevice(const QByteArray& deviceId) {
-    // 1. construct the serial device
-    // 2. emit signal
-
-    const QString name = portNames_.value(deviceId);
-
-    SerialDevice::SerialPortPtr serialPort = SerialDevice::establishPort(name);
-
-    if (serialPort == nullptr) {
-        qCInfo(logCategoryDeviceScanner).nospace().noquote()
-            << "Port for device: ID: " << deviceId << ", name: '" << name
-            << "' cannot be open, it is probably held by another application.";
-        return false;
-    }
-
-    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort), -1);
-    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
-
-    qCInfo(logCategoryDeviceScanner).nospace().noquote()
-        << "Created new serial device: ID: " << deviceId << ", name: '" << name << "'";
-
-    emit deviceDetected(platform);
-
-    return true;
+    addedList = newList;
+    addedList.subtract(originalList);
+    removedList = originalList;
+    removedList.subtract(newList);
 }
 
 }  // namespace

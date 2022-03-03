@@ -1,3 +1,11 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
 option(BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)" ON)
 add_feature_info(BUILD_DONT_CLEAN_EXTERNAL BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)")
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM ${BUILD_DONT_CLEAN_EXTERNAL})
@@ -52,7 +60,6 @@ include(ProjectExternals_pdfjs)
 include(ProjectExternals_googletest)
 include(ProjectExternals_OpenSSL)
 include(ProjectExternals_qwt)
-include(ProjectExternals_QtMqtt)
 include(ProjectExternals_cbl-official-api)
 include(ProjectExternals_libzmq)
 include(ProjectExternals_monaco_editor)

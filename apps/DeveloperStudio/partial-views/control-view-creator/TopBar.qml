@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
@@ -19,27 +27,10 @@ RowLayout {
 
         Connections {
             target: treeModel
-            onProjectDirectoryChanged: {
-                let cMakeFile = treeModel.projectDirectory
-                cMakeFile = SGUtilsCpp.urlToLocalFile(cMakeFile)
-                cMakeFile = SGUtilsCpp.joinFilePath(cMakeFile, "CMakeLists.txt")
 
-                if (SGUtilsCpp.isFile(cMakeFile)) {
-                    const content = SGUtilsCpp.readTextFileContent(cMakeFile)
-                    // Regex will parse the project name from CMakeLists.txt; "project(<project name to be captured>"
-                    const splitCondition = /project\s*\(\s*([a-zA-Z0-9_.-]*)\s*$/m
-                    const cMakeArr = content.match(splitCondition)
-                    
-                    if (cMakeArr === null || cMakeArr.length < 2) {
-                        console.warn("Could not determine project name from CMakeLists.txt")
-                        nameField.text = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
-                    } else {
-                        nameField.text = cMakeArr[1]
-                    }
-                } else {
-                    console.warn("Unable to open CMakeLists.txt")
-                    nameField.text = SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
-                }
+            onProjectDirectoryChanged: {
+                controlViewCreatorRoot.getProjectNameFromCmake()
+                nameField.text = controlViewCreatorRoot.projectName
             }
         }
     }

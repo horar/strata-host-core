@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include "Authenticator.h"
@@ -52,6 +60,7 @@ public:
             QString firmwareUrl = QString(),
             QString firmwareMd5 = QString());
 
+    Q_INVOKABLE void identifyBootloader();
     Q_INVOKABLE void programDevice();
     Q_INVOKABLE void notifyServiceAboutRegistration(
             const QString &classId,
@@ -80,6 +89,7 @@ signals:
     void deviceCountChanged();
     void bootloaderFilepathChanged();
     void downloadFirmwareFinished(QString errorString);
+    void identifyBootloaderFinished(QString errorString);
     void flasherOperationStateChanged(
             strata::FlasherConnector::Operation operation,
             strata::FlasherConnector::State state,
@@ -94,7 +104,7 @@ signals:
     void startApplicationFinished(QString errorString);
 
 private slots:
-    void deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized);
+    void deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void deviceDisconnectedHandler(const QByteArray& deviceId);
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
     void downloadFinishedHandler(QString groupId, QString errorString);

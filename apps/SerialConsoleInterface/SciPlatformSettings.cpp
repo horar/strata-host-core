@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SciPlatformSettings.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -97,7 +105,7 @@ void SciPlatformSettings::loadData()
 
     QFile file(boardStoragePath_);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
-        qCCritical(logCategorySci) << "cannot load data" << boardStoragePath_ << file.errorString();
+        qCCritical(lcSci) << "cannot load data" << boardStoragePath_ << file.errorString();
         return;
     }
 
@@ -105,14 +113,14 @@ void SciPlatformSettings::loadData()
     QJsonDocument doc =QJsonDocument::fromJson(file.readAll(), &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCCritical(logCategorySci) << "cannot load data, json corrupted"
+        qCCritical(lcSci) << "cannot load data, json corrupted"
                    << "error=" << parseError.error
                    << parseError.errorString();
         return;
     }
 
     if (doc.isArray() == false) {
-        qCCritical(logCategorySci) << "cannot load data, json is not an array";
+        qCCritical(lcSci) << "cannot load data, json is not an array";
         return;
     }
 
@@ -124,7 +132,7 @@ void SciPlatformSettings::loadData()
         QString id = board.toObject().value(SCI_SETTINGS_ID).toString();
 
         if (id.isEmpty()) {
-            qCCritical(logCategorySci) << "empty board identification";
+            qCCritical(lcSci) << "empty board identification";
             continue;
         }
 
@@ -163,7 +171,7 @@ void SciPlatformSettings::saveData()
     QSaveFile file(boardStoragePath_);
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCCritical(logCategorySci) << "cannot open file" << boardStoragePath_ << file.errorString();
+        qCCritical(lcSci) << "cannot open file" << boardStoragePath_ << file.errorString();
         return;
     }
 
@@ -173,6 +181,6 @@ void SciPlatformSettings::saveData()
 
     bool comitted = file.commit();
     if (comitted == false) {
-         qCCritical(logCategorySci) << "platform data were not saved";
+         qCCritical(lcSci) << "platform data were not saved";
     }
 }

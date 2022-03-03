@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -108,11 +116,19 @@ FocusScope {
             filePath: {
                 let fileName = "application"
                 if (model.platform.verboseName.length > 0 && model.platform.verboseName !== "Bootloader") {
-                    fileName = model.platform.verboseName.replace(/\s+/g,"_")
+                    fileName = model.platform.verboseName
                 }
                 if (model.platform.appVersion.length > 0) {
                     fileName = fileName + "_v" + model.platform.appVersion
                 }
+
+                let forbiddenCharacters = CommonCpp.SGUtilsCpp.getForbiddenCharacters()
+                for (let i = 0; i < forbiddenCharacters.length; i++) {
+                    fileName = replaceAll(fileName,forbiddenCharacters[i],"_")
+                }
+
+                fileName = fileName.replace(/\s+/g,"_") //replaces white-space
+
                 fileName = fileName + "_" + currentTimestamp() + ".bin"
 
                 let destination = Sci.Settings.lastSavedFirmwarePath
@@ -135,6 +151,8 @@ FocusScope {
                     return qsTr("Absolute path for firmware binary file is required")
                 } else if (CommonCpp.SGUtilsCpp.isFile(filePath)) {
                     return qsTr("Selected file exists, it will be overwritten")
+                } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                    return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
                 }
 
                 return ""
@@ -193,96 +211,113 @@ FocusScope {
             }
         }
 
-        Row {
+        Column {
+            id: bottomColumn
+            anchors.bottom: content.bottom
+            anchors.left: content.left
             spacing: baseSpacing
-            anchors {
-                top: statusColumn.bottom
-                topMargin: 2*baseSpacing
-            }
-            SGWidgets.SGButton {
-                text: "Back"
-                icon.source: "qrc:/sgimages/chevron-left.svg"
-                enabled: saveFirmwareView.editable
-                onClicked: {
-                    closeView()
+
+            Row {
+                spacing: baseSpacing
+
+                SGWidgets.SGButton {
+                    text: "Back"
+                    icon.source: "qrc:/sgimages/chevron-left.svg"
+                    enabled: saveFirmwareView.editable
+                    onClicked: {
+                        closeView()
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: saveFirmwareButton
+                    text: "Save firmware"
+                    icon.source: "qrc:/images/chip-download.svg"
+                    enabled: saveFirmwareView.editable
+                             && model.platform.status === Sci.SciPlatform.Ready
+                    onClicked: {
+                        var error = saveFirmwarePathEdit.inputValidationErrorMsg()
+                        if (error.length > 0) {
+                            SGWidgets.SGDialogJS.showMessageDialog(
+                                        saveFirmwareView,
+                                        SGWidgets.SGMessageDialog.Error,
+                                        "Save Firmware Failed",
+                                        error)
+                        } else {
+                            startBackupProcess(saveFirmwarePathEdit.filePath)
+                        }
+                    }
                 }
             }
+        }
+    }
 
-            SGWidgets.SGButton {
-                id: saveFirmwareButton
-                text: "Save firmware"
-                icon.source: "qrc:/images/chip-download.svg"
-                enabled: saveFirmwareView.editable
-                         && model.platform.status === Sci.SciPlatform.Ready
-                onClicked: {
-                    startBackupProcess(saveFirmwarePathEdit.filePath)
-                }
-             }
-         }
-     }
+    function startBackupProcess(firmwarePath) {
+        processingStatus = SaveFirmwareView.Setup
 
-     function startBackupProcess(firmwarePath) {
-         processingStatus = SaveFirmwareView.Setup
+        setupNode.nodeState = StatusNode.NotSet
+        preparationNode.nodeState = StatusNode.NotSet
+        backupNode.nodeState = StatusNode.NotSet
+        finishedNode.nodeState = StatusNode.NotSet
 
-         setupNode.nodeState = StatusNode.NotSet
-         preparationNode.nodeState = StatusNode.NotSet
-         backupNode.nodeState = StatusNode.NotSet
-         finishedNode.nodeState = StatusNode.NotSet
+        setupNode.subText = ""
+        preparationNode.subText = ""
+        backupNode.subText = ""
+        finishedNode.subText = ""
 
-         setupNode.subText = ""
-         preparationNode.subText = ""
-         backupNode.subText = ""
-         finishedNode.subText = ""
+        backupProgress = 0
 
-         backupProgress = 0
+        var errorString = model.platform.saveDeviceFirmware(firmwarePath)
+        if (errorString.length === 0) {
+            setupNode.nodeState = StatusNode.Succeed
+            Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(firmwarePath)
+        } else {
+            setupNode.nodeState = StatusNode.Failed
+            setupNode.subText = "Operation cannot start: " + errorString
+            setFinalState(FlasherConnector.Failed)
+        }
+    }
 
-         var errorString = model.platform.saveDeviceFirmware(firmwarePath)
-         if (errorString.length === 0) {
-             setupNode.nodeState = StatusNode.Succeed
-             Sci.Settings.lastSavedFirmwarePath = CommonCpp.SGUtilsCpp.parentDirectoryPath(firmwarePath)
-         } else {
-             setupNode.nodeState = StatusNode.Failed
-             setupNode.subText = "Operation cannot start: " + errorString
-             setFinalState(FlasherConnector.Failed)
-         }
-     }
+    function setFinalState(result) {
+        if (result === FlasherConnector.Success) {
+            processingStatus = SaveFirmwareView.BackupSucceed
+            finishedNode.nodeState = StatusNode.Succeed
+            finishedNode.subText = "The device firmware is saved."
+        } else if (result === FlasherConnector.Unsuccess) {
+            processingStatus = SaveFirmwareView.BackupSucceed
+            finishedNode.nodeState = StatusNode.SucceedWithWarning
+            finishedNode.subText = "The saved file is not a valid firmware."
+        } else {
+            // FlasherConnector.Failure
+            processingStatus = SaveFirmwareView.BackupFailed
+            finishedNode.nodeState = StatusNode.Failed
+            finishedNode.subText = "Firmware was not saved successfully."
+        }
+    }
 
-     function setFinalState(result) {
-         if (result === FlasherConnector.Success) {
-             processingStatus = SaveFirmwareView.BackupSucceed
-             finishedNode.nodeState = StatusNode.Succeed
-             finishedNode.subText = "The device firmware is saved."
-         } else if (result === FlasherConnector.Unsuccess) {
-             processingStatus = SaveFirmwareView.BackupSucceed
-             finishedNode.nodeState = StatusNode.SucceedWithWarning
-             finishedNode.subText = "The saved file is not a valid firmware."
-         } else {
-             // FlasherConnector.Failure
-             processingStatus = SaveFirmwareView.BackupFailed
-             finishedNode.nodeState = StatusNode.Failed
-             finishedNode.subText = "Firmware was not saved successfully."
-         }
-     }
+    function closeView() {
+        StackView.view.pop();
+    }
 
-     function closeView() {
-         StackView.view.pop();
-     }
+    function currentTimestamp() {
+        let timestamp = ""
+        let date = new Date()
+        timestamp += date.getFullYear()
+        let val = date.getMonth() + 1
+        timestamp += (val <= 9) ? "0" + val : val
+        val = date.getDate()
+        timestamp += (val <= 9) ? "0" + val : val
+        timestamp += "_"
+        val = date.getHours()
+        timestamp += (val <= 9) ? "0" + val : val
+        val = date.getMinutes()
+        timestamp += (val <= 9) ? "0" + val : val
+        val = date.getSeconds()
+        timestamp += (val <= 9) ? "0" + val : val
+        return timestamp
+    }
 
-     function currentTimestamp() {
-         let timestamp = ""
-         let date = new Date()
-         timestamp += date.getFullYear()
-         let val = date.getMonth() + 1
-         timestamp += (val <= 9) ? "0" + val : val
-         val = date.getDate()
-         timestamp += (val <= 9) ? "0" + val : val
-         timestamp += "_"
-         val = date.getHours()
-         timestamp += (val <= 9) ? "0" + val : val
-         val = date.getMinutes()
-         timestamp += (val <= 9) ? "0" + val : val
-         val = date.getSeconds()
-         timestamp += (val <= 9) ? "0" + val : val
-         return timestamp
-     }
+    function replaceAll(string, search, replace) {
+        return string.split(search).join(replace);
+    }
 }

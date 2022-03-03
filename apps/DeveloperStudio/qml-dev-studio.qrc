@@ -65,6 +65,8 @@
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>js/core_update.js</file>
+        <file>partial-views/core-update/SGCoreUpdate.qml</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg</file>
         <file>partial-views/profile-popup/SGProfilePopup.qml</file>
         <file>partial-views/SGConfirmationPopup.qml</file>
@@ -74,9 +76,9 @@
         <file>partial-views/profile-popup/ProfileSectionDivider.qml</file>
         <file>partial-views/profile-popup/SubSectionLabel.qml</file>
         <file>partial-views/platform-view/PlatformSettings.qml</file>
-        <file>partial-views/platform-view/PlatformSettings/SoftwareManagement.qml</file>
-        <file>partial-views/platform-view/PlatformSettings/FirmwareManagement.qml</file>
-        <file>partial-views/platform-view/PlatformSettings/FirmwareVersionList.qml</file>
+        <file>partial-views/platform-view/platform-settings/SoftwareManagement.qml</file>
+        <file>partial-views/platform-view/platform-settings/FirmwareManagement.qml</file>
+        <file>partial-views/platform-view/platform-settings/FirmwareVersionList.qml</file>
         <file>js/constants.js</file>
         <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
         <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
@@ -84,7 +86,6 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
-        <file>js/uuid_map.js</file>
         <file>partial-views/platform-view/ControlViewContainer.qml</file>
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
@@ -93,8 +94,8 @@
         <file>partial-views/general/SGWebPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/platform-selector/PlatformImage.qml</file>
-        <file>partial-views/general/WebPopup/SGWebControls.qml</file>
-        <file>partial-views/general/WebPopup/SGWebView.qml</file>
+        <file>partial-views/general/web-popup/SGWebControls.qml</file>
+        <file>partial-views/general/web-popup/SGWebView.qml</file>
         <file>partial-views/notifications/NotificationDelegate.qml</file>
         <file>partial-views/platform-selector/images/platform-images/recentlyReleased.png</file>
         <file>partial-views/platform-selector/PlatformControlButton.qml</file>

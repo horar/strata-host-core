@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <QObject>
@@ -5,6 +13,7 @@
 #include <QHash>
 
 #include <PlatformManager.h>
+#include <Operations/PlatformOperations.h>
 
 /*
 This PlatformController class is replacement for original classes BoardsController and PlatformBoard.
@@ -62,23 +71,46 @@ public:
      */
     QJsonObject createPlatformsList();
 
+    bool platformStartApplication(const QByteArray& deviceId);
+
 signals:
     void platformConnected(QByteArray deviceId);
     void platformDisconnected(QByteArray deviceId);
     void platformMessage(QString platformId, QJsonObject message);
+    void platformApplicationStarted(QByteArray deviceId);
 
-private slots:  // slots for signals from PlatformManager
-    void newConnection(const QByteArray& deviceId, bool recognized);
+public slots:
+    void bootloaderActive(QByteArray deviceId);
+    void applicationActive(QByteArray deviceId);
+
+private slots:
+    // slots for signals from PlatformManager
+    void newConnection(const QByteArray& deviceId, bool recognized, bool inBootloader);
     void closeConnection(const QByteArray& deviceId);
     void messageFromPlatform(strata::platform::PlatformMessage message);
     void messageToPlatform(QByteArray rawMessage, unsigned msgNumber, QString errorString);
+    // slot for signal from PlatformOperations
+    void operationFinished(QByteArray deviceId,
+                           strata::platform::operation::Type type,
+                           strata::platform::operation::Result result,
+                           int status,
+                           QString errorString);
 
 private:
+    struct PlatformData {
+        PlatformData(strata::platform::PlatformPtr p, bool b);
+
+        strata::platform::PlatformPtr platform;
+        bool inBootloader;
+        bool startAppFailed;
+        unsigned sentMessageNumber;  // number of last sent message
+    };
+
     strata::PlatformManager platformManager_;
 
-    // map: deviceID <-> Platform
-    QHash<QByteArray, strata::platform::PlatformPtr> platforms_;
-    // map: deviceID <-> number of last sent message
-    QHash<QByteArray, unsigned> sentMessageNumbers_;
-    // access to platforms_ and sentMessageNumbers_ should be protected by mutex in case of multithread usage
+    // map: deviceID <-> PlatformData
+    QHash<QByteArray, PlatformData> platforms_;
+    // access to platforms_ should be protected by mutex in case of multithread usage
+
+    strata::platform::operation::PlatformOperations platformOperations_;
 };

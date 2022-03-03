@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "CmdSetPlatformId.h"
 
 #include "PlatformCommandConstants.h"
@@ -54,7 +62,7 @@ bool CmdSetPlatformId::processNotification(const rapidjson::Document& doc, Comma
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
         status_ = operation::PLATFORM_ID_ALREADY_SET;
     } else {
-        qCCritical(logCategoryPlatformCommand) << platform_ << "Unknown status string:" << jsonStatus;
+        qCCritical(lcPlatformCommand) << platform_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

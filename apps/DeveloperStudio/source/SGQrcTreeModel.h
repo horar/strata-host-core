@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include "SGQrcTreeNode.h"
@@ -223,10 +231,22 @@ public:
     Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
     /**
+     * @brief createNewFolder Creates new folder in specified path. Uses QDir::mkdir
+     * @param path Path to new folder
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool createNewFolder(const QString &path);
+
+    /**
      * @brief stopWatchingPath Removes the `path` from internal QFileSystemWatcher
      * @param path The path to the file or directory
      */
     Q_INVOKABLE void stopWatchingPath(const QString &path);
+
+    /**
+     * @brief stopWatchingAll Removes all file/dir paths from internal QFileSystemWatcher
+     */
+    Q_INVOKABLE void stopWatchingAll();
 
     /**
      * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
@@ -259,6 +279,11 @@ public:
      * @return true if file is in pathsInTree_
      */
     Q_INVOKABLE bool containsPath(const QString url);
+
+    /**
+     * @brief reloadQrcModel force the Qrc model to be reloaded. public/QML-invocable call to createModel()
+     */
+    Q_INVOKABLE void reloadQrcModel();
 
     /***
      * SIGNALS
@@ -317,6 +342,8 @@ private:
     void setDebugMenuSource(const QUrl &path);
     void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
+    void save();
+    void setNeedsCleaning(const bool needsCleaning);
 
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
@@ -330,8 +357,13 @@ private:
      * @param uid The UID of the file deleted
      */
     void handleExternalFileDeleted(const QString uid);
-    void save();
-    void setNeedsCleaning(const bool needsCleaning);
+
+    /**
+     * @brief copyDir Copies a directory and all children files/directories recursively.
+     * @param fromPath Path of origin directory
+     * @param toPath Path of destination directory
+     */
+    bool copyDir(const QString &fromPath, const QString &toPath);
 
     SGQrcTreeNode *root_ = nullptr;
     QUrl url_;

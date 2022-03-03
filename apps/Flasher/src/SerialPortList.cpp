@@ -1,10 +1,19 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SerialPortList.h"
 
 #include <QSerialPortInfo>
 
-namespace strata {
-
-SerialPortList::SerialPortList() {
+namespace strata::flashercli
+{
+SerialPortList::SerialPortList()
+{
 #if defined(Q_OS_MACOS)
     const QString usb_keyword("usb");
     const QString cu_keyword("cu");
@@ -33,16 +42,19 @@ SerialPortList::SerialPortList() {
     }
 }
 
-QString SerialPortList::name(int index) const {
+QString SerialPortList::name(int index) const
+{
     return portNames_.value(index);
 }
 
-QList<QString> SerialPortList::list() const {
+QList<QString> SerialPortList::list() const
+{
     return portNames_;
 }
 
-int SerialPortList::count() const {
+int SerialPortList::count() const
+{
     return portNames_.count();
 }
 
-}  // namespace
+}  // namespace strata::flashercli

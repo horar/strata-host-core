@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "logging/LoggingQtCategories.h"
 #include "Database/DatabaseManager.h"
 #include "CouchbaseDatabase.h"
@@ -24,12 +32,12 @@ bool DatabaseManager::init(const QString &path, const QString &endpointURL, std:
 
     // Object valid if database open successful
     if (userAccessDb_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open user access map";
+        qCCritical(lcCouchbaseDatabase) << "Error: Failed to open user access map";
         return false;
     }
 
     if (userAccessDb_->startBasicReplicator(endpointURL, "", "", DatabaseAccess::ReplicatorType::PushAndPull, changeListener, documentListener, true) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid";
+        qCCritical(lcCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid";
         return false;
     }
 
@@ -47,13 +55,13 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QString &chann
 
 DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     if (name.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: username cannot be empty";
+        qCCritical(lcCouchbaseDatabase) << "Error: username cannot be empty";
         return nullptr;
     }
 
     // Authenticate user, get list of channels with access granted
     if (authenticate(name) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error with authentication for user" << name;
+        qCCritical(lcCouchbaseDatabase) << "Error with authentication for user" << name;
         return nullptr;
     }
     QStringList channelAccess;
@@ -66,7 +74,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
             if (channelsGranted.contains(channel)) {
                 channelAccess << channel;
             } else {
-                qCWarning(logCategoryCouchbaseDatabase) << "Login denied to channel" << channel;
+                qCWarning(lcCouchbaseDatabase) << "Login denied to channel" << channel;
             }
         }
     }
@@ -77,7 +85,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
 
     auto userDir = manageUserDir(path_, name, dbAccess_->channelAccess_);
     if (userDir.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory";
+        qCCritical(lcCouchbaseDatabase) << "Error: failed to create database directory";
         return nullptr;
     }
 
@@ -86,15 +94,15 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
         dbAccess_->database_map_.push_back(std::move(db));
 
         if (dbAccess_->database_map_.back()->open()) {
-            qCInfo(logCategoryCouchbaseDatabase) << "Opened bucket" << bucket;
+            qCInfo(lcCouchbaseDatabase) << "Opened bucket" << bucket;
         } else {
-            qCCritical(logCategoryCouchbaseDatabase) << "Failed to open bucket" << bucket;
+            qCCritical(lcCouchbaseDatabase) << "Failed to open bucket" << bucket;
         }
     }
 
     // Start replicator (pull only for user DBs)
     if (dbAccess_->startBasicReplicator(endpointURL_, "", "", DatabaseAccess::ReplicatorType::Pull, changeListener, documentListener, true) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid";
+        qCCritical(lcCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid";
     }
 
     return dbAccess_;
@@ -114,7 +122,7 @@ bool DatabaseManager::authenticate(const QString &name) {
     auto userAccessObj = userAccessMap.toObject();
 
     if (userAccessObj.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Received empty user access map";
+        qCCritical(lcCouchbaseDatabase) << "Error: Received empty user access map";
         return false;
     }
 
@@ -122,7 +130,7 @@ bool DatabaseManager::authenticate(const QString &name) {
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
         if (value.isArray() == false) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: user access map channel field must be array";
+            qCCritical(lcCouchbaseDatabase) << "Error: user access map channel field must be array";
             ok = false;
             continue;
         }
@@ -147,14 +155,14 @@ DatabaseAccess* DatabaseManager::getUserAccessMap() {
 
     auto userDir = manageUserDir(path_, userAccessDb_->name_, userAccessDb_->channelAccess_);
     if (userDir.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory";
+        qCCritical(lcCouchbaseDatabase) << "Error: failed to create database directory";
         return nullptr;
     }
 
     auto db = std::make_unique<CouchbaseDatabase>(userAccessDb_->name_.toStdString(), userDir.toStdString());
     userAccessDb_->database_map_.push_back(std::move(db));
     if (userAccessDb_->database_map_.back()->open() == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to open bucket" << userAccessDb_->name_;
+        qCCritical(lcCouchbaseDatabase) << "Error: failed to open bucket" << userAccessDb_->name_;
         return nullptr;
     }
 
@@ -195,9 +203,9 @@ QString DatabaseManager::manageUserDir(const QString &path, const QString &name,
         if (channelAccess.indexOf(subDir) < 0) {
             auto dir = QDir(userDir + QDir::separator() + subDir + ".cblite2");
             if (dir.removeRecursively()) {
-                qCInfo(logCategoryCouchbaseDatabase) << "Channel/directory" << subDir << "found locally but not in access list, deleted:" << dir.path();
+                qCInfo(lcCouchbaseDatabase) << "Channel/directory" << subDir << "found locally but not in access list, deleted:" << dir.path();
             } else {
-                qCCritical(logCategoryCouchbaseDatabase) << "Error: channel/directory" << subDir<< "found locally but not in access list, failed to delete:" << dir.path();
+                qCCritical(lcCouchbaseDatabase) << "Error: channel/directory" << subDir<< "found locally but not in access list, failed to delete:" << dir.path();
             }
         }
     }
@@ -235,7 +243,7 @@ QStringList DatabaseManager::readChannelsAccessGrantedOfUser(const QString &logi
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
         if (value.isArray() == false) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: user access map channel field must be array";
+            qCCritical(lcCouchbaseDatabase) << "Error: user access map channel field must be array";
             continue;
         }
         auto userArray = value.toArray();
@@ -258,7 +266,7 @@ QStringList DatabaseManager::readChannelsAccessDeniedOfUser(const QString &login
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
         if (value.isArray() == false) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: user access map channel field must be array";
+            qCCritical(lcCouchbaseDatabase) << "Error: user access map channel field must be array";
             continue;
         }
         auto userArray = value.toArray();
@@ -280,7 +288,7 @@ QString DatabaseManager::getUserAccessReplicatorStatus() {
         return userAccessDb_->getReplicatorStatus(userAccessDb_->name_);
     }
 
-    qCCritical(logCategoryCouchbaseDatabase) << "Error: Invalid user access map";
+    qCCritical(lcCouchbaseDatabase) << "Error: Invalid user access map";
     return QString();
 }
 
@@ -289,6 +297,6 @@ int DatabaseManager::getUserAccessReplicatorError() {
         return userAccessDb_->getReplicatorError(userAccessDb_->name_);
     }
 
-    qCCritical(logCategoryCouchbaseDatabase) << "Error: Invalid user access map";
+    qCCritical(lcCouchbaseDatabase) << "Error: Invalid user access map";
     return -1;
 }

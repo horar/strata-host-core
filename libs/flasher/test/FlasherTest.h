@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <rapidjson/document.h>
@@ -24,16 +32,26 @@ private slots:
     void cleanup();
 
     // tests standard responses
-    void flashFirmwareTest();
-    void flashFirmwareWithoutStartApplicationTest();
-    void flashFirmwareStartInBootloaderTest();
-    void flashBootloaderTest();
-    void flashBootloaderStartInBootloaderTest();
-    void setFwClassIdTest();
-    void setFwClassIdWithoutStartApplicationTest();
-    void backupFirmwareTest();
-    void backupFirmwareWithoutStartApplicationTest();
-    void backupFirmwareStartInBootloaderTest();
+    void flashFirmwareApplicationToApplicationTest();
+    void flashFirmwareApplicationToBootloaderTest();
+    void flashFirmwareApplicationToPreserveStateTest();
+    void flashFirmwareBootloaderToApplicationTest();
+    void flashFirmwareBootloaderToBootloaderTest();
+    void flashFirmwareBootloaderToPreserveStateTest();
+    void flashBootloaderFromApplicationTest();
+    void flashBootloaderFromBootloaderTest();
+    void setFwClassIdApplicationToApplicationTest();
+    void setFwClassIdApplicationToBootloaderTest();
+    void setFwClassIdApplicationToPreserveStateTest();
+    void setFwClassIdBootloaderToApplicationTest();
+    void setFwClassIdBootloaderToBootloaderTest();
+    void setFwClassIdBootloaderToPreserveStateTest();
+    void backupFirmwareApplicationToApplicationTest();
+    void backupFirmwareApplicationToBootloaderTest();
+    void backupFirmwareApplicationToPreserveStateTest();
+    void backupFirmwareBootloaderToApplicationTest();
+    void backupFirmwareBootloaderToBootloaderTest();
+    void backupFirmwareBootloaderToPreserveStateTest();
 
     // tests faulty/invalid responses
     void startFlashFirmwareInvalidCommandTest();
@@ -58,18 +76,24 @@ protected slots:
     void handleFlashingProgressForCancelDuringFlashOperation(int chunk, int total);
     void handleBackupProgressForDisconnectDuringBackupOperation(int chunk, int total);
     void handleBackupProgressForCancelDuringBackupOperation(int chunk, int total);
+    void handleFlasherState(strata::Flasher::State flasherState, bool done);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
-    static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectFlasherHandlers(strata::Flasher* flasher) const;
     void connectFlasherForDisconnectDuringFlashOperation(strata::Flasher* flasher) const;
     void connectFlasherForCancelFlashOperation(strata::Flasher* flasher) const;
+    void connectFlasherForSwitchingFromBootloader(strata::Flasher* flasher) const;
 
     void createFiles();
     void getExpectedValues(QString firmwarePath);
     void clearExpectedValues();
+
+    void flashFirmware(bool startInBootloader, strata::Flasher::FinalAction finalAction);
+    void flashBootloader(bool startInBootloader);
+    void setFwClassId(bool startInBootloader, strata::Flasher::FinalAction finalAction);
+    void backupFirmware(bool startInBootloader, strata::Flasher::FinalAction finalAction);
 
     strata::platform::PlatformPtr platform_;
     strata::device::MockDevicePtr mockDevice_;

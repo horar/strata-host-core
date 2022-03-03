@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "StorageInfo.h"
 
 #include "logging/LoggingQtCategories.h"
@@ -27,14 +35,14 @@ StorageInfo::FolderSize scanFolder(const QFileInfo& folderInfo)
 
 StorageInfo::StorageInfo(QObject * /*parent*/, QString cacheDir) : cacheDir_(std::move(cacheDir))
 {
-    qCDebug(logCategoryHcsStorageCache) << "Cache location:" << cacheDir_.absolutePath();
+    qCDebug(lcHcsStorageCache) << "Cache location:" << cacheDir_.absolutePath();
 }
 
 void StorageInfo::calculateSize() const
 {
     const auto dirs{cacheDir_.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)};
     if (dirs.isEmpty()) {
-        qCDebug(logCategoryHcsStorageCache) << "Cache folders not created yet";
+        qCDebug(lcHcsStorageCache) << "Cache folders not created yet";
         return;
     }
 
@@ -43,6 +51,6 @@ void StorageInfo::calculateSize() const
 
     QLocale locale;
     for (const auto& [folderName, folderSize] : future.results()) {
-        qCDebug(logCategoryHcsStorageCache) << locale.formattedDataSize(folderSize) << "in" << folderName;
+        qCDebug(lcHcsStorageCache) << locale.formattedDataSize(folderSize) << "in" << folderName;
     }
 }

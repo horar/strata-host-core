@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <QRegularExpression>
@@ -401,7 +409,7 @@ R"({
     "notification":{
         "value":"platform_id",
         "payload":{
-            "name":"LED Driver",
+            "name":"Mock Board",
             "controller_type":1,
             "platform_id":"00000000-0000-0000-0000-000000000000",
             "class_id":"00000000-0000-0000-0000-000000000000",
@@ -415,7 +423,7 @@ R"({
     "notification":{
        "value":"platform_id",
        "payload":{
-          "name":"LED Driver",
+          "name":"Mock Board",
           "controller_type":2,
           "platform_id":"00000000-0000-0000-0000-000000000000",
           "class_id":"00000000-0000-0000-0000-000000000000",
@@ -433,7 +441,7 @@ R"({
     "notification":{
        "value":"platform_id",
        "payload":{
-          "name":"LED Driver",
+          "name":"Mock Board",
           "controller_type":2,
           "controller_platform_id":"00000000-0000-0000-0000-000000000000",
           "controller_class_id":"00000000-0000-0000-0000-000000000000",
@@ -830,7 +838,7 @@ const QMap<MockVersion, QMap<MockCommand, QMap<MockResponse, QByteArray> > > moc
     // version 2.0
     {MockVersion::Version_2, {
         {MockCommand::Get_firmware_info, {
-            {MockResponse::Normal, get_firmware_info_response},
+            {MockResponse::Normal, get_firmware_info_response_ver2_application},
             {MockResponse::No_payload, get_firmware_info_response_no_payload},
             {MockResponse::Invalid, get_firmware_info_response_ver2_invalid},
             {MockResponse::Platform_config_embedded_app, get_firmware_info_response_ver2_application},
@@ -841,7 +849,7 @@ const QMap<MockVersion, QMap<MockCommand, QMap<MockResponse, QByteArray> > > moc
         }},
 
         {MockCommand::Request_platform_id, {
-            {MockResponse::Normal, request_platform_id_response},
+            {MockResponse::Normal, request_platform_id_response_ver2_embedded},
             {MockResponse::No_payload, request_platform_id_response_no_payload},
             {MockResponse::Invalid, request_platform_id_response_invalid},
             {MockResponse::Platform_config_embedded_app, request_platform_id_response_ver2_embedded},

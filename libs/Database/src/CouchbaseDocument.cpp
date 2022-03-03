@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "logging/LoggingQtCategories.h"
 
 #include "Database/CouchbaseDocument.h"
@@ -16,7 +24,7 @@ CouchbaseDocument::CouchbaseDocument(const std::string id) {
 bool CouchbaseDocument::setBody(const std::string &body) {
     auto fleece_doc = fleece::Doc::fromJSON(body);
     if (!fleece_doc) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error setting document. Verify the body is valid JSON.";
+        qCCritical(lcCouchbaseDatabase) << "Error setting document. Verify the body is valid JSON.";
         return false;
     }
     mutable_doc_->setProperties(fleece_doc);
@@ -37,7 +45,7 @@ fleece::keyref<fleece::MutableDict, fleece::slice> CouchbaseDocument::operator[]
 void CouchbaseDocument::tagChannelField(const std::vector<std::string> &channels) {
     auto doc_ref = mutable_doc_.get();
     if (channels.size() != 1) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: size of 'channels' field must be exactly 1.";
+        qCCritical(lcCouchbaseDatabase) << "Error: size of 'channels' field must be exactly 1.";
         return;
     }
     (*doc_ref)["StrataExternalChannelID"] = channels.at(0);

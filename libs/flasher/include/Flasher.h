@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #ifndef FLASHER_H_
 #define FLASHER_H_
 
@@ -97,6 +105,8 @@ class Flasher : public QObject
         /*!
          * Flash firmware.
          * \param finalAction value from FinalAction enum, defines what to do after flash
+         * NOTE: Flash firmware process is not completed until application is not started!
+         *       Application writes data like its version into board memory (into FIB).
          */
         void flashFirmware(FinalAction finalAction);
 

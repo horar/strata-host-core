@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Tcp/TcpDeviceScanner.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -15,20 +23,21 @@ TcpDeviceScanner::TcpDeviceScanner()
 
 TcpDeviceScanner::~TcpDeviceScanner()
 {
-    if (udpSocket_->isOpen() || (discoveredDevices_.size() != 0)) {
+    if (udpSocket_->isOpen() || (discoveredDevices_.isEmpty() == false)) {
         TcpDeviceScanner::deinit();
     }
 }
 
 void TcpDeviceScanner::init(quint32 flags)
 {
-    if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
-        qCCritical(logCategoryDeviceScanner) << "Failed to bind UDP socket to" << UDP_LISTEN_PORT;
-        return;
-    }
-    if ((flags & TcpDeviceScanner::DisableAutomaticScan) == 0) {
-        startAutomaticScan();
-    }
+    Q_UNUSED(flags);
+
+    connect(udpSocket_.get(), &QUdpSocket::readyRead,
+            this, &TcpDeviceScanner::processPendingDatagrams);
+
+    discoveryTimer_.setInterval(DISCOVERY_TIMEOUT);
+    discoveryTimer_.setSingleShot(true);
+    connect(&discoveryTimer_, &QTimer::timeout, this, &TcpDeviceScanner::stopDiscovery);
 }
 
 void TcpDeviceScanner::deinit()
@@ -37,42 +46,93 @@ void TcpDeviceScanner::deinit()
     disconnect(udpSocket_.get(), nullptr, this, nullptr);
     scanRunning_ = false;
 
-    for (const auto &deviceId : discoveredDevices_) {
-        emit deviceLost(deviceId);
+    TcpDeviceScanner::disconnectAllDevices();
+}
+
+QList<QByteArray> TcpDeviceScanner::discoveredDevices() const
+{
+    QList<QByteArray> discoveredDeviceIds;
+    for(const auto &tcpDeviceInfo : discoveredDevices_) {
+        discoveredDeviceIds.push_back(tcpDeviceInfo.deviceId);
+    }
+    return discoveredDeviceIds;
+}
+
+const QList<TcpDeviceInfo> TcpDeviceScanner::discoveredTcpDevices() const
+{
+    return discoveredDevices_;
+}
+
+QString TcpDeviceScanner::connectDevice(const QByteArray &deviceId)
+{
+    auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                           [&deviceId](const TcpDeviceInfo &tcpDeviceInfo) {
+                               return tcpDeviceInfo.deviceId == deviceId;
+                           });
+
+    if (it == discoveredDevices_.end()) {
+        QString errorMessage(QStringLiteral("Device ID not found in discovered devices list"));
+        qCCritical(lcDeviceScanner) << errorMessage;
+        return errorMessage;
+    }
+
+    DevicePtr device = std::make_shared<TcpDevice>(it->deviceId, it->deviceIpAddress, it->port);
+    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
+
+    createdDevices_.insert(it->deviceId, *it);
+    emit deviceDetected(platform);
+
+    return QString();
+}
+
+QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
+{
+    if (false == createdDevices_.contains(deviceId)) {
+        return "Device not found";
+    }
+
+    createdDevices_.remove(deviceId);
+
+    emit deviceLost(deviceId);
+    return QString();
+}
+
+void TcpDeviceScanner::disconnectAllDevices() {
+    for (const auto &tcpDeviceInfo : qAsConst(discoveredDevices_)) {
+        emit deviceLost(tcpDeviceInfo.deviceId);
     }
     discoveredDevices_.clear();
 }
 
-void TcpDeviceScanner::setProperties(quint32 flags) {
-    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        stopAutomaticScan();
-    }
-}
-
-void TcpDeviceScanner::unsetProperties(quint32 flags) {
-    if (flags & TcpDeviceScanner::DisableAutomaticScan) {
-        startAutomaticScan();
-    }
-}
-
-void TcpDeviceScanner::startAutomaticScan()
+void TcpDeviceScanner::startDiscovery()
 {
     if (scanRunning_) {
-        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already running.";
+        qCDebug(lcDeviceScanner) << "Scanning for new devices is already running.";
     } else {
-        connect(udpSocket_.get(), &QUdpSocket::readyRead, this,
-                &TcpDeviceScanner::processPendingDatagrams);
+        if (false == udpSocket_->bind(UDP_LISTEN_PORT, QUdpSocket::DefaultForPlatform)) {
+            qCCritical(lcDeviceScanner).nospace().noquote()
+                << "Failed to bind UDP socket to port " << UDP_LISTEN_PORT << ": "
+                << udpSocket_->errorString();
+            return;
+        }
+
+        discoveredDevices_.clear();
+
         scanRunning_ = true;
+        discoveryTimer_.start();
+        qCDebug(lcDeviceScanner) << "TcpDevice discovery started...";
     }
 }
 
-void TcpDeviceScanner::stopAutomaticScan()
+void TcpDeviceScanner::stopDiscovery()
 {
     if (scanRunning_) {
-        disconnect(udpSocket_.get(), nullptr, this, nullptr);
+        udpSocket_->disconnectFromHost();
         scanRunning_ = false;
+        qCDebug(lcDeviceScanner) << "TcpDevice discovery Finished";
+        emit discoveryFinished();
     } else {
-        qCWarning(logCategoryDeviceScanner) << "Scanning for new devices is already stopped.";
+        qCDebug(lcDeviceScanner) << "Scanning for new devices is already stopped.";
     }
 }
 
@@ -86,51 +146,25 @@ void TcpDeviceScanner::processPendingDatagrams()
         udpSocket_->readDatagram(buffer.data(), buffer.size(), &clientAddress);
 
         if (quint16 tcpPort; true == parseDatagram(buffer, tcpPort)) {
-            if (std::find(discoveredDevices_.begin(), discoveredDevices_.end(),
-                          createDeviceId(TcpDevice::createUniqueHash(clientAddress))) != discoveredDevices_.end()) {
-                qCCritical(logCategoryDeviceScanner)
-                    << "Tcp device" << clientAddress.toString() << "already discovered";
-                return;
+            auto it = std::find_if(discoveredDevices_.begin(), discoveredDevices_.end(),
+                                   [&clientAddress](TcpDeviceInfo &tcpDeviceInfo) {
+                                       return tcpDeviceInfo.deviceIpAddress == clientAddress;
+                                   });
+
+            if (it != discoveredDevices_.end()) {
+                qCDebug(lcDeviceScanner) << "Device already discovered";
+                continue;
             }
 
-            qCDebug(logCategoryDeviceScanner)
-                << "Discovered new platfrom. IP:" << clientAddress.toString()
-                << ", TCP port:" << tcpPort;
-            addTcpDevice(clientAddress, tcpPort);
+            discoveredDevices_.push_back(
+                {createDeviceId(TcpDevice::createUniqueHash(clientAddress)),
+                 clientAddress.toString(), clientAddress, tcpPort});
+
+            qCDebug(lcDeviceScanner).noquote().nospace()
+                << "Discovered new platfrom. IP: " << clientAddress.toString()
+                << ", TCP port: " << tcpPort;
         }
     }
-}
-
-void TcpDeviceScanner::addTcpDevice(QHostAddress deviceAddress, quint16 tcpPort)
-{
-    DevicePtr device = std::make_shared<TcpDevice>(createDeviceId(TcpDevice::createUniqueHash(deviceAddress)), deviceAddress, tcpPort);
-    platform::PlatformPtr platform = std::make_shared<platform::Platform>(device);
-
-    connect(dynamic_cast<device::TcpDevice *>(device.get()), &TcpDevice::deviceDisconnected, this,
-            &TcpDeviceScanner::deviceDisconnectedHandler);
-
-    discoveredDevices_.push_back(device->deviceId());
-    emit deviceDetected(platform);
-}
-
-void TcpDeviceScanner::deviceDisconnectedHandler()
-{
-    qCDebug(logCategoryDeviceScanner) << "device disconnected. removing from the list.";
-    Device *device = qobject_cast<Device *>(QObject::sender());
-    if (device == nullptr) {
-        qCWarning(logCategoryDeviceScanner) << "cannot cast sender to device object";
-        return;
-    }
-    QByteArray deviceId = device->deviceId();
-
-    const auto it =
-        std::find(discoveredDevices_.begin(), discoveredDevices_.end(), device->deviceId());
-    if (it != discoveredDevices_.end()) {
-        discoveredDevices_.erase(it);
-    }
-
-    qCDebug(logCategoryDeviceScanner) << "device lost" << deviceId;
-    emit deviceLost(deviceId);
 }
 
 bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPort)
@@ -139,41 +173,40 @@ bool TcpDeviceScanner::parseDatagram(const QByteArray &datagram, quint16 &tcpPor
     // https://confluence.onsemi.com/display/SPYG/Messaging+Structure+-+Proposal
 
     QJsonParseError jsonParseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(datagram, &jsonParseError);
+    const QJsonDocument jsonDocument = QJsonDocument::fromJson(datagram, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
-    QJsonObject jsonObject = jsonDocument.object();
-
-    if (false == jsonObject.contains("notification") ||
-        false == jsonObject.value("notification").isObject()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+    // The returned QJsonValue is QJsonValue::Undefined if the key does not exist.
+    const QJsonValue notification = jsonDocument.object().value("notification");
+    if (false == notification.isObject()) {
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
-    if (false == jsonObject["notification"].toObject().contains("payload") ||
-        false == jsonObject["notification"].toObject().value("payload").isObject()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+    const QJsonValue payload = notification.toObject().value("payload");
+    if (false == payload.isObject()) {
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
-    QJsonObject datagramPayload = jsonObject["notification"].toObject().value("payload").toObject();
-    if (false == datagramPayload.contains("tcp_port") ||
-        false == datagramPayload["tcp_port"].isDouble()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid UDP Datagram.";
+    const QJsonObject datagramPayload = payload.toObject();
+    auto tcpPortIter = datagramPayload.constFind("tcp_port");
+    if (tcpPortIter == datagramPayload.constEnd() || false == tcpPortIter->isDouble()) {
+        qCDebug(lcDeviceScanner) << "Invalid UDP Datagram.";
         return false;
     }
 
-    long port = datagramPayload["tcp_port"].toDouble();
+    const long port = static_cast<long>(tcpPortIter->toDouble());
     if (port < 1 || port > std::numeric_limits<quint16>::max()) {
-        qCDebug(logCategoryDeviceScanner) << "Invalid port range.";
+        qCDebug(lcDeviceScanner) << "Invalid port range.";
         return false;
     }
 
-    tcpPort = port;
+    tcpPort = static_cast<quint16>(port);
     return true;
 }
 }  // namespace strata::device::scanner

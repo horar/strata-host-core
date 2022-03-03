@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Platform.h>
 #include <CommandValidator.h>
 
@@ -27,6 +35,7 @@ Platform::Platform(const device::DevicePtr& device) :
     operationLock_(0),
     bootloaderMode_(false),
     isRecognized_(false),
+    platformState_(PlatformState::Closed),
     apiVersion_(ApiVersion::Unknown),
     controllerType_(ControllerType::Embedded)
 {
@@ -41,7 +50,7 @@ Platform::Platform(const device::DevicePtr& device) :
     connect(device_.get(), &device::Device::deviceError, this, &Platform::deviceErrorHandler);
 
     reconnectTimer_.setSingleShot(true);
-    connect(&reconnectTimer_, &QTimer::timeout, this, &Platform::openDevice);
+    connect(&reconnectTimer_, &QTimer::timeout, this, &Platform::open);
 }
 
 Platform::~Platform() {
@@ -78,7 +87,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
     PlatformMessage message(rawMsg);
 
     if (message.isJsonValid() == false) {
-        qCDebug(logCategoryPlatform) << this << "JSON error at offset "
+        qCDebug(lcPlatform) << this << "JSON error at offset "
             << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
@@ -86,7 +95,7 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
 
     if (message.isJsonValidObject()) {
         if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
-            qCInfo(logCategoryPlatform) << this << "Received 'platform_id_changed' notification";
+            qCInfo(lcPlatform) << this << "Received 'platform_id_changed' notification";
 
             emit platformIdChanged();
         }
@@ -110,21 +119,42 @@ void Platform::deviceErrorHandler(device::Device::ErrorCode errCode, QString err
 }
 
 void Platform::open() {
-    abortReconnect();
-    openDevice();
+    if (platformState_ == PlatformState::Closed) {
+        abortReconnect();
+        device_->open();
+    } else {
+        qCWarning(lcPlatform) << this << "Attempting to open device in invalid state" << platformState_;
+    }
 }
 
 void Platform::close(const std::chrono::milliseconds waitInterval) {
-    abortReconnect();
-    closeDevice(waitInterval);
+    if (platformState_ == PlatformState::Opened) {
+        abortReconnect();
+        platformState_ = PlatformState::AboutToClose;
+        emit aboutToClose();
+        device_->close();   // can take some time depending on the device type
+        emit closed();
+        platformState_ = PlatformState::Closed;
+        if (waitInterval != std::chrono::milliseconds::zero()) {
+            reconnectTimer_.start(waitInterval.count());
+        }
+    } else {
+        qCWarning(lcPlatform) << this << "Attempting to close device in invalid state" << platformState_;
+    }
 }
 
-void Platform::terminate(bool close) {
-    abortReconnect();
-    if (close) {
-        closeDevice(std::chrono::milliseconds::zero());
+void Platform::terminate() {
+    if (platformState_ != PlatformState::Terminated) {
+        if (platformState_ == PlatformState::Opened) {
+            close(std::chrono::milliseconds::zero());
+        } else {
+            abortReconnect();
+        }
+        platformState_ = PlatformState::Terminated;
+        emit terminated();
+    } else {
+        qCWarning(lcPlatform) << this << "Attempting to terminate already terminated platform";
     }
-    emit terminated();
 }
 
 // public method
@@ -152,7 +182,7 @@ unsigned Platform::sendMessage(const QByteArray& message, quintptr lockId) {
     }
 
     QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-    qCWarning(logCategoryPlatform) << this << errMsg;
+    qCWarning(lcPlatform) << this << errMsg;
     unsigned messageNumber = device_->nextMessageNumber();
     emit device_->messageSent(msgToWrite, messageNumber, errMsg);
     return messageNumber;
@@ -242,7 +272,6 @@ void Platform::resetReceiving() {
     device_->resetReceiving();
 }
 
-
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {
     // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&propertiesLock_);
@@ -317,23 +346,19 @@ void Platform::setRecognized(bool isRecognized) {
         QWriteLocker wLock(&propertiesLock_);
         isRecognized_ = isRecognized;
     }
-    emit recognized(isRecognized);
+    emit recognized(isRecognized, bootloaderMode());
 }
 
-void Platform::openDevice() {
-    device_->open();
+bool Platform::isOpen() const {
+    return platformState_ == PlatformState::Opened;
 }
 
 void Platform::openedHandler() {
-    emit opened();
-}
-
-void Platform::closeDevice(const std::chrono::milliseconds waitInterval) {
-    emit aboutToClose();
-    device_->close();   // can take some time depending on the device type
-    emit closed();
-    if (waitInterval != std::chrono::milliseconds::zero()) {
-        reconnectTimer_.start(waitInterval.count());
+    if (platformState_ == PlatformState::Closed) {
+        platformState_ = PlatformState::Opened;
+        emit opened();
+    } else {
+        qCWarning(lcPlatform) << this << "Attempting to emit open() signal in invalid state" << platformState_;
     }
 }
 

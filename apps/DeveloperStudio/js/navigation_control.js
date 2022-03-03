@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
 .import "constants.js" as Constants
@@ -178,6 +186,9 @@ function globalEventHandler(event, data)
                 platform_view_model_.remove(0)
             }
 
+            // Unregister all control views
+            resource_loader_.unregisterAllViews(main_qml_object_);
+
             updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
             break;
 
@@ -296,8 +307,13 @@ function updateState(event, data)
                     if (view_index !== -1) {
                         connected_view = platform_view_model_.get(view_index)
                         connected_view.device_id = data.device_id
-                        connected_view.firmware_version = data.firmware_version
                         connected_view.connected = true
+                        connected_view.is_assisted = data.is_assisted
+                        if (data.controller_class_id !== undefined) {
+                            connected_view.controller_class_id = data.controller_class_id
+                        }
+                        connected_view.firmware_version = data.firmware_version
+                        //IMPORTANT: firmware_version must be last - it triggers firmware list update, other data must already be set
 
                         if (userSettings.autoOpenView) {
                             updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
@@ -314,6 +330,8 @@ function updateState(event, data)
                         if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                             disconnected_view.connected = false
                             disconnected_view.firmware_version = ""
+                            disconnected_view.controller_class_id = ""
+                            //IMPORTANT: If you add deinitialization here, don't forget to add initialization to case events.PLATFORM_CONNECTED_EVENT
                             break
                         }
                     }
@@ -325,6 +343,9 @@ function updateState(event, data)
                         let closed_view = platform_view_model_.get(l)
                         if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
                             platform_view_model_.remove(l)
+
+                            // Unregister all related control views
+                            resource_loader_.unregisterAllRelatedViews(data.class_id, main_qml_object_);
                             break
                         }
                     }

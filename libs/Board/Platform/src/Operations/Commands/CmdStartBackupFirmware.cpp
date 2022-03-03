@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "CmdStartBackupFirmware.h"
 #include "PlatformCommandConstants.h"
 
@@ -25,11 +33,11 @@ bool CmdStartBackupFirmware::processNotification(const rapidjson::Document& doc,
         if (payload.HasMember(JSON_STATUS)) {
             const char* jsonStatus = payload[JSON_STATUS].GetString();
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Nothing to backup, board has no firmware.";
+                qCWarning(lcPlatformCommand) << platform_ << "Nothing to backup, board has no firmware.";
                 result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             } else {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Bad notification status: '" << jsonStatus << "'.";
+                qCWarning(lcPlatformCommand) << platform_ << "Bad notification status: '" << jsonStatus << "'.";
                 result = CommandResult::Failure;
             }
         } else {
@@ -39,14 +47,14 @@ bool CmdStartBackupFirmware::processNotification(const rapidjson::Document& doc,
             if (size.IsUint() && chunks.IsUint()) {
                 chunks_ = chunks.GetUint();
                 size_ = size.GetUint();
-                qCInfo(logCategoryPlatformCommand) << platform_ << "Going to backup firmware with size " << size_ << " bytes.";
+                qCInfo(lcPlatformCommand) << platform_ << "Going to backup firmware with size " << size_ << " bytes.";
                 /* this value is not used yet
                 md5_ = md5.GetString();
                 */
                 result = CommandResult::DoneAndWait;
                 status_ = operation::BACKUP_STARTED;
             } else {
-                qCWarning(logCategoryPlatformCommand) << platform_ << "Wrong format of notification.";
+                qCWarning(lcPlatformCommand) << platform_ << "Wrong format of notification.";
                 result = CommandResult::Failure;
             }
         }

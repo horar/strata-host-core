@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.10 // to support scale animator
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
@@ -16,6 +24,7 @@ import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/core_update.js" as CoreUpdate
 import "partial-views/control-view-creator"
 
 import tech.strata.fonts 1.0
@@ -58,6 +67,9 @@ Rectangle {
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
     function loginSuccessful() {
         PlatformSelection.getPlatformList()
+
+        // Trigger check for core update
+        CoreUpdate.getUpdateInformation()
     }
 
     Component.onDestruction: {
@@ -83,21 +95,21 @@ Rectangle {
         }
         spacing: 1
 
-    	Item {
-        	id: logoContainer
-        	Layout.preferredHeight: container.height
-        	Layout.preferredWidth: 70
+        Item {
+            id: logoContainer
+            Layout.preferredHeight: container.height
+            Layout.preferredWidth: 70
 
-        	Image {
-            	source: "qrc:/images/strata-logo-reverse.svg"
-            	height: 30
-            	width: 60
-            	mipmap: true
-            	anchors {
-                	centerIn: logoContainer
-            	}
-        	}
-    	}
+            Image {
+                source: "qrc:/images/strata-logo-reverse.svg"
+                height: 30
+                width: 60
+                mipmap: true
+                anchors {
+                    centerIn: logoContainer
+                }
+            }
+        }
 
         Rectangle {
             id: platformSelector
@@ -203,32 +215,34 @@ Rectangle {
             state: "help_tour"
             Layout.preferredWidth: 250
             Layout.fillHeight: true
+
             onXChanged: {
                 if (visible) {
                     Help.refreshView(Help.internal_tour_index)
                 }
             }
 
-           Component.onCompleted: {
-               Help.registerTarget(help_tour.currIcon, "This button opens the platform dropdown menu.", 4, "selectorHelp")
-               Help.registerTarget(help_tour.platformName, "Clicking here will bring the platform's interface into view. ", 3, "selectorHelp")
-           }
+            Component.onCompleted: {
+                Help.registerTarget(help_tour.currIcon, "This button opens the platform dropdown menu.", 4, "selectorHelp")
+                Help.registerTarget(help_tour.platformName, "Clicking here will bring the platform's interface into view. ", 3, "selectorHelp")
+            }
 
-           Connections {
-               target: Help.utility
+            Connections {
+                target: Help.utility
+                enabled: Help.utility.runningTourName === "selectorHelp"
 
-               onTour_runningChanged: {
-                   if(!tour_running){
-                       help_tour.visible = false
-                   }
-               }
+                onTour_runningChanged: {
+                    if (!tour_running) {
+                        help_tour.visible = false
+                    }
+                }
 
-               onInternal_tour_indexChanged: {
-                   if(Help.current_tour_targets[index]["target"] === help_tour){
+                onInternal_tour_indexChanged: {
+                    if (Help.current_tour_targets[index]["target"] === help_tour) {
                         help_tour.visible = true
-                   }
-               }
-           }
+                    }
+                }
+            }
         }
 
         ListView {
@@ -440,6 +454,10 @@ Rectangle {
                 source: "qrc:/sgimages/exclamation-circle.svg"
                 iconColor : Theme.palette.error
             }
+
+            Component.onCompleted: {
+                CoreUpdate.registerAlertIcon(this)
+            }
         }
 
         MouseArea {
@@ -535,6 +553,22 @@ Rectangle {
                 }
 
                 SGMenuItem {
+                    text: qsTr("Update")
+                    width: profileMenu.width
+                    enabled: false
+                    iconSource: enabled ? "qrc:/sgimages/exclamation-circle.svg" : ""
+
+                    onClicked: {
+                        profileMenu.close()
+                        CoreUpdate.createUpdatePopup();
+                    }
+
+                    Component.onCompleted: {
+                        CoreUpdate.registerMenuItem(this)
+                    }
+                }
+
+                SGMenuItem {
                     text: qsTr("Settings")
                     onClicked: {
                         profileMenu.close()
@@ -568,6 +602,8 @@ Rectangle {
                     Layout.preferredWidth: 26
                     Layout.preferredHeight: 16
                     checked: mainWindow.visibility === Window.FullScreen
+                    grooveFillColor: Theme.palette.onsemiHighlight
+
                     onToggled: {
                         if (mainWindow.visibility === Window.FullScreen) {
                             mainWindow.showNormal()
@@ -643,6 +679,7 @@ Rectangle {
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
+        property bool hasOptedOut: false
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
@@ -654,7 +691,7 @@ Rectangle {
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
             }
-            if(settings.hasOwnProperty("notifyOnFirmwareUpdate")){
+            if (settings.hasOwnProperty("notifyOnFirmwareUpdate")) {
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
             }
             if (settings.hasOwnProperty("closeOnDisconnect")) {
@@ -666,9 +703,13 @@ Rectangle {
             if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
                 notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
             }
-            if(settings.hasOwnProperty("notifyOnPlatformConnections")){
+            if (settings.hasOwnProperty("notifyOnPlatformConnections")) {
                 notifyOnPlatformConnections = settings.notifyOnPlatformConnections
             }
+            if (settings.hasOwnProperty("hasOptedOut")) {
+                hasOptedOut = settings.hasOptedOut
+            }
+
             NavigationControl.userSettings = userSettings
         }
 
@@ -680,7 +721,8 @@ Rectangle {
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal,
                 notifyOnPlatformConnections: notifyOnPlatformConnections,
-                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate,
+                hasOptedOut: hasOptedOut
             }
             userSettings.writeFile("general-settings.json", settings)
         }
@@ -697,6 +739,6 @@ Rectangle {
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
         Authenticator.logout()
         PlatformSelection.logout()
-        sdsModel.coreInterface.unregisterClient()
+        sdsModel.strataClient.sendRequest("unregister", {})
     }
 }

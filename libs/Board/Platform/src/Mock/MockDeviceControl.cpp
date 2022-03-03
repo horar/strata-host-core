@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Mock/MockDeviceControl.h>
 #include <QFile>
 #include <QDir>
@@ -28,13 +36,13 @@ int MockDeviceControl::writeMessage(const QByteArray &msg)
 {
     ++messagesSent_;
     if ((emitErrorOnNthMessage_ != 0) && (messagesSent_ % emitErrorOnNthMessage_ == 0)) {
-        qCDebug(logCategoryDeviceMock) << "Write configured to fail on following message:" << msg;
+        qCDebug(lcDeviceMock) << "Write configured to fail on following message:" << msg;
         return false;
     }
 
     if (saveMessages_) {
         if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
-            qCWarning(logCategoryDeviceMock) << "Maximum number (" << MAX_STORED_MESSAGES
+            qCWarning(lcDeviceMock) << "Maximum number (" << MAX_STORED_MESSAGES
                                              << ") of stored messages reached";
             recordedMessages_.pop_front();
         }
@@ -124,10 +132,10 @@ bool MockDeviceControl::setOpenEnabled(bool enabled)
 {
     if (isOpenEnabled_ != enabled) {
         isOpenEnabled_ = enabled;
-        qCDebug(logCategoryDeviceMock) << "Configured open enabled to" << isOpenEnabled_;
+        qCDebug(lcDeviceMock) << "Configured open enabled to" << isOpenEnabled_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Open enabled already configured to" << isOpenEnabled_;
+    qCDebug(lcDeviceMock) << "Open enabled already configured to" << isOpenEnabled_;
     return false;
 }
 
@@ -135,10 +143,10 @@ bool MockDeviceControl::setAutoResponse(bool autoResponse)
 {
     if (autoResponse_ != autoResponse) {
         autoResponse_ = autoResponse;
-        qCDebug(logCategoryDeviceMock) << "Configured auto-response to" << autoResponse_;
+        qCDebug(lcDeviceMock) << "Configured auto-response to" << autoResponse_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Auto-response already configured to" << autoResponse_;
+    qCDebug(lcDeviceMock) << "Auto-response already configured to" << autoResponse_;
     return false;
 }
 
@@ -146,10 +154,10 @@ bool MockDeviceControl::setSaveMessages(bool saveMessages)
 {
     if (saveMessages_ != saveMessages) {
         saveMessages_ = saveMessages;
-        qCDebug(logCategoryDeviceMock) << "Configured save-messages mode to" << saveMessages_;
+        qCDebug(lcDeviceMock) << "Configured save-messages mode to" << saveMessages_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Save-messages already configured to" << saveMessages_;
+    qCDebug(lcDeviceMock) << "Save-messages already configured to" << saveMessages_;
     return false;
 }
 
@@ -158,11 +166,11 @@ bool MockDeviceControl::setResponseForCommand(MockResponse response, MockCommand
     auto iter = responses_.find(command);
     if ((iter == responses_.end()) || (iter->second != response)) {
         responses_[command] = response;
-        qCDebug(logCategoryDeviceMock) << "Configured command-response pair to"
+        qCDebug(lcDeviceMock) << "Configured command-response pair to"
                                        << command << ":" << response;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Command-response pair already configured to"
+    qCDebug(lcDeviceMock) << "Command-response pair already configured to"
                                    << command << ":" << response;
     return false;
 }
@@ -171,11 +179,11 @@ bool MockDeviceControl::setVersion(MockVersion version)
 {
     if (version_ != version) {
         version_ = version;
-        qCDebug(logCategoryDeviceMock) << "Configured version to" << version_;
+        qCDebug(lcDeviceMock) << "Configured version to" << version_;
         initializeDefaultResponses();
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Version already configured to" << version_;
+    qCDebug(lcDeviceMock) << "Version already configured to" << version_;
     return false;
 }
 
@@ -183,10 +191,10 @@ bool MockDeviceControl::setAsBootloader(bool isBootloader)
 {
     if (isBootloader_ != isBootloader) {
         isBootloader_ = isBootloader;
-        qCDebug(logCategoryDeviceMock) << "Configured is bootloader to" << isBootloader_;
+        qCDebug(lcDeviceMock) << "Configured is bootloader to" << isBootloader_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Is bootloader already configured to" << isBootloader_;
+    qCDebug(lcDeviceMock) << "Is bootloader already configured to" << isBootloader_;
     return false;
 }
 
@@ -194,20 +202,20 @@ bool MockDeviceControl::setFirmwareEnabled(bool enabled)
 {
     if (isFirmwareEnabled_ != enabled) {
         isFirmwareEnabled_ = enabled;
-        qCDebug(logCategoryDeviceMock) << "Configured mock firmware to" << isFirmwareEnabled_;
+        qCDebug(lcDeviceMock) << "Configured mock firmware to" << isFirmwareEnabled_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Mock firmware already configured to" << isFirmwareEnabled_;
+    qCDebug(lcDeviceMock) << "Mock firmware already configured to" << isFirmwareEnabled_;
     return false;
 }
 
 bool MockDeviceControl::setErrorOnClose(bool enabled) {
     if (emitErrorOnClose_ != enabled) {
         emitErrorOnClose_ = enabled;
-        qCDebug(logCategoryDeviceMock) << "Configured emit error on close to" << emitErrorOnClose_;
+        qCDebug(lcDeviceMock) << "Configured emit error on close to" << emitErrorOnClose_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Emit error on close already configured to" << emitErrorOnClose_;
+    qCDebug(lcDeviceMock) << "Emit error on close already configured to" << emitErrorOnClose_;
     return false;
 }
 
@@ -215,22 +223,22 @@ bool MockDeviceControl::setWriteErrorOnNthMessage(unsigned messageNumber) {
     messagesSent_ = 0;
     if (emitErrorOnNthMessage_ != messageNumber) {
         emitErrorOnNthMessage_ = messageNumber;
-        qCDebug(logCategoryDeviceMock) << "Configured emit error on message sent to" << emitErrorOnNthMessage_;
+        qCDebug(lcDeviceMock) << "Configured emit error on message sent to" << emitErrorOnNthMessage_;
         return true;
     }
-    qCDebug(logCategoryDeviceMock) << "Emit error on message sent already configured to" << emitErrorOnNthMessage_;
+    qCDebug(lcDeviceMock) << "Emit error on message sent already configured to" << emitErrorOnNthMessage_;
     return false;
 }
 
 void MockDeviceControl::initializeDefaultResponses()
 {
     if (responses_.empty() == false) {
-        qCDebug(logCategoryDeviceMock) << "Reinitializing responses for commands version:" << version_;
+        qCDebug(lcDeviceMock) << "Reinitializing responses for commands version:" << version_;
     }
 
     responses_.clear();
     QList<MockCommand> supportedCommands = mockSupportedCommands(version_);
-    foreach(auto command, supportedCommands) {
+    for(auto command: supportedCommands) {
         responses_.insert({command, MockResponse::Normal});
     }
 }
@@ -257,7 +265,7 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
     MockCommand recievedCommand;
     std::string cmd = qCmd->GetString();
     if (mockCommandConvertStringToEnum(cmd, recievedCommand) == false) {
-        qCWarning(logCategoryDeviceMock) << "Unknown command received:" << cmd.c_str();
+        qCWarning(lcDeviceMock) << "Unknown command received:" << cmd.c_str();
         retVal.push_back(test_commands::nack_command_not_found);
         return replacePlaceholders(retVal, requestDoc);
     }
@@ -486,7 +494,7 @@ void MockDeviceControl::getExpectedValues(QString firmwarePath)
             }
         }
     } else {
-        qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
+        qCCritical(lcDeviceMock) << "Cannot open mock firmware";
     }
 }
 
@@ -511,22 +519,22 @@ QByteArray MockDeviceControl::generateMockFirmware(bool isBootloader)
 void MockDeviceControl::createMockFirmware()
 {
     if (mockFirmware_.open() == false) {
-        qCCritical(logCategoryDeviceMock) << "Cannot open mock firmware";
+        qCCritical(lcDeviceMock) << "Cannot open mock firmware";
     } else {
         QDataStream mockFirmwareOut(&mockFirmware_);
         mockFirmwareOut << generateMockFirmware();
         mockFirmware_.close();
-        qCDebug(logCategoryDeviceMock) << "Mock firmware file prepared with the size of" << mockFirmware_.size() << "bytes";
+        qCDebug(lcDeviceMock) << "Mock firmware file prepared with the size of" << mockFirmware_.size() << "bytes";
     }
 }
 
 void MockDeviceControl::removeMockFirmware()
 {
     if (mockFirmware_.exists() == false) {
-        qCCritical(logCategoryDeviceMock) << "No mock firmware for removal";
+        qCCritical(lcDeviceMock) << "No mock firmware for removal";
     } else {
         mockFirmware_.remove();
-        qCDebug(logCategoryDeviceMock) << "Mock firmware file removed";
+        qCDebug(lcDeviceMock) << "Mock firmware file removed";
     }
 }
 

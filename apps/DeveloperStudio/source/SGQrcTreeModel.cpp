@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SGQrcTreeModel.h"
 #include "SGUtilsCpp.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QDir>
-#include <QDebug>
 #include <QDirIterator>
 #include <QThread>
 #include <QStack>
@@ -11,10 +18,6 @@
 #include <QUuid>
 #include <QDateTime>
 #include <QCryptographicHash>
-
-/**************************************************************
- * Class SGQrcTreeModel
-**************************************************************/
 
 SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
@@ -325,8 +328,13 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const bool i
             outputFileLocation.setFile(SGUtilsCpp::joinFilePath(parentDir, filenameWithoutExt + "-" + QString::number(i) + "." + ext));
         }
 
-        // Copy the file to the base directory under the new name
-        QFile::copy(fileInfo.filePath(), outputFileLocation.filePath());
+        // Copy the file/directory to the base directory under the new name
+        if (fileInfo.isFile()) {
+            QFile::copy(fileInfo.filePath(), outputFileLocation.filePath());
+        } else if (fileInfo.isDir()) {
+            SGQrcTreeModel::copyDir(fileInfo.filePath(), outputFileLocation.filePath());
+        }
+
         fileInfo.setFile(outputFileLocation.filePath());
     }
 
@@ -392,6 +400,52 @@ bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &pa
     return success;
 }
 
+bool SGQrcTreeModel::copyDir(const QString &fromPath, const QString &toPath) {
+    QDir oldDir(fromPath);
+    QDir newDir(toPath);
+
+    // Create destination directory
+    if (!newDir.cd(toPath) && !newDir.mkpath(toPath)) {
+        qCCritical(lcControlViewCreator) << "Could not create new directory:" << toPath;
+        return false;
+    }
+
+    foreach (QString oldFile, oldDir.entryList(QDir::Files)) {
+        QFileInfo from(oldDir, oldFile);
+        QFileInfo to(newDir, oldFile);
+
+        // Attempt to copy file from old directory to destination directory
+        if (!QFile::copy(from.absoluteFilePath(), to.absoluteFilePath())) {
+            qCCritical(lcControlViewCreator) << "The files could not be copied from:" << from.absoluteFilePath() << "to:" << to.absoluteFilePath();
+            return false;
+        }
+
+        // We need this because copying files from a qresource path yields a readonly file by default
+        QFile::setPermissions(to.absoluteFilePath(), QFileDevice::WriteUser | QFileDevice::ReadUser);
+    }
+
+    // Loops through the next child directory
+    foreach (QString copyDir, oldDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        QFileInfo from(oldDir, copyDir);
+        QFileInfo to(newDir, copyDir);
+
+        // Make path to the new directory
+        QDir root = QDir::root();
+        if (!root.mkpath(to.absoluteFilePath())) {
+            qCCritical(lcControlViewCreator) << "Unable to add new directory";
+            return false;
+        }
+
+        // Recursive call to copy child directory
+        if (!SGQrcTreeModel::copyDir(from.absoluteFilePath(), to.absoluteFilePath())) {
+            qCCritical(lcControlViewCreator) << "Unable to recursively add files and directories to:" << oldDir.path();
+            return false;
+        }
+    }
+
+    return true;
+}
+
 QModelIndex SGQrcTreeModel::rootIndex() const
 {
     return rootIndex_;
@@ -436,13 +490,13 @@ QUrl SGQrcTreeModel::projectDirectory() const
 void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        qCCritical(lcControlViewCreator) << "Index is not valid";
         return;
     }
 
     SGQrcTreeNode *node = getNode(index);
     if (node == nullptr) {
-        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        qCCritical(lcControlViewCreator) << "Tree node is not valid";
         return;
     }
 
@@ -462,20 +516,18 @@ void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
     if (save) {
         startSave();
     }
-
-    return;
 }
 
 void SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
 {
     if (!index.isValid()) {
-        qCCritical(logCategoryControlViewCreator) << "Index is not valid";
+        qCCritical(lcControlViewCreator) << "Index is not valid";
         return;
     }
 
     SGQrcTreeNode *node = getNode(index);
     if (node == nullptr) {
-        qCCritical(logCategoryControlViewCreator) << "Tree node is not valid";
+        qCCritical(lcControlViewCreator) << "Tree node is not valid";
         return;
     }
 
@@ -594,42 +646,40 @@ bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFile
 
     stopWatchingPath(oldFileInfo.absolutePath());
     if (!QFile::rename(oldPath, newPath)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to rename" << (node->isDir() ? "folder" : "file") << "from" << oldPath << "to" << newPath;
+        qCCritical(lcControlViewCreator) << "Failed to rename" << (node->isDir() ? "folder" : "file") << "from" << oldPath << "to" << newPath;
         if (wasWatchingOldPath) {
             startWatchingPath(oldPath);
         }
         startWatchingPath(oldFileInfo.absolutePath());
         return false;
-    } else {
-        pathsInTree_.remove(oldUrl);
-        pathsInTree_.insert(newUrl);
-        bool wasInQrc = node->inQrc();
-
-        if (wasInQrc) {
-            removeFromQrc(index, false);
-        }
-
-        setData(index, newUrl, FilepathRole);
-        setData(index, newFilename, FilenameRole);
-
-        if (node->isDir()) {
-            renameAllChildren(index, newPath);
-        } else {
-            setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
-        }
-
-        if (wasInQrc) {
-            addToQrc(index, false);
-        }
-
-        startSave();
-
-        if (wasWatchingOldPath) {
-            startWatchingPath(newPath);
-        }
-        startWatchingPath(oldFileInfo.absolutePath());
-        return true;
     }
+
+    pathsInTree_.remove(oldUrl);
+    pathsInTree_.insert(newUrl);
+    bool wasInQrc = node->inQrc();
+
+    if (wasInQrc) {
+        removeFromQrc(index, false);
+    }
+
+    setData(index, newUrl, FilepathRole);
+    setData(index, newFilename, FilenameRole);
+
+    if (node->isDir()) {
+        renameAllChildren(index, newPath);
+    } else {
+        setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
+    }
+
+    if (wasInQrc) {
+        addToQrc(index);
+    }
+
+    if (wasWatchingOldPath) {
+        startWatchingPath(newPath);
+    }
+    startWatchingPath(oldFileInfo.absolutePath());
+    return true;
 }
 
 bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
@@ -646,6 +696,9 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
     }
 
     stopWatchingPath(SGUtilsCpp::urlToLocalFile(child->filepath()));
+    if (QString::compare(child->filepath().toString(), debugMenuSource_.toString()) == 0) {
+        setDebugMenuSource(QUrl());
+    }
 
     bool success = false;
     if (child->isDir()) {
@@ -653,6 +706,9 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         while (itr.hasNext()) {
             itr.next();
             stopWatchingPath(SGUtilsCpp::urlToLocalFile(child->filepath()));
+            if (QString::compare(child->filepath().toString(), debugMenuSource_.toString()) == 0) {
+                setDebugMenuSource(QUrl());
+            }
         }
         success = QDir(SGUtilsCpp::urlToLocalFile(child->filepath())).removeRecursively();
     } else {
@@ -666,13 +722,29 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         removeRows(row, 1, parent);
     }
 
+    removeDeletedFilesFromQrc();
     return success;
+}
+
+bool SGQrcTreeModel::createNewFolder(const QString &path)
+{
+    return QDir().mkdir(path);
 }
 
 void SGQrcTreeModel::stopWatchingPath(const QString &path)
 {
     if (!path.isEmpty()) {
         fsWatcher_->removePath(path);
+    }
+}
+
+void SGQrcTreeModel::stopWatchingAll()
+{
+    if (fsWatcher_->files().count() > 0) {
+        fsWatcher_->removePaths(fsWatcher_->files());
+    }
+    if (fsWatcher_->directories().count() > 0) {
+        fsWatcher_->removePaths(fsWatcher_->directories());
     }
 }
 
@@ -731,12 +803,7 @@ void SGQrcTreeModel::clear(bool emitSignals)
     setDebugMenuSource(QUrl());
     setNeedsCleaning(false);
 
-    if (fsWatcher_->files().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->files());
-    }
-    if (fsWatcher_->directories().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->directories());
-    }
+    stopWatchingAll();
     if (!qrcDoc_.isNull()) {
         qrcDoc_.clear();
     }
@@ -752,7 +819,7 @@ void SGQrcTreeModel::readQrcFile()
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
 
     if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to open qrc file";
+        qCCritical(lcControlViewCreator) << "Failed to open qrc file";
         qrcFile.close();
         emit finishedReadingQrc(QByteArray());
     } else {
@@ -778,13 +845,13 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
     int errorColumn;
 
     if (!qrcDoc_.setContent(fileText, &errorMessage, &errorLine, &errorColumn)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to parse qrc file." << errorMessage << "-" << QString::number(errorLine) + ":" + QString::number(errorColumn);
+        qCCritical(lcControlViewCreator) << "Failed to parse qrc file." << errorMessage << "-" << QString::number(errorLine) + ":" + QString::number(errorColumn);
         emit errorParsing("Invalid qrc file format.");
         return false;
     }
 
     if (qrcDoc_.elementsByTagName("qresource").count() == 0) {
-        qCCritical(logCategoryControlViewCreator) << "qresource tag missing from qrc file";
+        qCCritical(lcControlViewCreator) << "qresource tag missing from qrc file";
         emit errorParsing("Missing qresource tag.");
         return false;
     }
@@ -799,19 +866,19 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
         qrcItems_.insert(absolutePath);
     }
 
-    qDebug(logCategoryControlViewCreator) << "Successfully parsed qrc file";
+    qCDebug(lcControlViewCreator) << "Successfully parsed qrc file";
     return true;
+}
+
+void SGQrcTreeModel::reloadQrcModel()
+{
+    createModel();
 }
 
 void SGQrcTreeModel::createModel()
 {
     // reset fsWatcher and pathsInTree_ before creating model
-    if (fsWatcher_->files().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->files());
-    }
-    if (fsWatcher_->directories().count() > 0) {
-        fsWatcher_->removePaths(fsWatcher_->directories());
-    }
+    stopWatchingAll();
     pathsInTree_.clear();
 
     // Create a thread to write data to disk
@@ -842,6 +909,7 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
 
             if (info.fileName() == "platformInterface.json") {
                 setDebugMenuSource(QUrl::fromLocalFile(info.filePath()));
+                startWatchingPath(info.filePath());
             }
 
             SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
@@ -930,7 +998,7 @@ void SGQrcTreeModel::save()
 {
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
     if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
-       qCCritical(logCategoryControlViewCreator) << "Could not open" << url_;
+       qCCritical(lcControlViewCreator) << "Could not open" << url_;
        startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
        return;
     }
@@ -940,6 +1008,7 @@ void SGQrcTreeModel::save()
     stream << qrcDoc_.toString(4);
     qrcFile.close();
     startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
+    emit fileChanged(url_);
 }
 
 void SGQrcTreeModel::setNeedsCleaning(const bool needsCleaning)
@@ -957,10 +1026,9 @@ void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
     if (index.isValid()) {
         emit dataChanged(index, index, {role});
     } else {
-        qCWarning(logCategoryControlViewCreator) << "Index is not valid";
+        qCWarning(lcControlViewCreator) << "Index is not valid";
     }
 }
-
 
 /***
  * PRIVATE SLOTS
@@ -980,6 +1048,7 @@ void SGQrcTreeModel::projectFilesModified(const QString &path)
                 if (node->filepath() == url_) {
                     // If we encounter a change to the project's .qrc file, then reparse the qrc
                     createModel();
+                    emit fileChanged(url_);
                 } else {
                     emit fileChanged(url);
                 }
@@ -1089,8 +1158,13 @@ void SGQrcTreeModel::handleExternalFileAdded(const QUrl path, const QUrl parentP
 {
     QModelIndex parentIndex = findNodeInTree(rootIndex_, parentPath);
     if (!parentIndex.isValid() && parentIndex != rootIndex_) {
-        qCCritical(logCategoryControlViewCreator) << "Could not find path" << parentPath << "in tree";
+        qCCritical(lcControlViewCreator) << "Could not find path" << parentPath << "in tree";
         return;
+    }
+
+    if (path.fileName() == "platformInterface.json") {
+        setDebugMenuSource(path);
+        startWatchingPath(path.toLocalFile());
     }
 
     insertChild(path, -1, false, parentIndex);
@@ -1102,7 +1176,7 @@ void SGQrcTreeModel::handleExternalFileDeleted(const QString uid)
     QModelIndex deletedIndex = findNodeInTree(rootIndex_, node->filepath());
 
     if (!deletedIndex.isValid()) {
-        qCCritical(logCategoryControlViewCreator) << "Could not find path" << node->filepath() << "in tree";
+        qCCritical(lcControlViewCreator) << "Could not find path" << node->filepath() << "in tree";
         return;
     }
 

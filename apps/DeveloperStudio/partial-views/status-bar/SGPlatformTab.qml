@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
@@ -31,13 +39,12 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        if(platformTabRoot.state === "help_tour"){
+        if (platformTabRoot.state === "help_tour") {
             Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
-            for(var i = 0; i < repeater.count; i++){
-                Help.registerTarget(repeater.itemAt(i).toolItem, (6 + i === 6) ? "Use this menu item to open the platform and control a board" :
-                                                                 (i + 6 < repeater.count + 5) ? "Use this menu item to view documentation":
-                                                                 "Use this menu item to close the platform", 6 + i, "selectorHelp")
-            }
+            Help.registerTarget(repeater.itemAt(0).toolItem, "Use this menu item to open the platform and control a board", 6, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(1).toolItem, "Use this menu item to view documentation", 7, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to view software and firmware settings", 8, "selectorHelp")
+            Help.registerTarget(repeater.itemAt(3).toolItem, "Use this menu item to close the platform", 9, "selectorHelp")
         }
     }
 
@@ -47,20 +54,21 @@ Item {
 
     Connections {
         target: Help.utility
+        enabled: Help.utility.runningTourName === "selectorHelp"
         // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
         onInternal_tour_indexChanged: {
-            if(platformTabRoot.state === "help_tour"){
-                if(Help.current_tour_targets[index]["target"] === menu) {
+            if (platformTabRoot.state === "help_tour") {
+                if (Help.current_tour_targets[index]["target"] === menu) {
                     dropDownPopup.open()
                     menu.state = "help_tour"
-                } else if(Help.current_tour_targets[index]["target"] === currIcon) {
+                } else if (Help.current_tour_targets[index]["target"] === currIcon) {
                     dropDownPopup.close()
                 }
             }
         }
 
         onTour_runningChanged: {
-            if(!tour_running){
+            if (!tour_running) {
                 menu.state = "normal"
                 dropDownPopup.close()
             }
@@ -70,7 +78,7 @@ Item {
     onViewChanged: {
         setSelectedButton()
     }
-    
+
     function closeTab() {
         let data = {
             "class_id": platformTabRoot.class_id,
@@ -84,6 +92,7 @@ Item {
 
     function menuClicked(index) {
         let selection = buttonModel.get(index)
+
         if (selection.view !== view) {
             dropDownPopup.close()
 
@@ -127,6 +136,14 @@ Item {
             }
             buttonModel.append(buttonData)
         }
+
+        buttonData = {
+            "text": "Settings",
+            "view": "settings",
+            "icon": "qrc:/sgimages/cog.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
 
         buttonData = {
             "text": "Close Platform",
@@ -217,6 +234,12 @@ Item {
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
 
+            Accessible.name: "Open Platform Tab"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                mouseMenu.clicked(mouse)
+            }
+
             MouseArea {
                 id: mouseMenu
                 anchors.fill: parent
@@ -257,13 +280,17 @@ Item {
     Popup {
         id: dropDownPopup
         y: platformTabRoot.height
+        z: 100
         width: menu.width
         height: menu.height
         padding: 0
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
+        /* Cannot take focus, otherwise it steals it from help tour */
+        focus: false
+
         onOpened: {
-            if(menu.state === "help_tour"){
+            if (menu.state === "help_tour") {
                 Help.refreshView(Help.internal_tour_index)
             }
         }
@@ -276,10 +303,13 @@ Item {
             state: "normal"
 
             onStateChanged: {
-                if(state === "help_tour"){
+                if (state === "help_tour") {
                     Help.refreshView(Help.internal_tour_index)
                 }
             }
+
+            Accessible.role: Accessible.Pane
+            Accessible.name: "Platform Tab Popup"
 
             ColumnLayout {
                 id: menuColumn

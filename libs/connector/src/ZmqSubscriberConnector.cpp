@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "ZmqSubscriberConnector.h"
 
 namespace strata::connector
@@ -5,7 +13,7 @@ namespace strata::connector
 
 ZmqSubscriberConnector::ZmqSubscriberConnector() : ZmqConnector(ZMQ_SUB)
 {
-    qCInfo(logCategoryZmqSubscriberConnector) << "ZMQ_SUB Creating connector object";
+    qCInfo(lcZmqSubscriberConnector) << "ZMQ_SUB Creating connector object";
 }
 
 ZmqSubscriberConnector::~ZmqSubscriberConnector()
@@ -15,7 +23,7 @@ ZmqSubscriberConnector::~ZmqSubscriberConnector()
 bool ZmqSubscriberConnector::open(const std::string& ip_address)
 {
     if (false == socketAndContextOpen()) {
-        qCCritical(logCategoryZmqSubscriberConnector) << "Unable to open socket";
+        qCCritical(lcZmqSubscriberConnector) << "Unable to open socket";
         return false;
     }
 
@@ -24,13 +32,13 @@ bool ZmqSubscriberConnector::open(const std::string& ip_address)
         socketSetOptString(zmq::sockopt::subscribe, getDealerID()) &&
         socketConnect(ip_address)) {
         setConnectionState(true);
-        qCInfo(logCategoryZmqSubscriberConnector).nospace().noquote()
+        qCInfo(lcZmqSubscriberConnector).nospace().noquote()
                 << "Connected to the server socket '" << QString::fromStdString(ip_address)
                 << "' with filter '0x" << QByteArray::fromStdString(getDealerID()).toHex() << "'";
         return true;
     }
 
-    qCCritical(logCategoryZmqSubscriberConnector).nospace().noquote()
+    qCCritical(lcZmqSubscriberConnector).nospace().noquote()
             << "Unable to configure and/or connect to server socket '"
             << QString::fromStdString(ip_address) << "'";
     close();
@@ -46,13 +54,13 @@ bool ZmqSubscriberConnector::send(const std::string&)
 bool ZmqSubscriberConnector::read(std::string& message)
 {
     if (false == socketValid()) {
-        qCCritical(logCategoryZmqSubscriberConnector) << "Unable to read messages, socket not open";
+        qCCritical(lcZmqSubscriberConnector) << "Unable to read messages, socket not open";
         return false;
     }
 
     zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
     if (false == socketPoll(&items)) {
-        qCWarning(logCategoryZmqSubscriberConnector) << "Failed to poll items";
+        qCWarning(lcZmqSubscriberConnector) << "Failed to poll items";
         return false;
     }
 
@@ -60,12 +68,12 @@ bool ZmqSubscriberConnector::read(std::string& message)
         std::string identity;
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
-            qCDebug(logCategoryZmqSubscriberConnector).nospace().noquote()
+            qCDebug(lcZmqSubscriberConnector).nospace().noquote()
                     << "Rx'ed message: '" << QString::fromStdString(message)
                     << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
             return true;
         } else {
-            qCWarning(logCategoryZmqSubscriberConnector) << "Failed to read messages";
+            qCWarning(lcZmqSubscriberConnector) << "Failed to read messages";
         }
     }
 
@@ -75,22 +83,22 @@ bool ZmqSubscriberConnector::read(std::string& message)
 bool ZmqSubscriberConnector::blockingRead(std::string& message)
 {
     if (false == socketValid()) {
-        qCCritical(logCategoryZmqSubscriberConnector) << "Unable to blocking read messages, socket not open";
+        qCCritical(lcZmqSubscriberConnector) << "Unable to blocking read messages, socket not open";
         return false;
     }
 
     std::string identity;
     if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
-        qCDebug(logCategoryZmqSubscriberConnector).nospace().noquote()
+        qCDebug(lcZmqSubscriberConnector).nospace().noquote()
                 << "Rx'ed blocking message: '" << QString::fromStdString(message)
                 << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     } else {
         if(false == socketValid()) {
-            qCDebug(logCategoryZmqSubscriberConnector) << "Context was terminated, blocking read was interrupted";
+            qCDebug(lcZmqSubscriberConnector) << "Context was terminated, blocking read was interrupted";
         } else {
-            qCWarning(logCategoryZmqSubscriberConnector) << "Failed to blocking read messages";
+            qCWarning(lcZmqSubscriberConnector) << "Failed to blocking read messages";
         }
     }
 

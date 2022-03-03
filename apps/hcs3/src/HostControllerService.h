@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #pragma once
 
 #include <set>
@@ -13,6 +21,7 @@
 #include "PlatformController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
+#include "ComponentUpdateInfo.h"
 
 #include <DownloadManager.h>
 #include <StrataRPC/StrataServer.h>
@@ -113,10 +122,39 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
-private:
+    void sendUpdateInfoMessage(
+            const QByteArray &clientId,
+            const QJsonArray &componentList,
+            const QString &errorString);
+
+private slots:
     void sendPlatformMessageToClients(const QString &platformId, const QJsonObject& payload);
 
     void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
+
+    void platformStateChanged(const QByteArray& deviceId);
+
+private:
+    enum class hcsNotificationType {
+        downloadPlatformFilepathChanged,
+        downloadPlatformSingleFileProgress,
+        downloadPlatformSingleFileFinished,
+        downloadPlatformFilesFinished,
+        allPlatforms,
+        platformMetaData,
+        controlViewDownloadProgress,
+        downloadViewFinished,
+        updatesAvailable,
+        updateFirmware,
+        updateFirmwareJob,
+        programController,
+        programControllerJob,
+        platformDocumentsProgress,
+        platformDocument,
+        platformMessage,
+        connectedPlatforms
+    };
+    constexpr const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
 
     void processCmdRequestHcsStatus(const strata::strataRPC::Message &message);
     void processCmdLoadDocuments(const strata::strataRPC::Message &message);
@@ -125,21 +163,11 @@ private:
     void processCmdUpdateFirmware(const strata::strataRPC::Message &message);
     void processCmdDownlodView(const strata::strataRPC::Message &message);
     void processCmdSendPlatformMessage(const strata::strataRPC::Message &message);
-
-    void platformConnected(const QByteArray& deviceId);
-    void platformDisconnected(const QByteArray& deviceId);
+    void processCmdProgramController(const strata::strataRPC::Message &message);
+    void processCmdCheckForUpdates(const strata::strataRPC::Message &message);
+    void processCmdPlatformStartApplication(const strata::strataRPC::Message &message);
 
     bool parseConfig(const QString& config);
-
-    void callHandlerForTypeCmd(
-            const QString &cmdName,
-            const QJsonObject &payload,
-            const QByteArray &clientId);
-
-    void callHandlerForTypeHcsCmd(
-            const QString &cmdName,
-            const QJsonObject &payload,
-            const QByteArray &clientId);
 
     PlatformController platformController_;
     Database db_;
@@ -147,6 +175,7 @@ private:
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
+    ComponentUpdateInfo componentUpdateInfo_;
 
     QByteArray currentClient_ = "";   // remove this when platforms are mapped to connected clients.
 

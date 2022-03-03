@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQml 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -10,15 +18,15 @@ SGWidgets.SGMainWindow {
     visible: true
     height: defaultWindowHeight
     width: defaultWindowWidth
-    minimumHeight: 600
-    minimumWidth: 800
+    minimumHeight: 768
+    minimumWidth: 1024
 
     title: qsTr("Serial Console Interface")
 
     property variant settingsDialog: null
     property variant connectMockDeviceDialog: null
-    property int defaultWindowHeight: 600
-    property int defaultWindowWidth: 800
+    property int defaultWindowHeight: 768
+    property int defaultWindowWidth: 1024
 
     function resetWindowSize() {
         root.height = defaultWindowHeight

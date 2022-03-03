@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "Database.h"
 
 #include "logging/LoggingQtCategories.h"
@@ -25,18 +33,18 @@ bool Database::open(const QString& db_path, const QString& db_name)
     }
 
     if (db_name.isEmpty()) {
-        qCCritical(logCategoryHcsDb) << "Missing valid DB name";
+        qCCritical(lcHcsDb) << "Missing valid DB name";
         return false;
     }
 
     if (db_path.isEmpty()) {
-        qCCritical(logCategoryHcsDb) << "Missing writable DB location path";
+        qCCritical(lcHcsDb) << "Missing writable DB location path";
         return false;
     }
 
     databaseName_ = db_name;
     databasePath_ = db_path;
-    qCDebug(logCategoryHcsDb) << "DB location set to:" << databasePath_;
+    qCDebug(lcHcsDb) << "DB location set to:" << databasePath_;
 
     // Check if directories/files already exist
     // If 'db' and 'strata_db' (db_name) directories exist but the main DB file does not, remove directory 'strata_db' (db_name) to avoid bug with opening DB
@@ -44,11 +52,11 @@ bool Database::open(const QString& db_path, const QString& db_name)
     QDir db_directory{databasePath_};
     if (db_directory.cd(QString("%1.cblite2").arg(db_name)) && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
         if (db_directory.removeRecursively()) {
-            qCInfo(logCategoryHcsDb)
+            qCInfo(lcHcsDb)
                 << "DB directories exist but DB file does not -- successfully deleted directory"
                 << db_directory.absolutePath();
         } else {
-            qCWarning(logCategoryHcsDb)
+            qCWarning(lcHcsDb)
                 << "DB directories exist but DB file does not -- unable to delete directory"
                 << db_directory.absolutePath();
         }
@@ -58,7 +66,7 @@ bool Database::open(const QString& db_path, const QString& db_name)
     DB_ = std::make_unique<DatabaseAccess>();
 
     if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
-        qCCritical(logCategoryHcsDb) << "Failed to open database";
+        qCCritical(lcHcsDb) << "Failed to open database";
         return false;
     }
 
@@ -67,7 +75,7 @@ bool Database::open(const QString& db_path, const QString& db_name)
 
 void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)
 {
-    qCCritical(logCategoryHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
+    qCCritical(lcHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
     for (unsigned i = 0; i < documents.size(); ++i) {
         emit documentUpdated(documents[i].id);
     }
@@ -110,7 +118,7 @@ void Database::updateChannels()
     DB_->close();
 
     if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
-        qCCritical(logCategoryHcsDb) << "Failed to open database";
+        qCCritical(lcHcsDb) << "Failed to open database";
         return;
     }
 

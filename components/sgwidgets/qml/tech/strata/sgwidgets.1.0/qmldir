@@ -1,3 +1,12 @@
+#
+# Copyright (c) 2018-2022 onsemi.
+#
+# All rights reserved. This software and/or documentation is licensed by onsemi under
+# limited terms and conditions. The terms and conditions pertaining to the software and/or
+# documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+# Terms and Conditions of Sale, Section 8 Software”).
+#
+
 module tech.strata.sgwidgets
 
 SGUtilsJS 1.0 utils/SGUtils.js
@@ -11,6 +20,7 @@ SGCapacityBar 1.0 SGCapacityBar.qml
 SGCapacityBarElement 1.0 SGCapacityBarElement.qml
 SGCheckBox 1.0 SGCheckBox.qml
 SGCircularGauge 1.0 SGCircularGauge.qml
+SGCircularProgress 1.0 SGCircularProgress.qml
 SGComboBox 1.0 SGComboBox.qml
 SGContextMenuEditActions 1.0 SGContextMenuEditActions.qml
 SGFilePicker 1.0 SGFilePicker.qml

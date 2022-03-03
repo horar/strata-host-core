@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
@@ -10,6 +18,7 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/js/core_update.js" as CoreUpdate
 import "qrc:/partial-views/platform-view"
 
 // imports below must be qrc:/ due to qrc aliases for debug/release differences
@@ -51,12 +60,14 @@ SGWidgets.SGMainWindow {
         mainWindow.height = defaultHeight
     }
 
-    QtLabsPlatform.Menu {
-        QtLabsPlatform.MenuItem {
-            text: qsTr("&About")
-            role: QtLabsPlatform.MenuItem.AboutRole
-            onTriggered:  {
-                showAboutWindow()
+    QtLabsPlatform.MenuBar {
+        QtLabsPlatform.Menu {
+            visible: Qt.platform.os === "osx" // only for MacOS which will place it in its own About menu
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&About")
+                onTriggered:  {
+                    showAboutWindow()
+                }
             }
         }
     }
@@ -98,7 +109,10 @@ SGWidgets.SGMainWindow {
         NavigationControl.init(statusBarLoader, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
-            PlatformSelection.initialize(sdsModel.coreInterface)
+            PlatformSelection.initialize(sdsModel)
+        }
+        if (!CoreUpdate.isInitialized) {
+            CoreUpdate.initialize(sdsModel, updateLoader)
         }
         initialized()
     }
@@ -121,7 +135,7 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.coreInterface.unregisterClient();
+                                           sdsModel.strataClient.sendRequest("unregister", {});
                                            if (SessionUtils.settings.rememberMe === false) {
                                                SessionUtils.settings.clear()
                                            }
@@ -167,6 +181,39 @@ SGWidgets.SGMainWindow {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
+    }
+
+    Connections {
+        target: sdsModel.firmwareUpdater
+
+        onJobStarted: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", true)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0.0)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", "")
+        }
+
+        onJobProgressUpdate: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", progress)
+        }
+
+        onJobFinished: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller", false)
+        }
+
+        onJobError: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
+        }
+    }
+
+    Loader {
+        id: updateLoader
+        active: false
+        anchors {
+            centerIn: parent
+        }
+        width: 500
+        height: 300
+        visible: active
     }
 
     ColumnLayout {
@@ -235,17 +282,23 @@ SGWidgets.SGMainWindow {
         target: sdsModel.coreInterface
 
         onPlatformListChanged: {
-            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", platformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.generatePlatformSelectorModel(list)
+                PlatformSelection.generatePlatformSelectorModel(platformList)
             }
         }
 
         onConnectedPlatformListChanged: {
-            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", connectedPlatformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
-                PlatformSelection.parseConnectedPlatforms(list)
+                PlatformSelection.parseConnectedPlatforms(connectedPlatformList)
+            }
+        }
+
+        onUpdateInfoReceived: {
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
+                CoreUpdate.parseUpdateInfo(payload)
             }
         }
     }

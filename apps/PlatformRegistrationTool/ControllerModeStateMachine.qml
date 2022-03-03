@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQml 2.12
 import QtQml.StateMachine 1.12 as DSM
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -34,12 +42,16 @@ BaseStateMachine {
         } else if (stateLoopSucceed.active) {
             t = "Controller\n" + controllerOpn.toUpperCase() + "\n\n"
             t += "You can unplug controller now\n\n"
-            t += "To program another controller, simply plug it in and process will start automatically\n\n"
+            t += "To program another controller, simply plug it in and process will start automatically\n"
             t += "or press End to finish current session"
         } else if (stateLoopFailed.active) {
             t = internalSubtext
             t += "\n\n"
-            t += "Unplug controller and press Continue"
+            if (prtModel.deviceCount === 0) {
+                t += "Press Continue"
+            } else {
+                t += "Unplug controller and press Continue"
+            }
         } else if (stateError.active) {
             t = internalSubtext
         }
@@ -54,6 +66,7 @@ BaseStateMachine {
     property QtObject jLinkConnector
     property QtObject breakButton
     property QtObject continueButton
+    property QtObject taskbarButton
 
     property string jlinkExePath: ""
     property var bootloaderData: ({})
@@ -78,7 +91,10 @@ BaseStateMachine {
         id: stateValidateInput
 
         onEntered: {
-             prtModel.clearBinaries();
+            prtModel.clearBinaries();
+            taskbarButton.progress.resume()
+            taskbarButton.progress.show()
+            continueButton.visible = false
 
             var errorString = ""
             if (jlinkExePath.length === 0) {
@@ -189,6 +205,9 @@ BaseStateMachine {
             id: stateCheckDeviceCount
             onEntered: {
                 stateMachine.statusText = "Waiting for controller"
+                taskbarButton.progress.resume()
+                taskbarButton.progress.pause()
+                taskbarButton.progress.show()
 
                 console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
@@ -305,6 +324,7 @@ BaseStateMachine {
                 stateMachine.statusText = "Programming bootloader"
                 stateMachine.internalSubtext = ""
                 stateMachine.bottomLeftText = resolveJLinkInfoStatus(stateWaitForJLink.outputInfo)
+                taskbarButton.progress.resume()
 
                 console.debug(Logger.prtCategory, "bootloader on controller is about to be programmed")
 
@@ -328,7 +348,7 @@ BaseStateMachine {
             }
 
             DSM.SignalTransition {
-                targetState: stateNotifyCloudService
+                targetState: stateValidateBootloader
                 signal: jLinkConnector.programBoardProcessFinished
                 guard: exitedNormally
             }
@@ -340,6 +360,31 @@ BaseStateMachine {
                 onTriggered: {
                     stateMachine.internalSubtext = "JLink process failed"
                     console.error(Logger.prtCategory, "jlink process failed")
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateValidateBootloader
+
+            onEntered: {
+                console.debug(Logger.prtCategory, "programmed bootloader about to be validated")
+                prtModel.identifyBootloader()
+            }
+
+            DSM.SignalTransition {
+                targetState: stateNotifyCloudService
+                signal: prtModel.identifyBootloaderFinished
+                guard: errorString.length === 0
+            }
+
+            DSM.SignalTransition {
+                targetState: stateLoopFailed
+                signal: prtModel.identifyBootloaderFinished
+                guard: errorString.length > 0
+                onTriggered: {
+                    stateMachine.internalSubtext = "Programmed bootloader not valid"
+                    console.error(Logger.prtCategory, "programmed bootloader not valid.")
                 }
             }
         }
@@ -414,7 +459,7 @@ BaseStateMachine {
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
                     } else if (statusString) {
-                        stateMachine.internalSubtext = "Error: " + errorString
+                        stateMachine.internalSubtext = "Error: " + statusString
                     }
 
                     console.error(Logger.prtCategory, "controller registration failed:", statusString)
@@ -428,6 +473,7 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Controller Registration Failed"
+            taskbarButton.progress.stop()
         }
 
         DSM.SignalTransition {
@@ -441,12 +487,30 @@ BaseStateMachine {
 
         onEntered: {
             stateMachine.statusText = "Controller Registration Failed"
+            taskbarButton.progress.stop()
+            continueButton.visible = true
+        }
+
+        onExited: {
+            continueButton.visible = false
+        }
+
+        Binding {
+            target: continueButton
+            property: "enabled"
+            value: prtModel.deviceCount === 0
+            when: stateLoopFailed.active
         }
 
         DSM.SignalTransition {
             targetState: stateControllerCheck
             signal: continueButton.clicked
-            guard: prtModel.deviceCount !== 1
+            guard: prtModel.deviceCount ===0
+        }
+
+        DSM.SignalTransition {
+            targetState: exitState
+            signal: breakButton.clicked
         }
     }
 
@@ -456,6 +520,8 @@ BaseStateMachine {
         onEntered: {
             stateMachine.statusText = "Controller Registration Successful"
             console.debug(Logger.prtCategory, "registration successful")
+            taskbarButton.progress.hide()
+            taskbarButton.progress.reset()
         }
 
         DSM.SignalTransition {
@@ -473,6 +539,8 @@ BaseStateMachine {
         id: exitState
 
         onEntered: {
+            taskbarButton.progress.hide()
+            taskbarButton.progress.resume()
             stateMachine.exitWizardRequested()
         }
     }

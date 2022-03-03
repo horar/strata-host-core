@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
@@ -8,10 +16,10 @@ import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
-Item {
-    id: root
-    implicitHeight: iconContainer.implicitHeight
-    implicitWidth: Math.min(iconContainer.width + (textColumn.anchors.margins * 2) + textMetrics.wideWidth, flow.width)
+Button {
+    id: filterButtonRoot
+    implicitHeight: textMetrics.boundingRect.height + (textColumn.anchors.margins * 2)
+    implicitWidth: Math.min((textColumn.anchors.margins * 2) + textMetrics.wideWidth, flow.width)
 
     onYChanged: {
         if (parent === flow) {
@@ -19,96 +27,61 @@ Item {
         }
     }
 
-    Rectangle {
-        id: textArea
-        color: Theme.palette.onsemiOrange
-        height: 30
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: iconContainer.horizontalCenter
-            right: parent.right
-        }
-        radius: 5
-    }
+    background: Rectangle {
+        radius: 20
+        border.width: 1
+        border.color: Theme.palette.onsemiDark
+        color: mouse.containsMouse ? Theme.palette.onsemiDark : "transparent"
 
-    Rectangle {
-        id: iconContainer
-        color: "black"
-        radius: implicitHeight/2
-        implicitHeight: segmentCategoryList.delegateHeight
-        implicitWidth: implicitHeight
+        MouseArea {
+            id: mouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
 
-        SGIcon {
-            source: model.iconSource
-            implicitHeight: iconContainer.height * .8
-            implicitWidth: implicitHeight
-            iconColor: "white"
-            anchors {
-                centerIn: parent
+            onClicked: {
+                filterButtonRoot.clicked()
+            }
+
+            ToolTip {
+                delay: 1000
+                visible: mouse.containsMouse
+                text: {
+                    if (model.type === "category") {
+                        return "Filter platforms in this category"
+                    } else {
+                        return "Filter platforms in this Segment"
+                    }
+                }
             }
         }
+    }
+
+    onClicked: {
+        PlatformFilters.setFilterActive(model.filterName, true)
     }
 
     ColumnLayout {
         id: textColumn
-        anchors {
-            verticalCenter: textArea.verticalCenter
-            left: iconContainer.right
-            right: textArea.right
-            margins: 5
-        }
-        spacing: 1
+        anchors.fill: filterButtonRoot
+        anchors.margins: 5
 
         SGText {
             id: mainText
             text: model.text
+            fontSizeMultiplier: 0.9
+            color: !mouse.containsMouse ? Theme.palette.onsemiDark : Theme.palette.white
             elide: Text.ElideRight
             Layout.fillWidth: true
-            font.underline: filterLinkMouse.containsMouse
-            color: "white"
-            fontSizeMultiplier: .9
-
-            MouseArea {
-                id: filterLinkMouse
-                anchors {
-                    fill: parent
-                }
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                onClicked:  {
-                    PlatformFilters.setFilterActive(model.filterName, true)
-                }
-
-                ToolTip {
-                    delay: 1000
-                    visible: parent.containsMouse
-                    text: {
-                        if (model.type === "category") {
-                            return "Filter platforms in this category"
-                        } else {
-                            return "Filter platforms in this Segment"
-                        }
-                    }
-                }
-            }
-
-            TextMetrics {
-                id: textMetrics
-                text: model.text
-                font: mainText.font
-
-                property real wideWidth: width + 5 // +5 to make sure elide isn't prematurely applied due to rounding
-            }
+            Layout.fillHeight: true
         }
+    }
 
-        SGText {
-            text: model.type
-            elide: Text.ElideRight
-            Layout.fillWidth: true
-            fontSizeMultiplier: .5
-            font.capitalization: Font.AllUppercase
-            color: "white"
-        }
+    TextMetrics {
+        id: textMetrics
+        text: model.text
+        font.pixelSize: mainText.font.pixelSize
+
+        property real wideWidth: width + 5
     }
 }

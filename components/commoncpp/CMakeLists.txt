@@ -1,3 +1,11 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
 project(component-commoncpp
     VERSION 0.0.0
     LANGUAGES CXX
@@ -17,8 +25,6 @@ add_library(${PROJECT_NAME} MODULE)
 target_sources(${PROJECT_NAME}
     PRIVATE
     CommonCppPlugin.cpp
-    mqtt/SGMqttClient.cpp
-    mqtt/SGSslConfiguration.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
@@ -30,7 +36,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     strata::SGUserSettings
     strata::SGUtilsCpp
-    strata::SGQWTPlot
+    strata::SGQwtPlot
     strata::SGSortFilterProxyModel
     strata::SGVersionUtils
     strata::SGJLinkConnector
@@ -38,7 +44,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGTextHighlighter
     strata::SGTranslator
     strata::SGConversion
-    mqtt::mqtt
+    strata::SGCSVUtils
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

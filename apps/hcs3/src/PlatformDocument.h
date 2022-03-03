@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 
 #ifndef PLATFORM_DOCUMENT_H
 #define PLATFORM_DOCUMENT_H
@@ -14,7 +22,15 @@ struct PlatformFileItem {
     qint64 filesize;
 };
 
-struct VersionedFileItem {
+struct FirmwareFileItem {
+    QString partialUri;
+    QString controllerClassId;
+    QString md5;
+    QString timestamp;
+    QString version;
+};
+
+struct ControlViewFileItem {
     QString partialUri;
     QString md5;
     QString name;
@@ -42,8 +58,8 @@ public:
     const QList<PlatformFileItem>& getViewList();
     const QList<PlatformDatasheetItem>& getDatasheetList();
     const QList<PlatformFileItem>& getDownloadList();
-    const QList<VersionedFileItem>& getFirmwareList();
-    const QList<VersionedFileItem>& getControlViewList();
+    const QList<FirmwareFileItem>& getFirmwareList();
+    const QList<ControlViewFileItem>& getControlViewList();
     const PlatformFileItem& platformSelector();
 
 private:
@@ -52,15 +68,19 @@ private:
     QList<PlatformDatasheetItem> datasheetsList_;
     QList<PlatformFileItem> downloadList_;
     QList<PlatformFileItem> viewList_;
-    QList<VersionedFileItem> firmwareList_;
-    QList<VersionedFileItem> controlViewList_;
+    QList<FirmwareFileItem> firmwareList_;
+    QList<ControlViewFileItem> controlViewList_;
     PlatformFileItem platformSelector_;
 
     bool populateFileObject(const QJsonObject& jsonObject, PlatformFileItem &file);
     void populateFileList(const QJsonArray &jsonList, QList<PlatformFileItem> &fileList);
 
-    bool populateVersionedObject(const QJsonObject& jsonObject, VersionedFileItem &versionedFile);
-    void populateVersionedList(const QJsonArray &jsonList, QList<VersionedFileItem> &versionedList);
+    bool populateFirmwareObject(const QJsonObject& jsonObject, FirmwareFileItem &firmwareFile);
+    void populateFirmwareList(const QJsonArray &jsonList, QList<FirmwareFileItem> &firmwareList);
+
+    bool populateControlViewObject(const QJsonObject& jsonObject, ControlViewFileItem &controlViewFile);
+    void populateControlViewList(const QJsonArray &jsonList, QList<ControlViewFileItem> &controlViewList);
+
     bool populateDatasheetObject(const QJsonObject &jsonObject, PlatformDatasheetItem &datasheet);
     void populateDatasheetList(const QJsonArray &jsonList, QList<PlatformDatasheetItem> &datasheetList);
 };

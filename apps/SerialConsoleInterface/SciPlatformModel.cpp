@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SciPlatformModel.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -110,7 +118,7 @@ bool SciPlatformModel::condensedAtStartup() const
 void SciPlatformModel::releasePort(int index, int disconnectDuration)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
         return;
     }
 
@@ -126,7 +134,7 @@ void SciPlatformModel::releasePort(int index, int disconnectDuration)
 void SciPlatformModel::removePlatform(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
         return;
     }
 
@@ -140,12 +148,14 @@ void SciPlatformModel::removePlatform(int index)
     endRemoveRows();
 
     emit countChanged();
+
+    platformManager_->disconnectPlatform(item->deviceId());
 }
 
 void SciPlatformModel::reconnect(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCCritical(logCategorySci) << "index out of range";
+        qCCritical(lcSci) << "index out of range";
     }
 
     platformManager_->reconnectPlatform(platformList_.at(index)->deviceId());
@@ -174,11 +184,13 @@ void SciPlatformModel::boardConnectedHandler(const QByteArray& deviceId)
     }
 }
 
-void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
+void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recognized, bool inBootloader)
 {
+    Q_UNUSED(inBootloader)
+
     int index = findPlatform(deviceId);
     if (index < 0) {
-        qCCritical(logCategorySci) << "unknown board" << deviceId;
+        qCCritical(lcSci) << "unknown board" << deviceId;
         return;
     }
 
@@ -228,7 +240,7 @@ void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 {
     strata::platform::PlatformPtr platform = platformManager_->getPlatform(deviceId);
     if (platform == nullptr) {
-        qCWarning(logCategorySci).noquote() << "Platform not found by its id" << deviceId;
+        qCWarning(lcSci).noquote() << "Platform not found by its id" << deviceId;
         return;
     }
 

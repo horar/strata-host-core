@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SciMockVersionModel.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -55,7 +63,7 @@ QVariant SciMockVersionModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= versions_.count()) {
-        qCWarning(logCategorySci) << "Attempting to access out of range index when acquiring data";
+        qCWarning(lcSci) << "Attempting to access out of range index when acquiring data";
         return QVariant();
     }
 

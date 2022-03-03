@@ -1,3 +1,11 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
 project(CouchbaseBrowser
     DESCRIPTION "Couchbase Browser"
     LANGUAGES CXX
@@ -6,7 +14,7 @@ project(CouchbaseBrowser
 set(PROJECT_WIN32_ICO resources/icons/app/app.ico)
 set(PROJECT_MACOS_ICNS app.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.cbb)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2022 ${PROJECT_COMPANY}")
 
 
 find_package(Qt5 ${VERSION_QT5}

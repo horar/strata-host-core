@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SciMockDeviceModel.h"
 #include <Mock/MockDevice.h>
 #include "logging/LoggingQtCategories.h"
@@ -36,7 +44,7 @@ void SciMockDeviceModel::init()
     scanner_ = std::dynamic_pointer_cast<MockDeviceScanner>(platformManager_->getScanner(Device::Type::MockDevice));
 
     if (scanner_ == nullptr) {
-        qCCritical(logCategorySci) << "Received empty Mock Scanner pointer:" << scanner_.get();
+        qCCritical(lcSci) << "Received empty Mock Scanner pointer:" << scanner_.get();
         return;
     }
 
@@ -46,7 +54,7 @@ void SciMockDeviceModel::init()
 
 void SciMockDeviceModel::handleDeviceDetected(PlatformPtr platform) {
     if (platform == nullptr) {
-        qCCritical(logCategorySci) << "Received corrupt platform pointer:" << platform;
+        qCCritical(lcSci) << "Received corrupt platform pointer:" << platform;
         return;
     }
 
@@ -54,7 +62,7 @@ void SciMockDeviceModel::handleDeviceDetected(PlatformPtr platform) {
     platforms_.append({platform->deviceId(), platform->deviceName()});
     endInsertRows();
 
-    qCDebug(logCategorySci) << "Added new mock device to the model:" << platform->deviceId();
+    qCDebug(lcSci) << "Added new mock device to the model:" << platform->deviceId();
     emit countChanged();
 }
 
@@ -65,13 +73,13 @@ void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
             platforms_.removeAt(index);
             endRemoveRows();
 
-            qCDebug(logCategorySci) << "Removed mock device from the model:" << deviceId;
+            qCDebug(lcSci) << "Removed mock device from the model:" << deviceId;
             emit countChanged();
             return;
         }
     }
 
-    qCDebug(logCategorySci) << "Device not present in the mock model:" << deviceId;
+    qCDebug(lcSci) << "Device not present in the mock model:" << deviceId;
 }
 
 QString SciMockDeviceModel::connectMockDevice(const QString& deviceName, const QByteArray& deviceId)
@@ -95,7 +103,7 @@ bool SciMockDeviceModel::disconnectMockDevice(const QByteArray& deviceId)
         return false;
     }
 
-    return scanner_->mockDeviceLost(deviceId);
+    return scanner_->disconnectDevice(deviceId).isEmpty();
 }
 
 void SciMockDeviceModel::disconnectAllMockDevices() {
@@ -103,7 +111,7 @@ void SciMockDeviceModel::disconnectAllMockDevices() {
         return;
     }
 
-    return scanner_->mockAllDevicesLost();
+    scanner_->disconnectAllDevices();
 }
 
 QString SciMockDeviceModel::getLatestMockDeviceName() const {
@@ -122,7 +130,7 @@ QVariant SciMockDeviceModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= platforms_.count()) {
-        qCWarning(logCategorySci) << "Attempting to access out of range index when acquiring data";
+        qCWarning(lcSci) << "Attempting to access out of range index when acquiring data";
         return QVariant();
     }
 

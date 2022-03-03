@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "SGFileTabModel.h"
 #include "logging/LoggingQtCategories.h"
 #include "SGUtilsCpp.h"
@@ -136,7 +144,7 @@ QVariant SGFileTabModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= data_.size()) {
-        qCWarning(logCategoryControlViewCreator) << "Trying to access to out of range index in file tab list";
+        qCWarning(lcControlViewCreator) << "Trying to access to out of range index in file tab list";
         return QVariant();
     }
 
@@ -164,7 +172,7 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
 {
     int row = index.row();
     if (row < 0 || row >= data_.size()) {
-        qCWarning(logCategoryControlViewCreator) << "Trying to access to out of range index in file tab list";
+        qCWarning(lcControlViewCreator) << "Trying to access to out of range index in file tab list";
         return false;
     }
 
@@ -235,20 +243,19 @@ bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
     }
 
     if (id.isEmpty()) {
-        qCCritical(logCategoryControlViewCreator) << "File id is empty";
+        qCCritical(lcControlViewCreator) << "File id is empty";
         return false;
     } else if (filename.isEmpty()) {
-        qCCritical(logCategoryControlViewCreator) << "File name is empty";
+        qCCritical(lcControlViewCreator) << "File name is empty";
         return false;
     } else if (filetype.isEmpty()) {
-        qCCritical(logCategoryControlViewCreator) << "File type is empty";
+        qCCritical(lcControlViewCreator) << "File type is empty";
         return false;
     }
 
-    SGUtilsCpp utils;
-    QString path = utils.urlToLocalFile(filepath);
-    if (!utils.exists(path)) {
-        qCCritical(logCategoryControlViewCreator) << "File does not exist in file path";
+    QString path = SGUtilsCpp::urlToLocalFile(filepath);
+    if (!SGUtilsCpp::exists(path)) {
+        qCCritical(lcControlViewCreator) << "File does not exist in file path";
         return false;
     }
 

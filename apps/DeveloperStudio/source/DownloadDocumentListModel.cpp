@@ -1,17 +1,28 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <DownloadDocumentListModel.h>
+#include <PlatformInterface/core/CoreInterface.h>
+#include <StrataRPC/StrataClient.h>
+
+#include "logging/LoggingQtCategories.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileInfo>
 #include <QDir>
 #include <QVector>
 #include <QDebug>
-#include "logging/LoggingQtCategories.h"
 
-DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterface, QObject *parent)
-    : QAbstractListModel(parent),
-      coreInterface_(coreInterface)
+DownloadDocumentListModel::DownloadDocumentListModel(strata::strataRPC::StrataClient *strataClient,
+                                                     CoreInterface *coreInterface, QObject *parent)
+    : QAbstractListModel(parent), strataClient_(strataClient), coreInterface_(coreInterface)
 {
-
     connect(coreInterface_, &CoreInterface::downloadPlatformFilepathChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
     connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileProgress, this, &DownloadDocumentListModel::singleDownloadProgressHandler);
     connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileFinished, this, &DownloadDocumentListModel::singleDownloadFinishedHandler);
@@ -155,7 +166,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
     for (int i = 0; i < data_.length(); ++i) {
         DownloadDocumentItem* item = data_.at(i);
         if (item == nullptr) {
-            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
+            qCCritical(lcDocumentManager) << "item is empty" << i;
             continue;
         }
 
@@ -165,7 +176,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
 
             item->status = DownloadStatus::Waiting;
 
-            qCDebug(logCategoryDocumentManager)
+            qCDebug(lcDocumentManager)
                     << "uri" << item->uri;
         } else {
             item->status = DownloadStatus::NotSelected;
@@ -187,15 +198,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
         {"destination_dir", saveUrl.path()}
     };
 
-    QJsonObject message
-    {
-        {"hcs::cmd", "download_files"},
-        {"payload", payload},
-    };
-
-    doc.setObject(message);
-
-    coreInterface_->sendCommand(doc.toJson(QJsonDocument::Compact));
+    strataClient_->sendRequest("download_files", payload);
 
     emit downloadInProgressChanged();
 }
@@ -307,13 +310,13 @@ void DownloadDocumentListModel::singleDownloadFinishedHandler(const QJsonObject 
         item->status = DownloadStatus::Finished;
         roles << StatusRole;
 
-        qCDebug(logCategoryDocumentManager) << "filePath" << filePath;
+        qCDebug(lcDocumentManager) << "filePath" << filePath;
     } else {
         item->status = DownloadStatus::FinishedWithError;
         item->errorString = errorString ;
         roles << StatusRole << ErrorStringRole;
 
-        qCDebug(logCategoryDocumentManager) << "filePath" << filePath << "error:" << errorString;
+        qCDebug(lcDocumentManager) << "filePath" << filePath << "error:" << errorString;
     }
 
     emit dataChanged(
@@ -329,7 +332,7 @@ void DownloadDocumentListModel::groupDownloadFinishedHandler(const QJsonObject &
     QString errorString = payload["error_string"].toString();
 
     if (errorString.isEmpty() == false) {
-        qCWarning(logCategoryDocumentManager) << "downloading finished with error" << errorString;
+        qCWarning(lcDocumentManager) << "downloading finished with error" << errorString;
         QHashIterator<QString, DownloadDocumentItem*>  iter(downloadingData_);
         while (iter.hasNext()) {
             DownloadDocumentItem *item = iter.next().value();
@@ -367,7 +370,7 @@ void DownloadDocumentListModel::setHistoryState(const QString &doc, const QStrin
     for (int i = 0; i < data_.length(); ++i) {
         DownloadDocumentItem* item = data_.at(i);
         if (item == nullptr) {
-            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
+            qCCritical(lcDocumentManager) << "item is empty" << i;
             continue;
         }
 

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include <Operations/StartBootloader.h>
 #include <PlatformOperationsStatus.h>
 #include "Commands/PlatformCommands.h"
@@ -63,7 +71,7 @@ void StartBootloader::postCommandActions(CommandResult& result, int& status)
             result = CommandResult::FinaliseOperation;
             // set status for 'finished' signal
             status = ALREADY_IN_BOOTLOADER;
-            qCInfo(logCategoryPlatformOperation) << platform_ << "Platform already in bootloader mode.";
+            qCInfo(lcPlatformOperation) << platform_ << "Platform already in bootloader mode.";
         }
         return;
     }

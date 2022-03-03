@@ -1,3 +1,11 @@
+##
+## Copyright (c) 2018-2022 onsemi.
+##
+## All rights reserved. This software and/or documentation is licensed by onsemi under
+## limited terms and conditions. The terms and conditions pertaining to the software and/or
+## documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+## Terms and Conditions of Sale, Section 8 Software”).
+##
 project(StrataDeveloperStudio
     DESCRIPTION "Strata Developer Studio"
     LANGUAGES CXX
@@ -6,7 +14,7 @@ project(StrataDeveloperStudio
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 set(QT5_MINIMUM_VERSION 5.12.4)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -32,14 +40,17 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DownloadDocumentListModel.cpp
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
+    source/FirmwareUpdater.cpp
     source/SGQrcTreeModel.cpp
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp
     source/SGNewControlView.cpp
     source/ResourcePath.cpp
     source/RunGuard.cpp
+    source/CoreUpdate.cpp
     source/PlatformInterfaceGenerator.cpp
     source/VisualEditorUndoStack.cpp
+    source/PlatformOperation.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
@@ -87,11 +98,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::RemoteObjects
     Qt5::Svg
 
-    strata::connector
-    strata::HostControllerClient
     strata::PlatformInterface
     strata::SGUtilsCpp
     strata::SGVersionUtils
+    strata::StrataRPC-StrataClient
 
     strata::QtLogger
 )

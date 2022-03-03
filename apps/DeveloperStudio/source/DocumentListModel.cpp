@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "DocumentListModel.h"
 
 #include "logging/LoggingQtCategories.h"
@@ -130,7 +138,7 @@ void DocumentListModel::setHistoryState(const QString &doc, const QString &state
     for (int i = 0; i < data_.length(); ++i) {
         DocumentItem* item = data_.at(i);
         if (item == nullptr) {
-            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
+            qCCritical(lcDocumentManager) << "item is empty" << i;
             continue;
         }
 

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
@@ -21,6 +29,11 @@ Rectangle {
     property real sourceHeight: 120
     property real sourceWidth: 167
     property real aspectRatio: 120/167
+    property alias text: title.text
+    property alias textBgColor: textBg.color
+
+    readonly property string defaultText: "CONNECTED"
+    readonly property color defaultTextBg: Theme.palette.green
 
     Image {
         id: image
@@ -128,7 +141,8 @@ Rectangle {
     }
 
     Rectangle {
-        color: Theme.palette.onsemiOrange
+        id: textBg
+        color: defaultTextBg
         width: imageContainer.width
         anchors {
             bottom: imageContainer.bottom
@@ -138,11 +152,12 @@ Rectangle {
         clip: true
 
         SGText {
+            id: title
             color: "white"
             anchors {
                 centerIn: parent
             }
-            text: "CONNECTED"
+            text: defaultText
             font.bold: true
             fontSizeMultiplier: 1.4
         }

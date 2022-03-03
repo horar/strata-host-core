@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.7
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
@@ -90,33 +98,20 @@ Item {
                     width: Math.max(loginContainer.width, loginArea.width)
                     height: Math.max(loginContainer.height, loginArea.height)
 
-                    Item {
+                    Rectangle {
                         id: loginContainer
                         width: 800
                         height: loginContainerColumn.height + 40
+                        layer.enabled: true
+                        layer.effect: DropShadow {
+                            horizontalOffset: 10
+                            verticalOffset: 10
+                            samples: 17
+                            color: "#40000000"
+                        }
                         anchors {
                             centerIn: parent
                             verticalCenterOffset: -50
-                        }
-
-                        Rectangle {
-                            id: loginBackground
-                            color: "white"
-                            anchors {
-                                fill: parent
-                            }
-                            visible: false
-                            radius: 10
-                        }
-
-                        DropShadow {
-                            anchors.fill: loginBackground
-                            source: loginBackground
-                            horizontalOffset: 10
-                            verticalOffset: 10
-                            radius: 8.0
-                            samples: 17
-                            color: "#40000000"
                         }
 
                         ColumnLayout {

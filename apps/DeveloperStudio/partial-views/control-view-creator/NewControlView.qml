@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
@@ -21,6 +29,10 @@ Item {
     onVisibleChanged: {
         if (!visible) {
             alertMessage.Layout.preferredHeight = 0
+        } else {
+            if (fileOutput.text === "") {
+                fileOutput.text = openProjectContainer.fileDialogFolder()
+            }
         }
     }
 
@@ -78,6 +90,7 @@ Item {
                 text: "Browse"
 
                 onClicked: {
+                    fileDialog.folder = openProjectContainer.fileDialogFolder()
                     fileDialog.open()
                 }
             }
@@ -89,7 +102,6 @@ Item {
                 border.color: "#444"
                 border.width: 0.5
 
-
                 SGText {
                     id: fileOutput
                     color: "#333"
@@ -98,17 +110,6 @@ Item {
                         fill: parent
                     }
                     elide: Text.ElideLeft
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                SGText {
-                    visible: fileOutput.text === ""
-                    text: "Select a directory..."
-                    color: "#aaa"
-                    anchors {
-                        margins: 8
-                        fill: parent
-                    }
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -137,8 +138,8 @@ Item {
 
             GridLayout {
                 id: templateLayout
-                rowSpacing: 10
-                columnSpacing: 10
+                rowSpacing: 5
+                columnSpacing: 5
                 anchors.fill: parent
                 clip: true
                 columns: 9
@@ -328,10 +329,10 @@ Item {
 
         const qrcUrl = sdsModel.newControlView.createNewProject(projectName.text, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath)
         openProjectContainer.url = qrcUrl
-        openProjectContainer.addToTheProjectList(qrcUrl.toString())
+        openProjectContainer.addToTheProjectList(projectName.text, qrcUrl.toString())
         viewStack.currentIndex = 1
         controlViewCreatorRoot.projectInitialization = true
-        controlViewCreatorRoot.recompileControlViewQrc();
+        controlViewCreatorRoot.recompileControlViewQrc()
         projectName.text = ""
         fileOutput.text = ""
     }

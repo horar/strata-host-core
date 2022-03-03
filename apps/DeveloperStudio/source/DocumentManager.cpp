@@ -1,4 +1,13 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 #include "DocumentManager.h"
+#include <StrataRPC/StrataClient.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -10,23 +19,18 @@
 #include <QDir>
 #include <QList>
 
-DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
-    : QObject(parent),
-      coreInterface_(coreInterface)
+DocumentManager::DocumentManager(strata::strataRPC::StrataClient *strataClient,
+                                 CoreInterface *coreInterface, QObject *parent)
+    : QObject(parent), strataClient_(strataClient), coreInterface_(coreInterface)
 {
-    qCDebug(logCategoryDocumentManager) << "core interface";
-    /*
-        Register document handler with CoreInterface
-        This will also send a command to Nimbus
-    */
-    coreInterface->registerDataSourceHandler("document_progress",
-                                            std::bind(&DocumentManager::documentProgressHandler,
-                                            this, std::placeholders::_1));
-
-    coreInterface->registerDataSourceHandler("document",
-                                            std::bind(&DocumentManager::loadDocumentHandler,
-                                            this, std::placeholders::_1));
-    connect(coreInterface_, &CoreInterface::platformMetaData, this, &DocumentManager::platformMetaDataHandler);
+    strataClient_->registerHandler(
+        "document_progress",
+        std::bind(&DocumentManager::documentProgressHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "document", std::bind(&DocumentManager::loadDocumentHandler, this, std::placeholders::_1));
+    strataClient_->registerHandler(
+        "platform_meta_data",
+        std::bind(&DocumentManager::platformMetaDataHandler, this, std::placeholders::_1));
 
     init();
 }
@@ -39,7 +43,7 @@ DocumentManager::~DocumentManager ()
 ClassDocuments *DocumentManager::getClassDocuments(const QString &classId)
 {
     if (classes_.contains(classId) == false) {
-        ClassDocuments* classDocs = new ClassDocuments(classId, coreInterface_, this);
+        ClassDocuments *classDocs = new ClassDocuments(classId, strataClient_, coreInterface_, this);
         classes_[classId] = classDocs;
     }
     else if (classes_[classId]->errorString() != ""){

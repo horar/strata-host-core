@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -12,7 +20,7 @@ FocusScope {
 
     property string exportFilePath
     property string autoExportFilePath
-    property int baseSpacing: 10
+    property int baseSpacing: 16
 
     InfoPopup {
         id: infoPopup
@@ -41,38 +49,57 @@ FocusScope {
                 id: exportPathPicker
                 contextMenuEnabled: true
                 width: content.width
-                hasHelperText: false
                 filePath: model.platform.scrollbackModel.exportFilePath
                 label: "Output File"
+                inputValidation: true
                 dialogLabel: "Export to file"
                 dialogSelectExisting: false
                 dialogDefaultSuffix: "log"
                 dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
                 focus: true
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                        return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
+                    }
+
+                    return ""
+                }
             }
 
             SGWidgets.SGTag {
                 id: exportErrorTag
-
                 font.bold: true
                 textColor: "white"
+                mask: "A"
                 color: TangoTheme.palette.error
+                sizeByMask: text.length === 0
             }
 
             SGWidgets.SGButton {
                 text: "Export"
 
                 onClicked: {
-                    exportErrorTag.text = ""
-                    var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
-                    if (errorString.length > 0) {
-                        exportErrorTag.text = errorString
-                        infoPopup.showFailed("Export Failed")
-                        console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
-
+                    var error = exportPathPicker.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    exportView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Export Failed",
+                                    error)
                     } else {
-                        infoPopup.showSuccess("Export Done")
-                        console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
+                        exportErrorTag.text = ""
+                        var errorString = model.platform.scrollbackModel.exportToFile(exportPathPicker.filePath)
+                        if (errorString.length > 0) {
+                            exportErrorTag.text = errorString
+                            infoPopup.showFailed("Export Failed")
+                            console.error(Logger.sciCategory, "failed to export content into", exportPathPicker.filePath)
+                        } else {
+                            infoPopup.showSuccess("Export Done")
+                            console.log(Logger.sciCategory, "content exported into", exportPathPicker.filePath)
+                        }
                     }
                 }
             }
@@ -119,7 +146,7 @@ FocusScope {
                 text: "ACTIVE"
                 font.bold: true
                 textColor: "white"
-                color: TangoTheme.palette.plum1
+                color: TangoTheme.palette.chameleon2
                 visible: model.platform.scrollbackModel.autoExportIsActive
             }
 
@@ -142,15 +169,25 @@ FocusScope {
                     topMargin: baseSpacing
                 }
 
-                hasHelperText: false
                 filePath: model.platform.scrollbackModel.autoExportFilePath
                 label: "Output File"
+                inputValidation: true
                 enabled: model.platform.scrollbackModel.autoExportIsActive === false
 
                 dialogLabel: "Export to file"
                 dialogSelectExisting: false
                 dialogDefaultSuffix: "log"
                 dialogNameFilters: ["Log files (*.log)", "Text Files (*.txt)", "All files (*)"]
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
+                        return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
+                    }
+
+                    return ""
+                }
             }
 
             SGWidgets.SGTag {
@@ -160,13 +197,24 @@ FocusScope {
                     topMargin: baseSpacing
                 }
 
-                text: model.platform.scrollbackModel.autoExportErrorString
+                text: {
+                    if (model.platform.scrollbackModel.autoExportErrorString) {
+                        return "Export Failed: " + model.platform.scrollbackModel.autoExportErrorString
+                    }
+
+                    return ""
+                }
+
                 font.bold: true
                 textColor: "white"
+                mask: "A"
                 color: TangoTheme.palette.error
+                sizeByMask: text.length === 0
+
             }
 
             SGWidgets.SGButton {
+                id: startExportButton
                 anchors {
                     top: autoExportErrorTag.bottom
                     topMargin: baseSpacing
@@ -174,12 +222,33 @@ FocusScope {
 
                 text: model.platform.scrollbackModel.autoExportIsActive ? "Stop" : "Start"
                 onClicked: {
-                    if (model.platform.scrollbackModel.autoExportIsActive) {
+                    var error = autoExportPathPicker.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    exportView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Continuous Export Failed",
+                                    error)
+                    }
+
+                    else if (model.platform.scrollbackModel.autoExportIsActive) {
                         model.platform.scrollbackModel.stopAutoExport()
                     } else {
                         model.platform.scrollbackModel.startAutoExport(autoExportPathPicker.filePath)
                     }
                 }
+            }
+
+            SGWidgets.SGButton {
+                anchors {
+                    top: startExportButton.top
+                    left: startExportButton.right
+                    leftMargin: 6
+                }
+
+                text: "Clear Error"
+                visible: model.platform.scrollbackModel.autoExportErrorString.length > 0
+                onClicked: model.platform.scrollbackModel.clearAutoExportError()
             }
         }
 
@@ -209,7 +278,6 @@ FocusScope {
     }
 
     function closeView() {
-        model.platform.scrollbackModel.clearAutoExportError()
         StackView.view.pop();
     }
 }
