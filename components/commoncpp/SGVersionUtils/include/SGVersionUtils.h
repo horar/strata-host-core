@@ -55,6 +55,14 @@ public:
     Q_INVOKABLE static int compare(const QString &version1, const QString &version2, bool *error = nullptr);
 
     /**
+     * @brief compareSuffix
+     * @param suffix1 The LHS of the compare. Ex) suffix1 < suffix2
+     * @param suffix2 The RHS of the compare. Ex) suffix1 < suffix2
+     * @return Returns -1, 0, or 1 depending on if suffix1 is less than, equal to, or greater than suffix2, respectively.
+     */
+    Q_INVOKABLE static int compareSuffix(const QString &suffix1, const QString &suffix2);
+
+    /**
      * @brief getGreatestVersion Returns the index of the latest version in a list of versions
      * @param versions A QStringList of versions
      * @return Returns the index of the latest version
@@ -71,9 +79,17 @@ public:
     /**
      * @brief cleanVersion Returns a cleaned version of the version given
      * @param version The version to clean
+     * @param retainSuffix If the version should retain pre-release suffixes
      * @return Returns the cleaned version
      */
-    Q_INVOKABLE static QString cleanVersion(QString version);
+    Q_INVOKABLE static QString cleanVersion(QString version, bool retainSuffix = false);
+
+    /**
+     * @brief cleanSuffix Returns a cleaned version of the suffix given
+     * @param suffix The suffix to clean
+     * @return Returns the cleaned suffix
+     */
+    Q_INVOKABLE static QString cleanSuffix(QString suffix);
 
     static QObject* SingletonTypeProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 };
