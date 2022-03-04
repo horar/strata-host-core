@@ -117,7 +117,12 @@ ColumnLayout {
         if (objectIsEmpty(latestVersion)) {
             // upToDate remains true
             console.warn(Logger.devStudioCategory, "Could not find any control views on server for class id:", platformStack.class_id)
-            return;
+            return
+        }
+
+        if (SGVersionUtils.valid(latestVersion.version) === false) {
+            console.warn(Logger.devStudioCategory, "Invalid software version", latestVersion.version, "for class id:", platformStack.class_id)
+            return
         }
 
         if (installedVersion.version === "") {
@@ -128,7 +133,8 @@ ColumnLayout {
             return
         }
 
-        if (SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
+        if ((SGVersionUtils.valid(installedVersion.version) === false) ||
+            SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
             upToDate = false
             controlViewIsOutOfDate = true
         }

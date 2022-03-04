@@ -63,14 +63,19 @@ ColumnLayout {
         matchVersion()
         let isOutOfDate = false
         for (let i = 0; i < firmwareCount; i++) {
-
             if (platformStack.is_assisted === true &&
                     (platformStack.controller_class_id.length === 0 ||
                      platformStack.controller_class_id !== firmwareListModel.controller_class_id(i))) {
                 continue
             }
 
-            if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
+            if (SGVersionUtils.valid(firmwareListModel.version(i)) === false) {
+                console.warn(Logger.devStudioCategory, "Invalid firmware version", firmwareListModel.version(i), "for class id:", platformStack.class_id)
+                continue
+            }
+
+            if ((SGVersionUtils.valid(platformStack.firmware_version) === false) ||
+                SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
                 isOutOfDate = true
             }
         }
@@ -159,7 +164,7 @@ ColumnLayout {
         sortEnabled: false
 
         function filterAcceptsRow(row) {
-            console.log(row, firmwareListModel.controller_class_id(row), platformStack.controller_class_id)
+            console.log(Logger.devStudioCategory, row, firmwareListModel.controller_class_id(row), platformStack.controller_class_id)
 
             if (platformStack.connected === false) {
                 return false //platform not connected, no firmware displayed

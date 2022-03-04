@@ -42,7 +42,9 @@ int SGVersionUtils::compare(const QString &version1, const QString &version2, bo
     QVersionNumber v1 = QVersionNumber::fromString(cleanedV1, &suffixIndexV1);
     QVersionNumber v2 = QVersionNumber::fromString(cleanedV2, &suffixIndexV2);
 
-    if (v1.isNull() || v2.isNull()) {
+    // in case the version already arrived empty, consider it valid (like 0.0.0)
+    if ((v1.isNull() && (version1.isEmpty() == false)) ||
+        (v2.isNull() && (version2.isEmpty() == false))) {
         if (error != nullptr) {
             *error = true;
         }
@@ -200,7 +202,6 @@ QString SGVersionUtils::cleanSuffix(QString suffix) {
     if (suffix.startsWith("-")) {
         suffix.remove(0, 1);
     }
-    suffix = suffix.toLower();
     QRegExp rx("^((?:(?:alpha|beta|rc)[0-9]*)|(?:rtm|ga))(?:\\-.+)?$");
     if (rx.exactMatch(suffix)) {
         QStringList suffixList = rx.capturedTexts();
