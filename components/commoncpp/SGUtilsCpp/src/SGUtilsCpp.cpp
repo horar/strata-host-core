@@ -351,3 +351,106 @@ QStringList SGUtilsCpp::getForbiddenCharacters()
     }
     return list;
 }
+
+QVariantMap SGUtilsCpp::getWordStartEndPositions(const QString &text, int pos)
+{
+    QVariantMap result;
+    int startPos = -1;
+    int endPos = -1;
+    if (text.isEmpty() || (pos == -1)) {
+        result.insert("word_start", startPos);
+        result.insert("word_end", endPos);
+        return result;
+    }
+
+    // we will be selecting block to the right, except for \n
+    if ((pos > 0) && ((text.size() == pos) || (text.at(pos) == "\n"))) {
+        pos--;
+    }
+
+    startPos = pos;
+    endPos = pos+1;
+
+    auto getCharacterType = [](const QChar &character, bool &endLine, bool &letter, bool &symbol, bool &space)
+    {
+        endLine = letter = symbol = space = false;
+        if (character == "\n") {
+            endLine = true;
+        } else if (character.isLetterOrNumber() || character == "_" || character == "-") {
+            letter = true;
+        } else if (character.isSpace()) {
+            space = true;
+        } else {
+            symbol = true;
+        }
+    };
+
+    bool lookingForEndlines, lookingForLetters, lookingForSymbols, lookingForSpaces;
+    getCharacterType(text.at(pos), lookingForEndlines, lookingForLetters, lookingForSymbols, lookingForSpaces);
+
+    if (lookingForEndlines) {
+        result.insert("word_start", startPos);
+        result.insert("word_end", endPos);
+        return result;
+    }
+
+    bool isEndline, isLetter, isSymbol, isSpace;
+    for (int i = pos-1; i >= 0; i--) {
+        getCharacterType(text.at(i), isEndline, isLetter, isSymbol, isSpace);
+        if ((lookingForLetters && isLetter) ||
+            (lookingForSymbols && isSymbol) ||
+            (lookingForSpaces && isSpace)) {
+            startPos = i;
+        } else {
+            break;
+        }
+    }
+
+    for (int i = pos+1; i < text.size(); i++) {
+        endPos = i;
+        getCharacterType(text.at(i), isEndline, isLetter, isSymbol, isSpace);
+        if ((lookingForLetters && isLetter) == false &&
+            (lookingForSymbols && isSymbol) == false &&
+            (lookingForSpaces && isSpace) == false) {
+            break;
+        }
+    }
+
+    result.insert("word_start", startPos);
+    result.insert("word_end", endPos);
+    return result;
+}
+
+QVariantMap SGUtilsCpp::getLineStartEndPositions(const QString &text, int pos)
+{
+    QVariantMap result;
+    int startPos = -1;
+    int endPos = -1;
+    if (text.isEmpty() || (pos == -1)) {
+        result.insert("line_start", startPos);
+        result.insert("line_end", endPos);
+        return result;
+    }
+
+    startPos = text.lastIndexOf("\n", pos);
+    endPos = text.indexOf("\n", pos);
+
+    if (startPos == endPos) {
+        // we clicked at last character
+        if ((pos > 0) && (text.at(pos - 1) != "\n")) {
+            startPos = text.lastIndexOf("\n", pos - 1);
+        }
+    }
+
+    if (endPos == -1) {
+        endPos = text.size();
+    }
+
+    if (startPos != 0) {
+        startPos++; // we do not want to copy endline
+    }
+
+    result.insert("line_start", startPos);
+    result.insert("line_end", endPos);
+    return result;
+}

@@ -94,9 +94,8 @@ void RequestsController::findTimedoutRequests()
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
     for (const auto &request : qAsConst(requests_)) {
         qint64 duration = currentTime - request.timestamp_;
-        if (duration < request_timeout_.count()) {
-            return;
+        if (duration > request_timeout_.count()) {
+             emit requestTimedout(request.messageId_);
         }
-        emit requestTimedout(request.messageId_);
     }
 }

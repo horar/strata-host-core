@@ -11,7 +11,9 @@ Module {
         "QtQml 2.12",
         "QtQml.Models 2.12",
         "QtQuick 2.12",
-        "tech.strata.commoncpp 1.0"
+        "tech.strata.commoncpp 1.0",
+        "tech.strata.logger 1.0",
+        "tech.strata.signals 1.0"
     ]
     Component {
         prototype: "QQuickItem"
@@ -30,17 +32,24 @@ Module {
                 "Critical": 2
             }
         }
-        Property { name: "inboxIsOpen"; type: "bool" }
-        Property { name: "model"; type: "QQmlListModel"; isReadonly: true; isPointer: true }
+        Property { name: "currentUser"; type: "string" }
+        Property { name: "model"; type: "SGSortFilterProxyModel"; isReadonly: true; isPointer: true }
         Method {
             name: "createNotification"
             type: "QVariant"
             Parameter { name: "title"; type: "QVariant" }
             Parameter { name: "level"; type: "QVariant" }
             Parameter { name: "to"; type: "QVariant" }
+            Parameter { name: "source"; type: "QVariant" }
             Parameter { name: "additionalParameters"; type: "QVariant" }
         }
         Method { name: "saveNotifications"; type: "QVariant" }
         Method { name: "addSavedNotifications"; type: "QVariant" }
+        Method {
+            name: "destroyNotification"
+            type: "QVariant"
+            Parameter { name: "uuid"; type: "QVariant" }
+        }
+        Method { name: "create_UUID"; type: "QVariant" }
     }
 }

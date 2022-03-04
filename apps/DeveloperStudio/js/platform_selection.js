@@ -357,8 +357,12 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform)
         } else {
             if (classMap.hasOwnProperty(platform.class_id)) {
-                if (platform.firmware_version.length === 0) {
-                    //device without firmware
+                // Old legacy boards have no bootloader and provides no information about firmware version,
+                // so both 'firmware_version' and 'bootloader_version' are empty. In this case
+                // 'platform.active' is set to "application".
+
+                if (platform.firmware_version.length === 0 && platform.bootloader_version.length !== 0) {
+                    // device without firmware
 
                     // if there is already listing for this platform, reuse it
                     let listing = getDeviceListing(platform.class_id, platform.device_id)
@@ -814,6 +818,7 @@ function notifyConnectedState(connected, platformName){
             PlatformNotifications.Notifications.createNotification(`${platformName} is connected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
+                                                                   Qt.application,
                                                                    {
                                                                        "timeout": 4000,
                                                                        "actions": [notificationActions[0],notificationActions[1]]
@@ -822,6 +827,7 @@ function notifyConnectedState(connected, platformName){
             PlatformNotifications.Notifications.createNotification(`${platformName} is disconnected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
+                                                                   Qt.application,
                                                                    {
                                                                        "timeout": 4000,
                                                                        "actions": [notificationActions[0],notificationActions[1]]

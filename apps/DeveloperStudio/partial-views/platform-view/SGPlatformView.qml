@@ -82,12 +82,6 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
-        if(documentNotificationUUID !== ""){
-            Notifications.destroyNotification(documentNotificationUUID)
-        }
-        if(updateNotificationUUID !== ""){
-            Notifications.destroyNotification(updateNotificationUUID)
-        }
     }
 
     function initialize () {
@@ -102,7 +96,13 @@ StackLayout {
     }
 
     function openSettings() {
+        NavigationControl.switchToSelectedView(model.device_id)
         model.view = "settings"
+    }
+
+    function openDocuments() {
+        NavigationControl.switchToSelectedView(model.device_id)
+        model.view = "collateral"
     }
 
     ControlViewContainer {
@@ -126,7 +126,7 @@ StackLayout {
             id: documentsHistoryShowDocumentsView
             text: "View documents"
             onTriggered: {
-                model.view = "collateral"
+                openDocuments()
             }
         }
 
@@ -146,7 +146,7 @@ StackLayout {
         }
 
         function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
-            if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate == false) {
+            if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate === false) {
                 return
             }
 
@@ -160,11 +160,16 @@ StackLayout {
                 description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
             }
 
-            if (platformStack.currentIndex == 0) { // check if control view is displayed
-              documentNotificationUUID = Notifications.createNotification(
+            if (platformStack.currentIndex !== 1 || platformStack.visible === false) { // check if collateral is already not displayed
+                if (documentNotificationUUID !== "") {
+                    // remove previous notification
+                    Notifications.destroyNotification(documentNotificationUUID)
+                }
+                documentNotificationUUID = Notifications.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",
+                    platformStack,
                     {
                         "description": description,
                         "iconSource": "qrc:/sgimages/exclamation-circle.svg",
@@ -218,23 +223,28 @@ StackLayout {
     }
 
     function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){
-        if((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && model.view !== "settings" && platformStack.visible){
+        if ((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && (platformStack.currentIndex !== 2 || platformStack.visible === false)) {
             var description = ""
-            if(firmwareOutOfDate && controlViewOutOfDate){
+            if (firmwareOutOfDate && controlViewOutOfDate) {
                 description = "Newer versions of firmware and software are available."
-            } else if(firmwareOutOfDate){
+            } else if (firmwareOutOfDate) {
                 description = "A newer version of firmware is available."
-            } else{
+            } else {
                 description = "A newer version of software is available."
             }
 
-           updateNotificationUUID = Notifications.createNotification("Update available",
+            if (updateNotificationUUID !== "") {
+                // remove previous notification
+                Notifications.destroyNotification(updateNotificationUUID)
+            }
+            updateNotificationUUID = Notifications.createNotification("Update available",
                                                 Notifications.Info,
                                                 "current",
+                                                platformStack,
                                                 {
                                                     "description": description,
                                                     "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                                                    "actions": [close,goToSettings,disableNotifyOnFirmwareUpdate],
+                                                    "actions": [close, goToSettings, disableNotifyOnFirmwareUpdate],
                                                     "timeout": 0
                                                 }
                                              )

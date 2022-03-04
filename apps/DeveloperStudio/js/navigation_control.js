@@ -402,3 +402,20 @@ function updateState(event, data)
             break;
     }
 }
+
+function switchToSelectedView(device_id) {
+    let view_index = -1
+    let connected_view
+
+    for (let j = 0; j < platform_view_model_.count; j++) {
+        connected_view = platform_view_model_.get(j)
+        if (connected_view.device_id === device_id) {
+            view_index = j
+            break
+        }
+    }
+
+    if (view_index !== -1) {
+        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
+    }
+}
