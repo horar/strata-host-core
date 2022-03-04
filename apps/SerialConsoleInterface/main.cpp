@@ -21,6 +21,7 @@
 #include <QResource>
 #include <QDir>
 #include <QtWebEngine>
+#include <QQmlFileSelector>
 
 #include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
@@ -69,7 +70,6 @@ void loadResources() {
     }
 }
 
-
 void addImportPaths(QQmlApplicationEngine *engine) {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
@@ -87,6 +87,35 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     engine->addImportPath(applicationDir.path());
 
     engine->addImportPath("qrc:///");
+}
+
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcSci) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCWarning(lcSci) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcSci) << QStringLiteral("Loading '%1: %2'").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
 }
 
 int main(int argc, char *argv[])
@@ -168,10 +197,15 @@ int main(int argc, char *argv[])
     SciModel sciModel_;
 
     QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
 
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty("sciModel", &sciModel_);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &sciModel_, &SciModel::handleQmlWarning);
+
 
 #ifdef APPS_FEATURE_BLE
     engine.rootContext()->setContextProperty("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));

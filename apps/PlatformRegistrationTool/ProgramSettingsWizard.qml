@@ -21,7 +21,6 @@ FocusScope {
 
     clip: true
 
-    property QtObject prtModel
     property var latestData: ({})
 
     property var embeddedData: ({})

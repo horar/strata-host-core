@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QProcess>
+#include <QQmlError>
 
 #include "config/UrlConfig.h"
 
@@ -90,6 +91,7 @@ public:
 
 public slots:
     void shutdownService();
+    void handleQmlWarning(const QList<QQmlError> &warnings);
 
 signals:
     void hcsConnectedChanged();

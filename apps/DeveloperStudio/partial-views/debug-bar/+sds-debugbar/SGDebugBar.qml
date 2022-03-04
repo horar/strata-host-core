@@ -186,36 +186,4 @@ Item {
             commandBar.visible = true
         }
     }
-
-    SGQmlErrorListButton {
-        id: qmlErrorListButton
-
-        visible: qmlErrorModel.count !== 0
-        text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
-        checked: qmlErrorListPopUp.visible
-
-        onCheckedChanged: checked ? qmlErrorListPopUp.open() : qmlErrorListPopUp.close()
-
-        ListModel {
-            id: qmlErrorModel
-        }
-
-        Connections {
-            target: sdsModel
-            onNotifyQmlError: {
-                if (sdsModel.qtLogger.visualEditorReloading === false) {
-                    qmlErrorModel.append({"data" : notifyQmlError})
-                }
-            }
-        }
-    }
-
-    SGQmlErrorListPopUp {
-        id: qmlErrorListPopUp
-        topMargin: 32
-        leftMargin: 32
-        anchors.centerIn: ApplicationWindow.overlay
-        title: qmlErrorListButton.text
-        qmlErrorListModel: qmlErrorModel
-    }
 }

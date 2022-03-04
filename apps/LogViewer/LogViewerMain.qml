@@ -23,9 +23,7 @@ FocusScope {
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
-    property alias linesCount: logModel.count
-    property alias fileModel: logModel.fileModel
-    property int openedFilesCount: fileModel.count
+    property int openedFilesCount: logModel.fileModel.count
     property int cellHeightSpacer: 6
     property int defaultIconSize: 24
     property int smallIconSize: 20
@@ -55,8 +53,8 @@ FocusScope {
     readonly property int maxRecentFiles: 5
     property var recentFiles: []
 
-    LogViewModels.LogModel {
-        id: logModel
+    Connections {
+        target:logModel
 
         onRowsInserted: {
             if (automaticScroll) {
@@ -182,7 +180,7 @@ FocusScope {
     function removeFromRecentFiles(path) {
         var tmpRecentFiles = recentFiles
         for (var j = 0; j < tmpRecentFiles.length; ++j) {
-            if (path === tmpRecentFiles[j] && fileModel.containsFilePath(path) === false) {
+            if (path === tmpRecentFiles[j] && logModel.fileModel.containsFilePath(path) === false) {
                 tmpRecentFiles.splice(j, 1)
             }
         }
@@ -792,7 +790,7 @@ FocusScope {
                         id: listViewSide
                         width: sidePanel.width
                         height: contentHeight
-                        model: fileModel
+                        model: logModel.fileModel
                         interactive: false
                         clip: true
 
@@ -1170,8 +1168,8 @@ FocusScope {
             text: {
                 qsTr("Range: %1 - %2 | %3 %4").arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logModel.oldestTimestamp, timestampFormat))
                 .arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logModel.newestTimestamp, timestampFormat))
-                .arg(logViewerMain.linesCount)
-                .arg((logViewerMain.linesCount == 1) ? "log" : "logs")
+                .arg(logModel.count)
+                .arg((logModel.count == 1) ? "log" : "logs")
             }
             elide: Text.ElideRight
         }

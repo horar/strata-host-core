@@ -22,6 +22,7 @@
 #include <QVariant>
 #include <QQuickView>
 #include <QQmlContext>
+#include <QQmlFileSelector>
 #ifdef Q_OS_WIN
 #include <QVersionNumber>
 #endif
@@ -91,6 +92,35 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     engine->addImportPath("qrc:///");
 }
 
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcLogViewer) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCWarning(lcLogViewer) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcLogViewer) << QStringLiteral("Loading '%1: %2'").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -134,14 +164,24 @@ int main(int argc, char *argv[]) {
     qCInfo(lcLogViewer) << QString("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(lcLogViewer) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);
 
-    QQmlApplicationEngine engine;
+    loadResources();
 
-    qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
+    LogModel logModel_;
+
+    QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
+
+    qmlRegisterUncreatableType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel", "You can't instantiate LogModel in QML");
     qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
-    loadResources();
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
+
+    engine.rootContext()->setContextProperty("logModel", &logModel_);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &logModel_, &LogModel::handleQmlWarning);
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty()) {

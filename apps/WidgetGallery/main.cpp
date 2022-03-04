@@ -14,9 +14,11 @@
 #include <QResource>
 #include <QDir>
 #include <QIcon>
+#include <QQmlFileSelector>
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 #include "Version.h"
+#include "WgModel.h"
 
 static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -59,7 +61,6 @@ void loadResources() {
     }
 }
 
-
 void addImportPaths(QQmlApplicationEngine *engine) {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
@@ -79,6 +80,35 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     engine->addImportPath("qrc:///");
 }
 
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcWg) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCWarning(lcWg) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName);
+                continue;
+            }
+            qCDebug(lcWg) << QStringLiteral("Loading '%1: %2'").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -96,9 +126,18 @@ int main(int argc, char *argv[])
 
     loadResources();
 
-    QQmlApplicationEngine engine;
+    WgModel wgModel_;
 
+    QQmlApplicationEngine engine;
+    QQmlFileSelector selector(&engine);
+
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
+
+    engine.rootContext()->setContextProperty("wgModel", &wgModel_);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &wgModel_, &WgModel::handleQmlWarning);
+
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

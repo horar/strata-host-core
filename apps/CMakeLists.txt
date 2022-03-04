@@ -23,7 +23,8 @@ if(NOT MINGW)
     add_feature_info(APPS_CORESW_SDS APPS_CORESW_SDS "Strata Developer Studio")
 
     # DevStudio plugins
-    include(AddDevStudioPLugin)
+    include(AddDevStudioPlugin)
+    include(AddQmlDebugPlugin)
     cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_DEBUGBAR "Build DevStudio 'debugbar' plugin" ON
         "APPS_CORESW_SDS" OFF)
     add_feature_info(APPS_CORESW_SDS_PLUGIN_DEBUGBAR APPS_CORESW_SDS_PLUGIN_DEBUGBAR "DevStudio 'debugbar' plugin")
@@ -66,6 +67,16 @@ add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Widget Gallery")
 cmake_dependent_option(APPS_TOOLBOX_LCU "Build 'LoggingConfigurationUtility'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_LCU APPS_TOOLBOX_LCU "Logging Configuration Utility")
+
+#
+# Strata Plugin Options
+#
+option(APPS_PLUGINS "Build Strata Plugins" ON)
+add_feature_info(APPS_PLUGINS APPS_PLUGINS "Build Strata Plugins")
+
+cmake_dependent_option(APPS_PLUGINS_QMLDEBUG "Build Strata apps debug 'qmldebug' plugin" ON
+"APPS_PLUGINS" OFF)
+add_feature_info(APPS_PLUGINS_QMLDEBUG APPS_PLUGINS_QMLDEBUG "Strata apps debug 'qmldebug' plugin")
 
 if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)

@@ -11,12 +11,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 RowLayout {
-    anchors {
-        bottom: parent.bottom
-        left: parent.left
-        bottomMargin: 20
-        leftMargin: controlViewCreatorLoader.active ? 80 : 20
-    }
     spacing: 1
 
     property alias text: button.text

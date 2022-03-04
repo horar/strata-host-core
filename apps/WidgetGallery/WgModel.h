@@ -6,21 +6,22 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+#pragma once
 
-ListView {
-    id: root
-    
-    implicitWidth: 800
-    implicitHeight: 480
-    
-    clip: true
-    
-    ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOn }
-    
-    highlight: Rectangle {
-        color: "#eee"
-        radius: 5
-    }
-}
+#include <QObject>
+#include <QQmlError>
+
+class WgModel : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit WgModel(QObject *parent = nullptr);
+    virtual ~WgModel();
+
+public slots:
+    void handleQmlWarning(const QList<QQmlError> &warnings);
+
+signals:
+    void notifyQmlError(QString notifyQmlError);
+};

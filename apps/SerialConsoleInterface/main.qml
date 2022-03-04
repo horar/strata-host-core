@@ -9,6 +9,7 @@
 import QtQml 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import tech.strata.theme 1.0
 import Qt.labs.platform 1.1 as QtLabsPlatform
 
@@ -163,5 +164,17 @@ SGWidgets.SGMainWindow {
 
         connectBleDeviceDialog = SGWidgets.SGDialogJS.createDialog(root,"qrc:/ConnectBleDeviceDialog.qml")
         connectBleDeviceDialog.open()
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            topMargin: 10
+            rightMargin: 170
+            right: parent.right
+            top: parent.top
+        }
+
+            signalTarget: sciModel
     }
 }

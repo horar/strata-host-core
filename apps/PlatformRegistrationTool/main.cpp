@@ -93,6 +93,36 @@ void addImportPaths(QQmlApplicationEngine *engine) {
     engine->addImportPath("qrc:///");
 }
 
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qInfo(lcPrt) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+            applicationDir.cdUp();
+        #endif
+
+        for (const auto& pluginName : qAsConst(supportedPlugins)) {
+            const QString resourceFile(
+                QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
+
+            if (QFile::exists(resourceFile) == false) {
+                qCWarning(lcPrt) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName); 
+                continue;
+            }
+            qCDebug(lcPrt) << QStringLiteral("Loading '%1: %2'").arg(resourceFile, QResource::registerResource(resourceFile));
+        }
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -133,12 +163,15 @@ int main(int argc, char *argv[])
 
     loadResources();
 
+    PrtModel prtModel_;
+
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
-    qmlRegisterType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel");
+    qmlRegisterUncreatableType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel", "can not instantiate PrtModel in qml");
     qmlRegisterUncreatableType<strata::PlatformManager>("tech.strata.sci", 1, 0, "PlatformManager", "can not instantiate PlatformManager in qml");
     qmlRegisterUncreatableType<Authenticator>("tech.strata.prt.authenticator", 1, 0, "Authenticator", "can not instantiate Authenticator in qml");
     qmlRegisterUncreatableType<RestClient>("tech.strata.prt.restclient", 1, 0, "RestClient", "can not instantiate RestClient in qml");
@@ -149,6 +182,10 @@ int main(int argc, char *argv[])
     qRegisterMetaType<strata::FlasherConnector::Operation>();
     qRegisterMetaType<strata::FlasherConnector::State>();
     qRegisterMetaType<strata::FlasherConnector::Result>();
+
+    engine.rootContext()->setContextProperty("prtModel", &prtModel_);
+
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, &prtModel_, &PrtModel::handleQmlWarning);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

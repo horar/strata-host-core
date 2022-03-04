@@ -92,6 +92,17 @@ void addImportPaths(QQmlApplicationEngine *engine)
     engine->addImportPath("qrc:///");
 }
 
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qCDebug(lcDevStudio) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+    }
+}
+
 int main(int argc, char *argv[])
 {
 #if defined(Q_OS_WIN)
@@ -219,12 +230,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
-    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPLugins.empty() == false) {
-        qCDebug(lcDevStudio) << "Supportrd plugins:" << supportedPLugins.join(", ");
-        selector.setExtraSelectors(supportedPLugins);
-    }
-
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
@@ -243,14 +249,7 @@ int main(int argc, char *argv[])
         &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
         Qt::QueuedConnection);
 
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-                     [&sdsModel](const QList<QQmlError> &warnings) {
-                         QStringList msg;
-                         foreach (const QQmlError &error, warnings) {
-                             msg << error.toString();
-                         }
-                         emit sdsModel->notifyQmlError(msg.join(QStringLiteral("\n")));
-                     });
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, sdsModel.get(), &SDSModel::handleQmlWarning);
 
     // Starting services this build?
 #ifdef START_SERVICES

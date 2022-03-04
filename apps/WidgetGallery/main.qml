@@ -8,6 +8,7 @@
  */
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
 
 SGWidgets.SGMainWindow {
@@ -58,5 +59,17 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/WgAboutWindow.qml")
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            topMargin: 10
+            rightMargin: 170
+            right: parent.right
+            top: parent.top
+        }
+
+            signalTarget: wgModel
     }
 }
