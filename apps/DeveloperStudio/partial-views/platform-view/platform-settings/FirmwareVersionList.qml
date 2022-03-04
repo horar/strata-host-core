@@ -48,7 +48,7 @@ ColumnLayout {
                 spacing: 30
 
                 SGText {
-                    Layout.preferredWidth:60
+                    Layout.preferredWidth: 60
                     Layout.leftMargin: 5
                     text: "Version"
                     font.italic: true
@@ -130,7 +130,7 @@ ColumnLayout {
 
                     RowLayout {
                         Layout.margins: 10
-                        Layout.preferredHeight: 30
+                        Layout.preferredHeight: versionText.height < 30 ? 30 : versionText.height
                         spacing: 30
 
                         SGText {
@@ -139,6 +139,7 @@ ColumnLayout {
                             text: model.version
                             fontSizeMultiplier: 1.38
                             color: "#666"
+                            wrapMode: Text.Wrap
                         }
 
                         SGText {
@@ -154,7 +155,6 @@ ColumnLayout {
                             Layout.alignment: Qt.AlignRight
                             color: "#666"
                             elide: Text.ElideRight
-                            wrapMode: Text.Wrap
                             horizontalAlignment: Text.AlignRight
                             text: currentStatus !== "" ? currentStatus : (installMouse.enabled ? "Download and flash firmware" : "")
                             property string currentStatus: ""

@@ -880,6 +880,12 @@ Module {
             Parameter { name: "version2"; type: "string" }
         }
         Method {
+            name: "compareSuffix"
+            type: "int"
+            Parameter { name: "suffix1"; type: "string" }
+            Parameter { name: "suffix2"; type: "string" }
+        }
+        Method {
             name: "getGreatestVersion"
             type: "int"
             Parameter { name: "versions"; type: "QStringList" }
@@ -899,6 +905,17 @@ Module {
             name: "cleanVersion"
             type: "string"
             Parameter { name: "version"; type: "string" }
+            Parameter { name: "retainSuffix"; type: "bool" }
+        }
+        Method {
+            name: "cleanVersion"
+            type: "string"
+            Parameter { name: "version"; type: "string" }
+        }
+        Method {
+            name: "cleanSuffix"
+            type: "string"
+            Parameter { name: "suffix"; type: "string" }
         }
     }
 }
