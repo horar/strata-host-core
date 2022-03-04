@@ -76,7 +76,6 @@ BaseStateMachine {
     running: false
     initialState: stateValidateInput
 
-    property QtObject prtModel
     property QtObject jLinkConnector
     property QtObject breakButton
     property QtObject continueButton

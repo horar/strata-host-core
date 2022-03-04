@@ -60,7 +60,6 @@ BaseStateMachine {
         return t
     }
 
-    property QtObject prtModel
     property QtObject jLinkConnector
     property QtObject breakButton
     property QtObject continueButton

@@ -79,7 +79,6 @@ Item {
         ProgramSettingsWizard {
             id: settingsWizard
             focus: true
-            prtModel: prtModel
 
             onRegistrationEmbeddedRequested: {
                 var properties = {
@@ -123,7 +122,6 @@ Item {
 
         ProgramDeviceWizard {
             focus: true
-            prtModel: prtModel
             taskbarButton: prtMain.taskbarButtonHelper
 
             StackView.onActivated: {
