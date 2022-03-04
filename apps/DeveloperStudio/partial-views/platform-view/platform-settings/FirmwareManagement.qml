@@ -61,7 +61,7 @@ ColumnLayout {
 
     function checkForNewerVersion() {
         matchVersion()
-        platformStack.firmwareIsOutOfDate = false
+        let isOutOfDate = false
         for (let i = 0; i < firmwareCount; i++) {
 
             if (platformStack.is_assisted === true &&
@@ -71,9 +71,10 @@ ColumnLayout {
             }
 
             if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
-                platformStack.firmwareIsOutOfDate = true
+                isOutOfDate = true
             }
         }
+        platformStack.firmwareIsOutOfDate = isOutOfDate
     }
 
     SGText {

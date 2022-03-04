@@ -59,7 +59,9 @@ StackLayout {
     onPlatformOutOfDateChanged: {
         // Both of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' can be changed right after each other,
         // so we need to use 'Qt.callLater' for showing proper notification.
-        Qt.callLater(launchOutOfDateNotificationLater)
+        if (platformOutOfDate) {
+            Qt.callLater(launchOutOfDateNotificationLater)
+        }
     }
 
     onFullyInitializedChanged: {
