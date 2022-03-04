@@ -324,14 +324,47 @@ QString ResourceLoader::getVersionJson(const QString &class_id, const QString &v
     QJsonDocument doc = QJsonDocument::fromJson(fileText);
     QJsonObject docObj = doc.object();
 
-    if (!docObj.contains(QString("version"))) {
+    // we need to assemble it the same way it is uploaded to DP
+    // "{versionMajor}.{versionMinor}.{versionPatch}-{stageOfDevelopment}"
+
+    if (docObj.contains(QString("version")) == false) {
         qCWarning(lcResourceLoader) << "version.json does not have 'version' key.";
         return QString();
     }
-    QJsonValue versionJson = docObj.value(QString("version"));
+    QString versionString = docObj.value(QString("version")).toString();
 
-    qCInfo(lcResourceLoader) << "Found version of" << versionJson.toString() << "for class id" << class_id;
-    return versionJson.toString();
+    if (docObj.contains(QString("versionMajor")) == false) {
+        qCWarning(lcResourceLoader) << "version.json does not have 'versionMajor' key.";
+        return versionString;
+    }
+    QString versionMajor = docObj.value(QString("versionMajor")).toString();
+
+    if (docObj.contains(QString("versionMinor")) == false) {
+        qCWarning(lcResourceLoader) << "version.json does not have 'versionMinor' key.";
+        return versionString;
+    }
+    QString versionMinor = docObj.value(QString("versionMinor")).toString();
+
+    if (docObj.contains(QString("versionPatch")) == false) {
+        qCWarning(lcResourceLoader) << "version.json does not have 'versionPatch' key.";
+        return versionString;
+    }
+    QString versionPatch = docObj.value(QString("versionPatch")).toString();
+
+    QString stageOfDevelopment = "";
+    if (docObj.contains(QString("stageOfDevelopment"))) {
+        stageOfDevelopment = docObj.value(QString("stageOfDevelopment")).toString();
+        if (stageOfDevelopment.isEmpty() == false) {
+            stageOfDevelopment.prepend("-");
+        }
+    } else {
+        qCWarning(lcResourceLoader) << "version.json does not have 'stageOfDevelopment' key.";
+    }
+
+    versionString = versionMajor + "." + versionMinor + "." + versionPatch + stageOfDevelopment;
+
+    qCInfo(lcResourceLoader) << "Found version of" << versionString << "for class id" << class_id;
+    return versionString;
 }
 
 QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QString &version) {
