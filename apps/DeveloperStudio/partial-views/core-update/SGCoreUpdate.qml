@@ -218,7 +218,7 @@ SGStrataPopup {
 
                 background: Rectangle {
                     color: !updateButton.enabled ? "#dbdbdb" : updateButton.down ? "#666" : "#888"
-                    border.color: updateButton.activeFocus ? "#219647" : "transparent"
+                    border.color: updateButton.activeFocus ? Theme.palette.onsemiOrange : "transparent"
                 }
 
                 contentItem: Text {
@@ -255,7 +255,7 @@ SGStrataPopup {
 
                 background: Rectangle {
                     color: !cancelButton.enabled ? "#dbdbdb" : cancelButton.down ? "#666" : "#888"
-                    border.color: cancelButton.activeFocus ? "#219647" : "transparent"
+                    border.color: cancelButton.activeFocus ? Theme.palette.onsemiOrange : "transparent"
                 }
 
                 contentItem: Text {
