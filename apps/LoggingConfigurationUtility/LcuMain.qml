@@ -473,14 +473,15 @@ Item {
         }
     }
 
-    function showCorruptedFileDialog(parameter, errorMessage) {
+    function showCorruptedFileDialog(parameter, string) {
         var dialog = SGDialogJS.createDialog(
                     lcuMain,
-                    "qrc:/CorruptedFileDialog.qml",
-                    {"errorMessage": errorMessage})
+                    "qrc:/CorruptedFileDialog.qml", {
+                        "corruptedString": string,
+                        "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")
+                    })
 
-        dialog.accepted.connect(function() {
-            //set to default
+        dialog.accepted.connect(function() { //set to default
             console.log("Set " + parameter + " to default")
             if(parameter === "log/level") {
                 configFileSettings.logLevel = "debug"
@@ -500,9 +501,8 @@ Item {
             dialog.destroy()
         })
 
-        dialog.rejected.connect(function() {
-            //remove parameter
-            console.log("Remove " + parameter)
+        dialog.rejected.connect(function() { //remove parameter
+            console.log("Removed " + parameter)
             if(parameter === "log/level") {
                 configFileSettings.logLevel = ""
             } else if (parameter === "log/maxFileSize") {

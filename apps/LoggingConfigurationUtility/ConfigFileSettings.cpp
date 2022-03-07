@@ -33,7 +33,7 @@ QString ConfigFileSettings::logLevel() const
         qCDebug(lcLcu) << "Current log level: " << level;
         return level;
     } else {
-        emit corruptedFile(LOG_LEVEL_SETTING, "Log level is currently set to: '" + level + "'\nwhich is an unrecognized value.");
+        emit corruptedFile(LOG_LEVEL_SETTING, level);
     }
     return "";
 }

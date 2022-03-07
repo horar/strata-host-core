@@ -3,62 +3,98 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 
-
 SGWidgets.SGDialog {
     id: corruptedFileDialog
-    destroyOnClose: true
-    headerBgColor: TangoTheme.palette.warning
-    headerIcon: "qrc:/sgimages/exclamation-triangle.svg"
-    title: "Corrupted INI file"
 
+    property alias corruptedParam: errorParamText.text
+    property alias corruptedString: errorStringText.text
+    property int horizSpacing: 20
+    property int verticalSpacing: 15
+    property color warningColor: "#E97D2E"
+    property color buttonColor: palette.mid
+
+    title: "Loading error"
     modal: true
     focus: true
+    destroyOnClose: true
     closePolicy: Dialog.NoAutoClose
-
-    property alias errorMessage: messageText.text
+    headerBgColor: warningColor
+    headerIcon: "qrc:/sgimages/exclamation-triangle.svg"
 
     Item {
-        id: content
+        id: dialogContent
         implicitWidth: 400
         implicitHeight: column.height
 
         Column {
             id: column
             anchors.centerIn: parent
-            spacing: 12
+            spacing: verticalSpacing
 
             SGWidgets.SGText {
-                width: content.width
+                horizontalAlignment: Qt.AlignCenter
+                width: dialogContent.width
+                wrapMode: Text.WordWrap
                 text: "Selected INI file is corrupted."
-                wrapMode: Text.WordWrap
             }
 
             SGWidgets.SGText {
-                id: messageText
-                width: content.width
+                id: errorParamText
+                horizontalAlignment: Qt.AlignCenter
+                width: dialogContent.width
                 wrapMode: Text.WordWrap
-                text: errorMessage
+                text: corruptedParam
             }
 
             SGWidgets.SGText {
-                width: content.width
+                id: errorStringText
+                horizontalAlignment: Qt.AlignCenter
+                width: dialogContent.width
+                visible: corruptedString == "" ? false : true
+                maximumLineCount: 7
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                color: warningColor
+                font.bold: true
+                font.pixelSize: 20
+                text: corruptedString
+            }
+
+            SGWidgets.SGText {
+                horizontalAlignment: Qt.AlignCenter
+                width: dialogContent.width
+                wrapMode: Text.WordWrap
+                text: corruptedString == "" ? "An empty string is not a valid value for this parameter." : "which is an unrecognized value."
+            }
+
+            SGWidgets.SGText {
+                horizontalAlignment: Qt.AlignCenter
+                width: dialogContent.width
+                wrapMode: Text.WordWrap
                 text: "Do you want to set the parameter to default value or remove it?"
-                wrapMode: Text.WordWrap
             }
 
             Row {
-                spacing: 16
+                id: row
                 anchors.horizontalCenter: column.horizontalCenter
+                spacing: verticalSpacing
+
                 SGWidgets.SGButton {
                     text: "Set to default"
-                    onClicked: {
-                        corruptedFileDialog.accepted()
+                    onClicked: corruptedFileDialog.accepted()
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: 5
+                        color: parent.hovered ? warningColor : buttonColor
                     }
                 }
                 SGWidgets.SGButton {
                     text: "Remove parameter"
-                    onClicked: {
-                        corruptedFileDialog.rejected()
+                    onClicked: corruptedFileDialog.rejected()
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: 5
+                        color: parent.hovered ? warningColor : buttonColor
                     }
                 }
             }
