@@ -252,7 +252,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         }
     }
 
-    if((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (is_command_line_instance == true) && (installer.value("RunProgram") != "")) {
+    if(is_command_line_instance && (installer.value("RunProgram") != "")) {
         console.log("Executing: " + installer.value("RunProgram"));
         installer.executeDetached(installer.value("RunProgram"));
     }

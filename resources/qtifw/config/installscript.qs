@@ -12,12 +12,12 @@ var componentsToClean = [];
 
 function isValueSet(val)
 {
-    return ((installer.containsValue(val) == true) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
+    return (installer.containsValue(val) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
 }
 
 function Controller()
 {
-    if (isValueSet("isSilent") == true) {
+    if (isValueSet("isSilent")) {
         isSilent = true;
         installer.setValue("isSilent_internal","true");
     } else {
@@ -26,7 +26,7 @@ function Controller()
 
     console.log("Is isSilent set: " + isSilent);
 
-    if (isSilent == true) {
+    if (isSilent) {
         installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
         installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
 
@@ -37,7 +37,7 @@ function Controller()
     }
 
     try {
-        var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
+        let widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
         if (widget != null) {
             widget.packageManagerCoreTypeChanged.connect(onPackageManagerCoreTypeChanged);
         }
@@ -56,19 +56,25 @@ function Controller()
     installer.setValue("performCleanup", "false");
 }
 
-onPackageManagerCoreTypeChanged = function()
+function onPackageManagerCoreTypeChanged()
 {
-    console.log("[GUI] Is Updater: " + installer.isUpdater());
-    console.log("[GUI] Is Uninstaller: " + installer.isUninstaller());
-    console.log("[GUI] Is Package Manager: " + installer.isPackageManager());
+    if (installer.isInstaller() == false) {
+        if (installer.isUpdater()) {
+            console.log("[GUI] Is Updater");
+        } else if (installer.isPackageManager()) {
+            console.log("[GUI] Is Package Manager");
+        } else if (installer.isUninstaller()) {
+            console.log("[GUI] Is Uninstaller");
+        }
+    }
 }
 
 Controller.prototype.IntroductionPageCallback = function()
 {
     console.log("[GUI] IntroductionPageCallback entered");
-    var widget = gui.currentPageWidget();
+    let widget = gui.currentPageWidget();
     if (widget != null) {
-        if (installer.isInstaller() == true) {
+        if (installer.isInstaller()) {
             if (systemInfo.productType == "windows") {
                 widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
                                         + "This will install the following on your computer: \n"
@@ -107,7 +113,7 @@ Controller.prototype.IntroductionPageCallback = function()
         }
     }
 
-    if (isSilent == true) {
+    if (isSilent) {
         gui.clickButton(buttons.NextButton, 1000);
     }
 }
@@ -164,7 +170,7 @@ function acquireCleanupOperations()
 Controller.prototype.TargetDirectoryPageCallback = function ()
 {
     console.log("[GUI] TargetDirectoryPageCallback entered");
-    if (isSilent == true) {
+    if (isSilent) {
         gui.clickButton(buttons.NextButton);
     }
 }
@@ -172,9 +178,9 @@ Controller.prototype.TargetDirectoryPageCallback = function ()
 Controller.prototype.ComponentSelectionPageCallback = function ()
 {
     console.log("[GUI] ComponentSelectionPageCallback entered");
-    var widget = gui.currentPageWidget();
+    let widget = gui.currentPageWidget();
     if (widget != null) {
-        if (isSilent == true) {
+        if (isSilent) {
             // select the ui components
             if (performCleanup) {
                 acquireCleanupOperations();
@@ -193,15 +199,15 @@ Controller.prototype.ComponentSelectionPageCallback = function ()
 Controller.prototype.LicenseAgreementPageCallback = function ()
 {
     console.log("[GUI] LicenseAgreementPageCallback entered");
-    if (isSilent == true) {
-        var widget = gui.currentPageWidget();
+    if (isSilent) {
+        let widget = gui.currentPageWidget();
         if (widget != null) {
-            var licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
+            let licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
             if (licenseRadioButton != null) {
                 // QTIFW version 3.2
                 licenseRadioButton.setChecked(true);
             } else {
-                var licenseCheckBox = widget.findChild("AcceptLicenseCheckBox");
+                let licenseCheckBox = widget.findChild("AcceptLicenseCheckBox");
                 if (licenseCheckBox != null) {
                     // QTIFW version 4.1+
                     licenseCheckBox.setChecked(true);
@@ -223,7 +229,7 @@ Controller.prototype.StartMenuDirectoryPageCallback = function ()
 Controller.prototype.ReadyForInstallationPageCallback = function ()
 {
     console.log("[GUI] ReadyForInstallationPageCallback entered");
-    if (isSilent == true) {
+    if (isSilent) {
         gui.clickButton(buttons.NextButton);
     }
 }
@@ -231,7 +237,7 @@ Controller.prototype.ReadyForInstallationPageCallback = function ()
 Controller.prototype.PerformInstallationPageCallback = function ()
 {
     console.log("[GUI] PerformInstallationPageCallback entered");
-    //if (isSilent == true) {
+    //if (isSilent) {
     //    gui.clickButton(buttons.CommitButton);
     //}
 }
@@ -239,9 +245,9 @@ Controller.prototype.PerformInstallationPageCallback = function ()
 Controller.prototype.InstallationPerformed = function ()
 {
     console.log("InstallationPerformed entered");
-    if (isSilent == true) {
-        var widget = gui.pageById(QInstaller.PerformInstallation);
-        var widget_cmp = gui.currentPageWidget();
+    if (isSilent) {
+        let widget = gui.pageById(QInstaller.PerformInstallation);
+        let widget_cmp = gui.currentPageWidget();
         if (widget === widget_cmp) {
             console.log("InstallationPerformed clicking next button");
             gui.clickButton(buttons.NextButton, 2000);    // timer to avoid double clicking
@@ -251,9 +257,9 @@ Controller.prototype.InstallationPerformed = function ()
 
 function isComponentInstalled(component_name)
 {
-    var component = installer.componentByName(component_name);
+    let component = installer.componentByName(component_name);
     if (component != null) {
-        var installed = component.isInstalled();
+        let installed = component.isInstalled();
         console.log("component '" + component_name + "' found and is installed: " + installed);
         return installed;
     }
@@ -265,13 +271,13 @@ function isComponentInstalled(component_name)
 Controller.prototype.FinishedPageCallback = function ()
 {
     console.log("[GUI] FinishedPageCallback entered");
-    var widget = gui.currentPageWidget();
+    let widget = gui.currentPageWidget();
     if (widget != null) {
         widget.MessageLabel.setText("onsemi\n\n"
                                     + "Thank you for using onsemi. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
-        var runItCheckBox = widget.findChild("RunItCheckBox");
+        let runItCheckBox = widget.findChild("RunItCheckBox");
         if (runItCheckBox != null) {
             if ((installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success) && isSilent && isComponentInstalled("com.onsemi.strata.devstudio")) {
                 runItCheckBox.setChecked(true);
@@ -280,7 +286,7 @@ Controller.prototype.FinishedPageCallback = function ()
             }
         }
 
-        if ((installer.isInstaller() == true) && (installer.status != QInstaller.Success))
+        if (installer.isInstaller() && (installer.status != QInstaller.Success))
             installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
     }
 
@@ -308,9 +314,9 @@ function isComponentAvailable(component_name)
     // boolean isInstalled()
     // boolean isUninstalled()
 
-    var component = installer.componentByName(component_name);
+    let component = installer.componentByName(component_name);
     if (component != null) {
-        var available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
+        let available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
         console.log("component '" + component_name + "' found and is available: " + available);
         return available;
     }
@@ -322,11 +328,11 @@ function isComponentAvailable(component_name)
 Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
 {
     console.log("[GUI] DynamicShortcutCheckBoxWidgetCallback entered");
-    var widget = gui.currentPageWidget();
+    let widget = gui.currentPageWidget();
     if (widget != null) {
-        var desktopCheckBox = widget.findChild("desktopCheckBox");
+        let desktopCheckBox = widget.findChild("desktopCheckBox");
         if (desktopCheckBox != null) {
-            if (isComponentAvailable("com.onsemi.strata.devstudio") == true) {
+            if (isComponentAvailable("com.onsemi.strata.devstudio")) {
                 desktopCheckBox.setEnabled(true);
                 desktopCheckBox.setChecked(installer.value("add_desktop_shortcut", "true") == "true");
             } else {
@@ -334,13 +340,13 @@ Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
                 desktopCheckBox.setChecked(false);
             }
         }
-        var startMenuCheckBox = widget.findChild("startMenuCheckBox");
+        let startMenuCheckBox = widget.findChild("startMenuCheckBox");
         if (startMenuCheckBox != null) {
             startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut", "true") == "true");
         }
     }
 
-    if (isSilent == true) {
+    if (isSilent) {
         gui.clickButton(buttons.NextButton);
     }
 }
