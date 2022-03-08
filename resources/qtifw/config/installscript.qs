@@ -7,6 +7,8 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 var isSilent = false;
+var performCleanup = false;
+var componentsToClean = [];
 
 function isValueSet(val)
 {
@@ -43,8 +45,15 @@ function Controller()
         console.log("Controller: unable to access gui: " + e);
     }
 
+    if (isValueSet("performCleanup")) {
+        performCleanup = true;
+    }
+
+    console.log("Is performCleanup set: " + performCleanup);
+
     // we already saved their values, so we can return them back to default now
     installer.setValue("isSilent", "false");
+    installer.setValue("performCleanup", "false");
 }
 
 onPackageManagerCoreTypeChanged = function()
@@ -85,12 +94,71 @@ Controller.prototype.IntroductionPageCallback = function()
                                     + "Please choose one of the available options, then click Next to continue.\n\n"
                                     + "It is recommended that you close all other applications before continuing.\n\n"
                                     );
+
+            // in case the complete uninstallation is chosen, ignore cleanup
+            if (isSilent && performCleanup && (installer.isUninstaller() == false)) {
+                let packageManagerRadioButton = widget.findChild("PackageManagerRadioButton");
+                if (packageManagerRadioButton != null) {
+                    packageManagerRadioButton.setChecked(true);
+                } else {
+                    console.log("Error: unable to acquire PackageManagerRadioButton");
+                }
+            }   
         }
     }
 
     if (isSilent == true) {
         gui.clickButton(buttons.NextButton, 1000);
     }
+}
+
+function acquireCleanupOperations()
+{
+    console.log("acquireCleanupOperations entered");
+
+    if (installer.isInstaller() || installer.isUninstaller()) {
+        return;
+    }
+
+    if (installer.fileExists(installer.value("TargetDir")) == false) {
+        console.log("No TargetDir '" + installer.value("TargetDir") + "' found");
+        return;
+    }
+
+    let target_dir = installer.value("TargetDir") + "/";
+    if (systemInfo.productType == "windows") {
+        target_dir = target_dir.split("/").join("\\");
+    }
+    let cleanupFile = target_dir + "cleanup.txt";
+
+    if (installer.fileExists(cleanupFile) == false) {
+        console.log("No cleanup.txt file found");
+        return;
+    }
+
+    console.log("Found cleanup.txt: " + cleanupFile + ", parsing...");
+
+    let content = installer.readFile(cleanupFile, "UTF-8");
+    if (content == "") {
+        console.log("Empty cleanup.txt, nothing to cleanup");
+        return;
+    }
+
+    let cleanupAvailable = false;
+    let lines = content.split('\n');
+    componentsToClean = [];
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        if (line == "") {
+            continue;
+        }
+        if (isComponentInstalled(line)) {
+            cleanupAvailable = true;
+            componentsToClean.push(line)
+        }
+    }
+    
+    console.log("Found " + componentsToClean.length + " components to cleanup");
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function ()
@@ -108,8 +176,15 @@ Controller.prototype.ComponentSelectionPageCallback = function ()
     if (widget != null) {
         if (isSilent == true) {
             // select the ui components
-            widget.selectAll();
-            //widget.selectComponent("com.onsemi.strata.devstudio");
+            if (performCleanup) {
+                acquireCleanupOperations();
+                for (let i = 0; i < componentsToClean.length; i++) {
+                    widget.deselectComponent(componentsToClean[i]);
+                }
+            } else {
+                widget.selectAll();
+                //widget.selectComponent("com.onsemi.strata.devstudio");
+            }
             gui.clickButton(buttons.NextButton);
         }
     }
@@ -198,7 +273,7 @@ Controller.prototype.FinishedPageCallback = function ()
                                     );
         var runItCheckBox = widget.findChild("RunItCheckBox");
         if (runItCheckBox != null) {
-            if ((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (isSilent == true) && (isComponentInstalled("com.onsemi.strata.devstudio") == true)) {
+            if ((installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success) && isSilent && isComponentInstalled("com.onsemi.strata.devstudio")) {
                 runItCheckBox.setChecked(true);
             } else {
                 runItCheckBox.setChecked(false);
@@ -209,8 +284,18 @@ Controller.prototype.FinishedPageCallback = function ()
             installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
     }
 
-    if (isSilent == true) {
-        gui.clickButton(buttons.FinishButton);
+    let restart_maintenance_tool = false;
+    if (isSilent) {
+        if (installer.isUpdater() && (installer.status == QInstaller.Success) && (performCleanup == false)) {
+            // after update, we can do cleanup if available
+            acquireCleanupOperations();
+            if (componentsToClean.length > 0) {
+                performCleanup = true;  // when it restarts, it retains all variables
+                restart_maintenance_tool = true;
+            }
+        }
+
+        gui.clickButton(restart_maintenance_tool ? buttons.CommitButton : buttons.FinishButton);
     }
 }
 
