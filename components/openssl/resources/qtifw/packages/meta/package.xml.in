@@ -13,7 +13,7 @@
     <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
-    <ForcedInstallation>true</ForcedInstallation>
+    <Checkable>false</Checkable>
     <SortingPriority>67</SortingPriority>
     <Licenses>
         <License name="OpenSSL and SSLeay License Agreement" file="license-openssl-ssleay.txt" />

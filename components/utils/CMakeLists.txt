@@ -15,6 +15,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     set(PROJECT_BUNDLE_ID com.onsemi.strata.utils)
 
     add_custom_target(${PROJECT_NAME})
+    set(PROJECT_DEPENDENCIES "com.onsemi.strata.utils.ftdi,com.onsemi.strata.utils.common.vcredist")
     generate_ifw_version(GITTAG_PREFIX "utils_")
 endif()
 
