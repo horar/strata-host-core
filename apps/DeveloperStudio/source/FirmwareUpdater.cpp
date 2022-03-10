@@ -90,16 +90,16 @@ bool FirmwareUpdater::requestDevice(const QString& deviceId, Action action, cons
 
 bool FirmwareUpdater::sendCommand(const QString& deviceId, const QString& command, const QJsonObject& payload)
 {
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest(command, payload);
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         qCCritical(lcDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
         requestedDevices_.remove(deviceId);
         return false;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &FirmwareUpdater::replyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &FirmwareUpdater::errorHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, &FirmwareUpdater::replyHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, &FirmwareUpdater::errorHandler);
 
     return true;
 }

@@ -29,15 +29,15 @@ bool PlatformOperation::platformStartApplication(QString deviceId)
         { "device_id", deviceId }
     };
 
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest(command, payload);
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         qCCritical(lcDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
         return false;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &PlatformOperation::replyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &PlatformOperation::errorHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, &PlatformOperation::replyHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, &PlatformOperation::errorHandler);
 
     return true;
 }

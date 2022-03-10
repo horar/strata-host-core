@@ -39,7 +39,7 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), strata::strataRPC::default_check_timeout_interval, strata::strataRPC::default_request_timeout, this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), strata::strataRPC::default_check_reply_interval, strata::strataRPC::default_reply_expiration_time, this)),
       coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
@@ -314,7 +314,7 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     hcsConnected_ = hcsConnected;
 
     if (true == hcsConnected_) {
-        strataClient_->connect();
+        strataClient_->initializeAndConnect();
     } else {
         strataClient_->disconnect();
     }

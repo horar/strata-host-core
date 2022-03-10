@@ -98,15 +98,15 @@ void BleDeviceModel::startScan()
     setInScanMode(true);
     setLastScanError("");
 
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("bluetooth_scan", QJsonObject());
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest("bluetooth_scan", QJsonObject());
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         finishScan("Failed to send 'bluetooth_scan' request");
         return;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &BleDeviceModel::bluetoothScanReplyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &BleDeviceModel::bluetoothScanErrorReplyHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, &BleDeviceModel::bluetoothScanReplyHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, &BleDeviceModel::bluetoothScanErrorReplyHandler);
 }
 
 void BleDeviceModel::finishScan(const QString& errorString)
@@ -139,18 +139,18 @@ void BleDeviceModel::tryConnect(int row)
         {"device_id",  deviceId}
     };
 
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("connect_device", payload);
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest("connect_device", payload);
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         finishConnection(row, "Failed to send 'connect_device' request");
         return;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, [this, deviceId] (const QJsonObject &payload) {
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, [this, deviceId] (const QJsonObject &payload) {
         connectReplyHandler(deviceId, payload);
     });
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, [this, deviceId] (const QJsonObject &payload) {
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, [this, deviceId] (const QJsonObject &payload) {
         connectErrorReplyHandler(deviceId, payload);
     });
 }
@@ -177,18 +177,18 @@ void BleDeviceModel::tryDisconnect(int row)
         {"device_id",  deviceId}
     };
 
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("disconnect_device", payload);
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest("disconnect_device", payload);
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         finishConnection(row, "Failed to send 'disconnect_device' request");
         return;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, [this, deviceId] (const QJsonObject &payload) {
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, [this, deviceId] (const QJsonObject &payload) {
         disconnectReplyHandler(deviceId, payload);
     });
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, [this, deviceId] (const QJsonObject &payload) {
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, [this, deviceId] (const QJsonObject &payload) {
         disconnectErrorReplyHandler(deviceId, payload);
     });
 }

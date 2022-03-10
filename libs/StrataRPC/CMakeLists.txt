@@ -65,16 +65,15 @@ target_compile_definitions(${SERVER} PRIVATE
 # StrataRPC-Client
 #
 add_library(${CLIENT}
+    src/RpcError.cpp
     src/StrataClient.cpp
     src/ClientConnector.cpp
-    src/Request.h
-    src/RequestsController.cpp
-    src/DeferredRequest.cpp
+    src/DeferredReply.cpp
     src/logging/LoggingQtCategories.cpp
 
+    include/StrataRPC/RpcError.h
     include/StrataRPC/StrataClient.h
-    include/StrataRPC/DeferredRequest.h
-    include/StrataRPC/Message.h
+    include/StrataRPC/DeferredReply.h
 )
 
 add_library(strata::${CLIENT} ALIAS ${CLIENT})
