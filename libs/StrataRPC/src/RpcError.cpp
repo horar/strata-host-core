@@ -76,17 +76,25 @@ QString RpcError::defaultMessage(RpcErrorCode code)
 {
     switch(code) {
     case NoError: return "";
-    case ParseError: return "parse error";
+    case ServerInitialializationError: return "server initialization error";
+    case HandlerRegistrationError: return "handler registration error";
+    case HandlerUnregistrationError: return "handler unregistration error";
+    case ConnectionError: return "connection error";
+    case DisconnectionError: return "disconnection error";
+    case TransportError: return "transport error";
+    case ReplyTimeoutError: return "reply timeout error";
+    case SystemError: return "system error";
+    case ApplicationError: return "appliacation error";
     case InvalidRequestError: return "invalid request";
     case MethodNotFoundError: return "method not found";
     case InvalidParamsError: return "invalid parameter(s)";
     case InternalError: return "internal json-rpc error";
+    case ParseError: return "parse error";
+    case ProcedureExecutionError: return "procedure execution error";
     case ClientRegistrationError: return "client registration error";
     case UnknownApiVersionError: return "unknown api version";
     case ClientAlreadyRegisteredError: return "client already registered";
     case ClientUnregistrationError: return "client unregistration error";
-    case ProcedureExecutionError: return "procedure execution error";
-
     default:
         return "";
     }

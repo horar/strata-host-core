@@ -21,9 +21,9 @@ enum RpcErrorCode {
     NoError = 0,
 
     /* JSON-RPC pre-defined error codes, from -32000 to -32768 */
-    FailedToInitializeServer = -32000,
-    FailedToRegisterHandler = -32001,
-    FailedToUnregisterHandler = 32002,
+    ServerInitialializationError = -32000,
+    HandlerRegistrationError = -32001,
+    HandlerUnregistrationError = 32002,
     ConnectionError = 32003,
     DisconnectionError = 32004,
 
