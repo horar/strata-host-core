@@ -14,23 +14,8 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if( systemInfo.productType == "windows" ) {
-        var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData";
-        console.log("default ProgramData path: " + programDataShortcut);
-        try {
-            var programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
-            // the output of command is the first item, and the return code is the second
-            if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
-                programDataShortcut = programDataFolder[0].trim();
-                console.log("detected ProgramData path: " + programDataShortcut);
-            } else {
-                console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
-            }
-        } catch(e) {
-            console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
-            console.log(e);
-        }
-        var onsemiConfigFolder = programDataShortcut + "\\onsemi";
-        var hcsConfigFolder = onsemiConfigFolder + "\\HCS";
+        let onsemiConfigFolder = installer.value("ProgramDataDir") + "\\onsemi";
+        let hcsConfigFolder = onsemiConfigFolder + "\\HCS";
         component.addOperation("Mkdir", hcsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted
         component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", hcsConfigFolder + "\\hcs.config");
@@ -41,7 +26,7 @@ Component.prototype.createOperations = function()
 Component.prototype.beginInstallation = function()
 {
     if (systemInfo.productType == "windows") {
-        var target_dir = installer.value("TargetDir").split("/").join("\\");
+        let target_dir = installer.value("TargetDir").split("/").join("\\");
         component.addStopProcessForUpdateRequest(target_dir + "\\Strata Developer Studio.exe");
         component.addStopProcessForUpdateRequest(target_dir + "\\hcs.exe");
     } else if (systemInfo.productType == "osx") {

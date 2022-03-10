@@ -11,8 +11,9 @@ var is_command_line_instance = false;
 
 function Component()
 {
-    installer.installationFinished.connect(this, Component.prototype.onInstallationOrUpdateFinished);    // called after installation, update and adding/removing components
+    installer.installationFinished.connect(this, Component.prototype.onInstallationOrUpdateFinished);   // called after installation, update and adding/removing components
     installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
+    // note: uninstallation events cannot be connected here, because Component is not created
 
     try {
         is_command_line_instance = installer.isCommandLineInstance();
@@ -24,7 +25,7 @@ function Component()
 
     if (is_command_line_instance == false) {
         installer.finishButtonClicked.connect(this, Component.prototype.onFinishButtonClicked);
-        if ((installer.isInstaller() == true) && (systemInfo.productType == "windows")) {
+        if (installer.isInstaller() && (systemInfo.productType == "windows")) {
             component.loaded.connect(this, Component.prototype.addShortcutWidget);
         }
     }
@@ -35,47 +36,45 @@ Component.prototype.createOperations = function()
     // call default implementation to actually install the content
     component.createOperations();
 
-    if (installer.isInstaller() == true) {
+    if (installer.isInstaller()) {
         uninstallPreviousStrataInstallation();
     }
 
     if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut", "true") == "true")) {
-        var target_dir = installer.value("TargetDir").split("/").join("\\");
-        var strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\" + installer.value("MaintenanceToolName") + ".lnk";
+        let target_dir = installer.value("TargetDir").split("/").join("\\");
+        let strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\" + installer.value("MaintenanceToolName") + ".lnk";
         component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
                                 "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
         console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
     }
+}
 
-    if ((systemInfo.productType == "windows") && (installer.isInstaller() == true)) {
-        var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData";
-        console.log("default ProgramData path: " + programDataShortcut);
-        try {
-            var programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
-            // the output of command is the first item, and the return code is the second
-            if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
-                programDataShortcut = programDataFolder[0].trim();
-                console.log("detected ProgramData path: " + programDataShortcut);
-            } else {
-                console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
-            }
-        } catch(e) {
-            console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
-            console.log(e);
+Component.prototype.onInstallationStarted = function()
+{
+    if (component.updateRequested() || component.installationRequested()) {
+        if (systemInfo.productType == "windows") {
+            let target_dir = installer.value("TargetDir").split("/").join("\\");
+            component.installerbaseBinaryPath = target_dir + "\\installerbase.exe";
+            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        } else if (systemInfo.productType == "osx") {
+            component.installerbaseBinaryPath = installer.value("TargetDir") + "/installerbase";
+            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
         }
-        var onsemiConfigFolder = programDataShortcut + "\\onsemi";
+    }
+
+    if ((systemInfo.productType == "windows") && installer.isInstaller()) {
+        let onsemiConfigFolder = installer.value("ProgramDataDir") + "\\onsemi";
         try {
-            if (installer.gainAdminRights() == true) {
+            if (installer.gainAdminRights()) {
                 if (installer.fileExists(onsemiConfigFolder) == false) {
                     installer.execute("cmd", ["/c", "mkdir", onsemiConfigFolder]);
                 }
-                if (installer.fileExists(onsemiConfigFolder) == true) {
+                if (installer.fileExists(onsemiConfigFolder)) {
                     console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
                     installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
                     installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
                 }
-                // do not drop admin rights in this function, will break installer
-                //installer.dropAdminRights();
+                installer.dropAdminRights();
             }
         } catch(e) {
             console.log("unable to change access rights for Strata config folder");
@@ -84,25 +83,11 @@ Component.prototype.createOperations = function()
     }
 }
 
-Component.prototype.onInstallationStarted = function()
-{
-    if ((component.updateRequested() == true) || (component.installationRequested() == true)) {
-        if (systemInfo.productType == "windows") {
-            component.installerbaseBinaryPath = installer.value("TargetDir") + "\\installerbase.exe";
-            component.installerbaseBinaryPath = component.installerbaseBinaryPath.split("/").join("\\");
-            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
-        } else if (systemInfo.productType == "osx") {
-            component.installerbaseBinaryPath = installer.value("TargetDir") + "/installerbase";
-            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
-        }
-    }
-}
-
 function isRestartRequired()
 {
-    var vc_redist_temp_file = installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\vc_redist_out.txt";
-    if (installer.fileExists(vc_redist_temp_file) == true) {
-        var exit_code = installer.readFile(vc_redist_temp_file, "UTF-8");
+    let vc_redist_temp_file = installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\vc_redist_out.txt";
+    if (installer.fileExists(vc_redist_temp_file)) {
+        let exit_code = installer.readFile(vc_redist_temp_file, "UTF-8");
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime return code: '" + exit_code + "'");
         installer.performOperation("Delete", vc_redist_temp_file);
 
@@ -119,9 +104,9 @@ function isRestartRequired()
 
 function isComponentInstalled(component_name)
 {
-    var component = installer.componentByName(component_name);
+    let component = installer.componentByName(component_name);
     if (component != null) {
-        var installed = component.isInstalled();
+        let installed = component.isInstalled();
         console.log("component '" + component_name + "' found and is installed: " + installed);
         return installed;
     }
@@ -134,11 +119,11 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 {
     console.log("onInstallationOrUpdateFinished entered");
 
-    var target_dir = installer.value("TargetDir");
+    let target_dir = installer.value("TargetDir");
     if (systemInfo.productType == "windows") {
-            target_dir = target_dir.split("/").join("\\");
+        target_dir = target_dir.split("/").join("\\");
     }
-    if (isComponentInstalled("com.onsemi.strata.devstudio") && ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true))) {
+    if (isComponentInstalled("com.onsemi.strata.devstudio") && (installer.isInstaller() || installer.isUpdater() || installer.isPackageManager())) {
         if (systemInfo.productType == "windows") {
             installer.setValue("RunProgram", target_dir + "\\Strata Developer Studio.exe");
         } else if (systemInfo.productType == "osx") {
@@ -158,20 +143,20 @@ Component.prototype.onInstallationOrUpdateFinished = function()
     console.log("RunProgram: " + installer.value("RunProgram"));
 
     if (systemInfo.productType == "windows") {
-        if (((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) && (installer.status == QInstaller.Success)) {
+        if ((installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success)) {
             isRestartRequired();
         }
 
         // erase StrataUtils folder
-        var requiresAdminRights = false;
-        var strataUtilsFolder = target_dir + "\\StrataUtils";
-        if (installer.fileExists(strataUtilsFolder) == true) {
+        let requiresAdminRights = false;
+        let strataUtilsFolder = target_dir + "\\StrataUtils";
+        if (installer.fileExists(strataUtilsFolder)) {
             try {
                 console.log("erasing StrataUtils folder: " + strataUtilsFolder);
                 installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
-                if (installer.fileExists(strataUtilsFolder) == true) {
+                if (installer.fileExists(strataUtilsFolder)) {
                     requiresAdminRights = true;
-                    if (installer.gainAdminRights() == true) {    // needed when it is in Program Files directory on Win10
+                    if (installer.gainAdminRights()) {    // needed when it is in Program Files directory on Win10
                         console.log("gained admin rights, executing cmd in admin mode");
                         installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
                         installer.dropAdminRights();
@@ -185,10 +170,10 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 
         // correct access rights to allow use [CLI] mode checkupdates
         // needed when it is in Program Files directory on Win10
-        if ((installer.isInstaller() == true) && (requiresAdminRights == true)) {
+        if (installer.isInstaller() && requiresAdminRights) {
             try {
-                if (installer.gainAdminRights() == true) {
-                    if (installer.fileExists(target_dir) == true) {
+                if (installer.gainAdminRights()) {
+                    if (installer.fileExists(target_dir)) {
                         console.log("changing access rights for Strata folder: " + target_dir);
                         installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:(OI)(CI)(F)"]);
                         installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
@@ -204,20 +189,20 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         if (installer.status == QInstaller.Success) {
             console.log("fixing permissions for .dat files");
             // always run after installation to fix files which refuse inheritance
-            var installer_dat = target_dir + "\\" + "installer.dat";
-            var maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
-            if (installer.isInstaller() == true) {
-                if (installer.fileExists(installer_dat) == true)
+            let installer_dat = target_dir + "\\" + "installer.dat";
+            let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
+            if (installer.isInstaller()) {
+                if (installer.fileExists(installer_dat))
                     installer.execute("cmd", ["/c", "icacls", installer_dat, "/grant", "Users:F"]);
-                if (installer.fileExists(installer_dat + ".new") == true)
+                if (installer.fileExists(installer_dat + ".new"))
                     installer.execute("cmd", ["/c", "icacls", installer_dat + ".new", "/grant", "Users:F"]);
-                if (installer.fileExists(maintenance_tool_dat) == true)
+                if (installer.fileExists(maintenance_tool_dat))
                     installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat, "/grant", "Users:F"]);
-                if (installer.fileExists(maintenance_tool_dat + ".new") == true)
+                if (installer.fileExists(maintenance_tool_dat + ".new"))
                     installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat + ".new", "/grant", "Users:F"]);
             } else {
-                var temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
-                var temp_file = temp_location + "\\" + "fix_permissions.bat";
+                let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
+                let temp_file = temp_location + "\\" + "fix_permissions.bat";
                 installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
                 installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
                 installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
@@ -246,7 +231,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
                 installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
                 installer.execute("cmd", ["/c", "echo )>>", temp_file]);
                 console.log("starting detached process " + temp_file);
-                var maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
+                let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
                 installer.executeDetached("cmd", ["/c", temp_file, maintenance_tool_lock, installer_dat, maintenance_tool_dat], temp_location);
             }
         }
@@ -260,16 +245,16 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 
 Component.prototype.onFinishButtonClicked = function()
 {
-    if ((restart_is_required == true) && (installer.value("isSilent_internal", "false") != "true")) {
+    if (restart_is_required && (installer.value("isSilent_internal", "false") != "true")) {
         console.log("showing restart question to user");
         // Print a message for Windows users to tell them to restart the host machine, immediately or later
-        var restart_reply = QMessageBox.question("restart.question", "Installer", "Your computer needs to restart to complete your software installation. Do you wish to restart Now?", QMessageBox.Yes | QMessageBox.No);
+        let restart_reply = QMessageBox.question("restart.question", "Installer", "Your computer needs to restart to complete your software installation. Do you wish to restart Now?", QMessageBox.Yes | QMessageBox.No);
 
         // User has selected 'yes' to restart
         if (restart_reply == QMessageBox.Yes) {
-            var widget = gui.currentPageWidget();
+            let widget = gui.currentPageWidget();
             if (widget != null) {
-                var runItCheckBox = widget.findChild("RunItCheckBox");
+                let runItCheckBox = widget.findChild("RunItCheckBox");
                 if (runItCheckBox != null) {
                     runItCheckBox.setChecked(false);
                 }
@@ -289,13 +274,13 @@ Component.prototype.addShortcutWidget = function () {
     try {
         if (installer.addWizardPage( component, "ShortcutCheckBoxWidget", QInstaller.StartMenuSelection )) {
             console.log("ShortcutCheckBoxWidget page added");
-            var widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
+            let widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
             if (widget != null) {
-                var desktopCheckBox = widget.findChild("desktopCheckBox");
+                let desktopCheckBox = widget.findChild("desktopCheckBox");
                 if (desktopCheckBox != null) {
                     desktopCheckBox.toggled.connect(this, Component.prototype.desktopShortcutChanged);
                 }
-                var startMenuCheckBox = widget.findChild("startMenuCheckBox");
+                let startMenuCheckBox = widget.findChild("startMenuCheckBox");
                 if (startMenuCheckBox != null) {
                     startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
                 }
@@ -312,7 +297,7 @@ Component.prototype.addShortcutWidget = function () {
 Component.prototype.desktopShortcutChanged = function (checked)
 {
     console.log("desktopShortcutChanged to : " + checked);
-    if (checked == true) {
+    if (checked) {
         installer.setValue("add_desktop_shortcut", "true");
     } else {
         installer.setValue("add_desktop_shortcut", "false");
@@ -322,7 +307,7 @@ Component.prototype.desktopShortcutChanged = function (checked)
 Component.prototype.startMenuShortcutChanged = function (checked)
 {
     console.log("startMenuShortcutChanged to : " + checked);
-    if (checked == true) {
+    if (checked) {
         installer.setValue("add_start_menu_shortcut", "true");
         installer.setValue("StartMenuDir", "onsemi");
         if (systemInfo.productType == "windows") {
@@ -345,13 +330,13 @@ function compare(a, b) {
        return 0;
     }
 
-    var a_components = a.split(".");
-    var b_components = b.split(".");
+    let a_components = a.split(".");
+    let b_components = b.split(".");
 
-    var len = Math.min(a_components.length, b_components.length);
+    let len = Math.min(a_components.length, b_components.length);
 
     // loop while the components are equal
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         // A bigger than B
         if (parseInt(a_components[i]) > parseInt(b_components[i])) {
             return 1;
@@ -377,12 +362,12 @@ function compare(a, b) {
 }
 
 function getPowershellElement(str, element_name) {
-    var res = [];
-    var x = str.split('\r\n');
-    for(var i = 0; i < x.length; i++){
-        var n = x[i].indexOf(element_name);
+    let res = [];
+    let x = str.split('\r\n');
+    for(let i = 0; i < x.length; i++){
+        let n = x[i].indexOf(element_name);
         if (n == 0) {
-            var m = x[i].indexOf(": ", n + element_name.length);
+            let m = x[i].indexOf(": ", n + element_name.length);
             res.push(x[i].slice(m + ": ".length));
         }
     }
@@ -395,21 +380,21 @@ function uninstallPreviousStrataInstallation()
         powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
         console.log("executing powershell command '" + powerShellCommand + "'");
         // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
-        var isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
+        let isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
 
         // the output of command is the first item, and the return code is the second
         // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
 
         if ((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
-            var display_name = getPowershellElement(isInstalled[0], 'DisplayName');
-            var display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
-            var uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
+            let display_name = getPowershellElement(isInstalled[0], 'DisplayName');
+            let display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
+            let uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
 
             console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
 
             if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
                 if ((is_command_line_instance == false) && (installer.value("isSilent_internal", "false") != "true")) {
-                    var uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
+                    let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
 
                     if (uninstall_reply == QMessageBox.Ok) {
                         console.log("User reply to uninstall Strata: Ok");
@@ -421,9 +406,9 @@ function uninstallPreviousStrataInstallation()
                 }
 
                 // we should not find multiple entries here, but just in case, uninstall all
-                for (var i = 0; i < display_version.length; i++) {
+                for (let i = 0; i < display_version.length; i++) {
                     console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-                    var res = installer.execute(uninstall_string[i], ["isSilent=true", "--start-uninstaller"]);
+                    let res = installer.execute(uninstall_string[i], ["isSilent=true", "--start-uninstaller"]);
                     console.log("result: " + res);
                 }
             }
@@ -432,14 +417,14 @@ function uninstallPreviousStrataInstallation()
         }
     } else if (systemInfo.productType == "osx") {
         console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirX64"));
-        var isInstalled = installer.execute("find", [installer.value("ApplicationsDirX64"), "-name", installer.value("MaintenanceToolName") + ".app"]);
+        let isInstalled = installer.execute("find", [installer.value("ApplicationsDirX64"), "-name", installer.value("MaintenanceToolName") + ".app"]);
 
         // the output of command is the first item, and the return code is the second
         // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
 
         if ((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
             if ((is_command_line_instance == false) && (installer.value("isSilent_internal", "false") != "true")) {
-                var uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
+                let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
 
                 if (uninstall_reply == QMessageBox.Ok) {
                     console.log("User reply to uninstall Strata: Ok");
@@ -451,13 +436,13 @@ function uninstallPreviousStrataInstallation()
             }
 
             // we should not find multiple entries here, but just in case, uninstall all
-            var installed_stratas = isInstalled[0].split('\n');
-            for (var i = 0; i < installed_stratas.length; i++) {
+            let installed_stratas = isInstalled[0].split('\n');
+            for (let i = 0; i < installed_stratas.length; i++) {
                 if (installed_stratas[i] == "") {
                     continue;
                 }
                 console.log("executing Strata uninstall for: '" + installed_stratas[i] + "'");
-                var res = installer.execute(installed_stratas[i] + "/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true", "--start-uninstaller"]);
+                let res = installer.execute(installed_stratas[i] + "/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true", "--start-uninstaller"]);
                 console.log("result: " + res);
             }
         } else {

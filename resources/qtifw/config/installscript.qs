@@ -15,6 +15,27 @@ function isValueSet(val)
     return (installer.containsValue(val) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
 }
 
+function setProgramDataDirectory()
+{
+    let programDataShortcut = installer.value("RootDir").split("/").join("\\") + "\\ProgramData";
+    console.log("default ProgramData path: " + programDataShortcut);
+    try {
+        let programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
+        // the output of command is the first item, and the return code is the second
+        if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
+            programDataShortcut = programDataFolder[0].trim();
+            console.log("detected ProgramData path: " + programDataShortcut);
+        } else {
+            console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
+        }
+    } catch(e) {
+        console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
+        console.log(e);
+    }
+
+    installer.setValue("ProgramDataDir", programDataShortcut);
+}
+
 function Controller()
 {
     if (isValueSet("isSilent")) {
@@ -26,10 +47,10 @@ function Controller()
 
     console.log("Is isSilent set: " + isSilent);
 
-    if (isSilent) {
-        installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
-        installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
+    installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
+    installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
 
+    if (isSilent) {
         // do not use this or it will be impossible to cancel the installer
         //installer.autoRejectMessageBoxes();
         //installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
@@ -54,6 +75,10 @@ function Controller()
     // we already saved their values, so we can return them back to default now
     installer.setValue("isSilent", "false");
     installer.setValue("performCleanup", "false");
+
+    if (systemInfo.productType == "windows") {
+        setProgramDataDirectory();
+    }
 }
 
 function onPackageManagerCoreTypeChanged()
@@ -242,9 +267,108 @@ Controller.prototype.PerformInstallationPageCallback = function ()
     //}
 }
 
+function getProgramDataDirectory()
+{
+    let programDataShortcut = installer.value("RootDir").split("/").join("\\") + "\\ProgramData";
+    console.log("default ProgramData path: " + programDataShortcut);
+    try {
+        let programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
+        // the output of command is the first item, and the return code is the second
+        if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
+            programDataShortcut = programDataFolder[0].trim();
+            console.log("detected ProgramData path: " + programDataShortcut);
+        } else {
+            console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
+        }
+    } catch(e) {
+        console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
+        console.log(e);
+    }
+    return programDataShortcut;
+}
+
 Controller.prototype.InstallationPerformed = function ()
 {
     console.log("InstallationPerformed entered");
+
+    if (installer.isInstaller() && (installer.status == QInstaller.Success)) {
+        let home_dir = installer.value("HomeDir");
+        if (systemInfo.productType == "windows") {
+            home_dir = home_dir.split("/").join("\\");
+            let prod_database = home_dir + "\\AppData\\Roaming\\onsemi\\Host Controller Service\\PROD\\strata_db.cblite2"
+            if (installer.fileExists(prod_database)) {
+                installer.execute("cmd", ["/c", "rd", "/s", "/q", prod_database]);  // erases all files inside
+            }
+        } else if (systemInfo.productType == "osx") {
+            let prod_database = home_dir + "/Library/Application Support/onsemi/Host Controller Service/PROD/strata_db.cblite2"
+            if (installer.fileExists(prod_database)) {
+                installer.execute("rm", ["-r", prod_database]); // erases all files inside
+            }
+        }
+    }
+    if (installer.isUninstaller() && (installer.status == QInstaller.Success)) {
+        let home_dir = installer.value("HomeDir");
+        if (systemInfo.productType == "windows") {
+            home_dir = home_dir.split("/").join("\\");
+
+            let ini_dir = home_dir + "\\AppData\\Roaming\\onsemi";
+            if (installer.fileExists(ini_dir + "\\Host Controller Service.ini")) {
+                installer.execute("cmd", ["/c", "del", "/q", ini_dir + "\\Host Controller Service.ini"]);
+            }
+            if (installer.fileExists(ini_dir + "\\Strata Developer Studio.ini")) {
+                installer.execute("cmd", ["/c", "del", "/q", ini_dir + "\\Strata Developer Studio.ini"]);
+            }
+            if (installer.fileExists(ini_dir + "\\desktop.ini")) {
+                installer.execute("cmd", ["/c", "del", "/q", "/a:h", ini_dir + "\\desktop.ini"]);           // erases hidden file in case it was created
+            }
+            if (installer.fileExists(ini_dir + "\\Host Controller Service")) {
+                installer.execute("cmd", ["/c", "rd", "/s", "/q", ini_dir + "\\Host Controller Service"]);  // erases all files inside
+            }
+            if (installer.fileExists(ini_dir + "\\Strata Developer Studio")) {
+                installer.execute("cmd", ["/c", "rd", "/s", "/q", ini_dir + "\\Strata Developer Studio"]);  // erases all files inside
+            }
+            if (installer.fileExists(ini_dir)) {
+                installer.execute("cmd", ["/c", "rd", "/q", ini_dir]);  // erases only if it was empty
+            }
+
+            let config_dir = getProgramDataDirectory()+ "\\onsemi";
+            if (installer.fileExists(config_dir + "\\desktop.ini")) {
+                installer.execute("cmd", ["/c", "del", "/q", "/a:h", config_dir + "\\desktop.ini"]);    // erases hidden file in case it was created
+            }
+            if (installer.fileExists(config_dir)) {
+                installer.execute("cmd", ["/c", "rd", "/q", config_dir]);                               // erases only if it was empty
+            }
+        } else if (systemInfo.productType == "osx") {
+            let ini_dir = home_dir + "/.config/onsemi";
+            if (installer.fileExists(ini_dir + "/Host Controller Service.ini")) {
+                installer.execute("rm", ["-f", ini_dir + "/Host Controller Service.ini"]);
+            }
+            if (installer.fileExists(ini_dir + "/Strata Developer Studio.ini")) {
+                installer.execute("rm", ["-f", ini_dir + "/Strata Developer Studio.ini"]);
+            }
+            if (installer.fileExists(ini_dir + "/.DS_Store")) {
+                installer.execute("rm", ["-f", ini_dir + "/.DS_Store"]);    // in case it was created
+            }
+            if (installer.fileExists(ini_dir)) {
+                installer.execute("rm", ["-f", "-d", ini_dir]);             // erases only if it was empty
+            }
+
+            let log_dir = home_dir + "/Library/Application Support/onsemi";
+            if (installer.fileExists(log_dir + "/Host Controller Service")) {
+                installer.execute("rm", ["-f", "-r", log_dir + "/Host Controller Service"]);    // erases all files inside
+            }
+            if (installer.fileExists(log_dir + "/Strata Developer Studio")) {
+                installer.execute("rm", ["-f", "-r", log_dir + "/Strata Developer Studio"]);    // erases all files inside
+            }
+            if (installer.fileExists(log_dir + "/.DS_Store")) {
+                installer.execute("rm", ["-f", log_dir + "/.DS_Store"]);    // in case it was created
+            }
+            if (installer.fileExists(log_dir)) {
+                installer.execute("rm", ["-f", "-d", log_dir]);             // erases only if it was empty
+            }
+        }
+    }
+
     if (isSilent) {
         let widget = gui.pageById(QInstaller.PerformInstallation);
         let widget_cmp = gui.currentPageWidget();
