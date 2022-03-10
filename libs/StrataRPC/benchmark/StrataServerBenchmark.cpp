@@ -12,6 +12,8 @@
 
 QTEST_MAIN(StrataServerBenchmark)
 
+#ifdef false
+
 void StrataServerBenchmark::benchmarkLargeNumberOfHandlers()
 {
     int totalNumberOfHandlers = 10000;
@@ -116,3 +118,5 @@ void StrataServerBenchmark::benchmarkNotifyClientWithLargeNumberOfClients()
                             strata::strataRPC::ResponseType::Notification);
     }
 }
+
+#endif
