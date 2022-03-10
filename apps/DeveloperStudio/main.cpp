@@ -218,6 +218,13 @@ int main(int argc, char *argv[])
     qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
+    qmlRegisterUncreatableMetaObject(
+                strata::strataRPC::staticMetaObject,
+                "tech.strata.StrataRpc",
+                1, 0,
+                "StrataRPC",
+                "You can't instantiate StrataRPC in QML");
+
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases

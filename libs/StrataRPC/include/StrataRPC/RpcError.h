@@ -15,47 +15,52 @@
 
 namespace strata::strataRPC
 {
+Q_NAMESPACE
+
+enum RpcErrorCode {
+    NoError = 0,
+
+    /* JSON-RPC pre-defined error codes, from -32000 to -32768 */
+    FailedToInitializeServer = -32000,
+    FailedToRegisterHandler = -32001,
+    FailedToUnregisterHandler = 32002,
+    ConnectionError = 32003,
+    DisconnectionError = 32004,
+
+    TransportError = -32300,
+    ReplyTimeoutError = -32301,
+    SystemError = -32400,
+    ApplicationError = -32500,
+    InvalidRequestError = -32600,
+    MethodNotFoundError = -32601,
+    InvalidParamsError = -32602,
+    InternalError = -32603,
+    ParseError = -32700,
+
+    /* Application specific errors, from 1 */
+    ProcedureExecutionError = 1,
+    ClientRegistrationError,
+    UnknownApiVersionError,
+    ClientAlreadyRegisteredError,
+    ClientUnregistrationError,
+    };
+Q_ENUM_NS(RpcErrorCode)
 
 class RpcError {
 public:
-    enum ErrorCode {
-        NoError = 0,
+    RpcError(RpcErrorCode code=RpcErrorCode::NoError);
 
-        /* JSON-RPC pre-defined error codes, from -32000 to -32768 */
-        FailedToInitializeServer = -32000,
-        FailedToRegisterHandler = -32001,
-        FailedToUnregisterHandler = 32002,
-
-        TransportError = -32300,
-        SystemError = -32400,
-        ApplicationError = -32500,
-        InvalidRequestError = -32600,
-        MethodNotFoundError = -32601,
-        InvalidParamsError = -32602,
-        InternalError = -32603,
-        ParseError = -32700,
-
-        /* Application specific errors, from 1 */
-        ProcedureExecutionError = 1,
-        ClientRegistrationError,
-        UnknownApiVersionError,
-        ClientAlreadyRegisteredError,
-        ClientUnregistrationError,
-        };
-
-    RpcError(ErrorCode code=ErrorCode::NoError);
-
-    RpcError(ErrorCode code, QString message);
+    RpcError(RpcErrorCode code, QString message);
 
     RpcError(
-            ErrorCode code,
+            RpcErrorCode code,
             QString message,
             QJsonObject data);
 
     RpcError(const RpcError &other);
 
-    ErrorCode code() const;
-    void setCode(const ErrorCode &code);
+    RpcErrorCode code() const;
+    void setCode(const RpcErrorCode &code);
 
     QString message() const;
     void setMessage(const QString &message);
@@ -63,7 +68,7 @@ public:
     QJsonObject data() const;
     void setData(const QJsonObject &data);
 
-    static QString defaultMessage(ErrorCode code);
+    static QString defaultMessage(RpcErrorCode code);
 
     friend QDebug operator<<(QDebug debug, const RpcError &error);
 
@@ -76,7 +81,7 @@ private:
         RpcErrorData(const RpcErrorData &other);
         ~RpcErrorData();
 
-        RpcError::ErrorCode code;
+        RpcErrorCode code;
         QString message;
         QJsonObject data;
     };

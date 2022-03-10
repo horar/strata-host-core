@@ -11,13 +11,13 @@
 namespace strata::strataRPC
 {
 
-RpcError::RpcError(ErrorCode code)
+RpcError::RpcError(RpcErrorCode code)
     : sharedDataPtr_(new RpcErrorData)
 {
     setCode(code);
 }
 
-RpcError::RpcError(ErrorCode code, QString message)
+RpcError::RpcError(RpcErrorCode code, QString message)
     : sharedDataPtr_(new RpcErrorData)
 {
     setCode(code);
@@ -25,7 +25,7 @@ RpcError::RpcError(ErrorCode code, QString message)
 }
 
 RpcError::RpcError(
-        ErrorCode code,
+        RpcErrorCode code,
         QString message,
         QJsonObject data)
     : sharedDataPtr_(new RpcErrorData)
@@ -40,12 +40,12 @@ RpcError::RpcError(const RpcError &other)
 {
 }
 
-RpcError::ErrorCode RpcError::code() const
+RpcErrorCode RpcError::code() const
 {
     return sharedDataPtr_->code;
 }
 
-void RpcError::setCode(const ErrorCode &code)
+void RpcError::setCode(const RpcErrorCode &code)
 {
     sharedDataPtr_->code = code;
 }
@@ -72,7 +72,7 @@ void RpcError::setData(const QJsonObject &data) {
     sharedDataPtr_->data = data;
 }
 
-QString RpcError::defaultMessage(ErrorCode code)
+QString RpcError::defaultMessage(RpcErrorCode code)
 {
     switch(code) {
     case NoError: return "";
@@ -104,7 +104,7 @@ QDebug operator<<(QDebug debug, const RpcError &error)
 }
 
 RpcError::RpcErrorData::RpcErrorData()
-    : code(RpcError::NoError)
+    : code(RpcErrorCode::NoError)
 {
 }
 
