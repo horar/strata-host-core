@@ -7,13 +7,16 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #pragma once
-#include <StrataRPC/Message.h>
+//#include <StrataRPC/Message.h>
 
-using strata::strataRPC::Message;
+//using strata::strataRPC::Message;
 
 class TestHandlers
 {
 public:
+
+#ifdef false
+
     TestHandlers()
     {
     }
@@ -27,4 +30,7 @@ public:
 
 private:
     void printClientMessage(const Message &message);
+
+#endif
+
 };

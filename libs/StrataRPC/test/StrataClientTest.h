@@ -20,6 +20,7 @@ class StrataClientTest : public QObject
     Q_OBJECT
 
 private slots:
+#ifdef false
     void testRegisterAndUnregisterHandlers();
     void testConnectDisconnectToTheServer();
     void testBuildRequest();
@@ -36,4 +37,6 @@ private slots:
 private:
     void waitForZmqMessages(int delay);
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
+
+#endif
 };

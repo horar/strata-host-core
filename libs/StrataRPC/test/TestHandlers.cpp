@@ -10,6 +10,8 @@
 
 #include "TestHandlers.h"
 
+#ifdef false
+
 void TestHandlers::handler_1(const Message &message)
 {
     printClientMessage(message);
@@ -39,3 +41,5 @@ void TestHandlers::printClientMessage(const Message &message)
     qDebug() << "handler name:" << message.handlerName;
     qDebug() << "message id:" << message.messageID;
 }
+
+#endif
