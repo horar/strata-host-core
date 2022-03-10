@@ -12,6 +12,8 @@
 
 QTEST_MAIN(StrataClientBenchmark)
 
+#ifdef false
+
 void StrataClientBenchmark::benchmarkLargeNumberOfHandlers()
 {
     int totalNumberOfHandlers = 1000;
@@ -49,3 +51,5 @@ void StrataClientBenchmark::benchmarkSendNotification()
         client.sendNotification("test_method", QJsonObject());
     }
 }
+
+#endif
