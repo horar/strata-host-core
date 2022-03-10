@@ -14,6 +14,7 @@ personalized and secure environment for engineers to evaluate and design with on
     <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
-    <ForcedInstallation>true</ForcedInstallation>
+    <Checkable>false</Checkable>
+    <Dependencies>@PROJECT_DEPENDENCIES@</Dependencies>
     <SortingPriority>90</SortingPriority>
 </Package>

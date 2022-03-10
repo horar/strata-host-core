@@ -26,6 +26,14 @@ endif()
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 set(QT5_MINIMUM_VERSION 5.12.4)
 
+if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+    if(WIN32)
+        set(PROJECT_DEPENDENCIES "com.onsemi.strata.hcs,com.onsemi.strata.libs,com.onsemi.strata.utils")
+    else()
+        set(PROJECT_DEPENDENCIES "com.onsemi.strata.hcs,com.onsemi.strata.libs")
+    endif()
+endif()
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}

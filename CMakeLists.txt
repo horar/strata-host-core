@@ -54,6 +54,7 @@ add_qml_import_path(PATH ":/")
 
 if(CMAKE_BUILD_TYPE STREQUAL "OTA")
     add_custom_target(${PROJECT_NAME})
+    set(PROJECT_DEPENDENCIES "com.onsemi.strata.devstudio,com.onsemi.strata.hcs")
     generate_ifw_version(GITTAG_PREFIX "ifw_")
 endif()
 

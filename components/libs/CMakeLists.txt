@@ -15,6 +15,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     set(PROJECT_BUNDLE_ID com.onsemi.strata.libs)
 
     add_custom_target(${PROJECT_NAME})
+    set(PROJECT_DEPENDENCIES "com.onsemi.strata.libs.addons,com.onsemi.strata.libs.components,com.onsemi.strata.libs.openssl,com.onsemi.strata.libs.qt")
     generate_ifw_version(GITTAG_PREFIX "libs_")
 endif()
 
