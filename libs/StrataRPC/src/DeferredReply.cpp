@@ -76,4 +76,4 @@ void DeferredReply::callErrorCallback(const QJsonObject &error)
     emit finishedWithError(error);
 }
 
-}
+} // namespace strata::strataRPC
