@@ -329,7 +329,7 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
 
     if (0 == placeholderNamespace.compare("request") && placeholderSplit.length() >= 1) {
         const rapidjson::Value *targetDocumentNode = &requestDoc;
-        for (auto placeholderPart : placeholderSplit) {
+        for (auto& placeholderPart : placeholderSplit) {
             if (!targetDocumentNode->IsObject() ||
                 !targetDocumentNode->HasMember(placeholderPart.toStdString().c_str())) {
                 //QFAIL_(
