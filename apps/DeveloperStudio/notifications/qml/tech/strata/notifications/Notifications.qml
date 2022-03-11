@@ -17,7 +17,7 @@ import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/constants.js" as Constants
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/login_utilities.js" as LoginUtils
 
 /*
   Core notifications: see createNotification() below for use
@@ -101,7 +101,7 @@ Item {
 
         onValidationResult: {
             if (result === "Current token is valid" && currentUser !== Constants.GUEST_USER_ID) {
-                currentUser = Authenticator.settings.user
+                currentUser = LoginUtils.settings.user
             }
         }
     }

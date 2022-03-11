@@ -12,7 +12,7 @@ import QtQuick.Controls 2.0
 import Qt.labs.settings 1.0
 import QtGraphicalEffects 1.12
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/login_utilities.js" as LoginUtils
 import "qrc:/js/login_storage.js" as UsernameStorage
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/general/"
@@ -150,10 +150,10 @@ Item {
             CheckBox {
                 id: rememberCheckBox
                 text: qsTr("Remember Me")
-                checked: Authenticator.settings.rememberMe
+                checked: LoginUtils.settings.rememberMe
                 KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
                 onCheckedChanged: {
-                    Authenticator.settings.rememberMe = checked
+                    LoginUtils.settings.rememberMe = checked
                 }
                 padding: 0
                 palette.highlight: Theme.palette.onsemiOrange
@@ -237,8 +237,8 @@ Item {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
-                    connectionStatus.currentId = Authenticator.getNextId()
-                    Authenticator.login(login_info)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.login(login_info)
                 }
 
                 Keys.onReturnPressed:{

@@ -11,7 +11,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "qrc:/partial-views"
 import "qrc:/partial-views/general/"
-import "qrc:/js/login_utilities.js" as Password
+import "qrc:/js/login_utilities.js" as LoginUtils
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
@@ -122,8 +122,8 @@ SGStrataPopup {
 
                     onClicked: {
                         var reset_info = {username:emailField.text}
-                        submitStatus.currentId = Password.getNextId()
-                        Password.password_reset_request(reset_info)
+                        submitStatus.currentId = LoginUtils.getNextId()
+                        LoginUtils.password_reset_request(reset_info)
                         alertRect.hide()
                         fieldGrid.visible = false
                     }
