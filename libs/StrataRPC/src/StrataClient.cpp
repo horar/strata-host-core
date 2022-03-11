@@ -135,7 +135,6 @@ void StrataClient::processMessageFromServer(const QByteArray &message)
         }
 
         processResult(idValue.toInt(), messageObject.value("result").toObject());
-
     } else if (messageObject.contains("error") && messageObject.contains("id")) {
         //reply with error
         QJsonValue errorValue = messageObject.value("error");
