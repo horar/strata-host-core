@@ -40,13 +40,13 @@ public:
 signals:
     /**
      * Signal Emitted when the server replies with a successful message.
-     * @param [in] jsonPayload QJsonObject of the payload.
+     * @param [in] result QJsonObject of the payload.
      */
     void finishedSuccessfully(QJsonObject result);
 
     /**
      * Signal Emitted when the server resplies with a error message.
-     * @param [in] jsonPayload QJsonObject of the payload.
+     * @param [in] error QJsonObject of the payload.
      */
     void finishedWithError(QJsonObject error);
 
