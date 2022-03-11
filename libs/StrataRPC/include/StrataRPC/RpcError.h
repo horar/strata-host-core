@@ -23,9 +23,9 @@ enum RpcErrorCode {
     /* JSON-RPC pre-defined error codes, from -32000 to -32768 */
     ServerInitialializationError = -32000,
     HandlerRegistrationError = -32001,
-    HandlerUnregistrationError = 32002,
-    ConnectionError = 32003,
-    DisconnectionError = 32004,
+    HandlerUnregistrationError = -32002,
+    ConnectionError = -32003,
+    DisconnectionError = -32004,
 
     TransportError = -32300,
     ReplyTimeoutError = -32301,
