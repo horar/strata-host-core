@@ -96,7 +96,7 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case ClientAlreadyRegisteredError: return "client already registered";
     case ClientUnregistrationError: return "client unregistration error";
     default:
-        return "";
+        return "error message for this error not available";
     }
 }
 
