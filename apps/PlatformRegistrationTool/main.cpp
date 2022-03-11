@@ -12,6 +12,7 @@
 #include "Version.h"
 
 #include <PlatformManager.h>
+#include <SGCore/AppUi.h>
 
 #include "Version.h"
 
@@ -56,7 +57,8 @@ void loadResources() {
         QStringLiteral("component-fonts.rcc"),
         QStringLiteral("component-common.rcc"),
         QStringLiteral("component-sgwidgets.rcc"),
-        QStringLiteral("component-theme.rcc")};
+        QStringLiteral("component-theme.rcc")
+    };
 
 #ifdef Q_OS_MACOS
     applicationDir.cdUp();
@@ -187,10 +189,12 @@ int main(int argc, char *argv[])
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &prtModel_, &PrtModel::handleQmlWarning);
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty()) {
-        return -1;
-    }
+    strata::SGCore::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
+
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
 }
