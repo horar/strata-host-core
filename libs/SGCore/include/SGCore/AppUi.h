@@ -15,6 +15,8 @@
 
 class QQmlApplicationEngine;
 
+namespace strata::SGCore {
+
 class AppUi : public QObject
 {
     Q_OBJECT
@@ -43,3 +45,5 @@ private:
     QQmlApplicationEngine& engine_;
     QUrl errorUrl_;
 };
+
+} // namespace strata::SGCore

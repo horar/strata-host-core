@@ -6,13 +6,13 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include "AppUi.h"
+#include "SGCore/AppUi.h"
 
 #include <QCoreApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-namespace strata {
+namespace strata::SGCore {
 
 AppUi::AppUi(QQmlApplicationEngine& engine, const QUrl& errorUrl, QObject* parent)
     : QObject(parent), engine_{engine}, errorUrl_{errorUrl}
@@ -76,4 +76,4 @@ void AppUi::loadFailed()
     loadUrl(errorUrl_);
 }
 
-}  // namespace
+}

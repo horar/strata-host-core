@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>ErrorDialog.qml</file>
+        <file alias="ErrorDialog.qml">ErrorDialog.qml</file>
     </qresource>
 </RCC>
