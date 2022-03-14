@@ -22,6 +22,7 @@
 #include <Mock/MockDevice.h>
 #include <QObject>
 #include <QPointer>
+#include <QJsonParseError>
 #include <chrono>
 
 

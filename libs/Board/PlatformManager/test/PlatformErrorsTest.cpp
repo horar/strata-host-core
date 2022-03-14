@@ -18,8 +18,7 @@ using strata::platform::operation::Identify;
 using strata::platform::Platform;
 using strata::PlatformManager;
 using strata::device::MockVersion;
-
-namespace test_commands = strata::device::test_commands;
+using strata::device::TestCommands;
 
 QTEST_MAIN(PlatformErrorsTest)
 
@@ -359,8 +358,8 @@ void PlatformErrorsTest::multipleOperationsTest()
 
     std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
-    verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
-    verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
+    verifyMessage(recordedMessages[0], TestCommands::get_firmware_info_request);
+    verifyMessage(recordedMessages[1], TestCommands::request_platform_id_request);
 
     QVERIFY(platformSentSignal.count() > 0);
     while (platformSentSignal.size() > 0) {
