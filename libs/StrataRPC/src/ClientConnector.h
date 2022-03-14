@@ -9,6 +9,7 @@
 #pragma once
 
 #include <Connector.h>
+#include <StrataRPC/RpcError.h>
 
 #include <QObject>
 #include <QSocketNotifier>
@@ -20,10 +21,6 @@ class Connector;
 
 namespace strata::strataRPC
 {
-/**
- * Enum to describe ClientConnector errors.
- */
-enum class ClientConnectorError : short { FailedToConnect, FailedToDisconnect, FailedToSend };
 
 class ClientConnector : public QObject
 {
@@ -99,11 +96,11 @@ signals:
     void messageReceived(const QByteArray &message);
 
     /**
-     * Emitted when an error has occurred.
+     * Emitted when an error has occurred. For testing purposes only.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(const ClientConnectorError &errorType, const QString &errorMessage);
+    void errorOccurred(strataRPC::RpcErrorCode code, const QString message);
 
     /**
      * Emitted when the client connector was initialized successfully.
@@ -148,5 +145,3 @@ private:
 };
 
 }  // namespace strata::strataRPC
-
-Q_DECLARE_METATYPE(strata::strataRPC::ClientConnectorError);

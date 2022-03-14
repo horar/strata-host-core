@@ -139,7 +139,7 @@ signals:
     void sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 private:
-    RpcError::ErrorCode parseRpcRequest(const QByteArray &message, RpcRequest &request);
+    RpcErrorCode parseRpcRequest(const QByteArray &message, RpcRequest &request);
 
     QByteArray buildReplyMessage(
             const QJsonValue &id,

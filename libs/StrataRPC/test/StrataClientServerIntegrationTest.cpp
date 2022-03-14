@@ -8,7 +8,7 @@
  */
 #include "StrataClientServerIntegrationTest.h"
 
-using strata::strataRPC::Message;
+//using strata::strataRPC::Message;
 
 QTEST_MAIN(StrataClientServerIntegrationTest)
 

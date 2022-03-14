@@ -128,8 +128,8 @@ void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &
         << ", message: '" << message << "'";
 
     RpcRequest request;
-    RpcError::ErrorCode code = parseRpcRequest(message, request);
-    if (code != RpcError::ErrorCode::NoError) {
+    RpcErrorCode code = parseRpcRequest(message, request);
+    if (code != RpcErrorCode::NoError) {
         RpcError error(code);
         qCWarning(lcStrataServer) << error;
         sendError(clientId, request.id(), error);
@@ -143,7 +143,7 @@ void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &
         // Register the client, only v2 is supported now
         bool registered = clientsController_->registerClient(Client(clientId, ApiVersion::v2));
         if (registered == false) {
-            RpcError error(RpcError::ClientRegistrationError);
+            RpcError error(RpcErrorCode::ClientRegistrationError);
             qCWarning(lcStrataServer) << error;
             sendError(clientId, request.id(), error);
             return;
@@ -155,19 +155,19 @@ void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &
     request.setClientId(clientId);
     bool dispatched = dispatcher_->dispatch(request.method(), request);
     if (dispatched == false) {
-        RpcError error(RpcError::MethodNotFoundError);
+        RpcError error(RpcErrorCode::MethodNotFoundError);
         qCWarning(lcStrataServer) << error;
         sendError(clientId, request.id(), error);
         return;
     }
 }
 
-RpcError::ErrorCode StrataServer::parseRpcRequest(const QByteArray &message, RpcRequest &request)
+RpcErrorCode StrataServer::parseRpcRequest(const QByteArray &message, RpcRequest &request)
 {
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError) {
-        return RpcError::ParseError;
+        return RpcErrorCode::ParseError;
     }
 
     QJsonObject messageObject = jsonDocument.object();
@@ -175,13 +175,13 @@ RpcError::ErrorCode StrataServer::parseRpcRequest(const QByteArray &message, Rpc
     //jsonrpc
     QString jsonVersion = messageObject.value("jsonrpc").toString();
     if (jsonVersion.isEmpty() || jsonVersion != "2.0") {
-        return RpcError::InvalidRequestError;
+        return RpcErrorCode::InvalidRequestError;
     }
 
     //method
     QString method = messageObject.value("method").toString();
     if (method.isEmpty()) {
-        return RpcError::InvalidRequestError;
+        return RpcErrorCode::InvalidRequestError;
     } else {
         request.setMethod(method);
     }
@@ -192,7 +192,7 @@ RpcError::ErrorCode StrataServer::parseRpcRequest(const QByteArray &message, Rpc
         if (paramsValue.isObject()) {
             request.setParams(paramsValue.toObject());
         } else {
-            return RpcError::InvalidRequestError;
+            return RpcErrorCode::InvalidRequestError;
         }
     }
 
@@ -200,12 +200,12 @@ RpcError::ErrorCode StrataServer::parseRpcRequest(const QByteArray &message, Rpc
     if (messageObject.contains("id")) {
          QJsonValue idValue = messageObject.value("id");
          if (idValue.isDouble() == false && idValue.isString() == false) {
-             return RpcError::InvalidRequestError;
+             return RpcErrorCode::InvalidRequestError;
          }
          request.setId(idValue);
     }
 
-    return RpcError::NoError;
+    return RpcErrorCode::NoError;
 }
 
 void StrataServer::sendReply(
@@ -263,7 +263,7 @@ void StrataServer::registerNewClientHandler(const RpcRequest &request)
             if (apiVersionPayload == "2.0") {
                 clientsController_->updateClientApiVersion(request.clientId(), ApiVersion::v2);
             } else {
-                RpcError error(RpcError::UnknownApiVersionError);
+                RpcError error(RpcErrorCode::UnknownApiVersionError);
                 qCWarning(lcStrataServer) << error;
                 sendError(request.clientId(), request.id(), error);
 
@@ -278,7 +278,7 @@ void StrataServer::registerNewClientHandler(const RpcRequest &request)
     if (clientsController_->isRegisteredClient(request.clientId())) {
         sendReply(request.clientId(), request.id(), {{"status", "client registered"}});
     } else {
-        RpcError error(RpcError::ClientRegistrationError);
+        RpcError error(RpcErrorCode::ClientRegistrationError);
         qCWarning(lcStrataServer) << error;
         sendError(request.clientId(), request.id(), error);
     }
@@ -292,7 +292,7 @@ void StrataServer::unregisterClientHandler(const RpcRequest &request)
         sendReply(request.clientId(), request.id(), {{"status", "going to unregister client"}});
     }
     if (false == clientsController_->unregisterClient(request.clientId())) {
-        RpcError error(RpcError::ClientUnregistrationError);
+        RpcError error(RpcErrorCode::ClientUnregistrationError);
         qCWarning(lcStrataServer) << error;
         sendError(request.clientId(), request.id(), error);
     }

@@ -58,9 +58,9 @@ void FileDownloader::downloadDatasheetFile(const QString &fileUrl, const QString
         {"class_id", classId}
     };
 
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest("download_datasheet_file", payload);
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest("download_datasheet_file", payload);
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         emit downloadFinished(fileUrl, "", "Error: unable to send download_datasheet_file request");
         return;
     }
@@ -72,12 +72,12 @@ void FileDownloader::downloadDatasheetFile(const QString &fileUrl, const QString
     emit downloadStatus(fileUrl, downloadData.downloadStatus);
 
     connect(
-        deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this,
+        reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this,
         [this, fileUrl] ( const QJsonObject &payload ) { downloadFileReplyHandler( fileUrl, payload ); }
     );
 
     connect(
-        deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this,
+        reply, &strata::strataRPC::DeferredReply::finishedWithError, this,
         [this, fileUrl] ( const QJsonObject &payload ) { downloadFileErrorReplyHandler( fileUrl, payload ); }
     );
 }

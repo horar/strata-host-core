@@ -12,6 +12,8 @@
 
 QTEST_MAIN(DispatcherTest)
 
+#ifdef false
+
 DispatcherTest::DispatcherTest()
 {
     messageList_.push_back(
@@ -134,3 +136,5 @@ void DispatcherTest::testDispatchUsingSignals()
 
     delete dispatcher;
 }
+
+#endif

@@ -10,12 +10,14 @@
 
 #include "QtTest.h"
 
-#include <StrataRPC/StrataClient.h>
-#include <StrataRPC/StrataServer.h>
+//#include <StrataRPC/StrataClient.h>
+//#include <StrataRPC/StrataServer.h>
 #include <QObject>
 
+#ifdef false
 using strata::strataRPC::StrataClient;
 using strata::strataRPC::StrataServer;
+#endif
 
 class StrataClientServerIntegrationTest : public QObject
 {

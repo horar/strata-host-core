@@ -550,7 +550,7 @@ void HostControllerService::processCmdLoadDocuments(const strataRPC::RpcRequest 
     QString classId = request.params().value("class_id").toString();
     if (classId.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "class_id attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -571,7 +571,7 @@ void HostControllerService::processCmdDownloadDatasheetFile(const strataRPC::Rpc
     QString url = request.params().value("url").toString();
     if (url.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "url attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -581,7 +581,7 @@ void HostControllerService::processCmdDownloadDatasheetFile(const strataRPC::Rpc
 
     if (QUrl(url).fileName().isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "url attribute is missing filename");
 
         qCWarning(lcHcs) << error;
@@ -604,7 +604,7 @@ void HostControllerService::processCmdDownloadPlatformFiles(const strataRPC::Rpc
     QString destinationDir = request.params().value("destination_dir").toString();
     if (destinationDir.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "destinationDir attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -615,7 +615,7 @@ void HostControllerService::processCmdDownloadPlatformFiles(const strataRPC::Rpc
     QJsonValue filesValue = request.params().value("files");
     if (filesValue.isArray() == false) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "files attribute is not an array");
 
         qCWarning(lcHcs) << error;
@@ -647,14 +647,14 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::RpcRequest
     do {
         firmwareData.deviceId = request.params().value("device_id").toVariant().toByteArray();
         if (firmwareData.deviceId.isEmpty()) {
-            error.setCode(strataRPC::RpcError::InvalidParamsError);
+            error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
             error.setMessage("device_id attribute is empty or has bad format");
             break;
         }
 
         strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
         if (platform == nullptr) {
-            error.setCode(strataRPC::RpcError::InvalidParamsError);
+            error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
             error.setMessage("unknown platform");
             break;
         }
@@ -678,28 +678,28 @@ void HostControllerService::processCmdUpdateFirmware(const strataRPC::RpcRequest
             //use provided firmware
             firmwarePath = path.toString();
             if (firmwarePath.isEmpty()) {
-                error.setCode(strataRPC::RpcError::InvalidParamsError);
+                error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
                 error.setMessage("path attribute is empty or has bad format");
                 break;
             }
 
             firmwareData.firmwareMD5 = md5.toString();
             if (firmwareData.firmwareMD5.isEmpty()) {
-                error.setCode(strataRPC::RpcError::InvalidParamsError);
+                error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
                 error.setMessage("md5 attribute is empty or has bad format");
                 break;
             }
         } else {
             //find highest firmware
             if (platform->hasClassId() == false) {
-                error.setCode(strataRPC::RpcError::ProcedureExecutionError);
+                error.setCode(strataRPC::RpcErrorCode::ProcedureExecutionError);
                 error.setMessage("platform has empty classId");
                 break;
             }
 
             const FirmwareFileItem *firmware = storageManager_.findHighestFirmware(platform->classId());
             if (firmware == nullptr) {
-                error.setCode(strataRPC::RpcError::ProcedureExecutionError);
+                error.setCode(strataRPC::RpcErrorCode::ProcedureExecutionError);
                 error.setMessage("no firmware for provided classId");
                 break;
             }
@@ -744,20 +744,20 @@ void HostControllerService::processCmdProgramController(const strataRPC::RpcRequ
     do {
         firmwareData.deviceId = request.params().value("device_id").toVariant().toByteArray();
         if (firmwareData.deviceId.isEmpty()) {
-            error.setCode(strataRPC::RpcError::InvalidParamsError);
+            error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
             error.setMessage("device_id attribute is empty or has bad format");
             break;
         }
 
         strata::platform::PlatformPtr platform = platformController_.getPlatform(firmwareData.deviceId);
         if (platform == nullptr) {
-            error.setCode(strataRPC::RpcError::InvalidParamsError);
+            error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
             error.setMessage("unknown device_id");
             break;
         }
 
         if (platform->isControllerConnectedToPlatform() == false) {
-            error.setCode(strataRPC::RpcError::ProcedureExecutionError);
+            error.setCode(strataRPC::RpcErrorCode::ProcedureExecutionError);
             error.setMessage("controller is not connected to platform");
             break;
         }
@@ -765,14 +765,14 @@ void HostControllerService::processCmdProgramController(const strataRPC::RpcRequ
         firmwareData.firmwareClassId = platform->classId(); // class_id becomes the new fw_class_id
         const QString controllerClassId = platform->controllerClassId();
         if (firmwareData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
-            error.setCode(strataRPC::RpcError::ProcedureExecutionError);
+            error.setCode(strataRPC::RpcErrorCode::ProcedureExecutionError);
             error.setMessage("platform has no classId or controllerClassId");
             break;
         }
 
         const FirmwareFileItem *firmware = storageManager_.findHighestFirmware(firmwareData.firmwareClassId, controllerClassId);
         if (firmware == nullptr) {
-            error.setCode(strataRPC::RpcError::ProcedureExecutionError);
+            error.setCode(strataRPC::RpcErrorCode::ProcedureExecutionError);
             error.setMessage("no compatible firmware for your combination of controller and platform");
             break;
         }
@@ -838,7 +838,7 @@ void HostControllerService::processCmdDownlodView(const strataRPC::RpcRequest &r
     QString errorString;
     if (url.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "url attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -849,7 +849,7 @@ void HostControllerService::processCmdDownlodView(const strataRPC::RpcRequest &r
     QString md5 = request.params().value("md5").toString();
     if (md5.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "md5 attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -860,7 +860,7 @@ void HostControllerService::processCmdDownlodView(const strataRPC::RpcRequest &r
     QString classId = request.params().value("class_id").toString();
     if (classId.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "class_id attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -893,7 +893,7 @@ void HostControllerService::processCmdConnectDevice(const strata::strataRPC::Rpc
     QByteArray deviceId = request.params().value("device_id").toVariant().toByteArray();
     if (deviceId.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "device_id attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -914,7 +914,7 @@ void HostControllerService::processCmdDisconnectDevice(const strata::strataRPC::
     QByteArray deviceId = request.params().value("device_id").toVariant().toByteArray();
     if (deviceId.isEmpty()) {
         strataRPC::RpcError error(
-                    strataRPC::RpcError::InvalidParamsError,
+                    strataRPC::RpcErrorCode::InvalidParamsError,
                     "device_id attribute is empty or has bad format");
 
         qCWarning(lcHcs) << error;
@@ -1145,14 +1145,14 @@ void HostControllerService::processCmdPlatformStartApplication(const strataRPC::
 
     const QByteArray deviceId = request.params().value("device_id").toVariant().toByteArray();
     if (deviceId.isEmpty()) {
-        error.setCode(strataRPC::RpcError::InvalidParamsError);
+        error.setCode(strataRPC::RpcErrorCode::InvalidParamsError);
         error.setMessage("device_id attribute is empty or has bad format");
     } else if (platformController_.platformStartApplication(deviceId) == false) {
-        error.setCode(strataRPC::RpcError::ProcedureExecutionError);
+        error.setCode(strataRPC::RpcErrorCode::ProcedureExecutionError);
         error.setMessage("attempt to start platform application was rejected.");
     }
 
-    if (error.code() != strataRPC::RpcError::NoError) {
+    if (error.code() != strataRPC::RpcErrorCode::NoError) {
         error.setData({{"device_id", QLatin1String(deviceId)}});
         qCWarning(lcHcs) << error;
 

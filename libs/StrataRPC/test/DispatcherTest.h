@@ -9,19 +9,20 @@
 #pragma once
 
 #include <QObject>
-#include <StrataRPC/Message.h>
+//#include <StrataRPC/Message.h>
 
 #include "Dispatcher.h"
 #include "QtTest.h"
 #include "TestHandlers.h"
 
 using strata::strataRPC::Dispatcher;
-using strata::strataRPC::Message;
+//using strata::strataRPC::Message;
 
 class DispatcherTest : public QObject
 {
     Q_OBJECT
 public:
+#ifdef false
     DispatcherTest();
 
 private slots:
@@ -37,4 +38,6 @@ private:
 
 signals:
     void disp(const Message &clientMessage);
+
+#endif
 };
