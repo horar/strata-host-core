@@ -111,6 +111,12 @@ private:
     static constexpr const char* const RES_START_FLASH_FIRMWARE_TOO_LARGE       = "Start Flash Firmware: Firmware too large";
 };
 
+// When board receives command, it may send notification (one or more).
+enum class MockNotification {
+    BootloaderActive
+};
+Q_ENUM_NS(MockNotification)
+
 enum class MockVersion {
     Version_1,
     Version_2
@@ -198,7 +204,10 @@ public:
     static const QByteArray backup_firmware_request;
     static const QByteArray backup_firmware_response;
 
+    static const QByteArray notification_bootloader_active;
+
     static const QMap<MockVersion, QMap<MockCommand, QMap<MockResponse, QByteArray> > > mockResponsesMap;
+    static const QMap<MockNotification, QByteArray> mockNotificationMap;
 };
 
 class MockUtils {

@@ -24,6 +24,7 @@ using strata::platform::operation::OperationSharedPtr;
 using strata::platform::operation::BasePlatformOperation;
 using strata::device::MockCommand;
 using strata::device::MockResponse;
+using strata::device::MockNotification;
 using strata::device::MockVersion;
 using strata::device::TestCommands;
 
@@ -37,14 +38,17 @@ PlatformOperationsV2Test::PlatformOperationsV2Test() : platformOperations_(false
 
 }
 
+// will be called before the first test function is executed
 void PlatformOperationsV2Test::initTestCase()
 {
 }
 
+// will be called after the last test function was executed
 void PlatformOperationsV2Test::cleanupTestCase()
 {
 }
 
+// will be called before each test function is executed
 void PlatformOperationsV2Test::init()
 {
     operationErrorCount_ = 0;
@@ -66,6 +70,7 @@ void PlatformOperationsV2Test::init()
     connect(&platformOperations_, &PlatformOperations::finished, this, &PlatformOperationsV2Test::handleOperationFinished);
 }
 
+// will be called after every test function
 void PlatformOperationsV2Test::cleanup()
 {
     disconnect(&platformOperations_, nullptr, this, nullptr);
@@ -574,6 +579,29 @@ void PlatformOperationsV2Test::switchToBootloaderAndBackAssistedTest()
     verifyMessage(recordedMessages[5], TestCommands::start_application_request);
     verifyMessage(recordedMessages[6], TestCommands::get_firmware_info_request);
     verifyMessage(recordedMessages[7], TestCommands::request_platform_id_request);
+}
+
+void PlatformOperationsV2Test::switchToBootloaderAndSendNotificationTest()
+{
+    mockDevice_->mockAddNotificationAfterCommand(MockNotification::BootloaderActive, MockCommand::Start_bootloader);
+
+    QSignalSpy bootloaderActive(platform_.get(), &strata::platform::Platform::bootloaderActive);
+
+    OperationSharedPtr platformOperation = platformOperations_.StartBootloader(platform_);
+    static_cast<operation::StartBootloader*>(platformOperation.get())->setWaitTime(std::chrono::milliseconds(1000));
+    platformOperation->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(platformOperation->isSuccessfullyFinished(), true, 1000);
+
+    QVERIFY(bootloaderActive.count() == 1);
+
+    std::vector<QByteArray> recordedMessages = mockDevice_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 5);
+    verifyMessage(recordedMessages[0], TestCommands::get_firmware_info_request);
+    verifyMessage(recordedMessages[1], TestCommands::request_platform_id_request);
+    verifyMessage(recordedMessages[2], TestCommands::start_bootloader_request);
+    verifyMessage(recordedMessages[3], TestCommands::get_firmware_info_request);
+    verifyMessage(recordedMessages[4], TestCommands::request_platform_id_request);
 }
 
 void PlatformOperationsV2Test::cancelOperationEmbeddedTest()

@@ -20,6 +20,7 @@
 namespace strata::device {
 
 typedef std::map<MockCommand, MockResponse> MockCommandResponseMap;
+typedef std::map<MockCommand, QVector<MockNotification>> MockCommandNotificationsMap;
 
 class MockDeviceControl : public QObject
 {
@@ -44,12 +45,14 @@ public:
     bool isErrorOnCloseSet() const;
     bool isErrorOnNthMessageSet() const;
     MockResponse getResponseForCommand(MockCommand command) const;
+    QVector<MockNotification> getNotificationsForCommand(MockCommand command) const;
     MockVersion getVersion() const;
 
     bool setOpenEnabled(bool enabled);
     bool setAutoResponse(bool autoResponse);
     bool setSaveMessages(bool saveMessages);
     bool setResponseForCommand(MockResponse response, MockCommand command);
+    void addNotificationAfterCommand(MockNotification notification, MockCommand command);
     bool setVersion(MockVersion version);
     bool setAsBootloader(bool isBootloader);
     bool setFirmwareEnabled(bool enabled);
@@ -97,6 +100,7 @@ private:
     bool emitErrorOnClose_ = false;
     unsigned emitErrorOnNthMessage_ = 0;
     MockCommandResponseMap responses_;
+    MockCommandNotificationsMap notifications_;
     MockVersion version_ = MockVersion::Version_2;
 
     // variables used to store mock firmware's expected values

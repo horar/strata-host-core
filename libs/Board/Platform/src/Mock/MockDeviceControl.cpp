@@ -124,6 +124,16 @@ MockResponse MockDeviceControl::getResponseForCommand(MockCommand command) const
     return MockResponse::Nack;
 }
 
+QVector<MockNotification> MockDeviceControl::getNotificationsForCommand(MockCommand command) const
+{
+    auto iter = notifications_.find(command);
+    if (iter != notifications_.end()) {
+        return iter->second;
+    }
+
+    return QVector<MockNotification>();
+}
+
 MockVersion MockDeviceControl::getVersion() const
 {
     return version_;
@@ -174,6 +184,10 @@ bool MockDeviceControl::setResponseForCommand(MockResponse response, MockCommand
     qCDebug(lcDeviceMock) << "Command-response pair already configured to"
                                    << command << ":" << response;
     return false;
+}
+
+void MockDeviceControl::addNotificationAfterCommand(MockNotification notification, MockCommand command) {
+    notifications_[command].append(notification);
 }
 
 bool MockDeviceControl::setVersion(MockVersion version)
@@ -315,6 +329,16 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
             auto responseIter = commandIter.value().constFind(response);
             if (responseIter != commandIter.value().constEnd()) {
                 retVal.push_back(responseIter.value());
+            }
+        }
+    }
+
+    const QVector<MockNotification> notifications = getNotificationsForCommand(recievedCommand);
+    if (notifications.empty() == false) {
+        for (const MockNotification& n : notifications) {
+            auto notificationIter = TestCommands::mockNotificationMap.constFind(n);
+            if (notificationIter != TestCommands::mockNotificationMap.constEnd()) {
+                retVal.push_back(notificationIter.value());
             }
         }
     }
