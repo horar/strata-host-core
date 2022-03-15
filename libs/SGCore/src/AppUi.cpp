@@ -17,6 +17,7 @@ namespace strata::SGCore {
 AppUi::AppUi(QQmlApplicationEngine& engine, const QUrl& errorUrl, QObject* parent)
     : QObject(parent), engine_{engine}, errorUrl_{errorUrl}
 {
+    initializeResources();
 }
 
 void AppUi::loadUrl(const QUrl& url)

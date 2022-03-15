@@ -25,7 +25,7 @@ add_library(${PROJECT_NAME}
     #AUTOMOC wont find header if it is in different directory
     include/SGCore/AppUi.h
 
-    # qml-dev-studio-minimal.qrc
+    qml_minimal_ui.qrc
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -55,15 +55,5 @@ target_include_directories(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
-    # AUTORCC ON
-    # AUTORCC_OPTIONS "--compress;9"
-    # OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+    AUTORCC ON
 )
-
-qt5_add_binary_resources(${PROJECT_DESCRIPTION}-errordialog
-    qml-dev-studio-minimal.qrc
-    OPTIONS ARGS --binary --compress 9 --threshold 0 --verbose
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_DESCRIPTION}-errordialog.rcc
-)
-
-add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

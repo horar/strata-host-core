@@ -14,6 +14,7 @@
 #include "logging/LoggingQtCategories.h"
 
 class QQmlApplicationEngine;
+inline void initializeResources() { Q_INIT_RESOURCE(qml_minimal_ui); }
 
 namespace strata::SGCore {
 
