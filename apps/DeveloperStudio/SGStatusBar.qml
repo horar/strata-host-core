@@ -793,6 +793,7 @@ Rectangle {
     }
 
     function logout() {
+        sdsModel.coreInterface.unregisterClient();
         controlViewCreatorLoader.active = false
         Signals.logout()
         PlatformFilters.clearActiveFilters()

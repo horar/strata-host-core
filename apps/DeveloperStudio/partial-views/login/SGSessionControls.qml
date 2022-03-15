@@ -73,14 +73,29 @@ Item {
         onValidationResult: {
             if (result === "Current token is valid") {
                 console.log(LoggerModule.Logger.devStudioLoginCategory, "Previous session token validated")
-                connectionStatus.text = "Authenticated, Loading UI..."
 
-                var data = {
-                    "user_id": LoginUtils.settings.user,
-                    "first_name": LoginUtils.settings.first_name,
-                    "last_name": LoginUtils.settings.last_name
-                }
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                console.log(LoggerModule.Logger.devStudioLoginCategory, "Registering client with hcs")
+
+                connectionStatus.text = "Authenticated, Registering with server..."
+
+                loginControls.registerClient(
+                            function(result) {
+                                console.log(LoggerModule.Logger.devStudioLoginCategory, "Registration with server was successful")
+                                connectionStatus.text = "Registered, Loading UI..."
+
+                                var data = {
+                                    "user_id": LoginUtils.settings.user,
+                                    "first_name": LoginUtils.settings.first_name,
+                                    "last_name": LoginUtils.settings.last_name
+                                }
+                                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                            },
+                            function(error) {
+                                console.info(LoggerModule.Logger.devStudioLoginCategory, "Registration with server failed", JSON.stringify(JSON.stringify(error)))
+                                LoginUtils.settings.clear()
+                                root.showLogin()
+                            })
+
                 return
             } else if (result === "No Connection") {
                 console.info(LoggerModule.Logger.devStudioLoginCategory, "Unable to connect to server to validate token")

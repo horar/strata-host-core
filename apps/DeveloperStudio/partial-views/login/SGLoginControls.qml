@@ -299,24 +299,59 @@ Item {
             var resultObject = JSON.parse(result)
             //console.log(Logger.devStudioCategory, "Login result received")
             if (resultObject.response === "Connected") {
-                connectionStatus.text = "Connected, Loading UI..."
-                usernameField.updateModel()
-                sessionControls.loginSuccess(resultObject)
-                let data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                connectionStatus.text = "Registering Client..."
+                console.log(Logger.devStudioLoginCategory, "Registering client with hcs")
+
+                registerClient(
+                            function(result) {
+                                console.log(Logger.devStudioLoginCategory, "Registration with server was successful")
+
+                                connectionStatus.text = "Connected, Loading UI..."
+                                usernameField.updateModel()
+                                sessionControls.loginSuccess(resultObject)
+
+                                let data = {
+                                    "user_id": resultObject.user_id,
+                                    "first_name":resultObject.first_name,
+                                    "last_name": resultObject.last_name
+                                }
+                                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                            },
+                            function(error) {
+                                console.log("Registration with server failed", JSON.stringify(error))
+                                showLoginError("Registration with HCS failed.")
+                            })
             } else {
-                loginControls.visible = true
-                connectionStatus.text = ""
-                loginErrorRect.color = "red"
                 if (resultObject.response === "No Connection") {
-                    loginErrorRect.text = "Connection to authentication server failed. Please check your internet connection and try again."
+                    var errorString = "Connection to authentication server failed. Please check your internet connection and try again."
                 } else if (resultObject.response === "Server Error") {
-                    loginErrorRect.text = "Authentication server is unable to process your request at this time. Please try again later."
+                    errorString = "Authentication server is unable to process your request at this time. Please try again later."
                 } else {
-                    loginErrorRect.text = "Username and/or password is incorrect. Please try again."
+                    errorString = "Username and/or password is incorrect. Please try again."
                 }
-                loginErrorRect.show()
+
+                showLoginError(errorString);
             }
         }
+    }
+
+    function showLoginError(errorString) {
+        loginControls.visible = true
+        connectionStatus.text = ""
+        loginErrorRect.color = "red"
+        loginErrorRect.text = errorString
+        loginErrorRect.show()
+    }
+
+    function registerClient(callbackResult, callbackError) {
+        var reply = sdsModel.strataClient.sendRequest("register_client", {"api_version":"2.0"});
+
+        reply.finishedSuccessfully.connect(function(result) {
+            callbackResult(result)
+        })
+
+        reply.finishedWithError.connect(function(error) {
+            callbackError(error)
+        })
     }
 }
