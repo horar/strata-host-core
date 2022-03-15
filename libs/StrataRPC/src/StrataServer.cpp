@@ -138,18 +138,11 @@ void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &
 
     // Check if registered client
     Client client = clientsController_->getClient(clientId);
-    if (client.getClientID().isEmpty()) {
-        qCDebug(lcStrataServer) << "Client not registered";
-        // Register the client, only v2 is supported now
-        bool registered = clientsController_->registerClient(Client(clientId, ApiVersion::v2));
-        if (registered == false) {
-            RpcError error(RpcErrorCode::ClientRegistrationError);
-            qCWarning(lcStrataServer) << error;
-            sendError(clientId, request.id(), error);
-            return;
-        }
-
-        qCInfo(lcStrataServer) << "Client registered successfully";
+    if (client.getClientID().isEmpty() && request.method() != "register_client") {
+        RpcError error(RpcErrorCode::ClientNotRegistered);
+        qCWarning(lcStrataServer) << error;
+        sendError(clientId, request.id(), error);
+        return;
     }
 
     request.setClientId(clientId);
@@ -251,37 +244,39 @@ void StrataServer::registerNewClientHandler(const RpcRequest &request)
     qCDebug(lcStrataServer).noquote().nospace()
         << "Handle New Client Registration. ClientID 0x:" << request.clientId().toHex();
 
-    // Find the client API version, if it was v1, ignore the parsing.
-    if (ApiVersion currentApiVersion =
-            clientsController_->getClientApiVersion(request.clientId());
-        ApiVersion::v1 != currentApiVersion) {
-        if (request.params().contains("api_version") &&
-            request.params().value("api_version").isString()) {
-            QString apiVersionPayload = request.params().value("api_version").toString();
-
-            // list of available api versions.
-            if (apiVersionPayload == "2.0") {
-                clientsController_->updateClientApiVersion(request.clientId(), ApiVersion::v2);
-            } else {
-                RpcError error(RpcErrorCode::UnknownApiVersionError);
-                qCWarning(lcStrataServer) << error;
-                sendError(request.clientId(), request.id(), error);
-
-                clientsController_->unregisterClient(request.clientId());
-                return;
-            }
-        } else {
-            qCDebug(lcStrataServer) << "No API version in payload, Assuming API v2.";
-        }
-    }
-
     if (clientsController_->isRegisteredClient(request.clientId())) {
-        sendReply(request.clientId(), request.id(), {{"status", "client registered"}});
+        qCDebug(lcStrataServer) << "client already registered";
     } else {
-        RpcError error(RpcErrorCode::ClientRegistrationError);
-        qCWarning(lcStrataServer) << error;
-        sendError(request.clientId(), request.id(), error);
+        QString apiVersion = request.params().value("api_version").toString();
+        if (apiVersion.isEmpty()) {
+            RpcError error(RpcErrorCode::InvalidParamsError);
+            qCWarning(lcStrataServer) << error;
+            sendError(request.clientId(), request.id(), error);
+            return;
+        }
+
+        ApiVersion currentApiVersion = ApiVersion::none;
+        if (apiVersion == "2.0") {
+            currentApiVersion = ApiVersion::v2;
+        } else {
+            RpcError error(RpcErrorCode::UnknownApiVersionError);
+            qCWarning(lcStrataServer) << error;
+            sendError(request.clientId(), request.id(), error);
+            return;
+        }
+
+        bool registered = clientsController_->registerClient(Client(request.clientId(), currentApiVersion));
+        if (registered == false) {
+            RpcError error(RpcErrorCode::ClientRegistrationError);
+            qCWarning(lcStrataServer) << error;
+            sendError(request.clientId(), request.id(), error);
+            return;
+        }
+
+        qCDebug(lcStrataServer) << "client registered successfully";
     }
+
+    sendReply(request.clientId(), request.id(), {{"status", "client registered"}});
 }
 
 void StrataServer::unregisterClientHandler(const RpcRequest &request)

@@ -43,6 +43,7 @@ enum RpcErrorCode {
     UnknownApiVersionError,
     ClientAlreadyRegisteredError,
     ClientUnregistrationError,
+    ClientNotRegistered,
     };
 Q_ENUM_NS(RpcErrorCode)
 

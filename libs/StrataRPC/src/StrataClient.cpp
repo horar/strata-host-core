@@ -91,7 +91,6 @@ void StrataClient::initializeAndConnect()
 
 void StrataClient::disconnect()
 {
-    sendRequest("unregister_client", {});
     QMetaObject::invokeMethod(connector_.get(), &ClientConnector::disconnect, Qt::QueuedConnection);
 }
 
@@ -354,25 +353,7 @@ void StrataClient::removeExpiredReplies()
 
 void StrataClient::clientInitializedHandler()
 {
-    auto deferredReply = sendRequest("register_client", {{"api_version", "2.0"}});
-
-    if (deferredReply != nullptr) {
-        QObject::connect(deferredReply, &DeferredReply::finishedSuccessfully, this,
-                         [this](const QJsonObject &) {
-                             qCInfo(lcStrataClient)
-                                 << "Client connected successfully to the server.";
-                             emit connected();
-                         });
-
-        QObject::connect(
-            deferredReply, &DeferredReply::finishedWithError, this,
-            [this](const QJsonObject &) {
-                QString errorMessage(QStringLiteral(
-                    "Failed to connect to the server. register_client message timed out."));
-                qCCritical(lcStrataClient) << errorMessage;
-                emit errorOccurred(RpcErrorCode::ConnectionError, errorMessage);
-            });
-    }
+    emit connected();
 }
 
 } // namespace strata::strataRPC
