@@ -283,14 +283,18 @@ void StrataServer::unregisterClientHandler(const RpcRequest &request)
 {
     qCDebug(lcStrataServer).noquote().nospace()
         << "Handle Client Unregistration. ClientID: 0x" << request.clientId().toHex();
+
     if (clientsController_->isRegisteredClient(request.clientId())) {
-        sendReply(request.clientId(), request.id(), {{"status", "going to unregister client"}});
+        bool unregistered = clientsController_->unregisterClient(request.clientId());
+        if (unregistered == false) {
+            RpcError error(RpcErrorCode::ClientUnregistrationError);
+            qCWarning(lcStrataServer) << error;
+            sendError(request.clientId(), request.id(), error);
+            return;
+        }
     }
-    if (false == clientsController_->unregisterClient(request.clientId())) {
-        RpcError error(RpcErrorCode::ClientUnregistrationError);
-        qCWarning(lcStrataServer) << error;
-        sendError(request.clientId(), request.id(), error);
-    }
+
+    sendReply(request.clientId(), request.id(), {{"status", "client unregistered"}});
 }
 
 QByteArray StrataServer::buildReplyMessage(
