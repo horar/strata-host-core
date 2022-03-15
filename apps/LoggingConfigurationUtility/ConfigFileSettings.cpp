@@ -33,6 +33,7 @@ QString ConfigFileSettings::logLevel() const
         qCDebug(lcLcu) << "Current log level: " << level;
         return level;
     } else {
+        qCWarning(lcLcu) << "Parameter " << LOG_LEVEL_SETTING << " is set to " << level << ", which is not a valid value.";
         emit corruptedFile(LOG_LEVEL_SETTING, level);
     }
     return "";
@@ -44,13 +45,22 @@ int ConfigFileSettings::maxFileSize() const
         return 0;
     }
 
-    int logMaxFileSize = settings_->value(LOG_MAXSIZE_SETTING).toInt();
+    bool ok = false;
+    int logMaxFileSize = settings_->value(LOG_MAXSIZE_SETTING).toInt(&ok);
 
-    if (logMaxFileSize >= MIN_LOGFILE_SIZE && logMaxFileSize <= MAX_LOGFILE_SIZE) {
-        qCDebug(lcLcu) << "Current max size of log file : " << logMaxFileSize;
-        return logMaxFileSize;
+    if(ok) {
+        if (logMaxFileSize >= MIN_LOGFILE_SIZE && logMaxFileSize <= MAX_LOGFILE_SIZE) {
+            qCDebug(lcLcu) << "Current max size of log file : " << logMaxFileSize;
+            return logMaxFileSize;
+        } else {
+            QString fileSizeString = settings_->value(LOG_MAXSIZE_SETTING).toString();
+            qCWarning(lcLcu) << "Max file size out of range : " << fileSizeString;
+            emit corruptedFile(LOG_MAXSIZE_SETTING, fileSizeString);
+        }
     } else {
-        emit corruptedFile(LOG_MAXSIZE_SETTING, QString::number(logMaxFileSize));
+        QString fileSizeString = settings_->value(LOG_MAXSIZE_SETTING).toString();
+        qCWarning(lcLcu) << "Parameter " << LOG_MAXSIZE_SETTING << " is set to " << fileSizeString << ", which is not a valid value.";
+        emit corruptedFile(LOG_MAXSIZE_SETTING, fileSizeString);
     }
     return 0;
 }
@@ -61,13 +71,22 @@ int ConfigFileSettings::maxNoFiles() const
         return 0;
     }
 
-    int logMaxNoFiles = settings_->value(LOG_MAXNOFILES_SETTING).toInt();
+    bool ok = false;
+    int logMaxNoFiles = settings_->value(LOG_MAXNOFILES_SETTING).toInt(&ok);
 
-    if (logMaxNoFiles >= MIN_NOFILES && logMaxNoFiles <= MAX_NOFILES) {
-        qCDebug(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
-        return logMaxNoFiles;
+    if(ok) {
+        if (logMaxNoFiles >= MIN_NOFILES && logMaxNoFiles <= MAX_NOFILES) {
+            qCDebug(lcLcu) << "Current max size of log file : " << logMaxNoFiles;
+            return logMaxNoFiles;
+        } else {
+            QString noFilesString = settings_->value(LOG_MAXNOFILES_SETTING).toString();
+            qCWarning(lcLcu) << "Max number of files out of range : " << noFilesString;
+            emit corruptedFile(LOG_MAXNOFILES_SETTING, noFilesString);
+        }
     } else {
-        emit corruptedFile(LOG_MAXNOFILES_SETTING, QString::number(logMaxNoFiles));
+        QString noFilesString = settings_->value(LOG_MAXNOFILES_SETTING).toString();
+        qCWarning(lcLcu) << "Parameter " << LOG_MAXNOFILES_SETTING << " is set to " << noFilesString << ", which is not a valid value.";
+        emit corruptedFile(LOG_MAXNOFILES_SETTING, noFilesString);
     }
     return 0;
 }
@@ -84,6 +103,7 @@ QString ConfigFileSettings::qtFilterRules() const
         qCDebug(lcLcu) << "Current Qt filter rules : " << qtFilterRules;
         return qtFilterRules;
     } else {
+        qCWarning(lcLcu) << "Parameter " << LOG_FILTERRULES_SETTING << " is set to " << qtFilterRules << ", which is not a valid value.";
         emit corruptedFile(LOG_FILTERRULES_SETTING, qtFilterRules);
     }
     return "";
@@ -101,6 +121,7 @@ QString ConfigFileSettings::qtMsgPattern() const
         qCDebug(lcLcu) << "Current Qt message pattern : " << qtMsgPattern;
         return qtMsgPattern;
     } else {
+        qCWarning(lcLcu) << "Parameter " << LOG_QT_MSGPATTERN_SETTING << " is set to " << qtMsgPattern << ", which is not a valid value.";
         emit corruptedFile(LOG_QT_MSGPATTERN_SETTING, qtMsgPattern);
     }
     return "";
@@ -118,6 +139,7 @@ QString ConfigFileSettings::spdlogMsgPattern() const
         qCDebug(lcLcu) << "Current spdlog message pattern : " << spdMsgPattern;
         return spdMsgPattern;
     } else {
+        qCWarning(lcLcu) << "Parameter " << LOG_SPD_MSGPATTERN_SETTING << " is set to " << spdMsgPattern << ", which is not a valid value.";
         emit corruptedFile(LOG_SPD_MSGPATTERN_SETTING, spdMsgPattern);
     }
     return "";
@@ -155,7 +177,7 @@ QString ConfigFileSettings::spdMsgDefault() const
 
 void ConfigFileSettings::setLogLevel(const QString& logLevel)
 {
-    if (logLevel == settings_->value(LOG_LEVEL_SETTING)) {
+    if (logLevel == settings_->value(LOG_LEVEL_SETTING) && logLevel.isEmpty() == false) {
         return;
     }
 
@@ -206,7 +228,7 @@ void ConfigFileSettings::setMaxNoFiles(const int &maxNoFiles)
 
 void ConfigFileSettings::setQtFilterRules(const QString &qtFilterRules)
 {
-    if (qtFilterRules == settings_->value(LOG_FILTERRULES_SETTING)) {
+    if (qtFilterRules == settings_->value(LOG_FILTERRULES_SETTING) && qtFilterRules.isEmpty() == false) {
         return;
     }
 
@@ -221,7 +243,7 @@ void ConfigFileSettings::setQtFilterRules(const QString &qtFilterRules)
 
 void ConfigFileSettings::setQtMsgPattern(const QString &qtMessagePattern)
 {
-    if (qtMessagePattern == settings_->value(LOG_QT_MSGPATTERN_SETTING)) {
+    if (qtMessagePattern == settings_->value(LOG_QT_MSGPATTERN_SETTING) && qtMessagePattern.isEmpty() == false) {
         return;
     }
 
@@ -236,7 +258,7 @@ void ConfigFileSettings::setQtMsgPattern(const QString &qtMessagePattern)
 
 void ConfigFileSettings::setSpdlogMsgPattern(const QString &spdlogMessagePattern)
 {
-    if (spdlogMessagePattern == settings_->value(LOG_QT_MSGPATTERN_SETTING)) {
+    if (spdlogMessagePattern == settings_->value(LOG_SPD_MSGPATTERN_SETTING) && spdlogMessagePattern.isEmpty() == false) {
         return;
     }
 

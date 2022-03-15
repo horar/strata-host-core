@@ -507,9 +507,11 @@ Item {
                 configFileSettings.logLevel = ""
             } else if (parameter === "log/maxFileSize") {
                 configFileSettings.maxFileSize = 0
+                textInputFileSize.text = "no value"
                 maxFileSizeEnabled = false
             } else if (parameter === "log/maxNoFiles") {
                 configFileSettings.maxNoFiles = 0
+                textInputNoFiles.text = "no value"
                 maxNoFilesEnabled = false
             } else if (parameter === "log/qtFilterRules") {
                 configFileSettings.qtFilterRules = ""
