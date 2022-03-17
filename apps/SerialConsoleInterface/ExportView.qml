@@ -60,7 +60,7 @@ FocusScope {
 
                 function inputValidationErrorMsg() {
                     if (filePath.length === 0) {
-                        return qsTr("Firmware data file is required")
+                        return qsTr("Output file is required")
                     } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
                         return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
                     }
@@ -181,7 +181,7 @@ FocusScope {
 
                 function inputValidationErrorMsg() {
                     if (filePath.length === 0) {
-                        return qsTr("Firmware data file is required")
+                        return qsTr("Output file is required")
                     } else if (CommonCpp.SGUtilsCpp.containsForbiddenCharacters(CommonCpp.SGUtilsCpp.fileName(filePath))) {
                         return qsTr("A filename cannot contain any of the following characters: " + CommonCpp.SGUtilsCpp.joinForbiddenCharacters())
                     }
