@@ -73,6 +73,12 @@ FocusScope {
         }
     }
 
+    TextMetrics {
+        id: textMetricsForComboBox
+        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+        text: "is equal to"
+    }
+
     FocusScope {
         id: content
         anchors {
@@ -216,6 +222,8 @@ FocusScope {
                         id: typeComboBox
                         model: conditionTypeModel
                         textRole: "text"
+                        width: textMetricsForComboBox.width + indicator.width + leftPadding + rightPadding
+                        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
 
                         onCurrentIndexChanged: {
                             if (currentIndex < 0) {
