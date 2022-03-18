@@ -40,7 +40,13 @@ Item {
         id: configFileSettings
     }
 
+    QtLabsSettings.Settings {
+        id: settings
+        category: "log"
+    }
+
     Component.onCompleted: {
+        console.info("main.qml " + settings.value("level"))
         configFileModel.reload()
         iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
     }

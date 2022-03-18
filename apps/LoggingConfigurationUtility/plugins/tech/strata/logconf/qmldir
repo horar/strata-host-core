@@ -1,0 +1,6 @@
+module tech.strata.logconf
+
+plugin lcuPlugin
+typeinfo plugins.qmltypes
+
+LcuMain 1.0 qrc:///LcuMain.qml
