@@ -8,4 +8,4 @@
  */
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(lcAppUi, "strata.lcAppUi")
+Q_LOGGING_CATEGORY(lcAppUi, "strata.sgcore.appui")
