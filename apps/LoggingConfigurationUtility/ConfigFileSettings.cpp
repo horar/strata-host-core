@@ -42,7 +42,7 @@ QString ConfigFileSettings::logLevel() const
 int ConfigFileSettings::maxFileSize() const
 {
     if (settings_->contains(LOG_MAXSIZE_SETTING) == false) {
-        return 0;
+        return -1;
     }
 
     bool ok = false;
@@ -62,13 +62,13 @@ int ConfigFileSettings::maxFileSize() const
         qCWarning(lcLcu) << "Parameter " << LOG_MAXSIZE_SETTING << " is set to " << fileSizeString << ", which is not a valid value.";
         emit corruptedFile(LOG_MAXSIZE_SETTING, fileSizeString);
     }
-    return 0;
+    return -1;
 }
 
 int ConfigFileSettings::maxNoFiles() const
 {
     if (settings_->contains(LOG_MAXNOFILES_SETTING) == false) {
-        return 0;
+        return -1;
     }
 
     bool ok = false;
@@ -88,7 +88,7 @@ int ConfigFileSettings::maxNoFiles() const
         qCWarning(lcLcu) << "Parameter " << LOG_MAXNOFILES_SETTING << " is set to " << noFilesString << ", which is not a valid value.";
         emit corruptedFile(LOG_MAXNOFILES_SETTING, noFilesString);
     }
-    return 0;
+    return -1;
 }
 
 QString ConfigFileSettings::qtFilterRules() const

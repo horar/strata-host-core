@@ -215,7 +215,7 @@ Item {
                     textInputFileSize.text = maxFileSizeSpinBox.value
                 }
                 onFilePathChanged: {
-                    if (configFileSettings.maxFileSize == 0) {
+                    if (configFileSettings.maxFileSize == -1) {
                         maxFileSizeEnabled = false
                     } else {
                         maxFileSizeSpinBox.value = configFileSettings.maxFileSize
@@ -305,7 +305,7 @@ Item {
                     textInputNoFiles.text = maxNoFilesSpinBox.value
                 }
                 onFilePathChanged: {
-                    if (configFileSettings.maxNoFiles == 0) {
+                    if (configFileSettings.maxNoFiles == -1) {
                         maxNoFilesEnabled = false
                     } else {
                         maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
