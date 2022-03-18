@@ -9,6 +9,8 @@
 #include "LogModel.h"
 #include "FileModel.h"
 
+#include <SGCore/AppUi.h>
+
 #include "Version.h"
 #include "Timestamp.h"
 
@@ -184,9 +186,12 @@ int main(int argc, char *argv[]) {
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
-    if (engine.rootObjects().isEmpty()) {
-        qCCritical(lcLogViewer) << "root object is empty";
-        return -1;
-    }
+    strata::SGCore::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
+
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
+
     return app.exec();
 }
