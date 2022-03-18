@@ -24,11 +24,11 @@ class ConfigFileSettings : public QObject
     Q_PROPERTY(QString spdlogMsgPattern READ spdlogMsgPattern WRITE setSpdlogMsgPattern NOTIFY spdlogMsgPatternChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
 
-    Q_PROPERTY(int maxSizeDefault READ maxSizeDefault)
-    Q_PROPERTY(int maxCountDefault READ maxCountDefault )
-    Q_PROPERTY(QString filterRulesDefault READ filterRulesDefault)
-    Q_PROPERTY(QString qtMsgDefault READ qtMsgDefault )
-    Q_PROPERTY(QString spdMsgDefault READ spdMsgDefault )
+    Q_PROPERTY(int maxSizeDefault READ maxSizeDefault CONSTANT)
+    Q_PROPERTY(int maxCountDefault READ maxCountDefault CONSTANT)
+    Q_PROPERTY(QString filterRulesDefault READ filterRulesDefault CONSTANT)
+    Q_PROPERTY(QString qtMsgDefault READ qtMsgDefault CONSTANT)
+    Q_PROPERTY(QString spdMsgDefault READ spdMsgDefault CONSTANT)
 
 public:
     explicit ConfigFileSettings(QObject *parent = 0);
