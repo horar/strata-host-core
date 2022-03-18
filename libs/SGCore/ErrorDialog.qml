@@ -38,9 +38,9 @@ ApplicationWindow {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
-            text: qsTr("<strong><h2>An unexpected application error has occurred.</h2></strong>" +
-                       "<br><br>" +
-                       "Please contact your local sales representative.")
+            text: qsTr("<strong><h2>TTAn unexpected application error has occurred.</h2></strong>" +
+                        "<br><br>" +
+                        "Please contact your local sales representative.")
         }
     }
 
@@ -113,15 +113,15 @@ ApplicationWindow {
             anchors.fill: parent
             color: "black"
 
-            // Image {
-            //     id: strataLogoImage
+            Image {
+                id: strataLogoImage
 
-            //     height: 0.8 * parent.height
-            //     anchors.verticalCenter: parent.verticalCenter
-            //     source: "qrc:/images/strata-logo-reverse.svg"
-            //     fillMode: Image.PreserveAspectFit
-            //     mipmap: true
-            // }
+                height: 0.8 * parent.height
+                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/images/on-semi-logo-horiz.svg"
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+            }
         }
     }
 

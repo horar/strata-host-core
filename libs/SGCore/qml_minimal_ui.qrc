@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file alias="ErrorDialog.qml">ErrorDialog.qml</file>
+        <file>images/on-semi-logo-horiz.svg</file>
     </qresource>
 </RCC>
