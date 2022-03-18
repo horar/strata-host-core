@@ -54,6 +54,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     Qt5::Widgets
     strata::QtLogger
+    strata::SGCore
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
