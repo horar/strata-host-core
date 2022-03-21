@@ -19,7 +19,7 @@ import '../'
 import '../login/registration'
 import "../general"
 import '../login'
-import 'qrc:/js/login_utilities.js' as LoginUtil
+import 'qrc:/js/login_utilities.js' as LoginUtils
 import 'qrc:/js/navigation_control.js' as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -106,8 +106,8 @@ SGStrataPopup {
                     var user = {
                         username: NavigationControl.context.user_id
                     }
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.close_account(user)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.close_account(user)
                     spinnerDialog.open()
                 }
             }
@@ -150,8 +150,8 @@ SGStrataPopup {
                 }
 
                 if (guestUser === false) {
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.get_profile(NavigationControl.context.user_id)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.get_profile(NavigationControl.context.user_id)
                 }
             }
 
@@ -187,8 +187,8 @@ SGStrataPopup {
                     spinnerDialog.open()
                     firstNameColumn.editable = false;
                     lastNameColumn.editable = false;
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
                 onCanceled: {
@@ -248,8 +248,8 @@ SGStrataPopup {
                     spinnerDialog.open()
                     companyColumn.editable = false
                     jobTitleColumn.editable = false
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
                 onCanceled: {
@@ -322,8 +322,8 @@ SGStrataPopup {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: NavigationControl.context.user_id, password: currentPasswordField.text, timezone: timezone }
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.login(login_info)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.login(login_info)
                     currentPasswordRow.editable = false
                     newPasswordRow.editable = false
                     spinnerDialog.open()
@@ -601,8 +601,8 @@ SGStrataPopup {
                         let data = {
                             "password": passwordField.text
                         };
-                        connectionStatus.currentId = LoginUtil.getNextId()
-                        LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                        connectionStatus.currentId = LoginUtils.getNextId()
+                        LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     } else {
                         passwordControls.expandAnimation.start()
                         passwordControls.editing = true
@@ -697,7 +697,7 @@ SGStrataPopup {
                         resetFields()
 
                         PlatformFilters.clearActiveFilters()
-                        LoginUtil.logout()
+                        LoginUtils.logout()
                         PlatformSelection.logout()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     } else {

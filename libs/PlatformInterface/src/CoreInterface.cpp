@@ -91,6 +91,23 @@ void CoreInterface::sendNotification(const QString &method, const QJsonObject &p
     strataClient_->sendNotification(method, payload);
 }
 
+void CoreInterface::unregisterClient()
+{
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest("unregister_client", {});
+    if (reply == nullptr) {
+        qCCritical(lcCoreInterface) << "failed to send 'unregister_client' request";
+        return;
+    }
+
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, [](){
+        qCDebug(lcCoreInterface) << "client unregistered from StrataRpc server successfully";
+    });
+
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, [](QJsonObject error){
+        qCCritical(lcCoreInterface) << "client unregistration from StrataRpc server failed" << error;
+    });
+}
+
 void CoreInterface::processAllPlatformsNotification(const QJsonObject &payload)
 {
     QString newPlatformList = QJsonDocument(payload).toJson(QJsonDocument::Compact);

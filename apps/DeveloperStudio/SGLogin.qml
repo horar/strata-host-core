@@ -13,7 +13,6 @@ import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
 import "qrc:/js/utilities.js" as Utility
-import "qrc:/js/login_utilities.js" as Authenticator
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0

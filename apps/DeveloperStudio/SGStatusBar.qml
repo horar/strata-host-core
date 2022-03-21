@@ -16,7 +16,7 @@ import QtQml 2.12
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/login_utilities.js" as LoginUtils
 import "qrc:/js/constants.js" as Constants
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
@@ -793,11 +793,12 @@ Rectangle {
     }
 
     function logout() {
+        sdsModel.coreInterface.unregisterClient();
         controlViewCreatorLoader.active = false
         Signals.logout()
         PlatformFilters.clearActiveFilters()
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-        Authenticator.logout()
+        LoginUtils.logout()
         PlatformSelection.logout()
     }
 
@@ -808,7 +809,7 @@ Rectangle {
         repeat: true
 
         onTriggered: {
-            Authenticator.heartbeat()
+            LoginUtils.heartbeat()
         }
     }
 }

@@ -16,7 +16,7 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/js/login_utilities.js" as SessionUtils
+import "qrc:/js/login_utilities.js" as LoginUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/core_update.js" as CoreUpdate
 import "qrc:/partial-views/platform-view"
@@ -129,7 +129,7 @@ SGWidgets.SGMainWindow {
             controlViewCreatorLoader.visible = false
         }
 
-        SessionUtils.close_session((sessionClosed) => {
+        LoginUtils.close_session((sessionClosed) => {
                                        if (sessionClosed) {
                                            // block window close for 100ms to give time for asynchronous XHR to send
                                            close.accepted = false
@@ -137,9 +137,9 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.strataClient.sendRequest("unregister_client", {});
-                                           if (SessionUtils.settings.rememberMe === false) {
-                                               SessionUtils.settings.clear()
+                                           sdsModel.coreInterface.unregisterClient()
+                                           if (LoginUtils.settings.rememberMe === false) {
+                                               LoginUtils.settings.clear()
                                            }
                                        }
                                    })
@@ -181,7 +181,7 @@ SGWidgets.SGMainWindow {
                 hcsReconnecting = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()
-                SessionUtils.initialized = false
+                LoginUtils.initialized = false
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }

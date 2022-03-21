@@ -95,6 +95,7 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case UnknownApiVersionError: return "unknown api version";
     case ClientAlreadyRegisteredError: return "client already registered";
     case ClientUnregistrationError: return "client unregistration error";
+    case ClientNotRegistered: return "client not registered error";
     default:
         return "error message for this error not available";
     }

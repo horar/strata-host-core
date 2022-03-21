@@ -49,6 +49,11 @@ public:
     Q_INVOKABLE void sendNotification(const QString &handler, const QJsonObject &payload);
 
     /**
+     * Unregisters client from StrataRpc server
+     */
+    Q_INVOKABLE void unregisterClient();
+
+    /**
      * Function to access PlatformList_
      * @return QString of all platform list.
      */
