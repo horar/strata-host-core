@@ -33,19 +33,25 @@ class ConfigFileSettings : public QObject
 public:
     explicit ConfigFileSettings(QObject *parent = 0);
 
-    QString logLevel() const;
+    //functions return param value as int, if param doesn't exist return -1,
+    //if param contains unrecognized value - open CorruptedFileDialog and let user choose what happens
     int maxFileSize() const;
     int maxNoFiles() const;
+    //functions return param value as string, if param doesn't exist return empty string,
+    //if param contains unrecognized value - open CorruptedFileDialog and let user choose what happens
+    QString logLevel() const;
     QString qtFilterRules() const;
     QString qtMsgPattern() const;
     QString spdlogMsgPattern() const;
+    //returns file path to currently opened config file
     QString filePath() const;
+
+    //return default param values defined in QtLoggerDefaults.h
     int maxSizeDefault() const;
     int maxCountDefault() const;
     QString filterRulesDefault() const;
     QString qtMsgDefault() const;
     QString spdMsgDefault() const;
-
 
     void setLogLevel(const QString& logLevel);
     void setMaxFileSize(const int& maxFileSize);
