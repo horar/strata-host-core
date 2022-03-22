@@ -24,28 +24,34 @@ class ConfigFileSettings : public QObject
     Q_PROPERTY(QString spdlogMsgPattern READ spdlogMsgPattern WRITE setSpdlogMsgPattern NOTIFY spdlogMsgPatternChanged)
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
 
-    Q_PROPERTY(int maxSizeDefault READ maxSizeDefault)
-    Q_PROPERTY(int maxCountDefault READ maxCountDefault )
-    Q_PROPERTY(QString filterRulesDefault READ filterRulesDefault)
-    Q_PROPERTY(QString qtMsgDefault READ qtMsgDefault )
-    Q_PROPERTY(QString spdMsgDefault READ spdMsgDefault )
+    Q_PROPERTY(int maxSizeDefault READ maxSizeDefault CONSTANT)
+    Q_PROPERTY(int maxCountDefault READ maxCountDefault CONSTANT)
+    Q_PROPERTY(QString filterRulesDefault READ filterRulesDefault CONSTANT)
+    Q_PROPERTY(QString qtMsgDefault READ qtMsgDefault CONSTANT)
+    Q_PROPERTY(QString spdMsgDefault READ spdMsgDefault CONSTANT)
 
 public:
     explicit ConfigFileSettings(QObject *parent = 0);
 
-    QString logLevel() const;
+    //functions return param value as int, if param doesn't exist return -1,
+    //if param contains unrecognized value - open CorruptedFileDialog and let user choose what happens
     int maxFileSize() const;
     int maxNoFiles() const;
+    //functions return param value as string, if param doesn't exist return empty string,
+    //if param contains unrecognized value - open CorruptedFileDialog and let user choose what happens
+    QString logLevel() const;
     QString qtFilterRules() const;
     QString qtMsgPattern() const;
     QString spdlogMsgPattern() const;
+    //returns file path to currently opened config file
     QString filePath() const;
+
+    //return default param values defined in QtLoggerDefaults.h
     int maxSizeDefault() const;
     int maxCountDefault() const;
     QString filterRulesDefault() const;
     QString qtMsgDefault() const;
     QString spdMsgDefault() const;
-
 
     void setLogLevel(const QString& logLevel);
     void setMaxFileSize(const int& maxFileSize);
@@ -63,6 +69,7 @@ signals:
     void qtMsgPatternChanged();
     void spdlogMsgPatternChanged();
     void filePathChanged();
+    void corruptedFile(QString param, QString errorString) const;
 
 private:
     QScopedPointer<QSettings> settings_;

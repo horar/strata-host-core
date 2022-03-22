@@ -215,7 +215,7 @@ Item {
                     textInputFileSize.text = maxFileSizeSpinBox.value
                 }
                 onFilePathChanged: {
-                    if (configFileSettings.maxFileSize == 0) {
+                    if (configFileSettings.maxFileSize == -1) {
                         maxFileSizeEnabled = false
                     } else {
                         maxFileSizeSpinBox.value = configFileSettings.maxFileSize
@@ -305,7 +305,7 @@ Item {
                     textInputNoFiles.text = maxNoFilesSpinBox.value
                 }
                 onFilePathChanged: {
-                    if (configFileSettings.maxNoFiles == 0) {
+                    if (configFileSettings.maxNoFiles == -1) {
                         maxNoFilesEnabled = false
                     } else {
                         maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
@@ -464,5 +464,64 @@ Item {
                 }
             }
         }
+    }
+
+    Connections {
+        target: configFileSettings
+        onCorruptedFile: {
+            showCorruptedFileDialog(param, errorString)
+        }
+    }
+
+    function showCorruptedFileDialog(parameter, string) {
+        var dialog = SGDialogJS.createDialog(
+                    lcuMain,
+                    "qrc:/CorruptedFileDialog.qml", {
+                        "corruptedString": string,
+                        "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")
+                    })
+
+        dialog.accepted.connect(function() { //set to default
+            console.log("Set " + parameter + " to default")
+            if(parameter === "log/level") {
+                configFileSettings.logLevel = "debug"
+            } else if (parameter === "log/maxFileSize") {
+                configFileSettings.maxFileSize = configFileSettings.maxSizeDefault
+                maxFileSizeEnabled = true
+            } else if (parameter === "log/maxNoFiles") {
+                configFileSettings.maxNoFiles = configFileSettings.maxCountDefault
+                maxNoFilesEnabled = true
+            } else if (parameter === "log/qtFilterRules") {
+                configFileSettings.qtFilterRules = configFileSettings.filterRulesDefault
+            } else if (parameter === "log/qtMessagePattern") {
+                configFileSettings.qtMsgPattern = configFileSettings.qtMsgDefault
+            } else {
+                configFileSettings.spdlogMsgPattern = configFileSettings.spdMsgDefault
+            }
+            dialog.destroy()
+        })
+
+        dialog.rejected.connect(function() { //remove parameter
+            console.log("Removed " + parameter)
+            if(parameter === "log/level") {
+                configFileSettings.logLevel = ""
+            } else if (parameter === "log/maxFileSize") {
+                configFileSettings.maxFileSize = 0
+                textInputFileSize.text = "no value"
+                maxFileSizeEnabled = false
+            } else if (parameter === "log/maxNoFiles") {
+                configFileSettings.maxNoFiles = 0
+                textInputNoFiles.text = "no value"
+                maxNoFilesEnabled = false
+            } else if (parameter === "log/qtFilterRules") {
+                configFileSettings.qtFilterRules = ""
+            } else if (parameter === "log/qtMessagePattern") {
+                configFileSettings.qtMsgPattern = ""
+            } else {
+                configFileSettings.spdlogMsgPattern = ""
+            }
+            dialog.destroy()
+        })
+        dialog.open()
     }
 }
