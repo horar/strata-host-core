@@ -44,6 +44,7 @@ add_library(${PROJECT_NAME}
     src/Serial/SerialDevice.cpp
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
+    src/Mock/MockDeviceConstants.cpp
     src/Tcp/TcpDevice.cpp
     src/Operations/Commands/BasePlatformCommand.cpp
     src/Operations/Commands/CmdGetFirmwareInfo.cpp

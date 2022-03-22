@@ -116,9 +116,9 @@ void SciMockCommandModel::updateModelData(const MockVersion& version)
     beginResetModel();
 
     commands_.clear();
-    QList<MockCommand> commands = mockSupportedCommands(version);
+    QList<MockCommand> commands = MockUtils::supportedCommands(version);
     foreach(auto command, commands) {
-        commands_.push_back({command, mockCommandConvertEnumToString(command)});
+        commands_.push_back({command, MockCommandUtils::convertEnumToString(command)});
     }
 
     endResetModel();

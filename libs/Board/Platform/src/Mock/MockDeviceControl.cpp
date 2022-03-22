@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include <Mock/MockDeviceControl.h>
+#include <QRegularExpression>
 #include <QFile>
 #include <QDir>
 #include <QTimer>
@@ -237,7 +238,7 @@ void MockDeviceControl::initializeDefaultResponses()
     }
 
     responses_.clear();
-    QList<MockCommand> supportedCommands = mockSupportedCommands(version_);
+    QList<MockCommand> supportedCommands = MockUtils::supportedCommands(version_);
     for(auto command: supportedCommands) {
         responses_.insert({command, MockResponse::Normal});
     }
@@ -250,37 +251,37 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
     std::vector<QByteArray> retVal;
 
     if (parseResult.IsError()) {
-        return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});
+        return std::vector<QByteArray>({TestCommands::nack_badly_formatted_json});
     }
 
     if (requestDoc.HasMember("cmd") == false) {
-        return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});
+        return std::vector<QByteArray>({TestCommands::nack_badly_formatted_json});
     }
 
     auto *qCmd = &requestDoc["cmd"];
     if (qCmd->IsString() == false) {
-        return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});
+        return std::vector<QByteArray>({TestCommands::nack_badly_formatted_json});
     }
 
     MockCommand recievedCommand;
     std::string cmd = qCmd->GetString();
-    if (mockCommandConvertStringToEnum(cmd, recievedCommand) == false) {
+    if (MockCommandUtils::convertStringToEnum(cmd, recievedCommand) == false) {
         qCWarning(lcDeviceMock) << "Unknown command received:" << cmd.c_str();
-        retVal.push_back(test_commands::nack_command_not_found);
+        retVal.push_back(TestCommands::nack_command_not_found);
         return replacePlaceholders(retVal, requestDoc);
     }
 
     MockResponse response = getResponseForCommand(recievedCommand);
 
     if (response == MockResponse::Nack) {
-        retVal.push_back(test_commands::nack_command_not_found);
+        retVal.push_back(TestCommands::nack_command_not_found);
         return replacePlaceholders(retVal, requestDoc);
     }
 
-    retVal.push_back(test_commands::ack);
+    retVal.push_back(TestCommands::ack);
 
     if (response == MockResponse::No_JSON) {
-        retVal.push_back(test_commands::no_JSON_response);
+        retVal.push_back(TestCommands::no_JSON_response);
         return replacePlaceholders(retVal, requestDoc);
     }
 
@@ -307,8 +308,8 @@ std::vector<QByteArray> MockDeviceControl::getResponses(const QByteArray& reques
     default: break;
     }
 
-    auto versionIter = test_commands::mockResponsesMap.constFind(version_);
-    if (versionIter != test_commands::mockResponsesMap.constEnd()) {
+    auto versionIter = TestCommands::mockResponsesMap.constFind(version_);
+    if (versionIter != TestCommands::mockResponsesMap.constEnd()) {
         auto commandIter = versionIter.value().constFind(recievedCommand);
         if (commandIter != versionIter.value().constEnd()) {
             auto responseIter = commandIter.value().constFind(response);
@@ -439,7 +440,7 @@ const std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::
         QString responseString(response);
 
         QRegularExpressionMatchIterator rxIterator =
-            test_commands::parameterRegex.globalMatch(responseString);
+            TestCommands::parameterRegex.globalMatch(responseString);
         while (rxIterator.hasNext()) {
             QRegularExpressionMatch match = rxIterator.next();
             QString matchStr = match.captured(0);
