@@ -721,6 +721,15 @@ R"({
     }
 })");
 
+const QByteArray TestCommands::notification_bootloader_active =
+'\n' + normalizeMessage(
+R"({
+    "notification":{
+        "value":"bootloader_active",
+        "payload":{}
+    }
+})");
+
 const QMap<MockVersion, QMap<MockCommand, QMap<MockResponse, QByteArray> > > TestCommands::mockResponsesMap = {
     // version 1.0
     {{MockVersion::Version_1, {
@@ -810,6 +819,10 @@ const QMap<MockVersion, QMap<MockCommand, QMap<MockResponse, QByteArray> > > Tes
             {MockResponse::Normal, backup_firmware_response}
         }}
     }}}
+};
+
+const QMap<MockNotification, QByteArray> TestCommands::mockNotificationMap = {
+    {MockNotification::BootloaderActive, notification_bootloader_active}
 };
 
 
