@@ -85,6 +85,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::QtLogger
     strata::SGUtilsCpp
     strata::SGVersionUtils
+    strata::SGCore
 )
 
 target_include_directories(${PROJECT_NAME}

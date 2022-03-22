@@ -6,6 +6,12 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
+#include "WgModel.h"
+
+#include <SGCore/AppUi.h>
+
+#include "Version.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtWidgets/QApplication>
@@ -16,9 +22,8 @@
 #include <QIcon>
 #include <QQmlFileSelector>
 #include <QtLoggerSetup.h>
+
 #include "logging/LoggingQtCategories.h"
-#include "Version.h"
-#include "WgModel.h"
 
 static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -138,12 +143,12 @@ int main(int argc, char *argv[])
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &wgModel_, &WgModel::handleQmlWarning);
 
+    strata::SGCore::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty()) {
-        qCCritical(lcWg) << "engine failed to load 'main' qml file; quitting...";
-        return -1;
-    }
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
 }

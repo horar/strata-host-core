@@ -87,6 +87,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGJsonSyntaxHighlighter
     strata::SGTextHighlighter
     strata::SGSortFilterProxyModel
+    strata::SGCore
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

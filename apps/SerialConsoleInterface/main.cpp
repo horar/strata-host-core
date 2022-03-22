@@ -11,6 +11,8 @@
 #include "SciModel.h"
 #include "HexModel.h"
 
+#include <SGCore/AppUi.h>
+
 #include "Version.h"
 #include "Timestamp.h"
 
@@ -206,16 +208,16 @@ int main(int argc, char *argv[])
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &sciModel_, &SciModel::handleQmlWarning);
 
+    strata::SGCore::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
 
 #ifdef APPS_FEATURE_BLE
     engine.rootContext()->setContextProperty("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
 #endif // APPS_FEATURE_BLE
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty()) {
-        qCCritical(lcSci) << "engine failed to load 'main' qml file; quitting...";
-        return -1;
-    }
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
 }

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="ErrorDialog.qml">ErrorDialog.qml</file>
+        <file>images/onsemi_logo_reverse.svg</file>
+    </qresource>
+</RCC>

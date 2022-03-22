@@ -6,20 +6,23 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include "AppUi.h"
+#include "SGCore/AppUi.h"
 
 #include <QCoreApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+namespace strata::SGCore {
+
 AppUi::AppUi(QQmlApplicationEngine& engine, const QUrl& errorUrl, QObject* parent)
     : QObject(parent), engine_{engine}, errorUrl_{errorUrl}
 {
+    initializeResources();
 }
 
 void AppUi::loadUrl(const QUrl& url)
 {
-    qCDebug(lcDevStudio) << "loading" << url;
+    qCDebug(lcAppUi) << "loading" << url;
 
     auto qLaterDeleter = [](QQmlComponent* p) { p->deleteLater(); };
     std::unique_ptr<QQmlComponent, qtLaterDeleterFunction> newComponent(new QQmlComponent(&engine_),
@@ -31,7 +34,7 @@ void AppUi::loadUrl(const QUrl& url)
 
 void AppUi::statusChanged(QQmlComponent::Status status)
 {
-    qCDebug(lcDevStudio) << "loading status" << status;
+    qCDebug(lcAppUi) << "loading status" << status;
 
     if (status == QQmlComponent::Ready) {
         loadSuccess();
@@ -44,12 +47,12 @@ void AppUi::loadSuccess()
 {
     QObject* object = component_->create();
     if (object == nullptr) {
-        qCCritical(lcDevStudio)
+        qCCritical(lcAppUi)
             << "component creation critically failed:" << component_->errorString();
         emit uiFails();
         return;
     }
-    qCDebug(lcDevStudio) << "UI ready";
+    qCDebug(lcAppUi) << "UI ready";
     if (component_->url() != errorUrl_) {
         emit uiLoaded();
     }
@@ -57,13 +60,13 @@ void AppUi::loadSuccess()
 
 void AppUi::loadFailed()
 {
-    qCCritical(lcDevStudio) << "details:";
+    qCCritical(lcAppUi) << "details:";
     foreach (const QQmlError& error, component_->errors()) {
-        qCCritical(lcDevStudio) << error.toString();
+        qCCritical(lcAppUi) << error.toString();
     }
 
     if (component_->url() == errorUrl_) {
-        qCCritical(lcDevStudio)
+        qCCritical(lcAppUi)
             << "hell froze - fails to load error dialog; aborting...";
         emit uiFails();
         return;
@@ -72,4 +75,6 @@ void AppUi::loadFailed()
     const auto ctx{component_->engine()->rootContext()};
     ctx->setContextProperty("errorString", component_->errorString());
     loadUrl(errorUrl_);
+}
+
 }

@@ -39,8 +39,8 @@ ApplicationWindow {
             verticalAlignment: Text.AlignVCenter
 
             text: qsTr("<strong><h2>An unexpected application error has occurred.</h2></strong>" +
-                       "<br><br>" +
-                       "Please contact your local sales representative.")
+                        "<br><br>" +
+                        "Please contact your local sales representative.")
         }
     }
 
@@ -111,14 +111,18 @@ ApplicationWindow {
             id: strataHeaderBackground
 
             anchors.fill: parent
-            color: "black"
+            color: "#465e66"
 
             Image {
                 id: strataLogoImage
 
-                height: 0.8 * parent.height
-                anchors.verticalCenter: parent.verticalCenter
-                source: "qrc:/images/strata-logo-reverse.svg"
+                height: 0.5 * parent.height
+                anchors {
+                    left: parent.left
+                    leftMargin: 8
+                    verticalCenter: parent.verticalCenter
+                }
+                source: "qrc:/images/onsemi_logo_reverse.svg"
                 fillMode: Image.PreserveAspectFit
                 mipmap: true
             }

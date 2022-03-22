@@ -14,6 +14,9 @@
 #include "logging/LoggingQtCategories.h"
 
 class QQmlApplicationEngine;
+inline void initializeResources() { Q_INIT_RESOURCE(qml_minimal_ui); }
+
+namespace strata::SGCore {
 
 class AppUi : public QObject
 {
@@ -43,3 +46,5 @@ private:
     QQmlApplicationEngine& engine_;
     QUrl errorUrl_;
 };
+
+} // namespace strata::SGCore
