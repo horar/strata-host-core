@@ -124,7 +124,7 @@ FocusScope {
                         right: parent.right
                     }
 
-                    property var nextContent: ""
+                    property string nextContent: ""
                     onNextContentChanged: {
                         changeContentTimer.start()
                     }
@@ -143,12 +143,15 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            var sourceIndex = platformDelegate.filterScrollbackModel.mapIndexToSource(scrollbackView.currentIndex)
-                            if (sourceIndex < 0 || scrollbackView.count === 0) {
+                            if (platformDelegate.filterScrollbackModel.count === 0 || scrollbackView.currentIndex < 0) {
+                                return ""
+                            }
+                            let sourceIndex = platformDelegate.filterScrollbackModel.mapIndexToSource(scrollbackView.currentIndex)
+                            if (sourceIndex < 0) {
                                 return ""
                             }
 
-                            var selectedMsg = platformDelegate.scrollbackModel.data(sourceIndex, "rawMessage")
+                            let selectedMsg = platformDelegate.scrollbackModel.data(sourceIndex, "rawMessage")
                             if (selectedMsg === undefined) {
                                 return ""
                             } else {
