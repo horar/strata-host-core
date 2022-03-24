@@ -252,7 +252,7 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::downloadPlatformFilepathChanged),
+                rpcMethodToString(RpcMethodName::DownloadPlatformFilepathChanged),
                 payload);
 }
 
@@ -272,7 +272,7 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::downloadPlatformSingleFileProgress),
+                rpcMethodToString(RpcMethodName::DownloadPlatformSingleFileProgress),
                 payload);
 }
 
@@ -290,7 +290,7 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::downloadPlatformSingleFileFinished),
+                rpcMethodToString(RpcMethodName::DownloadPlatformSingleFileFinished),
                 payload);
 }
 
@@ -306,7 +306,7 @@ void HostControllerService::sendDownloadPlatformFilesFinishedMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::downloadPlatformFilesFinished),
+                rpcMethodToString(RpcMethodName::DownloadPlatformFilesFinished),
                 payload);
 }
 
@@ -320,7 +320,7 @@ void HostControllerService::sendPlatformListMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::allPlatforms),
+                rpcMethodToString(RpcMethodName::AllPlatforms),
                 payload);
 }
 
@@ -337,7 +337,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::platformDocumentsProgress),
+                rpcMethodToString(RpcMethodName::PlatformDocumentsProgress),
                 payload);
 }
 
@@ -357,7 +357,7 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::controlViewDownloadProgress),
+                rpcMethodToString(RpcMethodName::ControlViewDownloadProgress),
                 payload);
 }
 
@@ -380,7 +380,7 @@ void HostControllerService::sendPlatformMetaData(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::platformMetaData),
+                rpcMethodToString(RpcMethodName::PlatformMetaData),
                 payload);
 }
 
@@ -404,7 +404,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::platformDocument),
+                rpcMethodToString(RpcMethodName::PlatformDocument),
                 payload);
 }
 
@@ -422,7 +422,7 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(hcsNotificationType::downloadViewFinished),
+                rpcMethodToString(RpcMethodName::DownloadViewFinished),
                 payload);
 }
 
@@ -469,7 +469,7 @@ void HostControllerService::platformStateChanged(const QByteArray &deviceId)
 {
     Q_UNUSED(deviceId)
     strataServer_->broadcastNotification(
-                hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+                rpcMethodToString(RpcMethodName::ConnectedPlatforms),
                 platformController_.createPlatformsList());
 }
 
@@ -486,7 +486,7 @@ void HostControllerService::sendPlatformMessageToClients(
 
     strataServer_->sendNotification(
                 firstClientId,
-                hcsNotificationTypeToString(hcsNotificationType::platformNotification),
+                rpcMethodToString(RpcMethodName::PlatformNotification),
                 payload);
 }
 
@@ -505,9 +505,9 @@ void HostControllerService::connectDeviceFinished(
         const QString &errorMessage)
 {
     if (errorMessage.isEmpty()) {
-        sendDeviceSuccess(hcsNotificationType::connectDevice, deviceId, clientId);
+        sendDeviceSuccess(RpcMethodName::ConnectDevice, deviceId, clientId);
     } else {
-        sendDeviceError(hcsNotificationType::connectDevice, deviceId, clientId, errorMessage);
+        sendDeviceError(RpcMethodName::ConnectDevice, deviceId, clientId, errorMessage);
     }
 }
 
@@ -517,9 +517,9 @@ void HostControllerService::disconnectDeviceFinished(
         const QString &errorMessage)
 {
     if (errorMessage.isEmpty()) {
-        sendDeviceSuccess(hcsNotificationType::disconnectDevice, deviceId, clientId);
+        sendDeviceSuccess(RpcMethodName::DisconnectDevice, deviceId, clientId);
     } else {
-        sendDeviceError(hcsNotificationType::disconnectDevice, deviceId, clientId, errorMessage);
+        sendDeviceError(RpcMethodName::DisconnectDevice, deviceId, clientId, errorMessage);
     }
 }
 
@@ -541,7 +541,7 @@ void HostControllerService::processCmdDynamicPlatformList(const strataRPC::RpcRe
 
     strataServer_->sendNotification(
                 request.clientId(),
-                hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+                rpcMethodToString(RpcMethodName::ConnectedPlatforms),
                 platformList);
 }
 
@@ -1010,95 +1010,95 @@ void HostControllerService::handleUpdateProgress(
             progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
         payload.insert("error_string", progress.lastError);
     }
-    hcsNotificationType type = (progress.programController)
-            ? hcsNotificationType::programControllerJob
-            : hcsNotificationType::updateFirmwareJob;
+    RpcMethodName method = (progress.programController)
+            ? RpcMethodName::ProgramControllerJob
+            : RpcMethodName::UpdateFirmwareJob;
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(type),
+                rpcMethodToString(method),
                 payload);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished) {
         // If update process finished broadcast new platforms list to indicate
         // the firmware version has changed (or platform is in bootloader mode)
         strataServer_->broadcastNotification(
-                    hcsNotificationTypeToString(hcsNotificationType::connectedPlatforms),
+                    rpcMethodToString(RpcMethodName::ConnectedPlatforms),
                     platformController_.createPlatformsList());
     }
 }
 
-constexpr const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationType notificationType)
+constexpr const char* HostControllerService::rpcMethodToString(RpcMethodName method)
 {
-    const char* type = "";
+    const char* string = "";
 
-    switch (notificationType) {
-    case hcsNotificationType::downloadPlatformFilepathChanged:
-        type = "download_platform_filepath_changed";
+    switch (method) {
+    case RpcMethodName::DownloadPlatformFilepathChanged:
+        string = "download_platform_filepath_changed";
         break;
-    case hcsNotificationType::downloadPlatformSingleFileProgress:
-        type = "download_platform_single_file_progress";
+    case RpcMethodName::DownloadPlatformSingleFileProgress:
+        string = "download_platform_single_file_progress";
         break;
-    case hcsNotificationType::downloadPlatformSingleFileFinished:
-        type = "download_platform_single_file_finished";
+    case RpcMethodName::DownloadPlatformSingleFileFinished:
+        string = "download_platform_single_file_finished";
         break;
-    case hcsNotificationType::downloadPlatformFilesFinished:
-        type = "download_platform_files_finished";
+    case RpcMethodName::DownloadPlatformFilesFinished:
+        string = "download_platform_files_finished";
         break;
-    case hcsNotificationType::allPlatforms:
-        type = "all_platforms";
+    case RpcMethodName::AllPlatforms:
+        string = "all_platforms";
         break;
-    case hcsNotificationType::platformMetaData:
-        type = "platform_meta_data";
+    case RpcMethodName::PlatformMetaData:
+        string = "platform_meta_data";
         break;
-    case hcsNotificationType::controlViewDownloadProgress:
-        type = "control_view_download_progress";
+    case RpcMethodName::ControlViewDownloadProgress:
+        string = "control_view_download_progress";
         break;
-    case hcsNotificationType::downloadViewFinished:
-        type = "download_view_finished";
+    case RpcMethodName::DownloadViewFinished:
+        string = "download_view_finished";
         break;
-    case hcsNotificationType::updatesAvailable:
-        type = "updates_available";
+    case RpcMethodName::UpdatesAvailable:
+        string = "updates_available";
         break;
-    case hcsNotificationType::updateFirmware:
-        type = "update_firmware";
+    case RpcMethodName::UpdateFirmware:
+        string = "update_firmware";
         break;
-    case hcsNotificationType::updateFirmwareJob:
-        type = "update_firmware_job";
+    case RpcMethodName::UpdateFirmwareJob:
+        string = "update_firmware_job";
         break;
-    case hcsNotificationType::programController:
-        type = "program_controller";
+    case RpcMethodName::ProgramController:
+        string = "program_controller";
         break;
-    case hcsNotificationType::programControllerJob:
-        type = "program_controller_job";
+    case RpcMethodName::ProgramControllerJob:
+        string = "program_controller_job";
         break;
-    case hcsNotificationType::bluetoothScan:
-        type = "bluetooth_scan";
+    case RpcMethodName::BluetoothScan:
+        string = "bluetooth_scan";
         break;
-    case hcsNotificationType::connectDevice:
-        type = "connect_device";
+    case RpcMethodName::ConnectDevice:
+        string = "connect_device";
         break;
-    case hcsNotificationType::disconnectDevice:
-        type = "disconnect_device";
+    case RpcMethodName::DisconnectDevice:
+        string = "disconnect_device";
         break;
-    case hcsNotificationType::platformDocumentsProgress:
-        type = "document_progress";
+    case RpcMethodName::PlatformDocumentsProgress:
+        string = "document_progress";
         break;
-    case hcsNotificationType::platformDocument:
-        type = "document";
+    case RpcMethodName::PlatformDocument:
+        string = "document";
         break;
-    case hcsNotificationType::platformMessage:
-        type = "platform_message";
+    case RpcMethodName::PlatformMessage:
+        string = "platform_message";
         break;
-    case hcsNotificationType::platformNotification:
-        type = "platform_notification";
+    case RpcMethodName::PlatformNotification:
+        string = "platform_notification";
         break;
-    case hcsNotificationType::connectedPlatforms:
-        type = "connected_platforms";
+    case RpcMethodName::ConnectedPlatforms:
+        string = "connected_platforms";
         break;
     }
 
-    return type;
+    return string;
 }
 
 void HostControllerService::processCmdCheckForUpdates(const strataRPC::RpcRequest &request)
@@ -1112,7 +1112,7 @@ void HostControllerService::processCmdCheckForUpdates(const strataRPC::RpcReques
 }
 
 void HostControllerService::sendDeviceError(
-        hcsNotificationType notificationType,
+        RpcMethodName method,
         const QByteArray& deviceId,
         const QByteArray& clientId,
         const QString &errorString)
@@ -1124,18 +1124,18 @@ void HostControllerService::sendDeviceError(
 
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(notificationType),
+                rpcMethodToString(method),
                 resultObject);
 }
 
 void HostControllerService::sendDeviceSuccess(
-        hcsNotificationType notificationType,
+        RpcMethodName method,
         const QByteArray& deviceId,
         const QByteArray& clientId)
 {
     strataServer_->sendNotification(
                 clientId,
-                hcsNotificationTypeToString(notificationType),
+                rpcMethodToString(method),
                 {{ "device_id", QLatin1String(deviceId) }});
 }
 

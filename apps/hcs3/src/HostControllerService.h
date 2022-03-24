@@ -157,39 +157,39 @@ private slots:
             const QString &errorMessage);
 
 private:
-    enum class hcsNotificationType {
-        downloadPlatformFilepathChanged,
-        downloadPlatformSingleFileProgress,
-        downloadPlatformSingleFileFinished,
-        downloadPlatformFilesFinished,
-        allPlatforms,
-        platformMetaData,
-        controlViewDownloadProgress,
-        downloadViewFinished,
-        updatesAvailable,
-        updateFirmware,
-        updateFirmwareJob,
-        programController,
-        programControllerJob,
-        bluetoothScan,
-        connectDevice,
-        disconnectDevice,
-        platformDocumentsProgress,
-        platformDocument,
-        platformMessage,
-        platformNotification,
-        connectedPlatforms
+    enum class RpcMethodName {
+        DownloadPlatformFilepathChanged,
+        DownloadPlatformSingleFileProgress,
+        DownloadPlatformSingleFileFinished,
+        DownloadPlatformFilesFinished,
+        AllPlatforms,
+        PlatformMetaData,
+        ControlViewDownloadProgress,
+        DownloadViewFinished,
+        UpdatesAvailable,
+        UpdateFirmware,
+        UpdateFirmwareJob,
+        ProgramController,
+        ProgramControllerJob,
+        BluetoothScan,
+        ConnectDevice,
+        DisconnectDevice,
+        PlatformDocumentsProgress,
+        PlatformDocument,
+        PlatformMessage,
+        PlatformNotification,
+        ConnectedPlatforms
     };
-    constexpr const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
+    constexpr const char *rpcMethodToString(RpcMethodName method);
 
     void sendDeviceError(
-            hcsNotificationType notificationType,
+            RpcMethodName method,
             const QByteArray& deviceId,
             const QByteArray& clientId,
             const QString &errorString);
 
     void sendDeviceSuccess(
-            hcsNotificationType notificationType,
+            RpcMethodName method,
             const QByteArray& deviceId,
             const QByteArray& clientId);
 
