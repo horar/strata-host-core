@@ -494,7 +494,7 @@ void HostControllerService::sendPlatformMessageToClients(
 void HostControllerService::bluetoothScanFinished(const QJsonObject payload)
 {
     strataServer_->broadcastNotification(
-                hcsNotificationTypeToString(hcsNotificationType::bluetoothScan),
+                rpcMethodToString(RpcMethodName::BluetoothScan),
                 payload);
 }
 #endif // APPS_FEATURE_BLE
