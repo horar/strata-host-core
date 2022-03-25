@@ -408,22 +408,28 @@ Rectangle {
 
         Rectangle {
             visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
-            height: bleIconHover.containsMouse ? bleIconContainer.height : bleIconContainer.height - 6
+            height: bleIconContainer.height
             width: height
             anchors.centerIn: bleIconContainer
 
-            radius: height / 2
-            color: Theme.palette.onsemiOrange
+            radius: 5
+            color: {
+                if (bleIconHover.containsMouse) {
+                    return "dimgrey"
+                } else {
+                    return "transparent"
+                }
+            }
 
             SGIcon {
-                height: bleIconHover.containsMouse ? 26 : 22
+                height: parent.height - 20
                 width: height
                 anchors {
                     centerIn: parent
                 }
 
-                source: "qrc:/sgimages/bluetooth-b.svg"
-                iconColor: "white"
+                source: "qrc:/sgimages/bluetooth.svg"
+                iconColor: Theme.palette.white
             }
         }
 
