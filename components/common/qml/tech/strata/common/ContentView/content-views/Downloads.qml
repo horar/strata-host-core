@@ -378,9 +378,17 @@ Item {
         Button {
             width: Math.min(implicitWidth, parent.width)
             anchors.horizontalCenter: wrapper.horizontalCenter
-            opacity: enabled ? 1 : 0.2
+            opacity: enabled ? 1 : 0.4
             enabled: savePath !== ""
-            text: "Open Selected Save Folder"
+            text: "Open Save Folder"
+
+            contentItem: SGWidgets.SGText {
+                text: parent.text
+                font: parent.font
+                color: enabled ? "black" : "white"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
 
             background: Rectangle {
                 implicitWidth: 200
@@ -412,7 +420,7 @@ Item {
                 horizontalCenter: wrapper.horizontalCenter
             }
 
-            opacity: enabled ? 1 : 0.2
+            opacity: enabled ? 1 : 0.4
             enabled: {
                 if (downloadButtonGroup.checkState === Qt.Unchecked
                         || repeater.model.downloadInProgress
