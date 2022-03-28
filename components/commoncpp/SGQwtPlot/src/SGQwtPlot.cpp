@@ -258,7 +258,7 @@ void SGQwtPlot::setGridColor(QColor newColor)
 {
     if (gridColor_ != newColor) {
         gridColor_ = newColor;
-        qwtGrid_->setPen(QPen(gridColor_, 0, Qt::DotLine));
+        qwtGrid_->setPen(QPen(gridColor_, 0.0, Qt::DotLine));
         emit gridColorChanged();
 
         if (autoUpdate_) {
@@ -659,7 +659,7 @@ void SGQwtPlot::insertLegend(bool legend)
         if (legend) {
             qwtPlot->insertLegend(new QwtLegend(), QwtPlot::BottomLegend);
         } else {
-            qwtPlot->insertLegend(0);
+            qwtPlot->insertLegend(nullptr);
         }
         emit legendChanged();
 
