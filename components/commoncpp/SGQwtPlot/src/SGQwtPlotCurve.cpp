@@ -168,7 +168,7 @@ QPointF SGQwtPlotCurve::at(int index)
         return curveData_[index];
     } else {
         qCWarning(lcQWTPlot) << "Index Invalid" << index << "return 0,0";
-        return QPointF(0, 0);
+        return QPointF(0.0, 0.0);
     }
 }
 
@@ -200,7 +200,7 @@ void SGQwtPlotCurve::setSymbol(int newStyle, QColor color, int penStyle, int siz
 // Given any value from the X axis of the graph, find the point in the curve with the nearest X value and return its index
 int SGQwtPlotCurve::closestXAxisPointIndex(double xVal) {
     double diff;
-    QPointF currentPoint = QPointF(0,0);
+    QPointF currentPoint = QPointF(0.0, 0.0);
 
     // error check to ensure there is a curve with points
     if (curveData_.count() == 0) {
