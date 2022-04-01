@@ -13,7 +13,8 @@
     <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
-    <Checkable>false</Checkable>
+    <ExpandedByDefault>true</ExpandedByDefault>
+    <ForcedInstallation>true</ForcedInstallation>
     <Dependencies>@PROJECT_DEPENDENCIES@</Dependencies>
     <SortingPriority>70</SortingPriority>
 </Package>
