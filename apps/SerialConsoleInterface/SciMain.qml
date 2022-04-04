@@ -30,6 +30,12 @@ Item {
         onPlatformConnected: {
             tabBar.currentIndex = index
         }
+
+        onPlatformReady: {
+            if (recognized === false && Sci.Settings.relasePortOfUnrecongizedDevice) {
+                sciModel.platformModel.releasePort(index, 0)
+            }
+        }
     }
 
     Binding {

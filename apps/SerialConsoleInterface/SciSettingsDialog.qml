@@ -177,6 +177,28 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
+                text: "Release port of unrecognized device"
+                Layout.alignment: Qt.AlignRight
+            }
+
+            SGWidgets.SGCheckBox {
+                id: relesePortOption
+                padding: 0
+                Layout.alignment: Qt.AlignLeft
+                text: " "
+
+                Binding {
+                    target: relesePortOption
+                    property: "checked"
+                    value: Sci.Settings.relasePortOfUnrecongizedDevice
+                }
+
+                onCheckedChanged : {
+                    Sci.Settings.relasePortOfUnrecongizedDevice = checked
+                }
+            }
+
+            SGWidgets.SGText {
                 text: "Reset Settings"
                 fontSizeMultiplier: 1.1
                 font.bold: true

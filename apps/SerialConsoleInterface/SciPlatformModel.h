@@ -76,7 +76,7 @@ signals:
     void maxCmdInHistoryCountChanged();
     void condensedAtStartupChanged();
     void platformConnected(int index);
-    void platformReady(int index);
+    void platformReady(int index, bool recognized);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

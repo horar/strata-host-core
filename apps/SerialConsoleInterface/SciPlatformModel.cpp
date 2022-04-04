@@ -221,7 +221,7 @@ void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recogn
         platform->setStatus(SciPlatform::PlatformStatus::NotRecognized);
     }
 
-    emit platformReady(index);
+    emit platformReady(index, recognized);
 }
 
 void SciPlatformModel::boardDisconnectedHandler(const QByteArray& deviceId)
