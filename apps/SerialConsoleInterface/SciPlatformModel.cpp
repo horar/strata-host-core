@@ -131,6 +131,16 @@ void SciPlatformModel::releasePort(int index, int disconnectDuration)
                 std::chrono::milliseconds(disconnectDuration));
 }
 
+bool SciPlatformModel::acquirePort(int index)
+{
+    if (index < 0 || index >= platformList_.count()) {
+        qCCritical(lcSci) << "index out of range";
+        return false;
+    }
+
+    return platformList_.at(index)->acquirePort();
+}
+
 void SciPlatformModel::removePlatform(int index)
 {
     if (index < 0 || index >= platformList_.count()) {

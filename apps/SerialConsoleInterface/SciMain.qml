@@ -14,6 +14,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
 import tech.strata.sci 1.0 as Sci
+import tech.strata.theme 1.0
 
 Item {
     id: sciMain
@@ -22,7 +23,6 @@ Item {
     }
 
     property variant platformInfoWindow: null
-    property int releasePortDurationInSec: 5
 
     Connections {
         target: sciModel.platformModel
@@ -54,6 +54,10 @@ Item {
         target: sciModel.platformModel
         property: "condensedAtStartup"
         value: Sci.Settings.commandsCondensedAtStartup
+    }
+
+    InfoPopup {
+        id: infoPopup
     }
 
     Item {
@@ -202,7 +206,6 @@ Item {
 
                     Row {
                         id: buttonRow
-
                         anchors {
                             right: parent.right
                             rightMargin: 4
@@ -210,7 +213,6 @@ Item {
                         }
 
                         spacing: 4
-
                         visible: tabDelegate.isCurrent
                                  && ( bgMouseArea.containsMouse
                                      || releasePortButton.hovered
@@ -219,11 +221,34 @@ Item {
                         SGWidgets.SGIconButton {
                             id: releasePortButton
 
-                            enabled: model.platform.programInProgress === false && model.platform.status !== Sci.SciPlatform.Disconnected
-                            icon.source: "qrc:/sgimages/disconnected.svg"
-                            hintText: "Release port for "+releasePortDurationInSec+"s"
+                            property string defaultIconSource: {
+                                if (model.platform.status === Sci.SciPlatform.Disconnected) {
+                                    return "qrc:/sgimages/connected.svg"
+                                }
+                                return "qrc:/sgimages/disconnected.svg"
+                            }
+
+                            enabled: model.platform.programInProgress === false
+                                     && model.platform.status !== Sci.SciPlatform.Connected
+                                     && model.platform.acquirePortInProgress === false
+
+                            icon.source: defaultIconSource
+                            hintText: {
+                                if (model.platform.status === Sci.SciPlatform.Disconnected) {
+                                    return "Acquire port"
+                                }
+                                return "Release port"
+                            }
                             onClicked: {
-                                releasePort(index)
+                                if (model.platform.status === Sci.SciPlatform.Ready
+                                        || model.platform.status === Sci.SciPlatform.NotRecognized ) {
+                                    sciModel.platformModel.releasePort(index, 0)
+                                } else if (model.platform.status === Sci.SciPlatform.Disconnected) {
+                                    var acquired = sciModel.platformModel.acquirePort(index, 0)
+                                    if (acquired === false) {
+                                        showPortAcquireRequestFailed();
+                                    }
+                                }
                             }
                         }
 
@@ -290,6 +315,13 @@ Item {
                 commandHistoryModel: model.platform.commandHistoryModel
                 filterSuggestionModel: model.platform.filterSuggestionModel
                 tabBorderColor: tabBar.tabBorderColor
+
+                Connections {
+                    target: model.platform
+                    onAcquirePortRequestFailed: {
+                        showPortAcquireRequestFailed();
+                    }
+                }
             }
         }
     }
@@ -319,10 +351,6 @@ Item {
         sciModel.platformModel.removePlatform(index)
     }
 
-    function releasePort(index) {
-        sciModel.platformModel.releasePort(index, releasePortDurationInSec * 1000);
-    }
-
     function showPlatformInfoWindow(classId, className) {
         if (platformInfoWindow) {
             platformInfoWindow.close()
@@ -336,7 +364,10 @@ Item {
                         "platformClassName": className
                     })
 
-
         platformInfoWindow.visible = true
+    }
+
+    function showPortAcquireRequestFailed() {
+        infoPopup.showFailed("Port acquisition failed")
     }
 }
