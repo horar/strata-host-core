@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file>circuits-background-tiled.png</file>
+        <file>chevron-up.png</file>
+        <file>chevron-down.png</file>
+        <file>chevron-right.png</file>
+        <file>checkbox_unchecked.png</file>
+        <file>checkbox_unchecked_disabled.png</file>
+        <file>checkbox_checked.png</file>
+        <file>checkbox_checked_disabled.png</file>
+        <file>checkbox_indeterminate.png</file>
+        <file>checkbox_indeterminate_disabled.png</file>
+        <file>radiobutton_unchecked.png</file>
+        <file>radiobutton_unchecked_hover.png</file>
+        <file>radiobutton_unchecked_pressed.png</file>
+        <file>radiobutton_unchecked_disabled.png</file>
+        <file>radiobutton_checked.png</file>
+        <file>radiobutton_checked_hover.png</file>
+        <file>radiobutton_checked_pressed.png</file>
+        <file>radiobutton_checked_disabled.png</file>
+    </qresource>
+</RCC>

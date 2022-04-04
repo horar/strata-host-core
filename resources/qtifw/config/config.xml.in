@@ -20,6 +20,8 @@
     <WizardStyle>Modern</WizardStyle>
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
+    <WizardMinimumWidth>720</WizardMinimumWidth>
+    <WizardMinimumHeight>420</WizardMinimumHeight>
     <StartMenuDir>onsemi</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/onsemi/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
@@ -27,6 +29,7 @@
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
     <DisableAuthorizationFallback>true</DisableAuthorizationFallback>
     <ControlScript>installscript.qs</ControlScript>
+    <StyleSheet>style.qss</StyleSheet>
     <RemoteRepositories>
         <Repository>
             <Url>@STRATA_OTA_REPOSITORY@</Url>
