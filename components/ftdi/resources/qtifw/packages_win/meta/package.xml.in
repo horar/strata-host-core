@@ -11,7 +11,7 @@
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
     <Version>@MODULE_VERSION@</Version>
-    <Checkable>false</Checkable>
+    <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>58</SortingPriority>
     <!--we need admin rights to install this component-->
     <RequiresAdminRights>true</RequiresAdminRights>

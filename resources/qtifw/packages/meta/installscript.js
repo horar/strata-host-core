@@ -6,8 +6,15 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
+var isSilent = false;
+var performCleanup = false;
 var restart_is_required = false;
 var is_command_line_instance = false;
+
+function isValueSet(val)
+{
+    return (installer.containsValue(val) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
+}
 
 function Component()
 {
@@ -28,6 +35,17 @@ function Component()
         if (installer.isInstaller() && (systemInfo.productType == "windows")) {
             component.loaded.connect(this, Component.prototype.addShortcutWidget);
         }
+        gui.pageById(QInstaller.ComponentSelection).entered.connect(this, Component.prototype.onComponentSelectionPageEntered);
+        gui.pageById(QInstaller.LicenseCheck).entered.connect(this, Component.prototype.onLicenseAgreementPageEntered);
+        gui.pageById(QInstaller.InstallationFinished).entered.connect(this, Component.prototype.onFinishedPageEntered);
+    }
+
+    if (isValueSet("isSilent_internal")) {
+        isSilent = true;
+    }
+
+    if (isValueSet("performCleanup_internal")) {
+        performCleanup = true;
     }
 }
 
@@ -63,7 +81,7 @@ Component.prototype.onInstallationStarted = function()
     }
 
     if ((systemInfo.productType == "windows") && installer.isInstaller()) {
-        let onsemiConfigFolder = installer.value("ProgramDataDir") + "\\onsemi";
+        let onsemiConfigFolder = getProgramDataDirectory() + "\\onsemi";
         try {
             if (installer.gainAdminRights()) {
                 if (installer.fileExists(onsemiConfigFolder) == false) {
@@ -79,6 +97,82 @@ Component.prototype.onInstallationStarted = function()
         } catch(e) {
             console.log("unable to change access rights for Strata config folder");
             console.log(e);
+        }
+    }
+}
+
+Component.prototype.onComponentSelectionPageEntered = function ()
+{
+    console.log("onComponentSelectionPageEntered");
+
+    let widget = gui.pageById(QInstaller.ComponentSelection);
+    if (widget != null) {
+        if (isSilent) {
+            // select the ui components
+            if (performCleanup == true) {
+                let componentsToClean = acquireCleanupOperations();
+                for (let i = 0; i < componentsToClean.length; i++) {
+                    console.log("removing: " + componentsToClean[i])
+                    widget.deselectComponent(componentsToClean[i]);
+                }
+            } else if (installer.isInstaller()) {
+                widget.selectAll();
+                //widget.selectComponent("com.onsemi.strata.devstudio");
+            }
+        }
+    }
+}
+
+Component.prototype.onLicenseAgreementPageEntered = function ()
+{
+    console.log("onLicenseAgreementPageEntered");
+
+    if (isSilent) {
+        let widget = gui.pageById(QInstaller.LicenseCheck);
+        if (widget != null) {
+            let licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
+            if (licenseRadioButton != null) {
+                // QTIFW version 3.2
+                licenseRadioButton.setChecked(true);
+            } else {
+                let licenseCheckBox = widget.findChild("AcceptLicenseCheckBox");
+                if (licenseCheckBox != null) {
+                    // QTIFW version 4.1+
+                    licenseCheckBox.setChecked(true);
+                }
+            }
+        }
+    }
+}
+
+Component.prototype.onFinishedPageEntered = function ()
+{
+    console.log("onFinishedPageEntered");
+
+    let widget = gui.pageById(QInstaller.InstallationFinished);
+    if (widget != null) {
+        let runItCheckBox = widget.findChild("RunItCheckBox");
+        if (runItCheckBox != null) {
+            if ((installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success) && isSilent && isComponentInstalled("com.onsemi.strata.devstudio")) {
+                runItCheckBox.setChecked(true);
+            } else {
+                runItCheckBox.setChecked(false);
+            }
+        }
+
+        if (installer.isInstaller() && (installer.status != QInstaller.Success))
+            installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
+    }
+
+    if (isSilent) {
+        if (installer.isUpdater() && (installer.status == QInstaller.Success) && (performCleanup == false)) {
+            // after update, we can do cleanup if available
+            let componentsToClean = acquireCleanupOperations();
+            if (componentsToClean.length > 0) {
+                // when it restarts, it retains all variables
+                installer.setValue("restartMaintenanceTool", "true");
+                installer.setValue("performCleanup_internal","true");   // set this since the Controller() is not called
+            }
         }
     }
 }
@@ -170,7 +264,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 
         // correct access rights to allow use [CLI] mode checkupdates
         // needed when it is in Program Files directory on Win10
-        if (installer.isInstaller() && requiresAdminRights) {
+        if (installer.isInstaller() &&  installer.status == QInstaller.Success && requiresAdminRights) {
             try {
                 if (installer.gainAdminRights()) {
                     if (installer.fileExists(target_dir)) {
@@ -245,7 +339,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 
 Component.prototype.onFinishButtonClicked = function()
 {
-    if (restart_is_required && (installer.value("isSilent_internal", "false") != "true")) {
+    if (restart_is_required && isSilent == false) {
         console.log("showing restart question to user");
         // Print a message for Windows users to tell them to restart the host machine, immediately or later
         let restart_reply = QMessageBox.question("restart.question", "Installer", "Your computer needs to restart to complete your software installation. Do you wish to restart Now?", QMessageBox.Yes | QMessageBox.No);
@@ -279,11 +373,18 @@ Component.prototype.addShortcutWidget = function () {
                 let desktopCheckBox = widget.findChild("desktopCheckBox");
                 if (desktopCheckBox != null) {
                     desktopCheckBox.toggled.connect(this, Component.prototype.desktopShortcutChanged);
+                } else {
+                    console.log("Unable to acquire desktopCheckBox");
                 }
                 let startMenuCheckBox = widget.findChild("startMenuCheckBox");
                 if (startMenuCheckBox != null) {
                     startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
+                } else {
+                    console.log("Unable to acquire startMenuCheckBox");
                 }
+                widget.entered.connect(this, Component.prototype.ShortcutCheckBoxWidgetEntered);
+            } else {
+                console.log("Unable to acquire DynamicShortcutCheckBoxWidget");
             }
         } else {
             console.log("ShortcutCheckBoxWidget page not added");
@@ -291,6 +392,32 @@ Component.prototype.addShortcutWidget = function () {
     } catch(e) {
         console.log("ShortcutCheckBoxWidget page not added");
         console.log(e);
+    }
+}
+
+Component.prototype.ShortcutCheckBoxWidgetEntered = function () {
+    let widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
+    if (widget != null) {
+        let desktopCheckBox = widget.findChild("desktopCheckBox");
+        if (desktopCheckBox != null) {
+            if (Component.prototype.isComponentAvailable("com.onsemi.strata.devstudio")) {
+                desktopCheckBox.setEnabled(true);
+                desktopCheckBox.setChecked(installer.value("add_desktop_shortcut", "true") == "true");
+            } else {
+                desktopCheckBox.setEnabled(false);
+                desktopCheckBox.setChecked(false);
+            }
+        } else {
+            console.log("Unable to acquire desktopCheckBox");
+        }
+        let startMenuCheckBox = widget.findChild("startMenuCheckBox");
+        if (startMenuCheckBox != null) {
+            startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut", "true") == "true");
+        } else {
+            console.log("Unable to acquire startMenuCheckBox");
+        }
+    } else {
+        console.log("Unable to acquire DynamicShortcutCheckBoxWidget");
     }
 }
 
@@ -393,7 +520,7 @@ function uninstallPreviousStrataInstallation()
             console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
 
             if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
-                if ((is_command_line_instance == false) && (installer.value("isSilent_internal", "false") != "true")) {
+                if ((is_command_line_instance == false) && (isSilent == false)) {
                     let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
 
                     if (uninstall_reply == QMessageBox.Ok) {
@@ -423,7 +550,7 @@ function uninstallPreviousStrataInstallation()
         // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
 
         if ((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
-            if ((is_command_line_instance == false) && (installer.value("isSilent_internal", "false") != "true")) {
+            if ((is_command_line_instance == false) && (isSilent == false)) {
                 let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
 
                 if (uninstall_reply == QMessageBox.Ok) {
@@ -450,4 +577,73 @@ function uninstallPreviousStrataInstallation()
         }
     }
     return true;
+}
+
+function acquireCleanupOperations()
+{
+    console.log("acquireCleanupOperations entered");
+
+    if (installer.isInstaller() || installer.isUninstaller()) {
+        return [];
+    }
+
+    if (installer.fileExists(installer.value("TargetDir")) == false) {
+        console.log("No TargetDir '" + installer.value("TargetDir") + "' found");
+        return [];
+    }
+
+    let target_dir = installer.value("TargetDir") + "/";
+    if (systemInfo.productType == "windows") {
+        target_dir = target_dir.split("/").join("\\");
+    }
+    let cleanupFile = target_dir + "cleanup.txt";
+
+    if (installer.fileExists(cleanupFile) == false) {
+        console.log("No cleanup.txt file found");
+        return [];
+    }
+
+    console.log("Found cleanup.txt: " + cleanupFile + ", parsing...");
+
+    let content = installer.readFile(cleanupFile, "UTF-8");
+    if (content == "") {
+        console.log("Empty cleanup.txt, nothing to cleanup");
+        return [];
+    }
+
+    let cleanupAvailable = false;
+    let lines = content.split('\n');
+    let componentsToClean = [];
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        if (line == "") {
+            continue;
+        }
+        if (isComponentInstalled(line)) {
+            cleanupAvailable = true;
+            componentsToClean.push(line)
+        }
+    }
+    
+    console.log("Found " + componentsToClean.length + " components to cleanup");
+    return componentsToClean;
+}
+
+function getProgramDataDirectory()
+{
+    let programDataPath = installer.value("RootDir").split("/").join("\\") + "\\ProgramData";
+    try {
+        let programDataPathEnv = installer.environmentVariable("ProgramData");
+        if (programDataPathEnv !== "") {
+            programDataPath = programDataPathEnv;
+            console.log("detected ProgramData path: " + programDataPath);
+        } else {
+            console.log("unable to detect correct ProgramData path, trying default one: " + programDataPath);
+        }
+    } catch(e) {
+        console.log("error while detecting correct ProgramData path, trying default one: " + programDataPath);
+        console.log(e);
+    }
+
+    return programDataPath;
 }
