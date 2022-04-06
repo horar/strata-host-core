@@ -20,6 +20,7 @@ Item {
     property int maxCommandsInHistory: defaultMaxCommandsInHistory
     property bool commandsCondensedAtStartup: defaultcommandsCondensedAtStartup
     property bool backupFirmware: defaultBackupFirmware
+    property bool relasePortOfUnrecongizedDevice: defaultRelasePortOfUnrecongizedDevice
     property int maxInputLines: 500
     property var firmwarePathList: []
     property int maxFirmwarePathList: 10
@@ -30,6 +31,7 @@ Item {
     readonly property int defaultMaxCommandsInHistory: 20
     readonly property bool defaultcommandsCondensedAtStartup: false
     readonly property bool defaultBackupFirmware: true
+    readonly property bool defaultRelasePortOfUnrecongizedDevice: false
 
     QtLabsSettings.Settings {
         category: "App"
@@ -40,6 +42,7 @@ Item {
         property alias backupFirmware: root.backupFirmware
         property alias firmwarePathList: root.firmwarePathList
         property alias lastSavedFirmwarePath: root.lastSavedFirmwarePath
+        property alias relasePortOfUnrecongizedDevice: root.relasePortOfUnrecongizedDevice
     }
 
     function resetToDefaultValues() {
@@ -47,5 +50,6 @@ Item {
         commandsInScrollbackUnlimited = defaultCommandsInScrollbackUnlimited
         maxCommandsInHistory = defaultMaxCommandsInHistory
         commandsCondensedAtStartup = defaultcommandsCondensedAtStartup
+        relasePortOfUnrecongizedDevice = defaultRelasePortOfUnrecongizedDevice
     }
 }

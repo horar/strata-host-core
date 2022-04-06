@@ -48,6 +48,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
     Q_PROPERTY(bool sendMessageInProgress READ sendMessageInProgress NOTIFY sendMessageInProgressChanged)
     Q_PROPERTY(bool sendQueueInProgress READ sendQueueInProgress NOTIFY sendQueueInProgressChanged)
+    Q_PROPERTY(bool acquirePortInProgress READ acquirePortInProgress NOTIFY acquirePortInProgressChanged)
 
 public:
     SciPlatform(SciPlatformSettings *settings, strata::PlatformManager *platformManager, QObject *parent = nullptr);
@@ -101,6 +102,7 @@ public:
     void setDeviceName(const QString &deviceName);
     bool sendMessageInProgress();
     bool sendQueueInProgress();
+    bool acquirePortInProgress();
 
     void resetPropertiesFromDevice();
     Q_INVOKABLE void sendMessage(const QString &message, bool onlyValidJson);
@@ -109,6 +111,7 @@ public:
 
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
     Q_INVOKABLE QString saveDeviceFirmware(QString filePath);
+    Q_INVOKABLE bool acquirePort();
 
     //settings handlers
     void storeCommandHistory(const QStringList &list);
@@ -139,6 +142,8 @@ signals:
     void messageReceived();
     void sendMessageInProgressChanged();
     void sendQueueInProgressChanged();
+    void acquirePortInProgressChanged();
+    void acquirePortRequestFailed();
 
 private slots:
     void messageFromDeviceHandler(strata::platform::PlatformMessage message);
@@ -159,6 +164,7 @@ private:
     void setProgramInProgress(bool programInProgress);
     void setSendMessageInProgress(bool sendMessageInProgress);
     void setSendQueueInProgress(bool sendQueueInProgress);
+    void setAcquirePortInProgress(bool acquirePortInProgress);
     bool sendNextInQueue();
     QVariantMap extractJsonError(const QJsonParseError &error);
 
@@ -186,4 +192,5 @@ private:
     bool sendMessageInProgress_ = false;
     bool sendQueueInProgress_ = false;
     std::chrono::milliseconds sendQueueDelay_ = std::chrono::milliseconds(50);
+    bool acquirePortInProgress_ = false;
 };

@@ -83,11 +83,15 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
             return;
         }
 
-        disconnect(platform_.get(), nullptr, this, nullptr);
+        disconnect(platform_.get(), &strata::platform::Platform::messageReceived, this, nullptr);
+        disconnect(platform_.get(), &strata::platform::Platform::messageSent, this, nullptr);
+        //do not disconnect from deviceError, so error for port reconnection can be handled
+
         platform_.reset();
         mockDevice_->setMockDevice(nullptr);
         setStatus(PlatformStatus::Disconnected);
     } else {
+        setAcquirePortInProgress(false);
         platform_ = platform;
         deviceId_ = platform_->deviceId();
         setDeviceType(platform_->deviceType());
@@ -105,7 +109,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
 
         connect(platform_.get(), &strata::platform::Platform::messageReceived, this, &SciPlatform::messageFromDeviceHandler);
         connect(platform_.get(), &strata::platform::Platform::messageSent, this, &SciPlatform::messageToDeviceHandler);
-        connect(platform_.get(), &strata::platform::Platform::deviceError, this, &SciPlatform::deviceErrorHandler);
+        connect(platform_.get(), &strata::platform::Platform::deviceError, this, &SciPlatform::deviceErrorHandler, Qt::UniqueConnection);
 
         setStatus(PlatformStatus::Connected);
     }
@@ -237,6 +241,11 @@ bool SciPlatform::sendMessageInProgress()
 bool SciPlatform::sendQueueInProgress()
 {
     return sendQueueInProgress_;
+}
+
+bool SciPlatform::acquirePortInProgress()
+{
+    return acquirePortInProgress_;
 }
 
 void SciPlatform::resetPropertiesFromDevice()
@@ -397,6 +406,21 @@ QString SciPlatform::saveDeviceFirmware(QString filePath) {
     return QString();
 }
 
+bool SciPlatform::acquirePort()
+{
+    setAcquirePortInProgress(true);
+
+    if (status_ == PlatformStatus::Disconnected) {
+        bool requestProcessed =  platformManager_->reconnectPlatform(deviceId_);
+        if (requestProcessed) {
+            return true;
+        }
+    }
+
+    setAcquirePortInProgress(false);
+    return false;
+}
+
 void SciPlatform::storeCommandHistory(const QStringList &list)
 {
     settings_->setCommandHistory(verboseName_, list);
@@ -464,7 +488,20 @@ void SciPlatform::messageToDeviceHandler(QByteArray rawMessage, uint msgNumber, 
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
 {
-    Q_UNUSED(errorCode)
+    if (acquirePortInProgress_) {
+        if (errorCode == strata::device::Device::ErrorCode::DeviceFailedToOpen
+                || errorCode == strata::device::Device::ErrorCode::DeviceFailedToOpenGoingToRetry) {
+
+            emit acquirePortRequestFailed();
+            setAcquirePortInProgress(false);
+            return;
+        }
+    }
+
+    if (status_ == PlatformStatus::Disconnected) {
+       return;
+    }
+
     setErrorString(errorString);
 }
 
@@ -527,6 +564,16 @@ void SciPlatform::setSendQueueInProgress(bool sendQueueInProgress)
 
     sendQueueInProgress_ = sendQueueInProgress;
     emit sendQueueInProgressChanged();
+}
+
+void SciPlatform::setAcquirePortInProgress(bool acquirePortInProgress)
+{
+    if (acquirePortInProgress_ == acquirePortInProgress) {
+        return;
+    }
+
+    acquirePortInProgress_ = acquirePortInProgress;
+    emit acquirePortInProgressChanged();
 }
 
 bool SciPlatform::sendNextInQueue()
