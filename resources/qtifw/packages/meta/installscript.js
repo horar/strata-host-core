@@ -127,7 +127,7 @@ Component.prototype.onLicenseAgreementPageEntered = function ()
 {
     console.log("onLicenseAgreementPageEntered");
 
-    if (isSilent) {
+    if (isSilent && (installer.isUpdater() == false)) {
         let widget = gui.pageById(QInstaller.LicenseCheck);
         if (widget != null) {
             let licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
