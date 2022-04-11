@@ -81,9 +81,10 @@ Component.prototype.onInstallationStarted = function()
     }
 
     if ((systemInfo.productType == "windows") && installer.isInstaller()) {
-        let onsemiConfigFolder = getProgramDataDirectory() + "\\onsemi";
-        try {
-            if (installer.gainAdminRights()) {
+        if (installer.gainAdminRights()) {
+            // correct access rights to Strata config folder to avoid issues later
+            let onsemiConfigFolder = getProgramDataDirectory() + "\\onsemi";
+            try {
                 if (installer.fileExists(onsemiConfigFolder) == false) {
                     installer.execute("cmd", ["/c", "mkdir", onsemiConfigFolder]);
                 }
@@ -92,11 +93,30 @@ Component.prototype.onInstallationStarted = function()
                     installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
                     installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
                 }
-                installer.dropAdminRights();
+            } catch(e) {
+                console.log("unable to change access rights for Strata config folder");
+                console.log(e);
             }
-        } catch(e) {
-            console.log("unable to change access rights for Strata config folder");
-            console.log(e);
+
+            // correct access rights to Strata folder to avoid issues later
+            let target_dir = installer.value("TargetDir").split("/").join("\\");
+            try {
+                if (installer.fileExists(target_dir) == false) {
+                    installer.execute("cmd", ["/c", "mkdir", target_dir]);
+                }
+                if (installer.fileExists(target_dir)) {
+                    console.log("changing access rights for Strata folder: " + target_dir);
+                    installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:(OI)(CI)(F)"]);
+                    installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
+                }
+            } catch(e) {
+                console.log("unable to change access rights for Strata folder");
+                console.log(e);
+            }
+            installer.dropAdminRights();
+        } else {
+            console.log("unable to elevate access rights");
+            installer.interrupt();
         }
     }
 }
@@ -242,40 +262,16 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         }
 
         // erase StrataUtils folder
-        let requiresAdminRights = false;
         let strataUtilsFolder = target_dir + "\\StrataUtils";
         if (installer.fileExists(strataUtilsFolder)) {
             try {
                 console.log("erasing StrataUtils folder: " + strataUtilsFolder);
                 installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
                 if (installer.fileExists(strataUtilsFolder)) {
-                    requiresAdminRights = true;
-                    if (installer.gainAdminRights()) {    // needed when it is in Program Files directory on Win10
-                        console.log("gained admin rights, executing cmd in admin mode");
-                        installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
-                        installer.dropAdminRights();
-                    }
+                    console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
                 }
             } catch(e) {
                 console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
-                console.log(e);
-            }
-        }
-
-        // correct access rights to allow use [CLI] mode checkupdates
-        // needed when it is in Program Files directory on Win10
-        if (installer.isInstaller() &&  installer.status == QInstaller.Success && requiresAdminRights) {
-            try {
-                if (installer.gainAdminRights()) {
-                    if (installer.fileExists(target_dir)) {
-                        console.log("changing access rights for Strata folder: " + target_dir);
-                        installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:(OI)(CI)(F)"]);
-                        installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
-                    }
-                    installer.dropAdminRights();
-                }
-            } catch(e) {
-                console.log("unable to change access rights for Strata");
                 console.log(e);
             }
         }
