@@ -99,6 +99,9 @@ int SGVersionUtils::compareSuffix(const QString &suffix1, const QString &suffix2
                 alpha = true;
                 versionString.remove(0, 5);
             }
+            if (versionString.startsWith(".")) {
+                versionString.remove(0, 1);
+            }
             if (versionString.isEmpty() == false) {
                 version = versionString.toInt();    // will be 0 if it fails
             }
@@ -202,7 +205,7 @@ QString SGVersionUtils::cleanSuffix(QString suffix) {
     if (suffix.startsWith("-")) {
         suffix.remove(0, 1);
     }
-    QRegExp rx("^((?:(?:alpha|beta|rc)[0-9]*)|(?:rtm|ga))(?:\\-.+)?$");
+    QRegExp rx("^((?:(?:alpha|beta|rc)(?:\\.[0-9]+|[0-9]*))|(?:rtm|ga))(?:\\-.+)?$");
     if (rx.exactMatch(suffix)) {
         QStringList suffixList = rx.capturedTexts();
         if (suffixList.size() == 2) {
