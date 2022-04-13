@@ -63,18 +63,17 @@ Component.prototype.createOperations = function()
             if (strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
                 console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
                 try {
-                    let desktopFolder = installer.execute("cmd", ["/c", "echo", "%Public%\\Desktop"]);
-                    // the output of command is the first item, and the return code is the second
-                    if ((desktopFolder != undefined) && (desktopFolder != null) && (desktopFolder[0] != undefined) && (desktopFolder[0] != null) && (desktopFolder[0] != "")) {
-                        strata_ds_shortcut_dst2 = desktopFolder[0].trim() + "\\Strata Developer Studio.lnk";
+                    let publicFolder = installer.environmentVariable("Public"); // usually "C:\Users\Public"
+                    if (publicFolder !== "") {
+                        strata_ds_shortcut_dst2 = publicFolder + "\\Desktop\\Strata Developer Studio.lnk";
                         component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
                                         "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
                         console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
                     } else {
-                        console.log("unable to detect correct Desktop path");
+                        console.log("unable to detect correct Public Desktop path");
                     }
                 } catch(e) {
-                    console.log("unable to detect correct Desktop path");
+                    console.log("unable to detect correct Public Desktop path");
                     console.log(e);
                 }
             } else {
