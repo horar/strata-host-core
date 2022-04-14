@@ -13,10 +13,9 @@
     <Title>onsemi: Strata</Title>
     <Publisher>onsemi</Publisher>
     <ProductUrl>https://www.onsemi.com/strata</ProductUrl>
-    <InstallerApplicationIcon>ON_button_blk_vector</InstallerApplicationIcon>
-    <InstallerWindowIcon>ON_button_blk_vector.png</InstallerWindowIcon>
+    <InstallerApplicationIcon>onsemi-icon</InstallerApplicationIcon>
+    <InstallerWindowIcon>onsemi-icon.png</InstallerWindowIcon>
     <Logo>strata-logo.png</Logo>
-    <Watermark>strata-watermark.png</Watermark>
     <WizardStyle>Modern</WizardStyle>
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>

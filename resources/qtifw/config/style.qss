@@ -215,31 +215,31 @@ QCheckBox::indicator
     max-height: 16px;
     min-width: 16px;
     max-width: 16px;
-    background-color: white;
+    background-color: transparent;
 }
 QCheckBox::indicator:checked
 {
-    border-image: url(:/assets/checkbox_checked.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_checked.png);
 }
 QCheckBox::indicator:checked:disabled
 {
-    border-image: url(:/assets/checkbox_checked_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_checked_disabled.png);
 }
 QCheckBox::indicator:unchecked
 {
-    border-image: url(:/assets/checkbox_unchecked.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_unchecked.png);
 }
 QCheckBox::indicator:unchecked:disabled
 {
-    border-image: url(:/assets/checkbox_unchecked_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_unchecked_disabled.png);
 }
 QCheckBox::indicator:indeterminate
 {
-    border-image: url(:/assets/checkbox_indeterminate.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_indeterminate.png);
 }
 QCheckBox::indicator:indeterminate:disabled
 {
-    border-image: url(:/assets/checkbox_indeterminate_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_indeterminate_disabled.png);
 }
 QCheckBox::indicator:pressed
 {
@@ -270,28 +270,28 @@ QRadioButton::indicator
     background-color: transparent;
 }
 QRadioButton::indicator::unchecked {
-    border-image: url(:/assets/radiobutton_unchecked.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_unchecked.png);
 }
 QRadioButton::indicator:unchecked:hover {
-    border-image: url(:/assets/radiobutton_unchecked_hover.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_unchecked_hover.png);
 }
 QRadioButton::indicator:unchecked:pressed {
-    border-image: url(:/assets/radiobutton_unchecked_pressed.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_unchecked_pressed.png);
 }
 QRadioButton::indicator::unchecked:disabled {
-    border-image: url(:/assets/radiobutton_unchecked_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_unchecked_disabled.png);
 }
 QRadioButton::indicator::checked {
-    border-image: url(:/assets/radiobutton_checked.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_checked.png);
 }
 QRadioButton::indicator:checked:hover {
-    border-image: url(:/assets/radiobutton_checked_hover.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_checked_hover.png);
 }
 QRadioButton::indicator:checked:pressed {
-    border-image: url(:/assets/radiobutton_checked_pressed.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_checked_pressed.png);
 }
 QRadioButton::indicator::checked:disabled {
-    border-image: url(:/assets/radiobutton_checked_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/radiobutton_checked_disabled.png);
 }
 /************************************************************************************************/
 /*
@@ -385,11 +385,11 @@ QTreeView::branch:selected
 }
 QTreeView::branch:has-children:adjoins-item:closed
 {
-    border-image: url(:/assets/chevron-right.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/chevron-right.png);
 }
 QTreeView::branch:has-children:adjoins-item:open
 {
-    border-image: url(:/assets/chevron-down.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/chevron-down.png);
 }
 QTreeView::indicator
 {
@@ -397,31 +397,31 @@ QTreeView::indicator
     max-height: 14px;
     min-width: 14px;
     max-width: 14px;
-    background-color: white;
+    background-color: transparent;
 }
 QTreeView::indicator:checked
 {
-    border-image: url(:/assets/checkbox_checked.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_checked.png);
 }
 QTreeView::indicator:checked:disabled
 {
-    border-image: url(:/assets/checkbox_checked_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_checked_disabled.png);
 }
 QTreeView::indicator:unchecked
 {
-    border-image: url(:/assets/checkbox_unchecked.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_unchecked.png);
 }
 QTreeView::indicator:unchecked:disabled
 {
-    border-image: url(:/assets/checkbox_unchecked_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_unchecked_disabled.png);
 }
 QTreeView::indicator:indeterminate
 {
-    border-image: url(:/assets/checkbox_indeterminate.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_indeterminate.png);
 }
 QTreeView::indicator:indeterminate:disabled
 {
-    border-image: url(:/assets/checkbox_indeterminate_disabled.png) 0 0 0 0 stretch stretch;
+    image: url(:/assets/checkbox_indeterminate_disabled.png);
 }
 QTreeView::indicator:pressed
 {
