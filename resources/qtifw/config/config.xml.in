@@ -19,8 +19,8 @@
     <WizardStyle>Modern</WizardStyle>
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
-    <WizardMinimumWidth>720</WizardMinimumWidth>
-    <WizardMinimumHeight>420</WizardMinimumHeight>
+    <WizardMinimumWidth>840</WizardMinimumWidth>
+    <WizardMinimumHeight>480</WizardMinimumHeight>
     <StartMenuDir>onsemi</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/onsemi/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
@@ -36,4 +36,10 @@
             <DisplayName>Strata Repository</DisplayName>
         </Repository>
     </RemoteRepositories>
+    <ProductImages>
+        <Image>onsemi-banner-1.png</Image>
+        <Image>onsemi-banner-2.png</Image>
+        <Image>onsemi-banner-3.png</Image>
+        <Image>onsemi-banner-4.png</Image>
+    </ProductImages>
 </Installer>
