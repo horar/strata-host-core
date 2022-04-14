@@ -34,7 +34,9 @@ TEST_F(SGVersionUtilsTest, testCleanSuffix)
     EXPECT_EQ("alpha", SGVersionUtils::cleanSuffix("-alpha"));
     EXPECT_EQ("alpha", SGVersionUtils::cleanSuffix("alpha-243-oaifjfioe-dirty"));
     EXPECT_EQ("alpha3", SGVersionUtils::cleanSuffix("alpha3-sdas"));
-    EXPECT_EQ("beta243", SGVersionUtils::cleanSuffix("-beta243"));
+    EXPECT_EQ("alpha.3", SGVersionUtils::cleanSuffix("alpha.3-sdas"));
+    EXPECT_EQ("beta.243", SGVersionUtils::cleanSuffix("-beta.243"));
+    EXPECT_EQ("", SGVersionUtils::cleanSuffix("-beta."));
     EXPECT_EQ("", SGVersionUtils::cleanSuffix("avlpha5"));
     EXPECT_EQ("", SGVersionUtils::cleanSuffix("rtm32"));
     EXPECT_EQ("", SGVersionUtils::cleanSuffix("rc2a-123-sdsd"));
