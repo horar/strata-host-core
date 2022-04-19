@@ -21,9 +21,13 @@
 #include <QQmlContext>
 #include <QSettings>
 #include <QResource>
+#include <QIcon>
 #include <QDir>
-#include <QtWebEngine>
 #include <QQmlFileSelector>
+#include <QSslSocket>
+#ifdef Q_OS_WIN
+#include <QVersionNumber>
+#endif
 
 #include <QtLoggerConstants.h>
 #include <QtLoggerSetup.h>
@@ -129,8 +133,6 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/sci-logo.svg"));
-
-    QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(lcSci) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MAJOR);

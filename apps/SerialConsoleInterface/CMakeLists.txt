@@ -29,7 +29,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick WebEngine
+    COMPONENTS Core Quick
     REQUIRED
 )
 
@@ -79,7 +79,6 @@ endif()
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
-    Qt5::WebEngine
     strata::PlatformManager
     strata::FlasherConnector
     strata::QtLogger
