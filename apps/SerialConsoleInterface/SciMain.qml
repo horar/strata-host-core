@@ -357,22 +357,6 @@ Item {
         sciModel.platformModel.removePlatform(index)
     }
 
-    function showPlatformInfoWindow(classId, className) {
-        if (platformInfoWindow) {
-            platformInfoWindow.close()
-        }
-
-        platformInfoWindow = SGWidgets.SGDialogJS.createDialog(
-                    ApplicationWindow.window,
-                    "qrc:/PlatformInfoWindow.qml",
-                    {
-                        "platformClassId": classId,
-                        "platformClassName": className
-                    })
-
-        platformInfoWindow.visible = true
-    }
-
     function showPortAcquireRequestFailed() {
         infoPopup.showFailed("Port acquisition failed")
     }

@@ -18,12 +18,13 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QtQml/QQmlContext>
+#include <QQmlContext>
 #include <QSettings>
 #include <QResource>
-#include <QDir>
 #include <QIcon>
+#include <QDir>
 #include <QQmlFileSelector>
+#include <QSslSocket>
 #ifdef Q_OS_WIN
 #include <QVersionNumber>
 #endif

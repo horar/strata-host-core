@@ -6,7 +6,6 @@
         <file>SciMain.qml</file>
         <file>SciSettings.qml</file>
         <file>PlatformDelegate.qml</file>
-        <file>PlatformInfoWindow.qml</file>
         <file>SciAboutWindow.qml</file>
         <file>SciSettingsDialog.qml</file>
         <file>VerticalDivider.qml</file>
