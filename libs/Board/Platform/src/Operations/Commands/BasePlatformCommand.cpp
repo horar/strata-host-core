@@ -139,6 +139,8 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                 qCWarning(lcPlatformCommand) << platform_ << "Received wrong ACK. Expected '" << cmdName_ << "', got '" << ackStr << "'.";
                 if (ackOk_ == false) {
                     qCWarning(lcPlatformCommand) << platform_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                } else {
+                    ackOk_ = false;  // ACK is for another command, it is not OK.
                 }
             }
         } else {
