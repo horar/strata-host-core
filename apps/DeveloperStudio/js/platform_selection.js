@@ -610,7 +610,7 @@ function insertUnknownListing (platform) {
     let listing_data = {
         "verbose_name": (platform.verbose_name) ? platform.verbose_name : "Unknown Platform",
         "opn" : "Class id: " + class_id,
-        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem."
+        "description": "Platform is not recognized by Deployment Portal. Please report this to technical support at www.onsemi.com/support"
     }
 
     insertListing(generateErrorListing(platform, listing_data))
