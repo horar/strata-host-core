@@ -105,7 +105,7 @@ Item {
                 color: currentColor
                 opacity: enabled ? 1 : 0.3
 
-                property color defaultColor: TangoTheme.palette.aluminium3
+                property color defaultColor: TangoTheme.palette.aluminium2
                 property color currentColor: defaultColor
 
                 // example of defining the context menu

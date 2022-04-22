@@ -63,7 +63,7 @@ Item {
                     text: "-12 dBm"
                     iconSource: "qrc:/sgimages/signal.svg"
                     font.bold: true
-                    color: TangoTheme.palette.aluminium3
+                    color: TangoTheme.palette.aluminium2
                 }
 
                 SGWidgets.SGTag {
