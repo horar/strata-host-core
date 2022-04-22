@@ -116,7 +116,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: Theme.palette.dark
+            color: TangoTheme.palette.slate3
         }
 
         Row {
@@ -136,7 +136,7 @@ Item {
                 hintText: "Add Command"
                 icon.source: "qrc:/sgimages/plus.svg"
                 iconSize: buttonRow.iconHeight
-                iconColor: Theme.palette.green
+                iconColor: TangoTheme.palette.chameleon2
                 alternativeColorEnabled: true
 
                 onClicked: {

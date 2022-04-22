@@ -36,6 +36,9 @@ QtObject {
     readonly property color aluminium1:     "#eeeeec"
     readonly property color aluminium2:     "#d3d7cf"
     readonly property color aluminium3:     "#babdb6"
+    readonly property color slate1:         "#888a85"
+    readonly property color slate2:         "#555753"
+    readonly property color slate3:         "#2e3436"
 
     readonly property color white:          "#ffffff"
     readonly property color black:          "#000000"
