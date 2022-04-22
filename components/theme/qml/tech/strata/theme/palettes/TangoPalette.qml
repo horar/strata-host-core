@@ -30,12 +30,21 @@ QtObject {
     readonly property color chameleon1:     "#8ae234"
     readonly property color chameleon2:     "#73d216"
     readonly property color chameleon3:     "#4e9a06"
+    readonly property color skyBlue1:       "#729fcf"
+    readonly property color skyBlue2:       "#3465a4"
+    readonly property color skyBlue3:       "#204a87"
+    readonly property color aluminium1:     "#eeeeec"
+    readonly property color aluminium2:     "#d3d7cf"
+    readonly property color aluminium3:     "#babdb6"
+
+    readonly property color white:          "#ffffff"
+    readonly property color black:          "#000000"
 
     readonly property color error:          scarletRed2
     readonly property color warning:        orange2
     readonly property color highlight:      "#0066ff"
     readonly property color selectedText:   Qt.lighter(highlight, 1.2)
     readonly property color componentBorder: "#bdbdbd"
-    readonly property color componentBase:   "#ffffff"
+    readonly property color componentBase:  white
 
 }

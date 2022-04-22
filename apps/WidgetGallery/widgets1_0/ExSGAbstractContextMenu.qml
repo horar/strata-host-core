@@ -101,11 +101,11 @@ Item {
                 implicitWidth: 200
                 implicitHeight: 200
                 border.width: 1
-                border.color: Theme.palette.black
+                border.color: TangoTheme.palette.black
                 color: currentColor
                 opacity: enabled ? 1 : 0.3
 
-                property color defaultColor: Theme.palette.lightGray
+                property color defaultColor: TangoTheme.palette.aluminium3
                 property color currentColor: defaultColor
 
                 // example of defining the context menu
@@ -119,7 +119,7 @@ Item {
                         onTriggered: {
                             // execute action when user clicks the option
                             console.log("Selected: " + text)
-                            contentRectangle.currentColor = Theme.palette.red
+                            contentRectangle.currentColor = TangoTheme.palette.scarletRed2
                         }
                     }
 
@@ -130,7 +130,7 @@ Item {
                         onTriggered: {
                             // execute action when user clicks the option
                             console.log("Selected: " + text)
-                            contentRectangle.currentColor = Theme.palette.green
+                            contentRectangle.currentColor = TangoTheme.palette.chameleon2
                         }
                     }
 
@@ -141,7 +141,7 @@ Item {
                         onTriggered: {
                             // execute action when user clicks the option
                             console.log("Selected: " + text)
-                            contentRectangle.currentColor = Theme.palette.lightBlue
+                            contentRectangle.currentColor = TangoTheme.palette.skyBlue1
                         }
                     }
 
@@ -225,7 +225,7 @@ Item {
                     onTriggered: {
                         // execute action when user clicks the option
                         console.log("Selected: " + text)
-                        contentRectangle.currentColor = Theme.palette.orange
+                        contentRectangle.currentColor = TangoTheme.palette.orange2
                     }
                 }
             }

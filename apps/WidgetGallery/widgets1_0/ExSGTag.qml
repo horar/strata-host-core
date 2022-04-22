@@ -56,21 +56,21 @@ Item {
                     iconSource: "qrc:/sgimages/download.svg"
                     iconColor: "black"
                     textColor: "black"
-                    color: Theme.palette.orange
+                    color: TangoTheme.palette.orange2
                 }
 
                 SGWidgets.SGTag {
                     text: "-12 dBm"
                     iconSource: "qrc:/sgimages/signal.svg"
                     font.bold: true
-                    color: Theme.palette.lightGray
+                    color: TangoTheme.palette.aluminium3
                 }
 
                 SGWidgets.SGTag {
                     text: "Car"
                     iconSource: "qrc:/sgimages/bookmark.svg"
-                    iconColor: Theme.palette.green
-                    color: Theme.palette.darkBlue
+                    iconColor: TangoTheme.palette.chameleon2
+                    color:TangoTheme.palette.skyBlue3
                     textColor: "white"
                     font.bold: true
                 }
@@ -78,7 +78,7 @@ Item {
                 SGWidgets.SGTag {
                     text: "Active"
                     font.bold: true
-                    color: Theme.palette.green
+                    color: TangoTheme.palette.chameleon2
                     textColor: "white"
                 }
             }
@@ -98,7 +98,7 @@ Item {
                     verticalPadding: 1
                     text: "Device cannot be configured"
                     font.bold: true
-                    color: Theme.palette.red
+                    color: TangoTheme.palette.scarletRed2
                     textColor: "white"
                 }
 
@@ -106,7 +106,7 @@ Item {
                     verticalPadding: 1
                     text: "Device cannot be configured"
                     font.bold: true
-                    color: Theme.palette.orange
+                    color: TangoTheme.palette.orange2
                     textColor: "white"
                     iconSource: "qrc:/sgimages/exclamation-triangle.svg"
                     iconColor: "white"
