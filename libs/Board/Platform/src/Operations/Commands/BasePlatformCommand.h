@@ -110,6 +110,13 @@ public:
      */
     virtual void setNotificationTimeout(std::chrono::milliseconds notificationTimeout) final;
 
+    /*!
+     * Turn on/off 'validationFailure' and 'processedNotification' signals during
+     * processing messages from platform. By default these signals are turned off.
+     * \param emitSignals true for turn on emitting signals, false for turn off
+     */
+    virtual void setValidationSignals(bool emitSignals) final;
+
 signals:
     /*!
      * Emitted when command is finished.
@@ -117,6 +124,20 @@ signals:
      * \param status specific command return value
      */
     void finished(CommandResult result, int status);
+
+    /*!
+     * Emitted when some issue occurs during processing message from device.
+     * This signal is emitted only if it was enabled by 'setValidationSignals' method.
+     * \param error description of what goes wrong during message processing
+     */
+    void validationFailure(QString error);
+
+    /*!
+     * Emitted when notification from platfom was received.
+     * This signal is emitted only if it was enabled by 'setValidationSignals' method.
+     * \param message received notification from platform
+     */
+    void receivedNotification(PlatformMessage message);
 
 protected:
     /*!
@@ -176,10 +197,12 @@ protected:
 
 private:
     void finishCommand(CommandResult result);
-    void logWrongResponse(const PlatformMessage& response);
+    QString generateWrongResponseError(const PlatformMessage& response) const;
+    inline void emitValidationWarning(QString warning);
     std::chrono::milliseconds ackTimeout_;
     std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;
+    bool emitValidationSignals_;
 
 };
 
