@@ -65,35 +65,32 @@ Item {
             return in_filter(listing) && contains_text(listing) && is_visible(listing)
         }
 
-        function lessThan(index1, index2) {
-            var listing1 = sourceModel.get(index1)
-            var listing2 = sourceModel.get(index2)
+        /*
+          sort order:
+          1. connected
+          2. recently released
+          3. coming soon
+          4. alphabetically by OPN
+         */
+        function lessThan(indexLeft, indexRight) {
+            var listingLeft = sourceModel.get(indexLeft)
+            var listingRight = sourceModel.get(indexRight)
 
-            let timestamp1 = Date.fromLocaleString(Qt.locale(), listing1.timestamp, timeFormat);
-            let timestamp2 = Date.fromLocaleString(Qt.locale(), listing2.timestamp, timeFormat);
+            //note: true(1) > false(0)
 
-            // sort listings according to following priority:
-            if (listing1.connected === true && listing2.connected === false) {
-                return true     // connected platforms on top
-            } else if (listing1.connected === false && listing2.connected === true) {
-                return false    // not connected platforms on bottom
-            } else if (listing1.device_id !== Constants.NULL_DEVICE_ID &&
-                       listing2.device_id === Constants.NULL_DEVICE_ID) {
-                return true     // listings with a device id attached (from a previously connected board) on top
-            } else if (listing1.device_id === Constants.NULL_DEVICE_ID &&
-                       listing2.device_id !== Constants.NULL_DEVICE_ID) {
-                return false    // listings without a device id attached on bottom
-            } else if (listing1.available.documents === true && listing1.available.order === true &&
-                       listing2.available.documents === false && listing2.available.order === false) {
-                return true     // already available boards on top
-            } else if (listing1.available.documents === false && listing1.available.order === false &&
-                       listing2.available.documents === true && listing2.available.order === true) {
-                return false    // "coming soon" on bottom
-            } else if (timestamp1.getTime() !== timestamp2.getTime()) {
-                return timestamp1 > timestamp2 // newer listings on top, older on bottom
-            } else {
-                return listing1.opn < listing2.opn // sort alphabetically by opn if everything else fails
+            if (listingLeft.connected !== listingRight.connected) {
+                return listingLeft.connected > listingRight.connected
             }
+
+            if (listingLeft.recently_released !== listingRight.recently_released) {
+                return listingLeft.recently_released > listingRight.recently_released
+            }
+
+            if (listingLeft.coming_soon !== listingRight.coming_soon) {
+                return listingLeft.coming_soon > listingRight.coming_soon
+            }
+
+            return listingLeft.opn < listingRight.opn
         }
 
         function in_filter(item) {
