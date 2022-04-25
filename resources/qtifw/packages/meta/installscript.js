@@ -140,6 +140,8 @@ Component.prototype.onComponentSelectionPageEntered = function ()
                 //widget.selectComponent("com.onsemi.strata.devstudio");
             }
         }
+    } else {
+        console.log("Error: unable to locate default page 'ComponentSelection'");
     }
 }
 
@@ -159,8 +161,12 @@ Component.prototype.onLicenseAgreementPageEntered = function ()
                 if (licenseCheckBox != null) {
                     // QTIFW version 4.1+
                     licenseCheckBox.setChecked(true);
+                } else {
+                    console.log("Error: unable to acquire checkbox 'AcceptLicenseCheckBox'");
                 }
             }
+        } else {
+            console.log("Error: unable to locate default page 'LicenseCheck'");
         }
     }
 }
@@ -178,10 +184,15 @@ Component.prototype.onFinishedPageEntered = function ()
             } else {
                 runItCheckBox.setChecked(false);
             }
+        } else {
+            console.log("Error: unable to acquire checkbox 'RunItCheckBox'");
         }
 
-        if (installer.isInstaller() && (installer.status != QInstaller.Success))
+        if (installer.isInstaller() && (installer.status != QInstaller.Success)) {
             installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
+        }
+    } else {
+        console.log("Error: unable to locate default page 'InstallationFinished'");
     }
 
     if (isSilent) {
@@ -223,6 +234,26 @@ function isComponentInstalled(component_name)
         let installed = component.isInstalled();
         console.log("component '" + component_name + "' found and is installed: " + installed);
         return installed;
+    }
+
+    console.log("component '" + component_name + "' NOT found");
+    return false;
+}
+
+function isComponentAvailable(component_name)
+{
+    // functions to check component state:
+    // boolean installationRequested()
+    // boolean uninstallationRequested()
+    // boolean updateRequested()
+    // boolean isInstalled()
+    // boolean isUninstalled()
+
+    let component = installer.componentByName(component_name);
+    if (component != null) {
+        let available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
+        console.log("component '" + component_name + "' found and is available: " + available);
+        return available;
     }
 
     console.log("component '" + component_name + "' NOT found");
@@ -364,7 +395,7 @@ Component.prototype.addShortcutWidget = function () {
     try {
         if (installer.addWizardPage( component, "ShortcutCheckBoxWidget", QInstaller.StartMenuSelection )) {
             console.log("ShortcutCheckBoxWidget page added");
-            let widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
+            let widget = gui.pageByObjectName("DynamicShortcutCheckBoxWidget");
             if (widget != null) {
                 let desktopCheckBox = widget.findChild("desktopCheckBox");
                 if (desktopCheckBox != null) {
@@ -386,17 +417,18 @@ Component.prototype.addShortcutWidget = function () {
             console.log("ShortcutCheckBoxWidget page not added");
         }
     } catch(e) {
-        console.log("ShortcutCheckBoxWidget page not added");
+        console.log("Error when adding ShortcutCheckBoxWidget page:");
         console.log(e);
     }
 }
 
 Component.prototype.ShortcutCheckBoxWidgetEntered = function () {
+    console.log("ShortcutCheckBoxWidgetEntered");
     let widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
     if (widget != null) {
         let desktopCheckBox = widget.findChild("desktopCheckBox");
         if (desktopCheckBox != null) {
-            if (Component.prototype.isComponentAvailable("com.onsemi.strata.devstudio")) {
+            if (isComponentAvailable("com.onsemi.strata.devstudio")) {
                 desktopCheckBox.setEnabled(true);
                 desktopCheckBox.setChecked(installer.value("add_desktop_shortcut", "true") == "true");
             } else {
@@ -497,13 +529,38 @@ function getPowershellElement(str, element_name) {
     return res;
 }
 
+function getWindowsDirectory()
+{
+    let windowsPath = installer.value("RootDir").split("/").join("\\") + "\\Windows";
+    try {
+        let windowsPathEnv = installer.environmentVariable("windir");
+        if (windowsPathEnv !== "") {
+            windowsPath = windowsPathEnv;
+            console.log("detected Windows path: " + windowsPath);
+        } else {
+            console.log("unable to detect correct Windows path, trying default one: " + windowsPath);
+        }
+    } catch(e) {
+        console.log("error while detecting correct Windows path, trying default one: " + windowsPath);
+        console.log(e);
+    }
+
+    return windowsPath;
+}
+
 function uninstallPreviousStrataInstallation()
 {
     if (systemInfo.productType == "windows") {
-        powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
+        let powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
+        let powershell64Location = getWindowsDirectory() + "\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe";
+        if (installer.fileExists(powershell64Location) == false) {
+            console.log("unable to locate 64bit powershell at " + powershell64Location);
+            powershell64Location = "powershell.exe"; // use default one (32bit), which might not work as expected
+        }
+
         console.log("executing powershell command '" + powerShellCommand + "'");
         // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
-        let isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
+        let isInstalled = installer.execute(powershell64Location, ["-command", powerShellCommand]);
 
         // the output of command is the first item, and the return code is the second
         // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");

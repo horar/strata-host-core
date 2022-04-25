@@ -205,6 +205,12 @@ QCheckBox
     margin-top: 5px;
     margin-bottom: 5px;
 }
+QCheckBox#AcceptLicenseCheckBox
+{
+    spacing: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 QCheckBox:disabled
 {
     color: rgba(0, 0, 0, 60%);

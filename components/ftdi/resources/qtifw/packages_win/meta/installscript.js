@@ -33,13 +33,13 @@ function compare(a, b) {
        return 0;
     }
 
-    var a_components = a.split(".");
-    var b_components = b.split(".");
+    let a_components = a.split(".");
+    let b_components = b.split(".");
 
-    var len = Math.min(a_components.length, b_components.length);
+    let len = Math.min(a_components.length, b_components.length);
 
     // loop while the components are equal
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         // A bigger than B
         if (parseInt(a_components[i]) > parseInt(b_components[i])) {
             return 1;
@@ -69,8 +69,8 @@ function getVersion(a) {
        return "";
     }
 
-    var a_components = a.split(" ");    // example "08/16/2017 2.12.28"
-    var len = a_components.length;
+    let a_components = a.split(" ");    // example "08/16/2017 2.12.28"
+    let len = a_components.length;
 
     if (len == 0) {
         return a;       // maybe different in other version
@@ -84,11 +84,11 @@ function getVersion(a) {
 }
 
 function getPowershellElement(str, element_name) {
-    var res = [];
-    var x = str.split('\r\n');
-    var m = 0;
-    for(var i = 0; i < x.length; i++){
-        var n = x[i].indexOf(element_name);
+    let res = [];
+    let x = str.split('\r\n');
+    let m = 0;
+    for(let i = 0; i < x.length; i++){
+        let n = x[i].indexOf(element_name);
         if (n == 0) {
             m = x[i].indexOf(": ", n + element_name.length);
             m += ": ".length;
@@ -105,32 +105,56 @@ function getPowershellElement(str, element_name) {
     return res;
 }
 
+function getWindowsDirectory()
+{
+    let windowsPath = installer.value("RootDir").split("/").join("\\") + "\\Windows";
+    try {
+        let windowsPathEnv = installer.environmentVariable("windir");
+        if (windowsPathEnv !== "") {
+            windowsPath = windowsPathEnv;
+            console.log("detected Windows path: " + windowsPath);
+        } else {
+            console.log("unable to detect correct Windows path, trying default one: " + windowsPath);
+        }
+    } catch(e) {
+        console.log("error while detecting correct Windows path, trying default one: " + windowsPath);
+        console.log(e);
+    }
+
+    return windowsPath;
+}
+
 Component.prototype.isFTDIInstalled = function()
 {
-    var programName = "Windows Driver Package \\- FTDI CDM Driver Package";
-    var powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -match '" + programName + "' })";
+    let programName = "Windows Driver Package \\- FTDI CDM Driver Package";
+    let powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -match '" + programName + "' })";
+    let powershell64Location = getWindowsDirectory() + "\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe";
+    if (installer.fileExists(powershell64Location) == false) {
+        console.log("unable to locate 64bit powershell at " + powershell64Location);
+        powershell64Location = "powershell.exe"; // use default one (32bit), which might not work as expected
+    }
 
     console.log("executing powershell command '" + powerShellCommand + "'");
     // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
-    var isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
+    let isInstalled = installer.execute(powershell64Location, ["-command", powerShellCommand]);
 
     // the output of command is the first item, and the return code is the second
     // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
 
     if ((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
-        var up_to_date = false;
+        let up_to_date = false;
 
-        var display_name = getPowershellElement(isInstalled[0], 'DisplayName');
-        var display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
-        var uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
+        let display_name = getPowershellElement(isInstalled[0], 'DisplayName');
+        let display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
+        let uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
 
         console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
 
         // we should not find multiple entries here, but just in case, check the highest
         if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
-            for (var i = 0; i < display_version.length; i++) {
+            for (let i = 0; i < display_version.length; i++) {
 
-                var result = compare(getVersion(display_version[i]), component.value("Version").split('-')[0]);    // example "08/16/2017 2.12.28"
+                let result = compare(getVersion(display_version[i]), component.value("Version").split('-')[0]);    // example "08/16/2017 2.12.28"
 
                 if (result == 1) {
                     up_to_date = true;
@@ -141,7 +165,7 @@ Component.prototype.isFTDIInstalled = function()
                 } else {
                     console.log("program is older, will replace with new version if newer is not available, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                     console.log("executing FTDI uninstall command: '" + uninstall_string[i] + "'");
-                    var e = installer.execute(uninstall_string[i], ["/SW"]);
+                    let e = installer.execute(uninstall_string[i], ["/SW"]);
                     console.log(e);
                 }
             }
