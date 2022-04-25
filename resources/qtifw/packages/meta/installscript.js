@@ -34,10 +34,16 @@ function Component()
         installer.finishButtonClicked.connect(this, Component.prototype.onFinishButtonClicked);
         if (installer.isInstaller() && (systemInfo.productType == "windows")) {
             component.loaded.connect(this, Component.prototype.addShortcutWidget);
+            gui.pageById(QInstaller.StartMenuSelection).left.connect(this, Component.prototype.onStartMenuSelectionPageLeft);
         }
         gui.pageById(QInstaller.ComponentSelection).entered.connect(this, Component.prototype.onComponentSelectionPageEntered);
         gui.pageById(QInstaller.LicenseCheck).entered.connect(this, Component.prototype.onLicenseAgreementPageEntered);
         gui.pageById(QInstaller.InstallationFinished).entered.connect(this, Component.prototype.onFinishedPageEntered);
+    }
+
+    if (installer.isInstaller() && (systemInfo.productType == "windows")) {
+        // do not use "StartMenuDir" directly, because it is overwritten later to full path
+        installer.setValue("StartMenuDir_internal", "onsemi");
     }
 
     if (isValueSet("isSilent_internal")) {
@@ -60,10 +66,25 @@ Component.prototype.createOperations = function()
 
     if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut", "true") == "true")) {
         let target_dir = installer.value("TargetDir").split("/").join("\\");
-        let strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\" + installer.value("MaintenanceToolName") + ".lnk";
-        component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
-                                "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
-        console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
+
+        if (installer.value("add_start_menu_shortcut", "true") == "true") {
+            let strata_mt_shortcut_dst = "";
+            let start_menu_folder = installer.value("StartMenuDir_internal");
+            if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
+                start_menu_folder += "\\";
+            }
+            if (installer.value("add_public_shortcuts", "true") == "true") {
+                strata_mt_shortcut_dst = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                // will point to public Start Menu in this case
+                component.addElevatedOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                               "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+            } else {
+                strata_mt_shortcut_dst = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                       "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+            }
+            console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
+        }
     }
 }
 
@@ -205,6 +226,21 @@ Component.prototype.onFinishedPageEntered = function ()
                 installer.setValue("performCleanup_internal","true");   // set this since the Controller() is not called
             }
         }
+    }
+}
+
+Component.prototype.onStartMenuSelectionPageLeft = function ()
+{
+    let widget = gui.pageById(QInstaller.StartMenuSelection);
+    if (widget != null) {
+        let lineEdit = widget.findChild("StartMenuPathLineEdit");
+        if (lineEdit != null) {
+            installer.setValue("StartMenuDir_internal", lineEdit.text.trim().split("/").join("\\"))
+        } else {
+            console.log("Error: unable to acquire line edit 'StartMenuPathLineEdit'");
+        }
+    } else {
+        console.log("Error: unable to locate default page 'StartMenuSelection'");
     }
 }
 
@@ -409,6 +445,12 @@ Component.prototype.addShortcutWidget = function () {
                 } else {
                     console.log("Unable to acquire startMenuCheckBox");
                 }
+                let allUsersRadioButton = widget.findChild("allUsersRadioButton");
+                if (allUsersRadioButton != null) {
+                    allUsersRadioButton.toggled.connect(this, Component.prototype.allUsersRadioButtonChanged);
+                } else {
+                    console.log("Unable to acquire allUsersRadioButton");
+                }
                 widget.entered.connect(this, Component.prototype.ShortcutCheckBoxWidgetEntered);
             } else {
                 console.log("Unable to acquire DynamicShortcutCheckBoxWidget");
@@ -464,16 +506,24 @@ Component.prototype.startMenuShortcutChanged = function (checked)
     console.log("startMenuShortcutChanged to : " + checked);
     if (checked) {
         installer.setValue("add_start_menu_shortcut", "true");
-        installer.setValue("StartMenuDir", "onsemi");
         if (systemInfo.productType == "windows") {
             installer.setDefaultPageVisible(QInstaller.StartMenuSelection, true);
         }
     } else {
         installer.setValue("add_start_menu_shortcut", "false");
-        installer.setValue("StartMenuDir", "");
         if (systemInfo.productType == "windows") {
             installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
         }
+    }
+}
+
+Component.prototype.allUsersRadioButtonChanged = function (checked)
+{
+    console.log("allUsersRadioButtonChanged to : " + checked);
+    if (checked) {
+        installer.setValue("add_public_shortcuts", "true");
+    } else {
+        installer.setValue("add_public_shortcuts", "false");
     }
 }
 

@@ -15,7 +15,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>190</height>
+    <height>248</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -36,7 +36,7 @@
      <item>
       <widget class="QLabel" name="descriptionLabel">
        <property name="text">
-        <string>Select the additional tasks you would like Setup to perform during installation, then click Next.</string>
+        <string>Choose desired installation options, then click Next.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -54,7 +54,7 @@
        <item>
         <widget class="QLabel" name="optionLabel">
          <property name="text">
-          <string>Additional shortcuts:</string>
+          <string>Create shortcuts:</string>
          </property>
         </widget>
        </item>
@@ -86,6 +86,37 @@
            </property>
            <property name="tristate">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="availabilityLabel">
+         <property name="text">
+          <string>Shortcut availability:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="allUsersRadioButton">
+           <property name="text">
+            <string>Anyone who uses this computer (all users)</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="currentUserRadioButton">
+           <property name="text">
+            <string>Only for me (current user)</string>
            </property>
           </widget>
          </item>

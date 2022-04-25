@@ -52,13 +52,35 @@ Component.prototype.createOperations = function()
         component.addOperation("Delete", target_dir + "\\sds.config");
 
         if (installer.value("add_start_menu_shortcut", "true") == "true") {
-            let strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
-            component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
-                                    "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+            let strata_ds_shortcut_dst1 = "";
+            let start_menu_folder = installer.value("StartMenuDir_internal");
+            if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
+                start_menu_folder += "\\";
+            }
+            if (installer.value("add_public_shortcuts", "true") == "true") {
+                strata_ds_shortcut_dst1 = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + "Strata Developer Studio.lnk";
+                // will point to public Start Menu in this case
+                component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
+                                               "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+            } else {
+                strata_ds_shortcut_dst1 = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + "Strata Developer Studio.lnk";
+                component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
+                                       "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+            }
             console.log("will add Start Menu shortcut to: " + strata_ds_shortcut_dst1);
         }
-        if (installer.value("add_desktop_shortcut", "true") == "true", "true") {
-            let strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
+        if (installer.value("add_desktop_shortcut", "true") == "true") {
+            let desktop_path = "";
+            if (installer.value("add_public_shortcuts", "true") == "true") {
+                desktop_path = getSpecialFolderLocation("CommonDesktopDirectory");
+            } else {
+                desktop_path = getSpecialFolderLocation("DesktopDirectory");
+            }
+            if (desktop_path == "") {
+                desktop_path = installer.value("DesktopDir");   // fallback
+            }
+
+            let strata_ds_shortcut_dst2 = desktop_path.split("/").join("\\") + "\\Strata Developer Studio.lnk";
             // workaround for Parallels https://bugreports.qt.io/browse/QTIFW-1106
             if (strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
                 console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
@@ -77,8 +99,14 @@ Component.prototype.createOperations = function()
                     console.log(e);
                 }
             } else {
-                component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                if (installer.value("add_public_shortcuts", "true") == "true") {
+                    // will point to public Desktop in this case
+                    component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
                                         "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+                } else {
+                    component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+                }
                 console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
             }
         }
