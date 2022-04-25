@@ -497,13 +497,38 @@ function getPowershellElement(str, element_name) {
     return res;
 }
 
+function getWindowsDirectory()
+{
+    let windowsPath = installer.value("RootDir").split("/").join("\\") + "\\Windows";
+    try {
+        let windowsPathEnv = installer.environmentVariable("windir");
+        if (windowsPathEnv !== "") {
+            windowsPath = windowsPathEnv;
+            console.log("detected Windows path: " + windowsPath);
+        } else {
+            console.log("unable to detect correct Windows path, trying default one: " + windowsPath);
+        }
+    } catch(e) {
+        console.log("error while detecting correct Windows path, trying default one: " + windowsPath);
+        console.log(e);
+    }
+
+    return windowsPath;
+}
+
 function uninstallPreviousStrataInstallation()
 {
     if (systemInfo.productType == "windows") {
-        powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
+        let powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
+        let powershell64Location = getWindowsDirectory() + "\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe";
+        if (installer.fileExists(powershell64Location) == false) {
+            console.log("unable to locate 64bit powershell at " + powershell64Location);
+            powershell64Location = "powershell.exe"; // use default one (32bit), which might not work as expected
+        }
+
         console.log("executing powershell command '" + powerShellCommand + "'");
         // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
-        let isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
+        let isInstalled = installer.execute(powershell64Location, ["-command", powerShellCommand]);
 
         // the output of command is the first item, and the return code is the second
         // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
