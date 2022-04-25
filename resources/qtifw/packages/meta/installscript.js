@@ -229,6 +229,26 @@ function isComponentInstalled(component_name)
     return false;
 }
 
+function isComponentAvailable(component_name)
+{
+    // functions to check component state:
+    // boolean installationRequested()
+    // boolean uninstallationRequested()
+    // boolean updateRequested()
+    // boolean isInstalled()
+    // boolean isUninstalled()
+
+    let component = installer.componentByName(component_name);
+    if (component != null) {
+        let available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
+        console.log("component '" + component_name + "' found and is available: " + available);
+        return available;
+    }
+
+    console.log("component '" + component_name + "' NOT found");
+    return false;
+}
+
 Component.prototype.onInstallationOrUpdateFinished = function()
 {
     console.log("onInstallationOrUpdateFinished entered");
@@ -364,7 +384,7 @@ Component.prototype.addShortcutWidget = function () {
     try {
         if (installer.addWizardPage( component, "ShortcutCheckBoxWidget", QInstaller.StartMenuSelection )) {
             console.log("ShortcutCheckBoxWidget page added");
-            let widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
+            let widget = gui.pageByObjectName("DynamicShortcutCheckBoxWidget");
             if (widget != null) {
                 let desktopCheckBox = widget.findChild("desktopCheckBox");
                 if (desktopCheckBox != null) {
@@ -386,17 +406,18 @@ Component.prototype.addShortcutWidget = function () {
             console.log("ShortcutCheckBoxWidget page not added");
         }
     } catch(e) {
-        console.log("ShortcutCheckBoxWidget page not added");
+        console.log("Error when adding ShortcutCheckBoxWidget page:");
         console.log(e);
     }
 }
 
 Component.prototype.ShortcutCheckBoxWidgetEntered = function () {
+    console.log("ShortcutCheckBoxWidgetEntered");
     let widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
     if (widget != null) {
         let desktopCheckBox = widget.findChild("desktopCheckBox");
         if (desktopCheckBox != null) {
-            if (Component.prototype.isComponentAvailable("com.onsemi.strata.devstudio")) {
+            if (isComponentAvailable("com.onsemi.strata.devstudio")) {
                 desktopCheckBox.setEnabled(true);
                 desktopCheckBox.setChecked(installer.value("add_desktop_shortcut", "true") == "true");
             } else {
