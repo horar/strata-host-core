@@ -63,9 +63,9 @@ Component.prototype.createOperations = function()
             if (strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
                 console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
                 try {
-                    let publicFolder = installer.environmentVariable("Public"); // usually "C:\Users\Public"
-                    if (publicFolder !== "") {
-                        strata_ds_shortcut_dst2 = publicFolder + "\\Desktop\\Strata Developer Studio.lnk";
+                    let public_desktop_path = getSpecialFolderLocation("CommonDesktopDirectory"); // usually "C:\Users\Public\Desktop", but can be different (i.e. non-english OS)
+                    if (public_desktop_path !== "") {
+                        strata_ds_shortcut_dst2 = public_desktop_path + "\\Strata Developer Studio.lnk";
                         component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
                                         "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
                         console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
@@ -142,4 +142,34 @@ function getProgramDataDirectory()
     }
 
     return programDataPath;
+}
+
+function getSpecialFolderLocation(folder_name)
+{
+    var powerShellCommand = "[Environment]::GetFolderPath('" + folder_name + "')";
+    
+    console.log("executing powershell command '" + powerShellCommand + "'");
+    var specialFolder = installer.execute("powershell.exe", ["-command", powerShellCommand]);
+
+    // the output of command is the first item, and the return code is the second
+    // console.log("execution result code: " + specialFolder[1] + ", result: '" + specialFolder[0] + "'");
+
+    if ((specialFolder == null) || (specialFolder == undefined)) {
+        console.log("Error: powershell command failed to execute");
+        return "";
+    }
+
+    if ((specialFolder[0] == null) || (specialFolder[0] == undefined) || (specialFolder[0] == "")) {
+        console.log("Error: powershell command failed to return valid output:", specialFolder);
+        return "";
+    }
+
+    if ((specialFolder[1] == null) || (specialFolder[1] == undefined) || (specialFolder[1] != 0)) {
+        console.log("Error: powershell command returned bad exit code:", specialFolder);
+        return "";
+    }
+
+    var lines = specialFolder[0].split('\r\n');
+    console.log("returning: " + lines[0]);
+    return lines[0];
 }
