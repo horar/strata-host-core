@@ -115,7 +115,7 @@ Component.prototype.onInstallationStarted = function()
                     installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
                 }
             } catch(e) {
-                console.log("unable to change access rights for Strata config folder");
+                console.log("Error: unable to change access rights for Strata config folder");
                 console.log(e);
             }
 
@@ -131,12 +131,12 @@ Component.prototype.onInstallationStarted = function()
                     installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
                 }
             } catch(e) {
-                console.log("unable to change access rights for Strata folder");
+                console.log("Error: unable to change access rights for Strata folder");
                 console.log(e);
             }
             installer.dropAdminRights();
         } else {
-            console.log("unable to elevate access rights");
+            console.log("Error: unable to elevate access rights");
             installer.interrupt();
         }
     }
@@ -344,52 +344,62 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         }
 
         if (installer.status == QInstaller.Success) {
-            console.log("fixing permissions for .dat files");
-            // always run after installation to fix files which refuse inheritance
-            let installer_dat = target_dir + "\\" + "installer.dat";
-            let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
-            if (installer.isInstaller()) {
-                if (installer.fileExists(installer_dat))
-                    installer.execute("cmd", ["/c", "icacls", installer_dat, "/grant", "Users:F"]);
-                if (installer.fileExists(installer_dat + ".new"))
-                    installer.execute("cmd", ["/c", "icacls", installer_dat + ".new", "/grant", "Users:F"]);
-                if (installer.fileExists(maintenance_tool_dat))
-                    installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat, "/grant", "Users:F"]);
-                if (installer.fileExists(maintenance_tool_dat + ".new"))
-                    installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat + ".new", "/grant", "Users:F"]);
+            if (installer.gainAdminRights()) {
+                console.log("fixing permissions for .dat files");
+                // always run after installation to fix files which refuse inheritance
+                try {
+                    let installer_dat = target_dir + "\\" + "installer.dat";
+                    let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
+                    if (installer.isInstaller()) {
+                        if (installer.fileExists(installer_dat))
+                            installer.execute("cmd", ["/c", "icacls", installer_dat, "/grant", "Users:F"]);
+                        if (installer.fileExists(installer_dat + ".new"))
+                            installer.execute("cmd", ["/c", "icacls", installer_dat + ".new", "/grant", "Users:F"]);
+                        if (installer.fileExists(maintenance_tool_dat))
+                            installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat, "/grant", "Users:F"]);
+                        if (installer.fileExists(maintenance_tool_dat + ".new"))
+                            installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat + ".new", "/grant", "Users:F"]);
+                    } else {
+                        let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
+                        let temp_file = temp_location + "\\" + "fix_permissions.bat";
+                        installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
+                        installer.execute("cmd", ["/c", 'echo dir %1 /b /a-d ^>nul 2^>^&1 >>', temp_file]);
+                        installer.execute("cmd", ["/c", "echo IF errorlevel 1 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     set fileExist=0 >>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     set fileExist=1 >>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo )>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo IF %fileExist% EQU 1 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     timeout /t 5 /nobreak ^>nul>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     goto loop>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     timeout /t 2 /nobreak ^>nul>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     IF EXIST %2 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO granting %2 permissions>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         icacls %2 /grant Users:F>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO file %2 does not exists>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     IF EXIST %3 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO granting %3 permissions>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         icacls %3 /grant Users:F>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO file %3 does not exists>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo )>>", temp_file]);
+                        console.log("starting detached process " + temp_file);
+                        let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
+                        installer.executeDetached("cmd", ["/c", temp_file, maintenance_tool_lock, installer_dat, maintenance_tool_dat], temp_location);
+                    }
+                } catch(e) {
+                    console.log("Error: unable to change access rights for Maintenance Tool files");
+                    console.log(e);
+                }
+                installer.dropAdminRights();
             } else {
-                let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
-                let temp_file = temp_location + "\\" + "fix_permissions.bat";
-                installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
-                installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
-                installer.execute("cmd", ["/c", 'echo dir %1 /b /a-d ^>nul 2^>^&1 >>', temp_file]);
-                installer.execute("cmd", ["/c", "echo IF errorlevel 1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     set fileExist=0 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     set fileExist=1 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo IF %fileExist% EQU 1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     timeout /t 5 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     goto loop>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     timeout /t 2 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     IF EXIST %2 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO granting %2 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         icacls %2 /grant Users:F>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO file %2 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     IF EXIST %3 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO granting %3 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         icacls %3 /grant Users:F>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO file %3 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                console.log("starting detached process " + temp_file);
-                let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
-                installer.executeDetached("cmd", ["/c", temp_file, maintenance_tool_lock, installer_dat, maintenance_tool_dat], temp_location);
+                console.log("Error: unable to elevate access rights");
             }
         }
     }
