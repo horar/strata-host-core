@@ -62,10 +62,12 @@ public:
     const QList<FirmwareFileItem>& getFirmwareList();
     const QList<ControlViewFileItem>& getControlViewList();
     const PlatformFileItem& platformSelector();
+    const QString firstNormalPublishedTimestamp();
 
 private:
     QString classId_;
     QString name_;
+    QString firstNormalPublishedTimestamp_;
     QList<PlatformDatasheetItem> datasheetsList_;
     QList<PlatformFileItem> downloadList_;
     QList<PlatformFileItem> viewList_;

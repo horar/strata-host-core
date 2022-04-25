@@ -34,6 +34,7 @@ const QString JSON_LIST("list");
 const QString JSON_MD5("md5");
 const QString JSON_MESSAGE("message");
 const QString JSON_NAME("name");
+const QString JSON_FIRST_NORMAL_PUBLISHED_TIMESTAMP("first_normal_published_timestamp");
 const QString JSON_NOTIFICATION("notification");
 const QString JSON_OPN("opn");
 const QString JSON_PLATFORM_ID("platform_id");
