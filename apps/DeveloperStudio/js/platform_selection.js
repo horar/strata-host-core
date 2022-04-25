@@ -87,9 +87,6 @@ function generatePlatformSelectorModel(platform_list_json) {
 
     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Processing platform list");
 
-    platform_list.sort(function(a,b){ // Sort by timestamp
-        return new Date(b.timestamp) - new Date(a.timestamp);
-    });
 
     // Check to see if the user has a local platform list that they want to add
     if (localPlatformListSettings.value("path", "") !== "") {
@@ -110,19 +107,14 @@ function generatePlatformSelectorModel(platform_list_json) {
         }
     }
 
-    let recentlyReleased = 3
     for (let platform of platform_list){
         if (platform.class_id === undefined || platform.hasOwnProperty("available") === false) {
             console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform has undefined or missing fields, skipping");
             continue
         }
 
-        if ((platform.available.order || platform.available.documents) && !platform.available.unlisted) {
-            platform.recently_released = recentlyReleased > 0 // set first 3 timestamp-sorted non-"coming soon"/"unlisted" platforms to be "recently released"
-            recentlyReleased --
-        }
-
-        generatePlatform(platform)
+        var modelItem = createPlatformSelectorModelItem(platform)
+        platformSelectorModel.append(modelItem)
     }
 
     parseConnectedPlatforms(coreInterface.connectedPlatformList_)
@@ -149,28 +141,40 @@ function emptyListRetry() {
 }
 
 /*
-    Generate ListElemtent from platform JSON and append to selector model
+    Creates item for platform selector model
 */
-function generatePlatform (platform) {
-    const class_id_string = String(platform.class_id) // undefined class_id shall not get here
+function createPlatformSelectorModelItem(base_data) {
+    let platform = {}
+
+    const class_id_string = String(base_data.class_id) // undefined class_id shall not get here
+
+    platform.available = base_data.available
+    platform.class_id = base_data.class_id
+    platform.description = base_data.description
 
     // Parse list of text filters and gather complete filter info from PlatformFilters
-    if (platform.hasOwnProperty("filters")) {
-        platform.filters = PlatformFilters.getFilterList(platform.filters)
+    if (base_data.hasOwnProperty("filters")) {
+        platform.filters = PlatformFilters.getFilterList(base_data.filters)
     } else {
         platform.filters = []
     }
 
-    if (platform.hasOwnProperty("parts_list")) {
-        platform.parts_list = platform.parts_list.map(part => { return { opn: part, matchingIndex: -1 }})
+    platform.first_normal_published_timestamp = base_data.first_normal_published_timestamp
+    platform.image = base_data.image
+    platform.last_published_timestamp = base_data.last_published_timestamp
+    platform.opn = base_data.opn
+
+    if (base_data.hasOwnProperty("parts_list")) {
+        platform.parts_list = base_data.parts_list.map(part => { return { opn: part, matchingIndex: -1 }})
     } else {
         platform.parts_list = []
     }
 
+    platform.verbose_name = base_data.verbose_name
+    platform.version = base_data.version
     platform.desc_matching_index = -1
     platform.opn_matching_index = -1
     platform.name_matching_index = -1
-
     platform.error = false
     platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)
     platform.device_id = Constants.NULL_DEVICE_ID
@@ -183,7 +187,23 @@ function generatePlatform (platform) {
     platform.controller_class_id = ""
     platform.is_assisted = false
     platform.show_overflow_buttons  = false
-    platform.coming_soon = !platform.available.documents && !platform.available.order && !platform.available.control
+
+    let recentlyReleased = false
+    if ((platform.available.order || platform.available.documents)
+            && platform.available.unlisted === false
+            && platform.first_normal_published_timestamp.length > 0)
+    {
+        let msInThreeMonths = 1000*60*60*24*30*3
+        let currentTimestamp = Date.now();
+        let timestamp = Date.fromLocaleString(Qt.locale(), platform.first_normal_published_timestamp, "yyyy-MM-ddThh:mm:ss.zzzZ").getTime();
+
+        if (currentTimestamp - timestamp < msInThreeMonths) {
+            recentlyReleased = true
+        }
+    }
+    platform.recently_released = recentlyReleased
+
+    platform.coming_soon = platform.available.documents === false && platform.available.order === false && platform.available.control === false
 
     // Create entry in classMap
     classMap[class_id_string] = {
@@ -191,8 +211,7 @@ function generatePlatform (platform) {
         "selector_listings": [platformSelectorModel.count]
     }
 
-    // Add to the model
-    platformSelectorModel.append(platform)
+    return platform
 }
 
 /*

@@ -409,7 +409,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
-        jsonPlatform.insert("timestamp", platDoc->platformSelector().timestamp);
+        jsonPlatform.insert("first_normal_published_timestamp", platDoc->firstNormalPublishedTimestamp());
 
         QJsonArray parts_list;
 

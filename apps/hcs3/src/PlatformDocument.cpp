@@ -73,6 +73,8 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
         }
     }
 
+    firstNormalPublishedTimestamp_ = rootObject.value(JSON_FIRST_NORMAL_PUBLISHED_TIMESTAMP).toString();
+
     QJsonArray jsonArray;
 
     // documents
@@ -171,6 +173,11 @@ const QList<ControlViewFileItem>& PlatformDocument::getControlViewList()
 const PlatformFileItem &PlatformDocument::platformSelector()
 {
     return platformSelector_;
+}
+
+const QString PlatformDocument::firstNormalPublishedTimestamp()
+{
+    return firstNormalPublishedTimestamp_;
 }
 
 bool PlatformDocument::getObjectFromJson(const QJsonObject &json, const QString &key, QJsonObject &destObject) const
