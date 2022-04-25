@@ -47,6 +47,7 @@ constexpr const char* const JSON_NUMBER = "number";
 constexpr const char* const JSON_SIZE = "size";
 constexpr const char* const JSON_CRC = "crc";
 constexpr const char* const JSON_DATA = "data";
+constexpr const char* const JSON_DATE = "date";
 constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_FAILED = "failed";
@@ -60,6 +61,7 @@ constexpr const char* const JSON_PLATF_ID_VER = "platform_id_version";
 
 constexpr const char* const CSTR_NO_FIRMWARE = "no_firmware";
 constexpr const char* const CSTR_API_2_0 = "2.0";
+constexpr const char* const CSTR_APPLICATION = "application";
 constexpr const char* const CSTR_BOOTLOADER = "bootloader";
 constexpr const char* const CSTR_NAME_BOOTLOADER = "Bootloader";
 

@@ -58,7 +58,7 @@ protected:
     /*!
      * BasePlatformOperation constructor.
      * \param platform platform which will be used by platform operation
-     * \param type type of operation (value from OperationType enum)
+     * \param type type of operation (value from Type enum)
      */
     BasePlatformOperation(const PlatformPtr& platform, Type type);
 
