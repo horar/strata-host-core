@@ -140,6 +140,8 @@ Component.prototype.onComponentSelectionPageEntered = function ()
                 //widget.selectComponent("com.onsemi.strata.devstudio");
             }
         }
+    } else {
+        console.log("Error: unable to locate default page 'ComponentSelection'");
     }
 }
 
@@ -159,8 +161,12 @@ Component.prototype.onLicenseAgreementPageEntered = function ()
                 if (licenseCheckBox != null) {
                     // QTIFW version 4.1+
                     licenseCheckBox.setChecked(true);
+                } else {
+                    console.log("Error: unable to acquire checkbox 'AcceptLicenseCheckBox'");
                 }
             }
+        } else {
+            console.log("Error: unable to locate default page 'LicenseCheck'");
         }
     }
 }
@@ -178,10 +184,15 @@ Component.prototype.onFinishedPageEntered = function ()
             } else {
                 runItCheckBox.setChecked(false);
             }
+        } else {
+            console.log("Error: unable to acquire checkbox 'RunItCheckBox'");
         }
 
-        if (installer.isInstaller() && (installer.status != QInstaller.Success))
+        if (installer.isInstaller() && (installer.status != QInstaller.Success)) {
             installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
+        }
+    } else {
+        console.log("Error: unable to locate default page 'InstallationFinished'");
     }
 
     if (isSilent) {
