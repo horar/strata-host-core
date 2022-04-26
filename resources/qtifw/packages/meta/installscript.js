@@ -34,10 +34,16 @@ function Component()
         installer.finishButtonClicked.connect(this, Component.prototype.onFinishButtonClicked);
         if (installer.isInstaller() && (systemInfo.productType == "windows")) {
             component.loaded.connect(this, Component.prototype.addShortcutWidget);
+            gui.pageById(QInstaller.StartMenuSelection).left.connect(this, Component.prototype.onStartMenuSelectionPageLeft);
         }
         gui.pageById(QInstaller.ComponentSelection).entered.connect(this, Component.prototype.onComponentSelectionPageEntered);
         gui.pageById(QInstaller.LicenseCheck).entered.connect(this, Component.prototype.onLicenseAgreementPageEntered);
         gui.pageById(QInstaller.InstallationFinished).entered.connect(this, Component.prototype.onFinishedPageEntered);
+    }
+
+    if (installer.isInstaller() && (systemInfo.productType == "windows")) {
+        // do not use "StartMenuDir" directly, because it is overwritten later to full path
+        installer.setValue("StartMenuDir_internal", "onsemi");
     }
 
     if (isValueSet("isSilent_internal")) {
@@ -60,10 +66,25 @@ Component.prototype.createOperations = function()
 
     if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut", "true") == "true")) {
         let target_dir = installer.value("TargetDir").split("/").join("\\");
-        let strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\" + installer.value("MaintenanceToolName") + ".lnk";
-        component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
-                                "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
-        console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
+
+        if (installer.value("add_start_menu_shortcut", "true") == "true") {
+            let strata_mt_shortcut_dst = "";
+            let start_menu_folder = installer.value("StartMenuDir_internal");
+            if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
+                start_menu_folder += "\\";
+            }
+            if (installer.value("add_public_shortcuts", "true") == "true") {
+                strata_mt_shortcut_dst = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                // will point to public Start Menu in this case
+                component.addElevatedOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                               "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+            } else {
+                strata_mt_shortcut_dst = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                       "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+            }
+            console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
+        }
     }
 }
 
@@ -94,7 +115,7 @@ Component.prototype.onInstallationStarted = function()
                     installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
                 }
             } catch(e) {
-                console.log("unable to change access rights for Strata config folder");
+                console.log("Error: unable to change access rights for Strata config folder");
                 console.log(e);
             }
 
@@ -110,12 +131,12 @@ Component.prototype.onInstallationStarted = function()
                     installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
                 }
             } catch(e) {
-                console.log("unable to change access rights for Strata folder");
+                console.log("Error: unable to change access rights for Strata folder");
                 console.log(e);
             }
             installer.dropAdminRights();
         } else {
-            console.log("unable to elevate access rights");
+            console.log("Error: unable to elevate access rights");
             installer.interrupt();
         }
     }
@@ -205,6 +226,21 @@ Component.prototype.onFinishedPageEntered = function ()
                 installer.setValue("performCleanup_internal","true");   // set this since the Controller() is not called
             }
         }
+    }
+}
+
+Component.prototype.onStartMenuSelectionPageLeft = function ()
+{
+    let widget = gui.pageById(QInstaller.StartMenuSelection);
+    if (widget != null) {
+        let lineEdit = widget.findChild("StartMenuPathLineEdit");
+        if (lineEdit != null) {
+            installer.setValue("StartMenuDir_internal", lineEdit.text.trim().split("/").join("\\"))
+        } else {
+            console.log("Error: unable to acquire line edit 'StartMenuPathLineEdit'");
+        }
+    } else {
+        console.log("Error: unable to locate default page 'StartMenuSelection'");
     }
 }
 
@@ -308,52 +344,62 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         }
 
         if (installer.status == QInstaller.Success) {
-            console.log("fixing permissions for .dat files");
-            // always run after installation to fix files which refuse inheritance
-            let installer_dat = target_dir + "\\" + "installer.dat";
-            let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
-            if (installer.isInstaller()) {
-                if (installer.fileExists(installer_dat))
-                    installer.execute("cmd", ["/c", "icacls", installer_dat, "/grant", "Users:F"]);
-                if (installer.fileExists(installer_dat + ".new"))
-                    installer.execute("cmd", ["/c", "icacls", installer_dat + ".new", "/grant", "Users:F"]);
-                if (installer.fileExists(maintenance_tool_dat))
-                    installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat, "/grant", "Users:F"]);
-                if (installer.fileExists(maintenance_tool_dat + ".new"))
-                    installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat + ".new", "/grant", "Users:F"]);
+            if (installer.gainAdminRights()) {
+                console.log("fixing permissions for .dat files");
+                // always run after installation to fix files which refuse inheritance
+                try {
+                    let installer_dat = target_dir + "\\" + "installer.dat";
+                    let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
+                    if (installer.isInstaller()) {
+                        if (installer.fileExists(installer_dat))
+                            installer.execute("cmd", ["/c", "icacls", installer_dat, "/grant", "Users:F"]);
+                        if (installer.fileExists(installer_dat + ".new"))
+                            installer.execute("cmd", ["/c", "icacls", installer_dat + ".new", "/grant", "Users:F"]);
+                        if (installer.fileExists(maintenance_tool_dat))
+                            installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat, "/grant", "Users:F"]);
+                        if (installer.fileExists(maintenance_tool_dat + ".new"))
+                            installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat + ".new", "/grant", "Users:F"]);
+                    } else {
+                        let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
+                        let temp_file = temp_location + "\\" + "fix_permissions.bat";
+                        installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
+                        installer.execute("cmd", ["/c", 'echo dir %1 /b /a-d ^>nul 2^>^&1 >>', temp_file]);
+                        installer.execute("cmd", ["/c", "echo IF errorlevel 1 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     set fileExist=0 >>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     set fileExist=1 >>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo )>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo IF %fileExist% EQU 1 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     timeout /t 5 /nobreak ^>nul>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     goto loop>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     timeout /t 2 /nobreak ^>nul>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     IF EXIST %2 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO granting %2 permissions>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         icacls %2 /grant Users:F>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO file %2 does not exists>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     IF EXIST %3 (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO granting %3 permissions>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         icacls %3 /grant Users:F>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo         ECHO file %3 does not exists>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
+                        installer.execute("cmd", ["/c", "echo )>>", temp_file]);
+                        console.log("starting detached process " + temp_file);
+                        let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
+                        installer.executeDetached("cmd", ["/c", temp_file, maintenance_tool_lock, installer_dat, maintenance_tool_dat], temp_location);
+                    }
+                } catch(e) {
+                    console.log("Error: unable to change access rights for Maintenance Tool files");
+                    console.log(e);
+                }
+                installer.dropAdminRights();
             } else {
-                let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
-                let temp_file = temp_location + "\\" + "fix_permissions.bat";
-                installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
-                installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
-                installer.execute("cmd", ["/c", 'echo dir %1 /b /a-d ^>nul 2^>^&1 >>', temp_file]);
-                installer.execute("cmd", ["/c", "echo IF errorlevel 1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     set fileExist=0 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     set fileExist=1 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo IF %fileExist% EQU 1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     timeout /t 5 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     goto loop>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     timeout /t 2 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     IF EXIST %2 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO granting %2 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         icacls %2 /grant Users:F>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO file %2 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     IF EXIST %3 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO granting %3 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         icacls %3 /grant Users:F>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO file %3 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                console.log("starting detached process " + temp_file);
-                let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
-                installer.executeDetached("cmd", ["/c", temp_file, maintenance_tool_lock, installer_dat, maintenance_tool_dat], temp_location);
+                console.log("Error: unable to elevate access rights");
             }
         }
     }
@@ -408,6 +454,12 @@ Component.prototype.addShortcutWidget = function () {
                     startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
                 } else {
                     console.log("Unable to acquire startMenuCheckBox");
+                }
+                let allUsersRadioButton = widget.findChild("allUsersRadioButton");
+                if (allUsersRadioButton != null) {
+                    allUsersRadioButton.toggled.connect(this, Component.prototype.allUsersRadioButtonChanged);
+                } else {
+                    console.log("Unable to acquire allUsersRadioButton");
                 }
                 widget.entered.connect(this, Component.prototype.ShortcutCheckBoxWidgetEntered);
             } else {
@@ -464,16 +516,24 @@ Component.prototype.startMenuShortcutChanged = function (checked)
     console.log("startMenuShortcutChanged to : " + checked);
     if (checked) {
         installer.setValue("add_start_menu_shortcut", "true");
-        installer.setValue("StartMenuDir", "onsemi");
         if (systemInfo.productType == "windows") {
             installer.setDefaultPageVisible(QInstaller.StartMenuSelection, true);
         }
     } else {
         installer.setValue("add_start_menu_shortcut", "false");
-        installer.setValue("StartMenuDir", "");
         if (systemInfo.productType == "windows") {
             installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
         }
+    }
+}
+
+Component.prototype.allUsersRadioButtonChanged = function (checked)
+{
+    console.log("allUsersRadioButtonChanged to : " + checked);
+    if (checked) {
+        installer.setValue("add_public_shortcuts", "true");
+    } else {
+        installer.setValue("add_public_shortcuts", "false");
     }
 }
 
