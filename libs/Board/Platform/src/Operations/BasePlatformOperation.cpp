@@ -34,6 +34,11 @@ BasePlatformOperation::BasePlatformOperation(const PlatformPtr& platform, Type t
 
 BasePlatformOperation::~BasePlatformOperation()
 {
+    if (currentCommand_ != commandList_.end()) {
+        (*currentCommand_)->disconnect(this);
+        (*currentCommand_)->cancel();
+    }
+
     platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
     //qCDebug(lcPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
