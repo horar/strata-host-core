@@ -150,8 +150,6 @@ private slots:
     void handleCommandFinished(command::CommandResult result, int status);
 
 private:
-    void reset();
-
     const Type type_;
 
     bool started_;

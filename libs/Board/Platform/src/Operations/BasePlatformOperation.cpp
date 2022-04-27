@@ -210,7 +210,10 @@ void BasePlatformOperation::finishOperation(Result result, const QString &errorS
         return;
     }
 
-    reset();
+    commandList_.clear();
+    currentCommand_ = commandList_.end();
+    platform_->unlockDevice(reinterpret_cast<quintptr>(this));
+
     finished_ = true;
 
     if (result == Result::Success) {
@@ -240,13 +243,6 @@ void BasePlatformOperation::resume()
 void BasePlatformOperation::setPlatformRecognized(bool isRecognized)
 {
     platform_->setRecognized(isRecognized);
-}
-
-void BasePlatformOperation::reset()
-{
-    commandList_.clear();
-    currentCommand_ = commandList_.end();
-    platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 }
 
 }  // namespace
