@@ -9,6 +9,7 @@
 #pragma once
 
 #include <Connector.h>
+#include <StrataRPC/RpcError.h>
 
 #include <QObject>
 #include <QSocketNotifier>
@@ -72,7 +73,7 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(const ServerConnectorError &errorType, const QString &errorMessage);
+    void errorOccurred(strata::strataRPC::RpcErrorCode code);
 
     /**
      * Emitted when the client connector was initialized successfully.
@@ -106,5 +107,3 @@ private:
 };
 
 }  // namespace strata::strataRPC
-
-Q_DECLARE_METATYPE(strata::strataRPC::ServerConnectorError);

@@ -21,7 +21,6 @@ template <class HandlerArgument>
 class Dispatcher;
 class ServerConnector;
 class ClientsController;
-enum class ServerConnectorError : short;
 
 class StrataServer : public QObject
 {

@@ -100,7 +100,7 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(strataRPC::RpcErrorCode code, const QString message);
+    void errorOccurred(strata::strataRPC::RpcErrorCode code);
 
     /**
      * Emitted when the client connector was initialized successfully.

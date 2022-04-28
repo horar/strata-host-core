@@ -36,7 +36,6 @@ StrataServer::StrataServer(
             std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
     }
 
-    qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
     connector_->moveToThread(connectorThread_.get());
 
     QObject::connect(

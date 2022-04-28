@@ -62,9 +62,8 @@ bool ClientConnector::disconnect()
         return true;
     }
 
-    QString errorMessage(QStringLiteral("Failed to disconnect client."));
-    qCCritical(lcStrataClientConnector) << errorMessage;
-    emit errorOccurred(RpcErrorCode::DisconnectionError, errorMessage);
+    qCCritical(lcStrataClientConnector) << "Failed to disconnect client.";
+    emit errorOccurred(RpcErrorCode::DisconnectionError);
     return false;
 }
 
@@ -81,7 +80,7 @@ bool ClientConnector::connect()
 
     if (errorMessage.isEmpty() == false) {
         qCCritical(lcStrataClientConnector) << errorMessage;
-        emit errorOccurred(RpcErrorCode::ConnectionError, errorMessage);
+        emit errorOccurred(RpcErrorCode::ConnectionError);
         return false;
     }
 
@@ -125,7 +124,7 @@ bool ClientConnector::sendMessage(const QByteArray &message)
 
     if (errorMessage.isEmpty() == false) {
         qCCritical(lcStrataClientConnector) << errorMessage;
-        emit errorOccurred(RpcErrorCode::TransportError, errorMessage);
+        emit errorOccurred(RpcErrorCode::TransportError);
         return false;
     }
 
