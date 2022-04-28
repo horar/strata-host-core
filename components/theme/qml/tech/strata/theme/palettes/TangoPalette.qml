@@ -12,6 +12,7 @@ import QtQml 2.12
 QtObject {
     id: tangoPalette
 
+    // palette used in internal Strata Applications
     readonly property color chocolate1:     "#e9b96e"
     readonly property color chocolate2:     "#c17d11"
     readonly property color chocolate3:     "#8f5902"
