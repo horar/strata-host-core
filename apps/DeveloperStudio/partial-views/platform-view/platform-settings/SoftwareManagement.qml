@@ -13,6 +13,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -235,7 +236,7 @@ ColumnLayout {
                 Layout.leftMargin: 10
 
                 SGIcon {
-                    iconColor: "lime"
+                    iconColor: Theme.palette.success
                     source: "qrc:/sgimages/exclamation-circle.svg"
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
@@ -344,7 +345,7 @@ ColumnLayout {
 
                             Rectangle {
                                 id: progressBar
-                                color: downloadError ? "red" : "#57d445"
+                                color: downloadError ? Theme.palette.error : Theme.palette.success
                                 height: barBackground1.height
                                 width: 0
 

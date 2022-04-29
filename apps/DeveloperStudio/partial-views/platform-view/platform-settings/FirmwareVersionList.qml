@@ -15,6 +15,7 @@ import tech.strata.notifications 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 ColumnLayout {
     id: firmwareList
@@ -186,7 +187,7 @@ ColumnLayout {
                                     if (platformStack.connected === false || firmwareListView.flashingDeviceInProgress) {
                                         return "#ddd" // disabled - light greyed out
                                     } else if (model.installed) {
-                                        return "lime"
+                                        return Theme.palette.success
                                     } else {
                                         return "#666" // enabled - dark grey
                                     }
@@ -274,7 +275,7 @@ ColumnLayout {
                         function resetState() {
                             statusText.text = "Initializing..."
                             fillBar.progress = 0.0
-                            fillBar.color = "lime"
+                            fillBar.color = Theme.palette.success
                             flashStatus.visible = false
                         }
 
@@ -336,7 +337,7 @@ ColumnLayout {
                                     id: fillBar
                                     height: barBackground.height
                                     width: barBackground.width * progress // must be bound in case of resize
-                                    color: "lime"
+                                    color: Theme.palette.success
 
                                     property real progress : 0.0
                                 }

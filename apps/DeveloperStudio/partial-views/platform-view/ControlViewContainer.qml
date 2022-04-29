@@ -16,6 +16,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: controlViewContainer
@@ -110,7 +111,7 @@ Item {
 
                         Rectangle {
                             id: bar
-                            color: "#57d445"
+                            color: Theme.palette.success
                             height: parent.height
                             width: loadingBar.visualPosition * loadingBar.width
                             radius: 5

@@ -14,6 +14,7 @@ import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 ColumnLayout {
     id: firmwareColumn
@@ -128,7 +129,7 @@ ColumnLayout {
             source: "qrc:/sgimages/exclamation-triangle.svg"
             Layout.preferredHeight: 30
             Layout.preferredWidth: 30
-            iconColor: "#f53847"
+            iconColor: Theme.palette.error
         }
 
         SGText {
