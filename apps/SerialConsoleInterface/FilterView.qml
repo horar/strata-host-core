@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -352,7 +353,7 @@ FocusScope {
 
                 SGWidgets.SGButton {
                     id: addButton
-                    iconColor: "green"
+                    iconColor: TangoTheme.palette.chameleon2
                     icon.source: "qrc:/sgimages/plus.svg"
                     enabled: disableAllFiltering === false
 
