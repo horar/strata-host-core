@@ -363,11 +363,11 @@ Item {
             registrationStatus.text = ""
             fieldGrid.visible = true
             if (result === "Registered") {
-                alertRect.color = "#57d445"
+                alertRect.color = Theme.palette.success
                 alertRect.text = "Account successfully registered to " + emailField.text + "!"
                 root.resetForm()
             } else {
-                alertRect.color = "red"
+                alertRect.color = Theme.palette.error
                 if (result === "No Connection") {
                     alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
                 } else if (result === "Server Error") {

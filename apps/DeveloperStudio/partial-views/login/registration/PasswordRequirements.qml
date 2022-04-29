@@ -11,6 +11,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: passwordInfo
@@ -40,7 +41,7 @@ Rectangle {
 
         SGIcon {
             source: requirementsGrid.passwordsMatch ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-            iconColor: requirementsGrid.passwordsMatch ? "#30c235" : "#cccccc"
+            iconColor: requirementsGrid.passwordsMatch ? Theme.palette.success : "#cccccc"
             height: 20
             width: height
         }
@@ -52,7 +53,7 @@ Rectangle {
 
         SGIcon {
             source: requirementsGrid.hasCapital ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-            iconColor: requirementsGrid.hasCapital ? "#30c235" : "#cccccc"
+            iconColor: requirementsGrid.hasCapital ? Theme.palette.success : "#cccccc"
             height: 20
             width: height
         }
@@ -64,7 +65,7 @@ Rectangle {
 
         SGIcon {
             source: requirementsGrid.hasLower ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-            iconColor: requirementsGrid.hasLower ? "#30c235" : "#cccccc"
+            iconColor: requirementsGrid.hasLower ? Theme.palette.success : "#cccccc"
             height: 20
             width: height
         }
@@ -76,7 +77,7 @@ Rectangle {
 
         SGIcon {
             source: requirementsGrid.hasNumber ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-            iconColor: requirementsGrid.hasNumber ? "#30c235" : "#cccccc"
+            iconColor: requirementsGrid.hasNumber ? Theme.palette.success : "#cccccc"
             height: 20
             width: height
         }
@@ -88,7 +89,7 @@ Rectangle {
 
         SGIcon {
             source: requirementsGrid.lengthValid ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-            iconColor: requirementsGrid.lengthValid ? "#30c235" : "#cccccc"
+            iconColor: requirementsGrid.lengthValid ? Theme.palette.success : "#cccccc"
             height: 20
             width: height
         }
