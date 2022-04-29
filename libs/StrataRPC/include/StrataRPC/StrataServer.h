@@ -38,7 +38,6 @@ public:
      */
     StrataServer(
             const QString &address,
-            bool useDefaultHandlers = true,
             QObject *parent = nullptr);
 
     /**

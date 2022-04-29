@@ -19,7 +19,6 @@ using namespace strata::strataRPC;
 
 StrataServer::StrataServer(
         const QString &address,
-        bool useDefaultHandlers,
         QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const RpcRequest &>()),
@@ -27,14 +26,13 @@ StrataServer::StrataServer(
       connector_(new ServerConnector(address)),
       connectorThread_(new QThread())
 {
-    if (useDefaultHandlers) {
-        dispatcher_->registerHandler(
-            "register_client",
-            std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
-        dispatcher_->registerHandler(
-            "unregister_client",
-            std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
-    }
+
+    dispatcher_->registerHandler(
+                "register_client",
+                std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
+    dispatcher_->registerHandler(
+                "unregister_client",
+                std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
 
     connector_->moveToThread(connectorThread_.get());
 
