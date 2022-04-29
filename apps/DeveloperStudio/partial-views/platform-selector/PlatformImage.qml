@@ -33,7 +33,7 @@ Rectangle {
     property alias textBgColor: textBg.color
 
     readonly property string defaultText: "CONNECTED"
-    readonly property color defaultTextBg: Theme.palette.green
+    readonly property color defaultTextBg: Theme.palette.onsemiCyan
 
     Image {
         id: image
