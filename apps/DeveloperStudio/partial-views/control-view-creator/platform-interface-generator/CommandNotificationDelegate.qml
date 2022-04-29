@@ -10,7 +10,9 @@ import QtQuick 2.12
 import QtQml 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     width:  ListView.view.width
@@ -45,7 +47,7 @@ Rectangle {
 
                 icon {
                     source: "qrc:/sgimages/times.svg"
-                    color: removeCommandMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                    color: removeCommandMouseArea.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Theme.palette.onsemiOrange
                     height: 7
                     width: 7
                     name: "Remove command / notification"
@@ -97,7 +99,7 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            return "#D10000"
+                            return Theme.palette.onsemiOrange
                         } else if (cmdNotifName.activeFocus) {
                             return palette.highlight
                         } else {

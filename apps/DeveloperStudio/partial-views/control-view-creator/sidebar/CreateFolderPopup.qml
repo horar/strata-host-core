@@ -9,8 +9,10 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
+
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/partial-views"
 
@@ -142,7 +144,7 @@ SGStrataPopup {
 
             SGIcon {
                 source: folderReqsPopup.folderNameValid ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-                iconColor: folderReqsPopup.folderNameValid ? "#30c235" : "#cccccc"
+                iconColor: folderReqsPopup.folderNameValid ? Theme.palette.success : "#cccccc"
                 height: 20
                 width: height
             }
@@ -155,7 +157,7 @@ SGStrataPopup {
 
             SGIcon {
                 source: folderReqsPopup.folderDoesNotExist ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-                iconColor: folderReqsPopup.folderDoesNotExist ? "#30c235" : "#cccccc"
+                iconColor: folderReqsPopup.folderDoesNotExist ? Theme.palette.success : "#cccccc"
                 height: 20
                 width: height
             }

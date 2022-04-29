@@ -266,7 +266,7 @@ Rectangle {
 
         titleText: "You have unsaved changes in the Platform Interface Generator"
         popupText: "Platform Interface Generator:\nYour changes will be lost if you choose to not save them."
-        acceptButtonColor: Theme.palette.red
+        acceptButtonColor: Theme.palette.error
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Continue without Saving"
         cancelButtonText: "Cancel"
@@ -288,7 +288,7 @@ Rectangle {
         padding: 0
         closePolicy: Popup.NoAutoClose
 
-        acceptButtonColor: Theme.palette.green
+        acceptButtonColor: Theme.palette.onsemiCyan
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Clean"
         cancelButtonText: "Cancel"

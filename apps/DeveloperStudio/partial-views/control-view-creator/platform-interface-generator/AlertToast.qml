@@ -11,12 +11,14 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtQml 2.12
 
+import tech.strata.theme 1.0
+
 Rectangle {
     id: alertToast
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredHeight: 0
     Layout.fillWidth: true
-    color: "red"
+    color: Theme.palette.error
     visible: Layout.preferredHeight > 0
     clip: true
     Accessible.name: text

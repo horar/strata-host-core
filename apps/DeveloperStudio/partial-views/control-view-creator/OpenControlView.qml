@@ -15,6 +15,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 import "../general"
 import "components/"
@@ -185,7 +186,7 @@ Item {
         SGNotificationToast {
             id: alertMessage
             Layout.preferredWidth: parent.width/1.5
-            color: "red"
+            color: Theme.palette.error
         }
 
         SGText {

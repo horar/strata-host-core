@@ -16,6 +16,7 @@ import QtWebChannel 1.0
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -257,7 +258,7 @@ ColumnLayout {
         id: alertToast
         Layout.fillWidth: true
         interval: 0
-        color: "red"
+        color: Theme.palette.error
     }
 
     RowLayout {

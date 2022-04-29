@@ -12,6 +12,7 @@ import QtQml.Models 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: itemContainer
@@ -41,7 +42,7 @@ Item {
             rightMargin: 5
         }
 
-        iconColor: "green"
+        iconColor: Theme.palette.success
         source: "qrc:/sgimages/check-circle.svg"
 
         MouseArea {

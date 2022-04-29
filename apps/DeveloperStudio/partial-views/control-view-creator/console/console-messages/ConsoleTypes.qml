@@ -55,10 +55,10 @@ Item {
 
     function getMsgColor(type){
         switch(type){
-        case "debug": return Theme.palette.lightBlue
+        case "debug": return Theme.palette.onsemiLightBlue
         case "warning": return Theme.palette.warning
         case "error": return Theme.palette.error
-        case "info": return Theme.palette.green
+        case "info": return Theme.palette.onsemiCyan
         default: return "#aaa"
         }
     }

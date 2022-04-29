@@ -8,6 +8,7 @@
  */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import tech.strata.theme 1.0
 
 Button {
     id: button
