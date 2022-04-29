@@ -408,6 +408,18 @@ FocusScope {
                         visible: (model.platform.deviceType === Sci.SciPlatform.MockDevice)
                         onClicked: showMockSettingsView()
                     }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Validator"
+                        hintText: qsTr("Validate Platform interface")
+                        icon.source: "qrc:/images/question.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showValidationView()
+                    }
                 }
 
                 Item {
@@ -970,6 +982,13 @@ FocusScope {
         }
     }
 
+    Component {
+        id: validationComponent
+
+        ValidationView {
+        }
+    }
+
     function showProgramView() {
         stackView.push(programDeviceComponent)
     }
@@ -992,6 +1011,10 @@ FocusScope {
 
     function showMessageQueueView() {
         stackView.push(messageQueueComponent)
+    }
+
+    function showValidationView() {
+        stackView.push(validationComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {

@@ -195,6 +195,14 @@ int main(int argc, char *argv[])
     qmlRegisterType<HexModel>("tech.strata.sci", 1, 0, "HexModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
+    qmlRegisterUncreatableMetaObject(
+                strata::platform::validation::staticMetaObject,
+                "tech.strata.platform.validation",
+                1, 0,
+                "PlatformValidation",
+                "You can't instantiate PlatformValidation in QML" );
+    qRegisterMetaType<strata::platform::validation::Status>("PlatformValidation");
+
     loadResources();
 
     // make sure that objects in context properties are declared before engine, to maintain proper order of destruction

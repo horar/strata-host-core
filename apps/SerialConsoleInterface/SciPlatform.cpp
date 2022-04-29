@@ -44,6 +44,8 @@ SciPlatform::SciPlatform(
     searchScrollbackModel_->setSourceModel(scrollbackModel_);
 
     messageQueueModel_ = new SciMessageQueueModel(this);
+
+    platformValidation_ = new SciPlatformValidation(platform_, this);
 }
 
 SciPlatform::~SciPlatform()
@@ -55,6 +57,7 @@ SciPlatform::~SciPlatform()
     filterScrollbackModel_->deleteLater();
     searchScrollbackModel_->deleteLater();
     messageQueueModel_->deleteLater();
+    platformValidation_->deleteLater();
 }
 
 QByteArray SciPlatform::deviceId() const
@@ -200,6 +203,11 @@ SciSearchScrollbackModel *SciPlatform::searchScrollbackModel() const
 SciMessageQueueModel *SciPlatform::messageQueueModel() const
 {
     return messageQueueModel_;
+}
+
+SciPlatformValidation *SciPlatform::platformValidation() const
+{
+    return platformValidation_;
 }
 
 QString SciPlatform::errorString() const
