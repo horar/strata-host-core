@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.lcu 1.0
@@ -24,6 +25,13 @@ Item {
     property bool maxNoFilesEnabled: false
     property bool maxFileSizeEnabled: false
 
+    QtLabsSettings.Settings {
+        id: settings
+        category: "ApplicationWindow"
+
+        property alias selectedFileName: iniFileComboBox.currentText
+    }
+
     ConfigFileModel {
         id:configFileModel
     }
@@ -34,6 +42,7 @@ Item {
 
     Component.onCompleted: {
         configFileModel.reload()
+        iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
     }
 
     SGWidgets.SGText {
