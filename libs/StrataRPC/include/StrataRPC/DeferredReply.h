@@ -36,6 +36,7 @@ public:
     void setTimestamp(qint64 timestamp);
 
     friend QDebug operator<<(QDebug debug, const DeferredReply &reply);
+    friend QDebug operator<<(QDebug debug, const DeferredReply *reply);
 
 signals:
     /**
