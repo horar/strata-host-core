@@ -62,7 +62,12 @@ void DeferredReply::setTimestamp(qint64 timestamp)
 
 QDebug operator<<(QDebug debug, const DeferredReply &reply)
 {
-    debug.noquote() << reply.timestamp() << reply.method() << reply.params();
+    return debug << &reply;
+}
+
+QDebug operator<<(QDebug debug, const DeferredReply *reply)
+{
+    debug.noquote() << reply->id() << reply->timestamp() << reply->method() << reply->params();
     return debug;
 }
 

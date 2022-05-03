@@ -21,7 +21,7 @@ class DeferredReply : public QObject
     Q_DISABLE_COPY(DeferredReply);
 
 public:
-    DeferredReply(QObject *parent = nullptr);
+    DeferredReply(QObject *parent);
 
     int id() const;
     void setId(int id);
@@ -36,6 +36,7 @@ public:
     void setTimestamp(qint64 timestamp);
 
     friend QDebug operator<<(QDebug debug, const DeferredReply &reply);
+    friend QDebug operator<<(QDebug debug, const DeferredReply *reply);
 
 signals:
     /**
