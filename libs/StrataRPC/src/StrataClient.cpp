@@ -222,7 +222,7 @@ DeferredReply* StrataClient::sendRequest(const QString &method, const QJsonObjec
 
     QByteArray message = buildRequestMessage(id, method, params);
 
-    DeferredReply *deferred = new DeferredReply();
+    DeferredReply *deferred = new DeferredReply(this);
     if (deferred == nullptr) {
         qCCritical(lcStrataClient) << "failed to create DeferredReply object";
         return nullptr;
