@@ -45,6 +45,12 @@ public:
     ~PlatformMessage();
 
     /**
+     * Assignment operator.
+     * @param other existing PlatformMessage which will be assigned to new one
+     */
+    PlatformMessage& operator=(const PlatformMessage& other);
+
+    /**
      * Getter for raw message.
      * @return raw message received from device
      */
