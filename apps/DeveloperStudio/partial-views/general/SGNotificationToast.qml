@@ -8,15 +8,17 @@
  */
 import QtQuick 2.12
 import QtQml 2.12
-import tech.strata.sgwidgets 1.0
-import tech.strata.fonts 1.0
 import QtQuick.Layouts 1.3
+
+import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
+import tech.strata.fonts 1.0
 
 Rectangle {
     id: alertToast
     Layout.alignment: Qt.AlignHCenter
     Layout.preferredHeight: 0
-    color: "red"
+    color: Theme.palette.error
     visible: Layout.preferredHeight > 0
     clip: true
     Accessible.name: text
@@ -34,7 +36,7 @@ Rectangle {
 
     SGIcon {
         id: alertIcon
-        source: Qt.colorEqual(alertToast.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
+        source: Qt.colorEqual(alertToast.color, Theme.palette.error) ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
         anchors {
             left: alertToast.left
             verticalCenter: alertToast.verticalCenter

@@ -49,13 +49,13 @@ Window {
             height: 0
             Layout.alignment: Qt.AlignHCenter
 
-            color: "red"
+            color: Theme.palette.error
             visible: height > 0
             clip: true
 
             SGIcon {
                 id: alertIcon
-                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
+                source: Qt.colorEqual(alertRect.color, Theme.palette.error) ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
                 anchors {
                     left: alertRect.left
                     verticalCenter: alertRect.verticalCenter
@@ -174,7 +174,7 @@ Window {
                             // if we get a valid JSON file with a platform list, then either append or replace
                             if (platforms.length > 0) {
                                 alertText.text = "Successfully added a local platform list."
-                                alertRect.color = "#57d445"
+                                alertRect.color = Theme.palette.success
                                 alertAnimation.start()
 
                                 // Option 0 is append, 1 is replace
@@ -189,7 +189,7 @@ Window {
                                 }
                             } else {
                                 alertText.text = "Local platform list file has invalid JSON."
-                                alertRect.color = "red"
+                                alertRect.color = Theme.palette.error
                                 alertAnimation.start()
                             }
                         }
@@ -434,7 +434,7 @@ Window {
                         Rectangle {
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: Layout.preferredHeight
-                            color: "red"
+                            color: Theme.palette.error
 
                             SGIcon {
                                 source:"qrc:/sgimages/times.svg"

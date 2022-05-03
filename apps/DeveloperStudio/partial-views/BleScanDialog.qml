@@ -295,7 +295,7 @@ SGStrataPopup {
                                 target: isConnectedTag
                                 text: "CONNECTED"
                                 textColor: "white"
-                                color: Theme.palette.green
+                                color: Theme.palette.onsemiCyan
                                 font.bold: true
                             }
                         }
@@ -314,7 +314,7 @@ SGStrataPopup {
 
                     visible: text !== ""
                     text: model.errorString
-                    color: Theme.palette.red
+                    color: Theme.palette.error
                     elide: Text.ElideRight
                 }
 
