@@ -37,9 +37,9 @@ SGWidgets.SGWindow {
     property string versionNum: "<b>version:</b> %1".arg(AppInfo.version)
     property string versionNumber: versionList[versionListLength - 1] === "uncommited" ? versionNum + "-" + versionList[versionListLength - 1]  : versionNum
     property string versionNumberExpanded: createVersionString()
-    property color dialogBg: "#eeeeee"
-    property color lighterGrayColor: Qt.lighter(Theme.palette.gray, 1.33)
-    property color darkerGrayColor: Qt.lighter(Theme.palette.gray, 1.15)
+    property color dialogBg: TangoTheme.palette.aluminium1
+    property color lighterGrayColor: TangoTheme.palette.aluminium2
+    property color darkerGrayColor: TangoTheme.palette.aluminium3
     property bool versionExpanded: false
 
     defaultAttributionText: {
@@ -133,7 +133,7 @@ SGWidgets.SGWindow {
 
                     hintText: versionExpanded ? "Show less" : "Show more"
                     icon.source: versionExpanded ? "qrc:/sgimages/chevron-left.svg" : "qrc:/sgimages/chevron-right.svg"
-                    iconColor: Theme.palette.black
+                    iconColor: TangoTheme.palette.black
                     iconSize: 0.7*versionText.height
                     backgroundOnlyOnHovered: false
 

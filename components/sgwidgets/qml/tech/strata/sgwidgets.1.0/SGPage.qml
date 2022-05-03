@@ -29,7 +29,7 @@ Page {
 
         Rectangle {
             anchors.fill: parent
-            color: Theme.palette.darkBlue
+            color: TangoTheme.palette.skyBlue3
         }
 
         SGWidgets.SGIconButton {

@@ -195,7 +195,7 @@ FocusScope {
         visible: hasHelperText
         font.italic: true
         text: validStatus === SGBaseEditor.Invalid ? errorText : helperText
-        color: validStatus === SGBaseEditor.Invalid ? Theme.palette.error : Qt.darker("grey",1.5)
+        color: validStatus === SGBaseEditor.Invalid ? TangoTheme.palette.error : Qt.darker("grey",1.5)
     }
 
     Component {
@@ -205,7 +205,7 @@ FocusScope {
             Rectangle {
                 anchors.fill: parent
                 radius: Math.round(width/2)
-                color: Theme.palette.error
+                color: TangoTheme.palette.error
             }
 
             SGIcon {

@@ -26,7 +26,7 @@ Menu {
                 id: menuItemBackground
                 opacity: enabled ? 1 : 0.3
                 color: menuItem.highlighted ? Qt.lighter(TangoTheme.palette.selectedText, 1.5) : "transparent"
-                border.color: menuItem.highlighted ? Theme.palette.gray : "transparent"
+                border.color: menuItem.highlighted ? TangoTheme.palette.aluminium3 : "transparent"
                 border.width: 1
             }
     }
@@ -40,14 +40,14 @@ Menu {
                 bottomMargin: 0
             }
             glowRadius: 8
-            color: Theme.palette.gray
+            color: TangoTheme.palette.aluminium3
         }
 
         Rectangle {
             id: contextMenuBackground
             anchors.fill: parent
-            color: Theme.palette.white
-            border.color: Theme.palette.gray
+            color: TangoTheme.palette.white
+            border.color: TangoTheme.palette.aluminium3
             border.width: 1
             radius: 4
         }

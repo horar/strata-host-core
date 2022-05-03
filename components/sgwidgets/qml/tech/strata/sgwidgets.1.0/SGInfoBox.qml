@@ -19,7 +19,7 @@ FocusScope {
     implicitWidth: row.implicitWidth
 
     property color textColor: "black"
-    property color invalidTextColor: "red"
+    property color invalidTextColor: TangoTheme.palette.error
     property real fontSizeMultiplier: 1.0
     property color boxBorderColor: "#CCCCCC"
     property real boxBorderWidth: 1
