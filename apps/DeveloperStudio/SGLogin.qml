@@ -19,6 +19,7 @@ import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
 import tech.strata.theme 1.0
+
 Item {
     id: root
     clip: true
@@ -222,7 +223,7 @@ Item {
 
     Rectangle {
         id: testServerWarningContainer
-        color: "red"
+        color: Theme.palette.error
         anchors {
             left: parent.left
             right: parent.right
