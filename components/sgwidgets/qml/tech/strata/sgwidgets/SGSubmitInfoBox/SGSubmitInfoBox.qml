@@ -23,7 +23,7 @@ Rectangle {
     property alias infoBoxWidth: infoContainer.width
     property alias infoBoxHeight: infoContainer.height
     property color textColor: "#000"
-    property color invalidTextColor: "red"
+    property color invalidTextColor: TangoTheme.palette.error
     property color infoBoxColor: infoText.readOnly ? "#eee" : "transparent"
     property color infoBoxBorderColor: "#cccccc"
     property real infoBoxBorderWidth: 1
