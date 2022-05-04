@@ -210,4 +210,8 @@ if(APPS_CORESW_SDS_PLUGIN_CVC)
     else()
        target_compile_definitions(${PROJECT_NAME} PRIVATE -DQT_RCC_EXECUTABLE="${QT_RCC_EXECUTABLE}")
     endif()
+
+    if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+        add_subdirectory(cvc)
+    endif()
 endif()
