@@ -10,6 +10,7 @@
 #define COMMANDVALIDATOR_H
 
 #include <QByteArray>
+#include <QString>
 
 #include <map>
 
@@ -60,6 +61,8 @@ private:
     static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
     static const std::map<const JsonType, const char*> notifications_;
 
+    static QString lastValidationError_;
+
 public:
     /**
      * Parse JSON schema into rapidjson::SchemaDocument.
@@ -73,7 +76,7 @@ public:
      * Validate json document against schema.
      * @param schema[in] The rapidjson::SchemaDocument containing schema.
      * @param json[in] The rapidjson::Value contatining JSON (accepts also rapidjson::Document).
-     * @param quiet[in] If set to true, nothing is written to log.
+     * @param quiet[in] If set to true, nothing is written to log (and 'last validation error' contains generic error).
      * @return true if the the command is valid, false otherwise.
      */
     static bool validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json, bool quiet = false);
@@ -137,6 +140,12 @@ public:
      * @return status string (/notification/payload/status) or empty array
      */
     static QByteArray notificationStatus(const rapidjson::Document &doc);
+
+    /**
+     * Get last error from validation against schema. This function is not reentrant and thered safe!
+     * @return error from last validation (empty if none error occured)
+     */
+    static QString lastValidationError();
 };
 
 }  // namespace
