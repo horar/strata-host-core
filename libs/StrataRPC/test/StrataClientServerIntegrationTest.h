@@ -10,14 +10,12 @@
 
 #include "QtTest.h"
 
-//#include <StrataRPC/StrataClient.h>
-//#include <StrataRPC/StrataServer.h>
+#include <StrataRPC/StrataClient.h>
+#include <StrataRPC/StrataServer.h>
 #include <QObject>
 
-#ifdef false
 using strata::strataRPC::StrataClient;
 using strata::strataRPC::StrataServer;
-#endif
 
 class StrataClientServerIntegrationTest : public QObject
 {
@@ -25,14 +23,25 @@ class StrataClientServerIntegrationTest : public QObject
 
 private slots:
 
-#ifdef false
-//temporary disabled until strata-rpc redesign is complete
-    void testSingleClient();
-    void testMultipleClients();
-    void testCallbacks();
+    void init();
+    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
+
+
+    void testUnregisteredClient();
+    void testTimeoutRequest();
+    void testClientRegistration();
+    void testNotification();
+    void testBroadcastToAll();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
-    void waitForZmqMessages(int delay);
-#endif
+    void waitForMessages(int delay);
+
+    StrataServer *server;
+    StrataClient *client1;
+
+    void callRegisterClient(StrataClient *client);
+    void callUnregisterClient(strata::strataRPC::StrataClient *client);
 };

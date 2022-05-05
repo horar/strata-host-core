@@ -9,23 +9,20 @@
 #pragma once
 
 #include <QObject>
-//#include <StrataRPC/Message.h>
+#include <StrataRPC/RpcRequest.h>
 
 #include "Dispatcher.h"
 #include "QtTest.h"
 #include "TestHandlers.h"
 
 using strata::strataRPC::Dispatcher;
-//using strata::strataRPC::Message;
 
 class DispatcherTest : public QObject
 {
     Q_OBJECT
-public:
-#ifdef false
-    DispatcherTest();
 
 private slots:
+    void initTestCase();
     void testRegisteringHandlers();
     void testUregisterHandlers();
     void testDispatchHandlers();
@@ -34,10 +31,9 @@ private slots:
     void testDispatchUsingSignals();
 private:
     TestHandlers th_;
-    QVector<Message> messageList_;
+    QVector<RpcRequest> messageList_;
 
 signals:
-    void disp(const Message &clientMessage);
+    void disp(const RpcRequest &clientMessage);
 
-#endif
 };

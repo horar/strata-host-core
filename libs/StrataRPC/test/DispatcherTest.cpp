@@ -12,25 +12,21 @@
 
 QTEST_MAIN(DispatcherTest)
 
-#ifdef false
-
-DispatcherTest::DispatcherTest()
+void DispatcherTest::initTestCase()
 {
-    messageList_.push_back(
-        {"handler_1", {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});
-    messageList_.push_back(
-        {"handler_2", {}, 2, "mg", strata::strataRPC::Message::MessageType::Notification});
-    messageList_.push_back(
-        {"handler_3", {}, 3, "mg", strata::strataRPC::Message::MessageType::Response});
-    messageList_.push_back(
-        {"handler_4", {}, 4, "mg", strata::strataRPC::Message::MessageType::Error});
-    messageList_.push_back(
-        {"handler_5", {}, 5, "mg", strata::strataRPC::Message::MessageType::Command});
+    for (int i = 1; i < 6; ++i) {
+        RpcRequest request;
+        request.setClientId("mg");
+        request.setId(i);
+        request.setMethod(QString("handler_%1").arg(i));
+
+        messageList_.push_back(request);
+    }
 }
 
 void DispatcherTest::testRegisteringHandlers()
 {
-    Dispatcher<const Message &> dispatcher;
+    Dispatcher<const RpcRequest &> dispatcher;
 
     QCOMPARE(dispatcher.registerHandler(
                   "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)),
@@ -54,18 +50,18 @@ void DispatcherTest::testRegisteringHandlers()
 
 void DispatcherTest::testUregisterHandlers()
 {
-    Dispatcher<const Message &> dispatcher;
+    Dispatcher<const RpcRequest &> dispatcher;
 
     QVERIFY(false == dispatcher.unregisterHandler("not_registered_handler"));
 
-    QVERIFY(dispatcher.registerHandler("example_handler", [](const Message &) {}));
+    QVERIFY(dispatcher.registerHandler("example_handler", [](const RpcRequest &) {}));
     QVERIFY(dispatcher.unregisterHandler("example_handler"));
     QVERIFY(false == dispatcher.unregisterHandler("example_handler"));
 }
 
 void DispatcherTest::testDispatchHandlers()
 {
-    Dispatcher<const Message &> dispatcher;
+    Dispatcher<const RpcRequest &> dispatcher;
 
     QVERIFY(dispatcher.registerHandler(
         "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)));
@@ -76,31 +72,34 @@ void DispatcherTest::testDispatchHandlers()
     QVERIFY(dispatcher.registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
-    QCOMPARE(dispatcher.dispatch(messageList_[0].handlerName, messageList_[0]), true);
-    QCOMPARE(dispatcher.dispatch(messageList_[1].handlerName, messageList_[1]), true);
-    QCOMPARE(dispatcher.dispatch(messageList_[2].handlerName, messageList_[2]), true);
-    QCOMPARE(dispatcher.dispatch(messageList_[3].handlerName, messageList_[3]), true);
-    QCOMPARE(dispatcher.dispatch(messageList_[4].handlerName, messageList_[4]), false);
-    QCOMPARE(dispatcher.dispatch(messageList_[2].handlerName, messageList_[2]), true);
-    QCOMPARE(dispatcher.dispatch(messageList_[4].handlerName, messageList_[4]), false);
-    QCOMPARE(dispatcher.dispatch(messageList_[3].handlerName, messageList_[3]), true);
-    QCOMPARE(dispatcher.dispatch(messageList_[0].handlerName, messageList_[0]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[0].method(), messageList_[0]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[1].method(), messageList_[1]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[2].method(), messageList_[2]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[3].method(), messageList_[3]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[4].method(), messageList_[4]), false);
+    QCOMPARE(dispatcher.dispatch(messageList_[2].method(), messageList_[2]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[4].method(), messageList_[4]), false);
+    QCOMPARE(dispatcher.dispatch(messageList_[3].method(), messageList_[3]), true);
+    QCOMPARE(dispatcher.dispatch(messageList_[0].method(), messageList_[0]), true);
 }
 
 void DispatcherTest::testLargeNumberOfHandlers()
 {
-    Dispatcher<const Message &> dispatcher;
+    Dispatcher<const RpcRequest &> dispatcher;
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.registerHandler(QString::number(i), [i](const Message &message) {
-            QCOMPARE(message.handlerName, QString::number(i));
+        dispatcher.registerHandler(QString::number(i), [i](const RpcRequest &request) {
+            QCOMPARE(request.method(), QString::number(i));
         });
     }
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.dispatch(
-            QString::number(i),
-            {QString::number(i), {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});
+        RpcRequest request;
+        request.setClientId("mg");
+        request.setId(i);
+        request.setMethod(QString::number(i));
+
+        QCOMPARE(dispatcher.dispatch(QString::number(i), request), true);
     }
 }
 
@@ -112,29 +111,38 @@ void DispatcherTest::testDifferentArgumentType()
         QCOMPARE(jsonPayload.value("value").toString(), "test");
     }));
 
-    dispatcher.dispatch("test_handler_1", QJsonObject({{"value", "test"}}));
+    QCOMPARE(dispatcher.dispatch("test_handler_1", QJsonObject({{"value", "test"}})), true);
 }
 
 void DispatcherTest::testDispatchUsingSignals()
 {
-    Dispatcher<const Message &> *dispatcher = new Dispatcher<const Message &>;
+    Dispatcher<const RpcRequest &> *dispatcher = new Dispatcher<const RpcRequest &>;
 
-    connect(this, &DispatcherTest::disp, this, [dispatcher](const Message &message) {
-        QVERIFY(dispatcher->dispatch(message.handlerName, message));
+    connect(this, &DispatcherTest::disp, this, [dispatcher](const RpcRequest &message) {
+        QVERIFY(dispatcher->dispatch(message.method(), message));
     });
 
-    dispatcher->registerHandler("test_handler_1", [](const Message &message) {
-        QCOMPARE(message.handlerName, "test_handler_1");
+    dispatcher->registerHandler("test_handler_1", [](const RpcRequest &message) {
+        QCOMPARE(message.method(), "test_handler_1");
     });
 
-    dispatcher->registerHandler("test_handler_2", [](const Message &message) {
-        QCOMPARE(message.handlerName, "test_handler_2");
+    dispatcher->registerHandler("test_handler_2", [](const RpcRequest &message) {
+        QCOMPARE(message.method(), "test_handler_2");
     });
 
-    emit disp({"test_handler_1", {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});
-    emit disp({"test_handler_2", {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});
+    RpcRequest request1;
+    request1.setClientId("mg");
+    request1.setId(1);
+    request1.setMethod("test_handler_2");
+
+    emit disp(request1);
+
+    RpcRequest request2;
+    request2.setClientId("mg");
+    request2.setId(2);
+    request2.setMethod("test_handler_1");
+
+    emit disp(request2);
 
     delete dispatcher;
 }
-
-#endif
