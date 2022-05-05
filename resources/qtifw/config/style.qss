@@ -273,31 +273,30 @@ QRadioButton::indicator
     max-height: 16px;
     min-width: 16px;
     max-width: 16px;
-    background-color: transparent;
 }
 QRadioButton::indicator::unchecked {
-    image: url(:/assets/radiobutton_unchecked.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 white, stop:0.71 white, stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator:unchecked:hover {
-    image: url(:/assets/radiobutton_unchecked_hover.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 rgb(220, 220, 220), stop:0.71 rgb(220, 220, 220), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator:unchecked:pressed {
-    image: url(:/assets/radiobutton_unchecked_pressed.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 rgb(200, 200, 200), stop:0.71 rgb(200, 200, 200), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator::unchecked:disabled {
-    image: url(:/assets/radiobutton_unchecked_disabled.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 255, 255, 60%), stop:0.71 rgba(255, 255, 255, 60%), stop:0.8 rgba(0, 0, 0, 60%), stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator::checked {
-    image: url(:/assets/radiobutton_checked.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 white, stop:0.71 white, stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator:checked:hover {
-    image: url(:/assets/radiobutton_checked_hover.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 rgb(220, 220, 220), stop:0.71 rgb(220, 220, 220), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator:checked:pressed {
-    image: url(:/assets/radiobutton_checked_pressed.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 rgb(200, 200, 200), stop:0.71 rgb(200, 200, 200), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
 }
 QRadioButton::indicator::checked:disabled {
-    image: url(:/assets/radiobutton_checked_disabled.png);
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 rgba(255, 255, 255, 60%), stop:0.71 rgba(255, 255, 255, 60%), stop:0.8 rgba(0, 0, 0, 60%), stop:0.9 transparent, stop:1 transparent)
 }
 /************************************************************************************************/
 /*
