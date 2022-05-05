@@ -15,7 +15,9 @@ using namespace strata::strataRPC;
 
 ClientConnector::~ClientConnector()
 {
-    disconnect();
+    if (isConnected()) {
+        disconnect();
+    }
 }
 
 bool ClientConnector::isConnected() const
