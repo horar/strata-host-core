@@ -19,7 +19,6 @@
         <file>partial-views/help-tour/images/top-fade.png</file>
         <file>partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/comingsoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
@@ -98,7 +97,6 @@
         <file>partial-views/general/web-popup/SGWebControls.qml</file>
         <file>partial-views/general/web-popup/SGWebView.qml</file>
         <file>partial-views/notifications/NotificationDelegate.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/recentlyReleased.png</file>
         <file>partial-views/platform-selector/PlatformControlButton.qml</file>
         <file>partial-views/platform-selector/PlatformFilterButton.qml</file>
         <file>partial-views/notifications/NotificationsContainer.qml</file>
