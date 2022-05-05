@@ -547,6 +547,10 @@ QSpinBox::down-button
     width: 20px;
     image: url(:/assets/chevron-down.png);
 }
+QSpinBox::down-button:disabled
+{
+    image: url(:/assets/chevron-down-disabled.png);
+}
 QSpinBox::down-button:hover
 {
     background-color: rgb(160, 160, 160);
@@ -577,6 +581,10 @@ QSpinBox::up-button
     margin-bottom: 1px;
     width: 20px;
     image: url(:/assets/chevron-up.png);
+}
+QSpinBox::up-button:disabled
+{
+    image: url(:/assets/chevron-up-disabled.png);
 }
 QSpinBox::up-button:hover
 {
