@@ -135,7 +135,7 @@ void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &
 
     // Check if registered client
     Client client = clientsController_->getClient(clientId);
-    if (client.getClientID().isEmpty() && request.method() != "register_client") {
+    if (client.getClientID().isEmpty() && request.method() != "register_client" && request.method() != "unregister_client") {
         RpcError error(RpcErrorCode::ClientNotRegistered);
         qCWarning(lcStrataServer) << error;
         sendError(clientId, request.id(), error);
