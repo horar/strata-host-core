@@ -345,7 +345,7 @@ void ConnectorsTest::testClientConnectorErrorSignals()
     {
         QCOMPARE(client.initialize(), false);
         QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
-        int errorType = static_cast<strata::strataRPC::RpcErrorCode>(errorOccurred.takeFirst().at(0).toInt());
+        auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccurred.takeFirst().at(0));
         QCOMPARE(errorType, strata::strataRPC::RpcErrorCode::ConnectionError);
         errorOccurred.clear();
     }
