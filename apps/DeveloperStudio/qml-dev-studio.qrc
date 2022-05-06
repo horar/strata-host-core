@@ -104,5 +104,6 @@
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
         <file>partial-views/BleScanDialog.qml</file>
         <file>partial-views/general/SGSettingsCheckbox.qml</file>
+        <file>partial-views/SGPolicyUpdateDialog.qml</file>
     </qresource>
 </RCC>
