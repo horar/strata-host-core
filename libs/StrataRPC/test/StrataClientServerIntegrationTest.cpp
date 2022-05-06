@@ -20,7 +20,7 @@ QTEST_MAIN(StrataClientServerIntegrationTest)
 constexpr std::chrono::milliseconds check_timeout_interval = std::chrono::milliseconds(10);
 constexpr std::chrono::milliseconds request_timeout = std::chrono::milliseconds(100);
 constexpr int zmqWaitTimeSuccess = 250; // newarly always skipped, will never wait this long unless CPU is stalled
-constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
+//constexpr int zmqWaitTime = 50;         // will always wait this long checking for failures, etc
 
 
 void StrataClientServerIntegrationTest::init()
