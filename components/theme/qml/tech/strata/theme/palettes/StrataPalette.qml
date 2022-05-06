@@ -12,16 +12,16 @@ import QtQml 2.12
 QtObject {
     id: mainPalette
 
-    // palette used in mianly in Strata Developer Studio
+    // palette used in mainly in Strata Developer Studio
     // color palette from Corporate Style Guide revision 14
-    readonly property color onsemiOrange:   "#E97D2E" // RGB: 233, 125, 46
-    readonly property color onsemiDark:     "#465E66" // RGB: 70, 94, 102
-    readonly property color onsemiYellow:   "#DBAC17" // RGB: 219, 172, 23
-    readonly property color onsemiBrown:    "#A84626" // RGB: 168, 70, 38
-    readonly property color onsemiBlue:     "#3880F6" // RGB: 56, 128, 246
-    readonly property color onsemiDarkBlue: "#276990" // RGB: 39, 105, 144
-    readonly property color onsemiCyan:     "#009691" // RGB: 0, 150, 145
-    readonly property color onsemiLightBlue:"#34A6CA" // RGB: 52, 166, 202
+    readonly property color onsemiOrange:   "#E97D2E"
+    readonly property color onsemiDark:     "#465E66"
+    readonly property color onsemiYellow:   "#DBAC17"
+    readonly property color onsemiBrown:    "#A84626"
+    readonly property color onsemiBlue:     "#3880F6"
+    readonly property color onsemiDarkBlue: "#276990"
+    readonly property color onsemiCyan:     "#009691"
+    readonly property color onsemiLightBlue:"#34A6CA"
 
     readonly property color white:          "#ffffff"
     readonly property color black:          "#000000"
