@@ -15,6 +15,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 import "../widgets"
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
 
@@ -138,7 +139,7 @@ Rectangle {
         IconButton {
             id: runButton
             source: run ? "qrc:/images/stop-solid.svg" : "qrc:/images/play-solid.svg"
-            iconColor: run ? "#db0909" : "#45e03a"
+            iconColor: run ? Theme.palette.error : Theme.palette.success
             toolTipText: platformInterface.notifications.run.caption
 
             property bool run: false
@@ -172,7 +173,7 @@ Rectangle {
 
             id: brakeButton
             source: "qrc:/images/brake.svg"
-            iconColor: brake ? "yellow" : "white"
+            iconColor: brake ? Theme.palette.warning : "white"
             toolTipText: platformInterface.notifications.brake.caption
 
             property bool brake: false

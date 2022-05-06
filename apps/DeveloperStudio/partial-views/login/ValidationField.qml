@@ -124,7 +124,7 @@ TextField {
             width: height
 
             source: field.valid ? "qrc:/sgimages/check.svg" : "qrc:/sgimages/asterisk.svg"
-            iconColor: field.valid ? "#30c235" : "#ddd"
+            iconColor: field.valid ? Theme.palette.success : "#ddd"
         }
     }
 

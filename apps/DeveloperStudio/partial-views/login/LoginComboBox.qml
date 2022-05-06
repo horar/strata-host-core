@@ -22,7 +22,7 @@ ComboBox {
     property color textColor: "black"
     property color indicatorColor: "#B3B3B3"
     property color borderColor: "#B3B3B3"
-    property color borderColorFocused: "#219647"
+    property color borderColorFocused: Theme.palette.success
     property color boxColor: "white"
     property bool dividers: false
     property real popupHeight: 300 * fontSizeMultiplier

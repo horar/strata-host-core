@@ -11,6 +11,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Popup {
     id: root
@@ -27,7 +28,7 @@ Popup {
             Label {
                 id: errorListTitle
                 Layout.fillWidth: true
-                color: "red"
+                color: TangoTheme.palette.error
                 font {
                     bold: true
                 }

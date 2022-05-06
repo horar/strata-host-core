@@ -338,7 +338,7 @@ Item {
     function showLoginError(errorString) {
         loginControls.visible = true
         connectionStatus.text = ""
-        loginErrorRect.color = "red"
+        loginErrorRect.color = Theme.palette.error
         loginErrorRect.text = errorString
         loginErrorRect.show()
     }

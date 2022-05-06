@@ -233,7 +233,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: Theme.palette.green
+                                color: TangoTheme.palette.chameleon2
                             }
                         }
 
@@ -248,7 +248,7 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: Theme.palette.error
+                            color: TangoTheme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
@@ -393,7 +393,7 @@ Item {
             background: Rectangle {
                 implicitWidth: 200
                 implicitHeight: 40
-                color: Theme.palette.lightGray
+                color: TangoTheme.palette.aluminium2
             }
 
             onClicked: {

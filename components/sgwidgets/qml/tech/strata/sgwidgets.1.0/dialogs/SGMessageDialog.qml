@@ -58,12 +58,12 @@ SGDialog {
 
     headerBgColor: {
         if (dialog.type === SGMessageDialog.Warning) {
-            return Theme.palette.warning
+            return TangoTheme.palette.warning
         } else if (dialog.type === SGMessageDialog.Error) {
-            return Theme.palette.error
+            return TangoTheme.palette.error
         }
 
-        return Theme.palette.darkBlue
+        return TangoTheme.palette.skyBlue3
     }
 
     headerIcon: {

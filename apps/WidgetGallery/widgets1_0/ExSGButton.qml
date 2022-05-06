@@ -109,17 +109,17 @@ Item {
                 spacing: 6
                 SGWidgets.SGButton {
                     text: "button7"
-                    color: Theme.palette.green
+                    color: TangoTheme.palette.chameleon2
                 }
 
                 SGWidgets.SGButton {
                     text: "button8"
-                    color: Theme.palette.warning
+                    color: TangoTheme.palette.warning
                 }
 
                 SGWidgets.SGButton {
                     text: "button9"
-                    color: Theme.palette.error
+                    color: TangoTheme.palette.error
                     alternativeColorEnabled: true
                 }
             }

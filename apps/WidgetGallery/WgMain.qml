@@ -49,7 +49,7 @@ Item {
                         minimumContentHeight: 100
                         minimumContentWidth: 200
                         fontSizeMultiplier: 1.6
-                        color: Theme.palette.green
+                        color: TangoTheme.palette.chameleon2
                         text: model.name
                         onClicked: {
                             stackView.push(model.page)

@@ -428,7 +428,7 @@ Item {
                             right: settingsIcon.left
                             rightMargin: (textFilterContainer.height - height) / 2
                         }
-                        iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
+                        iconColor: textFilterClearMouse.containsMouse ?  Theme.palette.lightGray : Theme.palette.gray
                         visible: !placeholderText.visible
 
                         MouseArea {

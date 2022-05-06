@@ -14,6 +14,7 @@ import QtQuick.Dialogs 1.2
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 import "../"
 
@@ -81,7 +82,7 @@ Item {
             if (!platformInterfaceGeneratorSeen && currentCvcProjectJsonUrl != "") {
                 alertToast.text = "Detected " + jsonFileName + " in the project. Select 'Import from Project' to load it."
                 alertToast.textColor = "white"
-                alertToast.color = "green"
+                alertToast.color = Theme.palette.success
                 alertToast.interval = 8000
                 alertToast.show()
             }
@@ -523,7 +524,7 @@ Item {
                     if (!valid) {
                         alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique, not a JavaScript keyword, and nonempty."
                         alertToast.textColor = "white"
-                        alertToast.color = "#D10000"
+                        alertToast.color = Theme.palette.error
                         alertToast.interval = 0
                         alertToast.show()
                         return

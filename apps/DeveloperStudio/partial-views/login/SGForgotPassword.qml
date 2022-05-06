@@ -98,7 +98,7 @@ SGStrataPopup {
 
                     background: Rectangle {
                         color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
-                        border.color: submitButton.activeFocus ? "#219647" : "transparent"
+                        border.color: submitButton.activeFocus ? Theme.palette.success : "transparent"
                     }
 
                     contentItem: Text {
@@ -169,7 +169,7 @@ SGStrataPopup {
             submitStatus.text = ""
             fieldGrid.visible = true
             if (result === "Reset Requested") {
-                alertRect.color = "#0ec40c"
+                alertRect.color = Theme.palette.success
                 alertRect.text = "Email with password reset instructions is being sent to " + emailField.text
                 root.resetForm()
             } else {
@@ -182,7 +182,7 @@ SGStrataPopup {
                 } else {
                     alertRect.text = "No user found with email " + emailField.text
                 }
-                alertRect.color = "red"
+                alertRect.color =  Theme.palette.error
             }
             alertRect.show()
         }

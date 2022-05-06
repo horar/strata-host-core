@@ -178,7 +178,7 @@ FocusScope {
 
                     iconColor: {
                         if (loginStatus === LoginScreen.LoginSucceed) {
-                            return Theme.palette.green
+                            return TangoTheme.palette.chameleon2
                         } else if (loginStatus === LoginScreen.LoginFailed) {
                             return TangoTheme.palette.scarletRed2
                         }

@@ -286,7 +286,7 @@ SGStrataPopup {
                         }
                         color: {
                             if (charactersRemaining === 0) {
-                                return Theme.palette.red
+                                return Theme.palette.error
                             } else {
                                 return Theme.palette.black
                             }
@@ -348,11 +348,11 @@ SGStrataPopup {
             feedbackStatus.text = ""
             feedbackWrapperColumn.visible = true
             if (result === "Feedback successfully sent") {
-                alertToast.color = "#57d445"
+                alertToast.color = Theme.palette.success
                 alertToast.text = "Feedback successfully submitted!"
                 root.resetForm()
             } else {
-                alertToast.color = "red"
+                alertToast.color = Theme.palette.error
                 if (result === "No Connection") {
                     alertToast.text = "No connection to feedback server! Please check your internet connection and try again."
                 } else if (result === "Server Error") {

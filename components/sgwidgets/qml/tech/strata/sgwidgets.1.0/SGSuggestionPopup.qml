@@ -305,7 +305,7 @@ SGWidgets.SGPopup {
 
                 iconColor: "white"
                 icon.source: "qrc:/sgimages/times.svg"
-                highlightImplicitColor: Theme.palette.error
+                highlightImplicitColor: TangoTheme.palette.error
                 onClicked: {
                     removeRequested(index)
                 }

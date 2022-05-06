@@ -10,7 +10,10 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
+
 import "qrc:/js/help_layout_manager.js" as Help
+
+import tech.strata.theme 1.0
 
 Popup {
     id: root
@@ -20,7 +23,7 @@ Popup {
     property bool arrowOnTop: false
     property string horizontalAlignment: "center"
     property real radius: 5
-    property color color: "#00ccee"
+    property color color: Theme.palette.onsemiLightBlue
 
     function updateAlignment (){
         triangleArrow.anchors.left = undefined

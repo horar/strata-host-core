@@ -14,6 +14,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import '../'
 import '../login/registration'
@@ -95,8 +96,8 @@ SGStrataPopup {
 
             cancelButtonText: "Cancel"
             acceptButtonText: "Close Account"
-            acceptButtonColor: "#CC0000"
-            acceptButtonHoverColor: "#990000"
+            acceptButtonColor: Theme.palette.error
+            acceptButtonHoverColor: Qt.darker(Theme.palette.error, 1.15)
 
             titleText: "Close Account"
             popupText: "Are you sure you want to close your account?"
@@ -567,7 +568,7 @@ SGStrataPopup {
                     id: closeAccountBtnBg
                     implicitWidth: 100
                     implicitHeight: 40
-                    color: "#CC0000"
+                    color: Theme.palette.error
                 }
 
                 onClicked: {
@@ -583,11 +584,11 @@ SGStrataPopup {
                     cursorShape: Qt.PointingHandCursor
 
                     onEntered: {
-                        closeAccountBtnBg.color = "#990000"
+                        closeAccountBtnBg.color = Qt.darker(Theme.palette.error, 1.15)
                     }
 
                     onExited: {
-                        closeAccountBtnBg.color = "#CC0000"
+                        closeAccountBtnBg.color = Theme.palette.error
                     }
                 }
             }
@@ -606,7 +607,7 @@ SGStrataPopup {
                     } else {
                         passwordControls.expandAnimation.start()
                         passwordControls.editing = true
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                         if (resultObject.response === "No Connection") {
                             alertRect.text = "Connection to authentication server failed. Please check your internet connection and try again.";
                         } else if (resultObject.response === "Server Error") {
@@ -622,7 +623,7 @@ SGStrataPopup {
                 onChangePasswordResult: {
                     if (result === "Success") {
                         alertRect.text = "Successfully changed your password!"
-                        alertRect.color = "#57d445"
+                        alertRect.color = Theme.palette.success
                         resetFields()
                     } else {
                         console.error(result)
@@ -635,7 +636,7 @@ SGStrataPopup {
                         } else {
                             alertRect.text = "Unable to update password. Please try again."
                         }
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                     }
                     spinnerDialog.close()
                     alertRect.show()
@@ -666,7 +667,7 @@ SGStrataPopup {
                         }
 
                         alertRect.text = "Successfully updated your account information!"
-                        alertRect.color = "#57d445"
+                        alertRect.color = Theme.palette.success
 
                         resetFields()
                     } else {
@@ -680,7 +681,7 @@ SGStrataPopup {
                         } else {
                             alertRect.text = "Unable to update profile. Please try again."
                         }
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                     }
                     spinnerDialog.close()
                     alertRect.show()
@@ -711,7 +712,7 @@ SGStrataPopup {
                             alertRect.text = "Unable to close account. Please try again later."
                         }
 
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                         alertRect.show()
                     }
                     spinnerDialog.close()
@@ -741,7 +742,7 @@ SGStrataPopup {
                             alertRect.text = "Unable to aquire your profile data. Please try again later."
                         }
 
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                         alertRect.show()
                     }
                     spinnerDialog.close()

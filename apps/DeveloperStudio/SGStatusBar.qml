@@ -662,7 +662,7 @@ Rectangle {
                     Layout.preferredWidth: 26
                     Layout.preferredHeight: 16
                     checked: mainWindow.visibility === Window.FullScreen
-                    grooveFillColor: Theme.palette.onsemiHighlight
+                    grooveFillColor: Theme.palette.highlight
 
                     onToggled: {
                         if (mainWindow.visibility === Window.FullScreen) {

@@ -8,7 +8,9 @@
  */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 Component {
     Rectangle {
@@ -18,7 +20,7 @@ Component {
         implicitHeight: 30
         radius: 5
         border.width: feedbackTypeListView.currentIndex === index ? 2 : 0
-        border.color: "black"
+        border.color: Theme.palette.highlight
         Accessible.role: Accessible.Button
         Accessible.name: content.text
         Accessible.onPressAction: onClick()
@@ -38,6 +40,7 @@ Component {
                 pixelSize: 15
                 family: Fonts.franklinGothicBook
             }
+            color: "white"
         }
 
         MouseArea {

@@ -28,7 +28,7 @@ Item {
 
     Rectangle {
         width: 50
-        color: "#29e335"//Theme.palette.onsemiOrange
+        color: Theme.palette.onsemiLightBlue
         opacity: 1
         height: parent.height-1
         visible: model.connected
@@ -65,8 +65,8 @@ Item {
 
             PlatformImage {
                 id: imageContainer
-                text: model.program_controller ? "PROGRAMMING" : defaultText
-                textBgColor: model.program_controller ? Theme.palette.orange : defaultTextBg
+                text: model.program_controller ? "PROGRAMMING" : connectedText
+                textBgColor: model.program_controller ? Theme.palette.onsemiOrange : connectedTextBg
             }
         }
 
@@ -431,7 +431,7 @@ Item {
 
                 visible: model.program_controller
                 value: model.program_controller_progress
-                highlightColor: Theme.palette.orange
+                highlightColor: Theme.palette.onsemiOrange
             }
         }
     }

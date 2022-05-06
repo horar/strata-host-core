@@ -127,7 +127,7 @@ TextField {
         implicitHeight: 40
         color: {
             if (isValidAffectsBackground && !isValid) {
-                return Qt.lighter(Theme.palette.error, 1.9)
+                return Qt.lighter(TangoTheme.palette.error, 1.9)
             }
 
             return darkMode ? "#5e5e5e" : control.palette.base
@@ -139,7 +139,7 @@ TextField {
             } else if (isValid) {
                 return darkMode ? "black" : control.palette.mid
             } else {
-                return Theme.palette.error
+                return TangoTheme.palette.error
             }
         }
 

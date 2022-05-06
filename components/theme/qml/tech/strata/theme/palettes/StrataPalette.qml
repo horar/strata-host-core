@@ -12,22 +12,29 @@ import QtQml 2.12
 QtObject {
     id: mainPalette
 
-    readonly property color green:          "#53b948"
+    // palette used in mainly in Strata Developer Studio
+    // color palette from Corporate Style Guide revision 14
+    readonly property color onsemiOrange:   "#E97D2E"
+    readonly property color onsemiDark:     "#465E66"
+    readonly property color onsemiYellow:   "#DBAC17"
+    readonly property color onsemiBrown:    "#A84626"
+    readonly property color onsemiBlue:     "#3880F6"
+    readonly property color onsemiDarkBlue: "#276990"
+    readonly property color onsemiCyan:     "#009691"
+    readonly property color onsemiLightBlue:"#34A6CA"
+
+    readonly property color white:          "#ffffff"
+    readonly property color black:          "#000000"
+
+    // shades of gray used in Developer Studio
     readonly property color dark:           "#252627"
     readonly property color darkGray:       "#66686A"
     readonly property color gray:           "#a7a9ac"
     readonly property color lightGray:      "#d3d4d6"
-    readonly property color white:          "#ffffff"
-    readonly property color black:          "#000000"
-    readonly property color orange:         "#f57900"
-    readonly property color red:            "#cc0000"
-    readonly property color darkBlue:       "#2d5282"
-    readonly property color lightBlue:      "#5b8fcb"
-    readonly property color error:          red
-    readonly property color warning:        orange
-    readonly property color success:        "#28a745"
-    readonly property color highlight:      lightBlue
-    readonly property color onsemiOrange:   "#E97D2E"
-    readonly property color onsemiHighlight:"#276990"
-    readonly property color onsemiDark:     "#3a4d54"
+
+    // colors for error, warning and success used from Tango palette
+    readonly property color error:          "#cc0000"   // scarletRed2
+    readonly property color warning:        "#f57900"   // orange2
+    readonly property color success:        "#73d216"   // chameleon2
+    readonly property color highlight:      onsemiBlue
 }

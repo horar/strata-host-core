@@ -193,7 +193,7 @@ FocusScope {
                         opacity: btnShiftUp.opacity
                         iconColor: hovered ? "white" : "black"
                         icon.source: "qrc:/sgimages/times-thin.svg"
-                        highlightImplicitColor: Theme.palette.error
+                        highlightImplicitColor: TangoTheme.palette.error
                         onClicked: {
                             messageQueueModel.remove(index)
                         }

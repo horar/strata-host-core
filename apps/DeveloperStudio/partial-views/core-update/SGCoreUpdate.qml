@@ -81,7 +81,7 @@ SGStrataPopup {
                     height: 30
                     width: height - 5
                     source: "qrc:/sgimages/update-arrow.svg"
-                    iconColor: "#3aba44"
+                    iconColor: Theme.palette.success
                 }
 
                 SGText {

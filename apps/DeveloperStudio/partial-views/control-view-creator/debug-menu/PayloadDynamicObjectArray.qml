@@ -60,7 +60,7 @@ ColumnLayout {
                     Layout.preferredWidth: 30
                     Layout.preferredHeight: 30
                     Layout.leftMargin: 10
-                    color: "red"
+                    color: Theme.palette.error
 
                     SGIcon {
                         anchors.centerIn: parent

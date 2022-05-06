@@ -11,6 +11,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
+import tech.strata.theme 1.0
+
 GenericPopup {
     id: textPopup
 
@@ -67,7 +69,7 @@ GenericPopup {
             Layout.maximumWidth: textField.implicitWidth
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
-            color: "red"
+            color: Theme.palette.error
             visible: !textPopup.validInput
         }
 

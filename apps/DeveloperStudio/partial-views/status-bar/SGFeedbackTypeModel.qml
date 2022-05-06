@@ -7,21 +7,34 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick 2.12
+import QtQuick.Controls 2.3
+
+import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 ListModel {
-    ListElement {
-        type: "Bug"
-        baseColor: "#f91515"
-        hoverColor: "#fb6a6a"
-    }
-    ListElement {
-        type: "Feature"
-        baseColor: "#57d645"
-        hoverColor: "#a0e896"
-    }
-    ListElement {
-        type: "Acknowledgement"
-        baseColor: "#a5a5a5"
-        hoverColor: "#d9d9d9"
-    }
+
+    property string baseColor: String(Theme.palette.onsemiOrange)
+    property string hoverColor: String(Qt.darker(Theme.palette.onsemiOrange, 1.15))
+
+    property bool completed: false
+        Component.onCompleted: {
+            append({
+                "type": "Bug",
+                "baseColor": baseColor,
+                "hoverColor": hoverColor
+                });
+            append({
+                "type": "Feature",
+                "baseColor": baseColor,
+                "hoverColor": hoverColor
+                });
+            append({
+                "type": "Acknowledgement",
+                "baseColor": baseColor,
+                "hoverColor": hoverColor
+                });
+            completed = true;
+        }
 }

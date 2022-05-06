@@ -74,7 +74,7 @@ FocusScope {
                centerIn: parent
             }
 
-            iconColor: Theme.palette.green
+            iconColor: TangoTheme.palette.chameleon2
             source: "qrc:/sgimages/check.svg"
         }
     }

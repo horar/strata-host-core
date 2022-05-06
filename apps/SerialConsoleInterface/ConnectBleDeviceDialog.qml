@@ -218,7 +218,7 @@ SGWidgets.SGDialog {
 
                     text: model.rssi + " dBm"
                     iconSource: "qrc:/sgimages/signal.svg"
-                    color: Theme.palette.lightGray
+                    color: TangoTheme.palette.aluminium2
                 }
 
                 SGWidgets.SGTag {
@@ -232,7 +232,7 @@ SGWidgets.SGDialog {
 
                     text: "STRATA COMPATIBLE"
                     visible: model.isStrata
-                    color: Theme.palette.lightGray
+                    color: TangoTheme.palette.aluminium2
                 }
 
                 SGWidgets.SGTag {
@@ -272,7 +272,7 @@ SGWidgets.SGDialog {
                                 target: isConnectedTag
                                 text: "CONNECTED"
                                 textColor: "white"
-                                color: Theme.palette.green
+                                color: TangoTheme.palette.chameleon2
                                 font.bold: true
                             }
                         }
@@ -291,7 +291,7 @@ SGWidgets.SGDialog {
 
                     visible: text !== ""
                     text: model.errorString
-                    color: Theme.palette.red
+                    color: TangoTheme.palette.scarletRed2
                     elide: Text.ElideRight
                 }
 
