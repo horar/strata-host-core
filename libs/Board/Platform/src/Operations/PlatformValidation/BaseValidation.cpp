@@ -70,6 +70,9 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
 {
     Q_UNUSED(status)
 
+    if (running_ == false) {
+        return;
+    }
     if (currentCommand_ == commandList_.end()) {
         return;
     }
@@ -90,8 +93,7 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
             }
         }
         break;
-    case CommandResult::Timeout :
-        // Expected notification was not received (or received notification was not OK).
+    case CommandResult::Cancel :  // command cancelled (from 'handleValidationFailure' method)
         if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
             emit validationStatus(Status::State, QStringLiteral("Checking last received notification."));
             currentCommand_->notificationCheck();
@@ -106,6 +108,9 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
 
 void BaseValidation::handleValidationFailure(QString error) {
     emit validationStatus(Status::Error, error);
+    if (currentCommand_ != commandList_.end()) {
+        currentCommand_->command->cancel();
+    }
 }
 
 void BaseValidation::handlePlatformNotification(PlatformMessage message)
