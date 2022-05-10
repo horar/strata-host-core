@@ -428,7 +428,7 @@ Component.prototype.onFinishButtonClicked = function()
             }
 
             console.log("User reply to restart computer: Yes, restarting computer (with 5 second delay)");
-            installer.executeDetached("powershell", "shutdown /r /t 5", "");
+            installer.executeDetached("cmd", ["/c", "shutdown", "/r", "/t", "5"]);
         } else {
             console.log("User reply to restart computer: No");
         }
@@ -608,85 +608,126 @@ function getWindowsDirectory()
     return windowsPath;
 }
 
+function validateCommandOutput(commandOutput)
+{
+    // the output of command is the first item, and the return code is the second
+    // console.log("execution result code: " + commandOutput[1] + ", result: '" + commandOutput[0] + "'");
+    if ((commandOutput == undefined) || (commandOutput == null)) {
+        console.log("Error: powershell command failed to execute");
+        return "";
+    }
+
+    if ((commandOutput[1] == undefined) || (commandOutput[1] == null) || (commandOutput[1] != 0)) {
+        console.log("Error: powershell command returned bad exit code:", commandOutput);
+        return "";
+    }
+
+    if ((commandOutput[0] == undefined) || (commandOutput[0] == null)) {
+        return "";
+    }
+
+    // the output of command is the first item, and the return code is the second
+    // console.log("execution result code: " + commandOutput[1] + ", result: '" + commandOutput[0] + "'");
+    return commandOutput[0];
+}
+
+function executePowershell(powershell64Location, powerShellCommand)
+{
+    console.log("executing powershell command '" + powerShellCommand + "'");
+    let powershellOutput = installer.execute(powershell64Location, ["-NoProfile", "-Command", powerShellCommand]);
+
+    return validateCommandOutput(powershellOutput);
+}
+
+function executeFind()
+{
+    console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirX64"));
+    let findOutput = installer.execute("find", [installer.value("ApplicationsDirX64"), "-name", installer.value("MaintenanceToolName") + ".app"]);
+
+    return validateCommandOutput(findOutput);
+}
+
+function showUninstallQuestion()
+{
+    let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
+    
+    if (uninstall_reply == QMessageBox.Ok) {
+        console.log("User reply to uninstall Strata: Ok");
+        return true;
+    } else {
+        console.log("User reply to uninstall Strata: Abort");
+        return false;
+    }
+}
+
 function uninstallPreviousStrataInstallation()
 {
+    console.log("Checking for presence of old Strata...");
     if (systemInfo.productType == "windows") {
-        let powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
+
+        let registryPaths = "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+        let strataFilter = "$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "'";
+
+        // Note: old Powershell 2.0 on Windows 7 needs the "[Environment]::Exit(0)", because it is waiting for input and not terminating
+        let powerShellCommand = "(Get-ChildItem -ErrorAction SilentlyContinue -LiteralPath " + registryPaths + " | Get-ItemProperty | Where-Object {" + strataFilter + "}); [Environment]::Exit(0)";
         let powershell64Location = getWindowsDirectory() + "\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe";
         if (installer.fileExists(powershell64Location) == false) {
             console.log("unable to locate 64bit powershell at " + powershell64Location);
-            powershell64Location = "powershell.exe"; // use default one (32bit), which might not work as expected
+            powershell64Location = "powershell";    // use default one (32bit), which will not locate older Strata
         }
 
-        console.log("executing powershell command '" + powerShellCommand + "'");
-        // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
-        let isInstalled = installer.execute(powershell64Location, ["-command", powerShellCommand]);
+        let registryData = executePowershell(powershell64Location, powerShellCommand);
+        if (registryData == "") {
+            console.log("old Strata not found");
+            return false;
+        }
 
-        // the output of command is the first item, and the return code is the second
-        // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
+        let display_name = getPowershellElement(registryData, 'DisplayName');
+        let display_version = getPowershellElement(registryData, 'DisplayVersion');
+        let uninstall_string = getPowershellElement(registryData, 'UninstallString');
+    
+        console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
+    
+        if (uninstall_string.length == 0) {
+            console.log("unable to acquire uninstall string for old Strata");
+            return false;
+        }
 
-        if ((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
-            let display_name = getPowershellElement(isInstalled[0], 'DisplayName');
-            let display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
-            let uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
-
-            console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
-
-            if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
-                if ((is_command_line_instance == false) && (isSilent == false)) {
-                    let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
-
-                    if (uninstall_reply == QMessageBox.Ok) {
-                        console.log("User reply to uninstall Strata: Ok");
-                    } else {
-                        console.log("User reply to uninstall Strata: Abort");
-                        installer.interrupt();
-                        return false;
-                    }
-                }
-
-                // we should not find multiple entries here, but just in case, uninstall all
-                for (let i = 0; i < display_version.length; i++) {
-                    console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-                    let res = installer.execute(uninstall_string[i], ["isSilent=true", "--start-uninstaller"]);
-                    console.log("result: " + res);
-                }
+        if ((is_command_line_instance == false) && (isSilent == false)) {
+            if (showUninstallQuestion() == false) {
+                installer.interrupt();
+                return false;
             }
-        } else {
-            console.log("old program not found, will install new version");
+        }
+
+        // we should not find multiple entries here, but just in case, uninstall all
+        for (let i = 0; i < uninstall_string.length; i++) {
+            console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
+            installer.execute(uninstall_string[i], ["isSilent=true", "--start-uninstaller"]);
         }
     } else if (systemInfo.productType == "osx") {
-        console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirX64"));
-        let isInstalled = installer.execute("find", [installer.value("ApplicationsDirX64"), "-name", installer.value("MaintenanceToolName") + ".app"]);
+        let findData = executeFind();
 
-        // the output of command is the first item, and the return code is the second
-        // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
+        if (findData == "") {
+            console.log("old Strata not found");
+            return false;
+        }
 
-        if ((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
-            if ((is_command_line_instance == false) && (isSilent == false)) {
-                let uninstall_reply = QMessageBox.warning("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected.\nIt will be uninstalled before proceeding.", QMessageBox.Ok | QMessageBox.Abort, QMessageBox.Ok);
-
-                if (uninstall_reply == QMessageBox.Ok) {
-                    console.log("User reply to uninstall Strata: Ok");
-                } else {
-                    console.log("User reply to uninstall Strata: Abort");
-                    installer.interrupt();
-                    return false;
-                }
+        if ((is_command_line_instance == false) && (isSilent == false)) {
+            if (showUninstallQuestion() == false) {
+                installer.interrupt();
+                return false;
             }
+        }
 
-            // we should not find multiple entries here, but just in case, uninstall all
-            let installed_stratas = isInstalled[0].split('\n');
-            for (let i = 0; i < installed_stratas.length; i++) {
-                if (installed_stratas[i] == "") {
-                    continue;
-                }
-                console.log("executing Strata uninstall for: '" + installed_stratas[i] + "'");
-                let res = installer.execute(installed_stratas[i] + "/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true", "--start-uninstaller"]);
-                console.log("result: " + res);
+        // we should not find multiple entries here, but just in case, uninstall all
+        let maintenanceToolLocations = findData.split('\n');
+        for (let i = 0; i < maintenanceToolLocations.length; i++) {
+            if (maintenanceToolLocations[i] == "") {
+                continue;
             }
-        } else {
-            console.log("old program not found, will install new version");
+            console.log("executing Strata uninstall for: '" + maintenanceToolLocations[i] + "'");
+            installer.execute(maintenanceToolLocations[i] + "/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true", "--start-uninstaller"]);
         }
     }
     return true;

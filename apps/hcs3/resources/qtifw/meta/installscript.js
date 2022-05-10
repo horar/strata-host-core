@@ -23,7 +23,7 @@ Component.prototype.createOperations = function()
         target_dir = target_dir.split("/").join("\\");
         let cleanup_file = target_dir + "\\cleanup_hcs.bat";
         let ini_dir = home_dir + "\\AppData\\Roaming\\onsemi";
-        let config_dir = getProgramDataDirectory()+ "\\onsemi";
+        let config_dir = getProgramDataDirectory() + "\\onsemi";
 
         let file_content = '@echo off\n';
         let target_file = target_dir + "\\Offer of Source.txt"; // Strata module is erased first
@@ -46,8 +46,7 @@ Component.prototype.createOperations = function()
         component.addOperation("AppendFile", cleanup_file, file_content);
         component.addOperation("Execute", "cmd", ["/c", "echo", "nothing to do"], "UNDOEXECUTE", "cmd", ["/c", cleanup_file]);
         
-        let onsemiConfigFolder = getProgramDataDirectory() + "\\onsemi";
-        let hcsConfigFolder = onsemiConfigFolder + "\\HCS";
+        let hcsConfigFolder = config_dir + "\\HCS";
         component.addOperation("Mkdir", hcsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted
         component.addOperation("Copy", target_dir + "\\hcs.config", hcsConfigFolder + "\\hcs.config");

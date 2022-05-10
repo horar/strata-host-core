@@ -21,7 +21,7 @@ Component.prototype.createOperations = function()
         let cleanup_file = target_dir + "\\cleanup_sds.bat";
         home_dir = home_dir.split("/").join("\\");
         let ini_dir = home_dir + "\\AppData\\Roaming\\onsemi";
-        let config_dir = getProgramDataDirectory()+ "\\onsemi";
+        let config_dir = getProgramDataDirectory() + "\\onsemi";
 
         let file_content = '@echo off\n';
         let target_file = target_dir + "\\Offer of Source.txt"; // Strata module is erased first
@@ -44,8 +44,7 @@ Component.prototype.createOperations = function()
         component.addOperation("AppendFile", cleanup_file, file_content);
         component.addOperation("Execute", "cmd", ["/c", "echo", "nothing to do"], "UNDOEXECUTE", "cmd", ["/c", cleanup_file]);
 
-        let onsemiConfigFolder = getProgramDataDirectory() + "\\onsemi";
-        let sdsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio";
+        let sdsConfigFolder = config_dir + "\\Strata Developer Studio";
         component.addOperation("Mkdir", sdsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted
         component.addOperation("Copy", target_dir + "\\sds.config", sdsConfigFolder + "\\sds.config");
@@ -174,25 +173,26 @@ function getProgramDataDirectory()
 
 function getSpecialFolderLocation(folder_name)
 {
-    var powerShellCommand = "[Environment]::GetFolderPath('" + folder_name + "')";
+    // Note: old Powershell 2.0 on Windows 7 needs the "[Environment]::Exit(0)", because it is waiting for input and not terminating
+    var powerShellCommand = "[Environment]::GetFolderPath('" + folder_name + "'); [Environment]::Exit(0)";
     
     console.log("executing powershell command '" + powerShellCommand + "'");
-    var specialFolder = installer.execute("powershell.exe", ["-command", powerShellCommand]);
+    var specialFolder = installer.execute("powershell", ["-NoProfile", "-Command", powerShellCommand]);
 
     // the output of command is the first item, and the return code is the second
     // console.log("execution result code: " + specialFolder[1] + ", result: '" + specialFolder[0] + "'");
 
-    if ((specialFolder == null) || (specialFolder == undefined)) {
+    if ((specialFolder == undefined) || (specialFolder == null)) {
         console.log("Error: powershell command failed to execute");
         return "";
     }
 
-    if ((specialFolder[0] == null) || (specialFolder[0] == undefined) || (specialFolder[0] == "")) {
+    if ((specialFolder[0] == undefined) || (specialFolder[0] == null) || (specialFolder[0] == "")) {
         console.log("Error: powershell command failed to return valid output:", specialFolder);
         return "";
     }
 
-    if ((specialFolder[1] == null) || (specialFolder[1] == undefined) || (specialFolder[1] != 0)) {
+    if ((specialFolder[1] == undefined) || (specialFolder[1] == null) || (specialFolder[1] != 0)) {
         console.log("Error: powershell command returned bad exit code:", specialFolder);
         return "";
     }
