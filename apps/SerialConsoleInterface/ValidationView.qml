@@ -69,6 +69,7 @@ FocusScope {
                 text: "Run identification"
                 enabled: !model.platform.platformValidation.isRunning
                 onClicked: {
+                    textArea1.text = ""
                     model.platform.platformValidation.runIdentification()
                 }
             }
