@@ -122,7 +122,7 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(const strata::strataRPC::RpcErrorCode &code);
+    void errorOccurred(const strata::strataRPC::RpcErrorCode code);
 
 private slots:
     /**
