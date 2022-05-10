@@ -13,8 +13,6 @@
     <Version>@MODULE_VERSION@</Version>
     <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>59</SortingPriority>
-    <!--we need admin rights to install this component-->
-    <RequiresAdminRights>true</RequiresAdminRights>
     <Script>installscript.js</Script>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Virtual>True</Virtual>
