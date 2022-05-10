@@ -19,7 +19,6 @@ using namespace strata::strataRPC;
 
 StrataServer::StrataServer(
         const QString &address,
-        bool useDefaultHandlers,
         QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher<const RpcRequest &>()),
@@ -27,16 +26,14 @@ StrataServer::StrataServer(
       connector_(new ServerConnector(address)),
       connectorThread_(new QThread())
 {
-    if (useDefaultHandlers) {
-        dispatcher_->registerHandler(
-            "register_client",
-            std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
-        dispatcher_->registerHandler(
-            "unregister_client",
-            std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
-    }
 
-    qRegisterMetaType<strataRPC::ServerConnectorError>("ServerConnectorError");
+    dispatcher_->registerHandler(
+                "register_client",
+                std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
+    dispatcher_->registerHandler(
+                "unregister_client",
+                std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
+
     connector_->moveToThread(connectorThread_.get());
 
     QObject::connect(
@@ -138,7 +135,7 @@ void StrataServer::processRequest(const QByteArray &clientId, const QByteArray &
 
     // Check if registered client
     Client client = clientsController_->getClient(clientId);
-    if (client.getClientID().isEmpty() && request.method() != "register_client") {
+    if (client.getClientID().isEmpty() && request.method() != "register_client" && request.method() != "unregister_client") {
         RpcError error(RpcErrorCode::ClientNotRegistered);
         qCWarning(lcStrataServer) << error;
         sendError(clientId, request.id(), error);

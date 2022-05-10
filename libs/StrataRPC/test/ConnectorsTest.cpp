@@ -7,13 +7,15 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "ConnectorsTest.h"
+#include "ClientConnector.h"
+#include "ServerConnector.h"
 
+#include <QCoreApplication>
+#include <QEventLoop>
 #include <QSignalSpy>
 #include <QVector>
 
 QTEST_MAIN(ConnectorsTest)
-
-#ifdef false
 
 using strata::strataRPC::ServerConnector;
 using strata::strataRPC::ClientConnector;
@@ -31,6 +33,11 @@ void ConnectorsTest::waitForZmqMessages(int delay)
     do {
         QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
     } while (timer.isActive());
+}
+
+void ConnectorsTest::initTestCase()
+{
+    qRegisterMetaType<strata::strataRPC::RpcErrorCode>("RpcErrorCode");
 }
 
 void ConnectorsTest::testOpenServerConnectorFaild()
@@ -52,9 +59,8 @@ void ConnectorsTest::testOpenServerConnectorFaild()
     QCOMPARE(connectorDublicate.initialize(), false);
     QVERIFY((serverConnected_2.count() == 0) && (serverConnected_2.wait(zmqWaitTime) == false));
     QVERIFY((errorOccured_2.count() == 1) || (errorOccured_2.wait(zmqWaitTimeSuccess) == true));
-    auto errorType =
-        qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured_2.takeFirst().at(0));
-    QCOMPARE(errorType, strata::strataRPC::ServerConnectorError::FailedToInitialize);
+    auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccured_2.takeFirst().at(0));
+    QCOMPARE(errorType, strata::strataRPC::ServerInitialializationError);
 }
 
 void ConnectorsTest::testServerAndClient()
@@ -98,12 +104,7 @@ void ConnectorsTest::testServerAndClient()
 
     client.sendMessage("Start Test");
 
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(zmqWaitTimeSuccess);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages(zmqWaitTime);
 
     QVERIFY(testPassed);
 }
@@ -219,12 +220,7 @@ void ConnectorsTest::testFloodTheClient()
 
     client.sendMessage("Start Test");
 
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(zmqWaitTimeSuccess);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages(zmqWaitTime);
 }
 
 void ConnectorsTest::testDisconnectClient()
@@ -320,15 +316,13 @@ void ConnectorsTest::testFailedToSendMessageFromClientConnector()
 
 void ConnectorsTest::testFailedToSendMessageFromServerConnector()
 {
-    qRegisterMetaType<strata::strataRPC::ServerConnectorError>("ServerConnectorError");
     ServerConnector server(address_);
     QSignalSpy errorOccured(&server, &ServerConnector::errorOccurred);
     QVERIFY(errorOccured.isValid());
     QVERIFY(false == server.sendMessage("RANDOMID", "This should fail."));
     QVERIFY((errorOccured.count() == 1) || (errorOccured.wait(zmqWaitTimeSuccess) == true));
-    auto errorType =
-        qvariant_cast<strata::strataRPC::ServerConnectorError>(errorOccured.takeFirst().at(0));
-    QCOMPARE(errorType, strata::strataRPC::ServerConnectorError::FailedToSend);
+    auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccured.takeFirst().at(0));
+    QCOMPARE(errorType, strata::strataRPC::TransportError);
 
     QSignalSpy serverInitialized(&server, &ServerConnector::initialized);
     QVERIFY(serverInitialized.isValid());
@@ -339,8 +333,6 @@ void ConnectorsTest::testFailedToSendMessageFromServerConnector()
 
 void ConnectorsTest::testClientConnectorErrorSignals()
 {
-    qRegisterMetaType<strata::strataRPC::ClientConnectorError>("ClientConnectorError");
-
     ClientConnector client(address_);
     QCOMPARE(client.isConnected(), false);
     QSignalSpy clientConnected(&client, &ClientConnector::connected);
@@ -353,18 +345,16 @@ void ConnectorsTest::testClientConnectorErrorSignals()
     {
         QCOMPARE(client.initialize(), false);
         QVERIFY((errorOccurred.count() == 1) || (errorOccurred.wait(zmqWaitTimeSuccess) == true));
-        auto errorType =
-            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
-        QCOMPARE(errorType, strata::strataRPC::ClientConnectorError::FailedToConnect);
+        auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccurred.takeFirst().at(0));
+        QCOMPARE(errorType, strata::strataRPC::RpcErrorCode::ConnectionError);
         errorOccurred.clear();
     }
 
     {
         QCOMPARE(client.connect(), false);
         QCOMPARE(errorOccurred.count(), 1);
-        auto errorType =
-            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
-        QCOMPARE(errorType, strata::strataRPC::ClientConnectorError::FailedToConnect);
+        auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccurred.takeFirst().at(0));
+        QCOMPARE(errorType, strata::strataRPC::RpcErrorCode::ConnectionError);
         errorOccurred.clear();
     }
 
@@ -374,20 +364,16 @@ void ConnectorsTest::testClientConnectorErrorSignals()
     {
         QCOMPARE(client.disconnect(), false);
         QCOMPARE(errorOccurred.count(), 1);
-        auto errorType =
-            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
-        QCOMPARE(errorType, strata::strataRPC::ClientConnectorError::FailedToDisconnect);
+        auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccurred.takeFirst().at(0));
+        QCOMPARE(errorType, strata::strataRPC::RpcErrorCode::DisconnectionError);
         errorOccurred.clear();
     }
 
     {
         QCOMPARE(client.sendMessage("test"), false);
         QCOMPARE(errorOccurred.count(), 1);
-        auto errorType =
-            qvariant_cast<strata::strataRPC::ClientConnectorError>(errorOccurred.takeFirst().at(0));
-        QCOMPARE(errorType, strata::strataRPC::ClientConnectorError::FailedToSend);
+        auto errorType = qvariant_cast<strata::strataRPC::RpcErrorCode>(errorOccurred.takeFirst().at(0));
+        QCOMPARE(errorType, strata::strataRPC::RpcErrorCode::TransportError);
         errorOccurred.clear();
     }
 }
-
-#endif

@@ -10,36 +10,32 @@
 
 #include "TestHandlers.h"
 
-#ifdef false
-
-void TestHandlers::handler_1(const Message &message)
+void TestHandlers::handler_1(const RpcRequest &request)
 {
-    printClientMessage(message);
+    printClientMessage(request);
     for (size_t i = 0; i < 1000000000; i++) {
         // do work!
     }
 }
 
-void TestHandlers::handler_2(const Message &message)
+void TestHandlers::handler_2(const RpcRequest &request)
 {
-    printClientMessage(message);
+    printClientMessage(request);
 }
 
-void TestHandlers::handler_3(const Message &message)
+void TestHandlers::handler_3(const RpcRequest &request)
 {
-    printClientMessage(message);
+    printClientMessage(request);
 }
 
-void TestHandlers::handler_4(const Message &message)
+void TestHandlers::handler_4(const RpcRequest &request)
 {
-    printClientMessage(message);
+    printClientMessage(request);
 }
 
-void TestHandlers::printClientMessage(const Message &message)
+void TestHandlers::printClientMessage(const RpcRequest &request)
 {
-    qDebug().nospace().noquote() << "client id: 0x" << message.clientID.toHex();
-    qDebug() << "handler name:" << message.handlerName;
-    qDebug() << "message id:" << message.messageID;
+    qDebug().nospace().noquote() << "client id: 0x" << request.clientId().toHex();
+    qDebug() << "method name:" << request.method();
+    qDebug() << "message id:" << request.id();
 }
-
-#endif

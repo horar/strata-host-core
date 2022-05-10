@@ -53,7 +53,6 @@ bool HostControllerService::initialize(const QString &config)
 
     strataServer_ = std::make_shared<strataRPC::StrataServer>(
                 serverConfig.value("subscriber_address").toString(),
-                true,
                 this);
 
     // Register handlers in strataServer_

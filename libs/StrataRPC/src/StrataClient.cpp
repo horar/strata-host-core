@@ -194,9 +194,8 @@ bool StrataClient::registerHandler(const QString &handlerName, ClientHandler han
 {
     qCDebug(lcStrataClient) << "Registering Handler:" << handlerName;
     if (false == dispatcher_->registerHandler(handlerName, handler)) {
-        QString errorMessage(QStringLiteral("Failed to register handler."));
-        qCCritical(lcStrataClient) << errorMessage;
-        emit errorOccurred(RpcErrorCode::HandlerRegistrationError, errorMessage);
+        qCCritical(lcStrataClient) << "Failed to register handler.";
+        emit errorOccurred(RpcErrorCode::HandlerRegistrationError);
         return false;
     }
     return true;
@@ -206,9 +205,8 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
 {
     qCDebug(lcStrataClient) << "Unregistering handler:" << handlerName;
     if (false == dispatcher_->unregisterHandler(handlerName)) {
-        QString errorMessage(QStringLiteral("Failed to unregister handler."));
-        qCCritical(lcStrataClient) << errorMessage;
-        emit errorOccurred(RpcErrorCode::HandlerUnregistrationError, errorMessage);
+        qCCritical(lcStrataClient) << "Failed to unregister handler.";
+        emit errorOccurred(RpcErrorCode::HandlerUnregistrationError);
         return false;
     }
     return true;
@@ -307,8 +305,7 @@ void StrataClient::processError(int id, const QJsonObject &error)
     reply->deleteLater();
 
     RpcErrorCode code = static_cast<RpcErrorCode>(error.value("code").toInt());
-    QString message = error.value("message").toString();
-    emit errorOccurred(code, message);
+    emit errorOccurred(code);
 }
 
 
@@ -316,9 +313,8 @@ void StrataClient::processNotification(const QString &method, const QJsonObject 
 {
     bool dispatched = dispatcher_->dispatch(method, params);
     if (dispatched == false) {
-        QString errorMessage = "handler for notification not found";
-        qCCritical(lcStrataClient) << errorMessage << method;
-        emit errorOccurred(RpcErrorCode::MethodNotFoundError, errorMessage);
+        qCCritical(lcStrataClient) << "handler for notification not found" << method;
+        emit errorOccurred(RpcErrorCode::MethodNotFoundError);
         return;
     }
 }
@@ -345,6 +341,7 @@ void StrataClient::removeExpiredReplies()
         iter.next();
         qint64 duration = currentTime - iter.value()->timestamp();
         if (duration > replyExpirationTime_.count()) {
+            qCInfo(lcStrataClient) << "reply timeout expired, id=" << iter.value()->id();
             RpcError error(RpcErrorCode::ReplyTimeoutError);
             processError(iter.value()->id(), buildErrorPayload(error));
         }
