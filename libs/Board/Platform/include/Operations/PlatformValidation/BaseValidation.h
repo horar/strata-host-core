@@ -82,12 +82,12 @@ signals:
      * This signal is emitted when some warning occurs during platform validation.
      * \param description - contains description of had happened during validation
      */
-    void validationStatus(Status status, QString description);
+    void validationStatus(strata::platform::validation::Status status, QString description);
 
 private slots:
     void handleCommandFinished(command::CommandResult result, int status);
     void handleValidationFailure(QString error);
-    void handlePlatformNotification(PlatformMessage message);
+    void handlePlatformNotification(strata::platform::PlatformMessage message);
 
 private:
     void sendCommand();
