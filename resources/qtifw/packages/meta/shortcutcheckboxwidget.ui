@@ -65,6 +65,9 @@
          </property>
          <item>
           <widget class="QCheckBox" name="desktopCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="text">
             <string>Create Desktop shortcut</string>
            </property>
@@ -78,6 +81,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="startMenuCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="text">
             <string>Create Start Menu shortcuts</string>
            </property>
@@ -105,6 +111,9 @@
          </property>
          <item>
           <widget class="QRadioButton" name="allUsersRadioButton">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="text">
             <string>Anyone who uses this computer (all users)</string>
            </property>
@@ -115,6 +124,9 @@
          </item>
          <item>
           <widget class="QRadioButton" name="currentUserRadioButton">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="text">
             <string>Only for me (current user)</string>
            </property>
