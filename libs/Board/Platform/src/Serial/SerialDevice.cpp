@@ -142,6 +142,7 @@ SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
     if (serialPort->open(QIODevice::ReadWrite)) {
         // clear() should be called right after open()
         serialPort->clear(QSerialPort::AllDirections);
+        qCDebug(lcDeviceSerial).nospace().noquote() << "Serial port '" << portName << "' opened successfully.";
         return serialPort;
     }
 
