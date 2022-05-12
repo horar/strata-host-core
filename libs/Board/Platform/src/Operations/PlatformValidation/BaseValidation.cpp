@@ -190,7 +190,10 @@ QString BaseValidation::badKeyType(const QString& key, KeyType type) const
         result += QStringLiteral("a string.");
         break;
     case KeyType::Integer :
-        result += QStringLiteral("a number.");
+        result += QStringLiteral("an integer.");
+        break;
+    case KeyType::Unsigned :
+        result += QStringLiteral("an unsigned integer.");
         break;
     }
     return result;
@@ -228,7 +231,12 @@ bool BaseValidation::checkKey(const rapidjson::Value& jsonObject, const char* ke
         }
         break;
     case KeyType::Integer :
-        if (value.IsInt()) {
+        if (value.IsInt64()) {
+            typeOk = true;
+        }
+        break;
+    case KeyType::Unsigned :
+        if (value.IsUint64()) {
             typeOk = true;
         }
         break;

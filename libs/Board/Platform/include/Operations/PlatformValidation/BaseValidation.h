@@ -119,7 +119,8 @@ protected:
     enum class KeyType {
         Object,
         String,
-        Integer
+        Integer,
+        Unsigned
     };
     /*!
      * Joins keys to string as "/key1/key2/key3".

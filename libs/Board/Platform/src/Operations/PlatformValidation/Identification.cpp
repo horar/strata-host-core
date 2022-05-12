@@ -139,13 +139,15 @@ bool Identification::requestPlatformIdCheck()
         return false;
     }
 
-    int controller;
+    constexpr quint64 EMBEDDED = static_cast<quint64>(CONTROLLER_TYPE_EMBEDDED);
+    constexpr quint64 ASSISTED = static_cast<quint64>(CONTROLLER_TYPE_ASSISTED);
+    quint64 controller;
     {  // check "controller_type"
-        if (checkKey(payload, JSON_CONTROLLER_TYPE, KeyType::Integer, jsonPath) == false) {
+        if (checkKey(payload, JSON_CONTROLLER_TYPE, KeyType::Unsigned, jsonPath) == false) {
             return false;
         }
-        controller = payload[JSON_CONTROLLER_TYPE].GetInt();
-        if ((controller != CONTROLLER_TYPE_EMBEDDED) && (controller != CONTROLLER_TYPE_ASSISTED)) {
+        controller = payload[JSON_CONTROLLER_TYPE].GetUint64();
+        if ((controller != EMBEDDED) && (controller != ASSISTED)) {
             emit validationStatus(Status::Error, unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller)));
             return false;
         }
@@ -160,16 +162,16 @@ bool Identification::requestPlatformIdCheck()
         };
         // keys for embedded board and for complete assisted (dongle + platfom) board
         std::array<KeyInfo, 3> keysBoth = {{
-            {JSON_PLATFORM_ID, KeyType::String,  false},
-            {JSON_CLASS_ID,    KeyType::String,  false},
-            {JSON_BOARD_COUNT, KeyType::Integer, false}
+            {JSON_PLATFORM_ID, KeyType::String,   false},
+            {JSON_CLASS_ID,    KeyType::String,   false},
+            {JSON_BOARD_COUNT, KeyType::Unsigned, false}
         }};
         // keys for assisted board (with or without dongle)
         std::array<KeyInfo, 4> keysAssist = {{
-            {JSON_CNTRL_PLATFORM_ID, KeyType::String,  false},
-            {JSON_CNTRL_CLASS_ID,    KeyType::String,  false},
-            {JSON_CNTRL_BOARD_COUNT, KeyType::Integer, false},
-            {JSON_FW_CLASS_ID,       KeyType::String,  false}
+            {JSON_CNTRL_PLATFORM_ID, KeyType::String,   false},
+            {JSON_CNTRL_CLASS_ID,    KeyType::String,   false},
+            {JSON_CNTRL_BOARD_COUNT, KeyType::Unsigned, false},
+            {JSON_FW_CLASS_ID,       KeyType::String,   false}
         }};
         unsigned int keysBothCount = 0;
         for (size_t i = 0; i < keysBoth.size(); ++i) {
@@ -184,7 +186,7 @@ bool Identification::requestPlatformIdCheck()
             }
         }
         // keys mandatory for embedded and complete assisted (dongle + platfom)
-        if ( (controller == CONTROLLER_TYPE_EMBEDDED) || (keysBothCount > 0) ) {
+        if ( (controller == EMBEDDED) || (keysBothCount > 0) ) {
             for (size_t i = 0; i < keysBoth.size(); ++i) {
                 if (checkKey(payload, keysBoth[i].key, keysBoth[i].type, jsonPath) == false) {
                     return false;
@@ -192,7 +194,7 @@ bool Identification::requestPlatformIdCheck()
             }
         }
         // keys mandatory for assisted
-        if (controller == CONTROLLER_TYPE_ASSISTED) {
+        if (controller == ASSISTED) {
             for (size_t i = 0; i < keysAssist.size(); ++i) {
                 if (checkKey(payload, keysAssist[i].key, keysAssist[i].type, jsonPath) == false) {
                     return false;
@@ -200,7 +202,7 @@ bool Identification::requestPlatformIdCheck()
             }
         }
         // check if there are some assisted keys for embedded platform
-        if (controller == CONTROLLER_TYPE_EMBEDDED) {
+        if (controller == EMBEDDED) {
             for (size_t i = 0; i < keysAssist.size(); ++i) {
                 if (keysAssist[i].present) {
                     emit validationStatus(Status::Error, QStringLiteral("Unexpected key ") + joinKeys(jsonPath, keysAssist[i].key));
