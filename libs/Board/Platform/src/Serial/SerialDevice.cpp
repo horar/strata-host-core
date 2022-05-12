@@ -134,6 +134,8 @@ void SerialDevice::close()
 
 SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
 {
+    qCDebug(lcDeviceSerial).nospace().noquote() << "Trying to access serial port '" << portName << "'.";
+
     SerialPortPtr serialPort = std::make_unique<QSerialPort>(portName);
     initializePort(serialPort);
 
@@ -143,6 +145,8 @@ SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
         return serialPort;
     }
 
+    qCWarning(lcDeviceSerial).nospace().noquote()
+        << "Cannot open serial port '" << portName << "', error code: '" << serialPort->error() << "'.";
     return nullptr;
 }
 
