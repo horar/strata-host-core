@@ -135,7 +135,7 @@ signals:
      * This signal is emitted only once when FlasherConnector finishes.
      * \param result result of FlasherConnector operation
      */
-    void finished(Result result);
+    void finished(strata::FlasherConnector::Result result);
 
     /*!
      * This signal is emitted during flashing new firmware.
@@ -164,7 +164,9 @@ signals:
      * \param state state of operation
      * \param errorString error description (if state is 'Failed', otherwise null string)
      */
-    void operationStateChanged(Operation operation, State state, QString errorString = QString());
+    void operationStateChanged(strata::FlasherConnector::Operation operation,
+                               strata::FlasherConnector::State state,
+                               QString errorString = QString());
 
     /*!
      * This signal is emitted when platform properties are changed (when platform is
