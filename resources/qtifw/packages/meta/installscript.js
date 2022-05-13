@@ -60,26 +60,84 @@ Component.prototype.createOperations = function()
     // call default implementation to actually install the content
     component.createOperations();
 
-    if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut", "true") == "true")) {
+    if (systemInfo.productType == "windows") {
         let target_dir = installer.value("TargetDir").split("/").join("\\");
 
+        let file_content = 'Set fso = WScript.CreateObject("Scripting.FileSystemObject")\n';
+        file_content += 'Set shl = WScript.CreateObject("WScript.Shell")\n';
+        file_content += 'maintenance_tool_name = WScript.Arguments.Item(0)\n';
+        file_content += 'temp_folder = WScript.Arguments.Item(1)\n';
+        file_content += 'installer_dat = WScript.Arguments.Item(2)\n';
+        file_content += 'maintenance_tool_dat = WScript.Arguments.Item(3)\n\n';
+        file_content += 'if StrComp(maintenance_tool_name, "empty") <> 0 then\n';
+        file_content += '    Set objFolder = fso.GetFolder(temp_folder)\n';
+        file_content += '    Set colFiles = objFolder.Files\n';
+        file_content += '    for each objFile in colFiles\n';
+        file_content += '        file_name = objFile.Name\n';
+        file_content += '        if instr(file_name, maintenance_tool_name) <> 0 AND instr(file_name, ".lock") <> 0 then\n';
+        file_content += '            while fso.FileExists(temp_folder & "\\" & file_name)\n';
+        file_content += '                WScript.Sleep(1000)\n';
+        file_content += '            wend\n';
+        file_content += '            exit for\n';
+        file_content += '        end if\n';
+        file_content += '    next\n';
+        file_content += '    WScript.Sleep(1000)\n';
+        file_content += '    Set objFolder = fso.GetFolder(temp_folder)\n';
+        file_content += '    Set colFiles = objFolder.Files\n';
+        file_content += '    for each objFile in colFiles\n';
+        file_content += '        file_name = objFile.Name\n';
+        file_content += '        if instr(file_name, "deferredrename") <> 0 AND instr(file_name, ".vbs") <> 0 then\n';
+        file_content += '            num = 0\n';
+        file_content += '            while (num < 10 AND fso.FileExists(temp_folder & "\\" & file_name))\n';
+        file_content += '                WScript.Sleep(1000)\n';
+        file_content += '                num = num + 1\n';
+        file_content += '            wend\n';
+        file_content += '            exit for\n';
+        file_content += '        end if\n';
+        file_content += '    next\n';
+        file_content += 'end if\n\n';
+        file_content += 'WScript.Sleep(1000)\n\n';
+        file_content += 'if fso.FileExists(installer_dat & ".new") then\n';
+        file_content += '	shl.Run "icacls """ & installer_dat & ".new" & """ /inheritance:e", 0, True\n';
+        file_content += 'end if\n';
+        file_content += 'num = 0\n';
+        file_content += 'while (num < 10 AND fso.FileExists(installer_dat) = False)\n';
+        file_content += '    WScript.Sleep(1000)\n';
+        file_content += '    num = num + 1\n';
+        file_content += 'wend\n';
+        file_content += 'shl.Run "icacls """ & installer_dat & """ /inheritance:e", 0, True\n\n';
+        file_content += 'if fso.FileExists(maintenance_tool_dat & ".new") then\n';
+        file_content += '	shl.Run "icacls """ & maintenance_tool_dat & ".new" & """ /inheritance:e", 0, True\n';
+        file_content += 'end if\n';
+        file_content += 'num = 0\n';
+        file_content += 'while (num < 10 AND fso.FileExists(maintenance_tool_dat) = False)\n';
+        file_content += '    WScript.Sleep(1000)\n';
+        file_content += '    num = num + 1\n';
+        file_content += 'wend\n';
+        file_content += 'shl.Run "icacls """ & maintenance_tool_dat & """ /inheritance:e", 0, True\n';
+
+        let script_file = target_dir + "\\" + "update_permissions.vbs";
+        component.addOperation("AppendFile", script_file, file_content);
+
         if (installer.value("add_start_menu_shortcut", "true") == "true") {
-            let strata_mt_shortcut_dst = "";
-            let start_menu_folder = installer.value("StartMenuDir_internal");
-            if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
-                start_menu_folder += "\\";
+            if (installer.value("add_start_menu_shortcut", "true") == "true") {
+                let strata_mt_shortcut_dst = "";
+                let start_menu_folder = installer.value("StartMenuDir_internal");
+                if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
+                    start_menu_folder += "\\";
+                }
+                if (installer.value("add_public_shortcuts", "true") == "true") {
+                    strata_mt_shortcut_dst = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                    // will point to public Start Menu in this case
+                    component.addElevatedOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                                "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+                } else {
+                    strata_mt_shortcut_dst = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                    component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                        "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+                }
+                console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
             }
-            if (installer.value("add_public_shortcuts", "true") == "true") {
-                strata_mt_shortcut_dst = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
-                // will point to public Start Menu in this case
-                component.addElevatedOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
-                                               "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
-            } else {
-                strata_mt_shortcut_dst = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
-                component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
-                                       "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
-            }
-            console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
         }
     }
 }
@@ -289,16 +347,6 @@ function isComponentAvailable(component_name)
     return false;
 }
 
-function randomString(length) {
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
-
 Component.prototype.onInstallationOrUpdateFinished = function()
 {
     console.log("onInstallationOrUpdateFinished entered");
@@ -341,76 +389,18 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         }
 
         if (installer.status == QInstaller.Success) {
-            console.log("fixing permissions for .dat files");
-            // always run after installation to fix files which refuse inheritance
+            console.log("fixing permissions for .dat files which are missing inheritance due to the way QTIFW creates them");
+            let script_file = target_dir + "\\" + "update_permissions.vbs";
             let installer_dat = target_dir + "\\" + "installer.dat";
             let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
             let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
-            let temp_file_name = "fix_permissions_" + randomString(5) + ".bat";
-            let temp_file = temp_location + "\\" + temp_file_name;
-
-            if (installer.fileExists(temp_file)) {
-                console.log("erasing previously created temp: " + temp_file);
-                installer.performOperation("Delete", temp_file);
-            }
 
             if (installer.isInstaller()) {
-                installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
-                installer.execute("cmd", ["/c", "echo :loop1>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo timeout /t 1 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo IF EXIST %1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ECHO granting %1 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     icacls %1 /inheritance:e>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ECHO file %1 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     goto loop1>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo :loop2>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo timeout /t 1 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo IF EXIST %2 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ECHO granting %2 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     icacls %2 /inheritance:e>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ECHO file %2 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     goto loop2>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo (goto) 2^>nul ^& del /Q %0>>", temp_file]);
-
-                console.log("starting detached process " + temp_file);
-                installer.executeDetached("cmd", ["/c", "start", "Permission Init", "/B", "/D", temp_location, temp_file_name, installer_dat, maintenance_tool_dat]);
+                let res = installer.executeDetached("cscript", [script_file, "empty", temp_location, installer_dat, maintenance_tool_dat]);
+                console.log("result detached execution of cscript: ", res);
             } else {
-                installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
-                installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo dir %1 /b /a-d ^>nul 2^>^&1 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo IF errorlevel 1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     set fileExist=0 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     set fileExist=1 >>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo IF %fileExist% EQU 1 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     timeout /t 5 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     goto loop>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     timeout /t 2 /nobreak ^>nul>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     IF EXIST %2 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO granting %2 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         icacls %2 /grant Users:F>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO file %2 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     IF EXIST %3 (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO granting %3 permissions>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         icacls %3 /grant Users:F>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo         ECHO file %3 does not exists>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                installer.execute("cmd", ["/c", "echo (goto) 2^>nul ^& del /Q %0>>", temp_file]);
-
-                console.log("starting detached process " + temp_file);
-                let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
-                iinstaller.executeDetached("cmd", ["/c", "start", "Permission Update", "/B", "/D", temp_location, temp_file_name, maintenance_tool_lock, installer_dat, maintenance_tool_dat]);
+                let res = installer.executeDetached("cscript", [script_file, installer.value("MaintenanceToolName"), temp_location, installer_dat, maintenance_tool_dat]);
+                console.log("result detached execution of cscript: ", res);
             }
         }
     }
@@ -439,7 +429,7 @@ Component.prototype.onFinishButtonClicked = function()
             }
 
             console.log("User reply to restart computer: Yes, restarting computer (with 5 second delay)");
-            installer.executeDetached("cmd", ["/c", "shutdown", "/r", "/t", "5"]);
+            installer.execute("cmd", ["/c", "shutdown", "/r", "/t", "5"]);
         } else {
             console.log("User reply to restart computer: No");
         }
