@@ -60,30 +60,84 @@ Component.prototype.createOperations = function()
     // call default implementation to actually install the content
     component.createOperations();
 
-    if (installer.isInstaller()) {
-        uninstallPreviousStrataInstallation();
-    }
-
-    if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut", "true") == "true")) {
+    if (systemInfo.productType == "windows") {
         let target_dir = installer.value("TargetDir").split("/").join("\\");
 
+        let file_content = 'Set fso = WScript.CreateObject("Scripting.FileSystemObject")\n';
+        file_content += 'Set shl = WScript.CreateObject("WScript.Shell")\n';
+        file_content += 'maintenance_tool_name = WScript.Arguments.Item(0)\n';
+        file_content += 'temp_folder = WScript.Arguments.Item(1)\n';
+        file_content += 'installer_dat = WScript.Arguments.Item(2)\n';
+        file_content += 'maintenance_tool_dat = WScript.Arguments.Item(3)\n\n';
+        file_content += 'if StrComp(maintenance_tool_name, "empty") <> 0 then\n';
+        file_content += '    Set objFolder = fso.GetFolder(temp_folder)\n';
+        file_content += '    Set colFiles = objFolder.Files\n';
+        file_content += '    for each objFile in colFiles\n';
+        file_content += '        file_name = objFile.Name\n';
+        file_content += '        if instr(file_name, maintenance_tool_name) <> 0 AND instr(file_name, ".lock") <> 0 then\n';
+        file_content += '            while fso.FileExists(temp_folder & "\\" & file_name)\n';
+        file_content += '                WScript.Sleep(1000)\n';
+        file_content += '            wend\n';
+        file_content += '            exit for\n';
+        file_content += '        end if\n';
+        file_content += '    next\n';
+        file_content += '    WScript.Sleep(1000)\n';
+        file_content += '    Set objFolder = fso.GetFolder(temp_folder)\n';
+        file_content += '    Set colFiles = objFolder.Files\n';
+        file_content += '    for each objFile in colFiles\n';
+        file_content += '        file_name = objFile.Name\n';
+        file_content += '        if instr(file_name, "deferredrename") <> 0 AND instr(file_name, ".vbs") <> 0 then\n';
+        file_content += '            num = 0\n';
+        file_content += '            while (num < 10 AND fso.FileExists(temp_folder & "\\" & file_name))\n';
+        file_content += '                WScript.Sleep(1000)\n';
+        file_content += '                num = num + 1\n';
+        file_content += '            wend\n';
+        file_content += '            exit for\n';
+        file_content += '        end if\n';
+        file_content += '    next\n';
+        file_content += 'end if\n\n';
+        file_content += 'WScript.Sleep(1000)\n\n';
+        file_content += 'if fso.FileExists(installer_dat & ".new") then\n';
+        file_content += '	shl.Run "icacls """ & installer_dat & ".new" & """ /inheritance:e", 0, True\n';
+        file_content += 'end if\n';
+        file_content += 'num = 0\n';
+        file_content += 'while (num < 10 AND fso.FileExists(installer_dat) = False)\n';
+        file_content += '    WScript.Sleep(1000)\n';
+        file_content += '    num = num + 1\n';
+        file_content += 'wend\n';
+        file_content += 'shl.Run "icacls """ & installer_dat & """ /inheritance:e", 0, True\n\n';
+        file_content += 'if fso.FileExists(maintenance_tool_dat & ".new") then\n';
+        file_content += '	shl.Run "icacls """ & maintenance_tool_dat & ".new" & """ /inheritance:e", 0, True\n';
+        file_content += 'end if\n';
+        file_content += 'num = 0\n';
+        file_content += 'while (num < 10 AND fso.FileExists(maintenance_tool_dat) = False)\n';
+        file_content += '    WScript.Sleep(1000)\n';
+        file_content += '    num = num + 1\n';
+        file_content += 'wend\n';
+        file_content += 'shl.Run "icacls """ & maintenance_tool_dat & """ /inheritance:e", 0, True\n';
+
+        let script_file = target_dir + "\\" + "update_permissions.vbs";
+        component.addOperation("AppendFile", script_file, file_content);
+
         if (installer.value("add_start_menu_shortcut", "true") == "true") {
-            let strata_mt_shortcut_dst = "";
-            let start_menu_folder = installer.value("StartMenuDir_internal");
-            if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
-                start_menu_folder += "\\";
+            if (installer.value("add_start_menu_shortcut", "true") == "true") {
+                let strata_mt_shortcut_dst = "";
+                let start_menu_folder = installer.value("StartMenuDir_internal");
+                if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
+                    start_menu_folder += "\\";
+                }
+                if (installer.value("add_public_shortcuts", "true") == "true") {
+                    strata_mt_shortcut_dst = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                    // will point to public Start Menu in this case
+                    component.addElevatedOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                                "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+                } else {
+                    strata_mt_shortcut_dst = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
+                    component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
+                                        "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
+                }
+                console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
             }
-            if (installer.value("add_public_shortcuts", "true") == "true") {
-                strata_mt_shortcut_dst = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
-                // will point to public Start Menu in this case
-                component.addElevatedOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
-                                               "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
-            } else {
-                strata_mt_shortcut_dst = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + installer.value("MaintenanceToolName") + ".lnk";
-                component.addOperation("CreateShortcut", target_dir + "\\" + installer.value("MaintenanceToolName") + ".exe", strata_mt_shortcut_dst,
-                                       "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
-            }
-            console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
         }
     }
 }
@@ -101,43 +155,41 @@ Component.prototype.onInstallationStarted = function()
         }
     }
 
-    if ((systemInfo.productType == "windows") && installer.isInstaller()) {
-        if (installer.gainAdminRights()) {
+    if (installer.isInstaller()) {
+        if (uninstallPreviousStrataInstallation() == false) {
+            installer.interrupt();
+            return;
+        }
+
+        if (systemInfo.productType == "windows") {
+            let gainedAdminRights = installer.gainAdminRights();
             // correct access rights to Strata config folder to avoid issues later
             let onsemiConfigFolder = getProgramDataDirectory() + "\\onsemi";
-            try {
-                if (installer.fileExists(onsemiConfigFolder) == false) {
-                    installer.execute("cmd", ["/c", "mkdir", onsemiConfigFolder]);
-                }
-                if (installer.fileExists(onsemiConfigFolder)) {
-                    console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
-                    installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
-                    installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
-                }
-            } catch(e) {
-                console.log("Error: unable to change access rights for Strata config folder");
-                console.log(e);
+            if (installer.fileExists(onsemiConfigFolder) == false) {
+                installer.execute("cmd", ["/c", "mkdir", onsemiConfigFolder]);
+            }
+            if (installer.fileExists(onsemiConfigFolder)) {
+                console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
+                installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
+                installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
             }
 
             // correct access rights to Strata folder to avoid issues later
             let target_dir = installer.value("TargetDir").split("/").join("\\");
-            try {
-                if (installer.fileExists(target_dir) == false) {
-                    installer.execute("cmd", ["/c", "mkdir", target_dir]);
-                }
-                if (installer.fileExists(target_dir)) {
-                    console.log("changing access rights for Strata folder: " + target_dir);
-                    installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:(OI)(CI)(F)"]);
-                    installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
-                }
-            } catch(e) {
-                console.log("Error: unable to change access rights for Strata folder");
-                console.log(e);
+            if (installer.fileExists(target_dir) == false) {
+                installer.execute("cmd", ["/c", "mkdir", target_dir]);
             }
-            installer.dropAdminRights();
-        } else {
-            console.log("Error: unable to elevate access rights");
-            installer.interrupt();
+            if (installer.fileExists(target_dir)) {
+                console.log("changing access rights for Strata folder: " + target_dir);
+                installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:(OI)(CI)(F)"]);
+                installer.execute("cmd", ["/c", "icacls", target_dir, "/setowner", "Users"]);
+            }
+
+            if (gainedAdminRights) {
+                installer.dropAdminRights();
+            } else {
+                console.log("Error: unable to elevate access rights");
+            }
         }
     }
 }
@@ -244,20 +296,19 @@ Component.prototype.onStartMenuSelectionPageLeft = function ()
     }
 }
 
-function isRestartRequired()
+function isRestartRequired(strataUtilsFolder)
 {
-    let vc_redist_temp_file = installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\vc_redist_out.txt";
+    let vc_redist_temp_file = strataUtilsFolder + "\\VC_REDIST\\vc_redist_out.txt";
     if (installer.fileExists(vc_redist_temp_file)) {
-        let exit_code = installer.readFile(vc_redist_temp_file, "UTF-8");
+        let exit_code = installer.readFile(vc_redist_temp_file, "UTF-8").trim();
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime return code: '" + exit_code + "'");
         installer.performOperation("Delete", vc_redist_temp_file);
 
-        if (exit_code == "3010 ") {
+        if (exit_code == "3010") {
             restart_is_required = true;
-            return;
+        } else {
+            restart_is_required = false;
         }
-
-        restart_is_required = false;
     } else {
         restart_is_required = false;
     }
@@ -304,7 +355,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
     if (systemInfo.productType == "windows") {
         target_dir = target_dir.split("/").join("\\");
     }
-    if (isComponentInstalled("com.onsemi.strata.devstudio") && (installer.isInstaller() || installer.isUpdater() || installer.isPackageManager())) {
+    if (isComponentInstalled("com.onsemi.strata.devstudio")) {
         if (systemInfo.productType == "windows") {
             installer.setValue("RunProgram", target_dir + "\\Strata Developer Studio.exe");
         } else if (systemInfo.productType == "osx") {
@@ -324,87 +375,37 @@ Component.prototype.onInstallationOrUpdateFinished = function()
     console.log("RunProgram: " + installer.value("RunProgram"));
 
     if (systemInfo.productType == "windows") {
-        if ((installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success)) {
-            isRestartRequired();
-        }
-
         // erase StrataUtils folder
         let strataUtilsFolder = target_dir + "\\StrataUtils";
         if (installer.fileExists(strataUtilsFolder)) {
-            try {
-                console.log("erasing StrataUtils folder: " + strataUtilsFolder);
-                installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
-                if (installer.fileExists(strataUtilsFolder)) {
-                    console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
-                }
-            } catch(e) {
+            if (installer.status == QInstaller.Success) {
+                isRestartRequired(strataUtilsFolder);   // call BEFORE erasing StrataUtils folder
+            }
+            console.log("erasing StrataUtils folder: " + strataUtilsFolder);
+            installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+            if (installer.fileExists(strataUtilsFolder)) {
                 console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
-                console.log(e);
             }
         }
 
         if (installer.status == QInstaller.Success) {
-            if (installer.gainAdminRights()) {
-                console.log("fixing permissions for .dat files");
-                // always run after installation to fix files which refuse inheritance
-                try {
-                    let installer_dat = target_dir + "\\" + "installer.dat";
-                    let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
-                    if (installer.isInstaller()) {
-                        if (installer.fileExists(installer_dat))
-                            installer.execute("cmd", ["/c", "icacls", installer_dat, "/grant", "Users:F"]);
-                        if (installer.fileExists(installer_dat + ".new"))
-                            installer.execute("cmd", ["/c", "icacls", installer_dat + ".new", "/grant", "Users:F"]);
-                        if (installer.fileExists(maintenance_tool_dat))
-                            installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat, "/grant", "Users:F"]);
-                        if (installer.fileExists(maintenance_tool_dat + ".new"))
-                            installer.execute("cmd", ["/c", "icacls", maintenance_tool_dat + ".new", "/grant", "Users:F"]);
-                    } else {
-                        let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
-                        let temp_file = temp_location + "\\" + "fix_permissions.bat";
-                        installer.execute("cmd", ["/c", "echo @echo off>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo :loop>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo set fileExist=>>", temp_file]);
-                        installer.execute("cmd", ["/c", 'echo dir %1 /b /a-d ^>nul 2^>^&1 >>', temp_file]);
-                        installer.execute("cmd", ["/c", "echo IF errorlevel 1 (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     set fileExist=0 >>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     set fileExist=1 >>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo IF %fileExist% EQU 1 (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     timeout /t 5 /nobreak ^>nul>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     goto loop>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo ) ELSE (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     timeout /t 2 /nobreak ^>nul>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     IF EXIST %2 (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo         ECHO granting %2 permissions>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo         icacls %2 /grant Users:F>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo         ECHO file %2 does not exists>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     IF EXIST %3 (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo         ECHO granting %3 permissions>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo         icacls %3 /grant Users:F>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     ) ELSE (>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo         ECHO file %3 does not exists>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo     )>>", temp_file]);
-                        installer.execute("cmd", ["/c", "echo )>>", temp_file]);
-                        console.log("starting detached process " + temp_file);
-                        let maintenance_tool_lock = installer.value("MaintenanceToolName") + "*.lock";
-                        installer.executeDetached("cmd", ["/c", temp_file, maintenance_tool_lock, installer_dat, maintenance_tool_dat], temp_location);
-                    }
-                } catch(e) {
-                    console.log("Error: unable to change access rights for Maintenance Tool files");
-                    console.log(e);
-                }
-                installer.dropAdminRights();
+            console.log("fixing permissions for .dat files which are missing inheritance due to the way QTIFW creates them");
+            let script_file = target_dir + "\\" + "update_permissions.vbs";
+            let installer_dat = target_dir + "\\" + "installer.dat";
+            let maintenance_tool_dat = target_dir + "\\" + installer.value("MaintenanceToolName") + ".dat";
+            let temp_location = QDesktopServices.storageLocation(QDesktopServices.TempLocation).split("/").join("\\");
+
+            if (installer.isInstaller()) {
+                let res = installer.executeDetached("cscript", [script_file, "empty", temp_location, installer_dat, maintenance_tool_dat]);
+                console.log("result detached execution of cscript: ", res);
             } else {
-                console.log("Error: unable to elevate access rights");
+                let res = installer.executeDetached("cscript", [script_file, installer.value("MaintenanceToolName"), temp_location, installer_dat, maintenance_tool_dat]);
+                console.log("result detached execution of cscript: ", res);
             }
         }
     }
 
-    if(is_command_line_instance && (installer.value("RunProgram") != "")) {
+    if (is_command_line_instance && (installer.value("RunProgram") != "")) {
         console.log("Executing: " + installer.value("RunProgram"));
         installer.executeDetached(installer.value("RunProgram"));
     }
@@ -428,7 +429,7 @@ Component.prototype.onFinishButtonClicked = function()
             }
 
             console.log("User reply to restart computer: Yes, restarting computer (with 5 second delay)");
-            installer.executeDetached("cmd", ["/c", "shutdown", "/r", "/t", "5"]);
+            installer.execute("cmd", ["/c", "shutdown", "/r", "/t", "5"]);
         } else {
             console.log("User reply to restart computer: No");
         }
@@ -438,39 +439,34 @@ Component.prototype.onFinishButtonClicked = function()
 }
 
 Component.prototype.addShortcutWidget = function () {
-    try {
-        if (installer.addWizardPage( component, "ShortcutCheckBoxWidget", QInstaller.StartMenuSelection )) {
-            console.log("ShortcutCheckBoxWidget page added");
-            let widget = gui.pageByObjectName("DynamicShortcutCheckBoxWidget");
-            if (widget != null) {
-                let desktopCheckBox = widget.findChild("desktopCheckBox");
-                if (desktopCheckBox != null) {
-                    desktopCheckBox.toggled.connect(this, Component.prototype.desktopShortcutChanged);
-                } else {
-                    console.log("Unable to acquire desktopCheckBox");
-                }
-                let startMenuCheckBox = widget.findChild("startMenuCheckBox");
-                if (startMenuCheckBox != null) {
-                    startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
-                } else {
-                    console.log("Unable to acquire startMenuCheckBox");
-                }
-                let allUsersRadioButton = widget.findChild("allUsersRadioButton");
-                if (allUsersRadioButton != null) {
-                    allUsersRadioButton.toggled.connect(this, Component.prototype.allUsersRadioButtonChanged);
-                } else {
-                    console.log("Unable to acquire allUsersRadioButton");
-                }
-                widget.entered.connect(this, Component.prototype.ShortcutCheckBoxWidgetEntered);
+    if (installer.addWizardPage( component, "ShortcutCheckBoxWidget", QInstaller.StartMenuSelection )) {
+        console.log("ShortcutCheckBoxWidget page added");
+        let widget = gui.pageByObjectName("DynamicShortcutCheckBoxWidget");
+        if (widget != null) {
+            let desktopCheckBox = widget.findChild("desktopCheckBox");
+            if (desktopCheckBox != null) {
+                desktopCheckBox.toggled.connect(this, Component.prototype.desktopShortcutChanged);
             } else {
-                console.log("Unable to acquire DynamicShortcutCheckBoxWidget");
+                console.log("Unable to acquire desktopCheckBox");
             }
+            let startMenuCheckBox = widget.findChild("startMenuCheckBox");
+            if (startMenuCheckBox != null) {
+                startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
+            } else {
+                console.log("Unable to acquire startMenuCheckBox");
+            }
+            let allUsersRadioButton = widget.findChild("allUsersRadioButton");
+            if (allUsersRadioButton != null) {
+                allUsersRadioButton.toggled.connect(this, Component.prototype.allUsersRadioButtonChanged);
+            } else {
+                console.log("Unable to acquire allUsersRadioButton");
+            }
+            widget.entered.connect(this, Component.prototype.ShortcutCheckBoxWidgetEntered);
         } else {
-            console.log("ShortcutCheckBoxWidget page not added");
+            console.log("Unable to acquire DynamicShortcutCheckBoxWidget");
         }
-    } catch(e) {
-        console.log("Error when adding ShortcutCheckBoxWidget page:");
-        console.log(e);
+    } else {
+        console.log("ShortcutCheckBoxWidget page not added");
     }
 }
 
@@ -592,17 +588,12 @@ function getPowershellElement(str, element_name) {
 function getWindowsDirectory()
 {
     let windowsPath = installer.value("RootDir").split("/").join("\\") + "\\Windows";
-    try {
-        let windowsPathEnv = installer.environmentVariable("windir");
-        if (windowsPathEnv !== "") {
-            windowsPath = windowsPathEnv;
-            console.log("detected Windows path: " + windowsPath);
-        } else {
-            console.log("unable to detect correct Windows path, trying default one: " + windowsPath);
-        }
-    } catch(e) {
-        console.log("error while detecting correct Windows path, trying default one: " + windowsPath);
-        console.log(e);
+    let windowsPathEnv = installer.environmentVariable("windir");
+    if (windowsPathEnv !== "") {
+        windowsPath = windowsPathEnv;
+        console.log("detected Windows path: " + windowsPath);
+    } else {
+        console.log("unable to detect correct Windows path, trying default one: " + windowsPath);
     }
 
     return windowsPath;
@@ -664,7 +655,6 @@ function uninstallPreviousStrataInstallation()
 {
     console.log("Checking for presence of old Strata...");
     if (systemInfo.productType == "windows") {
-
         let registryPaths = "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
         let strataFilter = "$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "'";
 
@@ -676,10 +666,11 @@ function uninstallPreviousStrataInstallation()
             powershell64Location = "powershell";    // use default one (32bit), which will not locate older Strata
         }
 
+        // DO NOT ELEVATE access rights before calling this, if the admin user is different, this command will fail to find the old Strata installation in HKCU registry
         let registryData = executePowershell(powershell64Location, powerShellCommand);
         if (registryData == "") {
             console.log("old Strata not found");
-            return false;
+            return true;
         }
 
         let display_name = getPowershellElement(registryData, 'DisplayName');
@@ -690,32 +681,42 @@ function uninstallPreviousStrataInstallation()
     
         if (uninstall_string.length == 0) {
             console.log("unable to acquire uninstall string for old Strata");
-            return false;
+            return true;
         }
 
         if ((is_command_line_instance == false) && (isSilent == false)) {
             if (showUninstallQuestion() == false) {
-                installer.interrupt();
                 return false;
             }
         }
 
         // we should not find multiple entries here, but just in case, uninstall all
+        // also make sure to run with admin rights to not show multiple prompts each time
+        let gainedAdminRights = installer.gainAdminRights();
         for (let i = 0; i < uninstall_string.length; i++) {
-            console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-            installer.execute(uninstall_string[i], ["isSilent=true", "--start-uninstaller"]);
+            let uninstall_binary = uninstall_string[i].split('"').join('');
+            if (installer.fileExists(uninstall_binary)) {
+                console.log("executing Strata uninstall binary: '" + uninstall_binary + "'");
+                installer.performOperation("Execute", [uninstall_binary, "purge", "-c", "/SILENT", "showStandardError"]);
+            } else {
+                console.log("Error: unable to locate Strata uninstall binary: '" + uninstall_binary + "'");
+            }
+        }
+        if (gainedAdminRights) {
+            installer.dropAdminRights();
+        } else {
+            console.log("Error: unable to elevate access rights");
         }
     } else if (systemInfo.productType == "osx") {
         let findData = executeFind();
 
         if (findData == "") {
             console.log("old Strata not found");
-            return false;
+            return true;
         }
 
         if ((is_command_line_instance == false) && (isSilent == false)) {
             if (showUninstallQuestion() == false) {
-                installer.interrupt();
                 return false;
             }
         }
@@ -726,8 +727,13 @@ function uninstallPreviousStrataInstallation()
             if (maintenanceToolLocations[i] == "") {
                 continue;
             }
-            console.log("executing Strata uninstall for: '" + maintenanceToolLocations[i] + "'");
-            installer.execute(maintenanceToolLocations[i] + "/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true", "--start-uninstaller"]);
+            let maintenance_tool = maintenanceToolLocations[i] + "/Contents/MacOS/" + installer.value("MaintenanceToolName");
+            if (installer.fileExists(maintenance_tool)) {
+                console.log("executing Strata uninstall for: '" + maintenance_tool + "'");
+                installer.performOperation("Execute", [maintenance_tool, "purge", "-c", "showStandardError"]);
+            } else {
+                console.log("Error: unable to execute Strata uninstall for: '" + maintenance_tool + "'");
+            }
         }
     }
     return true;
@@ -786,17 +792,12 @@ function acquireCleanupOperations()
 function getProgramDataDirectory()
 {
     let programDataPath = installer.value("RootDir").split("/").join("\\") + "\\ProgramData";
-    try {
-        let programDataPathEnv = installer.environmentVariable("ProgramData");
-        if (programDataPathEnv !== "") {
-            programDataPath = programDataPathEnv;
-            console.log("detected ProgramData path: " + programDataPath);
-        } else {
-            console.log("unable to detect correct ProgramData path, trying default one: " + programDataPath);
-        }
-    } catch(e) {
-        console.log("error while detecting correct ProgramData path, trying default one: " + programDataPath);
-        console.log(e);
+    let programDataPathEnv = installer.environmentVariable("ProgramData");
+    if (programDataPathEnv !== "") {
+        programDataPath = programDataPathEnv;
+        console.log("detected ProgramData path: " + programDataPath);
+    } else {
+        console.log("unable to detect correct ProgramData path, trying default one: " + programDataPath);
     }
 
     return programDataPath;
