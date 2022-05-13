@@ -18,6 +18,7 @@ using strata::platform::validation::Identification;
 SciPlatformValidation::SciPlatformValidation(const strata::platform::PlatformPtr& platform, QObject *parent)
     : QObject(parent),
       platformRef_(platform),
+      validation_(nullptr, nullptr),
       running_(false)
 { }
 
@@ -31,12 +32,13 @@ bool SciPlatformValidation::isRunning() const
 
 void SciPlatformValidation::finishedHandler(bool success)
 {
+    validation_.reset();
+    emit validationFinished(success);
+
     if (running_) {
         running_ = false;
         emit isRunningChanged();
     }
-    validation_.reset();
-    emit validationFinished(success);
 }
 
 void SciPlatformValidation::runIdentification()
@@ -45,10 +47,14 @@ void SciPlatformValidation::runIdentification()
         running_ = true;
         emit isRunningChanged();
 
-        validation_ = std::make_unique<Identification>(platformRef_);
+        validation_ = ValidationPtr(new Identification(platformRef_), validationDeleter);
         connect(validation_.get(), &Identification::finished, this, &SciPlatformValidation::finishedHandler);
         connect(validation_.get(), &Identification::validationStatus, this, &SciPlatformValidation::validationStatus);
 
         validation_->run();
     }
+}
+
+void SciPlatformValidation::validationDeleter(strata::platform::validation::BaseValidation* validation) {
+    validation->deleteLater();
 }

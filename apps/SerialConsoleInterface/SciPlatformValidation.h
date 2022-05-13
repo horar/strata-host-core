@@ -43,8 +43,12 @@ private:
     // It refers to platform_ in SciPlatfrom class (we need reference to obtain its current value).
     const strata::platform::PlatformPtr& platformRef_;
 
-    bool running_;
+    typedef std::unique_ptr<strata::platform::validation::BaseValidation,
+                            void(*)(strata::platform::validation::BaseValidation*)> ValidationPtr;
+    ValidationPtr validation_;
+    // deleter for validation_ unique pointer
+    static void validationDeleter(strata::platform::validation::BaseValidation* validation);
 
-    std::unique_ptr<strata::platform::validation::BaseValidation> validation_;
+    bool running_;
 
 };
