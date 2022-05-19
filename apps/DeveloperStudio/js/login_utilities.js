@@ -80,6 +80,12 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
+    if (response.hasOwnProperty("consent_privacy_policy")) {
+        Rest.consent_privacy_policy = response.consent_privacy_policy;
+    } else {
+        console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
+        SignalsModule.Signals.privacyPolicyUpdate()
+    }
     var result = {
         "response":"Connected",
         "jwt": response.token,
@@ -454,6 +460,8 @@ function update_profile(username, updated_properties) {
 
     if (updated_properties.hasOwnProperty("password")) {
        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result)
+    } else if(updated_properties.hasOwnProperty("consent_privacy_policy")) {
+        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     } else {
        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     }

@@ -42,9 +42,8 @@ SGWidgets.SGDialog {
             text: "We respect your privacy and won\’t share your information with outside parties without your consent. " + 
                 "To learn more about the onsemi privacy policy, click <a href='" + sdsModel.urls.privacyPolicyUrl + "'>here</a>." +
                 "<br> <br>" +
-                "You can learn more about how we handle your personal data and your rights by reviewing our <a href='" + 
-                sdsModel.urls.privacyPolicyUrl + "'>privacy policy</a>." 
-// "onsemi has updated our <a href='" + sdsModel.urls.privacyPolicyUrl + "'>Privacy Policy</a>. Please read these documents carefully as the changes affect your legal rights. By clicking on Accept, you accept these updates."
+                "You can learn more about how we handle your personal data and your rights by reviewing our <a href='" +
+                sdsModel.urls.privacyPolicyUrl + "'>privacy policy</a>."
             linkColor: "#545960"
             fontSizeMultiplier: 1.25
             font.family: Fonts.franklinGothicBook
@@ -71,7 +70,14 @@ SGWidgets.SGDialog {
 
             SGWidgets.SGButton {
                 text: "Accept"
-                onClicked: policyDialog.accept()
+                onClicked: {
+                    console.log("Updating privacy policy consent!")
+                    let data = {
+                        "consent_privacy_policy": true
+                    };
+                    LoginUtils.update_profile(NavigationControl.context.user_id, data)
+                    policyDialog.accept()
+                }
                 color: Theme.palette.success
             }
         }
@@ -79,9 +85,7 @@ SGWidgets.SGDialog {
 
     function logout() {
         sdsModel.coreInterface.unregisterClient();
-        // controlViewCreatorLoader.active = false
         Signals.logout()
-        PlatformFilters.clearActiveFilters()
         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
         LoginUtils.logout()
         PlatformSelection.logout()

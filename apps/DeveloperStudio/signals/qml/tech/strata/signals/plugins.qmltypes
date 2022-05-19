@@ -61,5 +61,6 @@ Module {
             Parameter { name: "result"; type: "string" }
         }
         Signal { name: "loadCVC" }
+        Signal { name: "privacyPolicyUpdate" }
     }
 }

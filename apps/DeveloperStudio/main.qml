@@ -32,6 +32,7 @@ import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
+import tech.strata.signals 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -50,6 +51,7 @@ SGWidgets.SGMainWindow {
 
     signal initialized()
     property bool hcsReconnecting: false
+    property variant privacyPolicyDialog: null
 
     function resetWindowSize()
     {
@@ -335,8 +337,25 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    Connections {
+        target: Signals
+
+        onPrivacyPolicyUpdate: {
+            showPrivacyPolicyDialog()
+        }
+    }
+
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
+    function showPrivacyPolicyDialog() {
+        if (privacyPolicyDialog !== null) {
+            return
+        }
+
+        privacyPolicyDialog = SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/SGPolicyUpdateDialog.qml")
+        privacyPolicyDialog.open()
     }
 
     SGDebugBar {

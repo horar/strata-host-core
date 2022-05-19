@@ -71,4 +71,9 @@ QtObject {
       Misc Signal for CVC
     */
     signal loadCVC()
+
+    /*
+      Privacy Policy Update signal
+    */
+    signal privacyPolicyUpdate()
 }
