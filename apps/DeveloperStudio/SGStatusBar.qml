@@ -740,7 +740,6 @@ Rectangle {
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
-        property bool hasOptedOut: false
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
@@ -767,9 +766,6 @@ Rectangle {
             if (settings.hasOwnProperty("notifyOnPlatformConnections")) {
                 notifyOnPlatformConnections = settings.notifyOnPlatformConnections
             }
-            if (settings.hasOwnProperty("hasOptedOut")) {
-                hasOptedOut = settings.hasOptedOut
-            }
 
             NavigationControl.userSettings = userSettings
         }
@@ -782,8 +778,7 @@ Rectangle {
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal,
                 notifyOnPlatformConnections: notifyOnPlatformConnections,
-                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate,
-                hasOptedOut: hasOptedOut
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)
         }
