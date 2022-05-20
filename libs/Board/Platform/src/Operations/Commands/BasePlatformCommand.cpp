@@ -195,14 +195,16 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                 finishCommand(CommandResult::MissingAck);
             }
         } else {
-            QString warning = "Received invalid notification: '" + message.raw() + "'.";
-            qCWarning(lcPlatformCommand) << platform_ << warning;
-            emitValidationWarning(warning);
+            // some platforms send periodic notifications, it is not an error if we receive it, ignore it
+            qCDebug(lcPlatformCommand) << platform_ << "Received invalid notification for command '"
+                                       << cmdName_ << "': '" << message.raw() << "'.";
         }
 
         return;
     }
 
+    // received JSON is not valid response to command neither platform notification
+    // log warning and wait for the correct JSON (until timeout)
     QString warning = generateWrongResponseError(message);
     qCWarning(lcPlatformCommand) << platform_ << warning;
     emitValidationWarning(warning);
