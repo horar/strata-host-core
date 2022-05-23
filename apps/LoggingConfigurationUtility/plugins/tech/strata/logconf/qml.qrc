@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>LcuMain.qml</file>
+        <file>LogLevel.qml</file>
+        <file>LogDetails.qml</file>
     </qresource>
 </RCC>

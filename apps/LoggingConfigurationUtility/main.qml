@@ -7,7 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick 2.12
-//import QtQuick.Layouts 1.12
+import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logconf 1.0 as LcuPlugin
@@ -49,17 +49,18 @@ SGWidgets.SGMainWindow {
         color: "#eeeeee"
     }
 
+/*
     LcuPlugin.LcuMain {
-        anchors {
-            fill: parent
-            margins: 4
-        }
-    }
+-        anchors {
+-            fill: parent
+-            margins: 4
+-        }
+-    }
+*/
 
-/*    ColumnLayout {
+    ColumnLayout {
         property int outerSpacing: 10
         property int innerSpacing: 5
-
         anchors {
             fill: parent
             topMargin: 10
@@ -70,14 +71,9 @@ SGWidgets.SGMainWindow {
 
         LcuPlugin.LogLevel {
             id: logLevel
-            currentIniFile: fileSelector.selectedFileText
+            Layout.alignment: Qt.AlignTop
         }
-
-        LcuPlugin.LogDetails {
-            id: logDetails
-            currentIniFile: fileSelector.selectedFileText
-        }
-}*/
+    }
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/LcuAboutWindow.qml")
