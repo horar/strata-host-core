@@ -25,7 +25,7 @@ SGWidgets.SGDialog {
     id: policyDialog
 
     title: "Privacy Policy Update"
-    headerBgColor: Theme.palette.highlight
+    headerBgColor: Theme.palette.onsemiDark
     closePolicy: Dialog.NoAutoClose
     modal: true
     focus: true
@@ -53,32 +53,69 @@ SGWidgets.SGDialog {
     }
 
     footer: Item {
-        implicitHeight: buttonRow.height + 10
+        implicitHeight: buttonRow.height + 20
 
         Row {
             id: buttonRow
             anchors.centerIn: parent
-            spacing: 89
+            spacing: 100
 
-            SGWidgets.SGButton {
-                text: "Log Out"
-                onClicked: {
-                    logout()
-                    policyDialog.accept()
+            Rectangle {
+                id: logOutButton
+                height: 25
+                width: acceptButton.width
+                radius: 20
+                border.width: 1
+                border.color: Theme.palette.onsemiDark
+                color: mouse.containsMouse ? Theme.palette.onsemiDark : "transparent"
+
+                SGWidgets.SGText {
+                    text: qsTr("Log Out")
+                    color: mouse.containsMouse ? Theme.palette.white :  Theme.palette.onsemiDark
+                    anchors.centerIn: parent
+                }
+
+                MouseArea {
+                    id: mouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onClicked: {
+                        logout()
+                        policyDialog.accept()
+                    }
                 }
             }
+ 
+            Rectangle {
+                id: acceptButton
+                height: 25
+                width: acceptText.implicitWidth + 40
+                radius: 20
+                color: mouseAccept.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.1) : Theme.palette.onsemiOrange
 
-            SGWidgets.SGButton {
-                text: "Accept"
-                onClicked: {
-                    console.log("Updating privacy policy consent!")
-                    let data = {
-                        "consent_privacy_policy": true
-                    };
-                    LoginUtils.update_profile(NavigationControl.context.user_id, data)
-                    policyDialog.accept()
+                SGWidgets.SGText {
+                    id: acceptText
+                    text: qsTr("Accept")
+                    color: Theme.palette.white
+                    anchors.centerIn: parent
+                    font.bold: true
                 }
-                color: Theme.palette.success
+
+                MouseArea {
+                    id: mouseAccept
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onClicked: {
+                        console.log("Updating privacy policy consent!")
+                        let data = {
+                            "consent_privacy_policy": true
+                        };
+                        LoginUtils.update_profile(NavigationControl.context.user_id, data)
+                        policyDialog.accept()
+                    }
+                }
             }
         }
     }
