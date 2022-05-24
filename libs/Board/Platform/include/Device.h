@@ -154,7 +154,7 @@ namespace strata::device {
          * @param errCode error code
          * @param msg error description
          */
-        void deviceError(ErrorCode errCode, QString msg);
+        void deviceError(strata::device::Device::ErrorCode errCode, QString msg);
 
     protected:
         const QByteArray deviceId_;

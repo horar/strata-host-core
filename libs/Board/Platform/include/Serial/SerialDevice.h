@@ -9,15 +9,16 @@
 #ifndef SERIAL_DEVICE_H
 #define SERIAL_DEVICE_H
 
-#include <string>
-#include <memory>
-
 #include <Device.h>
 
-#include <QSerialPort>
-#include <QTimer>
+#include <QThread>
 
 namespace strata::device {
+
+namespace serial {
+enum class PortError : short;
+class SerialPortWorker;
+}
 
 class SerialDevice : public Device
 {
@@ -25,8 +26,6 @@ class SerialDevice : public Device
     Q_DISABLE_COPY(SerialDevice)
 
 public:
-    typedef std::unique_ptr<QSerialPort> SerialPortPtr;
-
     /**
      * SerialDevice constructor
      * @param deviceId device ID
@@ -34,15 +33,6 @@ public:
      * @param openRetries count of retries if 'open()' fails; default = 0, unlimited = -1 (negative number)
      */
     SerialDevice(const QByteArray& deviceId, const QString& name, int openRetries = 0);
-
-    /**
-     * SerialDevice constructor
-     * @param deviceId device ID
-     * @param name device name
-     * @param port already existing serial port
-     * @param openRetries count of retries if 'open()' fails; default = 0, unlimited = -1 (negative number)
-     */
-    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port, int openRetries = 0);
 
     /**
      * SerialDevice destructor
@@ -59,13 +49,6 @@ public:
      * Close serial port.
      */
     virtual void close() override;
-
-    /**
-     * Establish connection with serial port.
-     * @param portName system name of serial port
-     * @return SerialPortPtr if connection was established and port is open, nullptr otherwise
-     */
-    static SerialPortPtr establishPort(const QString& portName);
 
     /**
      * Creates unique hash for serial device, based on port name.
@@ -91,30 +74,29 @@ public:
 
     /**
      * Reset receiving messages from device - clear internal buffer
-     * for receiving from serial port (drop any data (parts of message) in it).
+     * for receiving from serial port (drop any data (parts of message) from it).
      */
     virtual void resetReceiving() override;
 
-    /**
-     * Set count of retries if 'open()' fails.
-     * @param retries retries count (default = 0), -1 (negative number) = unlimited
-     */
-    void setOpenRetries(int retries);
+signals:
+    void openPort(QPrivateSignal);
+    void closePort(QPrivateSignal);
+    void writeData(QByteArray data, unsigned messageNumber, QPrivateSignal);
+    void clearReadBuffer(QPrivateSignal);
 
 private slots:
-    void readMessage();
-    void handleError(QSerialPort::SerialPortError error);
+    void handlePortOpened(bool opened);
+    void handlePortClosed();
+    void handleDataWritten(QByteArray data, unsigned messageNumber, QString error);
+    void handleMessageObtained(QByteArray message);
+    void handlePortError(strata::device::serial::PortError errorCode, QString errorMessage);
 
 private:
-    void initSerialDevice(int openRetries);
-
-    SerialPortPtr serialPort_;
-    std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
+    QThread workerThread_;
+    serial::SerialPortWorker *serialPortWorker_;
 
     bool connected_;
-
-    QTimer openRetryTimer_;
-    int openRetries_;
+    static bool portErrorUnregistered_;
 };
 
 }  // namespace
