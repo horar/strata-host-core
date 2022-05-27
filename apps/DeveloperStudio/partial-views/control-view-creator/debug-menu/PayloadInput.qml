@@ -64,6 +64,7 @@ Item {
                 validator: switch(type) {
                     case "int": return intValid
                     case "double": return doubleValid
+                    default: return null
                 }
             }
         }
