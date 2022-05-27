@@ -15,11 +15,15 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.fonts 1.0
 import tech.strata.theme 1.0
 import tech.strata.platform.validation 1.0
+import tech.strata.sci 1.0 as Sci
 
 FocusScope {
     id: validationView
 
     property int baseSpacing: 16
+
+    property QtObject platformTestModel: model.platform.platformTestModel
+    property QtObject platformTestMessageModel: model.platform.platformTestMessageModel
 
     FocusScope {
         id: content
@@ -56,7 +60,177 @@ FocusScope {
         }
 
         Column {
+            id: testViewWrapper
+            anchors {
+                top: parent.top
+                left: parent.left
+            }
+
+            SGWidgets.SGText {
+                text: "tests:"
+            }
+
+            ListView {
+                id: testView
+
+                model: platformTestModel
+                width: 200
+                height: 200
+
+                delegate: Row {
+
+                    spacing: 10
+
+                    SGWidgets.SGCheckBox {
+                        id: enabledCheckbox
+                        text: ""
+
+                        onCheckedChanged : {
+                            platformTestModel.setEnabled(index, checked)
+                        }
+
+                        Binding {
+                            target: enabledCheckbox
+                            property: "checked"
+                            value: model.enabled
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        text: model.name
+                    }
+                }
+            }
+
+            SGWidgets.SGButton {
+                text: "Run tests"
+                onClicked: {
+                    platformTestModel.runTests()
+                }
+            }
+
+        }
+
+
+        Item {
+            id: validationListWrapper
+            anchors {
+                left: testViewWrapper.right
+                leftMargin: 10
+
+            }
+
+            width: 400
+            height: 200
+
+            Rectangle {
+                id: listViewBg
+                anchors {
+                    fill: validationListView
+                    margins: -border.width
+                }
+                color: "white"
+                border {
+                    width: 1
+                    color: TangoTheme.palette.componentBorder
+                }
+            }
+
+
+            ListView {
+                id: validationListView
+                anchors {
+
+                    fill: parent
+                    margins: listViewBg.border.width
+                }
+
+                model: platformTestMessageModel
+                spacing: 2
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
+
+                ScrollBar.vertical: ScrollBar {
+                    id: verticalScrollbar
+                    anchors {
+                        right: validationListView.right
+                        rightMargin: 0
+                    }
+                    width: visible ? 8 : 0
+
+                    policy: ScrollBar.AlwaysOn
+                    minimumSize: 0.1
+                    visible: validationListView.height < validationListView.contentHeight
+
+                    Behavior on width { NumberAnimation {}}
+                }
+
+                delegate: Item {
+
+                    height: Math.max(delegateIcon.height, delegateIcon.height)
+                    width: validationListWrapper.width
+
+                    SGWidgets.SGIcon {
+                        id: delegateIcon
+                        width: 16
+                        height: width
+
+                        source: {
+                            if (model.type === Sci.SciPlatformTestMessageModel.Warning) {
+                                return "qrc:/sgimages/exclamation-triangle.svg"
+                            }
+                            if (model.type === Sci.SciPlatformTestMessageModel.Error) {
+                                return "qrc:/sgimages/times-circle.svg"
+                            }
+                            if (model.type === Sci.SciPlatformTestMessageModel.Success) {
+                                return "qrc:/sgimages/check-circle.svg"
+                            }
+
+                            return ""
+                        }
+
+                        iconColor: {
+                            if (model.type === Sci.SciPlatformTestMessageModel.Warning) {
+                                return TangoTheme.palette.warning
+                            }
+                            if (model.type === Sci.SciPlatformTestMessageModel.Error) {
+                                return TangoTheme.palette.error
+                            }
+
+                            if (model.type === Sci.SciPlatformTestMessageModel.Success) {
+                                return TangoTheme.palette.success
+                            }
+
+                            return "black"
+
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        id: delegateText
+                        anchors {
+                            left: delegateIcon.right
+                            leftMargin: 4
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                        }
+
+                        text: model.text
+                    }
+                }
+            }
+
+        }
+
+
+        //old stuff
+        Column {
             id: validationWrapper
+            anchors {
+                top: testViewWrapper.bottom
+                topMargin: 50
+            }
+
             spacing: baseSpacing
 
             SGWidgets.SGText {
@@ -78,7 +252,7 @@ FocusScope {
                 id: textArea1
                 focus: false
                 width: 600
-                height: 400
+                height: 200
                 readOnly: true
             }
         }

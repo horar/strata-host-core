@@ -45,6 +45,10 @@ SciPlatform::SciPlatform(
 
     messageQueueModel_ = new SciMessageQueueModel(this);
 
+    platformTestMessageModel_ = new SciPlatformTestMessageModel(this);
+    platformTestModel_ = new SciPlatformTestModel(platformTestMessageModel_, this);
+
+
     platformValidation_ = new SciPlatformValidation(platform_, this);
 }
 
@@ -203,6 +207,16 @@ SciSearchScrollbackModel *SciPlatform::searchScrollbackModel() const
 SciMessageQueueModel *SciPlatform::messageQueueModel() const
 {
     return messageQueueModel_;
+}
+
+SciPlatformTestModel *SciPlatform::platformTestModel() const
+{
+    return platformTestModel_;
+}
+
+SciPlatformTestMessageModel *SciPlatform::platformTestMessageModel() const
+{
+    return platformTestMessageModel_;
 }
 
 SciPlatformValidation *SciPlatform::platformValidation() const

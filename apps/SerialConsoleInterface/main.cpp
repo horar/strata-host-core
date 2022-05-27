@@ -203,6 +203,10 @@ int main(int argc, char *argv[])
                 "You can't instantiate PlatformValidation in QML" );
     qRegisterMetaType<strata::platform::validation::Status>("PlatformValidation");
 
+    qmlRegisterUncreatableType<SciPlatformTestModel>("tech.strata.sci", 1, 0, "SciPlatformTestModel", "cannot instantiate SciPlatformTestModel in qml");
+    qmlRegisterUncreatableType<SciPlatformTestMessageModel>("tech.strata.sci", 1, 0, "SciPlatformTestMessageModel", "cannot instantiate SciPlatformTestMessageModel in qml");
+
+
     loadResources();
 
     // make sure that objects in context properties are declared before engine, to maintain proper order of destruction

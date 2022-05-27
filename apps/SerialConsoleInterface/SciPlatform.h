@@ -17,6 +17,8 @@
 #include "SciSearchScrollbackModel.h"
 #include "SciMessageQueueModel.h"
 #include "SciPlatformValidation.h"
+#include "SciPlatformTestModel.h"
+#include "SciPlatformTestMessageModel.h"
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
@@ -45,7 +47,11 @@ class SciPlatform: public QObject {
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
     Q_PROPERTY(SciMessageQueueModel* messageQueueModel READ messageQueueModel CONSTANT)
+
     Q_PROPERTY(SciPlatformValidation* platformValidation READ platformValidation CONSTANT)
+    Q_PROPERTY(SciPlatformTestModel* platformTestModel READ platformTestModel CONSTANT)
+    Q_PROPERTY(SciPlatformTestMessageModel* platformTestMessageModel READ platformTestMessageModel CONSTANT)
+
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
     Q_PROPERTY(bool sendMessageInProgress READ sendMessageInProgress NOTIFY sendMessageInProgressChanged)
@@ -97,6 +103,8 @@ public:
     SciFilterScrollbackModel* filterScrollbackModel() const;
     SciSearchScrollbackModel* searchScrollbackModel() const;
     SciMessageQueueModel* messageQueueModel() const;
+    SciPlatformTestModel* platformTestModel() const;
+    SciPlatformTestMessageModel* platformTestMessageModel() const;
     SciPlatformValidation* platformValidation() const;
     QString errorString() const;
     void setErrorString(const QString &errorString);
@@ -191,6 +199,8 @@ private:
     SciMessageQueueModel *messageQueueModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     strata::PlatformManager *platformManager_;
+    SciPlatformTestModel *platformTestModel_;
+    SciPlatformTestMessageModel *platformTestMessageModel_;
     SciPlatformValidation *platformValidation_;
     uint currentMessageId_ = 0;
     bool sendMessageInProgress_ = false;
