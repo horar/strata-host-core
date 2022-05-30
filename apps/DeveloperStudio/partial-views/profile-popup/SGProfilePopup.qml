@@ -395,8 +395,8 @@ SGStrataPopup {
 
                     width: 250
                     placeholderText: "Current Password"
-                    echoMode: TextInput.Password
                     showIcon: false
+                    passwordMode: true
                     visible: currentPasswordRow.editable
                 }
             }
