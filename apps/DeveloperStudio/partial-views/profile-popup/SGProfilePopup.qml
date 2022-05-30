@@ -428,37 +428,9 @@ SGStrataPopup {
                     width: 250
 
                     placeholderText: "New password"
-                    echoMode: TextInput.Password
                     showIcon: false
+                    passwordMode: true
                     visible: newPasswordRow.editable
-
-                    SGIcon {
-                        id: showPasswordIcon
-                        source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
-                        iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
-                        anchors {
-                            verticalCenter: passwordField.verticalCenter
-                            rightMargin: 5
-                            right: passwordField.right
-                        }
-                        height: passwordField.height*.75
-                        width: height
-
-                        MouseArea {
-                            id: showPassword
-                            anchors.fill: showPasswordIcon
-                            hoverEnabled: true
-                            onPressedChanged: {
-                                if(alertRect.visible) alertRect.hide();
-                                if (passwordField.echoMode === TextInput.Password) {
-                                    passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
-                                } else {
-                                    passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Password
-                                }
-                            }
-                            cursorShape: Qt.PointingHandCursor
-                        }
-                    }
 
                     onPressed: {
                         passReqsPopup.openPopup()
@@ -474,7 +446,7 @@ SGStrataPopup {
                     }
 
                     placeholderText: "Confirm password"
-                    echoMode: TextInput.Password
+                    echoMode: passwordField.echoMode
                     valid: passReqs.passwordValid
                     width: 250
 
