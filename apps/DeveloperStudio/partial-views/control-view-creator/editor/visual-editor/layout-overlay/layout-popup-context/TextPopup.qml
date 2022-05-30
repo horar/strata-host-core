@@ -12,6 +12,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 GenericPopup {
     id: textPopup
@@ -76,6 +77,9 @@ GenericPopup {
         TextField {
             id: textField
             implicitWidth: 400
+            selectByMouse: true
+            focus: true
+            persistentSelection: true
 
             onAccepted: {
                 if (okButton.enabled) {
@@ -86,6 +90,34 @@ GenericPopup {
             onTextChanged: {
                 if (textPopup.sourceProperty == "id") {
                     textPopup.validInput = !textPopup.invalidInputs.includes(text)
+                }
+            }
+
+            onActiveFocusChanged: {
+                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    textField.deselect()
+                }
+            }
+
+            SGWidgets.SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: textField
+                copyEnabled: textField.echoMode !== TextField.Password
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+
+                onClicked: {
+                    textField.forceActiveFocus()
                 }
             }
         }
