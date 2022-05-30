@@ -16,6 +16,7 @@ import "../widgets"
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
 
