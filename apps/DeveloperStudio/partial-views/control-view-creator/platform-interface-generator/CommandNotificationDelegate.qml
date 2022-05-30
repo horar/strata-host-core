@@ -131,7 +131,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
+                    if (activeFocus === false && (contextMenuPopupLoader.item == null || contextMenuPopupLoader.item.visible === false)) {
                         cmdNotifName.deselect()
                     }
                 }
@@ -146,7 +146,6 @@ Rectangle {
                     onReleased: {
                         if (containsMouse) {
                             contextMenuPopupLoader.active = true
-                            contextMenuPopupLoader.item.textEditor = cmdNotifName
                             contextMenuPopupLoader.item.popup(null)
                         }
                     }
@@ -155,7 +154,9 @@ Rectangle {
                 Loader {
                     id: contextMenuPopupLoader
                     active: false
-                    sourceComponent: contextMenuPopupComponent
+                    sourceComponent: SGContextMenuEditActions {
+                        textEditor: cmdNotifName
+                    }
                 }
             }
         }
@@ -261,7 +262,6 @@ Rectangle {
                 onReleased: {
                     if (containsMouse) {
                         contextMenuPopupLoader.active = true
-                        contextMenuPopupLoader.item.textEditor = defaultValueTextField
                         contextMenuPopupLoader.item.popup(null)
                     }
                 }
@@ -270,7 +270,9 @@ Rectangle {
             Loader {
                 id: contextMenuPopupLoader
                 active: false
-                sourceComponent: contextMenuPopupComponent
+                sourceComponent: SGContextMenuEditActions {
+                    textEditor: defaultValueTextField
+                }
             }
         }
     }

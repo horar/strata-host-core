@@ -170,7 +170,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
+                    if (activeFocus === false && (contextMenuPopupLoader.item == null || contextMenuPopupLoader.item.visible === false)) {
                         propertyKey.deselect()
                     }
                 }
@@ -187,7 +187,6 @@ Rectangle {
                     onReleased: {
                         if (containsMouse) {
                             contextMenuPopupLoader.active = true
-                            contextMenuPopupLoader.item.textEditor = propertyKey
                             contextMenuPopupLoader.item.popup(null)
                         }
                     }
@@ -196,7 +195,9 @@ Rectangle {
                 Loader {
                     id: contextMenuPopupLoader
                     active: false
-                    sourceComponent: contextMenuPopupComponent
+                    sourceComponent: SGContextMenuEditActions {
+                        textEditor: propertyKey
+                    }
                 }
             }
 
