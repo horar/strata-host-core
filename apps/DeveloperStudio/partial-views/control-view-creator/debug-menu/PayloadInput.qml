@@ -61,6 +61,7 @@ Item {
                 clip: true
                 focus: true
                 selectByMouse: true
+                contextMenuEnabled: true
                 validator: switch(type) {
                     case "int": return intValid
                     case "double": return doubleValid
