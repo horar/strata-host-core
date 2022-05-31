@@ -184,6 +184,7 @@ UIBase { // start_uibase
 
         live: false
         inputBox.readOnly: true
+        contextMenuEnabled: true
 
         onUserSet: {
             console.log("Slider value set:", value)
@@ -232,6 +233,7 @@ UIBase { // start_uibase
         text: platformInterface.notifications.infobox_integer.value
         readOnly: Boolean(platformInterface.notifications.infobox_integer.states.index_0)
         opacity: platformInterface.notifications.infobox_integer.states.index_0 === 2 ? 0.5 : 1
+        contextMenuEnabled: true
 
         validator: IntValidator {
             bottom: 0
@@ -286,6 +288,7 @@ UIBase { // start_uibase
         text: platformInterface.notifications.infobox_double.value
         readOnly: Boolean(platformInterface.notifications.infobox_double.states.index_0)
         opacity: platformInterface.notifications.infobox_double.states.index_0 === 2 ? 0.5 : 1
+        contextMenuEnabled: true
 
         validator: DoubleValidator {
             bottom: 0
@@ -341,6 +344,7 @@ UIBase { // start_uibase
         text: platformInterface.notifications.infobox_string.value
         readOnly: Boolean(platformInterface.notifications.infobox_string.states.index_0)
         opacity: platformInterface.notifications.infobox_string.states.index_0 === 2 ? 0.5 : 1
+        contextMenuEnabled: true
 
         // No validator required for string
 
@@ -630,6 +634,7 @@ UIBase { // start_uibase
         layoutInfo.xColumns: 1
         layoutInfo.yRows: 43
 
+        contextMenuEnabled: true
         placeholderText: "Enter parameter name"
         horizontalAlignment: Text.AlignLeft
         readOnly: false

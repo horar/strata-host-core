@@ -220,6 +220,7 @@ UIBase { // start_uibase
         from: 0
         to: 1.00
         live: false
+        contextMenuEnabled: true
 
         onUserSet: {
             console.log("onUserSet:", value)
@@ -603,6 +604,7 @@ UIBase { // start_uibase
 
         text: "2000"
         readOnly: false // Set readOnly: false if you like to make SGInfoBox Editable
+        contextMenuEnabled: true
 
         onEditingFinished: {
             if (intervalInfoBox.text) {
@@ -705,6 +707,7 @@ UIBase { // start_uibase
 
         text: "10"
         readOnly: false // Set readOnly: false if you like to make SGInfoBox Editable
+        contextMenuEnabled: true
 
         onEditingFinished: {
             if (runCountInfoBox.text) {
