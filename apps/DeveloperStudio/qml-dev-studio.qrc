@@ -80,8 +80,6 @@
         <file>partial-views/platform-view/platform-settings/FirmwareManagement.qml</file>
         <file>partial-views/platform-view/platform-settings/FirmwareVersionList.qml</file>
         <file>js/constants.js</file>
-        <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
-        <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
         <file>partial-views/distribution-portal/SGBaseDistributionButton.qml</file>
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
