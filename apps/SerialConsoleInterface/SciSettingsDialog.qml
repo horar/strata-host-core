@@ -199,6 +199,31 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
+                text: "Message queue send delay [ms]:"
+                Layout.alignment: Qt.AlignRight
+            }
+
+            SGWidgets.SGSpinBox {
+                id: messageQueueSendDelayEdit
+
+                from: 0
+                to: 2000
+                stepSize: 100
+                editable: true
+                Layout.alignment: Qt.AlignLeft
+
+                Binding {
+                    target: messageQueueSendDelayEdit
+                    property: "value"
+                    value: Sci.Settings.messageQueueSendDelay
+                }
+
+                onValueChanged: {
+                    Sci.Settings.messageQueueSendDelay = value
+                }
+            }
+
+            SGWidgets.SGText {
                 text: "Reset Settings"
                 fontSizeMultiplier: 1.1
                 font.bold: true

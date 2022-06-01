@@ -24,6 +24,7 @@
 #include <QPointer>
 #include <QJsonParseError>
 #include <chrono>
+#include <QSettings>
 
 
 class SciPlatform: public QObject {
@@ -191,6 +192,7 @@ private:
     uint currentMessageId_ = 0;
     bool sendMessageInProgress_ = false;
     bool sendQueueInProgress_ = false;
-    std::chrono::milliseconds sendQueueDelay_ = std::chrono::milliseconds(50);
+    std::chrono::milliseconds sendQueueDelay_;
     bool acquirePortInProgress_ = false;
+    QSettings appSettings_;
 };
