@@ -156,12 +156,14 @@ ColumnLayout {
                             case sdsModel.platformInterfaceGenerator.TYPE_INT: return 0
                             case sdsModel.platformInterfaceGenerator.TYPE_STRING: return "Your String Here"
                             case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE: return 0.00
+                            default: return ""
                         }
                     }
 
                     validator: switch(comboBox.currentText) {
                                case sdsModel.platformInterfaceGenerator.TYPE_INT: return intValid
                                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE: return doubleValid
+                               default: return null
                                }
 
                     onTextChanged: {
@@ -228,13 +230,15 @@ ColumnLayout {
             let value
             switch(object.type) {
                 case sdsModel.platformInterfaceGenerator.TYPE_INT:
-                    value = parseInt(object.value)
+                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
+                    value = Number(object.value)
+                    if (isNaN(value)) {
+                        console.warn("Unable to parse the input value '" + object.value + "'")
+                        value = 0
+                    }
                     break
                 case sdsModel.platformInterfaceGenerator.TYPE_STRING:
                     value = object.value
-                    break
-                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
-                    value = parseFloat(object.value)
                     break
                 case sdsModel.platformInterfaceGenerator.TYPE_BOOL:
                     value = (object.value === "true")

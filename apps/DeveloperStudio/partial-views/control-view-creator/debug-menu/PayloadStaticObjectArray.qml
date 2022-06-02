@@ -78,10 +78,12 @@ ColumnLayout {
                                 let textVal;
                                 switch(modelData.type) {
                                     case "int":
-                                        textVal = Number(value)
-                                        break
                                     case "double":
                                         textVal = Number(value)
+                                        if (isNaN(value)) {
+                                            console.warn("Unable to parse the input value '" + value + "'")
+                                            textVal = 0
+                                        }
                                         break
                                     default: textVal = value
                                 }
@@ -113,8 +115,14 @@ ColumnLayout {
                                     return JSON.stringify(retVal)
                                 } else {
                                     switch(type) {
-                                        case "int": return Number(value)
-                                        case "double": return Number(value)
+                                        case "int":
+                                        case "double":
+                                            let textVal = Number(value)
+                                            if (isNaN(value)) {
+                                                console.warn("Unable to parse the input value '" + value + "'")
+                                                textVal = 0
+                                            }
+                                            return textVal
                                         default: return value
                                     }
                                 }

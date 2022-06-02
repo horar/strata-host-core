@@ -211,6 +211,7 @@ Rectangle {
 
             property alias text: defaultValueTextField.text
             property alias checked: defaultValueSwitch.checked
+            property alias validator: defaultValueTextField.validator
 
             RowLayout {
                 anchors {

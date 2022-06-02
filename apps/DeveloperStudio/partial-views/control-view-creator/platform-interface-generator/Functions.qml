@@ -501,9 +501,13 @@ QtObject {
     function getTypedValue (type, value) {
         switch (type) {
             case "int":
-                return parseInt(value)
             case "double":
-                return parseFloat(value)
+                let textVal = Number(value)
+                if (isNaN(textVal)) {
+                    console.warn("Unable to parse the input value '" + value + "'")
+                    textVal = 0
+                }
+                return textVal
             case "bool":
                 if (value === "false") {
                     return false
