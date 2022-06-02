@@ -20,14 +20,13 @@ GridLayout {
     property int innerSpacing: 5
     property int shortEdit: 180
 
-    QtLabsSettings.Settings {
-        id: settings
-        category: "log"
-     }
-
     columns: 4
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
+
+    LogSettings {
+        id: logSettings
+    }
 
     SGWidgets.SGText {
         id: configOptionsText
@@ -51,10 +50,11 @@ GridLayout {
         enabled: currentIndex !== -1 //disable if log level value doesnt exist OR if INI files was not found
         placeholderText: "no value"
         onActivated: {
-            settings.setValue("level", currentText)
+            console.info(currentText)
+            logSettings.setvalue("level",currentText)
         }
         Component.onCompleted: {
-            currentIndex = find(settings.value("level"))
+            currentIndex = find(logSettings.getvalue("level"))
         }
     }
 
@@ -64,11 +64,11 @@ GridLayout {
         text: logLevelComboBox.enabled ? "Unset" : "Set"
         onClicked: {
             if (text === "Unset") {
-                settings.setValue("level", "")
+                logSettings.removekey("level")
             } else { //set to default value
-                settings.setValue("level", "debug")
+                logSettings.setvalue("level","debug")
             }
-            logLevelComboBox.currentIndex = logLevelComboBox.find(settings.value("level"))
+            logLevelComboBox.currentIndex = logLevelComboBox.find(logSettings.getvalue("level"))
         }
     }
 }

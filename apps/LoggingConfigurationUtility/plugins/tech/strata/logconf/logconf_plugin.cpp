@@ -9,6 +9,7 @@
 #include "logconf_plugin.h"
 #include "ConfigFileModel.h"
 #include "ConfigFileSettings.h"
+#include "LogSettings.h"
 
 #include <QtQml>
 
@@ -16,4 +17,5 @@ void LogConfPlugin::registerTypes(const char *uri){
     qmlRegisterModule(uri, 1, 0);
     qmlRegisterType<ConfigFileModel>("tech.strata.lcu", 1, 0, "ConfigFileModel");
     qmlRegisterType<ConfigFileSettings>("tech.strata.lcu", 1, 0, "ConfigFileSettings");
+    qmlRegisterType<LogSettings>("tech.strata.lcu", 1, 0, "LogSettings");
 }

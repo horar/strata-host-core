@@ -73,6 +73,11 @@ SGWidgets.SGMainWindow {
             id: logLevel
             Layout.alignment: Qt.AlignTop
         }
+
+        LcuPlugin.LogDetails {
+            id: logDetails
+            Layout.alignment: Qt.AlignTop
+        }
     }
 
     function showAboutWindow() {
