@@ -16,7 +16,6 @@ import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/platform_selection.js" as PlatformSelection
 
 ColumnLayout {
     id: software

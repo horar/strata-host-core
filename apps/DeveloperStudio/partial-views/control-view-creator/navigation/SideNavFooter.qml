@@ -12,7 +12,6 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.theme 1.0
 
-import "qrc:/js/navigation_control.js" as NavigationControl
 import "../components"
 
 Item {

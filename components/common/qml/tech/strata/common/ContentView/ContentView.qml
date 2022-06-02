@@ -17,7 +17,6 @@ import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/js/navigation_control.js" as NavigationControl
 
 import "content-views"
 
