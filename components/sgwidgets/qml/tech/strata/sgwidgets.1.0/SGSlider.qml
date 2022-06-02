@@ -343,6 +343,7 @@ GridLayout {
             decimals: slider.decimals
             bottom: slider.from
             top: slider.to
+            locale: "C"
         }
 
         onEditingFinished: slider.userSetValue(parseFloat(text))
