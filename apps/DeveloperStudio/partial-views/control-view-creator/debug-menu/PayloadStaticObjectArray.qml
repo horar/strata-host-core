@@ -152,14 +152,6 @@ ColumnLayout {
         }
     }
 
-    IntValidator {
-        id: intValid
-    }
-
-    DoubleValidator {
-        id: doubleValid
-    }
-
     function update() {
         let payload = {}
         payload[root.name] = listView.payload

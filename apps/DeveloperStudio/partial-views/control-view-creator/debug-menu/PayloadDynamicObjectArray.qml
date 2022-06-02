@@ -213,10 +213,12 @@ ColumnLayout {
 
     IntValidator {
         id: intValid
+        locale: "C"
     }
 
     DoubleValidator {
         id: doubleValid
+        locale: "C"
     }
 
     function update() {
