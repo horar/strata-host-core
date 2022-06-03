@@ -183,7 +183,7 @@ void SGSortFilterProxyModel::setInvokeCustomFilter(bool invokeCustomFilter)
     if (invokeCustomFilter_ != invokeCustomFilter) {
         invokeCustomFilter_ = invokeCustomFilter;
         if (complete_) {
-            invalidateFilter();
+            QSortFilterProxyModel::invalidateFilter();
         }
 
         emit invokeCustomFilterChanged();
@@ -273,6 +273,11 @@ int SGSortFilterProxyModel::mapIndexFromSource(int i)
 bool SGSortFilterProxyModel::matches(const QString &text) const
 {
     return filterRegExp().indexIn(text) != -1;
+}
+
+void SGSortFilterProxyModel::invalidateFilter()
+{
+    QSortFilterProxyModel::invalidateFilter();
 }
 
 int SGSortFilterProxyModel::roleKey(const QString &role) const
