@@ -416,7 +416,7 @@ FocusScope {
                     SGWidgets.SGIconButton {
                         text: "Validator"
                         hintText: qsTr("Validate Platform interface")
-                        icon.source: "qrc:/images/question.svg"
+                        icon.source: "qrc:/images/list-check.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: showValidationView()
                     }

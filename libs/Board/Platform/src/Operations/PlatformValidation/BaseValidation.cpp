@@ -35,6 +35,14 @@ BaseValidation::~BaseValidation()
 
 void BaseValidation::run()
 {
+    if (platform_.get() == nullptr) {
+        QString errStr(QStringLiteral("Device is not set."));
+        qCWarning(lcPlatformValidation) << errStr;
+        emit validationStatus(Status::Error, errStr);
+        finishValidation(false);
+        return;
+    }
+
     if (platform_->deviceConnected() == false) {
         QString errStr(QStringLiteral("Cannot run validation, device is not connected."));
         qCWarning(lcPlatformValidation) << platform_ << errStr;

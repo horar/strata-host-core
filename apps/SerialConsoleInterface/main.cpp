@@ -195,14 +195,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<HexModel>("tech.strata.sci", 1, 0, "HexModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
-    qmlRegisterUncreatableMetaObject(
-                strata::platform::validation::staticMetaObject,
-                "tech.strata.platform.validation",
-                1, 0,
-                "PlatformValidation",
-                "You can't instantiate PlatformValidation in QML" );
-    qRegisterMetaType<strata::platform::validation::Status>("PlatformValidation");
-
     qmlRegisterUncreatableType<SciPlatformTestModel>("tech.strata.sci", 1, 0, "SciPlatformTestModel", "cannot instantiate SciPlatformTestModel in qml");
     qmlRegisterUncreatableType<SciPlatformTestMessageModel>("tech.strata.sci", 1, 0, "SciPlatformTestMessageModel", "cannot instantiate SciPlatformTestMessageModel in qml");
 

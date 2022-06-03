@@ -16,7 +16,6 @@
 #include "SciFilterScrollbackModel.h"
 #include "SciSearchScrollbackModel.h"
 #include "SciMessageQueueModel.h"
-#include "SciPlatformValidation.h"
 #include "SciPlatformTestModel.h"
 #include "SciPlatformTestMessageModel.h"
 
@@ -49,7 +48,6 @@ class SciPlatform: public QObject {
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
     Q_PROPERTY(SciMessageQueueModel* messageQueueModel READ messageQueueModel CONSTANT)
 
-    Q_PROPERTY(SciPlatformValidation* platformValidation READ platformValidation CONSTANT)
     Q_PROPERTY(SciPlatformTestModel* platformTestModel READ platformTestModel CONSTANT)
     Q_PROPERTY(SciPlatformTestMessageModel* platformTestMessageModel READ platformTestMessageModel CONSTANT)
 
@@ -106,7 +104,6 @@ public:
     SciMessageQueueModel* messageQueueModel() const;
     SciPlatformTestModel* platformTestModel() const;
     SciPlatformTestMessageModel* platformTestMessageModel() const;
-    SciPlatformValidation* platformValidation() const;
     QString errorString() const;
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
@@ -202,7 +199,6 @@ private:
     strata::PlatformManager *platformManager_;
     SciPlatformTestModel *platformTestModel_;
     SciPlatformTestMessageModel *platformTestMessageModel_;
-    SciPlatformValidation *platformValidation_;
     uint currentMessageId_ = 0;
     bool sendMessageInProgress_ = false;
     bool sendQueueInProgress_ = false;
