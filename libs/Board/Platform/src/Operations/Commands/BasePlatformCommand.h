@@ -113,9 +113,10 @@ public:
     /*!
      * Turn on/off 'validationFailure' and 'processedNotification' signals during
      * processing messages from platform. By default these signals are turned off.
-     * \param emitSignals true for turn on emitting signals, false for turn off
+     * Also turns on more strict check for command ACK.
+     * \param enabled true for turn on platform validation, false for turn off
      */
-    virtual void setValidationSignals(bool emitSignals) final;
+    virtual void enablePlatformValidation(bool enable) final;
 
 signals:
     /*!
@@ -199,11 +200,11 @@ protected:
 private:
     void finishCommand(CommandResult result);
     QString generateWrongResponseError(const PlatformMessage& response) const;
-    inline void emitValidationWarning(QString warning, bool fatal);
+    inline void emitValidationFailure(QString warning, bool fatal);
     std::chrono::milliseconds ackTimeout_;
     std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;
-    bool emitValidationSignals_;
+    bool platformValidation_;
 
 };
 

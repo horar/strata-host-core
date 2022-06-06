@@ -64,7 +64,7 @@ void BaseValidation::run()
 
     for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
         command::BasePlatformCommand* cmd = (*it).command.get();
-        cmd->setValidationSignals(true);
+        cmd->enablePlatformValidation(true);
         connect(cmd, &BasePlatformCommand::finished, this, &BaseValidation::handleCommandFinished);
         connect(cmd, &BasePlatformCommand::validationFailure, this, &BaseValidation::handleValidationFailure);
         connect(cmd, &BasePlatformCommand::receivedNotification, this, &BaseValidation::handlePlatformNotification);
