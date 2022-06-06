@@ -235,7 +235,7 @@ Item {
                 text: "Create Project"
                 enabled: projectName.text !== "" && projectNameValid && fileOutput.text !== "" && fileOutput.text !== fileOutput.defaultText
 
-                property bool projectNameValid: projectName.text.match(/^[a-zA-Z0-9_.-]*$/)
+                property bool projectNameValid: projectName.text.match(/^[a-zA-Z0-9_\.\+\-]*$/)
 
                 onClicked: {
                     if (enabled) {
