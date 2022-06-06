@@ -13,7 +13,6 @@ import QtQuick.Layouts 1.12
 import QtQuick.Shapes 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -25,6 +24,11 @@ Item {
     id: root
 
     property bool isCurrentItem: false
+    property string highlightPattern
+    property bool matchName: false
+    property bool matchDescription: false
+    property bool matchOpn: false
+    property bool matchPartList: false
 
     Rectangle {
         width: 50
@@ -81,13 +85,11 @@ Item {
             Text {
                 id: name
                 text: {
-                    if (searchCategoryText.checked === false || model.name_matching_index === -1) {
-                        return model.verbose_name
-                    } else {
-                        let txt = model.verbose_name
-                        let idx = model.name_matching_index
-                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    if (matchName) {
+                        return highlightPatternInText(model.verbose_name, highlightPattern)
                     }
+
+                    return model.verbose_name
                 }
                 color: Theme.palette.onsemiDark
                 font {
@@ -105,13 +107,11 @@ Item {
             Text {
                 id: productId
                 text: {
-                    if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
-                        return model.opn
-                    } else {
-                        let txt = model.opn
-                        let idx = model.opn_matching_index
-                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    if (matchOpn) {
+                        return highlightPatternInText(model.opn, highlightPattern)
                     }
+
+                    return model.opn
                 }
 
                 Layout.fillWidth: true
@@ -129,6 +129,7 @@ Item {
 
             Text {
                 id: info
+
                 text: {
                     if (model.program_controller_error_string) {
                         return "Programming of controller failed.\n" + model.program_controller_error_string
@@ -138,13 +139,11 @@ Item {
                         return "Programming controller. Do not unplug device."
                     }
 
-                    if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
-                        return model.description
-                    } else {
-                        let txt = model.description
-                        let idx = model.desc_matching_index
-                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    if (matchDescription) {
+                        return highlightPatternInText(model.description, highlightPattern)
                     }
+
+                    return model.description
                 }
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -165,28 +164,12 @@ Item {
             Text {
                 id: parts
                 text: {
-                    if (searchCategoryPartsList.checked === true) {
-                        let str = "Matching Part OPNs: ";
-                        if (model.parts_list !== undefined) {
-                            for (let i = 0; i < model.parts_list.count; i++) {
-                                if (model.parts_list.get(i).matchingIndex > -1) {
-                                    let idx = model.parts_list.get(i).matchingIndex
-                                    let part = model.parts_list.get(i).opn
-                                    if (str !== "Matching Part OPNs: ") {
-                                        str += ", "
-                                    }
-                                    str += part.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
-                                } else {
-                                    continue
-                                }
-                            }
-                        }
-                        return str
-                    } else {
-                        return ""
+                    if (matchedPartList.length) {
+                        return "Matching Part OPNs: " + matchedPartList.join(", ")
                     }
+                    return ""
                 }
-                visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+                visible: text.length
                 Layout.fillWidth: true
                 font {
                     pixelSize: 12
@@ -196,6 +179,21 @@ Item {
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
+
+                property var matchedPartList: {
+                    var list = []
+                    if (matchPartList && model.parts_list) {
+                        for (let i = 0; i < model.parts_list.count; i++) {
+                            var opn = model.parts_list.get(i).opn
+                            var highlightedOpn  = highlightPatternInText(opn, highlightPattern);
+                            if (opn !== highlightedOpn) {
+                                list.push(highlightedOpn)
+                            }
+                        }
+                    }
+
+                    return list
+                }
             }
         }
 
@@ -449,5 +447,23 @@ Item {
 
     function updateIndex() {
         PlatformSelection.platformSelectorModel.currentIndex = index
+    }
+
+    function highlightPatternInText(text, pattern) {
+        if (!text) {
+            return ""
+        }
+
+        var pos = text.toLowerCase().indexOf(pattern)
+        if (pos >= 0) {
+            var txt = text
+            return txt.substring(0, pos)
+                    + `<font color="${Theme.palette.onsemiOrange}">`
+                    + txt.substring(pos, pos + pattern.length)
+                    + "</font>"
+                    + txt.substring(pos + pattern.length);
+        }
+
+        return text
     }
 }

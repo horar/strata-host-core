@@ -12,7 +12,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
 
-import "qrc:/js/platform_filters.js" as Filters
+import "qrc:/js/platform_filters.js" as PlatformFilters
 
 Rectangle {
     id: root
@@ -25,7 +25,7 @@ Rectangle {
     signal selected()
 
     function onClicked() {
-        Filters.setFilterActive(model.filterName, true)
+        PlatformFilters.setFilterActive(model.filterName, true)
         selected()
     }
 
