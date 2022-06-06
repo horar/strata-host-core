@@ -158,6 +158,9 @@ FocusScope {
                         height: width
 
                         source: {
+                            if (model.type === Sci.SciPlatformTestMessageModel.Info) {
+                                return "qrc:/sgimages/info-circle.svg"
+                            }
                             if (model.type === Sci.SciPlatformTestMessageModel.Warning) {
                                 return "qrc:/sgimages/exclamation-triangle.svg"
                             }
@@ -172,13 +175,15 @@ FocusScope {
                         }
 
                         iconColor: {
+                            if (model.type === Sci.SciPlatformTestMessageModel.Info) {
+                                return TangoTheme.palette.skyBlue1
+                            }
                             if (model.type === Sci.SciPlatformTestMessageModel.Warning) {
                                 return TangoTheme.palette.warning
                             }
                             if (model.type === Sci.SciPlatformTestMessageModel.Error) {
                                 return TangoTheme.palette.error
                             }
-
                             if (model.type === Sci.SciPlatformTestMessageModel.Success) {
                                 return TangoTheme.palette.success
                             }

@@ -105,12 +105,12 @@ void SciPlatformTestModel::finishedHandler(bool success)
     disconnect(data_.at(activeTestIndex_), nullptr, this, nullptr);
 
     if (success) {
-        messageModel_->addMessage(SciPlatformTestMessageModel::Success, data_.at(activeTestIndex_)->name() + " PASSED");
+        messageModel_->addMessage(SciPlatformTestMessageModel::Success, data_.at(activeTestIndex_)->name() + QStringLiteral(" PASSED."));
     } else {
-        messageModel_->addMessage(SciPlatformTestMessageModel::Error, data_.at(activeTestIndex_)->name() + " FAILED");
+        messageModel_->addMessage(SciPlatformTestMessageModel::Error, data_.at(activeTestIndex_)->name() + QStringLiteral(" FAILED."));
     }
 
-    messageModel_->addMessage(SciPlatformTestMessageModel::Info, "");
+    messageModel_->addMessage(SciPlatformTestMessageModel::Plain, "");
 
     ++activeTestIndex_;  // move to next test
     runNextTest();
@@ -121,7 +121,9 @@ void SciPlatformTestModel::statusHandler(validation::Status status, QString text
     SciPlatformTestMessageModel::MessageType msgType;
 
     switch (status) {
-    case validation::Status::State :
+    case validation::Status::Plain :
+        msgType = SciPlatformTestMessageModel::Plain;
+        break;
     case validation::Status::Info :
         msgType = SciPlatformTestMessageModel::Info;
         break;
@@ -140,7 +142,7 @@ void SciPlatformTestModel::runNextTest()
 {
     while (activeTestIndex_ < data_.length()) {
         if (data_.at(activeTestIndex_)->enabled()) {
-            messageModel_->addMessage(SciPlatformTestMessageModel::Info, data_.at(activeTestIndex_)->name() + " is about to start");
+            messageModel_->addMessage(SciPlatformTestMessageModel::Plain, data_.at(activeTestIndex_)->name() + QStringLiteral(" is about to start."));
 
             connect(data_.at(activeTestIndex_), &SciPlatformValidation::status, this, &SciPlatformTestModel::statusHandler);
             connect(data_.at(activeTestIndex_), &SciPlatformValidation::finished, this, &SciPlatformTestModel::finishedHandler);

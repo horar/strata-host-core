@@ -118,7 +118,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
     if (message.isJsonValidObject() == false) {
         QString warning = generateWrongResponseError(message);
         qCWarning(lcPlatformCommand) << platform_ << warning;
-        emitValidationWarning(warning);
+        emitValidationWarning(warning, false);
         return;
     }
 
@@ -138,16 +138,16 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                     responseTimer_.setInterval(notificationTimeout_);
                     responseTimer_.start();
                 } else {
-                    QString warning = "ACK for '" + cmdName_ + "' command is not OK: '" + payload[JSON_RETURN_STRING].GetString() + "'.";
+                    QString warning = "Bad ACK for '" + cmdName_ + "': '" + payload[JSON_RETURN_STRING].GetString() + "'.";
                     qCWarning(lcPlatformCommand) << platform_ << warning;
-                    emitValidationWarning(warning);
+                    emitValidationWarning(warning, true);
                     // ACK is not 'ok' - command is rejected by device
                     finishCommand(this->onReject());
                 }
             } else {
                 QString warning = "Received wrong ACK. Expected '" + cmdName_ + "', got '" + ackStr + "'.";
                 qCWarning(lcPlatformCommand) << platform_ << warning;
-                emitValidationWarning(warning);
+                emitValidationWarning(warning, true);
                 // Here should be variable 'ackOk_' set to 'false' - received ACK is for another command.
                 // It is not set because older Strata applications accepts any ACK which has 'true' in 'JSON_RETURN_VALUE'.
                 // We cannot set 'ackOk_' to 'false' due to backwards compatibility - if by chance there was an old board
@@ -161,7 +161,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                 warning = "Received invalid ACK: '" + message.raw() + "'.";
             }
             qCWarning(lcPlatformCommand) << platform_ << warning;
-            emitValidationWarning(warning);
+            emitValidationWarning(warning, true);
         }
 
         return;
@@ -180,9 +180,11 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             if (ackOk_) {
                 if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
                     if (result == CommandResult::Failure) {
-                        QString warning = "Received faulty notification: '" + message.raw() + "'.";
+                        QByteArray rawJson = message.raw();
+                        if (rawJson.endsWith('\n')) { rawJson.chop(1); }
+                        QString warning = "Received faulty notification: '" + rawJson + "'.";
                         qCWarning(lcPlatformCommand) << platform_ << warning;
-                        emitValidationWarning(warning);
+                        emitValidationWarning(warning, true);
                     }
 
                     const QByteArray status = CommandValidator::notificationStatus(json);
@@ -194,13 +196,16 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             } else {
                 QString warning = "Received notification without previous ACK.";
                 qCWarning(lcPlatformCommand) << platform_ << warning;
-                emitValidationWarning(warning);
+                emitValidationWarning(warning, true);
                 finishCommand(CommandResult::MissingAck);
             }
         } else {
             // some platforms send periodic notifications, it is not an error if we receive it, ignore it
-            qCDebug(lcPlatformCommand) << platform_ << "Received invalid notification for command '"
-                                       << cmdName_ << "': '" << message.raw() << "'.";
+            QByteArray rawJson = message.raw();
+            if (rawJson.endsWith('\n')) { rawJson.chop(1); }
+            QString warning = "Received invalid notification for command '" + cmdName_ + "': '" + rawJson + "'.";
+            qCDebug(lcPlatformCommand) << platform_ << warning;
+            emitValidationWarning(warning, false);
         }
 
         return;
@@ -210,7 +215,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
     // log warning and wait for the correct JSON (until timeout)
     QString warning = generateWrongResponseError(message);
     qCWarning(lcPlatformCommand) << platform_ << warning;
-    emitValidationWarning(warning);
+    emitValidationWarning(warning, false);
 }
 
 void BasePlatformCommand::handleResponseTimeout()
@@ -218,7 +223,7 @@ void BasePlatformCommand::handleResponseTimeout()
     if (cmdType_ != CommandType::Wait) {
         QString warning = "Command '" + cmdName_ + "' timed out.";
         qCWarning(lcPlatformCommand) << platform_ << warning;
-        emitValidationWarning(warning);
+        emitValidationWarning(warning, true);
     }
     finishCommand(this->onTimeout());
 }
@@ -230,7 +235,7 @@ void BasePlatformCommand::handleMessageSent(QByteArray rawMessage, unsigned msgN
         responseTimer_.stop();
         QString warning = QStringLiteral("Cannot send '") + cmdName_ + QStringLiteral("' command. Error: '") + errStr + '\'';
         qCCritical(lcPlatformCommand) << platform_ << warning;
-        emitValidationWarning(warning);
+        emitValidationWarning(warning, true);
         finishCommand(CommandResult::Unsent);
     }
 }
@@ -244,7 +249,7 @@ void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, Q
     responseTimer_.stop();
     QString warning = "Error: " + errStr;
     qCCritical(lcPlatformCommand) << platform_ << warning;
-    emitValidationWarning(warning);
+    emitValidationWarning(warning, true);
 
     if (errCode == device::Device::ErrorCode::DeviceDisconnected) {
         finishCommand(CommandResult::DeviceDisconnected);
@@ -280,10 +285,10 @@ QString BasePlatformCommand::generateWrongResponseError(const PlatformMessage& r
     return prefix + response.raw() + QStringLiteral("'.");
 }
 
-void BasePlatformCommand::emitValidationWarning(QString warning)
+void BasePlatformCommand::emitValidationWarning(QString warning, bool fatal)
 {
     if (emitValidationSignals_) {
-        emit validationFailure(warning);
+        emit validationFailure(warning, fatal);
     }
 }
 

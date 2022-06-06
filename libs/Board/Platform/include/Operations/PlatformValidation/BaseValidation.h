@@ -34,7 +34,7 @@ enum class Type : int {
 };
 
 enum class Status : int {
-    State,
+    Plain,
     Info,
     Warning,
     Error
@@ -86,7 +86,7 @@ signals:
 
 private slots:
     void handleCommandFinished(command::CommandResult result, int status);
-    void handleValidationFailure(QString error);
+    void handleValidationFailure(QString error, bool fatal);
     void handlePlatformNotification(strata::platform::PlatformMessage message);
 
 private:
@@ -95,10 +95,9 @@ private:
 
     const Type type_;
     bool running_;
+    bool fatalFailure_;
 
 protected:
-    void initCommandList();
-
     PlatformPtr platform_;
 
     PlatformMessage lastPlatformNotification_;

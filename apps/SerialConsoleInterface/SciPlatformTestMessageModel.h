@@ -19,6 +19,7 @@ class SciPlatformTestMessageModel: public QAbstractListModel
 
 public:
     enum MessageType {
+        Plain,
         Info,
         Warning,
         Error,

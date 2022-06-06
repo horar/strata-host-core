@@ -129,8 +129,9 @@ signals:
      * Emitted when some issue occurs during processing message from device.
      * This signal is emitted only if it was enabled by 'setValidationSignals' method.
      * \param error description of what goes wrong during message processing
+     * \param fatal if set to 'true' failure was fatal - validation cannot be succesful anymore
      */
-    void validationFailure(QString error);
+    void validationFailure(QString error, bool fatal);
 
     /*!
      * Emitted when notification from platfom was received.
@@ -198,7 +199,7 @@ protected:
 private:
     void finishCommand(CommandResult result);
     QString generateWrongResponseError(const PlatformMessage& response) const;
-    inline void emitValidationWarning(QString warning);
+    inline void emitValidationWarning(QString warning, bool fatal);
     std::chrono::milliseconds ackTimeout_;
     std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;

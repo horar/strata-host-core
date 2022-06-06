@@ -24,6 +24,7 @@ using command::CommandResult;
 BaseValidation::BaseValidation(const PlatformPtr& platform, Type type):
     type_(type),
     running_(false),
+    fatalFailure_(false),
     platform_(platform)
 { }
 
@@ -61,7 +62,17 @@ void BaseValidation::run()
 
     // TODO: if there will be need for "lock" implement it in same way as in 'PlatformOperations'
 
+    for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
+        command::BasePlatformCommand* cmd = (*it).command.get();
+        cmd->setValidationSignals(true);
+        connect(cmd, &BasePlatformCommand::finished, this, &BaseValidation::handleCommandFinished);
+        connect(cmd, &BasePlatformCommand::validationFailure, this, &BaseValidation::handleValidationFailure);
+        connect(cmd, &BasePlatformCommand::receivedNotification, this, &BaseValidation::handlePlatformNotification);
+
+        it->notificationReceived = false;
+    }
     currentCommand_ = commandList_.begin();
+    fatalFailure_ = false;
     running_ = true;
 
     QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
@@ -103,7 +114,7 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
         break;
     case CommandResult::Timeout :  // Expected notification was not received (or received notification was not OK).
         if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
-            emit validationStatus(Status::State, QStringLiteral("Checking last received notification."));
+            emit validationStatus(Status::Plain, QStringLiteral("Checking last received notification."));
             currentCommand_->notificationCheck();
         }
         finishValidation(false);
@@ -114,14 +125,19 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
     }
 }
 
-void BaseValidation::handleValidationFailure(QString error) {
-    emit validationStatus(Status::Error, error);
+void BaseValidation::handleValidationFailure(QString error, bool fatal) {
+    Status status = Status::Warning;
+    if (fatal) {
+        fatalFailure_ = true;
+        status = Status::Error;
+    }
+    emit validationStatus(status, error);
 }
 
 void BaseValidation::handlePlatformNotification(PlatformMessage message)
 {
-    lastPlatformNotification_ = message;
     if (currentCommand_ != commandList_.end()) {
+        lastPlatformNotification_ = message;
         currentCommand_->notificationReceived = true;
     }
 }
@@ -129,7 +145,7 @@ void BaseValidation::handlePlatformNotification(PlatformMessage message)
 void BaseValidation::sendCommand()
 {
     if (currentCommand_ != commandList_.end()) {
-        emit validationStatus(Status::State, QStringLiteral("Validating ") + currentCommand_->command->name());
+        emit validationStatus(Status::Plain, QStringLiteral("Validating '") + currentCommand_->command->name() + QStringLiteral("'."));
         // TODO: if there will be need for "lock" use 'reinterpret_cast<quintptr>(this)' as sendCommand parameter
         currentCommand_->command->sendCommand(0);
     }
@@ -137,25 +153,16 @@ void BaseValidation::sendCommand()
 
 void BaseValidation::finishValidation(bool success)
 {
+    for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
+        disconnect((*it).command.get(), nullptr, this, nullptr);
+    }
     currentCommand_ = commandList_.end();
     // TODO: if "lock" will be used, unlock it here
     // platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
     running_ = false;
-    emit finished(success);
-}
 
-void BaseValidation::initCommandList()
-{
-    for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
-        command::BasePlatformCommand* cmd = (*it).command.get();
-        cmd->setValidationSignals(true);
-        connect(cmd, &BasePlatformCommand::finished, this, &BaseValidation::handleCommandFinished);
-        connect(cmd, &BasePlatformCommand::validationFailure, this, &BaseValidation::handleValidationFailure);
-        connect(cmd, &BasePlatformCommand::receivedNotification, this, &BaseValidation::handlePlatformNotification);
-    }
-
-    currentCommand_ = commandList_.end();
+    emit finished((fatalFailure_) ? false : success);
 }
 
 BaseValidation::CommandTest::CommandTest(CommandPtr&& platformCommand, const std::function<bool()>& notificationCheckFn)
