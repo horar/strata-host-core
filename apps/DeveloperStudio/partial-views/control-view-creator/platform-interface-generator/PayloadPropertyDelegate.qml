@@ -170,7 +170,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
+                    if (activeFocus === false && (contextMenuPopupLoader.item == null || contextMenuPopupLoader.item.visible === false)) {
                         propertyKey.deselect()
                     }
                 }
@@ -187,7 +187,6 @@ Rectangle {
                     onReleased: {
                         if (containsMouse) {
                             contextMenuPopupLoader.active = true
-                            contextMenuPopupLoader.item.textEditor = propertyKey
                             contextMenuPopupLoader.item.popup(null)
                         }
                     }
@@ -196,7 +195,9 @@ Rectangle {
                 Loader {
                     id: contextMenuPopupLoader
                     active: false
-                    sourceComponent: contextMenuPopupComponent
+                    sourceComponent: SGContextMenuEditActions {
+                        textEditor: propertyKey
+                    }
                 }
             }
 
@@ -232,13 +233,16 @@ Rectangle {
             visible: active
 
             property bool isBool: propertyType.currentIndex === 3
+            property string modelType: model.type
 
             onIsBoolChanged: {
                 // reseting text, value, and checked to base states
                 if (propertyType.currentIndex !== 3) {
                     model.value = "0"
-                    item.text = "0"
-                    item.checked = false
+                    if (item) {
+                        item.text = "0"
+                        item.checked = false
+                    }
                 } else {
                     model.value = "false"
                     model.checked = false
@@ -252,6 +256,33 @@ Rectangle {
                     item.checked = (model.value === "true") ? true : false
                     item.checkedChanged.connect(checkedChanged)
                     item.textChanged.connect(textChanged)
+                    validateModelType(false)
+                }
+            }
+
+            onModelTypeChanged: {
+                if (item) {
+                    validateModelType(true)
+                }
+            }
+
+            function validateModelType(resetValue) {
+                switch (modelType) {
+                case sdsModel.platformInterfaceGenerator.TYPE_INT:
+                    if (resetValue) {
+                        item.text = "0"
+                    }
+                    item.validator = intValid
+                    break
+                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
+                    if (resetValue) {
+                        item.text = "0"
+                    }
+                    item.validator = doubleValid
+                    break
+                default:
+                    item.validator = null
+                    break
                 }
             }
 
@@ -263,6 +294,16 @@ Rectangle {
 
             function textChanged() {
                 model.value = item.text
+            }
+
+            IntValidator {
+                id: intValid
+                locale: "C"
+            }
+
+            DoubleValidator {
+                id: doubleValid
+                locale: "C"
             }
         }
 

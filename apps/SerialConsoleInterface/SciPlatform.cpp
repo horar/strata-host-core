@@ -351,6 +351,9 @@ QVariantMap SciPlatform::queueMessage(const QString &message, bool onlyValidJson
 
 void SciPlatform::sendQueue()
 {
+    int delay = appSettings_.value("App/messageQueueSendDelay", 100).toInt();
+    sendQueueDelay_ = std::chrono::milliseconds(delay);
+
     setSendQueueInProgress(true);
     sendNextInQueue();
 }

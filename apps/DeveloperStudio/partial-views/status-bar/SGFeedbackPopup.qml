@@ -216,20 +216,34 @@ SGStrataPopup {
                         }
                     }
 
-                    ListView {
-                        id: feedbackTypeListView
-                        opacity: !feedbackStatus.visible ? 1 : 0.1
-                        orientation: Qt.Horizontal
-                        spacing: 5
-                        enabled: !feedbackStatus.visible
-                        model: SGFeedbackTypeModel {}
-                        delegate: SGFeedbackTypeDelegate {}
-                        currentIndex: -1
-                        Layout.preferredHeight: 30
-                        Layout.fillWidth: true
+                    Item {
+                        id: feedbackTypeSelector
 
-                        onCurrentIndexChanged: {
-                            if(currentIndex !== -1 && alertToast.visible) alertToast.hide();
+                        Layout.preferredHeight: feedbackTypeColumn.height
+                        Layout.fillWidth: true
+                        enabled: feedbackStatus.visible === false
+
+                        ButtonGroup {
+                            id: feedbackTypeRadioGroup
+                            exclusive: true
+                            buttons: feedbackTypeColumn.children
+                        }
+
+                        Column {
+                            id: feedbackTypeColumn
+                            spacing: 5
+
+                            SGRadioButton {
+                                text: "Bug"
+                            }
+
+                            SGRadioButton {
+                                text: "Feature"
+                            }
+
+                            SGRadioButton {
+                                text: "Acknowledgement"
+                            }
                         }
                     }
 
@@ -300,7 +314,7 @@ SGStrataPopup {
                         text: "Submit"
                         Layout.alignment: Qt.AlignHCenter
                         activeFocusOnTab: true
-                        enabled: commentsQuestionsArea.text.match(/\S/) && feedbackTypeListView.currentIndex !== -1 && !feedbackStatus.visible
+                        enabled: commentsQuestionsArea.text.match(/\S/) && feedbackTypeRadioGroup.checkState === Qt.PartiallyChecked && !feedbackStatus.visible
 
                         background: Rectangle {
                             color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -326,7 +340,14 @@ SGStrataPopup {
                             if (alertToast.visible) {
                                 alertToast.hideInstantly()
                             }
-                            var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: commentsQuestionsArea.text, type: feedbackTypeListView.currentItem.typeValue }
+
+                            var feedbackInfo = {
+                                "email": emailField.text,
+                                "name": nameField.text,
+                                "comment": commentsQuestionsArea.text,
+                                "type": feedbackTypeRadioGroup.checkedButton.text,
+                            }
+
                             feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
@@ -369,6 +390,6 @@ SGStrataPopup {
 
     function resetForm(){
         commentsQuestionsArea.text = ""
-        feedbackTypeListView.currentIndex = -1
+        feedbackTypeRadioGroup.checkState = Qt.Unchecked
     }
 }

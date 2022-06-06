@@ -94,6 +94,7 @@ UIBase { // start_uibase
 
         text: "100"
         readOnly : true
+        contextMenuEnabled: true
     } // end_9cb37
 
     LayoutSGSlider { // start_8eeff
@@ -107,6 +108,7 @@ UIBase { // start_uibase
         from : 0
         to : 100
         live : false
+        contextMenuEnabled: true
 
         onUserSet : {
             console.log("onUserSet:", value)
@@ -193,6 +195,7 @@ UIBase { // start_uibase
 
         text: "100"
         readOnly : true
+        contextMenuEnabled: true
     } // end_122e0
 
     LayoutText { // start_cbef6

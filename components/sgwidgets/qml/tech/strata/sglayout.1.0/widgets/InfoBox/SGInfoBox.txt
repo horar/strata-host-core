@@ -8,6 +8,7 @@
 
         text: "100"
         readOnly: true // Set readOnly: false if you like to make SGInfoBox Editable
+        contextMenuEnabled: true
 
         onAccepted: {
            console.log("Accepted:", text)

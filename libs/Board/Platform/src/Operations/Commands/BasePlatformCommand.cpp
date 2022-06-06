@@ -148,9 +148,12 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                 QString warning = "Received wrong ACK. Expected '" + cmdName_ + "', got '" + ackStr + "'.";
                 qCWarning(lcPlatformCommand) << platform_ << warning;
                 emitValidationWarning(warning);
-                if (ackOk_) {
-                    ackOk_ = false;  // ACK is for another command, it is not OK.
-                }
+                // Here should be variable 'ackOk_' set to 'false' - received ACK is for another command.
+                // It is not set because older Strata applications accepts any ACK which has 'true' in 'JSON_RETURN_VALUE'.
+                // We cannot set 'ackOk_' to 'false' due to backwards compatibility - if by chance there was an old board
+                // that doesn't send ACK correctly.
+                // It means that if command "abc" is sent, ACK will be accepted even if it will be for command "def".
+                // Setting 'ackOk_' to 'false' here causes that only right ACK ("abc" for command "abc") will be accepted.
             }
         } else {
             QString warning = CommandValidator::lastValidationError();
