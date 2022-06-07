@@ -119,7 +119,6 @@ FocusScope {
                 }
             }
 
-
             ListView {
                 id: validationListView
                 anchors {
@@ -149,7 +148,7 @@ FocusScope {
 
                 delegate: Item {
 
-                    height: Math.max(delegateIcon.height, delegateIcon.height)
+                    height: Math.max(delegateIcon.height, delegateText.height)
                     width: validationListWrapper.width
 
                     SGWidgets.SGIcon {
@@ -189,7 +188,6 @@ FocusScope {
                             }
 
                             return "black"
-
                         }
                     }
 
@@ -203,6 +201,7 @@ FocusScope {
                         }
 
                         text: model.text
+                        wrapMode: Text.Wrap
                     }
                 }
             }
