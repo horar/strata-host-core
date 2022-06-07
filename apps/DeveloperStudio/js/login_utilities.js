@@ -578,6 +578,12 @@ function validation_result (response) {
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
         SignalsModule.Signals.validationResult("Current token is valid")
+
+        if (response.hasOwnProperty("privacy_policy_changed") && response.privacy_policy_changed == true ) {
+            console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
+            SignalsModule.Signals.privacyPolicyUpdate()
+        }
+
     } else {
         Rest.jwt = ""
         if (response.message === "No connection") {
@@ -648,4 +654,3 @@ function set_token (token) {
 function getNextId() {
    return Rest.getNextRequestId();
 }
-
