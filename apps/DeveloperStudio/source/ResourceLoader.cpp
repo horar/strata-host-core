@@ -554,7 +554,7 @@ QString ResourceLoader::getProjectNameFromCmake(const QString &qrcPath) {
     }
 
     // Regex to get 'project_name' out of 'project(project_name)'
-    const QRegularExpression re("(?<=project\\()(\\w+)");
+    const QRegularExpression re("(?<=project\\()([\\w\\.\\+\\-]+)");
     const QRegularExpressionMatch match = re.match(cmakeText);
     return match.captured();
 }
